@@ -1,12 +1,12 @@
 # NPC Builds (GM only, DRAFT)
 
-The 5e build behind every player-facing NPC. Species and subclasses come only from the 2024 Player's Handbook (PHB), Tasha's Cauldron of Everything (Tasha's) and Mordenkainen Presents: Monsters of the Multiverse (MotM). The "calling" is what players see.
+The 5e build behind every player-facing NPC. Species come from the Player's Handbook (2024, plus the 2014 half-elf and half-orc), Tasha's Cauldron of Everything (Tasha's), Mordenkainen Presents: Monsters of the Multiverse (MotM) and Eberron: Rising from the Last War (warforged). Classes and subclasses come from the 2024 PHB and Tasha's. The "calling" is what players see.
 
 Anything the archive already said (a species, a gender, a role) is kept. Everything else here is new and yours to change.
 
 ## Spread
 
-- **Species:** 41 different, between one and 6 each. Human 6, Dwarf 3, Elf 3, Hobgoblin 3, Orc 3, Shadar-kai 3, Tiefling 3, Aarakocra 2, Aasimar 2, Bloomborn 2, Changeling 2, Deep Gnome 2, Dragonborn 2, Duergar 2, Eladrin 2, Fire Genasi 2, Githzerai 2, Gnome 2, Goblin 2, Goliath 2, Halfling 2, Kobold 2, Minotaur 2, Shifter 2, Tabaxi 2, Tortle 2, Triton 2, Yuan-ti 2, Air Genasi 1, Bugbear 1, Centaur 1, Earth Genasi 1, Fairy 1, Firbolg 1, Githyanki 1, Harengon 1, Kenku 1, Lizardfolk 1, Satyr 1, Sea Elf 1, Water Genasi 1
+- **Species:** 44 different, between one and 6 each. Human 6, Dwarf 3, Elf 3, Hobgoblin 3, Orc 3, Shadar-kai 3, Tiefling 3, Aarakocra 2, Bloomborn 2, Changeling 2, Deep Gnome 2, Dragonborn 2, Eladrin 2, Fire Genasi 2, Githzerai 2, Gnome 2, Goblin 2, Goliath 2, Halfling 2, Kobold 2, Shifter 2, Tabaxi 2, Tortle 2, Triton 2, Yuan-ti 2, Aasimar 1, Air Genasi 1, Bugbear 1, Centaur 1, Duergar 1, Earth Genasi 1, Fairy 1, Firbolg 1, Githyanki 1, Half-elf 1, Half-orc 1, Harengon 1, Kenku 1, Lizardfolk 1, Minotaur 1, Satyr 1, Sea Elf 1, Warforged 1, Water Genasi 1
 - **Classes:** Druid 7, Fighter 7, Paladin 7, Warlock 7, Barbarian 6, Cleric 6, Ranger 6, Rogue 6, Sorcerer 6, Wizard 6, Artificer 5, Bard 5, Monk 5
 - **Pronouns:** she/her 35, he/him 33, they/them 9, any 1, unknown 1
 - **Backgrounds:** Hermit 8, Soldier 8, Acolyte 7, Entertainer 7, Sage 7, Criminal 6, Noble 5, Scribe 5, Wayfarer 5, Guide 4, Merchant 4, Artisan 3, Charlatan 3, Guard 3, Sailor 3, Farmer 1
@@ -21,7 +21,7 @@ Anything the archive already said (a species, a gender, a role) is kept. Everyth
 | Knight-Commander Edric Thalmos | Celestial Order | Minotaur (MotM) | Fighter (Battle Master) | Soldier | he/him | The Bloodfang Warcamp, the Tyrant's Dominion |  |
 | Lady Aurelia Stormvein | Celestial Order | Dwarf (PHB) | Cleric (War Domain) | Acolyte | she/her | The iron mountains of the Tyrant's Dominion |  |
 | Brother Altharion Vale | Celestial Order | Human (PHB) | Monk (Warrior of the Open Hand) | Hermit | he/him | Ashen Spire, the Hollow Marches |  |
-| Seraphis the Ascended | Celestial Order | Aasimar (PHB) | Paladin (Oath of Vengeance) | Soldier | they/them | Unknown | An aasimar whose radiant soul has almost burned away the person. Their name before the Order is for you to decide. Players see: Unknown. |
+| Seraphis the Ascended | Celestial Order | Warforged (Eberron: Rising from the Last War) | Paladin (Oath of Vengeance) | Soldier | they/them | Unknown | A warforged, built long ago by the Order. Whether a mortal soul was bound into it ("possibly once mortal") is for you to decide. Players see: Unknown. |
 | Archon Vaelion | Celestial Order | Centaur (MotM) | Fighter (Champion) | Noble | he/him | The Radiant Expanse, long ago |  |
 | Exile Liora Voss | Celestial Order | Dragonborn (PHB) | Paladin (Oath of Glory) | Wayfarer | she/her | Zepharyos, the Fractured Nexus |  |
 | Warlord Garron Kael | Crimson Legion | Hobgoblin (MotM) | Barbarian (Path of the Berserker) | Soldier | he/him | Varkhaal, the Tyrant's Dominion |  |
@@ -48,7 +48,7 @@ Anything the archive already said (a species, a gender, a role) is kept. Everyth
 | Selene Duskveil | Shadow Pact | Tabaxi (MotM) | Rogue (Assassin) | Criminal | she/her | The Green Expanse, the Verdant Rebirth |  |
 | Kaelen Voris | Shadow Pact | Changeling (MotM) | Rogue (Arcane Trickster) | Charlatan | any | Nobody knows | The current holder is a changeling. Earlier holders were not. Players see: Changes. |
 | Ilsevre the Whispering Veil | Shadow Pact | Shadar-kai (MotM) | Bard (College of Lore) | Entertainer | she/her | Noctis, the Eternal Veil |  |
-| Cazrin "the Hollow Blade" | Shadow Pact | Duergar (MotM) | Rogue (Soulknife) | Guard | he/him | Unknown | A duergar who can turn invisible, which helps people forget him. His real name and past are gone; decide what they were if it matters. |
+| Cazrin "the Hollow Blade" | Shadow Pact | Half-elf (PHB 2014) | Rogue (Soulknife) | Guard | he/him | Unknown | His real name and past are gone; decide what they were if it matters. |
 | "The Grey Raven" | Shadow Pact | Aarakocra (MotM) | Fighter (Battle Master) | Guide | unknown | Unknown | An aarakocra archer (she/her) who shoots from the air. The grey feather is the only clue anyone has. Players should not know who she is. Players see: Unknown. |
 | Mistress Zeyara | Shadow Pact | Satyr (MotM) | Sorcerer (Aberrant Sorcery) | Entertainer | she/her | The Fading Grove, the Eternal Veil |  |
 | Tobias Vale | Shadow Pact | Human (PHB) | Wizard (Diviner) | Noble | he/him | Ashen Spire, the Hollow Marches |  |
@@ -64,7 +64,7 @@ Anything the archive already said (a species, a gender, a role) is kept. Everyth
 | Jorik Fangtorn | Wildborn Clans | Bloomborn (Firbolg (MotM) or Custom Lineage (Tasha's)) | Ranger (Fey Wanderer) | Guide | he/him | Unknown | A Bloomborn who came through the Rift from Kaelmar. To the Wildborn he looks like a forest spirit, and he has not corrected them. Players see: Unknown. |
 | Brynn Wolfsong | Wildborn Clans | Shifter (MotM) | Ranger (Beast Master) | Guide | they/them | Fangholt, the Verdant Rebirth |  |
 | Selka "the Pactmother" | Bloodbound Company | Yuan-ti (MotM) | Warlock (Great Old One Patron) | Merchant | she/her | The Eclipsed Chamber, the Radiant Ascendancy |  |
-| Varik "the Bloodforged" | Bloodbound Company | Minotaur (MotM) | Paladin (Oath of Glory) | Soldier | he/him | The Bleeding Arena, the Eternal Veil |  |
+| Varik "the Bloodforged" | Bloodbound Company | Half-orc (PHB 2014) | Paladin (Oath of Glory) | Soldier | he/him | The Bleeding Arena, the Eternal Veil |  |
 | Lira "the Red Whisper" | Bloodbound Company | Halfling (PHB) | Rogue (Thief) | Criminal | she/her | The Market of Lost Things, Hollow Refuge |  |
 | Garek "the Coinbinder" | Bloodbound Company | Goblin (MotM) | Artificer (Alchemist) | Merchant | she/her | A counting-house in Noctis |  |
 | Yulrath "the Warhound" | Bloodbound Company | Bugbear (MotM) | Barbarian (Path of the Berserker) | Soldier | she/her | The Bloodfang Pit, the Verdant Rebirth |  |

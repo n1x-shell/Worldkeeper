@@ -147,7 +147,7 @@ Each person has:
 | --- | --- | --- | --- |
 | Unknown | Paladin | They/them | Unknown |
 
-**Looks.** A tall figure in seamless white armour that never dents or tarnishes. Light leaks from the joints. Nobody has seen the face inside.
+**Looks.** A tall figure in seamless white armour that never dents or tarnishes. Light leaks from the joints. Nobody has seen a face inside, because there may not be one.
 
 **Manner.** Silent. Communicates by pointing, and by what happens next.
 
@@ -692,9 +692,9 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Duergar | Silent Blade | He/him | Unknown |
+| Half-elf | Silent Blade | He/him | Unknown |
 
-**Looks.** A plain grey duergar in black with an empty sheath at his hip. When he fights, a blade of grey light fills it.
+**Looks.** A plain half-elf in black with an empty sheath at his hip. When he fights, a blade of grey light fills it.
 
 **Manner.** Flat, dutiful and strangely sad. Answers to "Cazrin" a moment too late.
 
@@ -1003,9 +1003,9 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Taur'n | Paladin | He/him | The Bleeding Arena, the Eternal Veil |
+| Half-orc | Paladin | He/him | The Bleeding Arena, the Eternal Veil |
 
-**Looks.** A broad Taur'n with contract scars across his hide and horns: a raised line for every oath sworn in blood.
+**Looks.** A broad half-orc covered in contract scars: a raised line for every oath sworn in blood.
 
 **Manner.** Grand, honourable and theatrical. Keeps every promise to the letter.
 
