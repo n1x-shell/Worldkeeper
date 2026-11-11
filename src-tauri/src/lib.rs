@@ -70,6 +70,7 @@ fn start_server(resources: &Path, data_dir: &Path, port: u16) -> Result<Child, S
         .env("WORLDKEEPER_MODE", "dm")
         .env("WORLDKEEPER_DATA_DIR", data_dir)
         .env("WORLDKEEPER_STATIC_DIR", resources.join("client"))
+        .env("WORLDKEEPER_PLAYER_SITE_DIR", resources.join("player-site"))
         // Lets the server exit on its own if this process dies without a clean shutdown.
         .env("WORLDKEEPER_PARENT_PID", std::process::id().to_string())
         .env_remove("NODE_OPTIONS")

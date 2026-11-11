@@ -121,6 +121,7 @@ const NAV: { title: string; items: Item[] }[] = [
     title: 'Library Management',
     items: [
       { to: '/search', label: 'Search', icon: <Search size={I} /> },
+      { to: '/publish', label: 'Publish for Players', icon: <Globe2 size={I} /> },
       { to: '/import', label: 'Import and Export', icon: <Upload size={I} /> },
       { to: '/review', label: 'Canon Review', icon: <KeyRound size={I} /> },
       { to: '/broken', label: 'Broken References', icon: <FileWarning size={I} /> },

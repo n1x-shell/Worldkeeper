@@ -26,6 +26,7 @@ import { LiveSession } from './pages/Live';
 import { AgendasPage, ConditionsPage, DicePage, DmScreen, NotesPage, NpcRefPage, RulesPage, TablesPage, TrackerPage, WorldEventsPage } from './pages/DmTools';
 import { BackupsPage, BrokenPage, HistoryPage, ImportExportPage, ReviewPage, SettingsPage } from './pages/Library';
 import { PlayerApp } from './player/PlayerApp';
+import { PublishPage } from './pages/Publish';
 
 function Page({ children }: { children: React.ReactNode }) {
   return <ErrorBoundary>{children}</ErrorBoundary>;
@@ -89,6 +90,7 @@ export function App() {
           <Route path="history" element={<Page><HistoryPage /></Page>} />
           <Route path="backups" element={<Page><BackupsPage /></Page>} />
           <Route path="settings" element={<Page><SettingsPage /></Page>} />
+          <Route path="publish" element={<Page><PublishPage /></Page>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

@@ -4,6 +4,7 @@
  *   desktop/build/server/index.mjs        the API server bundled into one file (esbuild)
  *   desktop/build/server/node_modules/    the native SQLite driver (better-sqlite3 + its runtime deps)
  *   desktop/build/client/                 the built web client
+ *   desktop/build/player-site/            the static Player Handbook (published by "Publish for Players")
  *   src-tauri/binaries/node-<triple>      the Node.js runtime, shipped as a Tauri sidecar
  *
  * The Node binary is the one running this script, so the native module ABI always matches.
@@ -26,8 +27,11 @@ fs.mkdirSync(path.join(out, 'server'), { recursive: true });
 if (!process.argv.includes('--skip-client')) {
   log('building client');
   execSync('npx vite build', { cwd: root, stdio: 'inherit' });
+  execSync('npx vite build --config vite.player.config.ts', { cwd: root, stdio: 'inherit' });
 }
 fs.cpSync(path.join(root, 'dist'), path.join(out, 'client'), { recursive: true });
+// The static Player Handbook that "Publish for Players" uploads.
+fs.cpSync(path.join(root, 'dist-player'), path.join(out, 'player-site'), { recursive: true });
 
 // 2. Server bundle (everything except the native driver)
 log('bundling server');
@@ -81,7 +85,7 @@ const { spawn } = await import('node:child_process');
 const port = 43000 + Math.floor(Math.random() * 1000);
 const child = spawn(sidecar, [path.join(out, 'server/index.mjs')], {
   cwd: out,
-  env: { ...process.env, NODE_ENV: 'production', PORT: String(port), HOST: '127.0.0.1', WORLDKEEPER_DATA_DIR: tmpData, WORLDKEEPER_STATIC_DIR: path.join(out, 'client'), NODE_PATH: '' },
+  env: { ...process.env, NODE_ENV: 'production', PORT: String(port), HOST: '127.0.0.1', WORLDKEEPER_DATA_DIR: tmpData, WORLDKEEPER_STATIC_DIR: path.join(out, 'client'), WORLDKEEPER_PLAYER_SITE_DIR: path.join(out, 'player-site'), NODE_PATH: '' },
   stdio: ['ignore', 'pipe', 'pipe'],
 });
 let stderr = '';
@@ -92,7 +96,8 @@ for (let i = 0; i < 60 && !ok; i++) {
   try {
     const h = await (await fetch(`http://127.0.0.1:${port}/api/health`)).json();
     const page = await (await fetch(`http://127.0.0.1:${port}/`)).text();
-    ok = h.ok === true && page.includes('<div id="root">');
+    const pub = await (await fetch(`http://127.0.0.1:${port}/api/publish`)).json();
+    ok = h.ok === true && page.includes('<div id="root">') && pub.available === true;
   } catch {
     /* not up yet */
   }
