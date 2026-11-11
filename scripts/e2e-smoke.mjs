@@ -130,7 +130,7 @@ try {
   const playerList = await (await fetch(`${base}/api/player/entities`)).json();
   if (playerList.length !== 0) throw new Error('player view should be empty before any reveal');
   await page.goto(`${base}/player`);
-  await expectText('has not revealed any lore');
+  await expectText('The handbook is empty');
   await shot(page, '08-player');
   step('player view empty until reveal');
 
