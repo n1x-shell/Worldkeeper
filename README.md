@@ -18,6 +18,7 @@ It runs entirely on your own computer: no account, no cloud service, no paid API
 - [Importing your world](#importing-your-world)
 - [Typical workflow](#typical-workflow)
 - [Player view](#player-view)
+- [Player handbook on GitHub Pages](#player-handbook-on-github-pages)
 - [Data, backups and exports](#data-backups-and-exports)
 - [Commands](#commands)
 - [Configuration](#configuration)
@@ -182,6 +183,25 @@ A record exists for players only after you enable **Players know this record exi
 
 Sections whose headings say *GM only* or *Secret* cannot be published. References to unrevealed records are removed. Maps, markers, regions, quests and recaps are hidden until you publish them.
 
+### Player handbook on GitHub Pages
+
+Publish the player view as a free website your players can open on any device, e.g. `https://<you>.github.io/<repo>/`:
+
+1. Create a [fine-grained GitHub token](https://github.com/settings/personal-access-tokens/new) with access to **only** the repository you want to publish to, and set its **Contents** and **Pages** permissions to *Read and write*.
+2. In the app, open **Publish for Players**, enter the repository (`owner/name`) and paste the token.
+3. Click **Publish to GitHub Pages** and confirm.
+
+How it works:
+- The app uploads a static handbook to the repository's `gh-pages` branch and turns on GitHub Pages if it can.
+- The first build on GitHub takes a minute or two. Publish again after each session; only changed files are uploaded, and republishing identical content changes nothing.
+- The handbook contains only what you revealed or published: revealed entries, sections and facts, published maps and their images, quests marked "players see", and published recaps. It is built by the same player-safe projection as the in-app player view, so secrets and GM-only sections are never included.
+- The token is kept in `secrets.json` in your data folder, never in the database, backups or exports.
+
+Things to know:
+- **Anyone with the link can read the handbook.** GitHub Pages sites are public. Publishing from a private repository needs a paid GitHub plan.
+- **It's a snapshot:** players see changes when you publish.
+- **Hosting elsewhere:** **Download as ZIP** gives the same site for any static host.
+
 ---
 
 ## Data, backups and exports
@@ -216,7 +236,7 @@ By default all data lives in `./data/`, which git ignores:
 | `npm start` | Start the DM app (production build) on `127.0.0.1:4310` |
 | `npm run start:player` | Start the player-only server on `0.0.0.0:4320` |
 | `npm run dev` | Development mode with live reload |
-| `npm run build` | Type-check and build the client into `dist/` |
+| `npm run build` | Type-check and build the app (`dist/`) and the Player Handbook (`dist-player/`) |
 | `npm run import -- <zip or folder> [--dry-run] [--take-source]` | Import a lore library from the command line |
 | `npm run backup [-- reason]` | Write a backup archive |
 | `npm test` | Run the test suite |
@@ -235,6 +255,7 @@ By default all data lives in `./data/`, which git ignores:
 | `HOST` | `127.0.0.1` (DM), `0.0.0.0` (player) | Listening address. The DM server is local-only unless you change this. |
 | `WORLDKEEPER_MODE` | `dm` | Set to `player` for the player-only server |
 | `WORLDKEEPER_STATIC_DIR` | `./dist` | Location of the built client (set by the desktop app) |
+| `WORLDKEEPER_PLAYER_SITE_DIR` | `./dist-player` | Location of the built Player Handbook (set by the desktop app) |
 | `WORLDKEEPER_DEBUG` | off | `1` forces technical details on (IDs, files, sources, how-it-works notes) |
 
 ### Keyboard shortcuts

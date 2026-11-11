@@ -10,6 +10,7 @@ import { campaignRoutes } from './routes/campaign.js';
 import { libraryRoutes } from './routes/library.js';
 import { atlasRoutes, uploadsHandler } from './routes/atlas.js';
 import { playerRoutes } from './routes/player.js';
+import { publishRoutes } from './routes/publish.js';
 
 /**
  * Build the HTTP application.
@@ -42,6 +43,7 @@ export function createApp(ctx: AppContext, opts: { staticDir?: string } = {}) {
     app.use('/api', campaignRoutes(ctx));
     app.use('/api', libraryRoutes(ctx));
     app.use('/api', atlasRoutes(ctx));
+    app.use('/api', publishRoutes(ctx));
     app.get('/api/uploads/:file', uploadsHandler(ctx));
   }
   app.use('/api', (_req, _res, next) => next(new HttpError(404, 'Not found')));

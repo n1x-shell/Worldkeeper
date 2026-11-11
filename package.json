@@ -8,7 +8,7 @@
     "dev": "concurrently -k -n server,client -c yellow,cyan \"npm:dev:server\" \"npm:dev:client\"",
     "dev:server": "tsx watch server/src/index.ts",
     "dev:client": "vite",
-    "build": "tsc -p tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit && vite build",
+    "build": "tsc -p tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit && vite build && vite build --config vite.player.config.ts",
     "start": "NODE_ENV=production tsx server/src/index.ts",
     "import": "tsx server/src/cli/import.ts",
     "backup": "tsx server/src/cli/backup.ts",
@@ -19,7 +19,8 @@
     "desktop:prepare": "node scripts/desktop-prepare.mjs",
     "desktop:dev": "node scripts/desktop-prepare.mjs && tauri dev",
     "desktop:build": "node scripts/desktop-prepare.mjs && tauri build",
-    "e2e": "node scripts/e2e-smoke.mjs"
+    "e2e": "node scripts/e2e-smoke.mjs",
+    "build:player": "vite build --config vite.player.config.ts"
   },
   "engines": {
     "node": ">=20"

@@ -14,6 +14,35 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
 
 **Import result on the real archive:** 421 records (all non-reference IDs), 475 source documents, 1,008 relationships, 17 timeline rows, 17 templates, 18 duplicate IDs resolved, 23 copies skipped, **0 broken references**. Counts include 13 vaults, 13 shards, 7 Ethereal domains, 110 NPCs. Re-import: 421 unchanged.
 
+## Player Handbook on GitHub Pages (working and tested)
+
+- **Static Player Handbook** (`client/player-site/`, `client/src/player/static-main.tsx`, `vite.player.config.ts`):
+  - The same player view, built separately into `dist-player/`. It contains no DM screens; this was checked on the bundle.
+  - It reads one `data/player.json` snapshot through a `PlayerSource` abstraction; the in-app player view uses the live API through the same abstraction.
+  - Hash routing, so it works under a sub-path on any static host. Strict CSP, `noindex` and `robots.txt`.
+- **Site assembly** (`server/src/publish/site.ts`):
+  - The static app + the player-safe projection + only the images of maps published to players + `.nojekyll`.
+  - Unchanged content keeps its date, so republishing identical data makes no commit.
+- **Publishing** (`server/src/publish/github.ts`):
+  - One commit per publish on `gh-pages` through the Git Data API. Blobs whose git id already matches are not uploaded again. A full tree replaces the branch, so unpublished files disappear. Fast-forward ref update.
+  - Then it reads or creates the Pages site. A Pages site on another branch, or no permission to create one, produces plain instructions.
+  - Errors are worded for the DM (token rejected, repository not found).
+- **Token** (`server/src/publish/secrets.ts`): stored in `<data>/secrets.json` with owner-only permissions. Never in the database, backups, exports or API responses.
+- **UI:** a **Publish for Players** page.
+  - It shows what players will see (counts), Preview, Download as ZIP, setup steps, a confirmation dialog naming the repository and that the site is public, and the result link with any Pages note.
+- **Desktop:** the desktop app ships the handbook build (`player-site/` resource, `WORLDKEEPER_PLAYER_SITE_DIR`). `desktop:prepare` checks that the publish page sees it.
+- **Tests** (`tests/publish.test.ts`), with an in-memory stand-in for the GitHub API:
+  - git blob ids
+  - ZIP contents and that it has no secrets, no unpublished map images and no unrevealed IDs
+  - first publish (branch and Pages created), unchanged republish (no commit), a single changed file uploaded with the right parent commit
+  - rejected token and unknown repository messages, configuration validation, the confirmation requirement
+  - the token absent from the API, settings, meta, JSON export and backup; the secrets file is mode 600
+- **Browser test** against a stand-in GitHub that writes the branch to a folder served under `/Worldkeeper/`:
+  - DM side: configure, confirm, publish, see the link and the Pages note; a republish shows "Already up to date".
+  - Player side, on the published static site: the lore list, an entry with revealed facts and section, `@[Mara Venn]` linking to another revealed entry, the map image with a marker opening the entry, the quest journal, offline search.
+  - No console errors, and no secret strings in the pages or `player.json`.
+- **Not tested against real GitHub from here.** The first real publish will confirm token permissions and Pages setup on your account.
+
 ## Interface clean-up and `@[Name]` links (working and tested)
 
 - **Debug flag:** technical details are hidden unless debug mode is on. Turn it on with **Settings → Technical details** (stored as setting `debug`), or force it with `WORLDKEEPER_DEBUG=1`. `/api/meta` reports the state. What is hidden:

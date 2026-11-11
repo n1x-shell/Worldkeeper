@@ -185,6 +185,7 @@ export function playerCampaigns(db: DB) {
 export function playerSnapshot(db: DB) {
   return {
     app: 'worldkeeper-player-snapshot',
+    appName: (db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper',
     generated_at: new Date().toISOString(),
     entities: playerEntities(db),
     maps: playerMaps(db),

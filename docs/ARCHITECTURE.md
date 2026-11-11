@@ -33,6 +33,7 @@ server/src/
                      campaigns (sessions, state overlay, plans, encounters, proposals), maps, review, crud helper
   player/projection  the ONLY code that produces player-visible data (allow-list projection)
   backup/            backups (VACUUM INTO + zip), restore staging with integrity check, exports
+  publish/           Player Handbook site assembly, GitHub publishing (Git Data API + Pages), local secrets file
   routes/            thin HTTP handlers per area
   cli/import.ts      command-line import
 client/src/
@@ -41,7 +42,8 @@ client/src/
   pages/             Dashboard, EntityList, EntityPage (view/edit/relationships/player/campaign/history),
                      WorldPages, Atlas, Graph, Special (vaults/shards/dominions/ethereal), Campaign, Live,
                      DmTools, Library (import/export, canon review, backups, settings)
-  player/            Player app (calls /api/player/* only)
+  player/            Player app over a PlayerSource: live /api/player/* or a published snapshot (static-main.tsx,
+                     built separately by vite.player.config.ts into dist-player/ with no DM code)
 tests/               vitest suites (+ synthetic fixture library in helpers.ts)
 scripts/e2e-smoke.mjs  browser smoke test
 ```

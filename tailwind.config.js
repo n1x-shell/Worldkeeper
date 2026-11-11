@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./client/index.html', './client/src/**/*.{ts,tsx}'],
+  content: { relative: true, files: ['./client/index.html', './client/player-site/index.html', './client/src/**/*.{ts,tsx}'] },
   darkMode: ['class'],
   theme: {
     extend: {

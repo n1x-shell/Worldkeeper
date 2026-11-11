@@ -25,7 +25,8 @@
     "externalBin": ["binaries/worldkeeper-node"],
     "resources": {
       "../desktop/build/server/": "server/",
-      "../desktop/build/client/": "client/"
+      "../desktop/build/client/": "client/",
+      "../desktop/build/player-site/": "player-site/"
     }
   }
 }
