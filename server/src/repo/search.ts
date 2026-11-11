@@ -181,5 +181,7 @@ export function search(db: DB, q: string, opts: SearchOptions = {}): SearchHit[]
     });
     if (results.length >= limit) break;
   }
-  return results;
+  // Records first (they are the primary targets), then documents, sessions and notes; stable within each group.
+  const rank = (h: SearchHit) => (h.score === -1000 ? -1 : h.kind === 'entity' ? 0 : h.kind === 'doc' ? 2 : 1);
+  return results.map((h, i) => ({ h, i })).sort((a, b) => rank(a.h) - rank(b.h) || a.i - b.i).map((x) => x.h);
 }

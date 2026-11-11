@@ -213,7 +213,7 @@ export function worldRoutes(ctx: AppContext) {
       const branches = ['CON-001', 'CON-301', 'CON-501'].map((id) => {
         const e = db.prepare('SELECT id, name, realm, body FROM entities WHERE id = ?').get(id) as { id: string; name: string; realm: string; body: string } | undefined;
         if (!e) return null;
-        const first = splitSections(e.body).find((s) => s.content && !isSecretHeading(s.heading));
+        const first = splitSections(e.body).find((s) => s.heading && s.content && !isSecretHeading(s.heading));
         return { id: e.id, name: e.name, realm: e.realm, excerpt: first ? first.content.slice(0, 420) : '', count: count(`SELECT COUNT(*) n FROM entities WHERE realm = ? AND archived = 0 AND type NOT IN ('redirect','index','register')`, e.realm) };
       });
       const quick = (types: string[], limit = 8) =>

@@ -387,7 +387,17 @@ export function updateEntity(db: DB, id: string, patch: EntityPatch, changeType 
       else assign(k, v);
     }
     if (!sets.length) return before;
-    saveRevision(db, before, changeType, p.reason ?? '');
+    // Autosave sends many small writes; one revision per editing burst (same reason, within 10 minutes)
+    // keeps history meaningful. The stored snapshot is the state before the burst began.
+    const last = db
+      .prepare('SELECT change_type, reason, created_at FROM entity_revisions WHERE entity_id = ? ORDER BY id DESC LIMIT 1')
+      .get(id) as { change_type: string; reason: string; created_at: string } | undefined;
+    const coalesce =
+      changeType === 'edit' &&
+      last?.change_type === 'edit' &&
+      last.reason === (p.reason ?? '') &&
+      Date.now() - new Date(last.created_at).getTime() < 10 * 60 * 1000;
+    if (!coalesce) saveRevision(db, before, changeType, p.reason ?? '');
     sets.push('version = version + 1', 'updated_at = @ts');
     args.ts = now();
     db.prepare(`UPDATE entities SET ${sets.join(', ')} WHERE id = @id`).run(args);
@@ -484,8 +494,8 @@ export function recentViews(db: DB, limit = 12): EntitySummary[] {
 export function recentlyEdited(db: DB, limit = 10) {
   return db
     .prepare(
-      `SELECT r.entity_id, r.change_type, r.reason, r.created_at, e.name, e.type, e.realm FROM entity_revisions r
-       JOIN entities e ON e.id = r.entity_id WHERE r.change_type NOT IN ('import') ORDER BY r.id DESC LIMIT ?`,
+      `SELECT r.entity_id, r.change_type, r.reason, MAX(r.created_at) AS created_at, e.name, e.type, e.realm FROM entity_revisions r
+       JOIN entities e ON e.id = r.entity_id WHERE r.change_type NOT IN ('import','pre-import') GROUP BY r.entity_id ORDER BY MAX(r.id) DESC LIMIT ?`,
     )
     .all(limit);
 }

@@ -82,7 +82,7 @@ describe('editing and persistence', () => {
     expect(d.canon_status).toBe('PROPOSED');
     expect(d.id).toMatch(/^CUS-\d{4}$/);
     expect(getEntity(ctx.db, 'LOC-002').canon_status).toBe('CANON');
-    const p = listProposals(ctx.db).find((x) => (x as { entity_id: string }).entity_id === d.id) as { id: number };
+    const p = listProposals(ctx.db).find((x) => x.entity_id === d.id)!;
     decideProposal(ctx.db, p.id, 'approved', 'ok');
     expect(getEntity(ctx.db, d.id).canon_status).toBe('CANON');
   });

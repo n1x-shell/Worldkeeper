@@ -13,12 +13,16 @@
     "import": "tsx server/src/cli/import.ts",
     "backup": "tsx server/src/cli/backup.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "start:player": "NODE_ENV=production WORLDKEEPER_MODE=player tsx server/src/index.ts",
+    "setup": "npm install && npm run build"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
+    "@fontsource/cinzel": "^5.3.0",
+    "@fontsource/eb-garamond": "^5.3.0",
     "@xyflow/react": "^12.12.1",
     "adm-zip": "^0.6.1",
     "better-sqlite3": "^11.10.0",

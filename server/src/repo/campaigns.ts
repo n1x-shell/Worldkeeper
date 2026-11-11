@@ -479,9 +479,10 @@ export function setActiveCampaign(db: DB, id: number | null) {
 
 // ---------- Proposals / canon review ----------
 export function listProposals(db: DB, status = 'pending') {
-  return (db.prepare('SELECT p.*, e.name AS entity_name FROM proposals p LEFT JOIN entities e ON e.id = p.entity_id WHERE p.status = ? ORDER BY p.id DESC').all(status) as {
-    payload: string;
-  }[]).map((p) => ({ ...p, payload: parseJson(p.payload, {}) }));
+  type Row = { id: number; kind: string; entity_id: string | null; campaign_id: number | null; title: string; payload: string; reason: string; status: string; entity_name: string | null; created_at: string };
+  return (db.prepare('SELECT p.*, e.name AS entity_name FROM proposals p LEFT JOIN entities e ON e.id = p.entity_id WHERE p.status = ? ORDER BY p.id DESC').all(status) as Row[]).map(
+    (p) => ({ ...p, payload: parseJson<Record<string, unknown>>(p.payload, {}) }),
+  );
 }
 
 export function decideProposal(db: DB, id: number, decision: 'approved' | 'rejected' | 'revise', note: string) {

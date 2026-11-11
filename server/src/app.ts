@@ -47,6 +47,14 @@ export function createApp(ctx: AppContext, opts: { staticDir?: string } = {}) {
   app.use('/api', (_req, _res, next) => next(new HttpError(404, 'Not found')));
 
   if (opts.staticDir && fs.existsSync(opts.staticDir)) {
+    // Strict CSP for the built client: no inline or remote scripts, so lore text can never execute code.
+    app.use((_req, res, next) => {
+      res.setHeader(
+        'Content-Security-Policy',
+        "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+      );
+      next();
+    });
     app.use(express.static(opts.staticDir, { index: false }));
     app.get(/^(?!\/api\/).*/, (_req, res) => res.sendFile(path.join(opts.staticDir!, 'index.html')));
   }
