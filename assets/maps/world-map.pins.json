@@ -114,6 +114,41 @@
       "x": 130,
       "y": 95,
       "category": "location"
+    },
+    {
+      "id": "REG-001",
+      "label": "The Hollow Marches",
+      "x": 1135,
+      "y": 380,
+      "category": "region"
+    },
+    {
+      "id": "SET-001",
+      "label": "Hollow Refuge",
+      "x": 1210,
+      "y": 495,
+      "category": "settlement"
+    },
+    {
+      "id": "LOC-002",
+      "label": "The Bloodmarked Fields",
+      "x": 1320,
+      "y": 515,
+      "category": "landmark"
+    },
+    {
+      "id": "LOC-901",
+      "label": "The Rift",
+      "x": 110,
+      "y": 400,
+      "category": "landmark"
+    },
+    {
+      "id": "SET-301",
+      "label": "Ashvale",
+      "x": 185,
+      "y": 280,
+      "category": "settlement"
     }
   ]
 }
