@@ -8,6 +8,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 ## The Blind Seer
 
+*The blind Taur'n prophet of Hollow Refuge, in his windowless tower.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Taur'n | Mystic | He/him | Nobody knows |
@@ -29,6 +31,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 - He is older than the Refuge.
 
 ## Old Vara
+
+*Hollow Refuge's dwarf smith, with an iron hand and a taste for strange metals.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -52,6 +56,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 ## Captain Marrek Vaal
 
+*A centaur Legion captain in the Marches who always keeps his word.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Centaur | Warrior | He/him | The Bloodfields, the Tyrant's Dominion |
@@ -71,6 +77,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 - He has never broken his word, which in the Legion makes people nervous.
 
 ## Sister Elyra Vale
+
+*The youngest Vale: an Order healer who treats anyone bleeding.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -93,6 +101,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 ## Professor Orin Vale
 
+*A half-elf Consortium scholar, desperate to get into the Sunken Archive.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Half-elf | Mage | He/him | Ashen Spire, the Hollow Marches |
@@ -113,6 +123,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 - He is very bad at lying.
 
 ## Vess the Grey
+
+*A Shadow Pact information broker nobody can describe the same way twice.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -135,6 +147,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 ## Mother Thorn
 
+*A sharp-tongued Wildborn elder who knows Wither's Hollow better than anyone.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Firbolg | Shaman | She/her | Wither's Hollow, the Hollow Marches |
@@ -155,6 +169,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 - She scolds the people she likes.
 
 ## Mara Venn
+
+*The bugbear who runs the Crooked Nail and remembers every face.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -177,6 +193,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 ## Torren Kell
 
+*A scavenger captain who wants wealth without allegiance, and avoids the Scar.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Earth Genasi | Rogue | He/him | The Scar, the Hollow Marches |
@@ -197,6 +215,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 ## Sera Noll
 
+*A travelling harengon scribe who asks about your earliest memories.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Harengon | Scribe | She/her | Kaelholm, she says |
@@ -215,6 +235,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 - Her accent is not from anywhere in Aetheris.
 
 ## Brann Kest
+
+*A shardscarred veteran who has not slept a full night in years.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -236,6 +258,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 ## Illa Reed
 
+*A fast-talking satyr merchant who wants anything rare enough to sell twice.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Satyr | Bard | She/her | The Market of Lost Things, Hollow Refuge |
@@ -256,6 +280,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 ## Talric Stormwing
 
+*A Stormborn storm-caller who rides a great eagle over the high passes.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Stormborn | Ranger | He/him | The high passes above the Green Expanse |
@@ -275,6 +301,8 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 - He is collecting storm reports from every dominion.
 
 ## The founder
+
+*The nameless woman with burned palms who founded Ashvale.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |

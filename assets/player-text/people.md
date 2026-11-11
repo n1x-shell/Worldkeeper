@@ -11,6 +11,8 @@ Each person has:
 
 ## Highlord Theos Valcairn
 
+*The goliath paladin who commands the Celestial Order, and may once have doubted it.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Goliath | Paladin | He/him | Empyrean Spire, the Radiant Ascendancy |
@@ -31,6 +33,8 @@ Each person has:
 - He prays alone each night, and nobody knows what he asks for.
 
 ## Grand Theurgist Selara Dawnveil
+
+*The Order's greatest holy mage, whose half-understood visions become law.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -54,6 +58,8 @@ Each person has:
 
 ## Inquisitor Malrik Vael
 
+*The Order's quiet tiefling inquisitor. When he arrives, someone is already guilty.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Tiefling | Inquisitor | He/him | The Purged Halls, the Radiant Ascendancy |
@@ -76,6 +82,8 @@ Each person has:
 
 ## Knight-Commander Edric Thalmos
 
+*A Taur'n Legion warrior who chose the Order over death, and is still torn.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Taur'n | Warrior | He/him | The Bloodfang Warcamp, the Tyrant's Dominion |
@@ -96,6 +104,8 @@ Each person has:
 - He sawed off the horn himself, the day he took his vows.
 
 ## Lady Aurelia Stormvein
+
+*A loud, warm dwarven warpriest who keeps asking why mercy has limits.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -119,6 +129,8 @@ Each person has:
 
 ## Brother Altharion Vale
 
+*Eldest of the Vales: a Wildborn warrior turned Order monk.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Human | Monk | He/him | Ashen Spire, the Hollow Marches |
@@ -141,6 +153,8 @@ Each person has:
 
 ## Seraphis the Ascended
 
+*The Order's silent executioner, in white armour that never ages.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Unknown | Paladin | They/them | Unknown |
@@ -162,6 +176,8 @@ Each person has:
 
 ## Archon Vaelion
 
+*The Order's legendary first champion. Possibly alive. Possibly only an idea.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Centaur | Warrior | He/him | The Radiant Expanse, long ago |
@@ -181,6 +197,8 @@ Each person has:
 - Riders on the Expanse still swear they have galloped beside him at dawn.
 
 ## Exile Liora Voss
+
+*A dragonborn paladin cast out of the Order who never stopped following the light.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -204,6 +222,8 @@ Each person has:
 
 ## Warlord Garron Kael
 
+*The hobgoblin warlord who rules the Crimson Legion from the battlefield.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Hobgoblin | Warrior | He/him | Varkhaal, the Tyrant's Dominion |
@@ -224,6 +244,8 @@ Each person has:
 - Every gold tooth has a name, and he will tell you all of them.
 
 ## General Orana Volkash
+
+*The Legion's two-axed general: reckless or brilliant, and always victorious.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -247,6 +269,8 @@ Each person has:
 
 ## Champion Valrik the Undying
 
+*The Legion's stone-skinned champion, who has never been seen to fall.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Earth Genasi | Warrior | She/her | The Great Arena of Varkhaal |
@@ -268,6 +292,8 @@ Each person has:
 
 ## Korga Bloodfang
 
+*An orc warlord who fought her way up from the gladiator pits.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Orc | Warrior | She/her | The gladiator pits of Varkhaal |
@@ -287,6 +313,8 @@ Each person has:
 - She still goes back to the pits, in disguise, to fight for free.
 
 ## Lyris Darkbane
+
+*The Legion's strange necromancer, unlike anyone Aetheris has seen.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -310,6 +338,8 @@ Each person has:
 
 ## Tormek Ironheart
 
+*A dwarven juggernaut in armour he built himself. No blade has pierced it.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Dwarf | Artificer | He/him | The Anvil of Dominion, the Tyrant's Dominion |
@@ -331,6 +361,8 @@ Each person has:
 
 ## Riven the Red
 
+*The Legion's smiling executioner of kings.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Yuan-ti | Silent Blade | She/her | The dusk coast of the Eternal Veil |
@@ -349,6 +381,8 @@ Each person has:
 - She came from the Eternal Veil, and the Pact would very much like her back.
 
 ## Velkana Stormclad
+
+*A Stormborn gladiator who fights with blade and lightning.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -370,6 +404,8 @@ Each person has:
 
 ## Balar the Unchained
 
+*An escaped pit slave turned berserker. He fights for the Legion. Nobody owns him.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Goliath | Warrior | He/him | A slave pit in the Ruins of the Old Kings |
@@ -389,6 +425,8 @@ Each person has:
 - He goes looking for slavers on his days off.
 
 ## Darion Kael
+
+*The Warlord's ink-stained heir, who doubts that war is the only path.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -410,6 +448,8 @@ Each person has:
 
 ## Archmagister Veylan Orithis
 
+*The tiny goblin archmage who leads the Consortium, one experiment from disaster.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Goblin | Mage | He/him | Zepharyos, the Fractured Nexus |
@@ -429,6 +469,8 @@ Each person has:
 - Half of Zepharyos floats because of something he did by accident.
 
 ## Archivist Lissara Wynne
+
+*Keeper of the Consortium's most dangerous books. Every answer has a price.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -450,6 +492,8 @@ Each person has:
 
 ## Master Thaelris Durn
 
+*A deep gnome necromancer who treats death as an equation.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Deep Gnome | Necromancer | He/him | The Ember Archives, the Tyrant's Dominion |
@@ -470,6 +514,8 @@ Each person has:
 
 ## Sorcerer-King Jorvas Myrr
 
+*A triton king who gave up his throne for storm magic.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Triton | Mage | He/him | An undersea kingdom off the dusk coast |
@@ -489,6 +535,8 @@ Each person has:
 - His old subjects still send envoys. He never receives them.
 
 ## Magister Celith Varis
+
+*A harengon chronomancer living every timeline at once.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -511,6 +559,8 @@ Each person has:
 
 ## Lord Varkoss
 
+*An illusionist whose true face nobody has ever seen.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Unknown | Mage | He/him | Unknown |
@@ -529,6 +579,8 @@ Each person has:
 - Varkoss may not exist at all.
 
 ## Pyromancer Elaris Duskbane
+
+*A fire genasi mage who has burned cities and called it purification.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -550,6 +602,8 @@ Each person has:
 
 ## Nyx the Veiled
 
+*A Shadowkin mage who speaks with beings beyond the waking world.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Shadowkin | Mystic | They/them | The Hollowed Veil, perhaps |
@@ -568,6 +622,8 @@ Each person has:
 - Nyx sleeps with eyes open.
 
 ## Master Talen Voros
+
+*A tiefling merchant-mage whose power comes from contracts written in blood.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -589,6 +645,8 @@ Each person has:
 
 ## Lirian Althos
 
+*A githzerai sorcerer who rewrites reality, valued and feared by his own side.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Githzerai | Mage | He/him | The Echoing Halls, the Fractured Nexus |
@@ -608,6 +666,8 @@ Each person has:
 - He walked out of the Echoing Halls one day. Nobody remembers him going in.
 
 ## Grandmaster Lysander Morrow
+
+*The charming leader of the Shadow Pact, whose past is a fabrication.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -629,6 +689,8 @@ Each person has:
 
 ## Selene Duskveil
 
+*A tabaxi assassin no target has ever survived.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Tabaxi | Silent Blade | She/her | The Green Expanse, the Verdant Rebirth |
@@ -649,6 +711,8 @@ Each person has:
 
 ## Kaelen Voris
 
+*The Pact's master of disguise. Maybe one person. Maybe many.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Changes | Silent Blade | Any | Nobody knows |
@@ -667,6 +731,8 @@ Each person has:
 - There may be more than one Kaelen Voris alive right now.
 
 ## Ilsevre the Whispering Veil
+
+*A Shadowkin singer of the Midnight Court whose words break minds.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -688,6 +754,8 @@ Each person has:
 
 ## Cazrin "the Hollow Blade"
 
+*A Pact enforcer whose name and past were taken from him.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Half-elf | Silent Blade | He/him | Unknown |
@@ -706,6 +774,8 @@ Each person has:
 - "Cazrin" is just what is left.
 
 ## "The Grey Raven"
+
+*A Pact sniper who kills from impossible distances. Nobody knows who.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -726,6 +796,8 @@ Each person has:
 
 ## Mistress Zeyara
 
+*A merry satyr mind-mage who plants false memories and erases real ones.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Satyr | Mystic | She/her | The Fading Grove, the Eternal Veil |
@@ -744,6 +816,8 @@ Each person has:
 - If you have met Zeyara, you might not remember.
 
 ## Tobias Vale
+
+*The Pact's spymaster, and the first of the Vales to leave home.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -765,6 +839,8 @@ Each person has:
 
 ## Elira Nightshade
 
+*A kobold killer whose twin daggers silence sound.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Kobold | Silent Blade | She/her | The back alleys of Noctis |
@@ -784,6 +860,8 @@ Each person has:
 - Nobody takes a contract on someone Nightshade likes.
 
 ## Magistrate Renn Varros
+
+*The duergar judge who sentences those who betray the Pact.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -805,6 +883,8 @@ Each person has:
 
 ## High Shaman Raethan "Stormcaller"
 
+*The towering lizardfolk shaman of the Wildborn, who commands storms and beasts.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Reptilian (lizardfolk) | Shaman | He/him | The jungle rivers of the Verdant Rebirth |
@@ -824,6 +904,8 @@ Each person has:
 - He has outlived three of his own apprentices.
 
 ## Korrak Grimtusk
+
+*An orc warband leader betrayed by her own kin, who now hunts alone.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -845,6 +927,8 @@ Each person has:
 
 ## Faelyn Moondancer
 
+*The last of the Moonborn, an elf who walks between worlds.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Elf | Shaman | She/her | The Green Expanse, the Verdant Rebirth |
@@ -865,6 +949,8 @@ Each person has:
 
 ## Yvara Ashborn
 
+*A fire genasi warrior born under an eclipse.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Fire Genasi | Monk | She/her | Born under an eclipse in the Ravaged Pass |
@@ -883,6 +969,8 @@ Each person has:
 - The Black Sun cult wants her very badly.
 
 ## Sareth "the Serpent"
+
+*A Shadowkin jungle assassin you will not see coming.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -903,6 +991,8 @@ Each person has:
 
 ## Ogrim Ironhide
 
+*A mossy-bearded dwarf who earned his place among the Wildborn by never falling.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Dwarf | Warrior | He/him | The iron mountains of the Tyrant's Dominion |
@@ -921,6 +1011,8 @@ Each person has:
 - The mountains he came from would not have him back.
 
 ## Elder Myrris Thornveil
+
+*An ancient firbolg druid who remembers the world before the wars.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -941,6 +1033,8 @@ Each person has:
 
 ## Jorik Fangtorn
 
+*A Wildborn ranger who leaves no tracks. Maybe a spirit of the hunt.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Unknown | Ranger | He/him | Unknown |
@@ -959,6 +1053,8 @@ Each person has:
 - Jorik may be a spirit of the hunt.
 
 ## Brynn Wolfsong
+
+*A shifter who leads a great wolf pack and wants the Clans to stand as one.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -980,6 +1076,8 @@ Each person has:
 
 ## Selka "the Pactmother"
 
+*A grandmotherly yuan-ti who may be the Bloodbound Company's real power.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Yuan-ti | Mystic | She/her | The Eclipsed Chamber, the Radiant Ascendancy |
@@ -999,6 +1097,8 @@ Each person has:
 
 ## Varik "the Bloodforged"
 
+*A half-orc mercenary lord covered in contract scars. Never lost a duel.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Half-orc | Paladin | He/him | The Bleeding Arena, the Eternal Veil |
@@ -1017,6 +1117,8 @@ Each person has:
 - Varik has never lost a duel.
 
 ## Lira "the Red Whisper"
+
+*A cheerful halfling who is the quietest killer there is.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -1038,6 +1140,8 @@ Each person has:
 
 ## Garek "the Coinbinder"
 
+*A goblin ex-banker who decides which wars get funded.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Goblin | Artificer | She/her | A counting-house in Noctis |
@@ -1057,6 +1161,8 @@ Each person has:
 
 ## Yulrath "the Warhound"
 
+*The bugbear berserker the Company unleashes when it wants terror.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Bugbear | Warrior | She/her | The Bloodfang Pit, the Verdant Rebirth |
@@ -1074,6 +1180,8 @@ Each person has:
 - The Company lets Yulrath off the leash when it wants terror.
 
 ## Hadrek "the Emberborn"
+
+*An Ashen Covenant leader who claims to have bathed in the First Fire.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -1094,6 +1202,8 @@ Each person has:
 
 ## Sister Kallisa "the Pyre-Singer"
 
+*An aarakocra singer whose hymns raise infernos.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Aarakocra | Bard | She/her | A village burned by the Legion |
@@ -1112,6 +1222,8 @@ Each person has:
 - The burning sing along.
 
 ## Aedrin "the Cinderfather"
+
+*A tiefling king who burned his own people, cursed to burn forever.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -1133,6 +1245,8 @@ Each person has:
 
 ## Vexis "the Infernal Architect"
 
+*A kobold builder who makes fire permanent, and mostly works for pay.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Kobold | Artificer | They/them | The Anvil of Dominion, the Tyrant's Dominion |
@@ -1151,6 +1265,8 @@ Each person has:
 - Vexis only joined because the Covenant pays.
 
 ## Elder Thaelon "the Last Spark"
+
+*An eladrin elder who remembers the First Fire, and does not preach destruction.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -1171,6 +1287,8 @@ Each person has:
 
 ## Seraine "the Eclipse Blade"
 
+*A githyanki warrior priestess of the Black Sun with a sword of darkness.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Githyanki | Paladin | She/her | The Rift of Unmaking, the Fractured Nexus |
@@ -1189,6 +1307,8 @@ Each person has:
 - When the eclipse comes, Seraine means to be standing in it.
 
 ## Vhalek "the Silent Watcher"
+
+*A githzerai who never speaks or acts. His eyes show the end of all things.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -1209,6 +1329,8 @@ Each person has:
 
 ## Cassiel "the False Dawn"
 
+*A fallen Order paladin who decided the gods lied.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Aasimar | Mage | He/him | Empyrean Spire, the Radiant Ascendancy |
@@ -1228,6 +1350,8 @@ Each person has:
 
 ## Isolde "the Last Ember"
 
+*A reluctant deep gnome oracle who foresees the end, and does not want it.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Deep Gnome | Mystic | She/her | She will not say |
@@ -1246,6 +1370,8 @@ Each person has:
 - She talks about places nobody in Aetheris has heard of.
 
 ## Father Iskar "the Tidecaller"
+
+*A triton preacher who drowned, and came back.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -1267,6 +1393,8 @@ Each person has:
 
 ## Althisa "the Saltborn"
 
+*A water genasi who drifts instead of walking and remembers only the sea.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Water Genasi | Shaman | She/her | The Black Tides |
@@ -1286,6 +1414,8 @@ Each person has:
 
 ## Drennal "the Barnacled Knight"
 
+*A tortle knight the ocean will not release.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Tortle | Paladin | He/him | A wreck off the Eternal Veil |
@@ -1303,6 +1433,8 @@ Each person has:
 - Drennal serves because the ocean will not release him.
 
 ## Sirala "the Deep Mourner"
+
+*A sea elf whose song calls the drowned home.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -1322,6 +1454,8 @@ Each person has:
 
 ## Elder Marrow "the Writeless Prophet"
 
+*A mute kenku seer whose writing in the sand survives the tide.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Kenku | Monk | They/them | A fishing village on the dusk coast |
@@ -1339,6 +1473,8 @@ Each person has:
 - What Elder Marrow writes in the sand survives the tide.
 
 ## The Cantor
+
+*The erased leader of the Nameless Choir, who cannot keep a name.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -1360,6 +1496,8 @@ Each person has:
 
 ## Scribe-Mother Ondine Marrow
 
+*The halfling archivist who leads the Silent Accord and copies its forbidden ledger.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Halfling | Mage | She/her | Hollow Refuge |
@@ -1377,6 +1515,8 @@ Each person has:
 - She copies the same forbidden ledger in every handwriting she can learn, so no single burning can destroy it.
 
 ## Justicar Quell
+
+*The masked judge of the Hollow Tribunal. Verdicts come before words.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -1398,6 +1538,8 @@ Each person has:
 
 ## Pell the Rememberer
 
+*An old gnome who leads the Whispering Circle and remembers three Aetherfalls.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Gnome | Mystic | He/him | Hollow Refuge, he says, three times over |
@@ -1416,6 +1558,8 @@ Each person has:
 - The Circle's seers do not predict the future. They remember it.
 
 ## Ritekeeper Orla Hesk
+
+*Ashvale's Ritekeeper, who keeps the song sung right.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -1436,6 +1580,8 @@ Each person has:
 - She has never once missed a singing at the stones.
 
 ## Master Speaker Tevan Lin
+
+*Ashvale's Master Speaker, who teaches communion with the Bloom to anyone who asks.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -1458,6 +1604,8 @@ Each person has:
 
 ## Chief Wright Brenna Halvor
 
+*Ashvale's Chief Wright: practical, generous, and always hiring.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Human | Artificer | She/her | Haskett's Mill, near Ashvale |
@@ -1478,6 +1626,8 @@ Each person has:
 
 ## Elder Sorrel
 
+*An elf of the Spore Circle who saw the Shrouding, and wants every Kaelith work burned.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Elf | Shaman | She/her | Thornhaven, the Eastern Deepwood |
@@ -1497,6 +1647,8 @@ Each person has:
 - She will never forgive what happened.
 
 ## Archivist-Elder Venn Tull
+
+*A Kaelholm tribunal head who wants a living Kaelith guardian at any price.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
@@ -1519,6 +1671,8 @@ Each person has:
 
 ## Maro Grane
 
+*The glyph-cut orc who is the Convergence Collective's first Riftwalker.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Orc | Spellblade | He/him | The ash barrens |
@@ -1539,6 +1693,8 @@ Each person has:
 
 ## Marshal Dace Corvane
 
+*The reasonable-sounding hobgoblin marshal of the Ascendancy.*
+
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
 | Hobgoblin | Warrior | He/him | The eastern mountains |
@@ -1558,6 +1714,8 @@ Each person has:
 - The iron jaw is the first of his remakings, not the last.
 
 ## Odran Reeve
+
+*A tortle salt trader of Low Fenn who knows every ford and every price.*
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |

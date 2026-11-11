@@ -48,3 +48,16 @@ export const plainText = (md: string) =>
     .replace(/[*_`#>|]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
+
+/**
+ * A short preview for list cards: the first paragraph of the text that is not a table or a heading. Player text
+ * starts with a one-line blurb, so that is normally what shows.
+ */
+export function previewText(md: string): string {
+  for (const block of md.split(/\n\s*\n/)) {
+    const b = block.trim();
+    if (!b || b.startsWith('|') || b.startsWith('#')) continue;
+    return plainText(b);
+  }
+  return '';
+}
