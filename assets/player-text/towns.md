@@ -1,6 +1,4 @@
-# Player Adventure Book: Cities (DRAFT)
-
-Drafted for review. Nothing here is published until this file is moved up into assets/player-text/.
+# Player Adventure Book: Cities
 
 ## How to use this
 
