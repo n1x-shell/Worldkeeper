@@ -8,7 +8,8 @@ import { useAppState } from '../lib/store';
 import { Empty, EntityLink, ErrorBox, Field, Loading, Modal, PageHeader, TypeBadge } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
-import { splitSections } from '../lib/sections';
+import { displaySections } from '../lib/sections';
+import { useDebug } from '../components/Dev';
 import type { Entity } from '../lib/types';
 
 interface MapRow {
@@ -141,7 +142,7 @@ export function AtlasPage() {
     <div className="space-y-3">
       <PageHeader
         title="World Atlas"
-        subtitle="Upload your maps and place locations yourself. The source gives positions in words, so no coordinates are invented."
+        subtitle="Upload your maps and place locations on them." note="The source gives positions in words, so no coordinates are invented."
         actions={
           <button className="btn-primary" onClick={() => setCreating(true)}>
             <Plus size={14} /> New map
@@ -492,7 +493,8 @@ function MarkerPanel({ marker, maps, onClose, onChange }: { marker: MarkerRow; m
   const [label, setLabel] = useState(marker.label);
   const nav = useNavigate();
   const save = (p: Partial<MarkerRow>) => api.patch(`/api/markers/${marker.id}`, p).then(onChange);
-  const overview = data ? splitSections(data.entity.body).find((s) => s.content && !s.secret) : null;
+  const debug = useDebug();
+  const overview = data ? displaySections(data.entity.body, debug).find((s) => s.content && !s.secret) : null;
   return (
     <div className="panel-pad space-y-2 text-sm">
       <div className="flex items-center justify-between">
@@ -581,7 +583,7 @@ function Unplaced({ scope, onPlace }: { scope: string | null; onPlace: (id: stri
   return (
     <div className="panel-pad text-sm">
       <div className="section-title mb-1">Unplaced locations ({data?.length ?? '…'})</div>
-      <p className="text-xs text-dim mb-2">Written positions from the source are shown to help you place them.</p>
+      <p className="text-xs text-dim mb-2">Where each place is described to be, to help you place it.</p>
       {scope && (
         <label className="flex items-center gap-1 text-xs mb-1">
           <input type="checkbox" checked={all} onChange={(e) => setAll(e.target.checked)} /> Show all realms

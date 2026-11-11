@@ -1,0 +1,23 @@
+[package]
+name = "worldkeeper"
+version = "0.2.0"
+description = "The Worldkeeper: local-first world encyclopedia and D&D campaign manager"
+edition = "2021"
+publish = false
+
+[lib]
+name = "worldkeeper_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

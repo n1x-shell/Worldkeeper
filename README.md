@@ -14,6 +14,7 @@ It runs entirely on your own computer: no account, no cloud service, no paid API
 
 - [Features](#features)
 - [Quick start](#quick-start)
+- [Desktop app](#desktop-app)
 - [Importing your world](#importing-your-world)
 - [Typical workflow](#typical-workflow)
 - [Player view](#player-view)
@@ -33,20 +34,29 @@ It runs entirely on your own computer: no account, no cloud service, no paid API
 - One record per stable ID (`NPC-010`, `VLT-305`, `CON-001-DOM`…), with original name, aliases, category, parent, realm, canon status, source references and tags kept verbatim.
 - Record pages with key facts, GM-only sections clearly flagged, child records, connections, campaign state and full history.
 - Markdown editor with live preview, autosave, a visible save indicator, change reasons and conflict protection.
-- `Name [ID]` cross-references become links automatically; broken references are reported.
+- **Link records in plain language:** write `@[Mara Venn]` anywhere (record text, notes, prep, recaps, quests) and it becomes a link to that record. In the app, just type `@` and start typing a name, then pick from the suggestions. If two records share a name, the suggestion adds the type, e.g. `@[Kaelholm (Settlement)]`. Linked records also show up in the relationship graph. The source library's own `Name [ID]` references keep working and display as the name.
+- **Clean, play-focused interface:** record IDs, file names, source citations, tags and the source's editorial notes stay out of sight. Turn on **Settings → Technical details** (or start with `WORLDKEEPER_DEBUG=1`) when you want to see them.
 - Version history with line-by-line diffs and one-click restore. Duplicate a record as a PROPOSED draft without touching the original.
 - New records start from your library's own templates, with missing facts left as `UNDEFINED`. The app warns you when a similar record already exists.
+
+### NPC and faction profiles
+- **Structured forms for NPCs:** pronouns, species, role, appearance, voice, home, factions, goals, pressures, secrets, what the NPC knows, disguise, game statistics and portrait.
+- **Structured forms for factions, cults and families:** ideology, leaders, headquarters, resources, allies, rivals, goals and secrets.
+- **Source text beside your notes:** each field shows what your source library already says, read-only, next to your own value. Fields the source does not cover show `UNDEFINED`. The canon record is never changed.
+- **Campaign fields:** attitude toward the party, status, current location, last encountered (filled in automatically from the session log), what the party knows, promises, debts and recent actions. For factions: current plans, influence by region, attitude and recent events.
+- **Influence by region:** Faction Agendas shows a matrix of faction influence per region and flags regions where several factions compete.
 
 ### Search and relationships
 - Global search (`Ctrl+K`) across names, aliases, stable IDs, tags, full text, original source files, sessions, quests, adventures and notes, with realm, type and canon filters.
 - Structured relationships (Lives in, Leads, Member of, Allied with, Opposes, Controls, Seeks…), some created from the source text (Parent, Leaders and cross-references) and others curated by you.
-- Interactive relationship graph showing the focused neighbourhood of one record, filterable by depth, entity type, continent, canon status and relationship type.
+- Interactive relationship graph showing the focused neighbourhood of one record, filterable by depth, entity type, continent, historical era, canon status and relationship type.
 
 ### The three branches
 - **Aetheris:** Crystal Shards table (lore power, GM-only canon location, interested parties, plus per-campaign holder, location, shardscarred bearer and cult activity), dominions and factions overview.
 - **Kaelmar:** Thirteen Vaults tracker (location, purpose, key, canon state, plus per-campaign vault state, clues, guardians and consequences). All vaults are sealed at the default start, 300 AB.
 - **Ethereal Realm:** an explorer that separates the border layer from the deep domains, highlights access requirements, and links crossings, hazards, Thinning and Unmaking, and inhabitants.
 - World overview, World Timeline (300 AB = Year 31 Unbound; undated events are never given invented dates), cosmology, pantheon, peoples, magic systems, and mysteries and secrets.
+- **Eras on the timeline:** the eras come from your library's own `era/` tags, and each event takes the era of the records it links to. You assign the rest, filter or group the timeline by era, and rename, reorder or add eras.
 
 ### World Atlas
 - Upload your own maps (PNG, JPEG, WEBP or GIF), or create abstract diagrams for places such as the Ethereal Realm.
@@ -64,6 +74,7 @@ It runs entirely on your own computer: no account, no cloud service, no paid API
 ### Running sessions
 - **Session prep:** recap, party location, goals, scenes, NPC notes, read-aloud text, clues, encounters, treasure, consequences and open questions.
 - **Live Session Mode:** current scene and read-aloud text, encounter tracker, quick event log, quest updates, proposed world changes, relevant NPC cards and dice, all on one screen.
+- **Reveal to players from live mode:** pick a record, then make it known to players, reveal a section, or write a fact in your own words. Every reveal is logged to the session and appears in the recap. GM-only sections cannot be revealed.
 - **Recap draft** built only from what you recorded, then a review screen to accept or reject the session's proposed changes.
 - **Encounter and initiative tracker:** roll or enter initiative, rounds and turns, damage, healing and temporary HP, the 15 conditions, concentration save DC (2024 rule), defeated and hidden combatants, and adding the whole party.
 - DM screen, NPC quick-reference cards, faction agendas (progress tracks you advance yourself, with a reason), world events, random tables, dice roller (`2d6+3`, `1d20 adv`, `4d6kh3`, `d%`), rules reference labelled OFFICIAL / HOMEBREW / OUTSIDE 2024 CORE / UNVERIFIED, and notes.
@@ -95,6 +106,16 @@ For development, with live reload of server and client:
 ```bash
 npm run dev        # API on :4310, client on http://localhost:5173
 ```
+
+### Desktop app
+
+The Worldkeeper can also be built as a desktop application (Linux, macOS, Windows) with [Tauri](https://tauri.app). It bundles its own Node.js runtime, keeps data in your OS app-data folder, and needs no terminal or browser:
+
+```bash
+npm run desktop:build      # installers in src-tauri/target/release/bundle/
+```
+
+Prerequisites (Rust and per-OS system libraries), data locations, signing and troubleshooting are in [docs/DESKTOP.md](docs/DESKTOP.md).
 
 ---
 
@@ -200,6 +221,10 @@ By default all data lives in `./data/`, which git ignores:
 | `npm run backup [-- reason]` | Write a backup archive |
 | `npm test` | Run the test suite |
 | `npm run typecheck` | Type-check client and server |
+| `npm run e2e -- <url> [screenshot dir]` | Browser end-to-end smoke test against a running app |
+| `npm run desktop:prepare` | Bundle server, client, SQLite driver and Node runtime for the desktop app |
+| `npm run desktop:dev` | Run the desktop app in development mode |
+| `npm run desktop:build` | Build desktop installers |
 
 ## Configuration
 
@@ -209,6 +234,8 @@ By default all data lives in `./data/`, which git ignores:
 | `PORT` | `4310` (DM), `4320` (player) | Listening port |
 | `HOST` | `127.0.0.1` (DM), `0.0.0.0` (player) | Listening address. The DM server is local-only unless you change this. |
 | `WORLDKEEPER_MODE` | `dm` | Set to `player` for the player-only server |
+| `WORLDKEEPER_STATIC_DIR` | `./dist` | Location of the built client (set by the desktop app) |
+| `WORLDKEEPER_DEBUG` | off | `1` forces technical details on (IDs, files, sources, how-it-works notes) |
 
 ### Keyboard shortcuts
 
@@ -218,6 +245,7 @@ By default all data lives in `./data/`, which git ignores:
 | `Alt+D` | DM screen |
 | `Ctrl+\` | Collapse or expand the sidebar |
 | `Ctrl+Enter` | Save a live-session log entry |
+| `@` in a text area | Suggest a record to link; `Enter`/`Tab` inserts `@[Name]`, `Esc` closes |
 
 ---
 
@@ -239,7 +267,9 @@ client/src/
   player/          Player view app
 tests/             Unit, API and integration tests
 scripts/           Browser end-to-end smoke test
-docs/              Architecture, schema and import strategy
+docs/              Architecture, schema, import strategy, desktop packaging
+src-tauri/         Desktop (Tauri) shell that runs the bundled server
+desktop/           Desktop icon source and loading page
 ```
 
 **Stack:** React, TypeScript, Vite, Tailwind CSS, Lucide, React Flow, Leaflet; Node.js, Express, SQLite (better-sqlite3, FTS5), zod. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the database schema, import strategy and security model.
@@ -288,11 +318,13 @@ The tests cover:
 
 The first release is functional. [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) lists completed and partial features, known issues, the tests performed and next steps.
 
-**Next milestone (v0.2, "At the table"):**
-- record-link suggestions as you type in the editor
-- structured faction and NPC panels
+**v0.2 "At the table"** added:
+- record-link suggestions while typing
+- NPC and faction profiles
 - revealing to players during a live session
 - timeline eras
-- desktop packaging with Tauri
+- the desktop app
+
+See [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) for what comes next.
 
 An optional, provider-independent AI assistant is planned only after the core is in regular use. It will only ever create `PROPOSED` drafts.

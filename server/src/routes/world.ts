@@ -33,6 +33,9 @@ import { decideProposal } from '../repo/campaigns.js';
 import { splitSections } from '../import/parseMarkdown.js';
 import { isSecretHeading } from '../player/projection.js';
 import { TYPE_GROUPS } from '../../../shared/domain.js';
+import { revealDuringPlay } from '../repo/reveal.js';
+import { createEra, listEras, setRowEra, updateEra } from '../repo/eras.js';
+import { getProfile, influenceMatrix, saveProfile } from '../repo/profiles.js';
 
 export function worldRoutes(ctx: AppContext) {
   const r = Router();
@@ -119,12 +122,44 @@ export function worldRoutes(ctx: AppContext) {
         relTypes: listParam(req.query.rel),
         realms: listParam(req.query.realms),
         canon: listParam(req.query.canon),
+        eras: listParam(req.query.eras),
         includeReferences: req.query.refs !== '0',
         limit: req.query.limit ? Number(req.query.limit) : undefined,
       }),
     ),
   );
   r.get('/broken', h(() => brokenReferences(ctx.db)));
+
+  // Live reveal (record + session log in one transaction)
+  r.post('/entities/:id/reveal', h((req) => revealDuringPlay(ctx.db, String(req.params.id), req.body)));
+
+  // Eras
+  r.get('/eras', h(() => listEras(ctx.db)));
+  r.post('/eras', h((req) => createEra(ctx.db, req.body)));
+  r.patch('/eras/:key', h((req) => updateEra(ctx.db, String(req.params.key), req.body)));
+  r.patch(
+    '/timeline/:id/era',
+    h((req) => {
+      const era = req.body?.era;
+      setRowEra(ctx.db, intParam(req.params.id), era === 'auto' ? 'auto' : era == null || era === '' ? null : String(era));
+      return { ok: true };
+    }),
+  );
+
+  // Structured NPC / faction profiles
+  r.get('/profiles/influence', h((req) => influenceMatrix(ctx.db, intParam(req.query.campaign, 'campaign'))));
+  r.get(
+    '/profiles/:id',
+    h((req) => getProfile(ctx.db, String(req.params.id), req.query.campaign ? intParam(req.query.campaign, 'campaign') : getActiveCampaignId(ctx.db))),
+  );
+  r.put(
+    '/profiles/:id',
+    h((req) => {
+      const scope = req.body?.scope === 'campaign' ? 'campaign' : 'world';
+      const cid = req.body?.campaign_id != null ? intParam(req.body.campaign_id, 'campaign_id') : getActiveCampaignId(ctx.db);
+      return saveProfile(ctx.db, String(req.params.id), scope, cid, req.body?.data);
+    }),
+  );
 
   // Search
   r.get(

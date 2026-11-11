@@ -17,7 +17,7 @@ export function EntityPicker({
   placeholder?: string;
   allowClear?: boolean;
 }) {
-  const { index } = useAppState();
+  const { index, debug } = useAppState();
   const [q, setQ] = useState('');
   const [open, setOpen] = useState(false);
   const [hi, setHi] = useState(0);
@@ -37,7 +37,7 @@ export function EntityPicker({
     return (
       <div className="flex items-center gap-1 input">
         <button type="button" className="flex-1 text-left truncate" onClick={() => (setOpen(true), setTimeout(() => inputRef.current?.focus(), 0))}>
-          {selected ? `${selected.name}` : value} <span className="text-dim text-xs">{value}</span>
+          {selected ? `${selected.name}` : value} {debug && <span className="text-dim text-xs">{value}</span>}
         </button>
         {allowClear && (
           <button type="button" className="text-dim hover:text-danger" onClick={() => onChange(null)} aria-label="Clear">
@@ -91,7 +91,8 @@ export function EntityPicker({
             >
               <span className="truncate">{e.name}</span>
               <span className="text-xs text-dim shrink-0">
-                {ENTITY_TYPE_LABELS[e.type as EntityType] ?? e.type} · {e.id}
+                {ENTITY_TYPE_LABELS[e.type as EntityType] ?? e.type}
+                {debug && ` · ${e.id}`}
               </span>
             </li>
           ))}

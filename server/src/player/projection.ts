@@ -10,9 +10,11 @@
  *  - References inside revealed text to unrevealed records are reduced to plain names-free placeholders.
  */
 import type { DB } from '../db/connection.js';
-import { BRACKET_REF_RE, SECRET_HEADING_RE, ENTITY_TYPE_LABELS, REALM_LABELS, type EntityType, type Realm } from '../../../shared/domain.js';
+import { SECRET_HEADING_RE, ENTITY_TYPE_LABELS, REALM_LABELS, type EntityType, type Realm } from '../../../shared/domain.js';
 import { parseJson } from '../lib/json.js';
 import { splitSections } from '../import/parseMarkdown.js';
+import { parseRefs, type MentionIndex } from '../../../shared/mentions.js';
+import { loadMentionIndex } from '../repo/mentions.js';
 
 export interface PlayerEntity {
   id: string;
@@ -47,16 +49,26 @@ function revealedIdSet(db: DB): Set<string> {
   return new Set((db.prepare('SELECT id FROM entities WHERE revealed = 1 AND archived = 0').all() as { id: string }[]).map((r) => r.id));
 }
 
-/** Replace `Name [ID]` references to unrevealed records so no hidden record's ID leaks. */
-function scrubRefs(text: string, revealed: Set<string>): string {
-  return text.replace(BRACKET_REF_RE(), (m, id: string) => (revealed.has(id) ? m : ''));
+/**
+ * Rewrite record references for players: links to revealed records become player links showing the name;
+ * references to unrevealed records keep only the words the DM wrote (never an ID or a link).
+ */
+function scrubRefs(text: string, revealed: Set<string>, index: MentionIndex): string {
+  return parseRefs(text, index)
+    .map((s) => {
+      if (s.kind === 'text') return s.text;
+      if (s.kind === 'link') return revealed.has(s.id) ? `[${s.label}](/player/e/${encodeURIComponent(s.id)})` : s.label;
+      if (s.kind === 'broken') return /^[A-Z]{2,4}-/.test(s.label) ? '' : s.label;
+      return '';
+    })
+    .join('');
 }
 
-function project(r: Row, revealed: Set<string>): PlayerEntity {
+function project(r: Row, revealed: Set<string>, index: MentionIndex): PlayerEntity {
   const wanted = new Set(parseJson<string[]>(r.revealed_sections, []));
   const sections = splitSections(r.body)
     .filter((s) => s.heading && wanted.has(s.heading) && !isSecretHeading(s.heading))
-    .map((s) => ({ heading: s.heading, content: scrubRefs(s.content, revealed) }));
+    .map((s) => ({ heading: s.heading, content: scrubRefs(s.content, revealed, index) }));
   return {
     id: r.id,
     name: r.name,
@@ -64,8 +76,8 @@ function project(r: Row, revealed: Set<string>): PlayerEntity {
     typeLabel: ENTITY_TYPE_LABELS[r.type as EntityType] ?? r.type,
     realm: r.realm,
     realmLabel: REALM_LABELS[r.realm as Realm] ?? r.realm,
-    summary: scrubRefs(r.player_summary, revealed),
-    facts: parseJson<string[]>(r.revealed_facts, []).map((f) => scrubRefs(f, revealed)),
+    summary: scrubRefs(r.player_summary, revealed, index),
+    facts: parseJson<string[]>(r.revealed_facts, []).map((f) => scrubRefs(f, revealed, index)),
     sections,
   };
 }
@@ -74,14 +86,15 @@ const COLS = 'id, name, type, realm, body, player_summary, revealed_sections, re
 
 export function playerEntities(db: DB): PlayerEntity[] {
   const revealed = revealedIdSet(db);
+  const index = loadMentionIndex(db);
   return (db.prepare(`SELECT ${COLS} FROM entities WHERE revealed = 1 AND archived = 0 ORDER BY name`).all() as Row[]).map((r) =>
-    project(r, revealed),
+    project(r, revealed, index),
   );
 }
 
 export function playerEntity(db: DB, id: string): PlayerEntity | null {
   const r = db.prepare(`SELECT ${COLS} FROM entities WHERE id = ? AND revealed = 1 AND archived = 0`).get(id) as Row | undefined;
-  return r ? project(r, revealedIdSet(db)) : null;
+  return r ? project(r, revealedIdSet(db), loadMentionIndex(db)) : null;
 }
 
 export function playerSearch(db: DB, q: string): PlayerEntity[] {
@@ -155,12 +168,13 @@ export function playerCampaign(db: DB, campaignId: number) {
     .prepare(`SELECT id, number, title, played_on, recap FROM sessions WHERE campaign_id = ? AND recap_player_visible = 1 ORDER BY number`)
     .all(campaignId) as { id: number; number: number; title: string; played_on: string; recap: string }[];
   const revealed = revealedIdSet(db);
+  const index = loadMentionIndex(db);
   return {
     id: c.id,
     title: c.title,
     current_date: c.current_date,
-    quests: quests.map((q) => ({ id: q.id, title: q.title, status: q.status, description: scrubRefs(q.description, revealed) })),
-    recaps: recaps.map((r) => ({ id: r.id, number: r.number, title: r.title, played_on: r.played_on, recap: scrubRefs(r.recap, revealed) })),
+    quests: quests.map((q) => ({ id: q.id, title: q.title, status: q.status, description: scrubRefs(q.description, revealed, index) })),
+    recaps: recaps.map((r) => ({ id: r.id, number: r.number, title: r.title, played_on: r.played_on, recap: scrubRefs(r.recap, revealed, index) })),
   };
 }
 

@@ -6,7 +6,8 @@ import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { CanonFlags, EntityLink, ErrorBox, Loading, PageHeader, TypeBadge } from '../components/ui';
 import { Markdown } from '../components/Markdown';
-import { splitSections } from '../lib/sections';
+import { Dev, useDebug } from '../components/Dev';
+import { displaySections, splitSections } from '../lib/sections';
 import type { Entity, EntitySummary, StateRow } from '../lib/types';
 
 interface SpecialRow {
@@ -36,7 +37,7 @@ function OverlayControls({ entityId, rows, fields, onChange }: { entityId: strin
         <Link to="/campaigns" className="text-arcane">
           Choose an active campaign
         </Link>{' '}
-        to track campaign state. Canon shown above is the default start (300 AB).
+        to track what changes in play.
       </p>
     );
   const opts = fields.find((x) => x.name === f)?.options;
@@ -89,6 +90,7 @@ function OverlayControls({ entityId, rows, fields, onChange }: { entityId: strin
 }
 
 export function VaultsPage() {
+  const debug = useDebug();
   const { activeCampaignId } = useAppState();
   const { data, error, reload } = useApi<SpecialRow[]>(`/api/special/vaults${activeCampaignId ? `?campaign=${activeCampaignId}` : ''}`);
   const [sel, setSel] = useState<string | null>(null);
@@ -100,7 +102,7 @@ export function VaultsPage() {
       <PageHeader
         icon={<KeyRound size={22} />}
         title="The Thirteen Vaults"
-        subtitle="Canon: all thirteen are sealed at 300 AB; the Seventh Ward and Root Core sleep. Changes below are campaign-only. The events of 927 AB are a possible future, not an outcome."
+        subtitle="All thirteen are sealed at 300 AB; the Seventh Ward and the Root Core sleep." note="Changes below are campaign-only. The events of 927 AB are a possible future, not an outcome."
       />
       <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
         {data.map((x) => {
@@ -111,7 +113,9 @@ export function VaultsPage() {
               <div className="flex items-center gap-1.5 text-sm font-display text-gold">
                 {sealed ? <Lock size={13} /> : <Unlock size={13} className="text-amber-400" />} {x.name}
               </div>
-              <div className="text-[11px] text-dim">{x.id}</div>
+              <Dev>
+                <div className="text-[11px] text-dim">{x.id}</div>
+              </Dev>
               <div className={`text-xs mt-1 ${sealed ? 'text-dim' : 'text-amber-400'}`}>{st}</div>
             </button>
           );
@@ -140,7 +144,7 @@ export function VaultsPage() {
                 </div>
               ))}
             </dl>
-            {splitSections(v.body).map((s, i) => (
+            {displaySections(v.body, debug).map((s, i) => (
               <div key={i} className={s.secret ? 'wk-secret border border-danger/40 bg-danger/5 rounded px-3 my-2' : ''}>
                 <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
               </div>
@@ -182,7 +186,7 @@ export function ShardsPage() {
   if (!data) return <Loading />;
   return (
     <div className="space-y-4">
-      <PageHeader icon={<Gem size={22} />} title="Crystal Shards" subtitle="Canon locations are GM-only. Campaign holders and locations are tracked per campaign. The Aetherfall Cycle is broken at the start; nothing here resets the world." />
+      <PageHeader icon={<Gem size={22} />} title="Crystal Shards" subtitle="Where each shard lies is GM-only." note="Campaign holders and locations are tracked per campaign. The Aetherfall Cycle is broken at the start; nothing here resets the world." />
       <div className="panel overflow-x-auto">
         <table className="table">
           <thead>
@@ -200,7 +204,9 @@ export function ShardsPage() {
                 <tr className="cursor-pointer" onClick={() => setOpen(open === s.id ? null : s.id)}>
                   <td>
                     <EntityLink id={s.id}>{s.name}</EntityLink>
-                    <div className="text-xs text-dim">{s.id}</div>
+                    <Dev>
+                      <div className="text-xs text-dim">{s.id}</div>
+                    </Dev>
                     <CanonFlags status={s.canon_status} flags={s.canon_flags ?? []} />
                   </td>
                   <td className="text-sm">
@@ -246,7 +252,7 @@ export function DominionsPage() {
         <div className="grid gap-1 sm:grid-cols-2 lg:grid-cols-4 text-sm">
           {factions?.map((f) => (
             <div key={f.id}>
-              <EntityLink id={f.id}>{f.name}</EntityLink> <span className="text-xs text-dim">{f.type}</span>
+              <EntityLink id={f.id}>{f.name}</EntityLink> <TypeBadge type={f.type} />
             </div>
           ))}
         </div>
@@ -341,7 +347,9 @@ function DomainButtons({ list, sel, setSel }: { list: EntitySummary[]; sel: stri
       {list.map((d) => (
         <button key={d.id} onClick={() => setSel(d.id)} className={`text-left px-3 py-2 rounded-md border ${sel === d.id ? 'border-gold text-gold bg-gold/10' : 'border-line hover:border-violet-400/60'}`}>
           <div className="font-display text-sm">{d.name}</div>
-          <div className="text-[11px] text-dim">{d.id}</div>
+          <Dev>
+            <div className="text-[11px] text-dim">{d.id}</div>
+          </Dev>
         </button>
       ))}
     </div>
@@ -349,6 +357,7 @@ function DomainButtons({ list, sel, setSel }: { list: EntitySummary[]; sel: stri
 }
 
 function DomainDetail({ id }: { id: string }) {
+  const debug = useDebug();
   const { data } = useApi<{ entity: Entity; relationships: { source_id: string; target_id: string; source_name: string; target_name: string; source_type: string; target_type: string }[] }>(`/api/entities/${id}`);
   if (!data) return <Loading />;
   const e = data.entity;
@@ -359,8 +368,8 @@ function DomainDetail({ id }: { id: string }) {
       <Link to={`/e/${id}`} className="text-2xl font-display text-gold">
         {e.name}
       </Link>
-      <div className="text-xs text-dim mb-2">{e.parent_raw}</div>
-      {splitSections(e.body).map((s, i) => (
+      <div className="text-xs text-dim mb-2">{/deep/i.test(e.parent_raw ?? '') ? 'Deep domain' : /border/i.test(e.parent_raw ?? '') ? 'Border layer' : null}</div>
+      {displaySections(e.body, debug).map((s, i) => (
         <div key={i} className={s.secret || /access/i.test(s.heading) ? 'border border-violet-500/30 rounded px-3 my-2 bg-violet-900/10' : ''}>
           <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
         </div>

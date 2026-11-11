@@ -2,7 +2,8 @@ import type { DB } from '../db/connection.js';
 import { z } from 'zod';
 import { RELATIONSHIP_TYPES, CANON_STATUSES, SYMMETRIC_RELATIONSHIPS, type Relationship } from '../../../shared/domain.js';
 import { parseJson } from '../lib/json.js';
-import { extractRefs } from '../import/normalize.js';
+import { collectRefs, type MentionIndex } from '../../../shared/mentions.js';
+import { loadMentionIndex } from './mentions.js';
 import { badRequest, notFound } from '../lib/errors.js';
 
 interface RelRow {
@@ -34,7 +35,7 @@ const FIELD_RELATIONS: { match: RegExp; type: Relationship['type']; reverse: boo
  * and every `Name [ID]` cross-reference in the body. User-curated relationships are never touched.
  * Redirect IDs (e.g. a legacy locator) resolve to their authoritative record.
  */
-export function rebuildDerivedRelationships(db: DB, id: string) {
+export function rebuildDerivedRelationships(db: DB, id: string, index: MentionIndex = loadMentionIndex(db)) {
   const row = db.prepare('SELECT id, type, parent_id, fields, body, redirect_to FROM entities WHERE id = ?').get(id) as
     | { id: string; type: string; parent_id: string | null; fields: string; body: string; redirect_to: string | null }
     | undefined;
@@ -65,7 +66,7 @@ export function rebuildDerivedRelationships(db: DB, id: string) {
   }
   for (const [key, value] of parseJson<[string, string][]>(row.fields, [])) {
     const rule = FIELD_RELATIONS.find((r) => r.match.test(key));
-    for (const ref of extractRefs(value)) {
+    for (const ref of collectRefs(value, index).ids) {
       const t = resolve(ref);
       if (!t || t === id) continue;
       if (rule) {
@@ -84,7 +85,7 @@ export function rebuildDerivedRelationships(db: DB, id: string) {
       heading = h[1].trim();
       continue;
     }
-    for (const ref of extractRefs(line)) {
+    for (const ref of collectRefs(line, index).ids) {
       const t = resolve(ref);
       if (!t || t === id || linked.has(t)) continue;
       linked.add(t);
@@ -163,6 +164,8 @@ export interface GraphFilters {
   relTypes?: string[];
   realms?: string[];
   canon?: string[];
+  /** Keep only records tagged with one of these eras (era/<key>); the focus record is always kept. */
+  eras?: string[];
   includeReferences?: boolean;
   limit?: number;
 }
@@ -171,13 +174,14 @@ export interface GraphFilters {
 export function neighbourhood(db: DB, focus: string, f: GraphFilters = {}) {
   const depth = Math.min(Math.max(f.depth ?? 1, 1), 3);
   const limit = Math.min(f.limit ?? 120, 400);
-  const nodeInfo = db.prepare('SELECT id, name, type, realm, canon_status FROM entities WHERE id = ?');
+  const nodeInfo = db.prepare('SELECT id, name, type, realm, canon_status, tags FROM entities WHERE id = ?');
   const relsOf = db.prepare('SELECT * FROM relationships WHERE source_id = ? OR target_id = ?');
   const nodes = new Map<string, { id: string; name: string; type: string; realm: string; canon_status: string; depth: number }>();
   const edges = new Map<number, Relationship>();
   const root = nodeInfo.get(focus) as { id: string; name: string; type: string; realm: string; canon_status: string } | undefined;
   if (!root) throw notFound(`Record ${focus}`);
-  nodes.set(focus, { ...root, depth: 0 });
+  const { tags: _rt, ...rootRest } = root as typeof root & { tags?: string };
+  nodes.set(focus, { ...rootRest, depth: 0 });
   let frontier = [focus];
   for (let d = 1; d <= depth && nodes.size < limit; d++) {
     const next: string[] = [];
@@ -193,8 +197,10 @@ export function neighbourhood(db: DB, focus: string, f: GraphFilters = {}) {
           if (f.types?.length && !f.types.includes(n.type)) continue;
           if (f.realms?.length && !f.realms.includes(n.realm)) continue;
           if (f.canon?.length && !f.canon.includes(n.canon_status)) continue;
+          if (f.eras?.length && !f.eras.some((era) => (n as unknown as { tags: string }).tags.includes(`"era/${era}"`))) continue;
           if (nodes.size >= limit) continue;
-          info = { ...n, depth: d };
+          const { tags: _t, ...rest } = n as typeof n & { tags?: string };
+          info = { ...rest, depth: d };
           nodes.set(other, info);
           next.push(other);
         }
@@ -217,6 +223,7 @@ export function brokenReferences(db: DB) {
     body: string;
   }[];
   const ids = new Set((db.prepare('SELECT id FROM entities').all() as { id: string }[]).map((r) => r.id));
+  const index = loadMentionIndex(db);
   const out: { from: string; from_name: string; ref: string; where: string }[] = [];
   for (const e of all) {
     const seen = new Set<string>();
@@ -226,8 +233,8 @@ export function brokenReferences(db: DB) {
       out.push({ from: e.id, from_name: e.name, ref, where });
     };
     if (e.parent_id) check(e.parent_id, 'Parent');
-    for (const [k, v] of parseJson<[string, string][]>(e.fields, [])) for (const r of extractRefs(v)) check(r, k);
-    for (const line of e.body.split('\n')) for (const r of extractRefs(line)) check(r, line.trim().slice(0, 200));
+    for (const [k, v] of parseJson<[string, string][]>(e.fields, [])) for (const r of collectRefs(v, index).broken) check(r, k);
+    for (const line of e.body.split('\n')) for (const r of collectRefs(line, index).broken) check(r, line.trim().slice(0, 200));
   }
   const danglingRels = db
     .prepare(

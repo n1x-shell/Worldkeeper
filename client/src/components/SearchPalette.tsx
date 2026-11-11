@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { api, qs } from '../lib/api';
 import { RealmBadge, TypeBadge, CanonBadge } from './ui';
+import { useAppState } from '../lib/store';
 
 export interface Hit {
   kind: string;
@@ -28,6 +29,8 @@ export function hitPath(h: Hit): string {
       return `/notes?note=${h.ref}`;
     case 'adventure':
       return `/adventure/${h.ref}`;
+    case 'profile':
+      return `/e/${encodeURIComponent(h.ref.split(':')[0])}`;
     default:
       return '/';
   }
@@ -51,27 +54,28 @@ export function Snippet({ text }: { text: string }) {
   );
 }
 
-const KIND_LABEL: Record<string, string> = { doc: 'Source document', session: 'Session', quest: 'Quest', note: 'Note', adventure: 'Adventure' };
+const KIND_LABEL: Record<string, string> = { doc: 'Source document', session: 'Session', quest: 'Quest', note: 'Note', adventure: 'Adventure', profile: 'Profile notes' };
 
 export function SearchPalette({ onClose }: { onClose: () => void }) {
   const [q, setQ] = useState('');
   const [hits, setHits] = useState<Hit[]>([]);
   const [hi, setHi] = useState(0);
   const nav = useNavigate();
+  const { debug } = useAppState();
   const ref = useRef<HTMLInputElement>(null);
   useEffect(() => ref.current?.focus(), []);
   useEffect(() => {
     if (!q.trim()) return setHits([]);
     const t = setTimeout(async () => {
       try {
-        setHits(await api.get<Hit[]>(`/api/search${qs({ q, limit: 15 })}`));
+        setHits(await api.get<Hit[]>(`/api/search${qs({ q, limit: 15, kinds: debug ? undefined : 'entity,session,quest,note,adventure,profile' })}`));
         setHi(0);
       } catch {
         setHits([]);
       }
     }, 120);
     return () => clearTimeout(t);
-  }, [q]);
+  }, [q, debug]);
   const go = (h: Hit) => {
     nav(hitPath(h));
     onClose();
@@ -98,7 +102,7 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
               }
             }}
             className="flex-1 bg-transparent py-3 text-base outline-none"
-            placeholder="Mara Venn, NPC-010, Black Sun, vault key…"
+            placeholder="Mara Venn, Black Sun, vault key…"
             aria-label="Search query"
           />
           <kbd className="text-[10px] text-dim border border-line rounded px-1">Esc</kbd>
@@ -111,7 +115,7 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
                   <span className="font-medium text-ink">{h.title}</span>
                   {h.kind === 'entity' ? (
                     <>
-                      <span className="text-xs text-dim">{h.ref}</span>
+                      {debug && <span className="text-xs text-dim">{h.ref}</span>}
                       {h.type && <TypeBadge type={h.type} />}
                       {h.realm && <RealmBadge realm={h.realm} />}
                       {h.canon_status && h.canon_status !== 'CANON' && <CanonBadge status={h.canon_status} />}

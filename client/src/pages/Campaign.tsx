@@ -100,7 +100,7 @@ export function CampaignsPage() {
     <div className="space-y-4">
       <PageHeader
         title="All Campaigns"
-        subtitle="Several campaigns can run in the same world. Each keeps its own state; promote developments to canon only through Canon Review."
+        subtitle="Several campaigns can run in the same world, each with its own history." note="Each keeps its own state; promote developments to canon only through Canon Review."
         actions={
           <label className="btn cursor-pointer">
             <Upload size={14} /> Import campaign
@@ -297,7 +297,7 @@ export function StateTable({ rows, onChange, title = 'Campaign-specific world ch
   return (
     <div className="panel-pad text-sm">
       <div className="section-title mb-1">{title}</div>
-      <p className="text-xs text-dim mb-2">Stored only in this campaign. The encyclopedia keeps its canon until you approve a promotion.</p>
+      <p className="text-xs text-dim mb-2">Only true in this campaign.</p>
       {msg && <div className="text-ok text-xs mb-1">{msg}</div>}
       <ul className="space-y-1.5 max-h-96 overflow-auto">
         {rows
@@ -349,7 +349,7 @@ export function PartyPage() {
     <div className="space-y-4">
       <PageHeader
         title="Party and Characters"
-        subtitle="D&D 2024 basics. Modifiers and proficiency bonus are calculated; everything else is what you enter."
+        note="D&D 2024 basics. Modifiers and proficiency bonus are calculated; everything else is what you enter."
         actions={
           <button
             className="btn-primary"
@@ -850,7 +850,7 @@ export function SessionPage() {
       )}
       {tab === 'review' && (
         <div className="space-y-3">
-          <p className="text-sm text-dim">Changes recorded during play arrive here as proposals. Accepting applies them to this campaign only; promoting to world canon is a separate, explicit step.</p>
+          <p className="text-sm text-dim">Changes recorded during play. Accept the ones that happened; they apply to this campaign only.</p>
           <StateTable
             title="Changes recorded in this session"
             rows={changes ?? []}
@@ -964,7 +964,7 @@ export function AdventuresPage({ byArc = false }: { byArc?: boolean }) {
   }, [data]);
   return (
     <div className="space-y-4">
-      <PageHeader title={byArc ? 'Story Arcs' : 'Adventures'} subtitle={byArc ? 'Adventures grouped by arc. Set the arc on each adventure.' : 'Non-linear adventure workspaces. Starting from a source hook links it; no content is invented.'} />
+      <PageHeader title={byArc ? 'Story Arcs' : 'Adventures'} subtitle={byArc ? 'Adventures grouped by story arc.' : undefined} note={byArc ? undefined : 'Starting from a source hook links it; no content is invented.'} />
       <div className="panel-pad grid gap-2 md:grid-cols-[1fr_auto_1fr_auto] items-end">
         <Field label="Blank adventure">
           <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
@@ -1004,7 +1004,7 @@ export function AdventuresPage({ byArc = false }: { byArc?: boolean }) {
                 <Link key={a.id} to={`/adventure/${a.id}`} className="panel p-4 hover:border-gold/60">
                   <div className="font-display text-gold">{a.title}</div>
                   <div className="text-xs text-dim">
-                    {a.status} {a.arc && `· ${a.arc}`} {a.source_hook_id && `· from ${a.source_hook_id}`}
+                    {a.status} {a.arc && `· ${a.arc}`}
                   </div>
                   <p className="text-sm line-clamp-2 mt-1">{a.data.premise}</p>
                 </Link>
@@ -1244,7 +1244,7 @@ function SceneFlow({ adventureId }: { adventureId: number }) {
   const onNodesChange = useCallback((ch: NodeChange[]) => setNodes((n) => applyNodeChanges(ch, n)), []);
   return (
     <div className="space-y-2">
-      <p className="text-sm text-dim">Drag scenes to arrange them; drag from one scene's edge to another to connect them; click a connection to delete it. Scenes do not need to be linear.</p>
+      <p className="text-sm text-dim">Drag scenes to arrange them. Drag from one scene's edge to another to connect them; click a connection to remove it.</p>
       <div className="panel h-[65vh]">
         <ReactFlow
           nodes={nodes}

@@ -20,6 +20,12 @@ interface Staged {
   created: number;
 }
 
+export function debugEnabled(ctx: AppContext): boolean {
+  if (process.env.WORLDKEEPER_DEBUG === '1' || process.env.WORLDKEEPER_DEBUG === 'true') return true;
+  const row = ctx.db.prepare(`SELECT value FROM settings WHERE key = 'debug'`).get() as { value: string } | undefined;
+  return row?.value === 'true';
+}
+
 export function libraryRoutes(ctx: AppContext) {
   const r = Router();
   const staging = new Map<string, Staged>();
@@ -140,7 +146,7 @@ export function libraryRoutes(ctx: AppContext) {
   r.put(
     '/settings',
     h((req) => {
-      const allowed = ['app_name', 'world_date', 'default_realm', 'player_note'];
+      const allowed = ['app_name', 'world_date', 'default_realm', 'player_note', 'debug'];
       const body = (req.body ?? {}) as Record<string, unknown>;
       const up = ctx.db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value');
       for (const [k, v] of Object.entries(body)) {
@@ -158,6 +164,9 @@ export function libraryRoutes(ctx: AppContext) {
       dataDir: ctx.paths.dataDir,
       entities: (ctx.db.prepare('SELECT COUNT(*) n FROM entities').get() as { n: number }).n,
       appName: (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper',
+      /** Technical details (IDs, files, sources, how-it-works notes) are shown only in debug mode. */
+      debug: debugEnabled(ctx),
+      debugForced: process.env.WORLDKEEPER_DEBUG === '1' || process.env.WORLDKEEPER_DEBUG === 'true',
     })),
   );
   r.get(

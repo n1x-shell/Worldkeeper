@@ -128,7 +128,7 @@ describe('campaign state never overwrites canon', () => {
     sessionLog.create(ctx.db, { session_id: s.id, kind: 'npc', text: 'Spoke with the keeper', entity_id: 'NPC-001' });
     recordState(ctx.db, { campaign_id: c.id, entity_id: 'LOC-002', field: 'State', value: 'Burned', session_id: s.id, status: 'proposed' });
     const draft = generateRecapDraft(ctx.db, s.id);
-    expect(draft).toContain('Spoke with the keeper (Test Keeper [NPC-001])');
+    expect(draft).toContain('Spoke with the keeper (@[Test Keeper])');
     expect(draft).toContain('State: Burned');
     expect(draft).not.toContain('Hidden Test Villain');
     sessions.update(ctx.db, s.id, { recap: draft });

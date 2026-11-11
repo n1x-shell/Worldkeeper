@@ -9,8 +9,13 @@ import type { Entity, EntitySummary, StateRow } from '../lib/types';
 import { AutoTextarea, CanonFlags, Empty, EntityLink, ErrorBox, Field, Loading, PageHeader, SaveStatus } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
-import { splitSections } from '../lib/sections';
+import { Dev } from '../components/Dev';
+import { REALM_LABELS, type Realm } from '@shared/domain';
+import { displaySections } from '../lib/sections';
 import type { Character } from './Campaign';
+import { ProfileSummary, type ProfileResponse } from './Profile';
+import { profileKindFor } from '@shared/profiles';
+import { INFLUENCE_LEVELS } from '@shared/profiles';
 
 // ------------------------------------------------------------------ Encounter tracker (used standalone and in live mode)
 interface Encounter {
@@ -285,7 +290,9 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
           <Plus size={14} /> Add
         </button>
       </div>
-      <p className="text-xs text-dim">Statistics are whatever you enter. The tracker does not contain monster stat blocks; attach your own rules or creature records.</p>
+      <Dev>
+        <p className="text-xs text-dim">Statistics are whatever you enter. The tracker does not contain monster stat blocks; attach your own rules or creature records.</p>
+      </Dev>
       {!compact && (
         <Field label="Encounter notes">
           <AutoTextarea minRows={3} value={enc.notes} onChange={(e) => save({ notes: e.target.value })} />
@@ -413,7 +420,7 @@ export function ConditionsPage() {
   const { data } = useApi<EntitySummary[]>('/api/entities?type=rule,system');
   return (
     <div className="space-y-4">
-      <PageHeader title="Combat Conditions" subtitle="The 2024 condition names used by the tracker. Rules text is not reproduced here; add your own summaries as Rule records with a source reference." />
+      <PageHeader title="Combat Conditions" note="The 2024 condition names used by the tracker. Rules text is not reproduced here; add your own summaries as Rule records with a source reference." />
       <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-5">
         {CONDITIONS_2024.map((c) => (
           <div key={c} className="panel p-3 text-center font-display text-gold">
@@ -444,7 +451,7 @@ export function RulesPage() {
     <div className="space-y-4">
       <PageHeader
         title="Rules Reference"
-        subtitle="Your setting rules (Shards, Thinning and Unmaking, glyph-work, vault keys…) as imported. Official, homebrew and unverified mechanics are labelled. No rulebook is bundled."
+        subtitle="Setting rules: Shards, Thinning and Unmaking, glyph-work, vault keys and more." note="As imported. Official, homebrew and unverified mechanics are labelled. No rulebook is bundled."
         actions={
           <Link className="btn-primary" to="/new?type=rule">
             <Plus size={14} /> New rule entry
@@ -463,7 +470,9 @@ export function RulesPage() {
           <Link key={r.id} to={`/e/${r.id}`} className="panel p-3 hover:border-gold/60">
             <div className="flex justify-between gap-2">
               <span className="text-ink">{r.name}</span>
-              <span className="text-xs text-dim">{r.id}</span>
+              <Dev>
+                <span className="text-xs text-dim">{r.id}</span>
+              </Dev>
             </div>
             <CanonFlags status={r.canon_status} flags={r.canon_flags} />
           </Link>
@@ -475,43 +484,43 @@ export function RulesPage() {
 
 // ------------------------------------------------------------------ NPC quick reference
 export function NpcCard({ id }: { id: string }) {
-  const { data } = useApi<{ entity: Entity; campaignState: StateRow[] }>(`/api/entities/${encodeURIComponent(id)}`);
+  const { activeCampaignId } = useAppState();
+  const { data } = useApi<{ entity: Entity }>(`/api/entities/${encodeURIComponent(id)}`);
+  const isProfiled = data ? profileKindFor(data.entity.type) !== null : false;
+  const { data: profile } = useApi<ProfileResponse>(isProfiled ? `/api/profiles/${encodeURIComponent(id)}${activeCampaignId ? `?campaign=${activeCampaignId}` : ''}` : null);
   if (!data) return <div className="panel p-3"><Loading /></div>;
   const e = data.entity;
-  const secs = splitSections(e.body);
-  const pick = (re: RegExp) => secs.find((s) => re.test(s.heading));
-  const rows: [string, string | undefined][] = [
-    ['Role', pick(/description|role|identity/i)?.content],
-    ['Wants', pick(/want|goal|aim/i)?.content],
-    ['Pressure', pick(/fear|pressure/i)?.content],
-    ['Groups', pick(/group|faction|associated/i)?.content],
-  ];
-  const secret = pick(/secret|gm/i);
+  const portrait = profile?.world.portrait as string | undefined;
+  const keys =
+    profile?.kind === 'faction'
+      ? ['attitude', 'goals', 'currentPlans', 'leaders', 'headquarters', 'secrets']
+      : ['pronouns', 'role', 'voice', 'attitude', 'status', 'goals', 'pressures', 'promises', 'debts', 'lastEncountered', 'secrets'];
   return (
     <div className="panel p-3 text-sm space-y-1.5">
-      <Link to={`/e/${e.id}`} className="font-display text-gold text-base">
-        {e.name}
-      </Link>
-      <div className="text-[11px] text-dim">
-        {e.id} · {e.realm}
+      <div className="flex gap-3 items-start">
+        {portrait && <img src={`/api/uploads/${portrait}`} alt="" className="w-14 h-14 rounded object-cover border border-line" />}
+        <div>
+          <Link to={`/e/${e.id}`} className="font-display text-gold text-base">
+            {e.name}
+          </Link>
+          <div className="text-[11px] text-dim">
+            {REALM_LABELS[e.realm as Realm] ?? e.realm}
+            <Dev> · {e.id}</Dev>
+          </div>
+        </div>
       </div>
-      {rows.map(([k, v]) => (
-        <div key={k}>
-          <span className="text-[10px] uppercase tracking-wider text-dim">{k}: </span>
-          {v ? <span>{v.replace(/\n+/g, ' ').slice(0, 280)}</span> : <span className="text-dim">UNDEFINED</span>}
-        </div>
-      ))}
-      {secret && (
-        <div className="border border-danger/40 bg-danger/5 rounded p-1.5">
-          <span className="text-[10px] uppercase text-danger">Secret: </span>
-          {secret.content.replace(/\n+/g, ' ').slice(0, 300)}
-        </div>
+      {profile ? (
+        <>
+          <ProfileSummary p={profile} keys={keys} />
+          {profile.lastLogged && (
+            <div className="text-[11px] text-dim">
+              Last in log: session {profile.lastLogged.session_number}, “{profile.lastLogged.text.slice(0, 80)}”
+            </div>
+          )}
+        </>
+      ) : (
+        <Markdown text={displaySections(e.body, false).find((s) => s.content && !s.secret)?.content.slice(0, 300) ?? ''} className="prose-lore text-[14px]" />
       )}
-      {data.campaignState.slice(0, 3).map((s) => (
-        <div key={s.id} className="text-xs">
-          <span className="text-dim">{s.field}:</span> {s.value}
-        </div>
-      ))}
       {e.notes && <div className="text-xs text-dim italic line-clamp-3">{e.notes}</div>}
     </div>
   );
@@ -525,7 +534,7 @@ export function NpcRefPage() {
   const shown = pinned.length ? pinned : (data ?? []).filter((n) => n.favorite).map((n) => n.id);
   return (
     <div className="space-y-4">
-      <PageHeader title="NPC Quick Reference" subtitle="Compact cards for play. Pin NPCs here or star them as favorites. Missing details show as UNDEFINED; nothing is filled in." />
+      <PageHeader title="NPC Quick Reference" subtitle="Compact cards for play. Pin NPCs here or star them as favorites." />
       <div className="flex gap-2 max-w-lg">
         <EntityPicker value={null} types={['npc']} placeholder="Pin an NPC…" onChange={(id) => id && setSp({ ids: [...new Set([...pinned, id])].join(',') })} />
         {pinned.length > 0 && (
@@ -592,7 +601,7 @@ export function AgendasPage() {
     );
   return (
     <div className="space-y-4">
-      <PageHeader title="Faction Agendas" subtitle="Optional campaign progress tracks. They advance only when you advance them; nothing runs automatically and no world reset exists." />
+      <PageHeader title="Faction Agendas" subtitle="Progress tracks for what each faction is pursuing in this campaign." note="They advance only when you advance them; nothing runs automatically and no world reset exists." />
       <div className="panel-pad grid gap-2 md:grid-cols-[260px_1fr_auto] items-end">
         <Field label="Faction">
           <EntityPicker value={faction} types={['faction', 'cult', 'family']} onChange={setFaction} />
@@ -623,6 +632,58 @@ export function AgendasPage() {
         </div>
       ))}
       {data && !data.length && <p className="text-sm text-dim">No plans yet. Factions in the library: {factions?.length ?? 0}.</p>}
+      <InfluenceMatrix campaignId={activeCampaignId} />
+    </div>
+  );
+}
+
+/** Competing influence by region, from each faction's campaign profile (Influence by region). */
+function InfluenceMatrix({ campaignId }: { campaignId: number }) {
+  const { data } = useApi<{ faction_id: string; faction_name: string; region: string; level: string; note: string }[]>(`/api/profiles/influence?campaign=${campaignId}`);
+  if (!data) return null;
+  const regions = [...new Set(data.map((d) => d.region).filter(Boolean))];
+  const factions = [...new Map(data.map((d) => [d.faction_id, d.faction_name])).entries()];
+  const strength = (l: string) => Math.max(0, INFLUENCE_LEVELS.indexOf(l as (typeof INFLUENCE_LEVELS)[number]));
+  return (
+    <div className="panel-pad">
+      <div className="section-title mb-1">Influence by region</div>
+      <p className="text-xs text-dim mb-2">Set on each faction's profile. Regions where several factions are strong are marked as conflicts.</p>
+      {!regions.length ? (
+        <p className="text-sm text-dim">No influence recorded yet.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Region</th>
+                {factions.map(([id, name]) => (
+                  <th key={id}>
+                    <EntityLink id={id}>{name}</EntityLink>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {regions.map((r) => {
+                const cells = factions.map(([id]) => data.find((d) => d.faction_id === id && d.region === r));
+                const contested = cells.filter((c) => c && (strength(c.level) >= 3 || c.level === 'Contested')).length > 1;
+                return (
+                  <tr key={r} className={contested ? 'bg-danger/10' : ''}>
+                    <td>
+                      <EntityLink id={r} /> {contested && <span className="chip border-danger/60 text-danger ml-1">conflict</span>}
+                    </td>
+                    {cells.map((c, i) => (
+                      <td key={i} title={c?.note}>
+                        {c ? c.level : <span className="text-dim">—</span>}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
@@ -695,7 +756,7 @@ export function WorldEventsPage() {
   const userRows = (tl ?? []).filter((r) => r.origin === 'user');
   return (
     <div className="space-y-4">
-      <PageHeader title="World Events" subtitle="What has actually happened in play (recorded campaign changes) and DM-added timeline events. No events are generated." />
+      <PageHeader title="World Events" subtitle="What has happened in play, and events you added to the timeline." />
       <div className="panel overflow-x-auto">
         <table className="table">
           <thead>
@@ -724,7 +785,7 @@ export function WorldEventsPage() {
       </div>
       <div className="panel-pad">
         <div className="section-title mb-2">DM-added timeline events</div>
-        {userRows.length ? userRows.map((r) => <div key={r.id} className="text-sm">{r.time_label}: {r.event} <span className="text-xs text-dim">({r.access})</span></div>) : <p className="text-sm text-dim">None. Add events on the World Timeline page.</p>}
+        {userRows.length ? userRows.map((r) => <div key={r.id} className="text-sm">{r.time_label}: <Markdown text={r.event} className="inline [&_p]:inline" /></div>) : <p className="text-sm text-dim">None. Add events on the World Timeline page.</p>}
       </div>
     </div>
   );
@@ -747,7 +808,7 @@ export function TablesPage() {
     <div className="space-y-4">
       <PageHeader
         title="Random Tables"
-        subtitle="Your own tables. None are pre-filled, so nothing is invented for your world. One entry per line; prefix “3:” to weight an entry."
+        subtitle="One entry per line; start a line with “3:” to make it three times as likely." note="None are pre-filled, so nothing is invented for your world."
         actions={
           <button
             className="btn-primary"

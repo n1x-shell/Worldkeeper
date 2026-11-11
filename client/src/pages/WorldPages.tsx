@@ -10,21 +10,23 @@ import { Markdown } from '../components/Markdown';
 import { EntityPicker } from '../components/EntityPicker';
 import { Snippet, hitPath, type Hit } from '../components/SearchPalette';
 import { EntityTable } from './EntityList';
-import { splitSections } from '../lib/sections';
+import { Dev, useDebug } from '../components/Dev';
+import { displaySections } from '../lib/sections';
 
 /** Show a record's non-secret sections inline (used by overview pages). */
 function RecordExcerpt({ id, maxSections = 99 }: { id: string; maxSections?: number }) {
+  const debug = useDebug();
   const { data, error } = useApi<{ entity: Entity }>(`/api/entities/${id}`);
-  if (error) return <p className="text-sm text-dim">Record {id} is not in the library yet.</p>;
+  if (error) return <p className="text-sm text-dim">Not in the library yet.</p>;
   if (!data) return <Loading />;
-  const secs = splitSections(data.entity.body).filter((s) => !s.secret).slice(0, maxSections);
+  const secs = displaySections(data.entity.body, debug).filter((s) => !s.secret).slice(0, maxSections);
   return (
     <div>
       {secs.map((s, i) => (
         <Markdown key={i} text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
       ))}
       <Link className="text-sm text-arcane" to={`/e/${id}`}>
-        Open full record (including GM sections) →
+        Open full record →
       </Link>
     </div>
   );
@@ -33,7 +35,7 @@ function RecordExcerpt({ id, maxSections = 99 }: { id: string; maxSections?: num
 export function WorldOverview() {
   return (
     <div className="space-y-5">
-      <PageHeader title="World Overview" subtitle="One world, three branches: from your imported encyclopedia." />
+      <PageHeader title="World Overview" subtitle="One world, three branches." />
       <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
         <div className="panel p-5">
           <RecordExcerpt id="WLD-901" />
@@ -157,9 +159,10 @@ export function NewEntity() {
     return () => clearTimeout(t);
   }, [form.name]);
   const template = templates?.find((t) => t.type === form.type);
+  const debug = useDebug();
   return (
     <div className="max-w-3xl space-y-4">
-      <PageHeader title="New record" subtitle="New records start as PROPOSED and go to Canon Review. Missing facts stay UNDEFINED." />
+      <PageHeader title="New record" subtitle="New records start as proposed until you approve them in Canon Review." />
       {err && <ErrorBox error={err} />}
       <div className="panel-pad grid gap-3 md:grid-cols-2">
         <Field label="Name">
@@ -197,18 +200,18 @@ export function NewEntity() {
           <input className="input" value={form.source_raw} onChange={(e) => setForm({ ...form, source_raw: e.target.value })} />
         </Field>
       </div>
-      {template && (
+      {template && debug && (
         <p className="text-sm text-dim">
           Using the library template <strong>{template.name}</strong>: {template.fields.length} fields and {template.sections.length} sections will be added, all marked UNDEFINED.
         </p>
       )}
       {similar.length > 0 && (
         <div className="panel border-amber-500/50 p-3 text-sm">
-          <div className="text-amber-400 mb-1">Possible existing records. Link to them instead of creating a duplicate:</div>
+          <div className="text-amber-400 mb-1">Already in your library? Link to one of these instead of creating a duplicate:</div>
           <ul>
             {similar.slice(0, 8).map((s) => (
               <li key={s.id}>
-                <EntityLink id={s.id}>{s.name}</EntityLink> <span className="text-xs text-dim">{s.id}</span>
+                <EntityLink id={s.id}>{s.name}</EntityLink> <TypeBadge type={s.type} />
               </li>
             ))}
           </ul>
@@ -253,26 +256,67 @@ interface TimelineRow {
   access: string;
   entity_ids: string[];
   origin: string;
+  era: string | null;
+  era_origin: string | null;
+}
+interface Era {
+  key: string;
+  name: string;
+  sort_order: number;
+  description: string;
+  origin: string;
 }
 
 export function TimelinePage() {
   const { data, error, reload } = useApi<TimelineRow[]>('/api/timeline');
-  const [realm, setRealm] = useState('');
+  const { data: eras, reload: reloadEras } = useApi<Era[]>('/api/eras');
+  const [sp, setSp] = useSearchParams();
+  const realm = sp.get('realm') ?? '';
+  const eraFilter = (sp.get('era') ?? '').split(',').filter(Boolean);
+  const grouped = sp.get('group') === '1';
+  const setParam = (k: string, v: string) => {
+    const next = new URLSearchParams(sp);
+    if (v) next.set(k, v);
+    else next.delete(k);
+    setSp(next, { replace: true });
+  };
+  const toggleEra = (k: string) => setParam('era', (eraFilter.includes(k) ? eraFilter.filter((x) => x !== k) : [...eraFilter, k]).join(','));
   const [adding, setAdding] = useState(false);
+  const [managing, setManaging] = useState(false);
   const [form, setForm] = useState({ time_label: '', event: '', realm_label: '', access: 'PROPOSED' });
-  const rows = (data ?? []).filter((r) => !realm || r.realm_label.toLowerCase().includes(realm));
+  const eraName = (k: string | null) => (k ? eras?.find((e) => e.key === k)?.name ?? k : 'No era assigned');
+  const rows = (data ?? []).filter(
+    (r) => (!realm || r.realm_label.toLowerCase().includes(realm)) && (!eraFilter.length || eraFilter.includes(r.era ?? '__none')),
+  );
+  const counts = new Map<string, number>();
+  for (const r of data ?? []) counts.set(r.era ?? '__none', (counts.get(r.era ?? '__none') ?? 0) + 1);
+  const groups: [string | null, TimelineRow[]][] = grouped
+    ? ([...(eras ?? []).map((e) => [e.key, rows.filter((r) => r.era === e.key)]), [null, rows.filter((r) => !r.era)]] as [string | null, TimelineRow[]][]).filter((g) => g[1].length > 0)
+    : [[null, rows]];
+
+  const setRowEra = async (row: TimelineRow, era: string) => {
+    await api.patch(`/api/timeline/${row.id}/era`, { era });
+    void reload();
+  };
+
   return (
     <div className="space-y-4">
       <PageHeader
         title="World Timeline"
-        subtitle="Imported from the World Timeline index. 300 AB = Year 31 Unbound. Dates the source does not give are not invented. The 927 AB events are a possible future, not history."
+        subtitle="300 AB = Year 31 Unbound. The events of 927 AB are a possible future, not history." note="Imported from the World Timeline index. Dates the source does not give are not invented. Eras come from your library's era tags; rows take the era of the records they link to, and you can assign the rest."
         actions={
-          <button className="btn" onClick={() => setAdding(!adding)}>
-            <Plus size={14} /> Add event
-          </button>
+          <>
+            <button className="btn" onClick={() => setManaging(!managing)}>
+              Eras
+            </button>
+            <button className="btn" onClick={() => setAdding(!adding)}>
+              <Plus size={14} /> Add event
+            </button>
+          </>
         }
       />
       {error && <ErrorBox error={error} />}
+      {managing && eras && <EraManager eras={eras} onChange={() => (void reloadEras(), void reload())} />}
       {adding && (
         <div className="panel-pad grid gap-2 md:grid-cols-[160px_1fr_160px_140px_auto] items-end">
           <Field label="Time">
@@ -303,49 +347,166 @@ export function TimelinePage() {
           </button>
         </div>
       )}
-      <div className="flex gap-1.5">
-        {['', 'aetheris', 'kaelmar', 'world', 'both'].map((r) => (
-          <button key={r} className={`chip ${realm === r ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setRealm(r)}>
-            {r || 'All'}
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Filter by era">
+          <span className="text-xs uppercase tracking-wider text-dim mr-1">Era</span>
+          <button className={`chip ${!eraFilter.length ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setParam('era', '')}>
+            All
           </button>
-        ))}
+          {eras?.map((e) => (
+            <button key={e.key} aria-pressed={eraFilter.includes(e.key)} className={`chip ${eraFilter.includes(e.key) ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => toggleEra(e.key)}>
+              {e.name} ({counts.get(e.key) ?? 0})
+            </button>
+          ))}
+          <button aria-pressed={eraFilter.includes('__none')} className={`chip ${eraFilter.includes('__none') ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => toggleEra('__none')}>
+            Unassigned ({counts.get('__none') ?? 0})
+          </button>
+        </div>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-xs uppercase tracking-wider text-dim mr-1">Realm</span>
+          {['', 'aetheris', 'kaelmar', 'world', 'both'].map((r) => (
+            <button key={r} className={`chip ${realm === r ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setParam('realm', r)}>
+              {r || 'All'}
+            </button>
+          ))}
+          <label className="ml-3 text-sm text-dim flex items-center gap-1">
+            <input type="checkbox" checked={grouped} onChange={(e) => setParam('group', e.target.checked ? '1' : '')} /> Group by era
+          </label>
+        </div>
       </div>
       {!data ? (
         <Loading />
       ) : !rows.length ? (
-        <Empty title="No timeline rows">Import the archive to load the World Timeline.</Empty>
+        <Empty title="No timeline rows match">Import the archive, or change the filters.</Empty>
       ) : (
-        <ol className="relative border-l border-gold/40 ml-3 space-y-4">
-          {rows.map((r) => (
-            <li key={r.id} className="ml-5">
-              <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full border-2 border-gold bg-bg" />
-              <div className="panel p-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-display text-gold text-sm">{r.time_label}</span>
-                  <span className="chip border-line text-dim">{r.realm_label}</span>
-                  {/SECRET/i.test(r.access) && <CanonBadge status="SECRET" />}
-                  {r.origin === 'user' && <CanonBadge status="PROPOSED" />}
-                </div>
-                <Markdown text={r.event} className="prose-lore text-[16px]" />
-                <div className="text-xs text-dim">
-                  {r.access} · {r.source}
-                </div>
-              </div>
-            </li>
-          ))}
-        </ol>
+        groups.map(([era, list]) => (
+          <section key={era ?? 'none'}>
+            {grouped && <h2 className="section-title mb-2">{eraName(era)}</h2>}
+            <ol className="relative border-l border-gold/40 ml-3 space-y-4 mb-6">
+              {list.map((r) => (
+                <li key={r.id} className="ml-5">
+                  <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full border-2 border-gold bg-bg" />
+                  <div className="panel p-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-display text-gold text-sm">{r.time_label}</span>
+                      <span className="chip border-line text-dim">{r.realm_label}</span>
+                      {/SECRET/i.test(r.access) && <CanonBadge status="SECRET" />}
+                      {r.origin === 'user' && <CanonBadge status="PROPOSED" />}
+                      <select
+                        className="input w-auto py-0.5 text-xs ml-auto"
+                        value={r.era ?? ''}
+                        onChange={(e) => setRowEra(r, e.target.value)}
+                        aria-label={`Era for ${r.time_label}`}
+                        title={r.era_origin === 'user' ? 'Assigned by you' : r.era_origin === 'derived' ? 'From the linked record' : 'Not assigned'}
+                      >
+                        <option value="">No era</option>
+                        {eras?.map((e) => (
+                          <option key={e.key} value={e.key}>
+                            {e.name}
+                            {r.era === e.key && r.era_origin === 'derived' ? ' (from record)' : ''}
+                          </option>
+                        ))}
+                        {r.era_origin === 'user' && <option value="auto">↺ Use linked record's era</option>}
+                      </select>
+                    </div>
+                    <Markdown text={r.event} className="prose-lore text-[16px]" />
+                    <Dev>
+                      <div className="text-xs text-dim">
+                        {r.access} · {r.source}
+                      </div>
+                    </Dev>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))
       )}
       <div className="panel p-4">
-        <div className="section-title mb-2">Event records</div>
-        <EventList />
+        <div className="section-title mb-2">Event records{eraFilter.length ? ' in the selected eras' : ''}</div>
+        <EventList eras={eraFilter} />
       </div>
     </div>
   );
 }
 
-function EventList() {
+function EraManager({ eras, onChange }: { eras: Era[]; onChange: () => void }) {
+  const [err, setErr] = useState<string | null>(null);
+  const [name, setName] = useState('');
+  const move = async (i: number, d: -1 | 1) => {
+    const j = i + d;
+    if (j < 0 || j >= eras.length) return;
+    await api.patch(`/api/eras/${eras[i].key}`, { sort_order: eras[j].sort_order });
+    await api.patch(`/api/eras/${eras[j].key}`, { sort_order: eras[i].sort_order });
+    onChange();
+  };
+  return (
+    <div className="panel-pad space-y-2">
+      <div className="section-title">Eras</div>
+      <p className="text-xs text-dim">Rename, reorder or add eras. Aetheris and Kaelmar keep their own chronologies, so the order is only for display.</p>
+      {err && <ErrorBox error={err} />}
+      {eras.map((e, i) => (
+        <div key={e.key} className="flex items-center gap-2">
+          <input
+            className="input max-w-xs"
+            defaultValue={e.name}
+            onBlur={async (ev) => {
+              if (ev.target.value.trim() && ev.target.value !== e.name) {
+                await api.patch(`/api/eras/${e.key}`, { name: ev.target.value.trim() });
+                onChange();
+              }
+            }}
+            aria-label={`Name of era ${e.key}`}
+          />
+          <Dev>
+            <span className="text-xs text-dim">era/{e.key}</span>
+          </Dev>
+          {e.origin === 'user' && <CanonBadge status="PROPOSED" />}
+          <button className="btn-ghost" onClick={() => move(i, -1)} aria-label="Move earlier">
+            ↑
+          </button>
+          <button className="btn-ghost" onClick={() => move(i, 1)} aria-label="Move later">
+            ↓
+          </button>
+        </div>
+      ))}
+      <div className="flex gap-2">
+        <input className="input max-w-xs" value={name} onChange={(e) => setName(e.target.value)} placeholder="New era name" />
+        <button
+          className="btn"
+          disabled={!name.trim()}
+          onClick={async () => {
+            try {
+              const key = name
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-|-$/g, '');
+              await api.post('/api/eras', { key, name: name.trim() });
+              setName('');
+              onChange();
+            } catch (x) {
+              setErr((x as Error).message);
+            }
+          }}
+        >
+          <Plus size={13} /> Add era
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function EventList({ eras = [] }: { eras?: string[] }) {
   const { data } = useApi<EntitySummary[]>('/api/entities?type=event');
-  return data ? <EntityTable rows={data} /> : <Loading />;
+  if (!data) return <Loading />;
+  const rows = eras.length
+    ? data.filter((e) => {
+        const tagged = e.tags.filter((t) => t.startsWith('era/')).map((t) => t.slice(4));
+        return tagged.length ? tagged.some((t) => eras.includes(t)) : eras.includes('__none');
+      })
+    : data;
+  return rows.length ? <EntityTable rows={rows} /> : <p className="text-sm text-dim">No event records carry these era tags.</p>;
 }
 
 export function MysteriesPage() {
@@ -357,7 +518,9 @@ export function MysteriesPage() {
         {['WLD-907', 'WLD-908', 'DEC-901'].map((id) => (
           <Link key={id} to={`/e/${id}`} className="panel p-4 hover:border-gold/60">
             <EntityLink id={id} />
-            <div className="text-xs text-dim mt-1">{id}</div>
+            <Dev>
+              <div className="text-xs text-dim mt-1">{id}</div>
+            </Dev>
           </Link>
         ))}
       </div>
@@ -373,10 +536,11 @@ export function SearchPage() {
   const [type, setType] = useState('');
   const [canon, setCanon] = useState('');
   const [kind, setKind] = useState('');
-  const { data, loading } = useApi<Hit[]>(q.trim() ? `/api/search${qs({ q, realms: realm, types: type, canon, kinds: kind, limit: 100 })}` : null);
+  const debugSearch = useDebug();
+  const { data, loading } = useApi<Hit[]>(q.trim() ? `/api/search${qs({ q, realms: realm, types: type, canon, kinds: kind || (debugSearch ? undefined : 'entity,session,quest,note,adventure,profile'), limit: 100 })}` : null);
   return (
     <div className="space-y-4">
-      <PageHeader title="Search" subtitle="Titles, aliases, stable IDs, tags, full text, source documents, sessions, quests and notes." />
+      <PageHeader title="Search" subtitle="Names, other names, full text, sessions, quests and notes." />
       <div className="flex flex-wrap gap-2">
         <input
           className="input max-w-lg"
@@ -392,7 +556,7 @@ export function SearchPage() {
         <select className="input w-auto" value={kind} onChange={(e) => setKind(e.target.value)} aria-label="Kind">
           <option value="">Everything</option>
           <option value="entity">Records</option>
-          <option value="doc">Source documents</option>
+          {debugSearch && <option value="doc">Source documents</option>}
           <option value="session">Sessions</option>
           <option value="quest">Quests</option>
           <option value="note">Notes</option>
@@ -430,7 +594,9 @@ export function SearchPage() {
                 <span className="text-ink hover:text-gold font-medium">{h.title}</span>
                 {h.kind === 'entity' ? (
                   <>
-                    <span className="text-xs text-dim">{h.ref}</span>
+                    <Dev>
+                      <span className="text-xs text-dim">{h.ref}</span>
+                    </Dev>
                     {h.type && <TypeBadge type={h.type} />}
                     {h.realm && <RealmBadge realm={h.realm} />}
                     {h.canon_status && <CanonBadge status={h.canon_status} />}
@@ -464,7 +630,7 @@ export function DocumentsPage() {
   const [filter, setFilter] = useState('');
   return (
     <div className="space-y-4">
-      <PageHeader title="Source Documents" subtitle="Every imported file, stored verbatim. Setting bibles and references are protected and never overwritten." />
+      <PageHeader title="Source Documents" note="Every imported file, stored verbatim. Setting bibles and references are protected and never overwritten." />
       <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
         <div className="panel p-2 max-h-[80vh] overflow-auto">
           <input className="input mb-2" placeholder="Filter files…" value={filter} onChange={(e) => setFilter(e.target.value)} />

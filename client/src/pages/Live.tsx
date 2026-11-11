@@ -4,11 +4,13 @@ import { Check, Plus, Square, Swords } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Session, StateRow } from '../lib/types';
-import { EntityLink, Field, Loading, PageHeader, ErrorBox } from '../components/ui';
+import { AutoTextarea, EntityLink, Field, Loading, PageHeader, ErrorBox } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { DiceRoller, EncounterTracker, NpcCard } from './DmTools';
 import { NeedCampaign, useActiveOverview, type Quest } from './Campaign';
 import { Markdown } from '../components/Markdown';
+import { useDebug } from '../components/Dev';
+import { isEditorial } from '../lib/sections';
 
 interface LogEntry {
   id: number;
@@ -97,7 +99,7 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
     <div className="space-y-3">
       <PageHeader
         title={`Live · Session ${session.number}${session.title ? `: ${session.title}` : ''}`}
-        subtitle="Everything you record here feeds the recap draft and the change review."
+        note="Everything you record here feeds the recap draft and the change review."
         actions={
           <>
             <Link className="btn" to={`/session/${session.id}`}>
@@ -227,9 +229,9 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
                 </button>
               ))}
             </div>
-            <textarea
-              className="input"
-              rows={3}
+            <AutoTextarea
+              minRows={3}
+              className="font-sans text-sm"
               value={text}
               onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => {
@@ -286,6 +288,7 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
               <Plus size={12} /> New quest
             </button>
           </div>
+          <RevealPanel sessionId={session.id} onRevealed={() => void reloadLog()} />
           <div className="panel-pad space-y-2">
             <div className="section-title">World change (for review)</div>
             <EntityPicker value={chg.entity} onChange={(id) => setChg({ ...chg, entity: id })} placeholder="Which record changed?" />
@@ -322,6 +325,98 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+interface RevealEntity {
+  id: string;
+  name: string;
+  revealed: boolean;
+  revealed_sections: string[];
+  revealed_facts: string[];
+  canon_flags: string[];
+}
+
+/** Reveal information to players without leaving live mode. Every reveal is logged to the session. */
+function RevealPanel({ sessionId, onRevealed }: { sessionId: number; onRevealed: () => void }) {
+  const debug = useDebug();
+  const [id, setId] = useState<string | null>(null);
+  const { data, reload } = useApi<{ entity: RevealEntity; sections: { heading: string; secret: boolean }[] }>(id ? `/api/entities/${encodeURIComponent(id)}` : null);
+  const [fact, setFact] = useState('');
+  const [msg, setMsg] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const reveal = async (body: Record<string, unknown>, done: string) => {
+    if (!id) return;
+    try {
+      await api.post(`/api/entities/${encodeURIComponent(id)}/reveal`, { ...body, session_id: sessionId });
+      setMsg(done);
+      setErr(null);
+      await reload();
+      onRevealed();
+    } catch (x) {
+      setErr((x as Error).message);
+    }
+  };
+  const e = data?.entity;
+  return (
+    <div className="panel-pad space-y-2">
+      <div className="section-title">Reveal to players</div>
+      <EntityPicker value={id} onChange={(v) => (setId(v), setMsg(null), setErr(null))} placeholder="What did they learn about?" />
+      {err && <div className="text-xs text-danger">{err}</div>}
+      {msg && <div className="text-xs text-ok">{msg}</div>}
+      {e && (
+        <div className="space-y-2 text-sm">
+          <div className="flex items-center gap-2">
+            <span className={e.revealed ? 'text-ok text-xs' : 'text-dim text-xs'}>{e.revealed ? 'Known to players' : 'Unknown to players'}</span>
+            {!e.revealed && (
+              <button className="btn text-xs ml-auto" onClick={() => reveal({ revealed: true }, `${e.name} is now known to players.`)}>
+                Reveal that it exists
+              </button>
+            )}
+          </div>
+          {e.canon_flags.includes('SECRET') && <div className="text-[11px] text-amber-400">Contains secrets: check a section before revealing it.</div>}
+          <div className="flex flex-wrap gap-1">
+            {data!.sections
+              .filter((s) => s.heading && (debug || !isEditorial(s.heading)))
+              .map((s) => {
+                const shown = e.revealed_sections.includes(s.heading);
+                return (
+                  <button
+                    key={s.heading}
+                    disabled={s.secret || shown}
+                    title={s.secret ? 'GM-only sections cannot be published; write a fact instead' : shown ? 'Already revealed' : 'Reveal this section'}
+                    className={`chip ${shown ? 'border-ok/60 text-ok' : s.secret ? 'border-line text-dim opacity-50' : 'border-line text-ink hover:border-gold'}`}
+                    onClick={() => reveal({ section: s.heading }, `Revealed “${s.heading}”.`)}
+                  >
+                    {shown ? '✓ ' : ''}
+                    {s.heading}
+                  </button>
+                );
+              })}
+          </div>
+          <div className="flex gap-1">
+            <input className="input" value={fact} onChange={(ev) => setFact(ev.target.value)} placeholder="A fact they learned, in your words" onKeyDown={(ev) => ev.key === 'Enter' && fact.trim() && (reveal({ fact: fact.trim() }, 'Fact revealed.'), setFact(''))} />
+            <button
+              className="btn-primary"
+              disabled={!fact.trim()}
+              onClick={() => {
+                void reveal({ fact: fact.trim() }, 'Fact revealed.');
+                setFact('');
+              }}
+            >
+              Reveal
+            </button>
+          </div>
+          {e.revealed_facts.length > 0 && (
+            <ul className="text-xs text-dim list-disc pl-4">
+              {e.revealed_facts.slice(-4).map((f, i) => (
+                <li key={i}>{f}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
     </div>
   );
 }

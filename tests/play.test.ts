@@ -66,3 +66,16 @@ describe('damage and concentration', () => {
     expect([1, 4, 5, 9, 13, 17, 20].map(proficiencyBonus)).toEqual([2, 2, 3, 4, 5, 6, 6]);
   });
 });
+
+import { rankRecords } from '../client/src/lib/rank.js';
+describe('record-link suggestion ranking', () => {
+  const mk = (id: string, name: string, extra: Record<string, unknown> = {}) =>
+    ({ id, name, type: 'npc', realm: 'world', canon_status: 'CANON', canon_flags: [], category_raw: null, parent_id: null, tags: [], archived: false, favorite: false, revealed: false, updated_at: '', ...extra }) as never;
+  const all = [mk('NPC-010', 'Mara Venn'), mk('NPC-308', 'Archivist Elder Venn Tull'), mk('SET-001', 'Hollow Refuge'), mk('LOC-015', 'Legacy', { type: 'redirect' }), mk('NPC-099', 'Old Mara', { archived: true })];
+  it('prefers name prefix, then word prefix, and skips redirects and archived records', () => {
+    expect(rankRecords(all, 'venn').map((e: { id: string }) => e.id)).toEqual(['NPC-010', 'NPC-308']);
+    expect(rankRecords(all, 'mara').map((e: { id: string }) => e.id)).toEqual(['NPC-010']);
+    expect(rankRecords(all, 'set-001').map((e: { id: string }) => e.id)).toEqual(['SET-001']);
+    expect(rankRecords(all, 'legacy')).toEqual([]);
+  });
+});

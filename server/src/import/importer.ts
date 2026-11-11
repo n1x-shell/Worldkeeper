@@ -6,7 +6,9 @@ import { blockToDraft, extractRefs, ID_RE_STRICT, isTemplatePlaceholder, type En
 import type { SourceFile } from './scan.js';
 import { contentHash, getEntity, rowToEntity, saveRevision, type EntityRow } from '../repo/entities.js';
 import { rebuildDerivedRelationships } from '../repo/relationships.js';
+import { loadMentionIndex } from '../repo/mentions.js';
 import { reindexAll } from '../repo/search.js';
+import { deriveTimelineEras, eraVocabularyFromText, seedEras } from '../repo/eras.js';
 
 export type DocKind =
   | 'bible'
@@ -358,21 +360,35 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
 
     // 3. Derived relationships for every imported record (refs may now resolve to newly created records).
     const importedIds = (db.prepare(`SELECT id FROM entities WHERE origin = 'import'`).all() as { id: string }[]).map((r) => r.id);
-    for (const id of importedIds) rebuildDerivedRelationships(db, id);
+    const mentionIndex = loadMentionIndex(db);
+    for (const id of importedIds) rebuildDerivedRelationships(db, id, mentionIndex);
     result.relationships = (db.prepare('SELECT COUNT(*) AS n FROM relationships').get() as { n: number }).n;
 
     // 4. Timeline index rows (imported rows only; DM-added rows are kept).
     const timeline = files.find((f) => /04_World_Timeline\.md$/i.test(f.path));
     if (timeline) {
+      // Keep the DM's hand-assigned eras across re-imports.
+      const kept = new Map(
+        (db.prepare(`SELECT time_label, event, era FROM timeline_rows WHERE origin = 'import' AND era_origin = 'user'`).all() as { time_label: string; event: string; era: string | null }[]).map(
+          (r) => [`${r.time_label}\u0000${r.event}`, r.era],
+        ),
+      );
       db.prepare(`DELETE FROM timeline_rows WHERE origin = 'import'`).run();
       const ins = db.prepare(
-        `INSERT INTO timeline_rows (sort_order, time_label, event, realm_label, source, access, entity_ids, origin) VALUES (?, ?, ?, ?, ?, ?, ?, 'import')`,
+        `INSERT INTO timeline_rows (sort_order, time_label, event, realm_label, source, access, entity_ids, origin, era, era_origin) VALUES (?, ?, ?, ?, ?, ?, ?, 'import', ?, ?)`,
       );
       for (const r of parseTimeline(timeline.content)) {
-        ins.run(r.sort_order, r.time_label, r.event, r.realm_label, r.source, r.access, JSON.stringify(r.entity_ids));
+        const key = `${r.time_label}\u0000${r.event}`;
+        const userEra = kept.has(key) ? kept.get(key)! : undefined;
+        ins.run(r.sort_order, r.time_label, r.event, r.realm_label, r.source, r.access, JSON.stringify(r.entity_ids), userEra ?? null, userEra !== undefined ? 'user' : null);
         result.timelineRows++;
       }
     }
+
+    // 4b. Eras: vocabulary from the library's own tag documentation and era tags; then derive row eras.
+    const vocab = files.map((f) => eraVocabularyFromText(f.content)).find((v) => v.length) ?? [];
+    seedEras(db, vocab);
+    deriveTimelineEras(db);
 
     // 5. Templates.
     const insT = db.prepare(

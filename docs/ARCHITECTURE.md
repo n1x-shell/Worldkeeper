@@ -14,7 +14,7 @@
 | Archives | adm-zip | ZIP import, exports, backup archives |
 | Tests | vitest + supertest; Playwright smoke script | Data operations, HTTP API, player safety, browser flows |
 
-**Desktop packaging (future):** the server is a plain Node process with a configurable data directory and the client is static files, so Tauri can ship it as a sidecar (or the server can be ported to Tauri commands later). Nothing depends on a browser-only store.
+**Desktop packaging:** Tauri 2 shell (`src-tauri/`) that launches the server, bundled into one ESM file with esbuild, on a bundled Node.js runtime (sidecar), with data in the OS app-data folder. See [DESKTOP.md](DESKTOP.md).
 
 ## Folder layout
 
@@ -61,6 +61,10 @@ All tables are created by `server/src/db/migrations.ts` (versioned, append-only)
 - `campaigns`, `characters` (2024 sheet basics in JSON), `quests`, `adventures` (+ `scenes`, `scene_links`), `sessions` (prep JSON, recap), `session_log`, `encounters` (combatants JSON), `faction_plans`, `notes`, `random_tables`, `dice_log`.
 - `campaign_state` — the overlay: `(campaign, entity, field, value, status)`. A new active value supersedes the previous one. Statuses: proposed → active / rejected; promoted.
 - `proposals` — Canon Review queue (new records, campaign promotions).
+
+**Profiles and eras (v0.2)**
+- `profiles` — DM values for NPC/faction profile fields, keyed by `(entity_id, campaign_id)`; `campaign_id = 0` is the world-level profile. Field definitions live in `shared/profiles.ts`; source values are extracted read-only from the record's sections/fields at request time, never copied.
+- `eras` — era vocabulary seeded from the library's `era/` tag documentation and `era/*` tags (DM can rename, reorder, add). `timeline_rows.era` / `era_origin` (`derived` from linked records' era tags, or `user`); DM assignments survive re-imports.
 
 **Atlas**
 - `maps` (image or abstract, parent map, linked record, layers, player visibility), `map_markers` (x/y in image pixels, linked record, layer, category, hidden, child map), `map_shapes` (region polygons, routes).

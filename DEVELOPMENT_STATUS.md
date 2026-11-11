@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-11 · First release (v0.1.0)_
+_Last updated: 2026-11-11 · v0.2.0 "At the table"_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -14,7 +14,55 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
 
 **Import result on the real archive:** 421 records (all non-reference IDs), 475 source documents, 1,008 relationships, 17 timeline rows, 17 templates, 18 duplicate IDs resolved, 23 copies skipped, **0 broken references**. Counts include 13 vaults, 13 shards, 7 Ethereal domains, 110 NPCs. Re-import: 421 unchanged.
 
-## Completed functionality (working and tested)
+## Interface clean-up and `@[Name]` links (working and tested)
+
+- **Debug flag:** technical details are hidden unless debug mode is on. Turn it on with **Settings → Technical details** (stored as setting `debug`), or force it with `WORLDKEEPER_DEBUG=1`. `/api/meta` reports the state. What is hidden:
+  - stable IDs in headers, lists, pickers, search results, graph nodes, vault and shard cards, and Canon Review
+  - source files and citations, tags, raw category/realm/canon strings
+  - the source's editorial sections: Source, References, Unspecified fields, Tome implementation, Review notes, Limits, Limits of the source, Record boundaries, Source boundary, Use and verification, Missing facts, Limitations, Open questions, Unknowns, Status
+  - import-report detail tabs and how-it-works page notes (`PageHeader note=`)
+  - the Source Documents and Broken References pages, removed from the sidebar
+  - The record text itself is unchanged; this is display only. GM-only sections stay visible to the DM and flagged.
+- **`@[Name]` links** (`shared/mentions.ts`, used by both server and client):
+  - Mentions resolve by name, by name without "the", or by alias. Records that share a name take a type qualifier, `@[Kaelholm (Settlement)]`; `@[Name|ID]` is accepted as an explicit fallback.
+  - The source's `Name [ID]` references render as the name; when the words before the ID are not the record's name, a small ↗ link is shown.
+  - Typing `@` in any DM text area suggests records and inserts the shortest unambiguous mention. Esc dismisses it for that `@`, and long prose without a match stops suggesting.
+  - Mentions create text-derived relationships (graph, connections). Unresolved and ambiguous mentions appear in Broken References and render with a dotted underline.
+  - Player text shows names only: links go to revealed records; other mentions become plain words.
+  - Recap drafts and from-hook adventures now write `@[Name]`.
+- **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
+- **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.2 "At the table" (working and tested)
+
+- **Record-link suggestions while typing** (now triggered by `@`; see above): typing `[[` in any DM text area opens a ranked list of records. The text areas covered: record body, DM notes, session prep, scenes, adventure fields, recaps, quests, notes, NPC profile fields and the live log. Choosing one inserts `Name [ID]`, the library's own reference format. Keyboard: arrows, Enter or Tab, Esc. Redirects and archived records are excluded.
+- **NPC and faction profiles:**
+  - Structured forms on the record page. Field definitions are in `shared/profiles.ts`.
+  - Each field shows the source's own text read-only, extracted from the record's sections and metadata fields and from structured relationships, next to a DM value.
+  - World-scope values sit beside the canon text, never in it. Campaign-scope values (attitude, status, current location, promises, debts, what the party knows, recent actions, current plans, influence by region, recent events) are stored per campaign.
+  - Last encountered is read automatically from the session log.
+  - Portraits are uploaded and checked by file content.
+  - NPC quick cards and the DM screen use the profiles.
+  - Faction Agendas shows an influence-by-region matrix that flags contested regions.
+  - Profiles are never part of player data, and the player-only server has no profile routes.
+- **Reveal to players during play:** a live-mode panel reveals that a record exists, reveals individual sections, or adds a revealed fact.
+  - One server call updates the record and logs the reveal to the session, in a single transaction.
+  - GM-only and secret sections are refused on the server.
+  - Reveals appear in the recap draft under "Revealed to players".
+- **Timeline eras:**
+  - The era vocabulary is read from the library's own `era/` tag documentation (the implementation guide) and the `era/*` tags on records. Display names are title-cased and can be renamed, reordered or added to.
+  - Timeline rows take the era of the records they link to. Rows without such a link stay unassigned, not guessed.
+  - The DM can assign or override any row, and these assignments survive re-imports.
+  - The timeline can be filtered by era and realm and grouped by era; the event list below it follows the filter. The relationship graph has a historical-era filter.
+  - Libraries imported with v0.1 are backfilled automatically on startup from the stored source documents.
+- **Desktop app (Tauri 2):**
+  - `src-tauri/` holds the Rust shell. It launches the server, bundled into one file with esbuild, on a bundled Node.js runtime (sidecar), bound to 127.0.0.1 on a free port, with data in the OS app-data folder.
+  - It shows a loading page, then the app, or a readable error naming the log file.
+  - Quitting stops the server cleanly with SIGTERM. A parent-process watchdog makes the server exit if the app is killed.
+  - `npm run desktop:prepare | desktop:dev | desktop:build`; see `docs/DESKTOP.md`.
+  - GitHub Actions workflows: `ci.yml` (typecheck, tests, build) and `desktop.yml` (installers for Linux, macOS and Windows).
+
+## Completed functionality from v0.1 (working and tested)
 
 **Core / data engine**
 - SQLite database with versioned migrations, WAL, FTS5 full-text search.
@@ -53,21 +101,23 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
 
 ## Partially completed
 
-- **Editor:** Markdown textarea with live preview and `Name [ID]` linking; no WYSIWYG and no inline `[[` autocomplete yet. Undo is the browser's textarea undo plus revision restore.
+- **Editor:** Markdown text area with live preview, `Name [ID]` linking and `[[` suggestions. There is no WYSIWYG editor. Undo is the browser's text-area undo, which is kept for inserted links where the browser supports `insertText`, plus revision restore.
+- **Desktop builds:** the Linux build was compiled, launched and tested here (see Tests). The macOS and Windows builds are configured (`desktop.yml`, platform-specific code paths in `lib.rs`) but have **not been built or run yet**. Builds are unsigned.
 - **Resizable panels:** layouts are responsive but panels are not drag-resizable.
 - **Relationship era filter:** the graph filters by type/realm/canon/relationship; there is no structured "historical era" field in the source to filter on (era tags exist on some records only).
-- **Faction records:** imported faction pages show source text; there is no dedicated per-faction structured form (ideology, resources, influence by region). Campaign-side attitudes/plans are in Faction Agendas.
-- **NPC extra fields** (last encountered, promises, debts, what the party knows): recorded as campaign-state fields or DM notes rather than dedicated form fields.
 - **Map labels:** markers can be used as labels (category `label`, permanent tooltips on abstract maps); no free-floating text-only label type.
 - **Player access control:** player mode is a separate read-only server; there is no per-player login.
 
 ## Not started
 
 - Optional AI assistant (Phase 22) — intentionally deferred until the core is in daily use.
-- Tauri desktop packaging (architecture prepared; see docs/ARCHITECTURE.md).
 - Rich-text/WYSIWYG editor, map marker icon library, timeline drag-reordering.
 
 ## Known issues
+
+- The desktop app is about 140 MB, most of it the bundled Node.js runtime.
+- The desktop app only serves this computer. A LAN player server still needs `npm run start:player` from the repository.
+- Opening two desktop windows at once shares one database. SQLite handles this safely, but there is no single-instance lock yet.
 
 - Client bundle is ~1 MB (one chunk); fine locally, could be code-split.
 - Import keeps the whole archive in memory during preview (fine for this ~2.4 MB library; large image-heavy archives are not supported because only `.md` files are read).
@@ -76,17 +126,41 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
 
 ## Tests performed
 
+**v0.2:**
+- **Unit and API tests:**
+  - `tests/v02.test.ts`: era vocabulary parsing, derivation from linked records, DM overrides surviving re-import, backfill on reopen, graph era filter.
+  - Profiles: source extraction, scope storage, validation, the canon record left untouched, the influence matrix, last encountered from the log, no exposure to players.
+  - Live reveals: section, fact and record reveals logged to the session; the recap section; GM-only sections, unknown sections and empty requests refused.
+  - Link-suggestion ranking.
+- **Total:** `npm test` reports 52 passing (plus the real-archive test when `WORLDKEEPER_TEST_ARCHIVE` is set).
+- **Browser test (`npm run e2e`)**, extended:
+  - typing `[[blind se` + Enter inserts `The Blind Seer [NPC-001]` and autosaves
+  - the NPC profile shows source sections and `UNDEFINED`; DM values persist across a reload
+  - live reveal of record, section and fact reaches `/api/player/entities/NPC-010`, the GM-only chip is disabled, and the secret text is absent
+  - timeline era filter, unassigned filter, manual assignment and grouping
+- **Upgrade path:** a v0.1 database was opened by v0.2: migration 4 ran and eras were backfilled. A 65-route browser sweep showed no console or page errors.
+- **Desktop (Linux, under Xvfb):**
+  - `desktop:prepare` passes its own check that the bundle starts on plain Node.
+  - The debug build launched the window, the sidecar answered on 127.0.0.1, the UI rendered, and the database was created in the data folder.
+  - A window close through a window manager stopped the server via SIGTERM (exit handler), and a SIGKILL of the app stopped it via the watchdog, leaving no orphaned processes.
+  - The release build produced `.deb` and `.rpm` installers (~50 MB each).
+  - The `.deb` was installed with apt: `/usr/bin/worldkeeper` launched with its own `worldkeeper-node` runtime and used `~/.local/share/app.worldkeeper.desktop`.
+  - The real archive was imported through the installed app's server: 421 records, 1,008 links, 0 broken. Search and eras worked.
+  - Closing or terminating the app left no server processes.
+  - Testing the installer caught a packaging bug: the sidecar was first installed as `/usr/bin/node`, which would clash with a system Node.js. It was renamed to `worldkeeper-node`.
+
+**v0.1:**
+
 - `npm test`: 41 passing (parser/normaliser, import planning and commit, duplicate handling, rollback, idempotency, local-edit protection, protected bibles, search, relationships/graph, persistence after reopen, revisions/revert/coalescing, concurrency, canon review, campaign overlay and promotion, recap generation, player projection and player-only server, backup→restore with relationships, JSON/Markdown/campaign export round-trips, atlas upload/marker/player visibility, dice/initiative/damage/concentration).
 - `WORLDKEEPER_TEST_ARCHIVE=… npm test`: real-archive integration test passes (every ID imported once, 0 broken refs, 13 vaults sealed, 13 shards, 7 domains, LOC-015 redirect, idempotent).
 - Browser (Playwright/Chromium) `scripts/e2e-smoke.mjs`: import through UI, dashboard, search → record, edit persists across reload, relationships, graph, vaults, Ethereal explorer, campaign → live session → log + encounter → end → recap draft, player view empty until reveal, atlas. Additional sweep of 61 routes with zero console/page errors; atlas upload + marker placement; mobile width (390px) without horizontal overflow.
 - `npm run typecheck` clean (client and server); production build succeeds.
 
-## Next development steps (suggested milestone: v0.2 "At the table")
+## Next development steps (suggested milestone: v0.3)
 
-1. Editor: `[[` record-link autocomplete, side-by-side section editing, keyboard save.
-2. Structured faction and NPC panels (ideology, resources, influence by region; last encountered, promises, debts, party knowledge) backed by campaign state.
-3. Player-view polish: per-campaign publication, handout records, "reveal during play" quick action in live mode.
-4. Timeline: era tags and filtering; link campaign sessions onto the timeline.
-5. Code-split the client; add Playwright tests to CI.
-6. Tauri packaging (server as sidecar, data dir in the OS app-data folder).
-7. Optional provider-independent AI assistant that cites records and only creates PROPOSED drafts.
+1. Run the `desktop.yml` workflow and fix any macOS or Windows issues. Add code signing. Add a single-instance lock and an in-app "share with players on my network" toggle.
+2. Player view: per-campaign publication, handout records, a player-facing timeline filtered by revealed eras and events.
+3. Timeline: place campaign sessions on the timeline, with in-world dates per session.
+4. Editor: side-by-side section editing, keyboard save, link suggestions inside the record picker.
+5. Code-split the client; run the Playwright smoke test in CI.
+6. Optional provider-independent AI assistant that cites records and only creates PROPOSED drafts.
