@@ -131,7 +131,7 @@ Each person has:
 
 - A monk of the Celestial Order, in @[The Radiant Ascendancy].
 - Once a Wildborn warrior.
-- Eldest of the Vale family, a minor house of Ashen Spire. Brother to @[Tobias Vale] of the Shadow Pact.
+- Eldest of the Vale family, a minor house of Ashen Spire. Brother to @[Tobias Vale], @[Professor Orin Vale] and @[Sister Elyra Vale].
 
 **What people say**
 
@@ -756,7 +756,7 @@ Each person has:
 **Who they are**
 
 - Spymaster of the Shadow Pact, in @[The Eternal Veil].
-- Of the Vale family, a minor house of Ashen Spire. The first of the Vales to leave. Brother to @[Brother Altharion Vale] of the Celestial Order.
+- Of the Vale family, a minor house of Ashen Spire, and the first of the Vales to leave. Brother to @[Brother Altharion Vale], @[Professor Orin Vale] and @[Sister Elyra Vale].
 
 **What people say**
 
