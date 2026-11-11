@@ -1,0 +1,174 @@
+@import '@fontsource/cinzel/500.css';
+@import '@fontsource/cinzel/700.css';
+@import '@fontsource/eb-garamond/400.css';
+@import '@fontsource/eb-garamond/500.css';
+@import '@fontsource/eb-garamond/400-italic.css';
+@import 'leaflet/dist/leaflet.css';
+@import '@xyflow/react/dist/style.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme tokens (RGB triplets so Tailwind can apply opacity). Dark is the default. */
+:root,
+.dark {
+  --bg: 17 18 22;
+  --panel: 24 26 31;
+  --raised: 33 36 43;
+  --line: 52 56 66;
+  --ink: 228 223 210;
+  --dim: 150 146 136;
+  --gold: 201 162 74;
+  --parchment: 233 222 196;
+  --parchink: 52 40 26;
+  --arcane: 122 140 214;
+  --danger: 205 92 82;
+  --ok: 110 170 120;
+  color-scheme: dark;
+}
+.light {
+  --bg: 240 236 226;
+  --panel: 250 247 240;
+  --raised: 255 253 248;
+  --line: 214 205 186;
+  --ink: 36 32 26;
+  --dim: 108 100 86;
+  --gold: 150 112 30;
+  --parchment: 246 238 218;
+  --parchink: 52 40 26;
+  --arcane: 72 88 168;
+  --danger: 170 60 50;
+  --ok: 60 120 70;
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  @apply bg-bg text-ink font-sans antialiased;
+  background-image: radial-gradient(ellipse at top, rgb(var(--gold) / 0.05), transparent 60%);
+}
+
+h1,
+h2,
+h3 {
+  @apply font-display tracking-wide;
+}
+
+:focus-visible {
+  outline: 2px solid rgb(var(--gold));
+  outline-offset: 2px;
+}
+
+@layer components {
+  .panel {
+    @apply bg-panel border border-line rounded-lg;
+  }
+  .panel-pad {
+    @apply bg-panel border border-line rounded-lg p-4;
+  }
+  .parchment {
+    @apply bg-parchment text-parchink rounded-lg border border-gold/40 shadow-inner;
+  }
+  .btn {
+    @apply inline-flex items-center gap-1.5 rounded-md border border-line bg-raised px-3 py-1.5 text-sm text-ink hover:border-gold/60 hover:text-gold disabled:opacity-50 disabled:pointer-events-none transition-colors;
+  }
+  .btn-primary {
+    @apply inline-flex items-center gap-1.5 rounded-md border border-gold/70 bg-gold/15 px-3 py-1.5 text-sm text-gold hover:bg-gold/25 disabled:opacity-50 disabled:pointer-events-none transition-colors;
+  }
+  .btn-danger {
+    @apply inline-flex items-center gap-1.5 rounded-md border border-danger/60 bg-danger/10 px-3 py-1.5 text-sm text-danger hover:bg-danger/20 disabled:opacity-50 transition-colors;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm text-dim hover:text-gold hover:bg-raised transition-colors;
+  }
+  .input {
+    @apply w-full rounded-md border border-line bg-bg/60 px-2.5 py-1.5 text-sm text-ink placeholder:text-dim/70 focus:border-gold/70 focus:outline-none;
+  }
+  .label {
+    @apply block text-xs uppercase tracking-wider text-dim mb-1;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium leading-4;
+  }
+  .section-title {
+    @apply font-display text-sm uppercase tracking-[0.18em] text-gold/90;
+  }
+  .table {
+    @apply w-full text-sm;
+  }
+  .table th {
+    @apply text-left text-xs uppercase tracking-wider text-dim font-medium px-3 py-2 border-b border-line;
+  }
+  .table td {
+    @apply px-3 py-2 border-b border-line/50 align-top;
+  }
+  .table tr:hover td {
+    @apply bg-raised/50;
+  }
+}
+
+/* Lore prose */
+.prose-lore {
+  @apply font-serif text-[17px] leading-relaxed;
+}
+.prose-lore h1 {
+  @apply text-2xl text-gold mt-2 mb-3;
+}
+.prose-lore h2 {
+  @apply text-lg text-gold/90 mt-6 mb-2 border-b border-line pb-1;
+}
+.prose-lore h3 {
+  @apply text-base text-gold/80 mt-4 mb-1;
+}
+.prose-lore p {
+  @apply my-2;
+}
+.prose-lore ul {
+  @apply list-disc pl-6 my-2;
+}
+.prose-lore ol {
+  @apply list-decimal pl-6 my-2;
+}
+.prose-lore table {
+  @apply my-3 w-full text-sm font-sans border border-line;
+}
+.prose-lore th {
+  @apply bg-raised text-left px-2 py-1 border border-line;
+}
+.prose-lore td {
+  @apply px-2 py-1 border border-line align-top;
+}
+.prose-lore code {
+  @apply font-mono text-[13px] bg-raised px-1 rounded;
+}
+.prose-lore blockquote {
+  @apply border-l-2 border-gold/50 pl-3 italic text-dim;
+}
+.prose-lore strong {
+  @apply text-ink font-semibold;
+}
+.prose-lore a.wk-ref {
+  @apply text-arcane underline decoration-dotted underline-offset-2 hover:text-gold;
+}
+.prose-lore a.wk-ref-broken {
+  @apply text-danger underline decoration-wavy;
+}
+.prose-lore .wk-secret {
+  @apply border border-danger/40 bg-danger/5 rounded-md px-3 py-1 my-3;
+}
+
+.leaflet-container {
+  background: rgb(var(--bg));
+  font: inherit;
+}
+.wk-marker {
+  @apply rounded-full border-2 border-bg shadow-lg;
+}
+.react-flow__attribution {
+  display: none;
+}

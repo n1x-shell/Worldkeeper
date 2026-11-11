@@ -1,0 +1,62 @@
+{
+  "name": "worldkeeper",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The Worldkeeper: a local-first worldbuilding encyclopedia and D&D campaign manager.",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n server,client -c yellow,cyan \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "tsx watch server/src/index.ts",
+    "dev:client": "vite",
+    "build": "tsc -p tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit && vite build",
+    "start": "NODE_ENV=production tsx server/src/index.ts",
+    "import": "tsx server/src/cli/import.ts",
+    "backup": "tsx server/src/cli/backup.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit",
+    "test": "vitest run",
+    "start:player": "NODE_ENV=production WORLDKEEPER_MODE=player tsx server/src/index.ts",
+    "setup": "npm install && npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@fontsource/cinzel": "^5.3.0",
+    "@fontsource/eb-garamond": "^5.3.0",
+    "@xyflow/react": "^12.12.1",
+    "adm-zip": "^0.6.1",
+    "better-sqlite3": "^11.10.0",
+    "express": "^5.3.0",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^1.71.0",
+    "multer": "^2.5.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-leaflet": "^5.0.0",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.18.5",
+    "remark-gfm": "^4.0.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.8",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/express": "^5.0.6",
+    "@types/leaflet": "^1.9.22",
+    "@types/multer": "^2.3.0",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/supertest": "^7.2.1",
+    "@vitejs/plugin-react": "^6.3.0",
+    "autoprefixer": "^10.6.2",
+    "concurrently": "^10.0.7",
+    "postcss": "^8.5.32",
+    "supertest": "^7.3.2",
+    "tailwindcss": "^3.4.19",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.7",
+    "vitest": "^5.1.0"
+  }
+}

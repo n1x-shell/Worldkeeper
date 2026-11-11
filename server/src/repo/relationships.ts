@@ -1,0 +1,239 @@
+import type { DB } from '../db/connection.js';
+import { z } from 'zod';
+import { RELATIONSHIP_TYPES, CANON_STATUSES, SYMMETRIC_RELATIONSHIPS, type Relationship } from '../../../shared/domain.js';
+import { parseJson } from '../lib/json.js';
+import { extractRefs } from '../import/normalize.js';
+import { badRequest, notFound } from '../lib/errors.js';
+
+interface RelRow {
+  id: number;
+  source_id: string;
+  target_id: string;
+  type: string;
+  directed: number;
+  label: string;
+  description: string;
+  canon_status: string;
+  origin: string;
+  source_context: string;
+}
+
+const toRel = (r: RelRow): Relationship => ({ ...r, directed: !!r.directed } as Relationship);
+
+
+
+/** Field names whose `[ID]` values express a specific relationship. */
+const FIELD_RELATIONS: { match: RegExp; type: Relationship['type']; reverse: boolean }[] = [
+  { match: /^(leaders?|leadership|rulers or keepers|keeper)$/i, type: 'leads', reverse: true },
+  { match: /^ruling faction$/i, type: 'controls', reverse: true },
+  { match: /^region$/i, type: 'part_of', reverse: false },
+];
+
+/**
+ * Regenerate relationships derived from a record's own text: its Parent field, structured metadata fields,
+ * and every `Name [ID]` cross-reference in the body. User-curated relationships are never touched.
+ * Redirect IDs (e.g. a legacy locator) resolve to their authoritative record.
+ */
+export function rebuildDerivedRelationships(db: DB, id: string) {
+  const row = db.prepare('SELECT id, type, parent_id, fields, body, redirect_to FROM entities WHERE id = ?').get(id) as
+    | { id: string; type: string; parent_id: string | null; fields: string; body: string; redirect_to: string | null }
+    | undefined;
+  db.prepare(`DELETE FROM relationships WHERE source_id = ? AND origin IN ('import-parent','import-reference')`).run(id);
+  // Field-derived links may point either way (e.g. "NPC leads Faction" comes from the faction's Leaders field),
+  // so they are identified by the record whose field produced them.
+  db.prepare(`DELETE FROM relationships WHERE origin = 'import-field' AND source_context LIKE ?`).run(`field:${id}:%`);
+  if (!row || row.type === 'redirect') return;
+
+  const exists = db.prepare('SELECT id, redirect_to FROM entities WHERE id = ?');
+  const resolve = (ref: string): string | null => {
+    const hit = exists.get(ref) as { id: string; redirect_to: string | null } | undefined;
+    if (!hit) return null;
+    return hit.redirect_to ?? hit.id;
+  };
+  const insert = db.prepare(
+    `INSERT OR IGNORE INTO relationships (source_id, target_id, type, directed, label, origin, source_context, canon_status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, 'CANON')`,
+  );
+  const linked = new Set<string>();
+
+  if (row.parent_id) {
+    const p = resolve(row.parent_id);
+    if (p && p !== id) {
+      insert.run(id, p, 'part_of', 1, 'Parent', 'import-parent', 'Parent field');
+      linked.add(p);
+    }
+  }
+  for (const [key, value] of parseJson<[string, string][]>(row.fields, [])) {
+    const rule = FIELD_RELATIONS.find((r) => r.match.test(key));
+    for (const ref of extractRefs(value)) {
+      const t = resolve(ref);
+      if (!t || t === id) continue;
+      if (rule) {
+        const [s, d] = rule.reverse ? [t, id] : [id, t];
+        insert.run(s, d, rule.type, 1, key, 'import-field', `field:${id}:${key}`);
+      } else {
+        insert.run(id, t, 'related_to', 1, key, 'import-field', `field:${id}:${key}`);
+      }
+      linked.add(t);
+    }
+  }
+  let heading = '';
+  for (const line of row.body.split(/\r?\n/)) {
+    const h = /^#{1,4}\s+(.+)/.exec(line);
+    if (h) {
+      heading = h[1].trim();
+      continue;
+    }
+    for (const ref of extractRefs(line)) {
+      const t = resolve(ref);
+      if (!t || t === id || linked.has(t)) continue;
+      linked.add(t);
+      insert.run(id, t, 'references', 1, heading, 'import-reference', line.trim().slice(0, 400));
+    }
+  }
+}
+
+export function listRelationshipsFor(db: DB, id: string) {
+  const rows = db
+    .prepare(
+      `SELECT r.*, s.name AS source_name, s.type AS source_type, t.name AS target_name, t.type AS target_type
+       FROM relationships r LEFT JOIN entities s ON s.id = r.source_id LEFT JOIN entities t ON t.id = r.target_id
+       WHERE r.source_id = ? OR r.target_id = ? ORDER BY r.origin = 'user' DESC, r.type, r.id`,
+    )
+    .all(id, id) as (RelRow & { source_name: string; target_name: string; source_type: string; target_type: string })[];
+  return rows.map((r) => ({ ...toRel(r), source_name: r.source_name, target_name: r.target_name, source_type: r.source_type, target_type: r.target_type }));
+}
+
+export const relationshipInputSchema = z.object({
+  source_id: z.string().min(1).max(40),
+  target_id: z.string().min(1).max(40),
+  type: z.enum(RELATIONSHIP_TYPES),
+  directed: z.boolean().optional(),
+  label: z.string().max(200).default(''),
+  description: z.string().max(5000).default(''),
+  canon_status: z.enum(CANON_STATUSES).default('PROPOSED'),
+});
+
+export function createRelationship(db: DB, input: z.input<typeof relationshipInputSchema>): Relationship {
+  const d = relationshipInputSchema.parse(input);
+  if (d.source_id === d.target_id) throw badRequest('A record cannot relate to itself');
+  for (const id of [d.source_id, d.target_id]) {
+    if (!db.prepare('SELECT 1 FROM entities WHERE id = ?').get(id)) throw badRequest(`Unknown record ${id}`);
+  }
+  const directed = d.directed ?? !SYMMETRIC_RELATIONSHIPS.includes(d.type);
+  const res = db
+    .prepare(
+      `INSERT INTO relationships (source_id, target_id, type, directed, label, description, canon_status, origin)
+       VALUES (?, ?, ?, ?, ?, ?, ?, 'user')
+       ON CONFLICT(source_id, target_id, type, origin) DO UPDATE SET label = excluded.label, description = excluded.description,
+         canon_status = excluded.canon_status, directed = excluded.directed`,
+    )
+    .run(d.source_id, d.target_id, d.type, directed ? 1 : 0, d.label, d.description, d.canon_status);
+  const row = db
+    .prepare('SELECT * FROM relationships WHERE source_id = ? AND target_id = ? AND type = ? AND origin = ?')
+    .get(d.source_id, d.target_id, d.type, 'user') as RelRow;
+  void res;
+  return toRel(row);
+}
+
+export function updateRelationship(db: DB, relId: number, patch: Partial<z.input<typeof relationshipInputSchema>>) {
+  const row = db.prepare('SELECT * FROM relationships WHERE id = ?').get(relId) as RelRow | undefined;
+  if (!row) throw notFound('Relationship');
+  const merged = relationshipInputSchema.parse({ ...row, directed: !!row.directed, ...patch });
+  if (row.origin !== 'user') {
+    // Promote a text-derived link into a curated one; the derived link stays derivable from the text.
+    return createRelationship(db, merged);
+  }
+  db.prepare(
+    `UPDATE relationships SET type = ?, directed = ?, label = ?, description = ?, canon_status = ? WHERE id = ?`,
+  ).run(merged.type, (merged.directed ?? true) ? 1 : 0, merged.label, merged.description, merged.canon_status, relId);
+  return toRel(db.prepare('SELECT * FROM relationships WHERE id = ?').get(relId) as RelRow);
+}
+
+export function deleteRelationship(db: DB, relId: number) {
+  const row = db.prepare('SELECT origin FROM relationships WHERE id = ?').get(relId) as { origin: string } | undefined;
+  if (!row) throw notFound('Relationship');
+  if (row.origin !== 'user') throw badRequest('This link comes from the record text. Edit the text to remove it.');
+  db.prepare('DELETE FROM relationships WHERE id = ?').run(relId);
+}
+
+export interface GraphFilters {
+  depth?: number;
+  types?: string[];
+  relTypes?: string[];
+  realms?: string[];
+  canon?: string[];
+  includeReferences?: boolean;
+  limit?: number;
+}
+
+/** Focused neighbourhood graph around one record, so the graph stays readable at any library size. */
+export function neighbourhood(db: DB, focus: string, f: GraphFilters = {}) {
+  const depth = Math.min(Math.max(f.depth ?? 1, 1), 3);
+  const limit = Math.min(f.limit ?? 120, 400);
+  const nodeInfo = db.prepare('SELECT id, name, type, realm, canon_status FROM entities WHERE id = ?');
+  const relsOf = db.prepare('SELECT * FROM relationships WHERE source_id = ? OR target_id = ?');
+  const nodes = new Map<string, { id: string; name: string; type: string; realm: string; canon_status: string; depth: number }>();
+  const edges = new Map<number, Relationship>();
+  const root = nodeInfo.get(focus) as { id: string; name: string; type: string; realm: string; canon_status: string } | undefined;
+  if (!root) throw notFound(`Record ${focus}`);
+  nodes.set(focus, { ...root, depth: 0 });
+  let frontier = [focus];
+  for (let d = 1; d <= depth && nodes.size < limit; d++) {
+    const next: string[] = [];
+    for (const id of frontier) {
+      for (const r of relsOf.all(id, id) as RelRow[]) {
+        if (f.includeReferences === false && r.origin === 'import-reference') continue;
+        if (f.relTypes?.length && !f.relTypes.includes(r.type)) continue;
+        const other = r.source_id === id ? r.target_id : r.source_id;
+        let info = nodes.get(other);
+        if (!info) {
+          const n = nodeInfo.get(other) as { id: string; name: string; type: string; realm: string; canon_status: string } | undefined;
+          if (!n) continue;
+          if (f.types?.length && !f.types.includes(n.type)) continue;
+          if (f.realms?.length && !f.realms.includes(n.realm)) continue;
+          if (f.canon?.length && !f.canon.includes(n.canon_status)) continue;
+          if (nodes.size >= limit) continue;
+          info = { ...n, depth: d };
+          nodes.set(other, info);
+          next.push(other);
+        }
+        edges.set(r.id, toRel(r));
+      }
+    }
+    frontier = next;
+  }
+  // Keep only edges whose both ends are present.
+  const edgeList = [...edges.values()].filter((e) => nodes.has(e.source_id) && nodes.has(e.target_id));
+  return { focus, nodes: [...nodes.values()], edges: edgeList, truncated: nodes.size >= limit };
+}
+
+export function brokenReferences(db: DB) {
+  const all = db.prepare(`SELECT id, name, parent_id, fields, body FROM entities WHERE type != 'redirect'`).all() as {
+    id: string;
+    name: string;
+    parent_id: string | null;
+    fields: string;
+    body: string;
+  }[];
+  const ids = new Set((db.prepare('SELECT id FROM entities').all() as { id: string }[]).map((r) => r.id));
+  const out: { from: string; from_name: string; ref: string; where: string }[] = [];
+  for (const e of all) {
+    const seen = new Set<string>();
+    const check = (ref: string, where: string) => {
+      if (ids.has(ref) || seen.has(ref)) return;
+      seen.add(ref);
+      out.push({ from: e.id, from_name: e.name, ref, where });
+    };
+    if (e.parent_id) check(e.parent_id, 'Parent');
+    for (const [k, v] of parseJson<[string, string][]>(e.fields, [])) for (const r of extractRefs(v)) check(r, k);
+    for (const line of e.body.split('\n')) for (const r of extractRefs(line)) check(r, line.trim().slice(0, 200));
+  }
+  const danglingRels = db
+    .prepare(
+      `SELECT r.id, r.source_id, r.target_id, r.type FROM relationships r
+       WHERE NOT EXISTS (SELECT 1 FROM entities e WHERE e.id = r.source_id) OR NOT EXISTS (SELECT 1 FROM entities e WHERE e.id = r.target_id)`,
+    )
+    .all();
+  return { references: out, danglingRelationships: danglingRels };
+}
