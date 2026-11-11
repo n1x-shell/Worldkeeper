@@ -32,38 +32,73 @@
       "category": "settlement"
     },
     {
-      "id": "REG-002",
-      "label": "The Radiant Ascendancy",
+      "id": "SET-010",
+      "label": "Empyrean Spire",
       "x": 1290,
       "y": 135,
+      "category": "settlement"
+    },
+    {
+      "id": "REG-002",
+      "label": "The Radiant Ascendancy",
+      "x": 1440,
+      "y": 250,
       "category": "location"
+    },
+    {
+      "id": "SET-012",
+      "label": "Zepharyos",
+      "x": 1020,
+      "y": 175,
+      "category": "settlement"
     },
     {
       "id": "REG-004",
       "label": "The Fractured Nexus",
-      "x": 1020,
-      "y": 175,
+      "x": 1115,
+      "y": 140,
       "category": "location"
+    },
+    {
+      "id": "SET-011",
+      "label": "Varkhaal",
+      "x": 1460,
+      "y": 465,
+      "category": "settlement"
     },
     {
       "id": "REG-003",
       "label": "The Tyrant's Dominion",
-      "x": 1460,
-      "y": 465,
+      "x": 1525,
+      "y": 335,
       "category": "location"
+    },
+    {
+      "id": "SET-013",
+      "label": "Noctis",
+      "x": 925,
+      "y": 515,
+      "category": "settlement"
     },
     {
       "id": "REG-005",
       "label": "The Eternal Veil",
-      "x": 925,
-      "y": 515,
+      "x": 960,
+      "y": 365,
       "category": "location"
+    },
+    {
+      "id": "SET-014",
+      "label": "The Rootspire",
+      "x": 1275,
+      "y": 700,
+      "category": "settlement"
     },
     {
       "id": "REG-006",
       "label": "The Verdant Rebirth",
-      "x": 1275,
-      "y": 700,
+      "x": 1000,
+      "y": 630,
       "category": "location"
     },
     {

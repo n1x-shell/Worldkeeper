@@ -12,6 +12,9 @@
  * text of the record with that name (only that text is shown, never the record's own sections). When several records
  * share a name, add the kind: "## Kaelholm (Settlement)".
  *
+ * New lore records in assets/lore/ (archive format) are imported alongside the archive. Drafts folders are skipped
+ * everywhere: assets/player-text/drafts/ and assets/lore/drafts/ hold material awaiting review.
+ *
  * Sections are left out when they are GM-only, editorial notes about the source, DM-facing advice, bookkeeping,
  * or mention something that is secret elsewhere in the lore (listed below). Review the output before publishing.
  */
@@ -31,7 +34,21 @@ import { ENTITY_TYPE_LABELS, type EntityType } from '../shared/domain.js';
 
 const [dataDir, archive, outDir] = process.argv.slice(2);
 const ctx = new AppContext(resolvePaths(dataDir));
-const files = readSource(archive);
+// New lore records written for this world (assets/lore/, same format as the archive's records) are imported with
+// the archive. Anything under a drafts/ folder is still awaiting review and is left out.
+const loreDir = path.resolve(import.meta.dirname, '../assets/lore');
+const lore: { path: string; content: string }[] = [];
+const walkLore = (dir: string) => {
+  for (const ent of fs.existsSync(dir) ? fs.readdirSync(dir, { withFileTypes: true }) : []) {
+    if (ent.name.startsWith('.') || ent.name === 'drafts') continue;
+    const full = path.join(dir, ent.name);
+    if (ent.isDirectory()) walkLore(full);
+    else if (ent.isFile() && ent.name.endsWith('.md'))
+      lore.push({ path: `Worldkeeper_Additions/${path.relative(loreDir, full).split(path.sep).join('/')}`, content: fs.readFileSync(full, 'utf8') });
+  }
+};
+walkLore(loreDir);
+const files = [...readSource(archive), ...lore];
 commitPlan(ctx.db, files, buildPlan(ctx.db, files, path.basename(archive)));
 // Same rule as the app's display filter for editorial notes about the source.
 const EDITORIAL = /^(sources?|references|unspecified fields|tome implementation|review notes|limits( of the source)?|record boundaries|source boundary|use and verification|missing facts|limitations|open questions|unknowns|amsel entry (rule|notes)|use in amsel|status)(\s*\[[^\]]*\])?$/i;

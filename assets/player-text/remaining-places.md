@@ -394,25 +394,6 @@ Three gods are dead: Maruun the Sundered Tide, Aurex the Throne-Breaker and the 
 - Ships from Aetheris have started arriving at Kaelholm, and everyone wants to know what they're carrying.
 - The Bloom remembers everything that happens in it.
 
-## Kaelholm (Settlement)
-
-> Grey stone, grey robes, grey sea. The biggest city on the continent climbs up from the harbour in terraces of archives and monasteries, every window lit with somebody reading. Clerks meet every ship at the dock with ledgers open. Somewhere above, a bell rings, and a name gets struck from the rolls.
-
-**What you know**
-
-- Kaelholm is the largest city on Kaelmar and the first port for ships from Aetheris. It used to be called Kaelith-East.
-- It kept Kaelith's name, archives, scholar corps and tribunals. Its elders wear grey.
-- Kaelholm is the strongest power on the continent. It wants every vault opened and catalogued, and the change turned back so the world goes back "into its drawers".
-- Archivist-Elder Venn Tull, a gnome and the head of a tribunal, leads it.
-- Its tribunals can punish someone by scraping their name from every roll. People call it being "burned".
-
-**What people say**
-
-- Venn Tull wants a living Kaelith guardian, and will pay anything to get one.
-- The Eastern Tendril of the Spore Circle burns Kaelith work on sight, and Kaelholm's expeditions keep running into them.
-- Kaelholm wants to be the first to look at anything old that comes off the ships from Aetheris.
-- Once you're burned, nobody in the city will say your name aloud.
-
 ## Thornhaven
 
 > Lamps hang in the branches, green light glowing through the skins of hollowed gourds. Smoke rises from a pit where something carved and glowing is being burned, and the people around it watch until it's ash. Nobody here carries anything made by the Kaelith. They check your pack before they let you sit down.

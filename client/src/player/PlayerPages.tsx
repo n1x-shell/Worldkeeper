@@ -7,7 +7,7 @@ import remarkGfm from 'remark-gfm';
 import { ArrowRight, BookOpen, Feather, ListChecks, Map as MapIcon } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
 import { usePlayerData, type PEntity } from './source';
-import { OTHER_GROUP, PLAYER_GROUPS, PLAYER_REALMS, groupOf, linkedIds, plainText } from './categories';
+import { OTHER_GROUP, PLAYER_GROUPS, PLAYER_REALMS, groupOf, linkedIds, previewText } from './categories';
 
 /** Markdown for players: links to other revealed entries (/player/e/ID from the server) stay inside the handbook. */
 export function Md({ text, className = 'prose-lore' }: { text: string; className?: string }) {
@@ -62,14 +62,19 @@ function EntryGrid({ list }: { list: PEntity[] }) {
             <Chip>{e.typeLabel}</Chip>
             <Chip>{e.realmLabel}</Chip>
           </div>
-          {e.summary && <p className="text-sm mt-2 line-clamp-2 text-ink/90">{plainText(e.summary)}</p>}
+          {(() => {
+            const preview = previewText(e.summary || e.sections?.[0]?.content || '');
+            return preview && <p className="text-sm mt-2 line-clamp-2 text-ink/90">{preview}</p>;
+          })()}
         </Link>
       ))}
     </div>
   );
 }
 
-const byName = (a: PEntity, b: PEntity) => a.name.localeCompare(b.name);
+// Sort by name, ignoring leading quote marks, so "The Grey Raven" files under T rather than first.
+const sortName = (n: string) => n.replace(/^["'“‘\s]+/, '');
+const byName = (a: PEntity, b: PEntity) => sortName(a.name).localeCompare(sortName(b.name));
 
 // ------------------------------------------------------------------ Home
 export function PlayerHome() {
