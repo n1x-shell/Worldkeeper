@@ -16,6 +16,7 @@ import { api, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary, RelationshipView, StateRow } from '../lib/types';
 import { displaySections, isEditorial, splitSections } from '../lib/sections';
+import { loreText } from '@shared/loreText';
 import { Dev, useDebug } from '../components/Dev';
 import {
   AutoTextarea,
@@ -82,7 +83,8 @@ export function EntityPage() {
     }
   };
 
-  const fieldMap = e.fields;
+  // Outside debug mode, fields the source left undefined are not facts about the world, so they are not shown.
+  const fieldMap = debug ? e.fields : e.fields.filter(([, v]) => !/^\s*UNDEFINED\b/i.test(v)).map(([k, v]) => [k, loreText(v)] as [string, string]);
   return (
     <div className="space-y-4">
       {toastNode}

@@ -1,4 +1,5 @@
 import { SECRET_HEADING_RE } from '@shared/domain';
+import { SOURCE_ONLY_HEADING, loreHeading, loreText } from '@shared/loreText';
 
 export interface Section {
   heading: string;
@@ -32,8 +33,16 @@ export function isEditorial(heading: string): boolean {
   return EDITORIAL_HEADING_RE.test(heading.trim());
 }
 
-/** Sections to display: editorial notes are dropped unless debug mode is on. */
+/**
+ * Sections to display. Outside debug mode the text reads as lore: editorial sections are dropped, and notes about
+ * the source (citations, tags, file names, rulebook caveats) are cleaned out of what is left. The record itself is
+ * never changed, and secrecy is decided from the original heading.
+ */
 export function displaySections(body: string, debug: boolean): Section[] {
   const all = splitSections(body);
-  return debug ? all : all.filter((s) => !s.heading || !isEditorial(s.heading));
+  if (debug) return all;
+  return all
+    .filter((s) => !s.heading || (!isEditorial(s.heading) && !SOURCE_ONLY_HEADING.test(s.heading.trim())))
+    .map((s) => ({ ...s, heading: s.heading ? loreHeading(s.heading) : s.heading, content: loreText(s.content) }))
+    .filter((s) => s.content.trim() || !s.heading);
 }
