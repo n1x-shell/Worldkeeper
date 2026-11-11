@@ -9,7 +9,8 @@
  * Pins link only to records that end up revealed; the others are left off.
  *
  * DM-written player text in assets/player-text/*.md is published too: each "## Name" section becomes the player
- * text of the record with that name (only that text is shown, never the record's own sections).
+ * text of the record with that name (only that text is shown, never the record's own sections). When several records
+ * share a name, add the kind: "## Kaelholm (Settlement)".
  *
  * Sections are left out when they are GM-only, editorial notes about the source, DM-facing advice, bookkeeping,
  * or mention something that is secret elsewhere in the lore (listed below). Review the output before publishing.
@@ -26,6 +27,7 @@ import { isSecretHeading } from '../server/src/player/projection.js';
 import { buildPlayerSite } from '../server/src/publish/site.js';
 import { maps, markers } from '../server/src/repo/maps.js';
 import { imageSize } from '../server/src/routes/atlas.js';
+import { ENTITY_TYPE_LABELS, type EntityType } from '../shared/domain.js';
 
 const [dataDir, archive, outDir] = process.argv.slice(2);
 const ctx = new AppContext(resolvePaths(dataDir));
@@ -54,14 +56,24 @@ for (const id of ids) {
 // DM-written player text (assets/player-text/*.md). Each "## Name" section becomes the player summary of the record
 // with that exact name, and only that text is shown: none of the record's own sections are revealed.
 const textDir = path.resolve(import.meta.dirname, '../assets/player-text');
-const byName = ctx.db.prepare(`SELECT id FROM entities WHERE lower(name) = lower(?) AND type NOT IN ('index','register','redirect') AND archived = 0`);
+const byName = ctx.db.prepare(`SELECT id, type FROM entities WHERE lower(name) = lower(?) AND type NOT IN ('index','register','redirect') AND archived = 0`);
+// "## Name" or, when several records share the name, "## Name (Type)", e.g. "## Kaelholm (Settlement)".
+const findRecords = (heading: string) => {
+  const exact = byName.all(heading) as { id: string; type: string }[];
+  const m = /^(.*?)\s*\(([^)]+)\)$/.exec(heading);
+  if (exact.length || !m) return exact;
+  const kind = m[2].trim().toLowerCase();
+  return (byName.all(m[1]) as { id: string; type: string }[]).filter(
+    (r) => r.type === kind || (ENTITY_TYPE_LABELS[r.type as EntityType] ?? '').toLowerCase() === kind,
+  );
+};
 for (const f of fs.existsSync(textDir) ? fs.readdirSync(textDir).filter((n) => n.endsWith('.md')).sort() : []) {
   const md = fs.readFileSync(path.join(textDir, f), 'utf8');
   for (const part of md.split(/^## /m).slice(1)) {
     const nl = part.indexOf('\n');
     const name = part.slice(0, nl).trim();
     const text = part.slice(nl + 1).trim();
-    const rows = byName.all(name) as { id: string }[];
+    const rows = findRecords(name);
     if (rows.length !== 1) {
       console.log(`player text: "${name}" ${rows.length ? 'matches several records' : 'is not a record'}, skipped`);
       continue;
