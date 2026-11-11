@@ -14,6 +14,17 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
 
 **Import result on the real archive:** 421 records (all non-reference IDs), 475 source documents, 1,008 relationships, 17 timeline rows, 17 templates, 18 duplicate IDs resolved, 23 copies skipped, **0 broken references**. Counts include 13 vaults, 13 shards, 7 Ethereal domains, 110 NPCs. Re-import: 421 unchanged.
 
+## Player view redesign (working and tested)
+
+- The player view (in-app `/player`, the LAN player server and the published handbook share one codebase) now uses the DM app's shell.
+- **Sidebar** built only from revealed content:
+  - World: Home and the realms that have entries.
+  - Encyclopedia: All Lore, then only the categories with revealed entries (Places, People, Factions, Peoples and Callings, Gods and Myths, History, Magic, Rules and Customs, Shards and Treasures, Creatures).
+  - Campaign: Maps, Quests and Session Recaps, each shown only when something is published.
+- **Shell:** top search, collapsible sidebar, phone drawer, light/dark toggle.
+- **Pages:** a home dashboard (overview link, realm cards, browse counts, open quests, latest session), category pages with realm filters, realm pages (intro, then entries grouped by category), and entry pages with breadcrumbs, an "At a glance" panel and Connections (other revealed entries linked from the text). There are also search results, maps, a quest log (open / finished) and session recaps.
+- Files: `client/src/player/{PlayerApp,PlayerLayout,PlayerPages,context,categories,source}.ts(x)`. Still no DM code in the player bundle.
+
 ## Player Handbook on GitHub Pages (working and tested)
 
 - **Static Player Handbook** (`client/player-site/`, `client/src/player/static-main.tsx`, `vite.player.config.ts`):

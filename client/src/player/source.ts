@@ -10,6 +10,8 @@ import { useEffect, useState } from 'react';
 export interface PEntity {
   id: string;
   name: string;
+  type: string;
+  realm: string;
   typeLabel: string;
   realmLabel: string;
   summary: string;
