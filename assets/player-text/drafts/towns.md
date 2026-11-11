@@ -25,14 +25,14 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 
 | Place | What it is |
 | --- | --- |
-| The Grey Quay | The harbour. Every ship is met, searched and written down. Sailors and smugglers argue here in Tidecant. |
-| The Tribunal Halls | Where the elders in grey sit in judgement. Open to the public, and always full. |
-| The House of Rolls | Where every name in Kaelholm is written. A burned name is scraped out here, in front of witnesses. |
-| The Scholar Corps | The college that trains Kaelholm's scholars and sends out its expeditions. Always hiring guards. |
-| Glyph Row | The gnomes' street of scribes and glyph-wrights. Signs glow faintly after dark. |
-| The Monasteries | Quiet houses of copying and study up on the terraces. Some take in travellers for work. |
-| The Lantern Market | Night market by the docks: Aetherian goods off the ships, salt from the south, and things nobody should be selling. |
-| The Drowned Bell | Dockside inn favoured by sailors from the Black Tides crossing. |
+| The Tally Quay | The harbour. Every ship, crate and passenger is counted and entered in a ledger before anyone steps ashore. Sailors argue with the clerks in Tidecant. |
+| The Grey Benches | The tribunal halls, where the elders in grey sit in judgement. Open to the public, and always full. |
+| The Scraping Hall | Where every name in Kaelholm is kept on the rolls, and where a burned name is scraped out, in front of witnesses. |
+| The Corps House | Home of the Scholar Corps, which trains Kaelholm's scholars and sends out its expeditions. Always hiring guards. |
+| The Inkwells | The gnome quarter of scribes and glyph-wrights. Its shop signs are written in glyphs that glow faintly after dark. |
+| The Copyhouses | Monasteries up on the terraces where everything is copied twice. Some take in travellers, if they can write. |
+| The Unlisted Market | The night market by the docks, selling everything that is in no ledger: Aetherian goods off the ships, salt from the south, and worse. |
+| The Lanternless | A dockside inn for crews off the Black Tides. They keep it dark, out of habit. |
 
 **Who you'll meet**
 
@@ -54,7 +54,7 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 - The Eastern Tendril of the Spore Circle burns Kaelith work on sight, and Kaelholm's expeditions keep running into them.
 - Kaelholm wants to be first to examine anything old that comes off the ships from Aetheris.
 - Once you are burned, nobody in the city will say your name aloud.
-- The House of Rolls has a second set of rolls, and nobody admits to keeping them.
+- The Scraping Hall keeps a second set of rolls, where burned names are never scraped out. Nobody admits to it.
 
 ## Empyrean Spire
 
@@ -73,12 +73,13 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 
 | Place | What it is |
 | --- | --- |
-| The Throne of Light | Where the High Theurgists rule. Petitioners wait days for an audience. |
-| The Dawn Lifts | Platforms drawn up from the plain on golden chains. The only way up for most. |
-| The Pilgrims' Ward | The lowest terraces, where outsiders stay. Every visitor's name goes into the Pilgrims' Book. |
-| The Hall of Mercy | The Order's great infirmary. Its missionary healers train here. |
-| Solenne's Dawn Temple | The great temple of the Dawn Mother: light, law and mercy. |
-| The Sunward Rest | The one inn in the Pilgrims' Ward that serves anyone, and asks no questions out loud. |
+| The Throne of Light | Where the High Theurgists rule, in a hall with no corners for shadows. Petitioners wait days for an audience. |
+| The Chains of Dawn | Platforms drawn up from the plain on golden chains, rising at first light. The only way up for most. |
+| The Threshold | The lowest terraces, where outsiders must stay. Every visitor's name goes into the Book of the Arrived. |
+| The Hall of Measured Mercy | The Order's great infirmary, where its missionary healers train. Over the door: *Mercy within the Law.* |
+| The First Light | Solenne's great temple, on the highest point of the city, where the dawn touches the world first. |
+| The Last Shade | The one inn on the Threshold with a roof that throws shade. It serves anyone, and asks no questions out loud. |
+| The Unshadowed Court | The Inquisition's offices, lit so brightly from every side that nobody inside casts a shadow. |
 | The Golden Aerie | The Order's chief fortress, on a crag near the city. Radiant knights train there. |
 
 **Who you'll meet**
@@ -96,7 +97,7 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 
 **What people say**
 
-- The Inquisition reads the Pilgrims' Book every night.
+- The Inquisition reads the Book of the Arrived every night.
 - There are no shadows at noon in the upper city, and the Order likes it that way.
 - Not everyone who falls from the Spire was pushed. Most were.
 
@@ -117,12 +118,13 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 
 | Place | What it is |
 | --- | --- |
-| The Great Arena | The heart of the city. Fights every day, and the yearly tournament. |
+| The Great Arena | The heart of the city, and its loudest place. Fights every day, and the yearly tournament. |
 | The Warlord's Hall | Where the warlords meet, and where the Warlord sometimes sits. |
-| The Pits | The gladiator pits under the arena, where fighters are made and broken. |
-| The Oath-Stones | Karrath's shrine, where oaths are sworn on stone and kept on pain of death. |
-| Smiths' Row | Forges cut into the mountainside. The Anvil of Dominion lies further down. |
-| The Broken Shield | A soldiers' tavern. A fight a night, and no hard feelings after. |
+| The Proving Pits | The gladiator pits under the arena, where fighters are made, and broken. |
+| The Oathanvil | Karrath's shrine. Oaths are sworn with a hammer-blow on the anvil, and oath-breakers are broken on it. |
+| The Smoking Teeth | Forges cut into the mountainside, smoking day and night. The Anvil of Dominion lies further down. |
+| The Second Blood | A soldiers' tavern where every brawl ends at second blood. A fight a night, and no hard feelings after. |
+| The Challenge Rings | A duelling circle at every crossroads. Step inside one and anyone may call you out. |
 | The Red Bastion | The Legion's chief fortress, a short march from the city walls. |
 
 **Who you'll meet**
@@ -160,12 +162,13 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 
 | Place | What it is |
 | --- | --- |
-| The Nexus Spire | Where the Consortium's council sits. |
+| The Nexus Spire | Where the Consortium's council sits, at the one point the whole city turns around. |
 | The Nexus Collegium | The Consortium's chief fortress and greatest school. |
-| The Drifting Quarters | Districts on floating islands that rearrange every few nights. Maps sell out daily. |
-| The Skybridges | Bridges of light between the islands. Mostly reliable. |
-| The Prism Market | Spell components, wands and things with no names, sold by the ounce. |
-| Ithiel's Observatory | Temple of the Many-Eyed: knowledge, magic and the stars. |
+| The Shuffle | Districts on floating islands that rearrange every few nights. Maps sell out daily, and are wrong by evening. |
+| The Maybe Bridges | Bridges of light between the islands. Mostly reliable. |
+| The Paradox Bazaar | Spell components, wands and things with no names, sold by the ounce. Some arrive before they are ordered. |
+| The Many-Eyed Dome | Ithiel's temple and observatory: knowledge, magic and the stars, watched through a thousand lenses. |
+| The Upside Quarter | A district that flipped in some old experiment and stayed that way. Its people do not see the problem. |
 | The Anchor | The one inn that never moves. Nobody knows how. |
 
 **Who you'll meet**
@@ -203,12 +206,12 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 
 | Place | What it is |
 | --- | --- |
-| The Midnight Court | Where the Pact's rulers meet, and its singers perform. |
+| The Midnight Court | Where the Pact's rulers meet behind their masks, and its singers perform. |
 | Nightglass | The Pact's chief fortress, just outside the city. Its magistrates judge traitors. |
-| The Mask Market | Masks sold, borrowed, stolen and inherited. Some come with a name attached. |
-| Ellun's Hidden Temple | Temple of the Maskwright: secrets, night and freedom. Its door is never in the same place. |
-| The Quiet Houses | Where secrets are bought and sold, by the whisper. |
-| The Veiled Lantern | An inn where nobody sees anybody. Very popular. |
+| The Hundred Faces | The mask market. Masks are sold, borrowed, stolen and inherited here. Some come with a name attached. |
+| The Maskwright's Door | Ellun's temple: secrets, night and freedom. Its door is never in the same place twice. |
+| The Whisper Exchange | Where secrets are bought and sold, by the whisper, and nobody sees who is buying. |
+| The Borrowed Name | An inn where you sign the ledger with someone else's name. Very popular. |
 
 **Who you'll meet**
 
@@ -227,7 +230,7 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 
 **What people say**
 
-- Every mask in the market has been worn before.
+- Every mask in the Hundred Faces has been worn before.
 - The Grandmaster has been seen in two places on the same night.
 - Ask for the same street twice and you will get two different directions, both correct.
 
@@ -248,11 +251,12 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 
 | Place | What it is |
 | --- | --- |
-| The Den of Elders | Where the clan elders meet, in a hollow deep in the trunk. |
-| The Root Halls | The old capital's streets and towers, held up inside the roots. Some of it is still lived in. |
-| The Hanging Market | Stalls slung from the branches: furs, herbs, carvings, and very fresh meat. |
-| Orrowen's Grove | Shrine of the Green Antler: the wild, the seasons and beasts. |
-| The Wolf Steps | The lower roots, where the packs den. Visitors walk quickly. |
+| The Den of Elders | Where the clan elders meet, in a hollow deep in the trunk. No chairs, no thrones, no table head. |
+| The Swallowed City | The old capital's streets and towers, lifted inside the roots. Some of it is still lived in. |
+| The Windfall Market | Stalls slung from the branches: furs, herbs, carvings, and very fresh meat. |
+| The Antler Shrine | Orrowen's shrine: the wild, the seasons and beasts. Offerings are left for whatever comes to take them. |
+| The Pack Roots | The lower roots, where the wolf packs den. Visitors walk quickly. |
+| The Kingsbone | A bare patch deep in the Swallowed City where the roots have never grown. |
 | The Verdant Crown | The Clans' chief fortress, a short climb away. |
 
 **Who you'll meet**
@@ -272,4 +276,4 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 
 - The tree is still growing, and is slowly lifting the old city's bones into the air.
 - Leave your axe at the roots, or the tree will remember.
-- The old capital's king is buried somewhere in the Root Halls, and the roots never grew near him.
+- The old capital's last king lies under the Kingsbone, and the tree will not touch him.
