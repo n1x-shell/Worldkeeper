@@ -2,7 +2,7 @@
 
 The 5e build behind every NPC. Species come from the Player's Handbook (2024, plus the 2014 half-elf and half-orc), Tasha's Cauldron of Everything (Tasha's), Mordenkainen Presents: Monsters of the Multiverse (MotM) and Eberron: Rising from the Last War (warforged). Classes and subclasses come from the 2024 PHB and Tasha's. The "calling" is what players see.
 
-Anything the archive already said (a species, a gender, a role, a secret) is kept. Everything else here is new and yours to change.
+Anything already established about a person (a species, a gender, a role, a secret) is kept. Everything else here is yours to change.
 
 ## Spread across all 106 people
 
@@ -58,7 +58,7 @@ Four NPCs are not people and have no build: the Hidden Ones Vyrithar and Vyrathu
 | Magistrate Renn Varros | Shadow Pact | Duergar (MotM) | Cleric (Order Domain) | Scribe | she/her | Nightglass, the Eternal Veil |  |
 | High Shaman Raethan "Stormcaller" | Wildborn Clans | Lizardfolk (MotM) | Druid (Circle of the Sea) | Hermit | he/him | The jungle rivers of the Verdant Rebirth |  |
 | Korrak Grimtusk | Wildborn Clans | Orc (PHB) | Ranger (Hunter) | Guide | she/her | The Bloodfang Warcamp, the Tyrant's Dominion |  |
-| Faelyn Moondancer | Wildborn Clans | Elf (PHB) | Druid (Circle of the Moon) | Wayfarer | she/her | The Green Expanse, the Verdant Rebirth | Moonborn: an elf with the Fey Touched feat, as the archive suggests. |
+| Faelyn Moondancer | Wildborn Clans | Elf (PHB) | Druid (Circle of the Moon) | Wayfarer | she/her | The Green Expanse, the Verdant Rebirth | Moonborn: an elf with the Fey Touched feat. |
 | Yvara Ashborn | Wildborn Clans | Fire Genasi (MotM) | Monk (Warrior of the Elements) | Wayfarer | she/her | Born under an eclipse in the Ravaged Pass |  |
 | Sareth "the Serpent" | Wildborn Clans | Shadar-kai (MotM) | Ranger (Gloom Stalker) | Criminal | he/him | The jungles of the Verdant Rebirth |  |
 | Ogrim Ironhide | Wildborn Clans | Dwarf (PHB) | Barbarian (Path of the World Tree) | Wayfarer | he/him | The iron mountains of the Tyrant's Dominion |  |
@@ -97,7 +97,7 @@ Four NPCs are not people and have no build: the Hidden Ones Vyrithar and Vyrathu
 | Marshal Dace Corvane | The Ascendancy | Hobgoblin (MotM) | Fighter (Battle Master) | Soldier | he/him | The eastern mountains |  |
 | Odran Reeve | Low Fenn | Tortle (MotM) | Ranger (Hunter) | Merchant | he/him | Low Fenn, near Ashvale |  |
 
-## GM-only (31, full profiles in gm-npcs.md)
+## GM-only (31, full profiles in the GM-only NPCs file)
 
 | Name | Group | Species | Class | Background | Pronouns | From | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
