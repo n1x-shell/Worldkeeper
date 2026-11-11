@@ -1,12 +1,10 @@
-# Player Adventure Book: The Other Places (DRAFT)
-
-Drafted from the archive for review. Nothing here is published until this file is moved up into assets/player-text/.
+# Player Adventure Book: The Other Places
 
 ## How to use this
 
 Same layout as the five places: **Read aloud**, **What you know** (common knowledge) and **What people say** (rumours, some true, some not). Secrets are left out, including every vault's name, place and purpose.
 
-The read-aloud text and rumours are new writing built on the archive. Check them before publishing.
+The read-aloud text and rumours are new writing built on the archive.
 
 ## Aetheris
 
