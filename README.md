@@ -1,72 +1,298 @@
 # The Worldkeeper
 
-A local-first worldbuilding encyclopedia and D&D 5e (2024) campaign manager, built for one world with three branches: **Aetheris**, **Kaelmar** and the **Ethereal Realm**. ("The Worldkeeper" is a working title; rename it in Settings.)
+**A local-first worldbuilding encyclopedia and D&D 5e (2024) campaign manager** for one world with three branches: **Aetheris**, **Kaelmar** and the **Ethereal Realm**.
 
-Everything runs on your own computer. There is no account, no cloud service, no AI requirement and no paid API. Your data lives in one SQLite file plus a folder of map images, and it is backed up automatically.
+The Worldkeeper imports an existing Markdown lore library, keeps every stable ID, source reference, canon label and GM secret intact, and turns it into an interconnected, searchable encyclopedia with maps, relationship graphs, campaign tracking and table-side tools for running sessions.
+
+It runs entirely on your own computer: no account, no cloud service, no paid API, and no AI dependency. Your data is one SQLite file plus a folder of map images, backed up automatically.
+
+> "The Worldkeeper" is a working title. Rename it under **Settings**.
+
+---
+
+## Contents
+
+- [Features](#features)
+- [Quick start](#quick-start)
+- [Importing your world](#importing-your-world)
+- [Typical workflow](#typical-workflow)
+- [Player view](#player-view)
+- [Data, backups and exports](#data-backups-and-exports)
+- [Commands](#commands)
+- [Configuration](#configuration)
+- [Project structure](#project-structure)
+- [Testing](#testing)
+- [Canon and safety guarantees](#canon-and-safety-guarantees)
+- [Status and roadmap](#status-and-roadmap)
+
+---
+
+## Features
+
+### Encyclopedia
+- One record per stable ID (`NPC-010`, `VLT-305`, `CON-001-DOM`…), with original name, aliases, category, parent, realm, canon status, source references and tags kept verbatim.
+- Record pages with key facts, GM-only sections clearly flagged, child records, connections, campaign state and full history.
+- Markdown editor with live preview, autosave, a visible save indicator, change reasons and conflict protection.
+- `Name [ID]` cross-references become links automatically; broken references are reported.
+- Version history with line-by-line diffs and one-click restore. Duplicate a record as a PROPOSED draft without touching the original.
+- New records start from your library's own templates, with missing facts left as `UNDEFINED`. The app warns you when a similar record already exists.
+
+### Search and relationships
+- Global search (`Ctrl+K`) across names, aliases, stable IDs, tags, full text, original source files, sessions, quests, adventures and notes, with realm, type and canon filters.
+- Structured relationships (Lives in, Leads, Member of, Allied with, Opposes, Controls, Seeks…), some created from the source text (Parent, Leaders and cross-references) and others curated by you.
+- Interactive relationship graph showing the focused neighbourhood of one record, filterable by depth, entity type, continent, canon status and relationship type.
+
+### The three branches
+- **Aetheris:** Crystal Shards table (lore power, GM-only canon location, interested parties, plus per-campaign holder, location, shardscarred bearer and cult activity), dominions and factions overview.
+- **Kaelmar:** Thirteen Vaults tracker (location, purpose, key, canon state, plus per-campaign vault state, clues, guardians and consequences). All vaults are sealed at the default start, 300 AB.
+- **Ethereal Realm:** an explorer that separates the border layer from the deep domains, highlights access requirements, and links crossings, hazards, Thinning and Unmaking, and inhabitants.
+- World overview, World Timeline (300 AB = Year 31 Unbound; undated events are never given invented dates), cosmology, pantheon, peoples, magic systems, and mysteries and secrets.
+
+### World Atlas
+- Upload your own maps (PNG, JPEG, WEBP or GIF), or create abstract diagrams for places such as the Ethereal Realm.
+- Map hierarchy World → Continent → Region → Settlement → Building, with drill-down from markers to local maps.
+- Draggable markers linked to records, categories, layers, region boundaries and routes, and DM-only or player-visible items.
+- **Unplaced locations** list shows the source's written placement ("east of centre", "half a day from…") so you can position places yourself. No coordinates are invented.
+
+### Campaigns
+- Multiple campaigns in the same world, each with premise, dates, status, players, active factions and notes.
+- **Campaign state overlay:** "the party captured the fortress" is stored per campaign. The encyclopedia record is never overwritten. You can propose a development as world canon, which then waits in Canon Review.
+- Party sheets with 2024 basics: ability scores and modifiers, proficiency by level, saves, skills, AC, HP, initiative, conditions, exhaustion, concentration, spell slots, rests, equipment and setting mechanics.
+- Quests with a "players see" flag; adventures with premise, hook, stakes, opposition, clues, obstacles, rewards, approaches, consequences and "if ignored"; story arcs.
+- Scenes that can be reordered, copied between adventures, and arranged in a visual branching flow editor.
+
+### Running sessions
+- **Session prep:** recap, party location, goals, scenes, NPC notes, read-aloud text, clues, encounters, treasure, consequences and open questions.
+- **Live Session Mode:** current scene and read-aloud text, encounter tracker, quick event log, quest updates, proposed world changes, relevant NPC cards and dice, all on one screen.
+- **Recap draft** built only from what you recorded, then a review screen to accept or reject the session's proposed changes.
+- **Encounter and initiative tracker:** roll or enter initiative, rounds and turns, damage, healing and temporary HP, the 15 conditions, concentration save DC (2024 rule), defeated and hidden combatants, and adding the whole party.
+- DM screen, NPC quick-reference cards, faction agendas (progress tracks you advance yourself, with a reason), world events, random tables, dice roller (`2d6+3`, `1d20 adv`, `4d6kh3`, `d%`), rules reference labelled OFFICIAL / HOMEBREW / OUTSIDE 2024 CORE / UNVERIFIED, and notes.
+
+> No rulebook text or monster stat blocks are bundled. Statistics and rules come from your own source material or what you enter.
+
+### Library management
+- Import preview, confirmation and history; exports; Canon Review; broken references; change history; backups and restore; settings.
+- Dark fantasy theme (default) and a readable light theme, collapsible sidebar, keyboard shortcuts, and layouts that work on tablets and phones.
+
+---
 
 ## Quick start
 
-Requirements: **Node.js 20 or newer** (22 recommended).
+**Requirements:** Node.js 20 or newer (22 recommended).
 
 ```bash
-npm install          # install dependencies
-npm run build        # build the web client
-npm start            # start the app at http://127.0.0.1:4310
+git clone <this repository>
+cd Worldbuilder
+npm install
+npm run build
+npm start
 ```
 
-Then open http://127.0.0.1:4310 and go to **Library Management → Import and Export**. Choose your world archive ZIP (e.g. `Amsel_Unified_World_Lore_Reference_v10.zip`), review the preview, and click **Confirm import**.
+Open **http://127.0.0.1:4310**.
 
-Or import from the command line:
+For development, with live reload of server and client:
 
 ```bash
-npm run import -- path/to/Amsel_Unified_World_Lore_Reference_v10.zip --dry-run   # preview only
-npm run import -- path/to/Amsel_Unified_World_Lore_Reference_v10.zip             # import (backs up first)
+npm run dev        # API on :4310, client on http://localhost:5173
 ```
 
-### Development mode
+---
+
+## Importing your world
+
+1. Open **Library Management → Import and Export**.
+2. Choose your archive, for example `Amsel_Unified_World_Lore_Reference_v10.zip`.
+3. Click **Preview import** and review the report:
+   - records to create, update or leave unchanged
+   - duplicate IDs and which page was kept
+   - skipped copies (compendium copies, worked examples, templates)
+   - broken references
+   - protected source files (setting bibles)
+   - conflicts with your own edits
+4. Click **Confirm import**. A backup is made first, then everything is written in one transaction. If anything fails, nothing is changed.
+
+From the command line:
 
 ```bash
-npm run dev          # API on :4310 with reload, Vite client on http://localhost:5173
+npm run import -- path/to/archive.zip --dry-run     # preview only
+npm run import -- path/to/archive.zip               # import (backs up first)
+npm run import -- path/to/folder                    # a folder of Markdown files works too
 ```
 
-### Where your data is
+**Re-importing is safe.** Unchanged records stay untouched. Records you edited are kept by default when the source also changed, and the other version is preserved in history either way. Records missing from a newer archive are never deleted.
 
-By default in `./data/` (ignored by git):
+What the importer understands:
+- metadata headers: `ID / Name / Alternate names / Category / Parent / Continent or realm / Canon status / Source / Tags`, plus template fields
+- files that contain several entries
+- the Canonical Entry Locator, used to choose authoritative pages
+- legacy redirect IDs
+- `References/`, stored as protected originals
+
+---
+
+## Typical workflow
+
+1. **Import** your library and browse it from the **Dashboard** or the realm pages.
+2. **Create a campaign** (All Campaigns) and make it active.
+3. **Add the party**, **quests** and **adventures**. Start an adventure from one of the source hooks to link it.
+4. **Prepare the next session**, choosing the adventures and the NPCs and places in play.
+5. **Go live** (Live Session button): run encounters, log events, update quests and record world changes.
+6. **End the session.** Generate the recap draft, edit it, and accept or reject the recorded changes.
+7. Reveal records to players, and publish quests, recaps and maps.
+8. Use **Canon Review** to approve anything that should become permanent world canon.
+
+---
+
+## Player view
+
+- **On your machine:** open `http://127.0.0.1:4310/player`, or use the **Player View** button.
+- **For players on your network:** start a separate player-only server:
+
+  ```bash
+  npm run start:player      # http://<your-computer>:4320
+  ```
+
+  This process contains **no DM routes at all**. Only player-safe data can be requested from it.
+
+A record exists for players only after you enable **Players know this record exists** on its *Player view* tab. Players then see only:
+- your player summary
+- facts you have revealed
+- the sections you tick
+
+Sections whose headings say *GM only* or *Secret* cannot be published. References to unrevealed records are removed. Maps, markers, regions, quests and recaps are hidden until you publish them.
+
+---
+
+## Data, backups and exports
+
+By default all data lives in `./data/`, which git ignores:
 
 | Path | Contents |
 | --- | --- |
-| `data/worldkeeper.db` | The SQLite database (records, history, campaigns, maps) |
+| `data/worldkeeper.db` | SQLite database: records, history, relationships, campaigns, maps |
 | `data/uploads/` | Uploaded map images |
-| `data/backups/` | Versioned `.wkbackup.zip` backups (daily, before every import and restore, and on demand) |
+| `data/backups/` | Versioned `.wkbackup.zip` backups |
 
-Set `WORLDKEEPER_DATA_DIR=/some/folder` to keep data elsewhere (for example a synced folder). `PORT` and `HOST` change where the server listens; the DM server listens on `127.0.0.1` only by default.
+**Backups** are created daily while the server runs, before every import, before every restore, and on demand: use **Backups → Back up now** or `npm run backup`. A restore checks the archive and the database's integrity first, and saves a safety backup of the current state.
 
-### Player view
+**Exports** (Import and Export → Export):
 
-- **Same machine:** open http://127.0.0.1:4310/player (or the **Player View** button). It only calls player endpoints.
-- **Players on your network:** run a second, player-only server:
-  ```bash
-  npm run start:player     # http://<your-computer>:4320 — serves ONLY revealed, player-safe data
-  ```
-  This process does not contain any DM routes at all, so secrets cannot be fetched from it.
+| Export | Use |
+| --- | --- |
+| Full world ZIP | Markdown library + complete JSON + every original source file + map images |
+| Markdown library | One file per record in the library format; re-importable anywhere |
+| JSON data | Every table; loads into an empty installation |
+| Campaign-only | One campaign; imports as a new campaign |
+| Player-safe | Only revealed and published material; contains no secrets |
 
-Players see a record only after you tick **Players know this record exists** on its *Player view* tab, and then only your player summary, revealed facts, and the sections you tick. Sections whose headings say *GM only* or *Secret* can never be published.
+---
 
-## Tests
+## Commands
+
+| Command | Description |
+| --- | --- |
+| `npm run setup` | Install dependencies and build the client |
+| `npm start` | Start the DM app (production build) on `127.0.0.1:4310` |
+| `npm run start:player` | Start the player-only server on `0.0.0.0:4320` |
+| `npm run dev` | Development mode with live reload |
+| `npm run build` | Type-check and build the client into `dist/` |
+| `npm run import -- <zip or folder> [--dry-run] [--take-source]` | Import a lore library from the command line |
+| `npm run backup [-- reason]` | Write a backup archive |
+| `npm test` | Run the test suite |
+| `npm run typecheck` | Type-check client and server |
+
+## Configuration
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `WORLDKEEPER_DATA_DIR` | `./data` | Where the database, uploads and backups are stored |
+| `PORT` | `4310` (DM), `4320` (player) | Listening port |
+| `HOST` | `127.0.0.1` (DM), `0.0.0.0` (player) | Listening address. The DM server is local-only unless you change this. |
+| `WORLDKEEPER_MODE` | `dm` | Set to `player` for the player-only server |
+
+### Keyboard shortcuts
+
+| Keys | Action |
+| --- | --- |
+| `Ctrl+K` or `/` | Search |
+| `Alt+D` | DM screen |
+| `Ctrl+\` | Collapse or expand the sidebar |
+| `Ctrl+Enter` | Save a live-session log entry |
+
+---
+
+## Project structure
+
+```
+shared/            Domain vocabulary and pure play logic (dice, initiative, damage), used by client and server
+server/src/
+  db/              SQLite connection and versioned migrations
+  import/          Archive scanning, Markdown parsing, normalisation, import plan/commit
+  repo/            Data access: entities, relationships, search, campaigns, maps, canon review
+  player/          The player-safe projection (the only source of player data)
+  backup/          Backups, restore, exports
+  routes/          HTTP API
+  cli/             Command-line import and backup
+client/src/
+  components/      Layout, search palette, Markdown renderer, pickers, UI primitives
+  pages/           Dashboard, encyclopedia, atlas, graph, realm tools, campaigns, live mode, DM tools, library
+  player/          Player view app
+tests/             Unit, API and integration tests
+scripts/           Browser end-to-end smoke test
+docs/              Architecture, schema and import strategy
+```
+
+**Stack:** React, TypeScript, Vite, Tailwind CSS, Lucide, React Flow, Leaflet; Node.js, Express, SQLite (better-sqlite3, FTS5), zod. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the database schema, import strategy and security model.
+
+---
+
+## Testing
 
 ```bash
-npm test                                         # unit + API tests (synthetic fixtures)
-WORLDKEEPER_TEST_ARCHIVE=path/to/archive.zip npm test   # also runs the full real-archive import test
+npm test                                                    # unit + API tests (synthetic fixtures)
+WORLDKEEPER_TEST_ARCHIVE=path/to/archive.zip npm test       # adds the full real-archive import test
 npm run typecheck
-# Browser end-to-end smoke test (start the app first, needs Playwright + Chromium):
+```
+
+**Browser end-to-end smoke test.** Start the app first; Playwright and Chromium are required.
+
+```bash
 WORLDKEEPER_TEST_ARCHIVE=path/to/archive.zip node scripts/e2e-smoke.mjs http://127.0.0.1:4310 ./screenshots
 ```
 
-## Keyboard shortcuts
+The tests cover:
+- import planning, deduplication, rollback and idempotency
+- protection of local edits and of the setting bibles
+- search and relationships
+- persistence across restarts and revision history
+- canon review and campaign overlays
+- recap generation
+- player-data safety, including the player-only server
+- backup and restore, and the JSON / Markdown / campaign export round-trips
+- atlas uploads, dice and initiative
 
-`Ctrl+K` or `/` search · `Alt+D` DM screen · `Ctrl+\` collapse sidebar · `Ctrl+Enter` save a live-session log entry.
+---
 
-## Documentation
+## Canon and safety guarantees
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): stack, folder layout, database schema, import strategy, safety model.
-- [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md): what is done, what is partial, known issues, tests performed and next steps.
+- **No invented lore.** Missing facts stay `UNDEFINED`. No placeholder entries, coordinates, dates or campaign events are generated.
+- **Canon changes are visible and reversible.** Every edit is versioned with a reason. Edited canon records appear in Canon Review with a diff until you approve or revert them. New records are `PROPOSED`.
+- **Campaigns never overwrite the world.** Campaign developments are stored separately and become canon only through explicit approval.
+- **Source originals are protected.** The setting bibles and other references are stored verbatim and never overwritten.
+- **Players see only what you reveal.** This is enforced on the server, not by hiding text in the page.
+- **Safe rendering.** Raw HTML in lore is never rendered. Uploaded images are checked by content, and SVG is refused. All writes are validated.
+
+---
+
+## Status and roadmap
+
+The first release is functional. [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) lists completed and partial features, known issues, the tests performed and next steps.
+
+**Next milestone (v0.2, "At the table"):**
+- record-link suggestions as you type in the editor
+- structured faction and NPC panels
+- revealing to players during a live session
+- timeline eras
+- desktop packaging with Tauri
+
+An optional, provider-independent AI assistant is planned only after the core is in regular use. It will only ever create `PROPOSED` drafts.
