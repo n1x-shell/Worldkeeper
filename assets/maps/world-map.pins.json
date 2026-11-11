@@ -1,0 +1,154 @@
+{
+  "name": "The World",
+  "image": "world-map.png",
+  "note": "Pin positions are pixels from the image's top-left corner, placed on drawn features rather than over the lettering. Only pins whose record is revealed are added for players.",
+  "pins": [
+    {
+      "id": "CON-301",
+      "label": "Kaelmar",
+      "x": 330,
+      "y": 560,
+      "category": "location"
+    },
+    {
+      "id": "CON-001",
+      "label": "Aetheris",
+      "x": 1180,
+      "y": 300,
+      "category": "location"
+    },
+    {
+      "id": "LOC-902",
+      "label": "The Black Tides",
+      "x": 790,
+      "y": 575,
+      "category": "landmark"
+    },
+    {
+      "id": "SET-302",
+      "label": "Kaelholm",
+      "x": 572,
+      "y": 588,
+      "category": "settlement"
+    },
+    {
+      "id": "REG-002",
+      "label": "The Radiant Ascendancy",
+      "x": 1290,
+      "y": 135,
+      "category": "location"
+    },
+    {
+      "id": "REG-004",
+      "label": "The Fractured Nexus",
+      "x": 1020,
+      "y": 175,
+      "category": "location"
+    },
+    {
+      "id": "REG-003",
+      "label": "The Tyrant's Dominion",
+      "x": 1460,
+      "y": 465,
+      "category": "location"
+    },
+    {
+      "id": "REG-005",
+      "label": "The Eternal Veil",
+      "x": 925,
+      "y": 515,
+      "category": "location"
+    },
+    {
+      "id": "REG-006",
+      "label": "The Verdant Rebirth",
+      "x": 1275,
+      "y": 700,
+      "category": "location"
+    },
+    {
+      "id": "LOC-007",
+      "label": "The Luminara Gate",
+      "x": 1580,
+      "y": 85,
+      "category": "landmark"
+    },
+    {
+      "id": "REG-306",
+      "label": "The Ash Barrens",
+      "x": 370,
+      "y": 330,
+      "category": "location"
+    },
+    {
+      "id": "REG-301",
+      "label": "The Eastern Deepwood",
+      "x": 520,
+      "y": 385,
+      "category": "location"
+    },
+    {
+      "id": "REG-302",
+      "label": "The Eastern Mountains",
+      "x": 650,
+      "y": 290,
+      "category": "location"
+    },
+    {
+      "id": "REG-303",
+      "label": "The Central Bloom Country",
+      "x": 270,
+      "y": 405,
+      "category": "location"
+    },
+    {
+      "id": "REG-305",
+      "label": "The Southern Fens, Lakes and River Country",
+      "x": 255,
+      "y": 640,
+      "category": "location"
+    },
+    {
+      "id": "REG-304",
+      "label": "The Northern Highlands and Ice",
+      "x": 130,
+      "y": 95,
+      "category": "location"
+    },
+    {
+      "id": "REG-001",
+      "label": "The Hollow Marches",
+      "x": 1135,
+      "y": 380,
+      "category": "region"
+    },
+    {
+      "id": "SET-001",
+      "label": "Hollow Refuge",
+      "x": 1210,
+      "y": 495,
+      "category": "settlement"
+    },
+    {
+      "id": "LOC-002",
+      "label": "The Bloodmarked Fields",
+      "x": 1320,
+      "y": 515,
+      "category": "landmark"
+    },
+    {
+      "id": "LOC-901",
+      "label": "The Rift",
+      "x": 110,
+      "y": 400,
+      "category": "landmark"
+    },
+    {
+      "id": "SET-301",
+      "label": "Ashvale",
+      "x": 185,
+      "y": 280,
+      "category": "settlement"
+    }
+  ]
+}

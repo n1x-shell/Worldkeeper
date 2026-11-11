@@ -5,6 +5,13 @@
  *
  *   npx tsx scripts/build-player-tagged-handbook.ts <fresh data dir> <archive.zip> <output dir>
  *
+ * The world map in assets/maps/ (world-map.png + world-map.pins.json) is added as a player-visible map.
+ * Pins link only to records that end up revealed; the others are left off.
+ *
+ * DM-written player text in assets/player-text/*.md is published too: each "## Name" section becomes the player
+ * text of the record with that name (only that text is shown, never the record's own sections). When several records
+ * share a name, add the kind: "## Kaelholm (Settlement)".
+ *
  * Sections are left out when they are GM-only, editorial notes about the source, DM-facing advice, bookkeeping,
  * or mention something that is secret elsewhere in the lore (listed below). Review the output before publishing.
  */
@@ -18,6 +25,9 @@ import { getEntity, updateEntity } from '../server/src/repo/entities.js';
 import { splitSections } from '../server/src/import/parseMarkdown.js';
 import { isSecretHeading } from '../server/src/player/projection.js';
 import { buildPlayerSite } from '../server/src/publish/site.js';
+import { maps, markers } from '../server/src/repo/maps.js';
+import { imageSize } from '../server/src/routes/atlas.js';
+import { ENTITY_TYPE_LABELS, type EntityType } from '../shared/domain.js';
 
 const [dataDir, archive, outDir] = process.argv.slice(2);
 const ctx = new AppContext(resolvePaths(dataDir));
@@ -43,6 +53,56 @@ for (const id of ids) {
   if (!sections.length) continue; // nothing safe to show: leave the record unrevealed
   updateEntity(ctx.db, id, { revealed: true, revealed_sections: sections.map((s) => s.heading), reason: 'Published to the Player Handbook (player-tagged in the archive)' });
 }
+// DM-written player text (assets/player-text/*.md). Each "## Name" section becomes the player summary of the record
+// with that exact name, and only that text is shown: none of the record's own sections are revealed.
+const textDir = path.resolve(import.meta.dirname, '../assets/player-text');
+const byName = ctx.db.prepare(`SELECT id, type FROM entities WHERE lower(name) = lower(?) AND type NOT IN ('index','register','redirect') AND archived = 0`);
+// "## Name" or, when several records share the name, "## Name (Type)", e.g. "## Kaelholm (Settlement)".
+const findRecords = (heading: string) => {
+  const exact = byName.all(heading) as { id: string; type: string }[];
+  const m = /^(.*?)\s*\(([^)]+)\)$/.exec(heading);
+  if (exact.length || !m) return exact;
+  const kind = m[2].trim().toLowerCase();
+  return (byName.all(m[1]) as { id: string; type: string }[]).filter(
+    (r) => r.type === kind || (ENTITY_TYPE_LABELS[r.type as EntityType] ?? '').toLowerCase() === kind,
+  );
+};
+for (const f of fs.existsSync(textDir) ? fs.readdirSync(textDir).filter((n) => n.endsWith('.md')).sort() : []) {
+  const md = fs.readFileSync(path.join(textDir, f), 'utf8');
+  for (const part of md.split(/^## /m).slice(1)) {
+    const nl = part.indexOf('\n');
+    const name = part.slice(0, nl).trim();
+    const text = part.slice(nl + 1).trim();
+    const rows = findRecords(name);
+    if (rows.length !== 1) {
+      console.log(`player text: "${name}" ${rows.length ? 'matches several records' : 'is not a record'}, skipped`);
+      continue;
+    }
+    if (SPOILER('', text)) console.warn(`player text: check "${name}", it mentions something secret elsewhere in the lore`);
+    updateEntity(ctx.db, rows[0].id, { revealed: true, player_summary: text, revealed_sections: [], reason: `Published to the Player Handbook from ${f}` });
+    console.log(`player text: ${name} -> ${rows[0].id}`);
+  }
+}
+// World map: image + pins (pixel positions from the top-left; the atlas measures y from the bottom).
+const mapDir = path.resolve(import.meta.dirname, '../assets/maps');
+const pinsFile = path.join(mapDir, 'world-map.pins.json');
+if (fs.existsSync(pinsFile)) {
+  const spec = JSON.parse(fs.readFileSync(pinsFile, 'utf8')) as { name: string; image: string; pins: { id: string; label: string; x: number; y: number; category: string }[] };
+  const img = fs.readFileSync(path.join(mapDir, spec.image));
+  const size = imageSize(img);
+  if (!size) throw new Error(`Could not read the size of ${spec.image}`);
+  const file = `map-world-${img.length.toString(16)}${path.extname(spec.image)}`;
+  fs.writeFileSync(path.join(ctx.paths.uploadsDir, file), img);
+  const map = maps.create(ctx.db, { name: spec.name, kind: 'image', image_file: file, width: size.width, height: size.height, player_visible: true, layers: ['Locations'] }) as { id: number };
+  let placed = 0;
+  for (const p of spec.pins) {
+    if (!getEntity(ctx.db, p.id).revealed) continue;
+    markers.create(ctx.db, { map_id: map.id, entity_id: p.id, label: p.label, x: p.x, y: size.height - p.y, category: p.category, layer: 'Locations', hidden: false });
+    placed++;
+  }
+  console.log(`world map: ${size.width}x${size.height}, ${placed} pins`);
+}
+
 const { files: site, summary } = buildPlayerSite(ctx.db, ctx.paths);
 fs.rmSync(outDir, { recursive: true, force: true });
 for (const f of site) {

@@ -360,7 +360,17 @@ export function PlayerMaps() {
         ))}
       </div>
       <div className="panel overflow-hidden">
-        <MapContainer key={m.id} crs={L.CRS.Simple} bounds={bounds} minZoom={-5} maxZoom={4} style={{ height: '70vh' }} attributionControl={false}>
+        {/* The frame takes the image's own shape (no empty letterbox on phones), up to 75% of the screen height. */}
+        <MapContainer
+          key={m.id}
+          crs={L.CRS.Simple}
+          bounds={bounds}
+          minZoom={-5}
+          maxZoom={4}
+          zoomSnap={0.25}
+          style={{ width: '100%', aspectRatio: `${m.width} / ${m.height}`, maxHeight: '75vh', background: 'transparent' }}
+          attributionControl={false}
+        >
           {m.image_file ? <ImageOverlay url={source.imageUrl(m.image_file)} bounds={bounds} /> : <Rectangle bounds={bounds} pathOptions={{ color: '#c9a24a', weight: 1, fillOpacity: 0.3 }} />}
           {m.shapes.map((s) =>
             s.kind === 'region' ? (
