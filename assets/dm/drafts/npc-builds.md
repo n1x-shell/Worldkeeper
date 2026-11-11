@@ -1,17 +1,19 @@
 # NPC Builds (GM only, DRAFT)
 
-The 5e build behind every player-facing NPC. Species come from the Player's Handbook (2024, plus the 2014 half-elf and half-orc), Tasha's Cauldron of Everything (Tasha's), Mordenkainen Presents: Monsters of the Multiverse (MotM) and Eberron: Rising from the Last War (warforged). Classes and subclasses come from the 2024 PHB and Tasha's. The "calling" is what players see.
+The 5e build behind every NPC. Species come from the Player's Handbook (2024, plus the 2014 half-elf and half-orc), Tasha's Cauldron of Everything (Tasha's), Mordenkainen Presents: Monsters of the Multiverse (MotM) and Eberron: Rising from the Last War (warforged). Classes and subclasses come from the 2024 PHB and Tasha's. The "calling" is what players see.
 
-Anything the archive already said (a species, a gender, a role) is kept. Everything else here is new and yours to change.
+Anything the archive already said (a species, a gender, a role, a secret) is kept. Everything else here is new and yours to change.
 
-## Spread
+## Spread across all 106 people
 
-- **Species:** 44 different, between one and 6 each. Human 6, Dwarf 3, Elf 3, Hobgoblin 3, Orc 3, Shadar-kai 3, Tiefling 3, Aarakocra 2, Bloomborn 2, Changeling 2, Deep Gnome 2, Dragonborn 2, Eladrin 2, Fire Genasi 2, Githzerai 2, Gnome 2, Goblin 2, Goliath 2, Halfling 2, Kobold 2, Shifter 2, Tabaxi 2, Tortle 2, Triton 2, Yuan-ti 2, Aasimar 1, Air Genasi 1, Bugbear 1, Centaur 1, Duergar 1, Earth Genasi 1, Fairy 1, Firbolg 1, Githyanki 1, Half-elf 1, Half-orc 1, Harengon 1, Kenku 1, Lizardfolk 1, Minotaur 1, Satyr 1, Sea Elf 1, Warforged 1, Water Genasi 1
-- **Classes:** Druid 7, Fighter 7, Paladin 7, Warlock 7, Barbarian 6, Cleric 6, Ranger 6, Rogue 6, Sorcerer 6, Wizard 6, Artificer 5, Bard 5, Monk 5
-- **Pronouns:** she/her 35, he/him 33, they/them 9, any 1, unknown 1
-- **Backgrounds:** Hermit 8, Soldier 8, Acolyte 7, Entertainer 7, Sage 7, Criminal 6, Noble 5, Scribe 5, Wayfarer 5, Guide 4, Merchant 4, Artisan 3, Charlatan 3, Guard 3, Sailor 3, Farmer 1
+Four NPCs are not people and have no build: the Hidden Ones Vyrithar and Vyrathus, Eryndor the First Shard, and the Root Core.
 
-## Builds
+- **Species (44):** Human 8, Dwarf 4, Shadar-kai 4, Changeling 3, Elf 3, Fire Genasi 3, Githzerai 3, Goliath 3, Hobgoblin 3, Kobold 3, Orc 3, Tiefling 3, Aarakocra 2, Aasimar 2, Air Genasi 2, Bloomborn 2, Bugbear 2, Centaur 2, Deep Gnome 2, Dragonborn 2, Duergar 2, Earth Genasi 2, Eladrin 2, Fairy 2, Firbolg 2, Githyanki 2, Gnome 2, Goblin 2, Half-elf 2, Half-orc 2, Halfling 2, Harengon 2, Kenku 2, Lizardfolk 2, Minotaur 2, Satyr 2, Shifter 2, Tabaxi 2, Tortle 2, Triton 2, Warforged 2, Water Genasi 2, Yuan-ti 2, Sea Elf 1
+- **Classes:** Druid 9, Fighter 9, Paladin 9, Rogue 9, Warlock 9, Wizard 9, Barbarian 8, Bard 8, Cleric 8, Ranger 8, Artificer 7, Sorcerer 7, Monk 6
+- **Pronouns:** she/her 47, he/him 44, they/them 12, any 1, it/its 1, unknown 1
+- **Backgrounds:** Soldier 12, Hermit 11, Acolyte 9, Sage 9, Scribe 8, Entertainer 7, Wayfarer 7, Criminal 6, Guard 6, Guide 6, Merchant 6, Artisan 5, Charlatan 5, Noble 5, Sailor 3, Farmer 1
+
+## Player-facing (79)
 
 | Name | Group | Species | Class | Background | Pronouns | From | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -94,3 +96,39 @@ Anything the archive already said (a species, a gender, a role) is kept. Everyth
 | Maro Grane | The Convergence Collective | Orc (PHB) | Fighter (Rune Knight) | Acolyte | he/him | The ash barrens |  |
 | Marshal Dace Corvane | The Ascendancy | Hobgoblin (MotM) | Fighter (Battle Master) | Soldier | he/him | The eastern mountains |  |
 | Odran Reeve | Low Fenn | Tortle (MotM) | Ranger (Hunter) | Merchant | he/him | Low Fenn, near Ashvale |  |
+
+## GM-only (31, full profiles in gm-npcs.md)
+
+| Name | Group | Species | Class | Background | Pronouns | From | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| The Blind Seer | Black Sun (secretly), Hollow Refuge | Minotaur (MotM) | Cleric (Twilight Domain) | Acolyte | he/him | Unknown. Older than anyone can say. |  |
+| Old Vara | Hollow Refuge | Dwarf (PHB) | Artificer (Armorer) | Artisan | she/her | The Anvil of Dominion, the Tyrant's Dominion |  |
+| Captain Marrek Vaal | Crimson Legion | Centaur (MotM) | Fighter (Psi Warrior) | Soldier | he/him | The Bloodfields, the Tyrant's Dominion |  |
+| Sister Elyra Vale | Celestial Order, Vale family | Human (PHB) | Cleric (Life Domain) | Acolyte | she/her | Ashen Spire, the Hollow Marches |  |
+| Professor Orin Vale | Arcane Consortium, Vale family | Half-elf (PHB 2014) | Wizard (Order of Scribes) | Sage | he/him | Ashen Spire, the Hollow Marches |  |
+| Vess the Grey | Shadow Pact | Lizardfolk (MotM) | Rogue (Thief) | Charlatan | they/them | Noctis, the Eternal Veil |  |
+| Mother Thorn | Wildborn Clans | Firbolg (MotM) | Druid (Circle of the Stars) | Hermit | she/her | Wither's Hollow, the Hollow Marches |  |
+| Mara Venn | Hollow Refuge (no faction) | Bugbear (MotM) | Bard (College of Eloquence) | Merchant | she/her | Hollow Refuge |  |
+| Torren Kell | Scavengers | Earth Genasi (MotM) | Rogue (Thief) | Wayfarer | he/him | The Scar, the Hollow Marches |  |
+| Sera Noll | Silent Accord | Harengon (MotM) | Rogue (Arcane Trickster) | Scribe | she/her | Kaelholm, Kaelmar, she claims |  |
+| Brann Kest | Hollow Refuge | Half-orc (PHB 2014) | Fighter (Psi Warrior) | Soldier | he/him | The Tyrant's Dominion |  |
+| Illa Reed | Merchants | Satyr (MotM) | Bard (College of Glamour) | Merchant | she/her | The Market of Lost Things, Hollow Refuge |  |
+| Talric Stormwing | Wildborn Clans | Air Genasi (MotM) | Ranger (Beast Master) | Guide | he/him | The high passes above the Green Expanse |  |
+| Vyrithar, the Weaver of Veils | Hidden Ones | Not a people | – | – | they/them | The Ethereal Realm |  |
+| Vyrathus, the Keeper of Flame | Hidden Ones | Not a people | – | – | they/them | The Ethereal Realm |  |
+| Eryndor the First Shard | Ethereal Realm | Not a people | – | – | he/him | Before everything |  |
+| Sylas Vaerin | Ethereal Realm | Githyanki (MotM) | Sorcerer (Clockwork Sorcery) | Sage | he/him | Unknown. He says the Astral Sea, and laughs. |  |
+| Veyra the Unchained | Ethereal Realm | Aasimar (PHB) | Barbarian (Path of Wild Magic) | Soldier | she/her | Empyrean Spire, the Radiant Ascendancy |  |
+| Kaelos "the Forgotten Star" | Ethereal Realm | Duergar (MotM) | Artificer (Artillerist) | Artisan | he/him | Unknown |  |
+| Lirien Ashborne | Ethereal Realm | Fire Genasi (MotM) | Paladin (Oath of Vengeance) | Wayfarer | she/her | Every turn of the Cycle |  |
+| Master Ilythis | Ethereal Realm | Water Genasi (MotM) | Wizard (Order of Scribes) | Scribe | they/them | Unknown |  |
+| Titan-King Varuun | Titans of the Rift | Goliath (PHB) | Barbarian (Path of the Zealot) | Soldier | he/him | The Rift's Edge |  |
+| Kyrra the Shadeborn | Ethereal Realm | Fairy (MotM) | Warlock (Great Old One Patron) | Hermit | she/her | The Veilborn Archive, the Eternal Veil |  |
+| Magistrate Althros | Ethereal Realm | Githzerai (MotM) | Monk (Warrior of the Open Hand) | Guard | he/him | Unknown |  |
+| Elyndria the Echo | Ethereal Realm | Kenku (MotM) | Warlock (Archfey Patron) | Charlatan | she/her | Unknown |  |
+| The Seventh Ward | Guardians | Warforged (Eberron: Rising from the Last War) | Paladin (Oath of the Watchers) | Guard | it/its | Built by Kaelith |  |
+| The Root Core | The Seed Vault | Not a people | – | – | it/its | Beneath the Rift |  |
+| The founder | Ashvale | Human (PHB) | Bard (College of Lore) | Scribe | she/her | Kaelith, before the Shrouding |  |
+| Warden Ilsabet Crane | The Continuity | Shadar-kai (MotM) | Ranger (Gloom Stalker) | Guard | she/her | Sentinel Hold |  |
+| Nib | The memory-house | Kobold (MotM) | Druid (Circle of the Land) | Guide | he/him | The under-roads |  |
+| The Forgotten One | None | Changeling (MotM) | Wizard (Order of Scribes) | Hermit | they/them | Aetheris, many lives ago |  |
