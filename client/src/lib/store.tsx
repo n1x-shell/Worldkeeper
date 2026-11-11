@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { api } from './api';
 import type { EntitySummary } from './types';
+import { MentionIndex } from '@shared/mentions';
 
 interface AppState {
   appName: string;
@@ -16,6 +17,12 @@ interface AppState {
   reloadIndex: () => Promise<void>;
   reloadMeta: () => Promise<void>;
   entityCount: number;
+  /** Show technical details (IDs, files, sources, how-it-works notes). Off for normal DM/player use. */
+  debug: boolean;
+  debugForced: boolean;
+  setDebug: (v: boolean) => Promise<void>;
+  /** Resolves @[Name] mentions and `[ID]` references to records. */
+  mentions: MentionIndex;
 }
 
 const Ctx = createContext<AppState | null>(null);
@@ -43,6 +50,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [indexLoaded, setIndexLoaded] = useState(false);
   const [appName, setAppName] = useState('The Worldkeeper');
   const [entityCount, setEntityCount] = useState(0);
+  const [debug, setDebugState] = useState(false);
+  const [debugForced, setDebugForced] = useState(false);
+  const mentions = useMemo(() => new MentionIndex([...index.values()].map((e) => ({ id: e.id, name: e.name, type: e.type, aliases: e.aliases, redirect_to: e.redirect_to }))), [index]);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -55,8 +65,10 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setIndexLoaded(true);
   }, []);
   const reloadMeta = useCallback(async () => {
-    const m = await api.get<{ appName: string; entities: number }>('/api/meta');
+    const m = await api.get<{ appName: string; entities: number; debug: boolean; debugForced: boolean }>('/api/meta');
     setAppName(m.appName);
+    setDebugState(!!m.debug);
+    setDebugForced(!!m.debugForced);
     setEntityCount(m.entities);
     document.title = m.appName;
     const a = await api.get<{ id: number | null }>('/api/campaigns/active');
@@ -91,8 +103,15 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       reloadIndex,
       reloadMeta,
       entityCount,
+      debug,
+      debugForced,
+      setDebug: async (v: boolean) => {
+        await api.put('/api/settings', { debug: v ? 'true' : 'false' });
+        setDebugState(v || debugForced);
+      },
+      mentions,
     }),
-    [appName, theme, sidebarCollapsed, activeCampaignId, index, indexLoaded, reloadIndex, reloadMeta, entityCount],
+    [appName, theme, sidebarCollapsed, activeCampaignId, index, indexLoaded, reloadIndex, reloadMeta, entityCount, debug, debugForced, mentions],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

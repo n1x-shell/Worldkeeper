@@ -5,6 +5,7 @@ import { indexAux, removeAux } from './search.js';
 import { parseJson, now } from '../lib/json.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { acceptAsBaseline, getEntity, updateEntity } from './entities.js';
+import { loadMentionIndex } from './mentions.js';
 
 // ---------- Campaigns ----------
 export const campaigns = makeCrud({
@@ -154,7 +155,7 @@ export function adventureFromHook(db: DB, hookId: string, campaignId: number | n
     title: hook.name,
     source_hook_id: hook.id,
     linked_ids: [hook.id],
-    data: { ...adventureData.parse({}), premise: `See source hook ${hook.name} [${hook.id}].` },
+    data: { ...adventureData.parse({}), premise: `See the source hook ${loadMentionIndex(db).mentionFor(hook.id)}.` },
   });
 }
 
@@ -222,11 +223,8 @@ export const sessionLog = makeCrud({
 export function generateRecapDraft(db: DB, sessionId: number): string {
   const s = sessions.get(db, sessionId) as { number: number; title: string; in_world_date: string; played_on: string; campaign_id: number };
   const log = sessionLog.list(db, { session_id: sessionId }) as { kind: string; text: string; entity_id: string | null; created_at: string }[];
-  const name = (id: string | null) => {
-    if (!id) return '';
-    const e = db.prepare('SELECT name FROM entities WHERE id = ?').get(id) as { name: string } | undefined;
-    return e ? ` (${e.name} [${id}])` : ` [${id}]`;
-  };
+  const mentions = loadMentionIndex(db);
+  const name = (id: string | null) => (id && mentions.byId.has(id) ? ` (${mentions.mentionFor(id)})` : '');
   const sections: [string, string[]][] = [
     ['Scenes', []],
     ['Events and notes', []],

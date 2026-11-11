@@ -5,6 +5,7 @@ import { CANON_STATUSES, REALMS, REALM_LABELS, ENTITY_TYPE_LABELS, TYPE_GROUPS, 
 import { useApi, qs } from '../lib/api';
 import { CanonFlags, Empty, ErrorBox, Loading, PageHeader, RealmBadge, TypeBadge, VisibilityBadge } from '../components/ui';
 import type { EntitySummary } from '../lib/types';
+import { useDebug } from '../components/Dev';
 
 export const BROWSE_GROUPS: Record<string, { title: string; types?: EntityType[]; note?: string }> = {
   all: { title: 'All Lore' },
@@ -31,13 +32,14 @@ export const BROWSE_GROUPS: Record<string, { title: string; types?: EntityType[]
 
 export function EntityTable({ rows, showRealm = true }: { rows: EntitySummary[]; showRealm?: boolean }) {
   const nav = useNavigate();
+  const debug = useDebug();
   return (
     <div className="panel overflow-x-auto">
       <table className="table">
         <thead>
           <tr>
             <th>Name</th>
-            <th className="hidden sm:table-cell">ID</th>
+            {debug && <th className="hidden sm:table-cell">ID</th>}
             <th>Type</th>
             {showRealm && <th className="hidden md:table-cell">Realm</th>}
             <th className="hidden lg:table-cell">Canon</th>
@@ -54,7 +56,7 @@ export function EntityTable({ rows, showRealm = true }: { rows: EntitySummary[];
                 </Link>
                 {e.archived && <span className="text-xs text-dim ml-2">(archived)</span>}
               </td>
-              <td className="hidden sm:table-cell text-dim text-xs whitespace-nowrap">{e.id}</td>
+              {debug && <td className="hidden sm:table-cell text-dim text-xs whitespace-nowrap">{e.id}</td>}
               <td>
                 <TypeBadge type={e.type} />
               </td>
@@ -81,6 +83,7 @@ export function EntityList({ group: groupProp, realm: fixedRealm }: { group?: st
   const params = useParams();
   const group = groupProp ?? params.group ?? 'all';
   const def = BROWSE_GROUPS[group] ?? BROWSE_GROUPS.all;
+  const debug = useDebug();
   const [realm, setRealm] = useState<string>(fixedRealm ?? '');
   const [canon, setCanon] = useState('');
   const [type, setType] = useState('');
@@ -105,9 +108,9 @@ export function EntityList({ group: groupProp, realm: fixedRealm }: { group?: st
           </Link>
         }
       />
-      {def.note && <p className="text-sm text-dim mb-3">{def.note}</p>}
+      {def.note && debug && <p className="text-sm text-dim mb-3">{def.note}</p>}
       <div className="flex flex-wrap gap-2 mb-4">
-        <input className="input max-w-xs" placeholder="Filter by name, ID or tag…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Filter" />
+ <input className="input max-w-xs" placeholder="Filter by name…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Filter" />
         {!fixedRealm && (
           <select className="input w-auto" value={realm} onChange={(e) => setRealm(e.target.value)} aria-label="Realm">
             <option value="">All realms</option>

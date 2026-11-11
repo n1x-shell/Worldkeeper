@@ -41,7 +41,23 @@ interface PCampaign {
 function Md({ text }: { text: string }) {
   return (
     <div className="prose-lore">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} urlTransform={defaultUrlTransform}>
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        urlTransform={defaultUrlTransform}
+        components={{
+          // Links to other revealed entries stay inside the player view.
+          a: ({ href, children }) =>
+            href?.startsWith('/player/') ? (
+              <Link to={href} className="underline decoration-dotted underline-offset-2">
+                {children}
+              </Link>
+            ) : (
+              <a href={href} target="_blank" rel="noreferrer noopener" className="underline">
+                {children}
+              </a>
+            ),
+        }}
+      >
         {text}
       </ReactMarkdown>
     </div>

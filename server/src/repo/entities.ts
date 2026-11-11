@@ -128,6 +128,8 @@ export function toSummary(e: Entity | EntityRow): EntitySummary {
   return {
     id: ent.id,
     name: ent.name,
+    aliases: ent.aliases,
+    redirect_to: ent.redirect_to,
     type: ent.type,
     realm: ent.realm,
     canon_status: ent.canon_status,

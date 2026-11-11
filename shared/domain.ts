@@ -210,6 +210,8 @@ export const SECRET_HEADING_RE = /(gm[- ]?only|gm truth|gm's view|secret|hidden 
 export interface EntitySummary {
   id: string;
   name: string;
+  aliases?: string[];
+  redirect_to?: string | null;
   type: EntityType;
   realm: Realm;
   canon_status: CanonStatus;
@@ -257,4 +259,29 @@ export interface Relationship {
   canon_status: CanonStatus;
   origin: 'import-parent' | 'import-field' | 'import-reference' | 'user';
   source_context: string;
+}
+
+/** Reading of a relationship from the other end, e.g. "Leads" → "Led by". */
+export const RELATIONSHIP_INVERSE_LABELS: Partial<Record<RelationshipType, string>> = {
+  part_of: 'Contains',
+  lives_in: 'Home of',
+  leads: 'Led by',
+  member_of: 'Has member',
+  controls: 'Controlled by',
+  seeks: 'Sought by',
+  created: 'Created by',
+  destroyed: 'Destroyed by',
+  present_at: 'Attended by',
+  knows_about: 'Known to',
+  references: 'Mentioned in',
+  contains: 'Part of',
+  draft_of: 'Has draft',
+};
+
+/** Human wording for a relationship as seen from one record. */
+export function relationshipLabel(type: string, outgoing: boolean): string {
+  const t = type as RelationshipType;
+  if (t === 'references') return outgoing ? 'Mentions' : 'Mentioned in';
+  if (outgoing || SYMMETRIC_RELATIONSHIPS.includes(t)) return RELATIONSHIP_LABELS[t] ?? type;
+  return RELATIONSHIP_INVERSE_LABELS[t] ?? RELATIONSHIP_LABELS[t] ?? type;
 }

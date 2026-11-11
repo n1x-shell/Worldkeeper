@@ -1,36 +1,53 @@
 import ReactMarkdown, { defaultUrlTransform } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Link } from 'react-router-dom';
-import { ID_PATTERN_SOURCE } from '@shared/domain';
+import { parseRefs } from '@shared/mentions';
 import { useAppState } from '../lib/store';
 
-const REF_RE = new RegExp(`\\[(${ID_PATTERN_SOURCE})\\](?!\\()`, 'g');
+const escLabel = (s: string) => s.replace(/([\\[\]])/g, '\\$1');
 
 /**
  * Safe Markdown renderer. Raw HTML in lore is NOT rendered (react-markdown escapes it; no rehype-raw),
- * and only http(s)/mailto/internal links survive the URL transform. `Name [ID]` references become record links.
+ * and only http(s)/mailto/internal links survive the URL transform.
+ * Record references (`@[Name]` and the library's `Name [ID]`) render as links showing the name; stable IDs
+ * are only shown in debug mode.
  */
 export function Markdown({ text, className = 'prose-lore' }: { text: string; className?: string }) {
-  const { index, indexLoaded } = useAppState();
-  const linked = text.replace(REF_RE, (_m, id: string) => `[${id}](wk:${id})`);
+  const { index, indexLoaded, mentions, debug } = useAppState();
+  const linked = !indexLoaded
+    ? text
+    : parseRefs(text, mentions)
+        .map((s) => {
+          if (s.kind === 'text') return s.text;
+          if (s.kind === 'link') return `[${escLabel(s.label)}](wk:${s.id})${debug ? ` [\`${s.id}\`](wk:${s.id})` : ''}`;
+          if (s.kind === 'anchor') return debug ? ` [\`${s.id}\`](wk:${s.id})` : ` [↗](wk:${s.id})`;
+          if (/^[A-Z]{2,4}-/.test(s.label)) return debug ? `[${escLabel(s.label)}](wkbroken:${encodeURIComponent(s.label)})` : '';
+          return `[${escLabel(s.label)}](wkbroken:${s.reason})`;
+        })
+        .join('');
   return (
     <div className={className}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        urlTransform={(url) => (url.startsWith('wk:') ? url : defaultUrlTransform(url))}
+        urlTransform={(url) => (url.startsWith('wk:') || url.startsWith('wkbroken:') ? url : defaultUrlTransform(url))}
         components={{
           a: ({ href, children }) => {
+            if (href?.startsWith('wkbroken:')) {
+              const why = href.slice(9);
+              return (
+                <span
+                  className="underline decoration-dotted decoration-danger/70 underline-offset-2"
+                  title={why === 'ambiguous' ? 'More than one record has this name. Add its type, e.g. @[Name (Settlement)].' : 'No record with this name yet.'}
+                >
+                  {children}
+                </span>
+              );
+            }
             if (href?.startsWith('wk:')) {
               const id = href.slice(3);
               const e = index.get(id);
-              if (indexLoaded && !e)
-                return (
-                  <span className="wk-ref-broken text-danger" title={`Broken reference: no record ${id}`}>
-                    {children}
-                  </span>
-                );
               return (
-                <Link to={`/e/${encodeURIComponent(id)}`} className="wk-ref text-[0.8em] font-sans" title={e ? e.name : id}>
+                <Link to={`/e/${encodeURIComponent(id)}`} className="wk-ref" title={e?.name ?? undefined}>
                   {children}
                 </Link>
               );

@@ -3,6 +3,7 @@ import { CalendarDays, Compass, Eye, Flag, History, ListChecks, Play, Upload, St
 import { useApi } from '../lib/api';
 import { ErrorBox, Loading, PageHeader, RealmBadge, TypeBadge, EntityLink } from '../components/ui';
 import { Markdown } from '../components/Markdown';
+import { useDebug } from '../components/Dev';
 import type { EntitySummary } from '../lib/types';
 
 interface Row {
@@ -67,6 +68,7 @@ function RowList({ rows, empty }: { rows: Row[]; empty: string }) {
 const BRANCH_ART: Record<string, string> = { aetheris: 'from-amber-700/25', kaelmar: 'from-emerald-700/25', ethereal: 'from-violet-700/25' };
 
 export function Dashboard() {
+  const debug = useDebug();
   const { data, error, loading, reload } = useApi<Dash>('/api/dashboard');
   if (loading && !data) return <Loading />;
   if (error) return <ErrorBox error={error} onRetry={reload} />;
@@ -94,7 +96,7 @@ export function Dashboard() {
               <CalendarDays size={14} /> World date: <strong className="text-ink">{a?.campaign.current_date ?? data.worldDate ?? 'UNDEFINED'}</strong>
               {a && <span className="text-dim">(campaign date)</span>}
             </span>
-            <span>{data.counts.entities} records · {data.counts.relationships} links · {data.counts.documents} source files</span>
+            {debug && <span>{data.counts.entities} records · {data.counts.relationships} links · {data.counts.documents} source files</span>}
           </span>
         }
         actions={
@@ -124,7 +126,7 @@ export function Dashboard() {
               <h2 className="text-lg text-gold">{b.name}</h2>
               <RealmBadge realm={b.realm} />
             </div>
-            <div className="text-sm text-dim mt-1 mb-2">{b.count} records</div>
+            <div className="text-sm text-dim mt-1 mb-2">{b.count} entries</div>
             <div className="text-sm line-clamp-4 opacity-90">
               <Markdown text={b.excerpt} className="prose-lore text-[15px] leading-snug" />
             </div>

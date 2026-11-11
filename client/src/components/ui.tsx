@@ -63,9 +63,10 @@ export function VisibilityBadge({ revealed }: { revealed: boolean }) {
 export function EntityLink({ id, children, className = '' }: { id: string; children?: ReactNode; className?: string }) {
   const { index, indexLoaded } = useAppState();
   const e = index.get(id);
-  if (indexLoaded && !e) return <span className="text-danger underline decoration-wavy" title={`No record with ID ${id}`}>{children ?? id}</span>;
+  const { debug } = useAppState();
+  if (indexLoaded && !e) return <span className="text-danger underline decoration-wavy" title={debug ? `No record with ID ${id}` : 'This record no longer exists'}>{children ?? (debug ? id : 'missing record')}</span>;
   return (
-    <Link to={`/e/${encodeURIComponent(id)}`} className={`text-arcane hover:text-gold ${className}`} title={e ? `${e.name} · ${id}` : id}>
+    <Link to={`/e/${encodeURIComponent(id)}`} className={`text-arcane hover:text-gold ${className}`} title={debug && e ? `${e.name} · ${id}` : undefined}>
       {children ?? e?.name ?? id}
     </Link>
   );
@@ -162,7 +163,9 @@ export function Empty({ title, children }: { title: string; children?: ReactNode
   );
 }
 
-export function PageHeader({ title, subtitle, actions, icon }: { title: ReactNode; subtitle?: ReactNode; actions?: ReactNode; icon?: ReactNode }) {
+/** `note` is a how-it-works explanation, shown only in debug mode. */
+export function PageHeader({ title, subtitle, note, actions, icon }: { title: ReactNode; subtitle?: ReactNode; note?: ReactNode; actions?: ReactNode; icon?: ReactNode }) {
+  const { debug } = useAppState();
   return (
     <div className="flex flex-wrap items-end justify-between gap-3 mb-5">
       <div>
@@ -171,6 +174,7 @@ export function PageHeader({ title, subtitle, actions, icon }: { title: ReactNod
           {title}
         </h1>
         {subtitle && <div className="text-sm text-dim mt-1">{subtitle}</div>}
+        {note && debug && <div className="text-xs text-dim/80 mt-1 italic">{note}</div>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
     </div>

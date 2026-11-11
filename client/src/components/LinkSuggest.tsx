@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, type RefObject } from 'react';
+import { useCallback, useMemo, useRef, useState, type RefObject } from 'react';
 import { ENTITY_TYPE_LABELS, type EntityType } from '@shared/domain';
 import { useAppState } from '../lib/store';
 import type { EntitySummary } from '../lib/types';
@@ -6,11 +6,13 @@ import { rankRecords } from '../lib/rank';
 
 /**
  * Record-link suggestions while typing.
- * Typing `[[` followed by part of a name or ID opens a list of matching records; choosing one replaces the
- * `[[query` with the library's own reference format, `Name [ID]`. Works in any textarea via `useLinkSuggest`.
+ * Typing `@` (or `[[`) followed by part of a name opens a list of matching records; choosing one inserts a
+ * natural-language mention, `@[Record Name]` (with its type added only when two records share the name).
+ * Works in any textarea via `useLinkSuggest`.
  */
 
-const TRIGGER = /\[\[([^\[\]\n]{0,60})$/;
+// `@` at the start of the text or after whitespace/punctuation (not inside e-mail addresses), or `[[`.
+const TRIGGER = /(?:(?:^|[\s(>"'“‘])(@\[?)|(\[\[))([^\[\]\n@]{0,60})$/;
 
 /** Pixel position of the caret inside a textarea (mirror-element technique). */
 export function caretPosition(el: HTMLTextAreaElement, index: number): { top: number; left: number; height: number } {
@@ -55,8 +57,9 @@ export function replaceRange(el: HTMLTextAreaElement, start: number, end: number
 }
 
 export function useLinkSuggest(ref: RefObject<HTMLTextAreaElement | null>, enabled = true) {
-  const { index } = useAppState();
+  const { index, mentions, debug } = useAppState();
   const [state, setState] = useState<{ start: number; query: string; top: number; left: number } | null>(null);
+  const dismissed = useRef<number | null>(null);
   const [hi, setHi] = useState(0);
   const results = useMemo(() => (state ? rankRecords(index.values(), state.query) : []), [state, index]);
 
@@ -67,10 +70,15 @@ export function useLinkSuggest(ref: RefObject<HTMLTextAreaElement | null>, enabl
     if (caret !== el.selectionEnd) return setState(null);
     const m = TRIGGER.exec(el.value.slice(0, caret));
     if (!m) return setState(null);
+    const marker = m[1] ?? m[2];
+    const query = m[3];
+    const start = caret - query.length - marker.length;
+    // A query that has grown past two words with no match is ordinary prose: stop suggesting.
+    if (dismissed.current === start || (query.split(' ').length > 3 && !rankRecords(index.values(), query, 1).length)) return setState(null);
     const pos = caretPosition(el, caret);
     setState((prev) => {
-      if (!prev || prev.start !== caret - m[0].length) setHi(0);
-      return { start: caret - m[0].length, query: m[1], top: pos.top + pos.height + 4, left: Math.min(pos.left, el.clientWidth - 280) };
+      if (!prev || prev.start !== start) setHi(0);
+      return { start, query, top: pos.top + pos.height + 4, left: Math.min(pos.left, el.clientWidth - 280) };
     });
   }, [ref, enabled]);
 
@@ -78,10 +86,13 @@ export function useLinkSuggest(ref: RefObject<HTMLTextAreaElement | null>, enabl
     (e: EntitySummary) => {
       const el = ref.current;
       if (!el || !state) return;
-      replaceRange(el, state.start, el.selectionStart, `${e.name} [${e.id}]`);
+      // Also consume a closing ] the user may already have typed.
+      const end = el.value.charAt(el.selectionStart) === ']' ? el.selectionStart + 1 : el.selectionStart;
+      replaceRange(el, state.start, end, mentions.mentionFor(e.id));
+      dismissed.current = null;
       setState(null);
     },
-    [ref, state],
+    [ref, state, mentions],
   );
 
   /** Returns true when the key was handled by the suggestion list. */
@@ -91,7 +102,10 @@ export function useLinkSuggest(ref: RefObject<HTMLTextAreaElement | null>, enabl
       if (ev.key === 'ArrowDown') setHi((h) => Math.min(h + 1, results.length - 1));
       else if (ev.key === 'ArrowUp') setHi((h) => Math.max(h - 1, 0));
       else if (ev.key === 'Enter' || ev.key === 'Tab') choose(results[Math.min(hi, results.length - 1)]);
-      else if (ev.key === 'Escape') setState(null);
+      else if (ev.key === 'Escape') {
+        dismissed.current = state.start;
+        setState(null);
+      }
       else return false;
       ev.preventDefault();
       return true;
@@ -108,7 +122,7 @@ export function useLinkSuggest(ref: RefObject<HTMLTextAreaElement | null>, enabl
         style={{ top: state.top, left: Math.max(0, state.left) }}
         onMouseDown={(e) => e.preventDefault()}
       >
-        <li className="px-3 py-1 text-[10px] uppercase tracking-wider text-dim">Link a record · Enter to insert · Esc to close</li>
+        <li className="px-3 py-1 text-[10px] uppercase tracking-wider text-dim">Link to…</li>
         {results.map((e, i) => (
           <li
             key={e.id}
@@ -120,14 +134,15 @@ export function useLinkSuggest(ref: RefObject<HTMLTextAreaElement | null>, enabl
           >
             <span className="truncate font-sans">{e.name}</span>
             <span className="text-[11px] text-dim shrink-0 font-sans">
-              {ENTITY_TYPE_LABELS[e.type as EntityType] ?? e.type} · {e.id}
+              {ENTITY_TYPE_LABELS[e.type as EntityType] ?? e.type}
+              {debug && ` · ${e.id}`}
             </span>
           </li>
         ))}
       </ul>
-    ) : state ? (
+    ) : state && state.query.trim() ? (
       <div className="absolute z-[1600] panel px-3 py-1.5 text-xs text-dim shadow-xl" style={{ top: state.top, left: Math.max(0, state.left) }}>
-        No record matches “{state.query}”
+        No record called “{state.query}”
       </div>
     ) : null;
 

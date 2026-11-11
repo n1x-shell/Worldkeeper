@@ -9,7 +9,9 @@ import type { Entity, EntitySummary, StateRow } from '../lib/types';
 import { AutoTextarea, CanonFlags, Empty, EntityLink, ErrorBox, Field, Loading, PageHeader, SaveStatus } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
-import { splitSections } from '../lib/sections';
+import { Dev } from '../components/Dev';
+import { REALM_LABELS, type Realm } from '@shared/domain';
+import { displaySections } from '../lib/sections';
 import type { Character } from './Campaign';
 import { ProfileSummary, type ProfileResponse } from './Profile';
 import { profileKindFor } from '@shared/profiles';
@@ -288,7 +290,9 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
           <Plus size={14} /> Add
         </button>
       </div>
-      <p className="text-xs text-dim">Statistics are whatever you enter. The tracker does not contain monster stat blocks; attach your own rules or creature records.</p>
+      <Dev>
+        <p className="text-xs text-dim">Statistics are whatever you enter. The tracker does not contain monster stat blocks; attach your own rules or creature records.</p>
+      </Dev>
       {!compact && (
         <Field label="Encounter notes">
           <AutoTextarea minRows={3} value={enc.notes} onChange={(e) => save({ notes: e.target.value })} />
@@ -416,7 +420,7 @@ export function ConditionsPage() {
   const { data } = useApi<EntitySummary[]>('/api/entities?type=rule,system');
   return (
     <div className="space-y-4">
-      <PageHeader title="Combat Conditions" subtitle="The 2024 condition names used by the tracker. Rules text is not reproduced here; add your own summaries as Rule records with a source reference." />
+      <PageHeader title="Combat Conditions" note="The 2024 condition names used by the tracker. Rules text is not reproduced here; add your own summaries as Rule records with a source reference." />
       <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-5">
         {CONDITIONS_2024.map((c) => (
           <div key={c} className="panel p-3 text-center font-display text-gold">
@@ -447,7 +451,7 @@ export function RulesPage() {
     <div className="space-y-4">
       <PageHeader
         title="Rules Reference"
-        subtitle="Your setting rules (Shards, Thinning and Unmaking, glyph-work, vault keys…) as imported. Official, homebrew and unverified mechanics are labelled. No rulebook is bundled."
+        subtitle="Setting rules: Shards, Thinning and Unmaking, glyph-work, vault keys and more." note="As imported. Official, homebrew and unverified mechanics are labelled. No rulebook is bundled."
         actions={
           <Link className="btn-primary" to="/new?type=rule">
             <Plus size={14} /> New rule entry
@@ -466,7 +470,9 @@ export function RulesPage() {
           <Link key={r.id} to={`/e/${r.id}`} className="panel p-3 hover:border-gold/60">
             <div className="flex justify-between gap-2">
               <span className="text-ink">{r.name}</span>
-              <span className="text-xs text-dim">{r.id}</span>
+              <Dev>
+                <span className="text-xs text-dim">{r.id}</span>
+              </Dev>
             </div>
             <CanonFlags status={r.canon_status} flags={r.canon_flags} />
           </Link>
@@ -498,7 +504,8 @@ export function NpcCard({ id }: { id: string }) {
             {e.name}
           </Link>
           <div className="text-[11px] text-dim">
-            {e.id} · {e.realm}
+            {REALM_LABELS[e.realm as Realm] ?? e.realm}
+            <Dev> · {e.id}</Dev>
           </div>
         </div>
       </div>
@@ -512,7 +519,7 @@ export function NpcCard({ id }: { id: string }) {
           )}
         </>
       ) : (
-        <Markdown text={splitSections(e.body).find((s) => s.content && !s.secret)?.content.slice(0, 300) ?? ''} className="prose-lore text-[14px]" />
+        <Markdown text={displaySections(e.body, false).find((s) => s.content && !s.secret)?.content.slice(0, 300) ?? ''} className="prose-lore text-[14px]" />
       )}
       {e.notes && <div className="text-xs text-dim italic line-clamp-3">{e.notes}</div>}
     </div>
@@ -527,7 +534,7 @@ export function NpcRefPage() {
   const shown = pinned.length ? pinned : (data ?? []).filter((n) => n.favorite).map((n) => n.id);
   return (
     <div className="space-y-4">
-      <PageHeader title="NPC Quick Reference" subtitle="Compact cards for play. Pin NPCs here or star them as favorites. Missing details show as UNDEFINED; nothing is filled in." />
+      <PageHeader title="NPC Quick Reference" subtitle="Compact cards for play. Pin NPCs here or star them as favorites." />
       <div className="flex gap-2 max-w-lg">
         <EntityPicker value={null} types={['npc']} placeholder="Pin an NPC…" onChange={(id) => id && setSp({ ids: [...new Set([...pinned, id])].join(',') })} />
         {pinned.length > 0 && (
@@ -594,7 +601,7 @@ export function AgendasPage() {
     );
   return (
     <div className="space-y-4">
-      <PageHeader title="Faction Agendas" subtitle="Optional campaign progress tracks. They advance only when you advance them; nothing runs automatically and no world reset exists." />
+      <PageHeader title="Faction Agendas" subtitle="Progress tracks for what each faction is pursuing in this campaign." note="They advance only when you advance them; nothing runs automatically and no world reset exists." />
       <div className="panel-pad grid gap-2 md:grid-cols-[260px_1fr_auto] items-end">
         <Field label="Faction">
           <EntityPicker value={faction} types={['faction', 'cult', 'family']} onChange={setFaction} />
@@ -640,7 +647,7 @@ function InfluenceMatrix({ campaignId }: { campaignId: number }) {
   return (
     <div className="panel-pad">
       <div className="section-title mb-1">Influence by region</div>
-      <p className="text-xs text-dim mb-2">From each faction's profile (Faction profile tab → This campaign). Regions with more than one strong faction are emerging conflicts.</p>
+      <p className="text-xs text-dim mb-2">Set on each faction's profile. Regions where several factions are strong are marked as conflicts.</p>
       {!regions.length ? (
         <p className="text-sm text-dim">No influence recorded yet.</p>
       ) : (
@@ -749,7 +756,7 @@ export function WorldEventsPage() {
   const userRows = (tl ?? []).filter((r) => r.origin === 'user');
   return (
     <div className="space-y-4">
-      <PageHeader title="World Events" subtitle="What has actually happened in play (recorded campaign changes) and DM-added timeline events. No events are generated." />
+      <PageHeader title="World Events" subtitle="What has happened in play, and events you added to the timeline." />
       <div className="panel overflow-x-auto">
         <table className="table">
           <thead>
@@ -778,7 +785,7 @@ export function WorldEventsPage() {
       </div>
       <div className="panel-pad">
         <div className="section-title mb-2">DM-added timeline events</div>
-        {userRows.length ? userRows.map((r) => <div key={r.id} className="text-sm">{r.time_label}: {r.event} <span className="text-xs text-dim">({r.access})</span></div>) : <p className="text-sm text-dim">None. Add events on the World Timeline page.</p>}
+        {userRows.length ? userRows.map((r) => <div key={r.id} className="text-sm">{r.time_label}: <Markdown text={r.event} className="inline [&_p]:inline" /></div>) : <p className="text-sm text-dim">None. Add events on the World Timeline page.</p>}
       </div>
     </div>
   );
@@ -801,7 +808,7 @@ export function TablesPage() {
     <div className="space-y-4">
       <PageHeader
         title="Random Tables"
-        subtitle="Your own tables. None are pre-filled, so nothing is invented for your world. One entry per line; prefix “3:” to weight an entry."
+        subtitle="One entry per line; start a line with “3:” to make it three times as likely." note="None are pre-filled, so nothing is invented for your world."
         actions={
           <button
             className="btn-primary"

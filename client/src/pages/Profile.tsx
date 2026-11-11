@@ -7,6 +7,7 @@ import { useAppState } from '../lib/store';
 import { AutoTextarea, EntityLink, ErrorBox, Loading, SaveStatus } from '../components/ui';
 import { EntityMultiPicker, EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
+import { Dev } from '../components/Dev';
 
 export interface SourceValue {
   text: string;
@@ -51,16 +52,13 @@ export function ProfilePanel({ entityId, entityName }: { entityId: string; entit
   const camp = data.fields.filter((f) => f.scope === 'campaign');
   return (
     <div className="space-y-6">
-      <p className="text-sm text-dim">
-        Left: what your source library says about {entityName} (read-only; edit the record text to change it). Right: your own notes. Fields the source does not cover show{' '}
-        <strong>UNDEFINED</strong> until you fill them in. Nothing here changes the canon record.
-      </p>
-      <ScopeEditor key={`w-${entityId}`} title="World profile" subtitle="True in every campaign. Marked as DM additions, separate from source canon." fields={world} data={data} scope="world" campaignId={null} onSaved={reload} />
+      <p className="text-sm text-dim">What your lore says about {entityName} sits beside your own notes. Your notes never change the record itself.</p>
+      <ScopeEditor key={`w-${entityId}`} title="In every campaign" subtitle="Your notes about who they are." fields={world} data={data} scope="world" campaignId={null} onSaved={reload} />
       {activeCampaignId ? (
         <ScopeEditor
           key={`c-${entityId}-${activeCampaignId}`}
           title={`This campaign: ${campaign?.title ?? '…'}`}
-          subtitle="Stored only in the active campaign."
+          subtitle="How things stand in this campaign."
           fields={camp}
           data={data}
           scope="campaign"
@@ -150,7 +148,7 @@ function ScopeEditor({
               />
               {f.key === 'lastEncountered' && data.lastLogged && (
                 <div className="text-xs text-dim mt-1">
-                  From the session log: Session {data.lastLogged.session_number}
+                  Last seen in session {data.lastLogged.session_number}
                   {data.lastLogged.played_on && ` (${data.lastLogged.played_on})`}: “{data.lastLogged.text}”
                 </div>
               )}
@@ -163,15 +161,17 @@ function ScopeEditor({
 }
 
 function SourceCell({ values, scope }: { values: SourceValue[]; scope: 'world' | 'campaign' }) {
-  if (scope === 'campaign') return <div className="text-xs text-dim self-center">Campaign-specific: the source describes the default start only.</div>;
-  if (!values.length) return <div className="text-xs text-dim self-center">UNDEFINED in source</div>;
+  if (scope === 'campaign') return <div />;
+  if (!values.length) return <div className="text-xs text-dim self-center">UNDEFINED</div>;
   return (
     <div className="space-y-2">
       {values.map((v, i) => (
         <div key={i} className="parchment px-3 py-2">
-          <div className="text-[10px] uppercase tracking-wider opacity-60 flex items-center gap-1">
-            <BookOpen size={10} /> {v.from}
-          </div>
+          <Dev>
+            <div className="text-[10px] uppercase tracking-wider opacity-60 flex items-center gap-1">
+              <BookOpen size={10} /> {v.from}
+            </div>
+          </Dev>
           <Markdown text={v.text.length > 900 ? v.text.slice(0, 900) + '…' : v.text} className="prose-lore text-[14px] text-parchink [&_p]:my-1 [&_a]:text-[#3b4a8f]" />
         </div>
       ))}
@@ -194,13 +194,13 @@ function FieldEditor({
   onUploaded: (file: string) => void;
   onError: (e: string) => void;
 }) {
-  const placeholder = 'Your note (leave empty if unknown)';
+  const placeholder = 'Your note';
   switch (field.type) {
     case 'short':
       return <input className="input" value={(value as string) ?? ''} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} aria-label={field.label} />;
     case 'text':
     case 'stats':
-      return <AutoTextarea minRows={2} className="font-sans text-sm" value={(value as string) ?? ''} placeholder={`${placeholder}. Type [[ to link a record.`} onChange={(e) => onChange(e.target.value)} aria-label={field.label} />;
+      return <AutoTextarea minRows={2} className="font-sans text-sm" value={(value as string) ?? ''} placeholder={`${placeholder}. Type @ to link a record.`} onChange={(e) => onChange(e.target.value)} aria-label={field.label} />;
     case 'ref':
       return <EntityPicker value={(value as string) || null} types={field.refTypes} onChange={(id) => onChange(id ?? '')} />;
     case 'refs':

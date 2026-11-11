@@ -10,21 +10,23 @@ import { Markdown } from '../components/Markdown';
 import { EntityPicker } from '../components/EntityPicker';
 import { Snippet, hitPath, type Hit } from '../components/SearchPalette';
 import { EntityTable } from './EntityList';
-import { splitSections } from '../lib/sections';
+import { Dev, useDebug } from '../components/Dev';
+import { displaySections } from '../lib/sections';
 
 /** Show a record's non-secret sections inline (used by overview pages). */
 function RecordExcerpt({ id, maxSections = 99 }: { id: string; maxSections?: number }) {
+  const debug = useDebug();
   const { data, error } = useApi<{ entity: Entity }>(`/api/entities/${id}`);
-  if (error) return <p className="text-sm text-dim">Record {id} is not in the library yet.</p>;
+  if (error) return <p className="text-sm text-dim">Not in the library yet.</p>;
   if (!data) return <Loading />;
-  const secs = splitSections(data.entity.body).filter((s) => !s.secret).slice(0, maxSections);
+  const secs = displaySections(data.entity.body, debug).filter((s) => !s.secret).slice(0, maxSections);
   return (
     <div>
       {secs.map((s, i) => (
         <Markdown key={i} text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
       ))}
       <Link className="text-sm text-arcane" to={`/e/${id}`}>
-        Open full record (including GM sections) →
+        Open full record →
       </Link>
     </div>
   );
@@ -33,7 +35,7 @@ function RecordExcerpt({ id, maxSections = 99 }: { id: string; maxSections?: num
 export function WorldOverview() {
   return (
     <div className="space-y-5">
-      <PageHeader title="World Overview" subtitle="One world, three branches: from your imported encyclopedia." />
+      <PageHeader title="World Overview" subtitle="One world, three branches." />
       <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
         <div className="panel p-5">
           <RecordExcerpt id="WLD-901" />
@@ -157,9 +159,10 @@ export function NewEntity() {
     return () => clearTimeout(t);
   }, [form.name]);
   const template = templates?.find((t) => t.type === form.type);
+  const debug = useDebug();
   return (
     <div className="max-w-3xl space-y-4">
-      <PageHeader title="New record" subtitle="New records start as PROPOSED and go to Canon Review. Missing facts stay UNDEFINED." />
+      <PageHeader title="New record" subtitle="New records start as proposed until you approve them in Canon Review." />
       {err && <ErrorBox error={err} />}
       <div className="panel-pad grid gap-3 md:grid-cols-2">
         <Field label="Name">
@@ -197,18 +200,18 @@ export function NewEntity() {
           <input className="input" value={form.source_raw} onChange={(e) => setForm({ ...form, source_raw: e.target.value })} />
         </Field>
       </div>
-      {template && (
+      {template && debug && (
         <p className="text-sm text-dim">
           Using the library template <strong>{template.name}</strong>: {template.fields.length} fields and {template.sections.length} sections will be added, all marked UNDEFINED.
         </p>
       )}
       {similar.length > 0 && (
         <div className="panel border-amber-500/50 p-3 text-sm">
-          <div className="text-amber-400 mb-1">Possible existing records. Link to them instead of creating a duplicate:</div>
+          <div className="text-amber-400 mb-1">Already in your library? Link to one of these instead of creating a duplicate:</div>
           <ul>
             {similar.slice(0, 8).map((s) => (
               <li key={s.id}>
-                <EntityLink id={s.id}>{s.name}</EntityLink> <span className="text-xs text-dim">{s.id}</span>
+                <EntityLink id={s.id}>{s.name}</EntityLink> <TypeBadge type={s.type} />
               </li>
             ))}
           </ul>
@@ -300,7 +303,7 @@ export function TimelinePage() {
     <div className="space-y-4">
       <PageHeader
         title="World Timeline"
-        subtitle="Imported from the World Timeline index. 300 AB = Year 31 Unbound. Dates the source does not give are not invented. The 927 AB events are a possible future, not history. Eras come from your library's era tags; rows take the era of the records they link to, and you can assign the rest."
+        subtitle="300 AB = Year 31 Unbound. The events of 927 AB are a possible future, not history." note="Imported from the World Timeline index. Dates the source does not give are not invented. Eras come from your library's era tags; rows take the era of the records they link to, and you can assign the rest."
         actions={
           <>
             <button className="btn" onClick={() => setManaging(!managing)}>
@@ -394,7 +397,7 @@ export function TimelinePage() {
                         value={r.era ?? ''}
                         onChange={(e) => setRowEra(r, e.target.value)}
                         aria-label={`Era for ${r.time_label}`}
-                        title={r.era_origin === 'user' ? 'Assigned by you' : r.era_origin === 'derived' ? 'From the era tag of a linked record' : 'Not assigned'}
+                        title={r.era_origin === 'user' ? 'Assigned by you' : r.era_origin === 'derived' ? 'From the linked record' : 'Not assigned'}
                       >
                         <option value="">No era</option>
                         {eras?.map((e) => (
@@ -407,9 +410,11 @@ export function TimelinePage() {
                       </select>
                     </div>
                     <Markdown text={r.event} className="prose-lore text-[16px]" />
-                    <div className="text-xs text-dim">
-                      {r.access} · {r.source}
-                    </div>
+                    <Dev>
+                      <div className="text-xs text-dim">
+                        {r.access} · {r.source}
+                      </div>
+                    </Dev>
                   </div>
                 </li>
               ))}
@@ -438,7 +443,7 @@ function EraManager({ eras, onChange }: { eras: Era[]; onChange: () => void }) {
   return (
     <div className="panel-pad space-y-2">
       <div className="section-title">Eras</div>
-      <p className="text-xs text-dim">Imported from the library's era tags (the two continents keep parallel chronologies, so order is for display only). Rename, reorder or add your own.</p>
+      <p className="text-xs text-dim">Rename, reorder or add eras. Aetheris and Kaelmar keep their own chronologies, so the order is only for display.</p>
       {err && <ErrorBox error={err} />}
       {eras.map((e, i) => (
         <div key={e.key} className="flex items-center gap-2">
@@ -453,7 +458,9 @@ function EraManager({ eras, onChange }: { eras: Era[]; onChange: () => void }) {
             }}
             aria-label={`Name of era ${e.key}`}
           />
-          <span className="text-xs text-dim">era/{e.key}</span>
+          <Dev>
+            <span className="text-xs text-dim">era/{e.key}</span>
+          </Dev>
           {e.origin === 'user' && <CanonBadge status="PROPOSED" />}
           <button className="btn-ghost" onClick={() => move(i, -1)} aria-label="Move earlier">
             ↑
@@ -511,7 +518,9 @@ export function MysteriesPage() {
         {['WLD-907', 'WLD-908', 'DEC-901'].map((id) => (
           <Link key={id} to={`/e/${id}`} className="panel p-4 hover:border-gold/60">
             <EntityLink id={id} />
-            <div className="text-xs text-dim mt-1">{id}</div>
+            <Dev>
+              <div className="text-xs text-dim mt-1">{id}</div>
+            </Dev>
           </Link>
         ))}
       </div>
@@ -527,10 +536,11 @@ export function SearchPage() {
   const [type, setType] = useState('');
   const [canon, setCanon] = useState('');
   const [kind, setKind] = useState('');
-  const { data, loading } = useApi<Hit[]>(q.trim() ? `/api/search${qs({ q, realms: realm, types: type, canon, kinds: kind, limit: 100 })}` : null);
+  const debugSearch = useDebug();
+  const { data, loading } = useApi<Hit[]>(q.trim() ? `/api/search${qs({ q, realms: realm, types: type, canon, kinds: kind || (debugSearch ? undefined : 'entity,session,quest,note,adventure,profile'), limit: 100 })}` : null);
   return (
     <div className="space-y-4">
-      <PageHeader title="Search" subtitle="Titles, aliases, stable IDs, tags, full text, source documents, sessions, quests and notes." />
+      <PageHeader title="Search" subtitle="Names, other names, full text, sessions, quests and notes." />
       <div className="flex flex-wrap gap-2">
         <input
           className="input max-w-lg"
@@ -546,7 +556,7 @@ export function SearchPage() {
         <select className="input w-auto" value={kind} onChange={(e) => setKind(e.target.value)} aria-label="Kind">
           <option value="">Everything</option>
           <option value="entity">Records</option>
-          <option value="doc">Source documents</option>
+          {debugSearch && <option value="doc">Source documents</option>}
           <option value="session">Sessions</option>
           <option value="quest">Quests</option>
           <option value="note">Notes</option>
@@ -584,7 +594,9 @@ export function SearchPage() {
                 <span className="text-ink hover:text-gold font-medium">{h.title}</span>
                 {h.kind === 'entity' ? (
                   <>
-                    <span className="text-xs text-dim">{h.ref}</span>
+                    <Dev>
+                      <span className="text-xs text-dim">{h.ref}</span>
+                    </Dev>
                     {h.type && <TypeBadge type={h.type} />}
                     {h.realm && <RealmBadge realm={h.realm} />}
                     {h.canon_status && <CanonBadge status={h.canon_status} />}
@@ -618,7 +630,7 @@ export function DocumentsPage() {
   const [filter, setFilter] = useState('');
   return (
     <div className="space-y-4">
-      <PageHeader title="Source Documents" subtitle="Every imported file, stored verbatim. Setting bibles and references are protected and never overwritten." />
+      <PageHeader title="Source Documents" note="Every imported file, stored verbatim. Setting bibles and references are protected and never overwritten." />
       <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
         <div className="panel p-2 max-h-[80vh] overflow-auto">
           <input className="input mb-2" placeholder="Filter files…" value={filter} onChange={(e) => setFilter(e.target.value)} />

@@ -132,8 +132,11 @@ const NAV: { title: string; items: Item[] }[] = [
   },
 ];
 
+/** Maintenance pages about the source files themselves; available in debug mode. */
+const DEBUG_ONLY = new Set(['/documents', '/broken']);
+
 export function Layout() {
-  const { sidebarCollapsed: collapsed, setSidebarCollapsed, theme, setTheme, appName } = useAppState();
+  const { sidebarCollapsed: collapsed, setSidebarCollapsed, theme, setTheme, appName, debug } = useAppState();
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
   const loc = useLocation();
@@ -170,7 +173,7 @@ export function Layout() {
         {NAV.map((g) => (
           <div key={g.title} className="mb-2">
             {!collapsed && <div className="px-4 pt-2 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim/80">{g.title}</div>}
-            {g.items.map((it) => (
+            {g.items.filter((it) => debug || !DEBUG_ONLY.has(it.to)).map((it) => (
               <NavLink
                 key={it.to}
                 to={it.to}
@@ -216,7 +219,7 @@ export function Layout() {
             ☰
           </button>
           <button onClick={() => setSearchOpen(true)} className="flex-1 max-w-xl input flex items-center gap-2 text-dim text-left">
-            <Search size={14} /> Search names, IDs, aliases, lore… <kbd className="ml-auto text-[10px] border border-line rounded px-1">Ctrl K</kbd>
+            <Search size={14} /> Search names and lore… <kbd className="ml-auto text-[10px] border border-line rounded px-1">Ctrl K</kbd>
           </button>
           <div className="ml-auto flex items-center gap-1">
             <NavLink to="/campaign/live" className="btn">

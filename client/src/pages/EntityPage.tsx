@@ -9,12 +9,14 @@ import {
   REALM_LABELS,
   RELATIONSHIP_LABELS,
   RELATIONSHIP_TYPES,
+  relationshipLabel,
   type RelationshipType,
 } from '@shared/domain';
 import { api, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary, RelationshipView, StateRow } from '../lib/types';
-import { splitSections } from '../lib/sections';
+import { displaySections, isEditorial, splitSections } from '../lib/sections';
+import { Dev, useDebug } from '../components/Dev';
 import {
   AutoTextarea,
   CanonFlags,
@@ -53,7 +55,7 @@ type Tab = 'record' | 'profile' | 'edit' | 'relationships' | 'player' | 'campaig
 export function EntityPage() {
   const { id = '' } = useParams();
   const nav = useNavigate();
-  const { reloadIndex } = useAppState();
+  const { reloadIndex, debug } = useAppState();
   const { data, error, loading, reload, setData } = useApi<Detail>(`/api/entities/${encodeURIComponent(id)}`);
   const [tab, setTab] = useState<Tab>('record');
   const { toast, node: toastNode } = useToast();
@@ -84,7 +86,7 @@ export function EntityPage() {
   return (
     <div className="space-y-4">
       {toastNode}
-      {data.redirectedFrom && (
+      {data.redirectedFrom && debug && (
         <div className="text-sm text-dim">
           Redirected from legacy ID {data.redirectedFrom}.
         </div>
@@ -96,10 +98,12 @@ export function EntityPage() {
               <>
                 <EntityLink id={data.parent.id}>{data.parent.name}</EntityLink> <ArrowRight size={11} />
               </>
-            ) : e.parent_raw ? (
+            ) : e.parent_raw && debug ? (
               <span>{e.parent_raw} ›</span>
             ) : null}
-            <span>{e.id}</span>
+            <Dev>
+              <span>{e.id}</span>
+            </Dev>
           </div>
           <h1 className="text-3xl text-gold">{e.name}</h1>
           {e.aliases.length > 0 && <div className="text-sm text-dim mt-1">Also: {e.aliases.join('; ')}</div>}
@@ -110,7 +114,7 @@ export function EntityPage() {
             <VisibilityBadge revealed={e.revealed} />
             {e.modified_since_import && (
               <Link to="/review" className="chip border-amber-500/60 text-amber-400">
-                <AlertTriangle size={11} /> Edited since import
+                <AlertTriangle size={11} /> Edited, not yet reviewed
               </Link>
             )}
             {e.archived && <span className="chip border-danger/50 text-danger">Archived</span>}
@@ -138,7 +142,7 @@ export function EntityPage() {
             <Copy size={14} /> Duplicate as draft
           </button>
           <a className="btn" href={`/api/entities/${encodeURIComponent(e.id)}/export.md`}>
-            <Download size={14} /> .md
+            <Download size={14} /> Export
           </a>
           <button className="btn" onClick={() => (e.archived ? patch({ archived: false }, 'Restored from archive') : setConfirmArchive(true))}>
             <Archive size={14} /> {e.archived ? 'Unarchive' : 'Archive'}
@@ -175,10 +179,10 @@ export function EntityPage() {
       {tab === 'record' && (
         <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
           <article className="panel p-5 min-w-0">
-            {splitSections(e.body).map((s, i) =>
+            {displaySections(e.body, debug).map((s, i) =>
               s.secret ? (
                 <div key={i} className="wk-secret border border-danger/40 bg-danger/5 rounded-md px-4 py-2 my-3">
-                  <div className="text-[10px] uppercase tracking-widest text-danger mb-1">GM only · never shown to players</div>
+                  <div className="text-[10px] uppercase tracking-widest text-danger mb-1">GM only</div>
                   <Markdown text={`## ${s.heading}\n\n${s.content}`} />
                 </div>
               ) : (
@@ -194,15 +198,16 @@ export function EntityPage() {
           </article>
           <aside className="space-y-3">
             <div className="parchment p-4 text-sm space-y-2">
-              <div className="font-display text-xs tracking-widest uppercase opacity-70">Key facts</div>
-              <Fact k="Category" v={e.category_raw ?? ENTITY_TYPE_LABELS[e.type]} />
-              <Fact k="Realm" v={e.realm_raw ?? REALM_LABELS[e.realm]} />
-              <Fact k="Canon status" v={e.canon_raw ?? e.canon_status} />
+              <div className="font-display text-xs tracking-widest uppercase opacity-70">At a glance</div>
+              {debug && <Fact k="Category" v={e.category_raw ?? ENTITY_TYPE_LABELS[e.type]} />}
+              {debug && <Fact k="Realm" v={e.realm_raw ?? REALM_LABELS[e.realm]} />}
+              {debug && <Fact k="Canon status" v={e.canon_raw ?? e.canon_status} />}
               {fieldMap.map(([k, v]) => (
                 <Fact key={k} k={k} v={v} />
               ))}
-              <Fact k="Source" v={e.source_raw ?? 'UNDEFINED'} />
-              {e.tags.length > 0 && (
+              {!fieldMap.length && !debug && <div className="font-serif text-[15px] opacity-70">No further details recorded.</div>}
+              {debug && <Fact k="Source" v={e.source_raw ?? 'UNDEFINED'} />}
+              {debug && e.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1 pt-1">
                   {e.tags.map((t) => (
                     <Link key={t} to={`/search?tag=${encodeURIComponent(t)}`} className="chip border-parchink/30 text-parchink/80">
@@ -211,7 +216,7 @@ export function EntityPage() {
                   ))}
                 </div>
               )}
-              {e.source_file && <div className="text-xs opacity-70 pt-1">File: {e.source_file}</div>}
+              {debug && e.source_file && <div className="text-xs opacity-70 pt-1">File: {e.source_file}</div>}
             </div>
             {data.children.length > 0 && (
               <div className="panel-pad">
@@ -281,7 +286,7 @@ function RelationshipSummary({ rels, selfId, onMore }: { rels: RelationshipView[
           const other = out ? r.target_id : r.source_id;
           return (
             <li key={r.id}>
-              <span className="text-dim text-xs">{out ? RELATIONSHIP_LABELS[r.type as RelationshipType] ?? r.type : `← ${RELATIONSHIP_LABELS[r.type as RelationshipType] ?? r.type}`}</span>{' '}
+              <span className="text-dim text-xs">{relationshipLabel(r.type, out)}</span>{' '}
               <EntityLink id={other}>{(out ? r.target_name : r.source_name) ?? other}</EntityLink>
             </li>
           );
@@ -329,6 +334,7 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
     [reason, onSaved],
   );
   const auto = useAutosave(save, 1000);
+  const debug = useDebug();
   const update = (p: Partial<Entity>) => {
     const next = { ...draft, ...p };
     setDraft(next);
@@ -343,8 +349,10 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
         <div className="panel border-amber-500/40 bg-amber-500/5 p-3 text-sm flex gap-2">
           <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
           <div>
-            You are editing an imported <strong>CANON</strong> record ({entity.source_file}). Every change is saved as a revision and listed in Canon Review until you approve or revert it. The original source
-            file is never modified.
+            This is canon lore. Your changes are kept in its history and wait in Canon Review until you approve them.
+            <Dev>
+              {' '}Source file: {entity.source_file}. The original source file is never modified.
+            </Dev>
           </div>
         </div>
       )}
@@ -370,10 +378,12 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
         <Field label="Name">
           <input className="input" value={draft.name} onChange={(e) => update({ name: e.target.value })} />
         </Field>
-        <Field label="Stable ID" hint="IDs never change.">
-          <input className="input opacity-70" value={draft.id} readOnly />
-        </Field>
-        <Field label="Template type">
+        {debug && (
+          <Field label="Stable ID" hint="IDs never change.">
+            <input className="input opacity-70" value={draft.id} readOnly />
+          </Field>
+        )}
+        <Field label="Type">
           <select className="input" value={draft.type} onChange={(e) => update({ type: e.target.value as Entity['type'] })}>
             {ENTITY_TYPES.map((t) => (
               <option key={t} value={t}>
@@ -405,7 +415,7 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
             ))}
           </select>
         </Field>
-        <Field label="Labels" hint="SECRET, HOMEBREW, UNVERIFIED, OFFICIAL, OUTSIDE 2024 CORE">
+        <Field label="Labels">
           <div className="flex flex-wrap gap-2 text-xs">
             {['SECRET', 'HOMEBREW', 'UNVERIFIED', 'OFFICIAL', 'OUTSIDE 2024 CORE'].map((f) => (
               <label key={f} className="flex items-center gap-1">
@@ -426,16 +436,16 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
           <textarea className="input" rows={2} value={draft.aliases.join('\n')} onChange={(e) => update({ aliases: e.target.value.split('\n').filter((s) => s.trim()) })} />
         </Field>
       </div>
-      <div className="grid gap-3 md:grid-cols-2">
+      {debug && <div className="grid gap-3 md:grid-cols-2">
         <Field label="Source references">
           <input className="input" value={draft.source_raw ?? ''} onChange={(e) => update({ source_raw: e.target.value })} placeholder="e.g. Kaelmar_Setting_Bible.md: Factions; or DM decision" />
         </Field>
         <Field label="Tags (comma separated)">
           <input className="input" value={draft.tags.join(', ')} onChange={(e) => update({ tags: e.target.value.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean) })} />
         </Field>
-      </div>
+      </div>}
       <div>
-        <span className="label">Template fields</span>
+        <span className="label">Details</span>
         <div className="space-y-1.5">
           {draft.fields.map(([k, v], i) => (
             <div key={i} className="flex gap-2">
@@ -452,7 +462,7 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
         </div>
       </div>
       <div className={`grid gap-3 ${preview ? 'lg:grid-cols-2' : ''}`}>
-        <Field label="Description (Markdown). Link records with Name [ID]. Headings containing “GM only” or “Secret” are never published to players.">
+        <Field label="Description. Type @ to link another record. Sections headed “GM only” or “Secret” are never shown to players.">
           <AutoTextarea minRows={16} value={draft.body} onChange={(e) => update({ body: e.target.value })} onBlur={() => void auto.flush()} />
         </Field>
         {preview && (
@@ -461,7 +471,7 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
           </div>
         )}
       </div>
-      <Field label="DM notes (not part of the source text)">
+      <Field label="DM notes">
         <AutoTextarea minRows={4} value={draft.notes} onChange={(e) => update({ notes: e.target.value })} onBlur={() => void auto.flush()} />
       </Field>
     </div>
@@ -479,10 +489,10 @@ function RelationshipsTab({ entityId, rels, onChange }: { entityId: string; rels
     return g;
   }, [rels]);
   const titles: Record<string, string> = {
-    user: 'Curated relationships',
-    'import-parent': 'Hierarchy (from Parent field)',
-    'import-field': 'From record fields',
-    'import-reference': 'Cross-references in the text',
+    user: 'Relationships',
+    'import-parent': 'Part of',
+    'import-field': 'Connections',
+    'import-reference': 'Mentioned in the text',
   };
   return (
     <div className="space-y-4">
@@ -524,8 +534,7 @@ function RelationshipsTab({ entityId, rels, onChange }: { entityId: string; rels
                         >
                           {RELATIONSHIP_TYPES.map((t) => (
                             <option key={t} value={t}>
-                              {out ? '' : '← '}
-                              {RELATIONSHIP_LABELS[t]}
+                              {relationshipLabel(t, out)}
                             </option>
                           ))}
                         </select>
@@ -534,7 +543,7 @@ function RelationshipsTab({ entityId, rels, onChange }: { entityId: string; rels
                         <EntityLink id={other}>{(out ? r.target_name : r.source_name) ?? other}</EntityLink>
                         {r.label && <span className="text-xs text-dim ml-2">{r.label}</span>}
                         {r.description && <div className="text-xs text-dim">{r.description}</div>}
-                        {origin === 'import-reference' && r.source_context && <div className="text-xs text-dim italic line-clamp-2">“{r.source_context}”</div>}
+                        {origin === 'import-reference' && r.source_context && <Markdown text={r.source_context} className="text-xs text-dim italic line-clamp-2 [&_p]:my-0" />}
                       </td>
                       <td className="w-24 text-right">
                         {origin === 'user' && (
@@ -619,6 +628,7 @@ function RelationshipsTab({ entityId, rels, onChange }: { entityId: string; rels
 
 // ------------------------------------------------------------------ Player view
 function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { heading: string; secret: boolean }[]; onPatch: (b: Record<string, unknown>, m?: string) => Promise<void> }) {
+  const debug = useDebug();
   const [summary, setSummary] = useState(entity.player_summary);
   const [fact, setFact] = useState('');
   const { data: preview, reload } = useApi<{ name: string; summary: string; facts: string[]; sections: { heading: string; content: string }[] } | null>(
@@ -637,7 +647,7 @@ function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { 
             <span className="font-medium">Players know this record exists</span>
           </label>
           <p className="text-xs text-dim">
-            Players only ever receive the name, your player summary, revealed facts and the sections you tick below. Sections with GM-only/secret headings can never be published; write a revealed fact instead.
+            Players see only the name, your summary, the facts you reveal and the sections you tick. GM-only sections can't be shown; write a fact instead.
           </p>
           {secretRecord && (
             <div className="text-xs text-amber-400 flex gap-1">
@@ -654,7 +664,7 @@ function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { 
           <div className="label">Reveal sections</div>
           <ul className="space-y-1 text-sm">
             {sections
-              .filter((s) => s.heading)
+              .filter((s) => s.heading && (debug || !isEditorial(s.heading)))
               .map((s) => (
                 <li key={s.heading}>
                   <label className={`flex items-center gap-2 ${s.secret ? 'opacity-50' : ''}`}>
@@ -736,7 +746,7 @@ function CampaignTab({ entity, rows, activeCampaignId, onChange }: { entity: Ent
   return (
     <div className="space-y-4">
       <p className="text-sm text-dim">
-        Campaign changes are stored separately from the encyclopedia. The world record above is never overwritten. Use <strong>Propose as canon</strong> to send a change to Canon Review.
+        What has changed for this record in your campaigns. Use <strong>Propose as canon</strong> to make a change permanent in the world.
       </p>
       {err && <ErrorBox error={err} />}
       {msg && <div className="text-sm text-ok">{msg}</div>}
@@ -836,7 +846,7 @@ function HistoryTab({ entity, onRestored }: { entity: Entity; onRestored: () => 
   }, [entity.version, reload]);
   return (
     <div className="space-y-3">
-      <p className="text-sm text-dim">Each row is the record as it was before a change (or right after an import). Restoring creates a new version; nothing in history is deleted.</p>
+      <p className="text-sm text-dim">Earlier versions of this record. Restoring one keeps the current version in history too.</p>
       <div className="panel overflow-x-auto">
         <table className="table">
           <thead>

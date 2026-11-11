@@ -34,8 +34,8 @@ It runs entirely on your own computer: no account, no cloud service, no paid API
 - One record per stable ID (`NPC-010`, `VLT-305`, `CON-001-DOM`…), with original name, aliases, category, parent, realm, canon status, source references and tags kept verbatim.
 - Record pages with key facts, GM-only sections clearly flagged, child records, connections, campaign state and full history.
 - Markdown editor with live preview, autosave, a visible save indicator, change reasons and conflict protection.
-- `Name [ID]` cross-references become links automatically; broken references are reported.
-- **Record-link suggestions while typing:** type `[[` and part of a name or ID in any text area. Choose a suggestion and it is inserted as `Name [ID]`.
+- **Link records in plain language:** write `@[Mara Venn]` anywhere (record text, notes, prep, recaps, quests) and it becomes a link to that record. In the app, just type `@` and start typing a name, then pick from the suggestions. If two records share a name, the suggestion adds the type, e.g. `@[Kaelholm (Settlement)]`. Linked records also show up in the relationship graph. The source library's own `Name [ID]` references keep working and display as the name.
+- **Clean, play-focused interface:** record IDs, file names, source citations, tags and the source's editorial notes stay out of sight. Turn on **Settings → Technical details** (or start with `WORLDKEEPER_DEBUG=1`) when you want to see them.
 - Version history with line-by-line diffs and one-click restore. Duplicate a record as a PROPOSED draft without touching the original.
 - New records start from your library's own templates, with missing facts left as `UNDEFINED`. The app warns you when a similar record already exists.
 
@@ -235,6 +235,7 @@ By default all data lives in `./data/`, which git ignores:
 | `HOST` | `127.0.0.1` (DM), `0.0.0.0` (player) | Listening address. The DM server is local-only unless you change this. |
 | `WORLDKEEPER_MODE` | `dm` | Set to `player` for the player-only server |
 | `WORLDKEEPER_STATIC_DIR` | `./dist` | Location of the built client (set by the desktop app) |
+| `WORLDKEEPER_DEBUG` | off | `1` forces technical details on (IDs, files, sources, how-it-works notes) |
 
 ### Keyboard shortcuts
 
@@ -244,7 +245,7 @@ By default all data lives in `./data/`, which git ignores:
 | `Alt+D` | DM screen |
 | `Ctrl+\` | Collapse or expand the sidebar |
 | `Ctrl+Enter` | Save a live-session log entry |
-| `[[` in a text area | Suggest a record link; `Enter`/`Tab` inserts it, `Esc` closes |
+| `@` in a text area | Suggest a record to link; `Enter`/`Tab` inserts `@[Name]`, `Esc` closes |
 
 ---
 

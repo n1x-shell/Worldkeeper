@@ -46,12 +46,22 @@ try {
 
   await page.keyboard.press('Control+k');
   await page.getByLabel('Search query').fill('Mara Venn');
-  await expectText('NPC-010');
+  await page.getByRole('button', { name: /Mara Venn/ }).first().waitFor();
   await page.keyboard.press('Enter');
   await page.waitForURL(/\/e\/NPC-010/);
   await expectText('GM only');
   await shot(page, '03-record');
-  step('search → open NPC record, GM section flagged');
+  // Technical details are hidden unless debug mode is on.
+  const recordText = await page.locator('main').innerText();
+  for (const dev of ['NPC-010', 'Aetheris_Setting_Bible', 'cat/npc', 'Unspecified fields']) if (recordText.includes(dev)) throw new Error(`technical detail visible without debug: ${dev}`);
+  await fetch(`${base}/api/settings`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ debug: 'true' }) });
+  await page.reload();
+  await expectText('Aetheris_Setting_Bible.md');
+  await expectText('Unspecified fields');
+  await fetch(`${base}/api/settings`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ debug: 'false' }) });
+  await page.reload();
+  await expectText('GM only');
+  step('search → open NPC record, GM section flagged; technical details only in debug mode');
 
   // Edit and persist
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
@@ -83,7 +93,7 @@ try {
   await page.goto(`${base}/ethereal/explorer`);
   await expectText('Deep domains');
   await page.getByRole('button', { name: /The Black Horizon/ }).click();
-  await expectText('ETH-507');
+  await expectText('Deep domain');
   await shot(page, '06-ethereal');
   step('ethereal explorer');
 
@@ -129,21 +139,32 @@ try {
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
   const notesBox = page.locator('textarea').last();
   await notesBox.fill('');
-  await notesBox.pressSequentially('Owes a favour to [[blind se');
+  await notesBox.pressSequentially('Owes a favour to @blind se');
   await page.getByRole('listbox', { name: 'Link a record' }).waitFor();
-  await page.keyboard.press('Enter');
-  const linked = await notesBox.inputValue();
-  if (!/Owes a favour to The Blind Seer \[NPC-001\]/.test(linked)) throw new Error(`link insert failed: ${linked}`);
-  await expectText('All changes saved', 10000);
   await shot(page, '13-link-suggest');
-  await notesBox.fill('');
+  await page.keyboard.press('Enter');
+  await notesBox.pressSequentially(' and drinks at @[Hollow Refuge].');
+  const linked = await notesBox.inputValue();
+  if (linked !== 'Owes a favour to @[The Blind Seer] and drinks at @[Hollow Refuge].') throw new Error(`link insert failed: ${linked}`);
   await expectText('All changes saved', 10000);
-  step('record-link suggestions insert Name [ID]');
+  await page.getByRole('button', { name: 'Done' }).click();
+  const seer = page.locator('main a.wk-ref', { hasText: 'The Blind Seer' });
+  await seer.first().waitFor();
+  if ((await seer.first().getAttribute('href')) !== '/e/NPC-001') throw new Error('mention did not link to the record');
+  if ((await page.locator('main a.wk-ref', { hasText: 'Hollow Refuge' }).first().getAttribute('href')) !== '/e/SET-001') throw new Error('typed @[Name] did not link');
+  await shot(page, '13b-mentions-rendered');
+  const rel = await (await fetch(`${base}/api/entities/NPC-010`)).json();
+  await page.getByRole('button', { name: 'Edit', exact: true }).click();
+  await page.locator('textarea').last().fill('');
+  await expectText('All changes saved', 10000);
+  void rel;
+  step('@ suggestions insert @[Name]; @[Name] renders as a link to the record');
 
   // ---- v0.2: NPC profile ----
   await page.getByRole('tab', { name: 'NPC profile' }).click();
-  await expectText('Section: Wants');
-  await expectText('UNDEFINED in source');
+  await expectText("The Refuge's neutrality."); // source text shown beside the DM's notes
+  await expectText('UNDEFINED');
+  if (await page.getByText('Section: Wants').count()) throw new Error('source caption visible without debug');
   const pronouns = page.getByLabel('Pronouns');
   await pronouns.fill('she/her (DM)');
   await expectText('All changes saved', 10000);

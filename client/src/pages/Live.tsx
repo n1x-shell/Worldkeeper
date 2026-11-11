@@ -9,6 +9,8 @@ import { EntityPicker } from '../components/EntityPicker';
 import { DiceRoller, EncounterTracker, NpcCard } from './DmTools';
 import { NeedCampaign, useActiveOverview, type Quest } from './Campaign';
 import { Markdown } from '../components/Markdown';
+import { useDebug } from '../components/Dev';
+import { isEditorial } from '../lib/sections';
 
 interface LogEntry {
   id: number;
@@ -97,7 +99,7 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
     <div className="space-y-3">
       <PageHeader
         title={`Live · Session ${session.number}${session.title ? `: ${session.title}` : ''}`}
-        subtitle="Everything you record here feeds the recap draft and the change review."
+        note="Everything you record here feeds the recap draft and the change review."
         actions={
           <>
             <Link className="btn" to={`/session/${session.id}`}>
@@ -338,6 +340,7 @@ interface RevealEntity {
 
 /** Reveal information to players without leaving live mode. Every reveal is logged to the session. */
 function RevealPanel({ sessionId, onRevealed }: { sessionId: number; onRevealed: () => void }) {
+  const debug = useDebug();
   const [id, setId] = useState<string | null>(null);
   const { data, reload } = useApi<{ entity: RevealEntity; sections: { heading: string; secret: boolean }[] }>(id ? `/api/entities/${encodeURIComponent(id)}` : null);
   const [fact, setFact] = useState('');
@@ -372,10 +375,10 @@ function RevealPanel({ sessionId, onRevealed }: { sessionId: number; onRevealed:
               </button>
             )}
           </div>
-          {e.canon_flags.includes('SECRET') && <div className="text-[11px] text-amber-400">Marked SECRET: check a section before revealing it.</div>}
+          {e.canon_flags.includes('SECRET') && <div className="text-[11px] text-amber-400">Contains secrets: check a section before revealing it.</div>}
           <div className="flex flex-wrap gap-1">
             {data!.sections
-              .filter((s) => s.heading)
+              .filter((s) => s.heading && (debug || !isEditorial(s.heading)))
               .map((s) => {
                 const shown = e.revealed_sections.includes(s.heading);
                 return (

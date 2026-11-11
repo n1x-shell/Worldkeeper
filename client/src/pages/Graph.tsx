@@ -5,6 +5,7 @@ import { CANON_STATUSES, ENTITY_TYPE_LABELS, REALMS, REALM_LABELS, RELATIONSHIP_
 import { qs, useApi } from '../lib/api';
 import { ErrorBox, Loading, PageHeader } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
+import { useAppState } from '../lib/store';
 import type { Relationship } from '../lib/types';
 
 interface GraphData {
@@ -25,7 +26,7 @@ const TYPE_GROUPS: Record<string, string[]> = {
 };
 
 /** Radial layout: focus in the centre, each depth on its own ring, nodes on a ring grouped by type. */
-function layout(d: GraphData): { nodes: Node[]; edges: Edge[] } {
+function layout(d: GraphData, debug: boolean): { nodes: Node[]; edges: Edge[] } {
   const rings = new Map<number, GraphData['nodes']>();
   for (const n of d.nodes) rings.set(n.depth, [...(rings.get(n.depth) ?? []), n]);
   const nodes: Node[] = [];
@@ -43,7 +44,8 @@ function layout(d: GraphData): { nodes: Node[]; edges: Edge[] } {
             <div className="text-left">
               <div className="font-medium leading-tight text-[12px]">{n.name}</div>
               <div className="text-[10px] opacity-70">
-                {ENTITY_TYPE_LABELS[n.type as EntityType] ?? n.type} · {n.id}
+                {ENTITY_TYPE_LABELS[n.type as EntityType] ?? n.type}
+                {debug ? ` · ${n.id}` : ''}
               </div>
             </div>
           ),
@@ -88,11 +90,12 @@ export function GraphPage() {
   const { data: eras } = useApi<{ key: string; name: string }[]>('/api/eras');
   const url = `/api/graph${qs({ focus, depth, refs: refs ? undefined : '0', types: group ? TYPE_GROUPS[group] : undefined, realms: realm, canon, rel, eras: era })}`;
   const { data, error, loading } = useApi<GraphData>(url);
-  const flow = useMemo(() => (data ? layout(data) : null), [data]);
+  const { debug } = useAppState();
+  const flow = useMemo(() => (data ? layout(data, debug) : null), [data, debug]);
 
   return (
     <div className="space-y-3">
-      <PageHeader title="Relationships" subtitle="A focused neighbourhood around one record. Click a node to recentre; double-click to open its record. Dotted lines are text cross-references; gold lines are structured relationships." />
+      <PageHeader title="Relationships" subtitle="Click a record to centre on it; double-click to open it." note="Dotted lines are mentions in the text; gold lines are structured relationships." />
       <div className="flex flex-wrap gap-2 items-end">
         <div className="w-72">
           <span className="label">Focus</span>
@@ -158,7 +161,7 @@ export function GraphPage() {
           </select>
         </label>
         <label className="flex items-center gap-1 text-sm text-dim pb-2">
-          <input type="checkbox" checked={refs} onChange={(e) => setRefs(e.target.checked)} /> Text cross-references
+          <input type="checkbox" checked={refs} onChange={(e) => setRefs(e.target.checked)} /> Include mentions
         </label>
       </div>
       {error && <ErrorBox error={error} />}

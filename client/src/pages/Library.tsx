@@ -5,6 +5,7 @@ import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { Confirm, EntityLink, ErrorBox, Field, Loading, PageHeader, Tabs, TypeBadge, useToast } from '../components/ui';
 import { DiffView } from './EntityPage';
+import { Dev, useDebug } from '../components/Dev';
 import type { Entity } from '../lib/types';
 
 // ------------------------------------------------------------------ Import & export
@@ -31,6 +32,7 @@ interface PreviewResp {
 }
 
 export function ImportExportPage() {
+  const debug = useDebug();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<PreviewResp | null>(null);
   const [busy, setBusy] = useState(false);
@@ -43,7 +45,7 @@ export function ImportExportPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Import and Export" subtitle="Imports are previewed, validated and confirmed before anything is written, and run in a single transaction after an automatic backup." />
+      <PageHeader title="Import and Export" note="Imports are previewed, validated and confirmed before anything is written, and run in a single transaction after an automatic backup." />
       <Tabs
         value={tab}
         onChange={setTab}
@@ -77,7 +79,7 @@ export function ImportExportPage() {
             >
               <Upload size={14} /> {busy ? 'Reading…' : 'Preview import'}
             </button>
-            <p className="text-xs text-dim w-full">
+            <p className={`text-xs text-dim w-full ${debug ? '' : 'hidden'}`}>
               Also available from the command line: <code>npm run import -- path/to/archive.zip</code> (add <code>--dry-run</code> to preview only).
             </p>
           </div>
@@ -139,6 +141,7 @@ export function ImportExportPage() {
 }
 
 function ImportPreview({ p, resolutions, setResolutions }: { p: PreviewResp; resolutions: Record<string, 'keep-local' | 'take-source'>; setResolutions: (r: Record<string, 'keep-local' | 'take-source'>) => void }) {
+  const debug = useDebug();
   const s = p.summary;
   const [show, setShow] = useState<'actions' | 'skipped' | 'duplicates' | 'broken' | 'files'>('actions');
   return (
@@ -166,7 +169,7 @@ function ImportPreview({ p, resolutions, setResolutions }: { p: PreviewResp; res
           {s.conflicts.map((c) => (
             <div key={c.id} className="flex items-center gap-2 text-sm">
               <span className="flex-1">
-                {c.name} <span className="text-xs text-dim">{c.id} · {c.note}</span>
+                {c.name} <span className="text-xs text-dim">{debug ? `${c.id} · ` : ''}{c.note}</span>
               </span>
               <select className="input w-auto" value={resolutions[c.id] ?? 'keep-local'} onChange={(e) => setResolutions({ ...resolutions, [c.id]: e.target.value as 'keep-local' | 'take-source' })}>
                 <option value="keep-local">Keep my version</option>
@@ -177,7 +180,7 @@ function ImportPreview({ p, resolutions, setResolutions }: { p: PreviewResp; res
         </div>
       )}
       <div className="flex gap-1.5">
-        {(['actions', 'skipped', 'duplicates', 'broken', 'files'] as const).map((k) => (
+        {(debug ? (['actions', 'skipped', 'duplicates', 'broken', 'files'] as const) : (['actions'] as const)).map((k) => (
           <button key={k} className={`chip ${show === k ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setShow(k)}>
             {k}
           </button>
@@ -191,7 +194,7 @@ function ImportPreview({ p, resolutions, setResolutions }: { p: PreviewResp; res
                 .filter((e) => e.action !== 'unchanged')
                 .map((e) => (
                   <tr key={e.id}>
-                    <td className="text-xs">{e.id}</td>
+                    {debug && <td className="text-xs">{e.id}</td>}
                     <td>{e.name}</td>
                     <td>
                       <TypeBadge type={e.type} />
@@ -320,6 +323,7 @@ interface Review {
 }
 
 export function ReviewPage() {
+  const debug = useDebug();
   const { data, reload, error } = useApi<Review>('/api/review');
   const [tab, setTab] = useState<'proposals' | 'modified' | 'proposed' | 'duplicates' | 'conflicts' | 'sources'>('proposals');
   const [diffFor, setDiffFor] = useState<string | null>(null);
@@ -337,7 +341,7 @@ export function ReviewPage() {
   return (
     <div className="space-y-4">
       {node}
-      <PageHeader title="Canon Review" subtitle="Nothing becomes canon without your approval here. Every decision is recorded in change history." />
+      <PageHeader title="Canon Review" subtitle="Nothing becomes canon without your approval here." />
       <Tabs
         value={tab}
         onChange={setTab}
@@ -347,7 +351,7 @@ export function ReviewPage() {
           { id: 'proposed', label: `Proposed records (${data.proposed.length})` },
           { id: 'duplicates', label: `Possible duplicates (${data.duplicates.length})` },
           { id: 'conflicts', label: `Conflicts (${data.conflicts.length})` },
-          { id: 'sources', label: `Missing sources (${data.missingSources.length})` },
+          ...(debug ? [{ id: 'sources' as const, label: `Missing sources (${data.missingSources.length})` }] : []),
         ]}
       />
       {tab === 'proposals' && (
@@ -356,7 +360,7 @@ export function ReviewPage() {
             <div key={p.id} className="panel-pad flex flex-wrap gap-3 items-start">
               <div className="flex-1 min-w-60">
                 <div className="text-xs text-dim">
-                  {p.kind.replace('_', ' ')} · {new Date(p.created_at).toLocaleString()} {p.status === 'revise' && '· needs revision'}
+                  {p.kind === 'new_entity' ? 'New record' : p.kind === 'campaign_promotion' ? 'From a campaign' : p.kind} · {new Date(p.created_at).toLocaleString()} {p.status === 'revise' && '· needs revision'}
                 </div>
                 <div className="font-medium">{p.title}</div>
                 {p.entity_id && <EntityLink id={p.entity_id}>{p.entity_name ?? p.entity_id}</EntityLink>}
@@ -385,13 +389,13 @@ export function ReviewPage() {
       )}
       {tab === 'modified' && (
         <div className="space-y-2">
-          <p className="text-sm text-dim">Imported records whose text differs from the last reviewed version. Approve to accept the edit as canon, or revert to the reviewed text.</p>
+          <p className="text-sm text-dim">Canon records that were edited. Approve the edit, or revert to the approved text.</p>
           {data.modified.map((m) => (
             <div key={m.id} className="panel-pad">
               <div className="flex flex-wrap items-center gap-2">
                 <EntityLink id={m.id}>{m.name}</EntityLink>
                 <span className="text-xs text-dim">
-                  {m.id} · edited {new Date(m.updated_at).toLocaleString()}
+                  {debug ? `${m.id} · ` : ''}edited {new Date(m.updated_at).toLocaleString()}
                 </span>
                 <div className="ml-auto flex gap-1">
                   <button className="btn" onClick={() => setDiffFor(diffFor === m.id ? null : m.id)}>
@@ -427,18 +431,18 @@ export function ReviewPage() {
       {tab === 'proposed' && <SimpleList rows={data.proposed.map((r) => ({ id: r.id, name: r.name, extra: r.origin }))} empty="No PROPOSED records." />}
       {tab === 'duplicates' && (
         <div className="space-y-2">
-          <p className="text-sm text-dim">Different IDs sharing a name. Many are deliberate dual roles in the source (e.g. a settlement and the polity of the same name). Link them with “Same being as (dual role)” rather than merging.</p>
+          <p className="text-sm text-dim">Records that share a name. Many are deliberate, such as a city and the faction of the same name; link them with “Same being as” instead of merging.</p>
           {data.duplicates.map((d, i) => (
             <div key={i} className="panel-pad text-sm flex flex-wrap gap-3">
               {d.records.map((r) => (
                 <span key={r.id}>
-                  <EntityLink id={r.id}>{r.name}</EntityLink> <span className="text-xs text-dim">{r.id}</span> <TypeBadge type={r.type} />
+                  <EntityLink id={r.id}>{r.name}</EntityLink> {debug && <span className="text-xs text-dim">{r.id}</span>} <TypeBadge type={r.type} />
                 </span>
               ))}
               {d.acknowledgedDualRole && <span className="chip border-ok/50 text-ok">linked dual role</span>}
             </div>
           ))}
-          {data.importDuplicates.length > 0 && (
+          {debug && data.importDuplicates.length > 0 && (
             <details className="panel p-3 text-sm">
               <summary className="cursor-pointer">Duplicate IDs resolved during the last import ({data.importDuplicates.length})</summary>
               {data.importDuplicates.map((d) => (
@@ -454,7 +458,16 @@ export function ReviewPage() {
         <div className="space-y-2">
           <SimpleList rows={data.conflicts.map((r) => ({ id: r.id, name: r.name }))} empty="No records are marked CONFLICT." />
           <p className="text-sm">
-            See also the source <EntityLink id="DEC-903">Canon Conflict Register</EntityLink>, <EntityLink id="DEC-904">Decisions Required</EntityLink> and <Link to="/broken" className="text-arcane">broken references</Link> ({data.broken.references.length}).
+            See also the <EntityLink id="DEC-903">Canon Conflict Register</EntityLink> and <EntityLink id="DEC-904">Decisions Required</EntityLink>.
+            {debug && (
+              <>
+                {' '}
+                <Link to="/broken" className="text-arcane">
+                  Broken references
+                </Link>{' '}
+                ({data.broken.references.length}).
+              </>
+            )}
           </p>
         </div>
       )}
@@ -481,12 +494,13 @@ function ModifiedDiff({ id }: { id: string }) {
 }
 
 function SimpleList({ rows, empty }: { rows: { id: string; name: string; extra?: string }[]; empty: string }) {
+  const debug = useDebug();
   if (!rows.length) return <p className="text-sm text-dim">{empty}</p>;
   return (
     <div className="panel p-3 grid sm:grid-cols-2 lg:grid-cols-3 gap-1 text-sm">
       {rows.map((r) => (
         <div key={r.id}>
-          <EntityLink id={r.id}>{r.name}</EntityLink> <span className="text-xs text-dim">{r.id} {r.extra}</span>
+          <EntityLink id={r.id}>{r.name}</EntityLink> {debug && <span className="text-xs text-dim">{r.id} {r.extra}</span>}
         </div>
       ))}
     </div>
@@ -498,7 +512,7 @@ export function BrokenPage() {
   const { data } = useApi<{ references: { from: string; from_name: string; ref: string; where: string }[]; danglingRelationships: unknown[] }>('/api/broken');
   return (
     <div className="space-y-4">
-      <PageHeader title="Broken References" subtitle="`Name [ID]` references and relationships that point at a record that does not exist." />
+      <PageHeader title="Broken References" note="@[Name] mentions, `Name [ID]` references and relationships that point at a record that does not exist." />
       {!data ? (
         <Loading />
       ) : !data.references.length && !data.danglingRelationships.length ? (
@@ -540,7 +554,7 @@ export function HistoryPage() {
   const { data } = useApi<{ id: number; entity_id: string; name: string | null; version: number; change_type: string; reason: string; created_at: string }[]>(`/api/history?limit=300${all ? '&all=1' : ''}`);
   return (
     <div className="space-y-4">
-      <PageHeader title="Change History" subtitle="Every change to every record: what, when and why. Open a record's History tab to compare or restore versions." />
+      <PageHeader title="Change History" subtitle="Every change to every record: what, when and why." />
       <label className="text-sm flex items-center gap-1">
         <input type="checkbox" checked={all} onChange={(e) => setAll(e.target.checked)} /> Include import events
       </label>
@@ -590,7 +604,7 @@ export function BackupsPage() {
     <div className="space-y-4">
       <PageHeader
         title="Backups"
-        subtitle="Versioned snapshots of the whole database plus map images. A backup is made automatically every day, before every import, and before every restore."
+        subtitle="A backup is made automatically every day, before every import and before every restore."
         actions={
           <button
             className="btn-primary"
@@ -715,6 +729,8 @@ export function SettingsPage() {
           Save settings
         </button>
       </div>
+      <DebugToggle />
+      <Dev>
       <div className="panel-pad text-sm space-y-1">
         <div className="section-title mb-1">Installation</div>
         <div>Data folder: <code>{meta?.dataDir}</code></div>
@@ -724,6 +740,26 @@ export function SettingsPage() {
           Keyboard: Ctrl+K or / search · Alt+D DM screen · Ctrl+\ collapse sidebar. Player view: open <code>/player</code>, or run <code>npm run start:player</code> for a separate player-only server.
         </div>
       </div>
+      </Dev>
+    </div>
+  );
+}
+
+function DebugToggle() {
+  const { debug, debugForced, setDebug } = useAppState();
+  return (
+    <div className="panel-pad space-y-2">
+      <div className="section-title">Technical details</div>
+      <label className="flex items-start gap-2 text-sm">
+        <input type="checkbox" className="mt-1" checked={debug} disabled={debugForced} onChange={(e) => void setDebug(e.target.checked)} />
+        <span>
+          Show technical details
+          <span className="block text-xs text-dim">
+            Record IDs, source files and citations, tags, import reports and notes on how the app works. Leave off for normal play.
+            {debugForced && ' Turned on by the WORLDKEEPER_DEBUG setting on this computer.'}
+          </span>
+        </span>
+      </label>
     </div>
   );
 }

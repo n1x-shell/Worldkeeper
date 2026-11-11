@@ -14,9 +14,28 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
 
 **Import result on the real archive:** 421 records (all non-reference IDs), 475 source documents, 1,008 relationships, 17 timeline rows, 17 templates, 18 duplicate IDs resolved, 23 copies skipped, **0 broken references**. Counts include 13 vaults, 13 shards, 7 Ethereal domains, 110 NPCs. Re-import: 421 unchanged.
 
+## Interface clean-up and `@[Name]` links (working and tested)
+
+- **Debug flag:** technical details are hidden unless debug mode is on. Turn it on with **Settings → Technical details** (stored as setting `debug`), or force it with `WORLDKEEPER_DEBUG=1`. `/api/meta` reports the state. What is hidden:
+  - stable IDs in headers, lists, pickers, search results, graph nodes, vault and shard cards, and Canon Review
+  - source files and citations, tags, raw category/realm/canon strings
+  - the source's editorial sections: Source, References, Unspecified fields, Tome implementation, Review notes, Limits, Limits of the source, Record boundaries, Source boundary, Use and verification, Missing facts, Limitations, Open questions, Unknowns, Status
+  - import-report detail tabs and how-it-works page notes (`PageHeader note=`)
+  - the Source Documents and Broken References pages, removed from the sidebar
+  - The record text itself is unchanged; this is display only. GM-only sections stay visible to the DM and flagged.
+- **`@[Name]` links** (`shared/mentions.ts`, used by both server and client):
+  - Mentions resolve by name, by name without "the", or by alias. Records that share a name take a type qualifier, `@[Kaelholm (Settlement)]`; `@[Name|ID]` is accepted as an explicit fallback.
+  - The source's `Name [ID]` references render as the name; when the words before the ID are not the record's name, a small ↗ link is shown.
+  - Typing `@` in any DM text area suggests records and inserts the shortest unambiguous mention. Esc dismisses it for that `@`, and long prose without a match stops suggesting.
+  - Mentions create text-derived relationships (graph, connections). Unresolved and ambiguous mentions appear in Broken References and render with a dotted underline.
+  - Player text shows names only: links go to revealed records; other mentions become plain words.
+  - Recap drafts and from-hook adventures now write `@[Name]`.
+- **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
+- **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
 ## v0.2 "At the table" (working and tested)
 
-- **Record-link suggestions while typing:** typing `[[` in any DM text area opens a ranked list of records. The text areas covered: record body, DM notes, session prep, scenes, adventure fields, recaps, quests, notes, NPC profile fields and the live log. Choosing one inserts `Name [ID]`, the library's own reference format. Keyboard: arrows, Enter or Tab, Esc. Redirects and archived records are excluded.
+- **Record-link suggestions while typing** (now triggered by `@`; see above): typing `[[` in any DM text area opens a ranked list of records. The text areas covered: record body, DM notes, session prep, scenes, adventure fields, recaps, quests, notes, NPC profile fields and the live log. Choosing one inserts `Name [ID]`, the library's own reference format. Keyboard: arrows, Enter or Tab, Esc. Redirects and archived records are excluded.
 - **NPC and faction profiles:**
   - Structured forms on the record page. Field definitions are in `shared/profiles.ts`.
   - Each field shows the source's own text read-only, extracted from the record's sections and metadata fields and from structured relationships, next to a DM value.
