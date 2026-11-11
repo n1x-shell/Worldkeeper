@@ -124,6 +124,80 @@ try {
   await shot(page, '08-player');
   step('player view empty until reveal');
 
+  // ---- v0.2: record-link suggestions while typing ----
+  await page.goto(`${base}/e/NPC-010`);
+  await page.getByRole('button', { name: 'Edit', exact: true }).click();
+  const notesBox = page.locator('textarea').last();
+  await notesBox.fill('');
+  await notesBox.pressSequentially('Owes a favour to [[blind se');
+  await page.getByRole('listbox', { name: 'Link a record' }).waitFor();
+  await page.keyboard.press('Enter');
+  const linked = await notesBox.inputValue();
+  if (!/Owes a favour to The Blind Seer \[NPC-001\]/.test(linked)) throw new Error(`link insert failed: ${linked}`);
+  await expectText('All changes saved', 10000);
+  await shot(page, '13-link-suggest');
+  await notesBox.fill('');
+  await expectText('All changes saved', 10000);
+  step('record-link suggestions insert Name [ID]');
+
+  // ---- v0.2: NPC profile ----
+  await page.getByRole('tab', { name: 'NPC profile' }).click();
+  await expectText('Section: Wants');
+  await expectText('UNDEFINED in source');
+  const pronouns = page.getByLabel('Pronouns');
+  await pronouns.fill('she/her (DM)');
+  await expectText('All changes saved', 10000);
+  await page.getByLabel('Attitude toward the party').fill('Cautiously friendly');
+  await page.waitForTimeout(1500);
+  await page.reload();
+  await page.getByRole('tab', { name: 'NPC profile' }).click();
+  if ((await page.getByLabel('Pronouns').inputValue()) !== 'she/her (DM)') throw new Error('profile value did not persist');
+  await shot(page, '14-npc-profile');
+  await page.getByLabel('Pronouns').fill('');
+  await expectText('All changes saved', 10000);
+  step('NPC profile: source values shown, DM values persist');
+
+  // ---- v0.2: reveal during live session ----
+  await page.goto(`${base}/campaign/live`);
+  await page.getByText(/No live session|Reveal to players/).first().waitFor({ timeout: 15000 });
+  const startBtn = page.getByRole('button', { name: /Start session/ });
+  if (await startBtn.isVisible()) await startBtn.click();
+  await expectText('Reveal to players');
+  const revealPicker = page.getByPlaceholder('What did they learn about?');
+  await revealPicker.fill('Mara Venn');
+  await page.keyboard.press('Enter');
+  await page.getByRole('button', { name: 'Reveal that it exists' }).click();
+  await expectText('is now known to players');
+  await page.getByRole('button', { name: 'Wants', exact: true }).click();
+  await expectText('Revealed “Wants”');
+  const secretChip = page.getByRole('button', { name: /Secrets \(GM only\)/ });
+  if (!(await secretChip.isDisabled())) throw new Error('GM-only section chip must be disabled');
+  await page.getByPlaceholder('A fact they learned, in your words').fill('She keeps one room of the inn locked.');
+  await page.getByRole('button', { name: 'Reveal', exact: true }).click();
+  await expectText('Fact revealed.');
+  await expectText('Revealed to players: section “Wants”');
+  await shot(page, '15-live-reveal');
+  const pe = await (await fetch(`${base}/api/player/entities/NPC-010`)).json();
+  if (!pe.sections.some((x) => x.heading === 'Wants') || !pe.facts.includes('She keeps one room of the inn locked.')) throw new Error('player view missing reveal');
+  if (JSON.stringify(pe).includes('belongings from people she no longer remembers')) throw new Error('secret leaked to player view');
+  // Undo the reveal so the suite can be rerun.
+  await fetch(`${base}/api/entities/NPC-010`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ revealed: false, revealed_sections: [], revealed_facts: [] }) });
+  step('live reveal: record, section and fact reach players; secrets do not');
+
+  // ---- v0.2: timeline era filter ----
+  await page.goto(`${base}/timeline?era=after-bloom`);
+  await expectText('22 AB');
+  if (await page.getByText('Before any Aetherfall').count()) throw new Error('era filter not applied');
+  await page.goto(`${base}/timeline?era=__none`);
+  const sel = page.getByLabel('Era for Before any Aetherfall');
+  await sel.selectOption('before-the-cycle');
+  await page.waitForTimeout(800);
+  await page.goto(`${base}/timeline?era=before-the-cycle&group=1`);
+  await expectText('Before any Aetherfall');
+  await shot(page, '16-timeline-eras');
+  await page.getByLabel('Era for Before any Aetherfall').selectOption('');
+  step('timeline era filter + manual era assignment');
+
   // Atlas page loads
   await page.goto(`${base}/atlas`);
   await expectText('World Atlas');

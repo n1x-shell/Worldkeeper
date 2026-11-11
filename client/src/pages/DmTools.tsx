@@ -11,6 +11,9 @@ import { EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
 import { splitSections } from '../lib/sections';
 import type { Character } from './Campaign';
+import { ProfileSummary, type ProfileResponse } from './Profile';
+import { profileKindFor } from '@shared/profiles';
+import { INFLUENCE_LEVELS } from '@shared/profiles';
 
 // ------------------------------------------------------------------ Encounter tracker (used standalone and in live mode)
 interface Encounter {
@@ -475,43 +478,42 @@ export function RulesPage() {
 
 // ------------------------------------------------------------------ NPC quick reference
 export function NpcCard({ id }: { id: string }) {
-  const { data } = useApi<{ entity: Entity; campaignState: StateRow[] }>(`/api/entities/${encodeURIComponent(id)}`);
+  const { activeCampaignId } = useAppState();
+  const { data } = useApi<{ entity: Entity }>(`/api/entities/${encodeURIComponent(id)}`);
+  const isProfiled = data ? profileKindFor(data.entity.type) !== null : false;
+  const { data: profile } = useApi<ProfileResponse>(isProfiled ? `/api/profiles/${encodeURIComponent(id)}${activeCampaignId ? `?campaign=${activeCampaignId}` : ''}` : null);
   if (!data) return <div className="panel p-3"><Loading /></div>;
   const e = data.entity;
-  const secs = splitSections(e.body);
-  const pick = (re: RegExp) => secs.find((s) => re.test(s.heading));
-  const rows: [string, string | undefined][] = [
-    ['Role', pick(/description|role|identity/i)?.content],
-    ['Wants', pick(/want|goal|aim/i)?.content],
-    ['Pressure', pick(/fear|pressure/i)?.content],
-    ['Groups', pick(/group|faction|associated/i)?.content],
-  ];
-  const secret = pick(/secret|gm/i);
+  const portrait = profile?.world.portrait as string | undefined;
+  const keys =
+    profile?.kind === 'faction'
+      ? ['attitude', 'goals', 'currentPlans', 'leaders', 'headquarters', 'secrets']
+      : ['pronouns', 'role', 'voice', 'attitude', 'status', 'goals', 'pressures', 'promises', 'debts', 'lastEncountered', 'secrets'];
   return (
     <div className="panel p-3 text-sm space-y-1.5">
-      <Link to={`/e/${e.id}`} className="font-display text-gold text-base">
-        {e.name}
-      </Link>
-      <div className="text-[11px] text-dim">
-        {e.id} · {e.realm}
+      <div className="flex gap-3 items-start">
+        {portrait && <img src={`/api/uploads/${portrait}`} alt="" className="w-14 h-14 rounded object-cover border border-line" />}
+        <div>
+          <Link to={`/e/${e.id}`} className="font-display text-gold text-base">
+            {e.name}
+          </Link>
+          <div className="text-[11px] text-dim">
+            {e.id} · {e.realm}
+          </div>
+        </div>
       </div>
-      {rows.map(([k, v]) => (
-        <div key={k}>
-          <span className="text-[10px] uppercase tracking-wider text-dim">{k}: </span>
-          {v ? <span>{v.replace(/\n+/g, ' ').slice(0, 280)}</span> : <span className="text-dim">UNDEFINED</span>}
-        </div>
-      ))}
-      {secret && (
-        <div className="border border-danger/40 bg-danger/5 rounded p-1.5">
-          <span className="text-[10px] uppercase text-danger">Secret: </span>
-          {secret.content.replace(/\n+/g, ' ').slice(0, 300)}
-        </div>
+      {profile ? (
+        <>
+          <ProfileSummary p={profile} keys={keys} />
+          {profile.lastLogged && (
+            <div className="text-[11px] text-dim">
+              Last in log: session {profile.lastLogged.session_number}, “{profile.lastLogged.text.slice(0, 80)}”
+            </div>
+          )}
+        </>
+      ) : (
+        <Markdown text={splitSections(e.body).find((s) => s.content && !s.secret)?.content.slice(0, 300) ?? ''} className="prose-lore text-[14px]" />
       )}
-      {data.campaignState.slice(0, 3).map((s) => (
-        <div key={s.id} className="text-xs">
-          <span className="text-dim">{s.field}:</span> {s.value}
-        </div>
-      ))}
       {e.notes && <div className="text-xs text-dim italic line-clamp-3">{e.notes}</div>}
     </div>
   );
@@ -623,6 +625,58 @@ export function AgendasPage() {
         </div>
       ))}
       {data && !data.length && <p className="text-sm text-dim">No plans yet. Factions in the library: {factions?.length ?? 0}.</p>}
+      <InfluenceMatrix campaignId={activeCampaignId} />
+    </div>
+  );
+}
+
+/** Competing influence by region, from each faction's campaign profile (Influence by region). */
+function InfluenceMatrix({ campaignId }: { campaignId: number }) {
+  const { data } = useApi<{ faction_id: string; faction_name: string; region: string; level: string; note: string }[]>(`/api/profiles/influence?campaign=${campaignId}`);
+  if (!data) return null;
+  const regions = [...new Set(data.map((d) => d.region).filter(Boolean))];
+  const factions = [...new Map(data.map((d) => [d.faction_id, d.faction_name])).entries()];
+  const strength = (l: string) => Math.max(0, INFLUENCE_LEVELS.indexOf(l as (typeof INFLUENCE_LEVELS)[number]));
+  return (
+    <div className="panel-pad">
+      <div className="section-title mb-1">Influence by region</div>
+      <p className="text-xs text-dim mb-2">From each faction's profile (Faction profile tab → This campaign). Regions with more than one strong faction are emerging conflicts.</p>
+      {!regions.length ? (
+        <p className="text-sm text-dim">No influence recorded yet.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Region</th>
+                {factions.map(([id, name]) => (
+                  <th key={id}>
+                    <EntityLink id={id}>{name}</EntityLink>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {regions.map((r) => {
+                const cells = factions.map(([id]) => data.find((d) => d.faction_id === id && d.region === r));
+                const contested = cells.filter((c) => c && (strength(c.level) >= 3 || c.level === 'Contested')).length > 1;
+                return (
+                  <tr key={r} className={contested ? 'bg-danger/10' : ''}>
+                    <td>
+                      <EntityLink id={r} /> {contested && <span className="chip border-danger/60 text-danger ml-1">conflict</span>}
+                    </td>
+                    {cells.map((c, i) => (
+                      <td key={i} title={c?.note}>
+                        {c ? c.level : <span className="text-dim">—</span>}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

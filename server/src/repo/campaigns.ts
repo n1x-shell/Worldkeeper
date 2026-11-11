@@ -211,7 +211,7 @@ export const sessionLog = makeCrud({
   table: 'session_log',
   schema: z.object({
     session_id: z.number().int(),
-    kind: z.enum(['note', 'quest', 'combat', 'npc', 'location', 'loot', 'change', 'scene']).default('note'),
+    kind: z.enum(['note', 'quest', 'combat', 'npc', 'location', 'loot', 'change', 'scene', 'reveal']).default('note'),
     text: z.string().trim().min(1).max(20000),
     entity_id: zId,
   }),
@@ -235,8 +235,9 @@ export function generateRecapDraft(db: DB, sessionId: number): string {
     ['Quest updates', []],
     ['Combat', []],
     ['Treasure and items', []],
+    ['Revealed to players', []],
   ];
-  const bucket: Record<string, number> = { scene: 0, note: 1, npc: 2, location: 3, quest: 4, combat: 5, loot: 6 };
+  const bucket: Record<string, number> = { scene: 0, note: 1, npc: 2, location: 3, quest: 4, combat: 5, loot: 6, reveal: 7 };
   for (const l of log) {
     if (l.kind === 'change') continue;
     sections[bucket[l.kind] ?? 1][1].push(`- ${l.text}${name(l.entity_id)}`);

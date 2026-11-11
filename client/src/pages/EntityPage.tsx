@@ -33,6 +33,8 @@ import {
 } from '../components/ui';
 import { Markdown } from '../components/Markdown';
 import { EntityPicker } from '../components/EntityPicker';
+import { ProfilePanel } from './Profile';
+import { profileKindFor } from '@shared/profiles';
 
 interface Detail {
   entity: Entity;
@@ -46,7 +48,7 @@ interface Detail {
   baseline: { revisionId: number; created_at: string } | null;
 }
 
-type Tab = 'record' | 'edit' | 'relationships' | 'player' | 'campaign' | 'history';
+type Tab = 'record' | 'profile' | 'edit' | 'relationships' | 'player' | 'campaign' | 'history';
 
 export function EntityPage() {
   const { id = '' } = useParams();
@@ -161,6 +163,7 @@ export function EntityPage() {
         onChange={setTab}
         tabs={[
           { id: 'record', label: 'Record' },
+          ...(profileKindFor(e.type) ? [{ id: 'profile' as Tab, label: profileKindFor(e.type) === 'npc' ? 'NPC profile' : 'Faction profile' }] : []),
           { id: 'edit', label: 'Edit' },
           { id: 'relationships', label: `Relationships (${data.relationships.length})` },
           { id: 'player', label: 'Player view' },
@@ -240,6 +243,7 @@ export function EntityPage() {
           }}
         />
       )}
+      {tab === 'profile' && <ProfilePanel entityId={e.id} entityName={e.name} />}
       {tab === 'relationships' && <RelationshipsTab entityId={e.id} rels={data.relationships} onChange={reload} />}
       {tab === 'player' && <PlayerTab entity={e} sections={data.sections} onPatch={patch} />}
       {tab === 'campaign' && <CampaignTab entity={e} rows={data.campaignState} activeCampaignId={data.activeCampaignId} onChange={reload} />}

@@ -369,6 +369,31 @@ CREATE TABLE map_shapes (
 );
 `,
   },
+  {
+    version: 4,
+    name: 'profiles, eras, timeline eras',
+    sql: `
+CREATE TABLE profiles (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  entity_id TEXT NOT NULL,
+  campaign_id INTEGER NOT NULL DEFAULT 0,
+  data TEXT NOT NULL DEFAULT '{}',
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  UNIQUE(entity_id, campaign_id)
+);
+
+CREATE TABLE eras (
+  key TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  description TEXT NOT NULL DEFAULT '',
+  origin TEXT NOT NULL DEFAULT 'import'
+);
+
+ALTER TABLE timeline_rows ADD COLUMN era TEXT;
+ALTER TABLE timeline_rows ADD COLUMN era_origin TEXT;
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

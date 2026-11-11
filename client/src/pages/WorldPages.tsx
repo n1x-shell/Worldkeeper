@@ -253,26 +253,67 @@ interface TimelineRow {
   access: string;
   entity_ids: string[];
   origin: string;
+  era: string | null;
+  era_origin: string | null;
+}
+interface Era {
+  key: string;
+  name: string;
+  sort_order: number;
+  description: string;
+  origin: string;
 }
 
 export function TimelinePage() {
   const { data, error, reload } = useApi<TimelineRow[]>('/api/timeline');
-  const [realm, setRealm] = useState('');
+  const { data: eras, reload: reloadEras } = useApi<Era[]>('/api/eras');
+  const [sp, setSp] = useSearchParams();
+  const realm = sp.get('realm') ?? '';
+  const eraFilter = (sp.get('era') ?? '').split(',').filter(Boolean);
+  const grouped = sp.get('group') === '1';
+  const setParam = (k: string, v: string) => {
+    const next = new URLSearchParams(sp);
+    if (v) next.set(k, v);
+    else next.delete(k);
+    setSp(next, { replace: true });
+  };
+  const toggleEra = (k: string) => setParam('era', (eraFilter.includes(k) ? eraFilter.filter((x) => x !== k) : [...eraFilter, k]).join(','));
   const [adding, setAdding] = useState(false);
+  const [managing, setManaging] = useState(false);
   const [form, setForm] = useState({ time_label: '', event: '', realm_label: '', access: 'PROPOSED' });
-  const rows = (data ?? []).filter((r) => !realm || r.realm_label.toLowerCase().includes(realm));
+  const eraName = (k: string | null) => (k ? eras?.find((e) => e.key === k)?.name ?? k : 'No era assigned');
+  const rows = (data ?? []).filter(
+    (r) => (!realm || r.realm_label.toLowerCase().includes(realm)) && (!eraFilter.length || eraFilter.includes(r.era ?? '__none')),
+  );
+  const counts = new Map<string, number>();
+  for (const r of data ?? []) counts.set(r.era ?? '__none', (counts.get(r.era ?? '__none') ?? 0) + 1);
+  const groups: [string | null, TimelineRow[]][] = grouped
+    ? ([...(eras ?? []).map((e) => [e.key, rows.filter((r) => r.era === e.key)]), [null, rows.filter((r) => !r.era)]] as [string | null, TimelineRow[]][]).filter((g) => g[1].length > 0)
+    : [[null, rows]];
+
+  const setRowEra = async (row: TimelineRow, era: string) => {
+    await api.patch(`/api/timeline/${row.id}/era`, { era });
+    void reload();
+  };
+
   return (
     <div className="space-y-4">
       <PageHeader
         title="World Timeline"
-        subtitle="Imported from the World Timeline index. 300 AB = Year 31 Unbound. Dates the source does not give are not invented. The 927 AB events are a possible future, not history."
+        subtitle="Imported from the World Timeline index. 300 AB = Year 31 Unbound. Dates the source does not give are not invented. The 927 AB events are a possible future, not history. Eras come from your library's era tags; rows take the era of the records they link to, and you can assign the rest."
         actions={
-          <button className="btn" onClick={() => setAdding(!adding)}>
-            <Plus size={14} /> Add event
-          </button>
+          <>
+            <button className="btn" onClick={() => setManaging(!managing)}>
+              Eras
+            </button>
+            <button className="btn" onClick={() => setAdding(!adding)}>
+              <Plus size={14} /> Add event
+            </button>
+          </>
         }
       />
       {error && <ErrorBox error={error} />}
+      {managing && eras && <EraManager eras={eras} onChange={() => (void reloadEras(), void reload())} />}
       {adding && (
         <div className="panel-pad grid gap-2 md:grid-cols-[160px_1fr_160px_140px_auto] items-end">
           <Field label="Time">
@@ -303,49 +344,162 @@ export function TimelinePage() {
           </button>
         </div>
       )}
-      <div className="flex gap-1.5">
-        {['', 'aetheris', 'kaelmar', 'world', 'both'].map((r) => (
-          <button key={r} className={`chip ${realm === r ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setRealm(r)}>
-            {r || 'All'}
+      <div className="space-y-2">
+        <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Filter by era">
+          <span className="text-xs uppercase tracking-wider text-dim mr-1">Era</span>
+          <button className={`chip ${!eraFilter.length ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setParam('era', '')}>
+            All
           </button>
-        ))}
+          {eras?.map((e) => (
+            <button key={e.key} aria-pressed={eraFilter.includes(e.key)} className={`chip ${eraFilter.includes(e.key) ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => toggleEra(e.key)}>
+              {e.name} ({counts.get(e.key) ?? 0})
+            </button>
+          ))}
+          <button aria-pressed={eraFilter.includes('__none')} className={`chip ${eraFilter.includes('__none') ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => toggleEra('__none')}>
+            Unassigned ({counts.get('__none') ?? 0})
+          </button>
+        </div>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-xs uppercase tracking-wider text-dim mr-1">Realm</span>
+          {['', 'aetheris', 'kaelmar', 'world', 'both'].map((r) => (
+            <button key={r} className={`chip ${realm === r ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setParam('realm', r)}>
+              {r || 'All'}
+            </button>
+          ))}
+          <label className="ml-3 text-sm text-dim flex items-center gap-1">
+            <input type="checkbox" checked={grouped} onChange={(e) => setParam('group', e.target.checked ? '1' : '')} /> Group by era
+          </label>
+        </div>
       </div>
       {!data ? (
         <Loading />
       ) : !rows.length ? (
-        <Empty title="No timeline rows">Import the archive to load the World Timeline.</Empty>
+        <Empty title="No timeline rows match">Import the archive, or change the filters.</Empty>
       ) : (
-        <ol className="relative border-l border-gold/40 ml-3 space-y-4">
-          {rows.map((r) => (
-            <li key={r.id} className="ml-5">
-              <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full border-2 border-gold bg-bg" />
-              <div className="panel p-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-display text-gold text-sm">{r.time_label}</span>
-                  <span className="chip border-line text-dim">{r.realm_label}</span>
-                  {/SECRET/i.test(r.access) && <CanonBadge status="SECRET" />}
-                  {r.origin === 'user' && <CanonBadge status="PROPOSED" />}
-                </div>
-                <Markdown text={r.event} className="prose-lore text-[16px]" />
-                <div className="text-xs text-dim">
-                  {r.access} · {r.source}
-                </div>
-              </div>
-            </li>
-          ))}
-        </ol>
+        groups.map(([era, list]) => (
+          <section key={era ?? 'none'}>
+            {grouped && <h2 className="section-title mb-2">{eraName(era)}</h2>}
+            <ol className="relative border-l border-gold/40 ml-3 space-y-4 mb-6">
+              {list.map((r) => (
+                <li key={r.id} className="ml-5">
+                  <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full border-2 border-gold bg-bg" />
+                  <div className="panel p-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-display text-gold text-sm">{r.time_label}</span>
+                      <span className="chip border-line text-dim">{r.realm_label}</span>
+                      {/SECRET/i.test(r.access) && <CanonBadge status="SECRET" />}
+                      {r.origin === 'user' && <CanonBadge status="PROPOSED" />}
+                      <select
+                        className="input w-auto py-0.5 text-xs ml-auto"
+                        value={r.era ?? ''}
+                        onChange={(e) => setRowEra(r, e.target.value)}
+                        aria-label={`Era for ${r.time_label}`}
+                        title={r.era_origin === 'user' ? 'Assigned by you' : r.era_origin === 'derived' ? 'From the era tag of a linked record' : 'Not assigned'}
+                      >
+                        <option value="">No era</option>
+                        {eras?.map((e) => (
+                          <option key={e.key} value={e.key}>
+                            {e.name}
+                            {r.era === e.key && r.era_origin === 'derived' ? ' (from record)' : ''}
+                          </option>
+                        ))}
+                        {r.era_origin === 'user' && <option value="auto">↺ Use linked record's era</option>}
+                      </select>
+                    </div>
+                    <Markdown text={r.event} className="prose-lore text-[16px]" />
+                    <div className="text-xs text-dim">
+                      {r.access} · {r.source}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))
       )}
       <div className="panel p-4">
-        <div className="section-title mb-2">Event records</div>
-        <EventList />
+        <div className="section-title mb-2">Event records{eraFilter.length ? ' in the selected eras' : ''}</div>
+        <EventList eras={eraFilter} />
       </div>
     </div>
   );
 }
 
-function EventList() {
+function EraManager({ eras, onChange }: { eras: Era[]; onChange: () => void }) {
+  const [err, setErr] = useState<string | null>(null);
+  const [name, setName] = useState('');
+  const move = async (i: number, d: -1 | 1) => {
+    const j = i + d;
+    if (j < 0 || j >= eras.length) return;
+    await api.patch(`/api/eras/${eras[i].key}`, { sort_order: eras[j].sort_order });
+    await api.patch(`/api/eras/${eras[j].key}`, { sort_order: eras[i].sort_order });
+    onChange();
+  };
+  return (
+    <div className="panel-pad space-y-2">
+      <div className="section-title">Eras</div>
+      <p className="text-xs text-dim">Imported from the library's era tags (the two continents keep parallel chronologies, so order is for display only). Rename, reorder or add your own.</p>
+      {err && <ErrorBox error={err} />}
+      {eras.map((e, i) => (
+        <div key={e.key} className="flex items-center gap-2">
+          <input
+            className="input max-w-xs"
+            defaultValue={e.name}
+            onBlur={async (ev) => {
+              if (ev.target.value.trim() && ev.target.value !== e.name) {
+                await api.patch(`/api/eras/${e.key}`, { name: ev.target.value.trim() });
+                onChange();
+              }
+            }}
+            aria-label={`Name of era ${e.key}`}
+          />
+          <span className="text-xs text-dim">era/{e.key}</span>
+          {e.origin === 'user' && <CanonBadge status="PROPOSED" />}
+          <button className="btn-ghost" onClick={() => move(i, -1)} aria-label="Move earlier">
+            ↑
+          </button>
+          <button className="btn-ghost" onClick={() => move(i, 1)} aria-label="Move later">
+            ↓
+          </button>
+        </div>
+      ))}
+      <div className="flex gap-2">
+        <input className="input max-w-xs" value={name} onChange={(e) => setName(e.target.value)} placeholder="New era name" />
+        <button
+          className="btn"
+          disabled={!name.trim()}
+          onClick={async () => {
+            try {
+              const key = name
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/^-|-$/g, '');
+              await api.post('/api/eras', { key, name: name.trim() });
+              setName('');
+              onChange();
+            } catch (x) {
+              setErr((x as Error).message);
+            }
+          }}
+        >
+          <Plus size={13} /> Add era
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function EventList({ eras = [] }: { eras?: string[] }) {
   const { data } = useApi<EntitySummary[]>('/api/entities?type=event');
-  return data ? <EntityTable rows={data} /> : <Loading />;
+  if (!data) return <Loading />;
+  const rows = eras.length
+    ? data.filter((e) => {
+        const tagged = e.tags.filter((t) => t.startsWith('era/')).map((t) => t.slice(4));
+        return tagged.length ? tagged.some((t) => eras.includes(t)) : eras.includes('__none');
+      })
+    : data;
+  return rows.length ? <EntityTable rows={rows} /> : <p className="text-sm text-dim">No event records carry these era tags.</p>;
 }
 
 export function MysteriesPage() {

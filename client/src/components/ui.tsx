@@ -4,6 +4,7 @@ import { AlertTriangle, Check, CircleDashed, Loader2, X, EyeOff, Eye } from 'luc
 import { ENTITY_TYPE_LABELS, REALM_LABELS, type EntityType, type Realm } from '@shared/domain';
 import type { SaveState } from '../lib/api';
 import { useAppState } from '../lib/store';
+import { useLinkSuggest } from './LinkSuggest';
 
 const CANON_STYLES: Record<string, string> = {
   CANON: 'border-gold/50 text-gold bg-gold/10',
@@ -186,17 +187,53 @@ export function Field({ label, children, hint }: { label: string; children: Reac
   );
 }
 
-/** Text area that grows with its content. */
-export function AutoTextarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { minRows?: number }) {
-  const { minRows = 3, className = '', ...rest } = props;
+/**
+ * Text area that grows with its content. Typing `[[` offers record-link suggestions
+ * (inserts `Name [ID]`); pass `links={false}` to turn that off.
+ */
+export function AutoTextarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { minRows?: number; links?: boolean }) {
+  const { minRows = 3, className = '', links = true, onKeyDown, onChange, onBlur, onClick, onKeyUp, ...rest } = props;
   const ref = useRef<HTMLTextAreaElement>(null);
+  const suggest = useLinkSuggest(ref, links);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     el.style.height = 'auto';
     el.style.height = `${Math.max(el.scrollHeight, minRows * 22)}px`;
   }, [props.value, minRows]);
-  return <textarea ref={ref} rows={minRows} className={`input font-mono text-[13px] leading-relaxed resize-y ${className}`} {...rest} />;
+  return (
+    <div className="relative">
+      <textarea
+        ref={ref}
+        rows={minRows}
+        className={`input font-mono text-[13px] leading-relaxed resize-y ${className}`}
+        {...rest}
+        onChange={(e) => {
+          onChange?.(e);
+          suggest.update();
+        }}
+        onKeyDown={(e) => {
+          if (suggest.onKeyDown(e)) return;
+          onKeyDown?.(e);
+        }}
+        onKeyUp={(e) => {
+          if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) suggest.update();
+          onKeyUp?.(e);
+        }}
+        onClick={(e) => {
+          suggest.update();
+          onClick?.(e);
+        }}
+        onBlur={(e) => {
+          setTimeout(suggest.close, 150);
+          onBlur?.(e);
+        }}
+        aria-autocomplete={links ? 'list' : undefined}
+        aria-expanded={links ? suggest.open : undefined}
+      />
+      {suggest.popup}
+    </div>
+  );
 }
 
 export function Toast({ message, onDone }: { message: string; onDone: () => void }) {

@@ -163,6 +163,8 @@ export interface GraphFilters {
   relTypes?: string[];
   realms?: string[];
   canon?: string[];
+  /** Keep only records tagged with one of these eras (era/<key>); the focus record is always kept. */
+  eras?: string[];
   includeReferences?: boolean;
   limit?: number;
 }
@@ -171,13 +173,14 @@ export interface GraphFilters {
 export function neighbourhood(db: DB, focus: string, f: GraphFilters = {}) {
   const depth = Math.min(Math.max(f.depth ?? 1, 1), 3);
   const limit = Math.min(f.limit ?? 120, 400);
-  const nodeInfo = db.prepare('SELECT id, name, type, realm, canon_status FROM entities WHERE id = ?');
+  const nodeInfo = db.prepare('SELECT id, name, type, realm, canon_status, tags FROM entities WHERE id = ?');
   const relsOf = db.prepare('SELECT * FROM relationships WHERE source_id = ? OR target_id = ?');
   const nodes = new Map<string, { id: string; name: string; type: string; realm: string; canon_status: string; depth: number }>();
   const edges = new Map<number, Relationship>();
   const root = nodeInfo.get(focus) as { id: string; name: string; type: string; realm: string; canon_status: string } | undefined;
   if (!root) throw notFound(`Record ${focus}`);
-  nodes.set(focus, { ...root, depth: 0 });
+  const { tags: _rt, ...rootRest } = root as typeof root & { tags?: string };
+  nodes.set(focus, { ...rootRest, depth: 0 });
   let frontier = [focus];
   for (let d = 1; d <= depth && nodes.size < limit; d++) {
     const next: string[] = [];
@@ -193,8 +196,10 @@ export function neighbourhood(db: DB, focus: string, f: GraphFilters = {}) {
           if (f.types?.length && !f.types.includes(n.type)) continue;
           if (f.realms?.length && !f.realms.includes(n.realm)) continue;
           if (f.canon?.length && !f.canon.includes(n.canon_status)) continue;
+          if (f.eras?.length && !f.eras.some((era) => (n as unknown as { tags: string }).tags.includes(`"era/${era}"`))) continue;
           if (nodes.size >= limit) continue;
-          info = { ...n, depth: d };
+          const { tags: _t, ...rest } = n as typeof n & { tags?: string };
+          info = { ...rest, depth: d };
           nodes.set(other, info);
           next.push(other);
         }

@@ -28,6 +28,8 @@ export function hitPath(h: Hit): string {
       return `/notes?note=${h.ref}`;
     case 'adventure':
       return `/adventure/${h.ref}`;
+    case 'profile':
+      return `/e/${encodeURIComponent(h.ref.split(':')[0])}`;
     default:
       return '/';
   }
@@ -51,7 +53,7 @@ export function Snippet({ text }: { text: string }) {
   );
 }
 
-const KIND_LABEL: Record<string, string> = { doc: 'Source document', session: 'Session', quest: 'Quest', note: 'Note', adventure: 'Adventure' };
+const KIND_LABEL: Record<string, string> = { doc: 'Source document', session: 'Session', quest: 'Quest', note: 'Note', adventure: 'Adventure', profile: 'Profile notes' };
 
 export function SearchPalette({ onClose }: { onClose: () => void }) {
   const [q, setQ] = useState('');

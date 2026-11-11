@@ -7,6 +7,7 @@ import type { AppContext } from '../context.js';
 import { h, intParam, mountCrud } from './util.js';
 import { mapDetail, maps, markers, shapes, unplacedLocations } from '../repo/maps.js';
 import { badRequest, notFound } from '../lib/errors.js';
+import { kindOf, saveProfile } from '../repo/profiles.js';
 
 const IMAGE_TYPES: Record<string, string> = {
   'image/png': '.png',
@@ -72,6 +73,20 @@ export function atlasRoutes(ctx: AppContext) {
       const name = `map-${id}-${randomBytes(6).toString('hex')}${ext}`;
       fs.writeFileSync(path.join(ctx.paths.uploadsDir, name), req.file.buffer);
       return maps.update(ctx.db, id, { image_file: name, kind: 'image', width: size.width, height: size.height });
+    }),
+  );
+  r.post(
+    '/profiles/:id/portrait',
+    upload.single('image'),
+    h((req) => {
+      const id = String(req.params.id);
+      kindOf(ctx.db, id);
+      if (!req.file) throw badRequest('Choose an image file');
+      const ext = sniffImage(req.file.buffer);
+      if (!ext || !IMAGE_TYPES[req.file.mimetype]) throw badRequest('Portraits must be PNG, JPEG, WEBP or GIF images');
+      const name = `portrait-${id.replace(/[^\w-]/g, '')}-${randomBytes(6).toString('hex')}${ext}`;
+      fs.writeFileSync(path.join(ctx.paths.uploadsDir, name), req.file.buffer);
+      return saveProfile(ctx.db, id, 'world', null, { portrait: name });
     }),
   );
   mountCrud(r, ctx, '/maps', maps, ['parent_map_id', 'entity_id']);

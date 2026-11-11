@@ -84,7 +84,9 @@ export function GraphPage() {
   const [realm, setRealm] = useState('');
   const [canon, setCanon] = useState('');
   const [rel, setRel] = useState('');
-  const url = `/api/graph${qs({ focus, depth, refs: refs ? undefined : '0', types: group ? TYPE_GROUPS[group] : undefined, realms: realm, canon, rel })}`;
+  const [era, setEra] = useState('');
+  const { data: eras } = useApi<{ key: string; name: string }[]>('/api/eras');
+  const url = `/api/graph${qs({ focus, depth, refs: refs ? undefined : '0', types: group ? TYPE_GROUPS[group] : undefined, realms: realm, canon, rel, eras: era })}`;
   const { data, error, loading } = useApi<GraphData>(url);
   const flow = useMemo(() => (data ? layout(data) : null), [data]);
 
@@ -140,6 +142,17 @@ export function GraphPage() {
             {RELATIONSHIP_TYPES.map((t) => (
               <option key={t} value={t}>
                 {RELATIONSHIP_LABELS[t]}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          <span className="label">Historical era</span>
+          <select className="input w-auto" value={era} onChange={(e) => setEra(e.target.value)}>
+            <option value="">All</option>
+            {eras?.map((x) => (
+              <option key={x.key} value={x.key}>
+                {x.name}
               </option>
             ))}
           </select>

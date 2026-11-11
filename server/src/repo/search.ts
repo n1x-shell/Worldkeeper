@@ -81,6 +81,13 @@ export function reindexAll(db: DB) {
       indexAux(db, 'note', n.id, n.title, n.body);
     for (const a of db.prepare('SELECT id, title, data FROM adventures').all() as { id: number; title: string; data: string }[])
       indexAux(db, 'adventure', a.id, a.title, a.data);
+    for (const p of db.prepare('SELECT p.entity_id, p.campaign_id, p.data, e.name FROM profiles p JOIN entities e ON e.id = p.entity_id').all() as {
+      entity_id: string;
+      campaign_id: number;
+      data: string;
+      name: string;
+    }[])
+      indexAux(db, 'profile', `${p.entity_id}:${p.campaign_id}`, `${p.name} (profile)`, p.data);
   });
   tx();
 }
