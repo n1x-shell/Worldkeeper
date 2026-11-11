@@ -1,6 +1,4 @@
-# Player Adventure Book: People (DRAFT)
-
-Drafted for review. Nothing here is published until this file is moved up into assets/player-text/.
+# Player Adventure Book: People
 
 ## How to use this
 
