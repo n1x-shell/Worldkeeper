@@ -95,7 +95,7 @@ for (const f of fs.existsSync(textDir) ? fs.readdirSync(textDir).filter((n) => n
       console.log(`player text: "${name}" ${rows.length ? 'matches several records' : 'is not a record'}, skipped`);
       continue;
     }
-    if (SPOILER('', text)) console.warn(`player text: check "${name}", it mentions something secret elsewhere in the lore`);
+    if (SPOILER(rows[0].id, text)) console.warn(`player text: check "${name}", it mentions something secret elsewhere in the lore`);
     updateEntity(ctx.db, rows[0].id, { revealed: true, player_summary: text, revealed_sections: [], reason: `Published to the Player Handbook from ${f}` });
     console.log(`player text: ${name} -> ${rows[0].id}`);
   }

@@ -1,6 +1,6 @@
 # GM-only NPCs (DRAFT)
 
-Full profiles for the 31 NPCs the archive keeps from players. None of this is published. "What people see" is the cover a player meets; "The truth" keeps every secret the archive gives, plus any new ones marked in the hook.
+Full profiles for the 31 NPCs kept from players. None of this is published. "What people see" is the face a player meets; "The truth" is what only you know.
 
 ## The Blind Seer
 
@@ -488,7 +488,7 @@ Full profiles for the 31 NPCs the archive keeps from players. None of this is pu
 
 **The truth**
 
-- The guardian the novel calls WARD/7, and later Daemon Xero: a fragment of the divided guardian mind.
+- Kaelith's logs name it WARD/7. In one possible future it will be called Daemon Xero. It is a fragment of the divided guardian mind.
 - Asleep in a sealed vault, and dreaming. Believes itself whole.
 - A prize every faction wants, and a person.
 
@@ -591,4 +591,4 @@ Full profiles for the 31 NPCs the archive keeps from players. None of this is pu
 - Cut the shards from the Loom, ending the Cycle, and tore a piece from their own Thread to make the thirteenth shard.
 - Lives unremembered in the Empty House at Hollow Refuge, with the thirteenth shard.
 
-**Hook.** Why a changeling and a scribe: a face nobody keeps, and a habit of writing everything down, because they have had to relearn it all so many times. Both are suggestions; the archive leaves name, face and people undefined.
+**Hook.** Why a changeling and a scribe: a face nobody keeps, and a habit of writing everything down, because they have had to relearn it all so many times. Their true name and first face were never recorded anywhere; these are suggestions to keep or change.
