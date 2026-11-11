@@ -1,6 +1,6 @@
 {
   "name": "worldkeeper",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "The Worldkeeper: a local-first worldbuilding encyclopedia and D&D campaign manager.",
   "type": "module",
@@ -15,7 +15,11 @@
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit",
     "test": "vitest run",
     "start:player": "NODE_ENV=production WORLDKEEPER_MODE=player tsx server/src/index.ts",
-    "setup": "npm install && npm run build"
+    "setup": "npm install && npm run build",
+    "desktop:prepare": "node scripts/desktop-prepare.mjs",
+    "desktop:dev": "node scripts/desktop-prepare.mjs && tauri dev",
+    "desktop:build": "node scripts/desktop-prepare.mjs && tauri build",
+    "e2e": "node scripts/e2e-smoke.mjs"
   },
   "engines": {
     "node": ">=20"
@@ -39,6 +43,7 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.12.4",
     "@types/adm-zip": "^0.5.8",
     "@types/better-sqlite3": "^9.6.0",
     "@types/express": "^5.0.6",
@@ -51,6 +56,7 @@
     "@vitejs/plugin-react": "^6.3.0",
     "autoprefixer": "^10.6.2",
     "concurrently": "^10.0.7",
+    "esbuild": "^0.28.2",
     "postcss": "^8.5.32",
     "supertest": "^7.3.2",
     "tailwindcss": "^3.4.19",
