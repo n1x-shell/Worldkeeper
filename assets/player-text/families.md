@@ -8,7 +8,7 @@ The families that matter on both continents. Each section becomes that family's 
 
 *The hobgoblin warlords of Varkhaal.*
 
-The hobgoblin warlords of Varkhaal. House Kael has held the Warlord's Hall since the Border Years, by winning every challenge for it, and the Warlord wears the proof: a mouthful of gold teeth, each one taken from a rival who lost.
+House Kael has held the Warlord's Hall since the Border Years, by winning every challenge for it, and the Warlord wears the proof: a mouthful of gold teeth, each one taken from a rival who lost.
 
 **Who's who**
 
@@ -26,7 +26,7 @@ The Kaels count their history in fights won. The house has no lands of its own, 
 
 *Not a family by blood.*
 
-Not a family by blood. On the Eternal Veil's dusk coast, children left at Sephane's shrines are taken in by her carvers and given the name Marrow, because, the carvers say, a name has to go all the way to the bone. A kenku and a halfling grew up in the same foundling house and still sign their letters "your sibling".
+On the Eternal Veil's dusk coast, children left at Sephane's shrines are taken in by her carvers and given the name Marrow, because, the carvers say, a name has to go all the way to the bone. A kenku and a halfling grew up in the same foundling house and still sign their letters "your sibling".
 
 **Who's who**
 
@@ -44,7 +44,7 @@ Marrows turn up everywhere: priests, clerks, sailors, a prophet who never speaks
 
 *The Hesks have sung the keeping song at Ashvale's stones for as long as anyone has kept count, and they claim it was a Hesk who stood beside the woman with burned hands when Ashvale was founded.*
 
-The Hesks have sung the keeping song at Ashvale's stones for as long as anyone has kept count, and they claim it was a Hesk who stood beside the woman with burned hands when Ashvale was founded. Orla is Ritekeeper, as her mother was. Her grandson Jory, half-elf on his father's side, teaches the song to every child in town.
+Orla is Ritekeeper, as her mother was. Her grandson Jory, half-elf on his father's side, teaches the song to every child in town.
 
 **Who's who**
 
@@ -62,7 +62,7 @@ A Hesk is expected to be at every singing, sick or well, and to know every verse
 
 *A big, loud hill family from Greyfold, spread across three villages and two peoples.*
 
-A big, loud hill family from Greyfold, spread across three villages and two peoples. The Lins have married humans and halflings for generations, and nobody keeps track of which cousin is which, except at weddings. They've spoken to the Bloom since the first years after the Shrouding; the copper marks run in the family.
+The Lins have married humans and halflings for generations, and nobody keeps track of which cousin is which, except at weddings. They've spoken to the Bloom since the first years after the Shrouding; the copper marks run in the family.
 
 **Who's who**
 
@@ -80,7 +80,7 @@ A Lin table always has room for one more. The Lins mark every child's first comm
 
 *Millwrights from Haskett's Mill, who've kept the river wheels turning for five generations.*
 
-Millwrights from Haskett's Mill, who've kept the river wheels turning for five generations. Brenna and Edda left the mill for Ashvale and the Wrights, and their parents haven't forgiven them, though they ask about the walkers in every letter.
+Brenna and Edda left the mill for Ashvale and the Wrights, and their parents haven't forgiven them, though they ask about the walkers in every letter.
 
 **Who's who**
 
@@ -98,7 +98,7 @@ The Halvors can fix anything, and they'll tell you so.
 
 *An old family of gnome glyph-wrights who have kept Kaelholm's archives for longer than the city has had its name.*
 
-An old family of gnome glyph-wrights who have kept Kaelholm's archives for longer than the city has had its name. A Tull has sat on one of the city's tribunals for most of its history, and a Tull's name has never once been burned from the rolls.
+A Tull has sat on one of the city's tribunals for most of its history, and a Tull's name has never once been burned from the rolls.
 
 **Who's who**
 
@@ -116,7 +116,7 @@ Tulls are trained to the archive from childhood. Most stay there. Corin didn't.
 
 *An orc family of herders from the ash barrens, who had never been anyone in particular until Maro climbed down into the Rift.*
 
-An orc family of herders from the ash barrens, who had never been anyone in particular until Maro climbed down into the Rift. Now the first Riftwalker and the eldest of the cycles are brother and sister, and the Convergence Collective is, at its heart, a family argument.
+Now the first Riftwalker and the eldest of the cycles are brother and sister, and the Convergence Collective is, at its heart, a family argument.
 
 **Who's who**
 

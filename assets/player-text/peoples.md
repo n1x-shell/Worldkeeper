@@ -38,19 +38,19 @@ In Kaelmar aasimar are rare and quietly watched. Kaelholm records every one in i
 
 ## Stormborn
 
-*People with a storm in their blood: hair that drifts, eyes that flicker, and a temper that brings the weather.*
+*Rare souls born in a thunderstorm, with the storm still in them: hair that drifts, eyes that flicker, and a temper that brings the weather.*
 
-Stormborn are born in thunderstorms, most often over the Fractured Nexus, where the storms never stop. The Consortium calls them a natural phenomenon and studies them. The Wildborn call them sky-children and give them to the shamans.
+Stormborn aren't a people with a homeland. They're individuals, born to ordinary families on nights of great storms, most often over the Fractured Nexus, where the storms never stop. Some are big as goliaths, with a storm giant somewhere back in the family; others are slight and light as air. The Consortium calls them a natural phenomenon and studies them. The Wildborn call them sky-children. The arenas of Varkhaal call them crowd-pleasers.
 
-In Kaelmar storms are just weather, and Stormborn are rare enough that sailors take one aboard for luck.
+In Kaelmar storms are just weather, and a Stormborn is rare enough that sailors take one aboard for luck.
 
-**Strengths and flaws.** Quick, light and hard to pin down. Restless, and moody as the sky.
+**Strengths and flaws.** Quick, strong and hard to pin down. Restless, and moody as the sky.
 
-**Culture.** Born wherever the storm was; most drift until they find somewhere the weather suits them.
+**Culture.** No culture of their own: they belong to the family that raised them, and to wherever the weather suits them.
 
-**Common names.** Aeris, Galen, Kesta, Lyre, Siro, Tamsin, Velka, Wren
+**Common names.** Aeris, Galen, Kesta, Lyre, Siro, Talric, Tamsin, Velka
 
-**At the table.** Use the air genasi rules.
+**At the table.** Use the goliath rules with storm giant ancestry, or the air genasi rules.
 
 ## Bugbears
 

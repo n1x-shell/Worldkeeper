@@ -16,10 +16,10 @@ Everything found in the lore audit (November 2026), as one list. Ticked items ar
 
 ## 2. Gaps in what we have
 
-- [ ] Kaelmar's peoples (about 17) as records, not just a table
-- [ ] History from Year 1 to Year 31 Unbound
-- [ ] Faith in practice: where each god is worshipped, by whom and how
-- [ ] Families, clans and houses beyond the Vales
+- [x] Kaelmar's peoples as records: every people in use on either continent has a page, with life in Aetheris and in Kaelmar
+- [x] History from Year 1 to Year 31 Unbound: twelve events, on the World Timeline and in the handbook
+- [x] Faith in practice: where each god is worshipped, by whom and how, with their signs and holy days
+- [x] Families, clans and houses beyond the Vales: House Kael, the Marrows, Hesks, Lins, Halvors, Tulls and Granes
 
 ## 3. Links
 
@@ -37,7 +37,7 @@ Everything found in the lore audit (November 2026), as one list. Ticked items ar
 - [x] Secrets, their clues, and which NPC knows what: Mysteries and Secrets (World → Mysteries and Secrets, and a Secrets panel on every record). 10 mysteries, 50 secrets and 99 drafted clues (rumours, people who know, places, items), with the party's progress per campaign: unknown, suspected or known, and clues found.
 - [x] Where things are and who holds them: shards and relics are linked to where they lie and who seeks or holds them; keys live in the Mysteries tool
 - [x] How factions feel about each other: every pair drafted with a reason; see the grid on Faction Agendas
-- [ ] Travel routes and distances, tied to the map
-- [ ] Festivals and holy days on the calendar
-- [ ] Name lists for every people and culture
+- [x] Travel routes and distances, tied to the map: the Marches roads, the roads to each capital, the crossing, and Ashvale's villages
+- [x] Festivals and holy days on the calendar
+- [x] Name lists for every people and culture
 - [x] Player characters' ties to the world: hometown and ties on each character sheet; a record's page shows which characters are tied to it

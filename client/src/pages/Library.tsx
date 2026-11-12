@@ -775,7 +775,7 @@ function AdditionsPanel({ onDone }: { onDone: (msg: string) => void }) {
       <div className="flex-1 min-w-[16rem]">
         <div className="font-display text-gold">Worldkeeper additions</div>
         <p className="text-sm text-dim">
-          New lore written for this world: {data.records} records (people, places, creatures), their links, the handbook's rumours, and the mysteries with their
+          New lore written for this world: {data.records} records (people, places, peoples, families, history, creatures), their links, the years on the World Timeline, the handbook's rumours, and the mysteries with their
           secrets and clues. Your archive records are never changed, and anything you've edited is kept. Safe to run again after an update.
         </p>
       </div>

@@ -68,38 +68,6 @@ Reptilians, also called lizardfolk, are scaled hunters of swamp, desert and jung
 
 **At the table.** Use the lizardfolk rules, or dragonborn rules described as scaled hunters.
 
-## Shadowkin
-
-*Born from an erased past, living between light and dark.*
-
-Shadowkin are born from an erased past and live between light and dark. They are masters of stealth, and they are distrusted everywhere. They value hidden identity, chosen family and performance. Some Shadowkin families say their ancestors came from places that no longer exist.
-
-**Strengths and flaws.** Masters of stealth. Distrusted everywhere.
-
-**Common names.** Ash, Eris, Kell, Nira, Orren, Seth, Vey, Zara
-
-**At the table.** Use the shadar-kai rules, or elf rules with the drow lineage.
-
-## Taur'n
-
-*Horned nomads seven to nine feet tall, honoured by the Wildborn and feared by the Legion.*
-
-The Taur'n are horned nomads, seven to nine feet tall, with runes marked into their horns. They are warriors and storm-calling shamans. They value migration, family oaths, craftsmanship and spiritual memory. Many live in cities, and assuming they are all Wildborn annoys them.
-
-**Strengths and flaws.** Warriors and storm-callers. Honoured by the Wildborn, feared in the Legion.
-
-**Common names.** Arrok, Bera, Dorran, Kala, Mhor, Sava, Torren, Yara
-
-**At the table.** Use the minotaur rules, or goliath rules with horns.
-
-## Moonborn
-
-*Wildborn druids who step between the physical and spirit worlds. Perhaps only one is left.*
-
-The Moonborn were Wildborn druids who could step between the physical world and the spirit world. They were always few. Faelyn Moondancer is said to be the last of them.
-
-**At the table.** Play a Moonborn as an elf with the Fey Touched feat.
-
 ## Bloomborn
 
 *People of bark, moss, root and fungus, grown from the first years of the Bloom.*
@@ -321,23 +289,6 @@ Kaelith doors listen. Outer gates may demand a sequence of notes, a tuning fork,
 | The Cycle | Again and again a faction gathered the shards and remade the world. The Hidden Ones guided each turn, and erased whoever came too close to the truth. |
 | Things erased | A war nobody remembers: the Bloodless War. A king who tried to seize the Loom: the Unraveled King. A city stolen from the surface and sunk: the Drowned City. Someone who tried to break the Aetherfall, and was unmade. |
 | The Broken World | The last great kingdom fell. Its capital, Ashen Spire, is a ruin. The shards were lost again, and no faction holds power. |
-
-## Calendar
-
-*One 363-day year, shared by both continents.*
-
-Both continents keep the same year of 363 days: twelve 30-day months in four seasons, plus three festival days that belong to no month. A week has seven days.
-
-| Season | Months | Festivals |
-| --- | --- | --- |
-| Spring | Spring Dawn, First Seed, Monsoon | Spring Equinox, before Spring Dawn 1, is New Year's Day. |
-| Summer | Midnight Sun, Dry Wind, Harvest | Midsummer falls on Midnight Sun 15. |
-| Autumn | Fall, Last Seed, Old Winds | Autumn Equinox, before Fall 1. |
-| Winter | Snowfall, Evernight, Winter's Dusk | Evernight Festival, between Evernight 30 and Winter's Dusk 1. |
-
-The three days outside the months are Spring Equinox, Autumn Equinox and the Evernight Festival.
-
-**Counting the years.** Kaelmar counts years After Bloom (AB). Aetheris counts Unbound years, from the breaking of the Cycle. The same year is 300 AB in Kaelmar and Year 31 Unbound in Aetheris. A date is written like *Midnight Sun 15, 300 AB*.
 
 ## Money
 

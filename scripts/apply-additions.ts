@@ -11,5 +11,5 @@ import { applyAdditions } from '../server/src/additions.js';
 
 const ctx = new AppContext(resolvePaths(process.argv[2]));
 const r = applyAdditions(ctx.db);
-console.log(`Additions applied: ${r.records} records (${r.imported?.created ?? 0} new, ${r.imported?.updated ?? 0} updated), ${r.links.added} links, ${r.rumours.total} rumours (${r.rumours.added} new), ${r.mysteries.mysteries} mysteries with ${r.mysteries.secrets} secrets and ${r.mysteries.clues} clues.`);
+console.log(`Additions applied: ${r.records} records (${r.imported?.created ?? 0} new, ${r.imported?.updated ?? 0} updated), ${r.links.added} links, ${r.rumours.total} rumours (${r.rumours.added} new), ${r.mysteries.mysteries} mysteries with ${r.mysteries.secrets} secrets and ${r.mysteries.clues} clues, ${r.timeline} timeline rows.`);
 if (r.links.skipped.length) console.log(`Skipped ${r.links.skipped.length} links whose records are not in this library: ${r.links.skipped.join('; ')}`);
