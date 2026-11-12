@@ -47,7 +47,7 @@ About thirty years ago it stopped. The world woke up one morning and stayed as i
 
 *Twelve pieces of the broken Ethereal Crystal: the most powerful objects in the world, and the most dangerous.*
 
-In the oldest myth, the Elders broke the Ethereal Crystal, and it shattered into twelve shards. For as long as the Cycle ran, whoever gathered them remade the world. The Cycle is broken now, and scholars say the shards can't remake the world any more. Every faction still wants them, just in case, and because each one is still the greatest power a person can hold.
+In the oldest myth, the Elders broke the Ethereal Crystal, and it shattered into twelve shards. For as long as the Cycle ran, whoever gathered them made the Crystal whole again, as the @[The Ethereal Orb], and remade the world. The Cycle is broken now, and scholars say the twelve would have to be carried beyond the world, into the Ethereal Realm, to do it again. Every faction is trying, and each shard is still the greatest power a person can hold.
 
 Every shard gives great power, and takes something specific in return.
 

@@ -1246,6 +1246,113 @@
      ]
     }
    ]
+  },
+  {
+   "key": "orb",
+   "title": "The Ethereal Orb",
+   "question": "Can the Orb still be made, and what would it do now?",
+   "summary": "The twelve shards, carried into the Ethereal Realm and forged there, make the Ethereal Orb: its bearer ascends and remakes the world until they fall. With the thirteenth shard they make the Greater Ethereal Orb, which heals both continents and closes the realm, at the price of everyone who came.",
+   "secrets": [
+    {
+     "key": "orb-in-realm",
+     "title": "The Orb can still be made",
+     "truth": "Since the Cycle broke, the Orb can only be formed in the Ethereal Realm, by someone or something there. Its bearer ascends as a god in the realm and remakes the world until they fall.",
+     "source": "COS-022",
+     "about": [
+      "COS-022",
+      "COS-906",
+      "ETH-505"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Whoever makes the Orb becomes a god",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-063",
+       "note": "Eryndor the First Shard has seen the Orb made. He won't say where."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-071",
+       "note": "Magistrate Althros knows the realm has a law about it."
+      }
+     ]
+    },
+    {
+     "key": "orb-forge",
+     "title": "Who forms the Orb",
+     "truth": "The GM's choice: the Loom's dark crystal, Vyrithar the Weaver, an elder god in the Nameless Sepulcher, or the Nameless Smith's last fire.",
+     "source": "COS-022",
+     "about": [
+      "COS-022",
+      "ETH-505",
+      "LOC-509"
+     ],
+     "clues": [
+      {
+       "kind": "place",
+       "entity": "ETH-505",
+       "note": "Twelve great crystals pierce the Loom. One is dark."
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-509",
+       "note": "Something in the Sepulcher has been asking travellers how many shards they carry."
+      }
+     ]
+    },
+    {
+     "key": "orb-hidden-ones",
+     "title": "The Hidden Ones want the twelve",
+     "truth": "The Hidden Ones want the twelve reforged and the Cycle back. They help a twelve-shard bearer quietly, until a thirteenth appears.",
+     "source": "FAC-007",
+     "about": [
+      "FAC-007",
+      "COS-022"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The new god's world lasts until the god falls",
+       "note": ""
+      },
+      {
+       "kind": "text",
+       "note": "Shards turn up a little too easily for anyone gathering them. Someone is helping."
+      }
+     ]
+    },
+    {
+     "key": "orb-greater",
+     "title": "The Greater Ethereal Orb",
+     "truth": "With all thirteen shards, the Greater Orb heals both continents, closes the Rift and the realm, and restores every name and memory. Everyone who came is shut in the realm for life. The thirteenth must choose its bearer.",
+     "source": "COS-022",
+     "about": [
+      "COS-022",
+      "SHD-013",
+      "NPC-901"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-001",
+       "note": "The Blind Seer has dreamed the thirteenth shard choosing someone."
+      },
+      {
+       "kind": "npc",
+       "entity": "CLT-006",
+       "note": "The Silent Accord's evidence points to a thirteenth shard."
+      },
+      {
+       "kind": "text",
+       "note": "An old verse, half remembered in the Nameless Asylum, counts the shards to thirteen."
+      }
+     ]
+    }
+   ]
   }
  ]
 }

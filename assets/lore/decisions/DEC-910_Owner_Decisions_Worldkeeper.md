@@ -24,3 +24,6 @@ Decisions the owner has made since the archive was reconciled. Where one changes
 
 ## The Ethereal Realm lies outside the world (November 2026)
 The Ethereal Realm [CON-501] lies outside the world. Whoever holds power there could restart the Cycle, create new worlds, or destroy reality itself. It holds cosmic powers: the Watchers [COS-904], the Hidden Ones, the elder gods and other entities, each with its own conflicts and goals. They mostly overlook people coming and going, unless tested. Now that the Cycle is broken, reaching the realm is possible. See The Depths of the Ethereal Realm [COS-021].
+
+## The Ethereal Orb and the endings (November 2026)
+The Orb is back. The World Canon Rules [WLD-902] removed the books' Orb; that line is superseded. The Ethereal Orb is the Ethereal Crystal made whole. Since the Cycle broke, it can only be formed in the Ethereal Realm. Twelve shards form the Ethereal Orb: its bearer ascends and remakes the world until they fall, and then the Cycle restarts. Thirteen form the Greater Ethereal Orb: it heals both continents, closes the Rift and the realm, and restores every name and memory, and everyone who came is shut in the realm for life. Full details in The Ethereal Orb [COS-022].
