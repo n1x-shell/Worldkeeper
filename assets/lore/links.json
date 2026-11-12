@@ -1,0 +1,1541 @@
+{
+ "note": "Links added by the Worldkeeper additions: NPC homes, origins and groups from the approved people pages. Applied after the archive import; the archive text supplies the rest.",
+ "links": [
+  {
+   "source": "NPC-015",
+   "target": "SET-010",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-015",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-016",
+   "target": "SET-010",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-016",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-017",
+   "target": "REG-002",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-017",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-018",
+   "target": "REG-002",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-018",
+   "target": "REG-003",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-018",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-019",
+   "target": "REG-002",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-019",
+   "target": "REG-003",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-019",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-020",
+   "target": "REG-002",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-020",
+   "target": "REG-001",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-020",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-021",
+   "target": "REG-002",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-021",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-022",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-023",
+   "target": "SET-012",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-023",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-024",
+   "target": "SET-011",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-024",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-025",
+   "target": "SET-011",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-025",
+   "target": "REG-001",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-025",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-026",
+   "target": "SET-011",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-026",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-027",
+   "target": "SET-011",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-027",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-028",
+   "target": "REG-003",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-028",
+   "target": "LOC-902",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-028",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-029",
+   "target": "REG-003",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-029",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-030",
+   "target": "REG-003",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-030",
+   "target": "REG-005",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-030",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-031",
+   "target": "SET-011",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-031",
+   "target": "REG-004",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-031",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-032",
+   "target": "REG-003",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-032",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-033",
+   "target": "SET-011",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-033",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-034",
+   "target": "SET-012",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-034",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-035",
+   "target": "SET-012",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-035",
+   "target": "REG-005",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-035",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-036",
+   "target": "REG-004",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-036",
+   "target": "REG-003",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-036",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-037",
+   "target": "SET-012",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-037",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-038",
+   "target": "SET-012",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-038",
+   "target": "SET-001",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-038",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-039",
+   "target": "REG-004",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-039",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-040",
+   "target": "SET-012",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-040",
+   "target": "LOC-004",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-040",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-041",
+   "target": "REG-004",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-041",
+   "target": "LOC-017",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-041",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-042",
+   "target": "SET-012",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-042",
+   "target": "SET-013",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-042",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-043",
+   "target": "REG-004",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-043",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-044",
+   "target": "SET-013",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-044",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-045",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-045",
+   "target": "REG-006",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-045",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-046",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-046",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-047",
+   "target": "SET-013",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-047",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-048",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-048",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-049",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-049",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-050",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-050",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-051",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-051",
+   "target": "REG-001",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-051",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-052",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-052",
+   "target": "SET-013",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-052",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-053",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-053",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-054",
+   "target": "SET-014",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-054",
+   "target": "REG-006",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-054",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-055",
+   "target": "REG-006",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-055",
+   "target": "REG-003",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-055",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-056",
+   "target": "SET-014",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-056",
+   "target": "REG-006",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-056",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-057",
+   "target": "REG-006",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-057",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-058",
+   "target": "REG-006",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-058",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-059",
+   "target": "SET-014",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-059",
+   "target": "REG-003",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-059",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-060",
+   "target": "SET-014",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-060",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-061",
+   "target": "REG-006",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-061",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-062",
+   "target": "SET-014",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-062",
+   "target": "REG-006",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-062",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-073",
+   "target": "REG-002",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-073",
+   "target": "CLT-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-074",
+   "target": "REG-005",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-074",
+   "target": "CLT-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-075",
+   "target": "SET-001",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-075",
+   "target": "CLT-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-076",
+   "target": "SET-013",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-076",
+   "target": "CLT-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-077",
+   "target": "REG-006",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-077",
+   "target": "CLT-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-078",
+   "target": "LOC-004",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-078",
+   "target": "CLT-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-079",
+   "target": "CLT-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-080",
+   "target": "CLT-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-081",
+   "target": "REG-003",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-081",
+   "target": "CLT-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-082",
+   "target": "CLT-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-083",
+   "target": "LOC-901",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-083",
+   "target": "CLT-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-084",
+   "target": "CLT-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-085",
+   "target": "SET-010",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-085",
+   "target": "CLT-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-086",
+   "target": "CLT-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-087",
+   "target": "REG-005",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-087",
+   "target": "CLT-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-088",
+   "target": "LOC-902",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-088",
+   "target": "CLT-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-089",
+   "target": "REG-005",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-089",
+   "target": "CLT-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-090",
+   "target": "LOC-902",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-090",
+   "target": "CLT-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-091",
+   "target": "CLT-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-093",
+   "target": "CLT-005",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-094",
+   "target": "SET-001",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-094",
+   "target": "CLT-006",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-095",
+   "target": "CLT-007",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-096",
+   "target": "SET-001",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-096",
+   "target": "CLT-008",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-304",
+   "target": "SET-301",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-304",
+   "target": "FAC-306",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-305",
+   "target": "SET-301",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-305",
+   "target": "FAC-307",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-306",
+   "target": "SET-301",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-306",
+   "target": "FAC-308",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-307",
+   "target": "LOC-308",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-307",
+   "target": "FAC-302",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-308",
+   "target": "SET-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-308",
+   "target": "FAC-301",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-310",
+   "target": "REG-306",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-310",
+   "target": "FAC-304",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-311",
+   "target": "REG-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-311",
+   "target": "FAC-305",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-312",
+   "target": "SET-301",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-001",
+   "target": "SET-001",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-001",
+   "target": "CLT-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-004",
+   "target": "SET-001",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-004",
+   "target": "REG-003",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-005",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-005",
+   "target": "REG-003",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-005",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-006",
+   "target": "SET-001",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-006",
+   "target": "REG-001",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-006",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-007",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-007",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-008",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-008",
+   "target": "SET-013",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-008",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-009",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-009",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-010",
+   "target": "SET-001",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-011",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-012",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-012",
+   "target": "SET-302",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-012",
+   "target": "CLT-006",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-013",
+   "target": "SET-001",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-013",
+   "target": "REG-003",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-014",
+   "target": "SET-001",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-092",
+   "target": "REG-006",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-092",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-002",
+   "target": "CON-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-002",
+   "target": "FAC-007",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-003",
+   "target": "CON-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-003",
+   "target": "FAC-007",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-063",
+   "target": "CON-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-064",
+   "target": "CON-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-065",
+   "target": "CON-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-065",
+   "target": "SET-010",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-066",
+   "target": "CON-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-067",
+   "target": "CON-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-068",
+   "target": "CON-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-069",
+   "target": "CON-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-069",
+   "target": "LOC-901",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-069",
+   "target": "FAC-504",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-070",
+   "target": "CON-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-070",
+   "target": "REG-005",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-071",
+   "target": "CON-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-072",
+   "target": "CON-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-301",
+   "target": "VLT-303",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-302",
+   "target": "VLT-301",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-302",
+   "target": "LOC-901",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-309",
+   "target": "LOC-304",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-309",
+   "target": "FAC-303",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-313",
+   "target": "LOC-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-313",
+   "target": "LOC-303",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-313",
+   "target": "FAC-311",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-901",
+   "target": "LOC-001",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-901",
+   "target": "CON-001",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "CLT-001",
+   "target": "LOC-004",
+   "type": "lives_in",
+   "label": "Base"
+  },
+  {
+   "source": "NPC-078",
+   "target": "LOC-004",
+   "type": "lives_in",
+   "label": "With the Ashen Covenant"
+  },
+  {
+   "source": "NPC-079",
+   "target": "LOC-004",
+   "type": "lives_in",
+   "label": "With the Ashen Covenant"
+  },
+  {
+   "source": "NPC-080",
+   "target": "LOC-004",
+   "type": "lives_in",
+   "label": "With the Ashen Covenant"
+  },
+  {
+   "source": "NPC-081",
+   "target": "LOC-004",
+   "type": "lives_in",
+   "label": "With the Ashen Covenant"
+  },
+  {
+   "source": "NPC-082",
+   "target": "LOC-004",
+   "type": "lives_in",
+   "label": "With the Ashen Covenant"
+  },
+  {
+   "source": "CLT-002",
+   "target": "LOC-013",
+   "type": "lives_in",
+   "label": "Base"
+  },
+  {
+   "source": "NPC-083",
+   "target": "LOC-013",
+   "type": "lives_in",
+   "label": "With the Black Sun"
+  },
+  {
+   "source": "NPC-084",
+   "target": "LOC-013",
+   "type": "lives_in",
+   "label": "With the Black Sun"
+  },
+  {
+   "source": "NPC-085",
+   "target": "LOC-013",
+   "type": "lives_in",
+   "label": "With the Black Sun"
+  },
+  {
+   "source": "NPC-086",
+   "target": "LOC-013",
+   "type": "lives_in",
+   "label": "With the Black Sun"
+  },
+  {
+   "source": "CLT-003",
+   "target": "LOC-902",
+   "type": "lives_in",
+   "label": "Base"
+  },
+  {
+   "source": "NPC-087",
+   "target": "LOC-902",
+   "type": "lives_in",
+   "label": "With the Drowned Saints"
+  },
+  {
+   "source": "NPC-088",
+   "target": "LOC-902",
+   "type": "lives_in",
+   "label": "With the Drowned Saints"
+  },
+  {
+   "source": "NPC-089",
+   "target": "LOC-902",
+   "type": "lives_in",
+   "label": "With the Drowned Saints"
+  },
+  {
+   "source": "NPC-090",
+   "target": "LOC-902",
+   "type": "lives_in",
+   "label": "With the Drowned Saints"
+  },
+  {
+   "source": "NPC-091",
+   "target": "LOC-902",
+   "type": "lives_in",
+   "label": "With the Drowned Saints"
+  },
+  {
+   "source": "CLT-004",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "Base"
+  },
+  {
+   "source": "NPC-073",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "With the Bloodbound Company"
+  },
+  {
+   "source": "NPC-074",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "With the Bloodbound Company"
+  },
+  {
+   "source": "NPC-075",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "With the Bloodbound Company"
+  },
+  {
+   "source": "NPC-076",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "With the Bloodbound Company"
+  },
+  {
+   "source": "NPC-077",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "With the Bloodbound Company"
+  },
+  {
+   "source": "CLT-005",
+   "target": "LOC-017",
+   "type": "lives_in",
+   "label": "Base"
+  },
+  {
+   "source": "NPC-093",
+   "target": "LOC-017",
+   "type": "lives_in",
+   "label": "With the Nameless"
+  },
+  {
+   "source": "CLT-006",
+   "target": "SET-001",
+   "type": "lives_in",
+   "label": "Base"
+  },
+  {
+   "source": "NPC-094",
+   "target": "SET-001",
+   "type": "lives_in",
+   "label": "With the Silent Accord"
+  },
+  {
+   "source": "CLT-008",
+   "target": "LOC-014",
+   "type": "lives_in",
+   "label": "Base"
+  },
+  {
+   "source": "NPC-096",
+   "target": "LOC-014",
+   "type": "lives_in",
+   "label": "With the Whispering Circle"
+  },
+  {
+   "source": "NPC-023",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "Wanders the Marches roads"
+  },
+  {
+   "source": "NPC-310",
+   "target": "LOC-901",
+   "type": "lives_in",
+   "label": "Riftwalker"
+  },
+  {
+   "source": "NPC-303",
+   "target": "SET-301",
+   "type": "created",
+   "label": "Founded it in 2 AB"
+  }
+ ]
+}

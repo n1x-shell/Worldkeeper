@@ -130,6 +130,7 @@ export const TYPE_GROUPS: Record<string, EntityType[]> = {
 export const RELATIONSHIP_TYPES = [
   'part_of',
   'lives_in',
+  'comes_from',
   'leads',
   'member_of',
   'allied_with',
@@ -153,6 +154,7 @@ export type RelationshipType = (typeof RELATIONSHIP_TYPES)[number];
 export const RELATIONSHIP_LABELS: Record<RelationshipType, string> = {
   part_of: 'Part of',
   lives_in: 'Lives in',
+  comes_from: 'Comes from',
   leads: 'Leads',
   member_of: 'Member of',
   allied_with: 'Allied with',
@@ -265,6 +267,7 @@ export interface Relationship {
 export const RELATIONSHIP_INVERSE_LABELS: Partial<Record<RelationshipType, string>> = {
   part_of: 'Contains',
   lives_in: 'Home of',
+  comes_from: 'Birthplace of',
   leads: 'Led by',
   member_of: 'Has member',
   controls: 'Controlled by',
