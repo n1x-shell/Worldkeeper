@@ -1137,6 +1137,115 @@
      ]
     }
    ]
+  },
+  {
+   "key": "loom",
+   "title": "The Loom",
+   "question": "Who still has a hand on the Loom of Eternity, and what is it for?",
+   "summary": "The Loom governs the fates of everyone in Aetheris and Kaelmar and shapes the peoples and the world. The Cycle broke, but the Loom still weaves, and someone can still tweak it. It is guarded. Why the Hidden Ones and the elder gods made the world, and what the Loom is for, nobody knows.",
+   "secrets": [
+    {
+     "key": "loom-both-shores",
+     "title": "The Loom holds Kaelmar too",
+     "truth": "Every life in Aetheris and Kaelmar is a thread on the Loom. It shapes the peoples and the world around them, on both continents.",
+     "source": "ETH-505",
+     "about": [
+      "ETH-505",
+      "COS-905",
+      "CON-301"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Everyone has a thread. Kaelmar's people too",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-068",
+       "note": "Master Ilythis keeps pages for people of both continents, side by side."
+      },
+      {
+       "kind": "place",
+       "entity": "ETH-505",
+       "note": "Seen from close by, Kaelmar's threads are on the Loom with everyone else's."
+      }
+     ]
+    },
+    {
+     "key": "loom-still-woven",
+     "title": "Someone still tweaks the Loom",
+     "truth": "The Cycle is broken, but the Loom still weaves, and someone can still tweak a thread. Who, and how, is the GM's to decide.",
+     "source": "ETH-505",
+     "about": [
+      "ETH-505",
+      "CRE-522"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The Cycle's over. That doesn't mean nobody's pulling the strings",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "CRE-522",
+       "note": "Thread ghosts include people whose fate was changed after the Cycle broke."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-064",
+       "note": "Sylas Vaerin's clocks jump whenever a thread is tweaked. He has a list of the times."
+      }
+     ]
+    },
+    {
+     "key": "loom-guarded",
+     "title": "Who guards the Loom",
+     "truth": "The Loom is protected: Vyrithar keeps it, and its sentinels hunt anything that touches the threads. They let some hands through. Whose is unknown.",
+     "source": "ETH-505",
+     "about": [
+      "ETH-505",
+      "CRE-533",
+      "NPC-002"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "They don't stop people looking at the Loom",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "CRE-533",
+       "note": "A Loom Sentinel steps aside for someone it shouldn't."
+      }
+     ]
+    },
+    {
+     "key": "loom-purpose",
+     "title": "What the Loom is for",
+     "truth": "Nobody knows why the Hidden Ones and the elder gods made the world of Aetheris and Kaelmar, or what the Loom is for. Breaking the Cycle answered neither question. The GM decides, or leaves it open.",
+     "source": "COS-021",
+     "about": [
+      "ETH-505",
+      "FAC-007",
+      "COS-021"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Whoever holds the deep realm could start the Cycle again",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-063",
+       "note": "Eryndor the First Shard remembers the world before the Cycle, and still doesn't know."
+      }
+     ]
+    }
+   ]
   }
  ]
 }

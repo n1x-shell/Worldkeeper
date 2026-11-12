@@ -28,4 +28,4 @@ Start from: Star Spawn Grue (MotM). About CR 1/4.
 
 ## Secret (GM only)
 
-Star spawn are the Loom's infection from beyond the Black Horizon. Since the Cycle broke and the Loom went quiet, they have crept in.
+Star spawn are an infection from beyond the Black Horizon. A thread a grue tangles is a real life in Aetheris or Kaelmar going wrong. The Loom's sentinels hunt them.

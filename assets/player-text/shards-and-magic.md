@@ -41,6 +41,7 @@ About thirty years ago it stopped. The world woke up one morning and stayed as i
 - Every faction claims it would have won the next Aetherfall.
 - Some people say the Cycle will start again, if someone gathers the shards. Some people are trying.
 - Your grandmother's world might not have been this one. Ask her what she remembers. Then ask her again next year.
+- The Cycle's over. That doesn't mean nobody's pulling the strings.
 
 ## The Shards
 

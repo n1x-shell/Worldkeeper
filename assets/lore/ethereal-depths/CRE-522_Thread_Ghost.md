@@ -28,4 +28,4 @@ Start from: Starlight Apparition (BAM). About CR 12.
 
 ## Secret (GM only)
 
-The shards were cut from the Loom; the thread ghosts are the loose ends.
+Thread ghosts are lives the Loom has let go: the Unmade, the erased, and people whose fate someone tweaked. Who did the tweaking is the Loom's mystery.

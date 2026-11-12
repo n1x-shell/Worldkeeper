@@ -34,7 +34,11 @@ With an invitation, a party can go deeper sooner. The deep realm's dangers don't
 - The Archive onward: the Far Realm, arriving gradually. Psychic creatures, then star spawn in the Loom, then nothing recognisable at the Black Horizon.
 
 ## The realm and its powers (GM)
-The Cycle was how the world was controlled: it remade Aetheris through the Loom, and its hiding held both continents, Kaelmar included, out of sight and out of reach. Now that the Cycle is broken, the way out of the world is open, and reaching the Ethereal Realm is possible for anyone who finds a door.
+The Loom of Eternity [ETH-505] governs the fates of everyone in Aetheris and Kaelmar. It shapes the peoples and the world around them. The Cycle was its sharpest tool: through the shards, a whole world could be rewoven at once. The Forgotten One cut the shards from the Loom, and the Cycle broke, but the Loom still weaves. Someone can still tweak it; who, and how, is a mystery. It is protected and guarded.
+
+Nobody knows why the Hidden Ones and the elder gods made the world of Aetheris and Kaelmar, or what the Loom is for. Breaking the Cycle answered neither question. The people and the world are still shaped, or at least influenced, by unseen forces, and most of them never know it.
+
+Now that the Cycle is broken, the way out of the world is open, and reaching the Ethereal Realm is possible for anyone who finds a door. See Owner Decisions (Worldkeeper) [DEC-910].
 
 The Ethereal Realm lies outside the world. Whoever holds power there could remake the Cycle, create new worlds, or destroy reality itself. Powers do hold it: cosmic horrors beyond comprehension.
 - **The Watchers**, at the realm's far shore beyond the Black Horizon [COS-904]. Their nature and aims stay undefined.
@@ -44,7 +48,7 @@ The Ethereal Realm lies outside the world. Whoever holds power there could remak
 
 They have their own conflicts and their own goals, and mostly they overlook the people coming and going, the way a storm overlooks a moth. Mostly. A party that is tested, by drawing attention, taking something, or getting in the way, finds out what it is to be noticed.
 
-The deeper the party goes, the nearer it is to these powers, and the stranger everything becomes. The star spawn and their kin are the attendants, spillage and leavings of the outer powers, drifting inward through the Black Horizon into the Loom, and lately toward the Archive. They are not the Watchers.
+The deeper the party goes, the nearer it is to these powers, and the stranger everything becomes. The star spawn and their kin are the attendants, spillage and leavings of the outer powers, drifting inward through the Black Horizon. They gather at the edges of the Loom, where its sentinels hunt them, and lately they have reached the Archive. They are not the Watchers.
 
 ## Driftships
 Salvagers in the Fields sail driftships: hulls patched from wreckage of several worlds, moved by astral currents and by whoever is willing to steer. Use Spelljammer's ship rules if you like them, or treat a driftship as a sailing ship that ignores up and down.

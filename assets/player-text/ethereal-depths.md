@@ -16,7 +16,7 @@ The Ethereal Realm lies outside the world. While the Cycle ran, the world was he
 | 2 | @[The Fields of Lost Realities] | Wreck-islands of dead worlds drifting in a silver void, crossed by salvagers' driftships, currents and great swimming beasts. |
 | 3 | @[The Ossuary of Kings] | Courts of dead kings, all ceremony and bone, and very afraid. |
 | 4 | @[The Silent Archive] | A hush, and the feeling of being read. Things here aren't quite like anything in the world. |
-| 5 | @[The Loom of Eternity] | Threads of light across a black sea standing on end, and something crawling along them that came from somewhere else. |
+| 5 | @[The Loom of Eternity] | Threads of light across a black sea standing on end, one for every life in Aetheris and Kaelmar. Guarded, and crawling with things from somewhere else. |
 | 6 | @[The Citadel of the Hidden] | Corridors behind reality, where the angles don't add up. |
 | 7 | @[The Black Horizon] | The edge of everything. Wrong stars, wrong distances, and nothing made for people. |
 
@@ -27,7 +27,7 @@ The Ethereal Realm lies outside the world. While the Cycle ran, the world was he
 **What people say**
 
 - The deeper you go, the less you'll be able to describe it when you get back.
-- Since the Cycle broke, something from outside has been creeping in from the Black Horizon. It's reached the Loom. Some say the Archive.
+- Since the Cycle broke, something from outside has been creeping in from the Black Horizon. It crawls on the Loom's threads, and the Loom's guardians hunt it.
 - Past the Archive, keep your eyes down and your friends' names in your mouth.
 - There are powers out there older than the gods, with their own wars. Mostly they don't notice people. Mostly.
 - Whoever holds the deep realm could start the Cycle again, or make a new world, or end this one.
@@ -424,6 +424,24 @@ The Ethereal Realm lies outside the world. While the Cycle ran, the world was he
 
 - If a thread ghost finds the person it belonged to, both of them change.
 - There are more of them since the Cycle broke.
+
+## Loom Sentinel
+
+*A towering guardian of the Loom of Eternity, made by nobody knows whom, that hunts anything that touches the threads.*
+
+> A figure of polished stone and silver, taller than a house, with a blank golden mask where a face should be and a hand that glows with the light of the threads.
+
+**Where.** The Loom of Eternity.
+
+**What you know**
+
+- Guardians of the Loom of Eternity.
+- They hunt the star-things that crawl on the threads, and anyone else who lays a hand on them.
+
+**What people say**
+
+- A Loom Sentinel has never been beaten. It has sometimes been talked to.
+- They don't stop people looking at the Loom. They stop people touching it.
 
 ## Horizon Hulk
 

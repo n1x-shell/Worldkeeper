@@ -184,16 +184,19 @@ Somewhere deep in the realm there's a library with a book for everyone who was e
 
 ## The Loom of Eternity
 
-*Where the threads of every life are woven, or were, until the Cycle broke.*
+*Where the threads of every life in Aetheris and Kaelmar are woven, still.*
 
 **How deep.** Depth 5 of 7: cosmic, and crawling with things from outside. See @[The Depths of the Ethereal Realm].
 
-Every story of the Cycle ends at the Loom. It's said to be a black ocean hanging in nothing, crossed by countless threads of light, one for each life, and pierced by great crystals. Rewriting fate is possible there. A king who tried it, long ago, was unmade.
+Every story of the Cycle ends at the Loom. It's said to be a black ocean hanging in nothing, crossed by countless threads of light, one for every life in Aetheris and Kaelmar, and pierced by great crystals. Every thread is a fate. Rewriting fate is possible there. A king who tried it, long ago, was unmade.
+
+The Loom is guarded. By what, the few who have come back don't agree.
 
 **What people say**
 
 - The Unraveled King tried to seize the Loom. Nobody remembers his real name, which is the point.
-- Since the Cycle broke, the Loom has been quiet. Some people think that's temporary.
+- The Cycle is broken. The Loom is still weaving. Nobody knows whose hands are on it.
+- Everyone has a thread. Kaelmar's people too, whatever Kaelmar's scholars say.
 
 ## The Citadel of the Hidden
 
