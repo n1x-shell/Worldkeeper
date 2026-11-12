@@ -1349,6 +1349,39 @@
       {
        "kind": "text",
        "note": "An old verse, half remembered in the Nameless Asylum, counts the shards to thirteen."
+      },
+      {
+       "kind": "rumour",
+       "match": "Some say there's a thirteenth shard",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "orb-lesser",
+     "title": "The Lesser Ethereal Orb",
+     "truth": "Eleven of the twelve with the thirteenth make the Lesser Orb: a mad god, an unfinished Aetherfall, the realm spilling into the world, and mass forgetting, shaped by whichever shard is missing.",
+     "source": "COS-022",
+     "about": [
+      "COS-022",
+      "SHD-013",
+      "SHD-012"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The Unraveled King had the wrong number of shards",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Twelve makes a god. Everyone knows that",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-068",
+       "note": "Master Ilythis has a page for a world the Lesser Orb made. It is unreadable in a way that hurts."
       }
      ]
     }

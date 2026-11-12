@@ -35,6 +35,35 @@ This supersedes the World Canon Rules' line that the Orb is removed. See Owner D
 - **The price.** Everyone who came into the realm with the bearer is shut in when it closes, for the rest of their mortal lives. The world is saved by people who never see it again.
 - **After.** Nobody in the world can start the Cycle again. The powers in the realm are shut out, not gone.
 
+## The Lesser Ethereal Orb (eleven of the twelve, and the thirteenth): catastrophe
+If the bearer brings eleven of the twelve shards and the thirteenth, the forge makes the Lesser Ethereal Orb. It is the twelve-shard Orb with a hole in it, filled by something that was never meant to go there. Everything goes wrong, all at once, and gets worse:
+- **A mad god.** The bearer ascends broken, a god missing a piece, reshaping the world on whims and nightmares, with no way to make it stop.
+- **An unfinished Aetherfall.** The world is remade wrong and never settles. Places flicker between realities, people wake as someone else, and history rewrites itself every few days.
+- **The doors blow open.** Instead of closing, the Rift tears wider and the Ethereal Realm spills into the world. Star spawn and worse walk the Hollow Marches and the Bloom.
+- **Mass forgetting.** Instead of names coming back, they go. Whole towns are Unmade, history empties out, and Thinning sweeps both continents.
+
+It lasts until the mad god falls. Then the Orb splits, the twelve scatter, and the Cycle restarts on whatever is left. Where the thirteenth goes is the GM's to decide.
+
+**The missing shard flavours the chaos.**
+
+| Missing | How it goes wrong |
+| --- | --- |
+| Dominion | Nobody can make anyone do anything. Armies dissolve, laws stop working, and the strong simply take. |
+| Infinity | No future is fixed. Prophecy, planning and tomorrow stop making sense. |
+| Ruin | Nothing ends. Fires don't go out; wounds don't close; the dying can't die. |
+| Sacrifice | Nothing costs anything, so nothing is worth anything. Magic runs wild and free and ruinous. |
+| Eternity | Time slips. Moments repeat, years vanish, and the old and young swap places. |
+| Illusions | Nothing is false any more. Every lie, dream and illusion becomes true. |
+| Renewal | Nothing heals. Not crops, not wounds, not the Bloom. |
+| Balance | Everything tips to extremes: seasons, tempers, fortunes and wars. |
+| Shadows | Nothing can hide. Every secret, every thought, every Hidden One is laid bare. |
+| Chaos | Rigid order. The world freezes into one pattern, and anyone who doesn't fit it is unmade. |
+| Knowledge | Everyone forgets how. Reading, magic, crafts and tongues decay in a generation. |
+| The Lost Twelfth | Something nobody can name is gone from the world, and everyone can feel the hole. |
+
+## Keeping it uncertain
+The table should never be sure what the thirteenth shard does. In the world, the legends disagree on purpose: some say a thirteenth completes the Orb, some say it ruins it, and some say it's a lie told to stop people gathering the twelve. The cautionary tale of the Unraveled King, who tried to remake the world with the wrong number of shards, is told both ways: too few, or too many. Only the thirteen together, with the thirteenth choosing its bearer, make the Greater Orb. Twelve without it make the Ethereal Orb. Eleven with it make the Lesser. Nobody alive has seen any of them made.
+
 ## The bargain
 The Hidden Ones say the world can be free, remembered or safe, and only two at once [COS-915]. The Ethereal Orb makes the world safe on one god's terms, but neither free nor remembered. Leaving the shards scattered keeps it free, but neither safe nor remembered. The Greater Orb makes it all three, and the price is paid by the people who stay behind. Whether that proves the Hidden Ones wrong, or only proves how much it costs, is for the table.
 
@@ -57,4 +86,4 @@ Pick one, or none, and keep the others as rumours.
 - **Bargain with a power.** Give the shards to the Hidden Ones, an elder god or the Watchers, in exchange for something. What they do with them is theirs to decide.
 
 ## What the world knows
-Every faction knows the old story: gather the twelve shards, make the Crystal whole, and whoever holds it remakes the world. That's why they want them. Scholars now say that since the Cycle broke, the twelve would have to be carried beyond the world, into the Ethereal Realm, to do it. Almost nobody knows a thirteenth shard exists, and nobody knows about the Greater Orb.
+Every faction knows the old story: gather the twelve shards, make the Crystal whole, and whoever holds it remakes the world. That's why they want them. Scholars now say that since the Cycle broke, the twelve would have to be carried beyond the world, into the Ethereal Realm, to do it. Almost nobody knows whether a thirteenth shard exists. The few legends that mention it disagree about what it does. Nobody knows about the Greater or the Lesser Orb.

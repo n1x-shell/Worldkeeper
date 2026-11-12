@@ -12,7 +12,9 @@ Every child in Aetheris knows the story. The Ethereal Crystal broke into twelve 
 
 The Cycle is broken now. Scholars say the shards can't remake the world from inside it any more, and that whoever gathered all twelve would have to carry them beyond the world, into the Ethereal Realm, to make the Orb there. Nobody knows who, or what, would make it, or where.
 
-Every faction is trying anyway.
+Every faction is trying anyway. The legends don't agree on much past that, and nobody alive has seen an Orb made.
+
+**The Unraveled King.** Every version of the story has a warning in it. Long ago, in a world nobody remembers, a king tried to remake the world with the wrong number of shards. What came out wasn't a god, and the world he made wasn't a world. He was unmade, and so, they say, was nearly everything else. Some tellers say he had too few shards. Some say he had too many.
 
 **What people say**
 
@@ -20,3 +22,7 @@ Every faction is trying anyway.
 - The new god's world lasts until the god falls. Then the shards scatter, and it all starts again.
 - You'd need all twelve. Nobody even remembers what the twelfth one is.
 - Carrying one shard costs you. Carrying twelve would cost you everything, long before you got there.
+- Some say there's a thirteenth shard, one that should never have been made. Some say it completes the Orb. Some say it breaks it.
+- The Consortium says the thirteenth shard is a story the Hidden Ones tell, to stop people gathering the twelve.
+- Twelve makes a god. Everyone knows that. Nobody knows what any other number makes.
+- The Unraveled King had the wrong number of shards. Nobody agrees which way.
