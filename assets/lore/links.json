@@ -21,6 +21,12 @@
   },
   {
    "source": "NPC-016",
+   "target": "LOC-042",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-016",
    "target": "FAC-001",
    "type": "member_of",
    "label": "Member"
@@ -30,6 +36,12 @@
    "target": "REG-002",
    "type": "lives_in",
    "label": "Home"
+  },
+  {
+   "source": "NPC-017",
+   "target": "LOC-043",
+   "type": "comes_from",
+   "label": "Where they come from"
   },
   {
    "source": "NPC-017",
@@ -81,7 +93,7 @@
   },
   {
    "source": "NPC-020",
-   "target": "REG-001",
+   "target": "LOC-030",
    "type": "comes_from",
    "label": "Where they come from"
   },
@@ -102,6 +114,12 @@
    "target": "FAC-001",
    "type": "member_of",
    "label": "Member"
+  },
+  {
+   "source": "NPC-022",
+   "target": "LOC-042",
+   "type": "comes_from",
+   "label": "Where they come from"
   },
   {
    "source": "NPC-022",
@@ -201,6 +219,12 @@
   },
   {
    "source": "NPC-029",
+   "target": "LOC-047",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-029",
    "target": "FAC-002",
    "type": "member_of",
    "label": "Member"
@@ -249,6 +273,12 @@
   },
   {
    "source": "NPC-032",
+   "target": "LOC-046",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-032",
    "target": "FAC-002",
    "type": "member_of",
    "label": "Member"
@@ -285,7 +315,7 @@
   },
   {
    "source": "NPC-035",
-   "target": "REG-005",
+   "target": "LOC-054",
    "type": "comes_from",
    "label": "Where they come from"
   },
@@ -417,6 +447,12 @@
   },
   {
    "source": "NPC-043",
+   "target": "LOC-050",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-043",
    "target": "FAC-003",
    "type": "member_of",
    "label": "Member"
@@ -519,7 +555,7 @@
   },
   {
    "source": "NPC-051",
-   "target": "REG-001",
+   "target": "LOC-030",
    "type": "comes_from",
    "label": "Where they come from"
   },
@@ -555,6 +591,12 @@
   },
   {
    "source": "NPC-053",
+   "target": "LOC-052",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-053",
    "target": "FAC-004",
    "type": "member_of",
    "label": "Member"
@@ -621,6 +663,12 @@
   },
   {
    "source": "NPC-057",
+   "target": "LOC-057",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-057",
    "target": "FAC-005",
    "type": "member_of",
    "label": "Member"
@@ -687,7 +735,7 @@
   },
   {
    "source": "NPC-062",
-   "target": "REG-006",
+   "target": "LOC-056",
    "type": "comes_from",
    "label": "Where they come from"
   },
@@ -783,7 +831,7 @@
   },
   {
    "source": "NPC-081",
-   "target": "REG-003",
+   "target": "LOC-047",
    "type": "comes_from",
    "label": "Where they come from"
   },
@@ -801,7 +849,7 @@
   },
   {
    "source": "NPC-083",
-   "target": "LOC-901",
+   "target": "LOC-049",
    "type": "comes_from",
    "label": "Where they come from"
   },
@@ -945,6 +993,12 @@
   },
   {
    "source": "NPC-305",
+   "target": "SET-322",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-305",
    "target": "FAC-307",
    "type": "member_of",
    "label": "Member"
@@ -954,6 +1008,12 @@
    "target": "SET-301",
    "type": "lives_in",
    "label": "Home"
+  },
+  {
+   "source": "NPC-306",
+   "target": "SET-321",
+   "type": "comes_from",
+   "label": "Where they come from"
   },
   {
    "source": "NPC-306",
@@ -1011,7 +1071,7 @@
   },
   {
    "source": "NPC-312",
-   "target": "SET-301",
+   "target": "SET-323",
    "type": "comes_from",
    "label": "Where they come from"
   },
@@ -1035,7 +1095,7 @@
   },
   {
    "source": "NPC-004",
-   "target": "REG-003",
+   "target": "LOC-047",
    "type": "comes_from",
    "label": "Where they come from"
   },
@@ -1047,7 +1107,7 @@
   },
   {
    "source": "NPC-005",
-   "target": "REG-003",
+   "target": "LOC-045",
    "type": "comes_from",
    "label": "Where they come from"
   },
@@ -1065,7 +1125,7 @@
   },
   {
    "source": "NPC-006",
-   "target": "REG-001",
+   "target": "LOC-030",
    "type": "comes_from",
    "label": "Where they come from"
   },
@@ -1080,6 +1140,12 @@
    "target": "REG-001",
    "type": "lives_in",
    "label": "Home"
+  },
+  {
+   "source": "NPC-007",
+   "target": "LOC-030",
+   "type": "comes_from",
+   "label": "Where they come from"
   },
   {
    "source": "NPC-007",
@@ -1113,6 +1179,12 @@
   },
   {
    "source": "NPC-009",
+   "target": "LOC-034",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-009",
    "target": "FAC-005",
    "type": "member_of",
    "label": "Member"
@@ -1128,6 +1200,12 @@
    "target": "REG-001",
    "type": "lives_in",
    "label": "Home"
+  },
+  {
+   "source": "NPC-011",
+   "target": "LOC-031",
+   "type": "comes_from",
+   "label": "Where they come from"
   },
   {
    "source": "NPC-012",
@@ -1269,7 +1347,7 @@
   },
   {
    "source": "NPC-070",
-   "target": "REG-005",
+   "target": "LOC-054",
    "type": "comes_from",
    "label": "Where they come from"
   },
@@ -1532,6 +1610,18 @@
    "label": "Riftwalker"
   },
   {
+   "source": "NPC-325",
+   "target": "SET-322",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-331",
+   "target": "SET-326",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
    "source": "NPC-332",
    "target": "LOC-303",
    "type": "comes_from",
@@ -1544,8 +1634,26 @@
    "label": "Where they come from"
   },
   {
+   "source": "NPC-337",
+   "target": "SET-321",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
    "source": "NPC-339",
    "target": "LOC-303",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-340",
+   "target": "SET-327",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-343",
+   "target": "SET-324",
    "type": "comes_from",
    "label": "Where they come from"
   },
@@ -1716,6 +1824,36 @@
    "target": "LOC-040",
    "type": "present_at",
    "label": "Works from the camp"
+  },
+  {
+   "source": "FAC-001",
+   "target": "LOC-041",
+   "type": "controls",
+   "label": "Chief fortress"
+  },
+  {
+   "source": "FAC-002",
+   "target": "LOC-044",
+   "type": "controls",
+   "label": "Chief fortress"
+  },
+  {
+   "source": "FAC-003",
+   "target": "LOC-048",
+   "type": "controls",
+   "label": "Chief fortress"
+  },
+  {
+   "source": "FAC-004",
+   "target": "LOC-052",
+   "type": "controls",
+   "label": "Chief fortress"
+  },
+  {
+   "source": "FAC-005",
+   "target": "LOC-055",
+   "type": "controls",
+   "label": "Chief fortress"
   },
   {
    "source": "NPC-303",

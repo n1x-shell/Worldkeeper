@@ -1,6 +1,4 @@
-# Player Adventure Book: Sites of the Dominions and Legendary Places (DRAFT)
-
-Drafted for review. Nothing here is published until this file is moved up into assets/player-text/ and the records in assets/lore/drafts/dominion-sites/ move up to assets/lore/.
+# Player Adventure Book: Sites of the Dominions and Legendary Places
 
 ## How to use this
 

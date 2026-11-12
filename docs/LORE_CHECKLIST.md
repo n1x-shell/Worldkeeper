@@ -6,10 +6,10 @@ Everything found in the lore audit (November 2026), as one list. Ticked items ar
 
 - [x] **Link what the archive already says.** Turn text like "Associated groups", "Leaders", "Known figures", "Approved leader", "Known relationships and locations" and family lines into real links (member of, leads, lives in), in the GM library and the handbook.
 - [x] **Fill out Kaelmar's people.** 42 new people: faction leaders and members, nine village headfolk, regional figures. A leader and a few members for each Kaelmar faction, a headperson for each of the nine villages, and more of Kaelholm, to bring Kaelmar closer to Aetheris.
-- [ ] **Give named places their own records**, with pages and map pins where they are drawn:
+- [x] **Give named places their own records**, with pages and map pins where they are drawn:
   - [x] The Hollow Marches (plus the Crossroads of Fate page and the five faction camps): Ashen Spire, the Scar, Blackveil Fortress, the Sunken Archive, Wither's Hollow, the Cairn of the Forgotten
-  - [ ] The dominions: the five chief fortresses, the Bloodfields, the Purged Halls, Fangholt and the other named sites
-  - [ ] The 20 rival enclaves (GM decision: as an "Enclaves" section on each dominion page)
+  - [x] The dominions: the five chief fortresses and 12 other named sites, plus the six legendary places of the myths
+  - [x] The 20 rival enclaves, as a table on each dominion page
   - [x] Kaelmar's nine villages, with pages, headfolk and map pins: Coldwater, Haskett's Mill, Greyfold, Low Fenn, Oakhallow, Sallow Cross, Kettleby, Brannock, Thornmere
 - [ ] **A creature bestiary** for both continents, from what the setting bibles describe.
 - [ ] **Rumours and secrets as proper records**: true, false or partly true, who knows them, and whether the players have heard them.
