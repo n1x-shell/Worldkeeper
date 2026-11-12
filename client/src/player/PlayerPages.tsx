@@ -383,7 +383,9 @@ export function PlayerMaps() {
                 {s.label && <Tooltip sticky>{s.label}</Tooltip>}
               </Polygon>
             ) : (
-              <Polyline key={s.id} positions={s.points.map(([x, y]) => [y, x] as [number, number])} pathOptions={{ color: s.color }} />
+              <Polyline key={s.id} positions={s.points.map(([x, y]) => [y, x] as [number, number])} pathOptions={{ color: s.color, weight: 2, dashArray: '5 5' }}>
+                {s.label && <Tooltip sticky>{s.label}</Tooltip>}
+              </Polyline>
             ),
           )}
           {m.markers.map((mk) => (

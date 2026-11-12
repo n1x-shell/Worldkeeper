@@ -44,6 +44,8 @@ export interface Character {
     conditions?: string[];
     exhaustion?: number;
     equipment?: string;
+    hometown?: string | null;
+    ties?: { entity_id: string; kind: string; note: string }[];
     lastRest?: string;
     speed?: string;
     shardscarred?: string;
@@ -520,9 +522,108 @@ function CharacterSheet({ ch: initial, onDeleted }: { ch: Character; onDeleted: 
           <AutoTextarea minRows={3} value={sh.shardscarred ?? ''} onChange={(e) => setSheet({ shardscarred: e.target.value })} />
         </Field>
       </div>
+      <WorldTies hometown={sh.hometown ?? null} ties={sh.ties ?? []} onChange={(p) => setSheet(p)} />
       <Field label="Notes">
         <AutoTextarea minRows={3} value={ch.notes} onChange={(e) => set({ notes: e.target.value })} />
       </Field>
+    </div>
+  );
+}
+
+export const TIE_KINDS = ['Faction', 'Family', 'Friend', 'Rival', 'Enemy', 'Patron', 'Mentor', 'Owes them', 'Owed by them', 'Secret', 'Other'];
+
+/** A character's ties to the world: where they come from, and the people, factions and places in their story. */
+function WorldTies({
+  hometown,
+  ties,
+  onChange,
+}: {
+  hometown: string | null;
+  ties: { entity_id: string; kind: string; note: string }[];
+  onChange: (p: { hometown?: string | null; ties?: { entity_id: string; kind: string; note: string }[] }) => void;
+}) {
+  const [entity, setEntity] = useState<string | null>(null);
+  const [kind, setKind] = useState('Friend');
+  const [note, setNote] = useState('');
+  return (
+    <div className="space-y-2">
+      <div className="section-title">Ties to the world</div>
+      <div className="grid gap-2 md:grid-cols-[1fr_2fr] items-end">
+        <Field label="Hometown">
+          <EntityPicker value={hometown} onChange={(v) => onChange({ hometown: v })} types={['settlement', 'region', 'landmark', 'building', 'continent']} />
+        </Field>
+      </div>
+      {ties.length > 0 && (
+        <ul className="divide-y divide-line/50">
+          {ties.map((t, i) => (
+            <li key={`${t.entity_id}-${i}`} className="flex flex-wrap items-center gap-2 py-1.5 text-sm">
+              <span className="chip">{t.kind}</span>
+              <EntityLink id={t.entity_id} />
+              <input
+                className="input flex-1 min-w-[12rem] text-sm"
+                value={t.note}
+                placeholder="What's between them"
+                onChange={(e) => onChange({ ties: ties.map((x, j) => (j === i ? { ...x, note: e.target.value } : x)) })}
+              />
+              <button className="btn-ghost" aria-label="Remove tie" onClick={() => onChange({ ties: ties.filter((_, j) => j !== i) })}>
+                <Trash2 size={13} />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="grid gap-2 md:grid-cols-[140px_1fr_1fr_auto] items-end">
+        <Field label="Tie">
+          <select className="input" value={kind} onChange={(e) => setKind(e.target.value)}>
+            {TIE_KINDS.map((k) => (
+              <option key={k}>{k}</option>
+            ))}
+          </select>
+        </Field>
+        <Field label="To">
+          <EntityPicker value={entity} onChange={setEntity} />
+        </Field>
+        <Field label="Note">
+          <input className="input" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional" />
+        </Field>
+        <button
+          className="btn"
+          disabled={!entity}
+          onClick={() => {
+            if (!entity) return;
+            onChange({ ties: [...ties, { entity_id: entity, kind, note }] });
+            setEntity(null);
+            setNote('');
+          }}
+        >
+          <Plus size={14} /> Add tie
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/** Party members tied to a record, for its page. */
+export function PartyTiesPanel({ entityId }: { entityId: string }) {
+  const { activeCampaignId } = useAppState();
+  const { data } = useApi<{ character_id: number; name: string; tie: string; note: string }[]>(
+    activeCampaignId ? `/api/party-ties?entity=${encodeURIComponent(entityId)}&campaign_id=${activeCampaignId}` : null,
+  );
+  if (!data?.length) return null;
+  return (
+    <div className="panel p-4">
+      <div className="section-title mb-1">The party</div>
+      <ul className="text-sm space-y-1">
+        {data.map((t, i) => (
+          <li key={i}>
+            <Link to="/campaign/party" className="text-arcane">
+              {t.name}
+            </Link>{' '}
+            <span className="text-dim">· {t.tie}</span>
+            {t.note && <span className="text-ink/80"> · {t.note}</span>}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

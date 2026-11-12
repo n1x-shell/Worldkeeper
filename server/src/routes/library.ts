@@ -8,6 +8,7 @@ import { h, intParam } from './util.js';
 import { readZip, type SourceFile } from '../import/scan.js';
 import { buildPlan, commitPlan, listImportRuns, summarisePlan, type ImportPlan } from '../import/importer.js';
 import { backupPath, createBackup, listBackups, stageRestore } from '../backup/backup.js';
+import { DEFAULT_ADDITIONS_DIR, applyAdditions, loreFiles } from '../additions.js';
 import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, exportPlayerZip, importCampaign, importJson } from '../backup/exporter.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { schemaVersion } from '../db/migrations.js';
@@ -96,6 +97,18 @@ export function libraryRoutes(ctx: AppContext) {
 
   // ---- Backups ----
   r.get('/backups', h(() => listBackups(ctx.paths)));
+  // Worldkeeper additions: new lore records, links, rumours and mysteries shipped with the app.
+  r.get(
+    '/additions',
+    h(() => ({ available: fs.existsSync(DEFAULT_ADDITIONS_DIR), records: loreFiles().length })),
+  );
+  r.post(
+    '/additions/apply',
+    h(() => {
+      const backup = createBackup(ctx.db, ctx.paths, 'pre-additions');
+      return { backup: backup.file, ...applyAdditions(ctx.db) };
+    }),
+  );
   r.post('/backups', h((req) => createBackup(ctx.db, ctx.paths, String(req.body?.reason ?? 'manual'))));
   r.get(
     '/backups/:file',

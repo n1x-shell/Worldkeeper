@@ -14,6 +14,7 @@ import { REALM_LABELS, type Realm } from '@shared/domain';
 import { displaySections } from '../lib/sections';
 import type { Character } from './Campaign';
 import { ProfileSummary, type ProfileResponse } from './Profile';
+import { StanceMatrix } from './Rumours';
 import { profileKindFor } from '@shared/profiles';
 import { INFLUENCE_LEVELS } from '@shared/profiles';
 
@@ -595,9 +596,12 @@ export function AgendasPage() {
   }, [data]);
   if (!activeCampaignId)
     return (
-      <Empty title="No active campaign">
-        Faction plans are campaign tools. <Link to="/campaigns" className="text-arcane">Choose a campaign.</Link>
-      </Empty>
+      <div className="space-y-4">
+        <Empty title="No active campaign">
+          Faction plans are campaign tools. <Link to="/campaigns" className="text-arcane">Choose a campaign.</Link>
+        </Empty>
+        <StanceMatrix />
+      </div>
     );
   return (
     <div className="space-y-4">
@@ -632,6 +636,7 @@ export function AgendasPage() {
         </div>
       ))}
       {data && !data.length && <p className="text-sm text-dim">No plans yet. Factions in the library: {factions?.length ?? 0}.</p>}
+      <StanceMatrix />
       <InfluenceMatrix campaignId={activeCampaignId} />
     </div>
   );

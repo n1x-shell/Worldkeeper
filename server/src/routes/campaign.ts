@@ -27,6 +27,7 @@ import {
   sessionLog,
   sessions,
   setActiveCampaign,
+  partyTiesFor,
 } from '../repo/campaigns.js';
 import { createClue, createMystery, createSecret, deleteClue, deleteSecret, listMysteries, setClueFound, setSecretState, syncMysteries, updateMystery, updateSecret, type SecretState } from '../repo/mysteries.js';
 import { TRUTHS, createRumour, deleteRumour, listRumours, readPlayerText, setHeard, syncRumours, updateRumour, type Truth } from '../repo/rumours.js';
@@ -89,6 +90,24 @@ export function campaignRoutes(ctx: AppContext) {
     }),
   );
   r.post('/rumours', h((req) => createRumour(ctx.db, req.body)));
+  r.get('/party-ties', h((req) => partyTiesFor(ctx.db, String(req.query.entity ?? ''), req.query.campaign_id ? Number(req.query.campaign_id) : getActiveCampaignId(ctx.db))));
+  // How factions feel about each other: links between groups (allied, uneasy, rival, at war).
+  r.get(
+    '/faction-stances',
+    h(() => {
+      const groups = ctx.db
+        .prepare(`SELECT id, name, type, realm FROM entities WHERE type IN ('faction','cult') AND archived = 0 ORDER BY realm, type, name`)
+        .all() as { id: string; name: string; type: string; realm: string }[];
+      const links = ctx.db
+        .prepare(
+          `SELECT r.source_id, r.target_id, r.type, r.label, r.description FROM relationships r
+           JOIN entities a ON a.id = r.source_id JOIN entities b ON b.id = r.target_id
+           WHERE r.type IN ('allied_with','opposes','related_to') AND a.type IN ('faction','cult') AND b.type IN ('faction','cult')`,
+        )
+        .all() as { source_id: string; target_id: string; type: string; label: string; description: string }[];
+      return { groups, links };
+    }),
+  );
   // Mysteries, secrets and clues (GM only; never part of player data).
   const campaignOf = (v: unknown) => Number(v ?? getActiveCampaignId(ctx.db) ?? 0);
   r.get('/mysteries', h((req) => listMysteries(ctx.db, campaignOf(req.query.campaign_id), req.query.entity ? String(req.query.entity) : undefined)));

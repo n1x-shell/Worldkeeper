@@ -158,7 +158,9 @@ export function setHeard(db: DB, id: number, campaignId: number, heard: boolean,
 
 // ------------------------------------------------------------------ sync from handbook text
 
-export const DEFAULT_PLAYER_TEXT_DIR = path.resolve(import.meta.dirname, '../../../assets/player-text');
+export const DEFAULT_PLAYER_TEXT_DIR = process.env.WORLDKEEPER_ADDITIONS_DIR
+  ? path.join(process.env.WORLDKEEPER_ADDITIONS_DIR, 'player-text')
+  : path.resolve(import.meta.dirname, '../../../assets/player-text');
 
 export interface RumourSource {
   sourceId: string;

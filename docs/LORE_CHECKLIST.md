@@ -16,28 +16,28 @@ Everything found in the lore audit (November 2026), as one list. Ticked items ar
 
 ## 2. Gaps in what we have
 
-- [ ] Kaelmar's peoples (about 17) as records, not just a table
-- [ ] History from Year 1 to Year 31 Unbound
-- [ ] Faith in practice: where each god is worshipped, by whom and how
-- [ ] Families, clans and houses beyond the Vales
+- [x] Kaelmar's peoples as records: every people in use on either continent has a page, with life in Aetheris and in Kaelmar
+- [x] History from Year 1 to Year 31 Unbound: twelve events, on the World Timeline and in the handbook
+- [x] Faith in practice: where each god is worshipped, by whom and how, with their signs and holy days
+- [x] Families, clans and houses beyond the Vales: House Kael, the Marrows, Hesks, Lins, Halvors, Tulls and Granes
 
 ## 3. Links
 
 - [x] NPC to place (home, usual haunt) for every NPC. Left unplaced on purpose: Archon Vaelion (a legend), Justicar Quell (nobody knows), the founder (long dead). Odran Reeve now lives in Low Fenn.
 - [x] NPC to faction or cult for every NPC
 - [x] Cult figures linked back from each cult, and each cult given a base (the Hollow Tribunal's stays unknown)
-- [ ] The 357 places where one record names another without linking
-- [ ] Specific link types (member of, leads, allied with, opposes, lives in) instead of plain "references". Done for people; factions to each other is still to do (see "How factions feel about each other").
+- [x] The 357 places where one record names another without linking. Names in prose now link; about 100 left are generic words (Warrior, Guardian) that shouldn't link
+- [x] Specific link types (member of, leads, allied with, opposes, lives in) instead of plain "references", for people and for factions to each other
 
 ## 4. Things to start tracking
 
-- [ ] Bring the Worldkeeper additions into your own app: run `npx tsx scripts/apply-additions.ts` on your laptop (adds the new records and links; archive records are untouched)
+- [x] Bring the Worldkeeper additions into your own app: **Import and Export → Apply additions** (backs up first; archive records are untouched). The desktop app carries the additions with it
 
 - [x] Rumours (see "Do first")
 - [x] Secrets, their clues, and which NPC knows what: Mysteries and Secrets (World → Mysteries and Secrets, and a Secrets panel on every record). 10 mysteries, 50 secrets and 99 drafted clues (rumours, people who know, places, items), with the party's progress per campaign: unknown, suspected or known, and clues found.
-- [ ] Where things are and who holds them: shards, relics, keys
-- [ ] How factions feel about each other: allied, at war, at truce, uneasy
-- [ ] Travel routes and distances, tied to the map
-- [ ] Festivals and holy days on the calendar
-- [ ] Name lists for every people and culture
-- [ ] Player characters' ties to the world: hometown, faction, rivals, debts
+- [x] Where things are and who holds them: shards and relics are linked to where they lie and who seeks or holds them; keys live in the Mysteries tool
+- [x] How factions feel about each other: every pair drafted with a reason; see the grid on Faction Agendas
+- [x] Travel routes and distances, tied to the map: the Marches roads, the roads to each capital, the crossing, and Ashvale's villages
+- [x] Festivals and holy days on the calendar
+- [x] Name lists for every people and culture
+- [x] Player characters' ties to the world: hometown and ties on each character sheet; a record's page shows which characters are tied to it

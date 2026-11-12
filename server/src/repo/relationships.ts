@@ -35,7 +35,8 @@ const PLACE_TYPES = new Set(['continent', 'realm', 'region', 'nation', 'settleme
 const GROUP_TYPES = new Set(['faction', 'cult', 'family']);
 
 /** Section headings whose text is a list of people, groups or places. */
-const LIST_SECTION = /^(?:associated groups|known relationships and locations|associated people and places|known figures|approved leader|leaders?|leadership|family|members?)\b/i;
+const LIST_SECTION = /^(?:associated groups|known relationships and locations|associated people and places|known figures|approved leader|leaders?|leadership|family|members?|canon location|location|closest interested party|held by|holder|bearer)\b/i;
+const HELD_TYPES = new Set(['shard', 'artifact', 'item', 'vault_key']);
 
 /**
  * What a name in a list section means, given who wrote it and what it names.
@@ -44,6 +45,13 @@ const LIST_SECTION = /^(?:associated groups|known relationships and locations|as
  */
 function sectionRelation(heading: string, sourceType: string, targetType: string): [Relationship['type'], boolean] | null {
   const h = heading.toLowerCase();
+  if (HELD_TYPES.has(sourceType)) {
+    // Where a treasure lies, who holds it, and who is after it.
+    if (/location/.test(h) && PLACE_TYPES.has(targetType)) return ['contains', true];
+    if (/interested/.test(h) && (GROUP_TYPES.has(targetType) || targetType === 'npc')) return ['seeks', true];
+    if (/held|holder|bearer/.test(h) && (GROUP_TYPES.has(targetType) || targetType === 'npc')) return ['controls', true];
+    return null;
+  }
   if (sourceType === 'npc') {
     if (GROUP_TYPES.has(targetType)) return ['member_of', false];
     if (PLACE_TYPES.has(targetType)) return ['lives_in', false];
@@ -123,6 +131,8 @@ export function rebuildDerivedRelationships(db: DB, id: string, index: MentionIn
         const t = nameIndex.find(item);
         if (t) targets.add(t);
       }
+      // Names inside a sentence ("Beneath the Bloodmarked Fields", "Inside the waystone at the Crossroads of Fate").
+      for (const t of nameIndex.scan(text)) targets.add(t);
       for (const t of targets) {
         if (t === id) continue;
         const rel = sectionRelation(sec, row.type, nameIndex.typeOf(t) ?? '');
@@ -144,6 +154,12 @@ export function rebuildDerivedRelationships(db: DB, id: string, index: MentionIn
     for (const ref of collectRefs(line, index).ids) {
       const t = resolve(ref);
       if (!t || t === id || linked.has(t)) continue;
+      linked.add(t);
+      insert.run(id, t, 'references', 1, heading, 'import-reference', line.trim().slice(0, 400));
+    }
+    // Records named in plain prose ("Elder Sorrel leads the Eastern Tendril") are mentions too.
+    for (const t of nameIndex.scan(line.replace(/\[[A-Z]{2,4}-\d{3}[^\]]*\]/g, ''))) {
+      if (t === id || linked.has(t)) continue;
       linked.add(t);
       insert.run(id, t, 'references', 1, heading, 'import-reference', line.trim().slice(0, 400));
     }

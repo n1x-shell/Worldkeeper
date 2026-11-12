@@ -222,7 +222,9 @@ interface MysterySpec {
   secrets: SecretSpec[];
 }
 
-export const DEFAULT_MYSTERIES_FILE = path.resolve(import.meta.dirname, '../../../assets/lore/mysteries.json');
+export const DEFAULT_MYSTERIES_FILE = process.env.WORLDKEEPER_ADDITIONS_DIR
+  ? path.join(process.env.WORLDKEEPER_ADDITIONS_DIR, 'lore', 'mysteries.json')
+  : path.resolve(import.meta.dirname, '../../../assets/lore/mysteries.json');
 
 /**
  * Bring the drafted mysteries into the library. Text the GM has edited in the app is kept (only rows still

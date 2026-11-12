@@ -87,3 +87,34 @@ describe('Worldkeeper additions', () => {
     expect(ctx.db.prepare(`SELECT 1 FROM entities WHERE id = 'FAC-001'`).get()).toBeTruthy(); // archive records untouched
   });
 });
+
+describe('names in prose', () => {
+  it('links a record named in a sentence, including the possessive, but not inside another word', () => {
+    const ctx = tempContext();
+    const prose: SourceFile[] = [
+      rec('SET-001', 'Test Town', 'Settlement', 'A town.'),
+      rec('NPC-001', 'Mira Quill', 'NPC', 'She lives near Test Town\'s gate.'),
+      rec('NPC-002', 'Other Person', 'NPC', 'Nothing about Test Townsfolk here.'),
+    ];
+    commitPlan(ctx.db, prose, buildPlan(ctx.db, prose, 'test'));
+    const refs = ctx.db.prepare(`SELECT source_id, target_id FROM relationships WHERE type = 'references'`).all() as { source_id: string; target_id: string }[];
+    expect(refs).toContainEqual({ source_id: 'NPC-001', target_id: 'SET-001' });
+    expect(refs).not.toContainEqual({ source_id: 'NPC-002', target_id: 'SET-001' });
+  });
+});
+
+describe('timeline additions', () => {
+  it('adds the additions’ timeline rows, replaces them on a second run, and keeps an era the GM set', () => {
+    const ctx = tempContext();
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wk-timeline-'));
+    const rows = [{ sort_order: 15.01, time_label: 'Year 1 Unbound', event: 'The First Morning', entity_ids: [] }];
+    fs.writeFileSync(path.join(dir, 'timeline.json'), JSON.stringify({ rows }));
+    fs.mkdirSync(path.join(dir, 'drafts'));
+    fs.writeFileSync(path.join(dir, 'drafts', 'timeline.json'), JSON.stringify({ rows: [{ sort_order: 1, time_label: 'x', event: 'Draft row' }] }));
+    expect(applyAdditions(ctx.db, dir).timeline).toBe(1);
+    ctx.db.prepare(`UPDATE timeline_rows SET era = 'the-cycle', era_origin = 'user'`).run();
+    applyAdditions(ctx.db, dir);
+    const all = ctx.db.prepare(`SELECT event, era, era_origin FROM timeline_rows`).all();
+    expect(all).toEqual([{ event: 'The First Morning', era: 'the-cycle', era_origin: 'user' }]);
+  });
+});
