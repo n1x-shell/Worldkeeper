@@ -1137,6 +1137,255 @@
      ]
     }
    ]
+  },
+  {
+   "key": "loom",
+   "title": "The Loom",
+   "question": "Who still has a hand on the Loom of Eternity, and what is it for?",
+   "summary": "The Loom governs the fates of everyone in Aetheris and Kaelmar and shapes the peoples and the world. The Cycle broke, but the Loom still weaves, and someone can still tweak it. It is guarded. Why the Hidden Ones and the elder gods made the world, and what the Loom is for, nobody knows.",
+   "secrets": [
+    {
+     "key": "loom-both-shores",
+     "title": "The Loom holds Kaelmar too",
+     "truth": "Every life in Aetheris and Kaelmar is a thread on the Loom. It shapes the peoples and the world around them, on both continents.",
+     "source": "ETH-505",
+     "about": [
+      "ETH-505",
+      "COS-905",
+      "CON-301"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Everyone has a thread. Kaelmar's people too",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-068",
+       "note": "Master Ilythis keeps pages for people of both continents, side by side."
+      },
+      {
+       "kind": "place",
+       "entity": "ETH-505",
+       "note": "Seen from close by, Kaelmar's threads are on the Loom with everyone else's."
+      }
+     ]
+    },
+    {
+     "key": "loom-still-woven",
+     "title": "Someone still tweaks the Loom",
+     "truth": "The Cycle is broken, but the Loom still weaves, and someone can still tweak a thread. Who, and how, is the GM's to decide.",
+     "source": "ETH-505",
+     "about": [
+      "ETH-505",
+      "CRE-522"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The Cycle's over. That doesn't mean nobody's pulling the strings",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "CRE-522",
+       "note": "Thread ghosts include people whose fate was changed after the Cycle broke."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-064",
+       "note": "Sylas Vaerin's clocks jump whenever a thread is tweaked. He has a list of the times."
+      }
+     ]
+    },
+    {
+     "key": "loom-guarded",
+     "title": "Who guards the Loom",
+     "truth": "The Loom is protected: Vyrithar keeps it, and its sentinels hunt anything that touches the threads. They let some hands through. Whose is unknown.",
+     "source": "ETH-505",
+     "about": [
+      "ETH-505",
+      "CRE-533",
+      "NPC-002"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "They don't stop people looking at the Loom",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "CRE-533",
+       "note": "A Loom Sentinel steps aside for someone it shouldn't."
+      }
+     ]
+    },
+    {
+     "key": "loom-purpose",
+     "title": "What the Loom is for",
+     "truth": "Nobody knows why the Hidden Ones and the elder gods made the world of Aetheris and Kaelmar, or what the Loom is for. Breaking the Cycle answered neither question. The GM decides, or leaves it open.",
+     "source": "COS-021",
+     "about": [
+      "ETH-505",
+      "FAC-007",
+      "COS-021"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Whoever holds the deep realm could start the Cycle again",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-063",
+       "note": "Eryndor the First Shard remembers the world before the Cycle, and still doesn't know."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "orb",
+   "title": "The Ethereal Orb",
+   "question": "Can the Orb still be made, and what would it do now?",
+   "summary": "The twelve shards, carried into the Ethereal Realm and forged there, make the Ethereal Orb: its bearer ascends and remakes the world until they fall. With the thirteenth shard they make the Greater Ethereal Orb, which heals both continents and closes the realm, at the price of everyone who came.",
+   "secrets": [
+    {
+     "key": "orb-in-realm",
+     "title": "The Orb can still be made",
+     "truth": "Since the Cycle broke, the Orb can only be formed in the Ethereal Realm, by someone or something there. Its bearer ascends as a god in the realm and remakes the world until they fall.",
+     "source": "COS-022",
+     "about": [
+      "COS-022",
+      "COS-906",
+      "ETH-505"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Whoever makes the Orb becomes a god",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-063",
+       "note": "Eryndor the First Shard has seen the Orb made. He won't say where."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-071",
+       "note": "Magistrate Althros knows the realm has a law about it."
+      }
+     ]
+    },
+    {
+     "key": "orb-forge",
+     "title": "Who forms the Orb",
+     "truth": "The GM's choice: the Loom's dark crystal, Vyrithar the Weaver, an elder god in the Nameless Sepulcher, or the Nameless Smith's last fire.",
+     "source": "COS-022",
+     "about": [
+      "COS-022",
+      "ETH-505",
+      "LOC-509"
+     ],
+     "clues": [
+      {
+       "kind": "place",
+       "entity": "ETH-505",
+       "note": "Twelve great crystals pierce the Loom. One is dark."
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-509",
+       "note": "Something in the Sepulcher has been asking travellers how many shards they carry."
+      }
+     ]
+    },
+    {
+     "key": "orb-hidden-ones",
+     "title": "The Hidden Ones want the twelve",
+     "truth": "The Hidden Ones want the twelve reforged and the Cycle back. They help a twelve-shard bearer quietly, until a thirteenth appears.",
+     "source": "FAC-007",
+     "about": [
+      "FAC-007",
+      "COS-022"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The new god's world lasts until the god falls",
+       "note": ""
+      },
+      {
+       "kind": "text",
+       "note": "Shards turn up a little too easily for anyone gathering them. Someone is helping."
+      }
+     ]
+    },
+    {
+     "key": "orb-greater",
+     "title": "The Greater Ethereal Orb",
+     "truth": "With all thirteen shards, the Greater Orb heals both continents, closes the Rift and the realm, and restores every name and memory. Everyone who came is shut in the realm for life. The thirteenth must choose its bearer.",
+     "source": "COS-022",
+     "about": [
+      "COS-022",
+      "SHD-013",
+      "NPC-901"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-001",
+       "note": "The Blind Seer has dreamed the thirteenth shard choosing someone."
+      },
+      {
+       "kind": "npc",
+       "entity": "CLT-006",
+       "note": "The Silent Accord's evidence points to a thirteenth shard."
+      },
+      {
+       "kind": "text",
+       "note": "An old verse, half remembered in the Nameless Asylum, counts the shards to thirteen."
+      },
+      {
+       "kind": "rumour",
+       "match": "Some say there's a thirteenth shard",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "orb-lesser",
+     "title": "The Lesser Ethereal Orb",
+     "truth": "Eleven of the twelve with the thirteenth make the Lesser Orb: a mad god, an unfinished Aetherfall, the realm spilling into the world, and mass forgetting, shaped by whichever shard is missing.",
+     "source": "COS-022",
+     "about": [
+      "COS-022",
+      "SHD-013",
+      "SHD-012"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The Unraveled King had the wrong number of shards",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Twelve makes a god. Everyone knows that",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-068",
+       "note": "Master Ilythis has a page for a world the Lesser Orb made. It is unreadable in a way that hurts."
+      }
+     ]
+    }
+   ]
   }
  ]
 }

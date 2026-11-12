@@ -34,6 +34,8 @@ The Ethereal Realm as the people who live there and the people who've been there
 
 > The door was in a wall you've walked past a hundred times. Behind it, a corridor of every corridor you've ever been down, going on and on, and then: a quiet country of grey grass and long shadows, full of people who look up when you arrive and are kind enough not to ask how.
 
+**How deep.** Depth 1 of 7: grey, quiet and almost remembered. See @[The Depths of the Ethereal Realm].
+
 **What you know**
 
 - The Hollow Verge is the border of the Ethereal Realm, the part closest to the world.
@@ -97,6 +99,8 @@ The Ethereal Realm as the people who live there and the people who've been there
 
 *Where discarded worlds pile up, one on top of another.*
 
+**How deep.** Depth 2 of 7: wreck-islands of dead worlds in a silver void. See @[The Depths of the Ethereal Realm].
+
 Past the Verge, the deep realm begins with the Fields: the wreckage of every world the Cycle threw away. A golden cathedral lies on its side inside a Legion fortress. Rivers run uphill into forests that were cut down in another history. Travellers here sometimes find monuments to themselves, to deeds they never did.
 
 The @[Architects of Eternity] built a city here, the @[The Crucible of Creation], out of the remains of lost worlds.
@@ -132,6 +136,8 @@ The Architects of Eternity built the Crucible from the wreckage of the Fields: t
 
 *Where rulers who learned the truth of the Cycle fled, and where they can finally die.*
 
+**How deep.** Depth 3 of 7: courts of frightened dead kings. See @[The Depths of the Ethereal Realm].
+
 Kings, queens and warlords who found out what the Cycle was came here to escape it. For centuries they couldn't die. Now they can, and they're afraid. Their courts still sit, in halls of bone.
 
 **What people say**
@@ -165,6 +171,8 @@ The @[Titans of the Rift] fight here, against echoes of themselves: copies that 
 
 *A library with a book for every erased soul. Most of them are blank.*
 
+**How deep.** Depth 4 of 7: where the truly strange begins. See @[The Depths of the Ethereal Realm].
+
 Somewhere deep in the realm there's a library with a book for everyone who was ever erased. Most of the books are blank. The ones that aren't are read by the books themselves: in the Silent Archive, it's the books that read you.
 
 @[Master Ilythis] keeps records of histories that never happened, and is often found here.
@@ -176,18 +184,25 @@ Somewhere deep in the realm there's a library with a book for everyone who was e
 
 ## The Loom of Eternity
 
-*Where the threads of every life are woven, or were, until the Cycle broke.*
+*Where the threads of every life in Aetheris and Kaelmar are woven, still.*
 
-Every story of the Cycle ends at the Loom. It's said to be a black ocean hanging in nothing, crossed by countless threads of light, one for each life, and pierced by great crystals. Rewriting fate is possible there. A king who tried it, long ago, was unmade.
+**How deep.** Depth 5 of 7: cosmic, and crawling with things from outside. See @[The Depths of the Ethereal Realm].
+
+Every story of the Cycle ends at the Loom. It's said to be a black ocean hanging in nothing, crossed by countless threads of light, one for every life in Aetheris and Kaelmar, and pierced by great crystals. Every thread is a fate. Rewriting fate is possible there. A king who tried it, long ago, was unmade.
+
+The Loom is guarded. By what, the few who have come back don't agree.
 
 **What people say**
 
 - The Unraveled King tried to seize the Loom. Nobody remembers his real name, which is the point.
-- Since the Cycle broke, the Loom has been quiet. Some people think that's temporary.
+- The Cycle is broken. The Loom is still weaving. Nobody knows whose hands are on it.
+- Everyone has a thread. Kaelmar's people too, whatever Kaelmar's scholars say.
 
 ## The Citadel of the Hidden
 
 *Where the Hidden Ones are said to keep their citadel, behind reality.*
+
+**How deep.** Depth 6 of 7: corridors where the angles don't add up. See @[The Depths of the Ethereal Realm].
 
 Aetheris's oldest stories say the Hidden Ones, who guided every turn of the Cycle, live in a citadel of corridors behind reality, full of archives of lives and pools of abandoned futures. Whether it's real, nobody in the Asylum will say for sure. Those who might know don't talk about it.
 
@@ -199,6 +214,8 @@ Aetheris's oldest stories say the Hidden Ones, who guided every turn of the Cycl
 ## The Black Horizon
 
 *A starless region at the far edge of the realm, where distance stops making sense.*
+
+**How deep.** Depth 7 of 7: the edge of everything. See @[The Depths of the Ethereal Realm].
 
 At the far edge of the realm the light gives out, and distance stops behaving. A day's walk takes a minute; a step takes a year. Even the realm's oldest residents avoid it. The @[Echoborn] go there anyway, to look.
 
