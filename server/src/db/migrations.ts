@@ -422,6 +422,63 @@ CREATE TABLE rumour_heard (
 );
 `,
   },
+  {
+    version: 6,
+    name: 'mysteries, secrets and clues',
+    sql: `
+CREATE TABLE mysteries (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  key TEXT NOT NULL UNIQUE,
+  title TEXT NOT NULL,
+  question TEXT NOT NULL DEFAULT '',
+  summary TEXT NOT NULL DEFAULT '',
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  origin TEXT NOT NULL DEFAULT 'additions'
+);
+
+CREATE TABLE secrets (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  key TEXT NOT NULL UNIQUE,
+  mystery_id INTEGER REFERENCES mysteries(id) ON DELETE SET NULL,
+  title TEXT NOT NULL,
+  truth TEXT NOT NULL DEFAULT '',
+  gm_note TEXT NOT NULL DEFAULT '',
+  source_id TEXT,
+  about TEXT NOT NULL DEFAULT '[]',
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  origin TEXT NOT NULL DEFAULT 'additions'
+);
+CREATE INDEX secrets_source ON secrets(source_id);
+
+CREATE TABLE clues (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  key TEXT NOT NULL UNIQUE,
+  secret_id INTEGER NOT NULL REFERENCES secrets(id) ON DELETE CASCADE,
+  kind TEXT NOT NULL CHECK (kind IN ('rumour','npc','place','item','text')),
+  note TEXT NOT NULL DEFAULT '',
+  entity_id TEXT,
+  rumour_ids TEXT NOT NULL DEFAULT '[]',
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  origin TEXT NOT NULL DEFAULT 'additions'
+);
+
+CREATE TABLE secret_progress (
+  campaign_id INTEGER NOT NULL,
+  secret_id INTEGER NOT NULL REFERENCES secrets(id) ON DELETE CASCADE,
+  state TEXT NOT NULL DEFAULT 'unknown' CHECK (state IN ('unknown','suspected','known')),
+  note TEXT NOT NULL DEFAULT '',
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  PRIMARY KEY (campaign_id, secret_id)
+);
+
+CREATE TABLE clue_found (
+  campaign_id INTEGER NOT NULL,
+  clue_id INTEGER NOT NULL REFERENCES clues(id) ON DELETE CASCADE,
+  found_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  PRIMARY KEY (campaign_id, clue_id)
+);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

@@ -28,6 +28,7 @@ import {
   sessions,
   setActiveCampaign,
 } from '../repo/campaigns.js';
+import { createClue, createMystery, createSecret, deleteClue, deleteSecret, listMysteries, setClueFound, setSecretState, syncMysteries, updateMystery, updateSecret, type SecretState } from '../repo/mysteries.js';
 import { TRUTHS, createRumour, deleteRumour, listRumours, readPlayerText, setHeard, syncRumours, updateRumour, type Truth } from '../repo/rumours.js';
 import { rollDice } from '../../../shared/play.js';
 import { badRequest } from '../lib/errors.js';
@@ -88,6 +89,19 @@ export function campaignRoutes(ctx: AppContext) {
     }),
   );
   r.post('/rumours', h((req) => createRumour(ctx.db, req.body)));
+  // Mysteries, secrets and clues (GM only; never part of player data).
+  const campaignOf = (v: unknown) => Number(v ?? getActiveCampaignId(ctx.db) ?? 0);
+  r.get('/mysteries', h((req) => listMysteries(ctx.db, campaignOf(req.query.campaign_id), req.query.entity ? String(req.query.entity) : undefined)));
+  r.post('/mysteries', h((req) => createMystery(ctx.db, req.body)));
+  r.post('/mysteries/sync', h(() => ({ rumours: syncRumours(ctx.db, readPlayerText()), mysteries: syncMysteries(ctx.db) })));
+  r.patch('/mysteries/:id', h((req) => updateMystery(ctx.db, intParam(req.params.id), req.body)));
+  r.post('/secrets', h((req) => createSecret(ctx.db, req.body)));
+  r.patch('/secrets/:id', h((req) => updateSecret(ctx.db, intParam(req.params.id), req.body)));
+  r.delete('/secrets/:id', h((req) => deleteSecret(ctx.db, intParam(req.params.id))));
+  r.post('/secrets/:id/state', h((req) => setSecretState(ctx.db, intParam(req.params.id), campaignOf(req.body?.campaign_id), String(req.body?.state) as SecretState, req.body?.note)));
+  r.post('/clues', h((req) => createClue(ctx.db, req.body)));
+  r.delete('/clues/:id', h((req) => deleteClue(ctx.db, intParam(req.params.id))));
+  r.post('/clues/:id/found', h((req) => setClueFound(ctx.db, intParam(req.params.id), campaignOf(req.body?.campaign_id), !!req.body?.found)));
   r.post('/rumours/sync', h(() => syncRumours(ctx.db, readPlayerText())));
   r.patch('/rumours/:id', h((req) => updateRumour(ctx.db, intParam(req.params.id), req.body)));
   r.delete('/rumours/:id', h((req) => (deleteRumour(ctx.db, intParam(req.params.id)), { ok: true })));
