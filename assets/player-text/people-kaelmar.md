@@ -1,6 +1,4 @@
-# Player Adventure Book: People of Kaelmar (DRAFT)
-
-Drafted for review. Nothing here is published until this file is moved up into assets/player-text/ and the records in assets/lore/drafts/kaelmar-npcs/ move up to assets/lore/.
+# Player Adventure Book: People of Kaelmar
 
 ## How to use this
 

@@ -1532,6 +1532,24 @@
    "label": "Riftwalker"
   },
   {
+   "source": "NPC-332",
+   "target": "LOC-303",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-336",
+   "target": "REG-301",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-339",
+   "target": "LOC-303",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
    "source": "NPC-303",
    "target": "SET-301",
    "type": "created",

@@ -1,4 +1,4 @@
-# GM-only notes: new Kaelmar NPCs (DRAFT)
+# GM-only notes: people of Kaelmar
 
 The truth behind the cover pages, and the three NPCs with no player page at all.
 

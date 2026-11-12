@@ -133,7 +133,7 @@ Four NPCs are not people and have no build: the Hidden Ones Vyrithar and Vyrathu
 | Nib | The memory-house | Kobold (MotM) | Druid (Circle of the Land) | Guide | he/him | The under-roads |  |
 | The Forgotten One | None | Changeling (MotM) | Wizard (Order of Scribes) | Hermit | they/them | Aetheris, many lives ago |  |
 
-## New people of Kaelmar (42, DRAFT)
+## People of Kaelmar (42)
 
 | Name | Group | Species | Class | Background | Pronouns | From | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- |
