@@ -32,6 +32,10 @@ if (!process.argv.includes('--skip-client')) {
 fs.cpSync(path.join(root, 'dist'), path.join(out, 'client'), { recursive: true });
 // The static Player Handbook that "Publish for Players" uploads.
 fs.cpSync(path.join(root, 'dist-player'), path.join(out, 'player-site'), { recursive: true });
+// The Worldkeeper additions (new lore records, links, rumour text, mysteries) for Library > Worldkeeper additions.
+fs.rmSync(path.join(out, 'additions'), { recursive: true, force: true });
+for (const dir of ['lore', 'player-text'])
+  fs.cpSync(path.join(root, 'assets', dir), path.join(out, 'additions', dir), { recursive: true, filter: (src) => !src.split(path.sep).includes('drafts') });
 
 // 2. Server bundle (everything except the native driver)
 log('bundling server');
@@ -85,7 +89,7 @@ const { spawn } = await import('node:child_process');
 const port = 43000 + Math.floor(Math.random() * 1000);
 const child = spawn(sidecar, [path.join(out, 'server/index.mjs')], {
   cwd: out,
-  env: { ...process.env, NODE_ENV: 'production', PORT: String(port), HOST: '127.0.0.1', WORLDKEEPER_DATA_DIR: tmpData, WORLDKEEPER_STATIC_DIR: path.join(out, 'client'), WORLDKEEPER_PLAYER_SITE_DIR: path.join(out, 'player-site'), NODE_PATH: '' },
+  env: { ...process.env, NODE_ENV: 'production', PORT: String(port), HOST: '127.0.0.1', WORLDKEEPER_DATA_DIR: tmpData, WORLDKEEPER_STATIC_DIR: path.join(out, 'client'), WORLDKEEPER_PLAYER_SITE_DIR: path.join(out, 'player-site'), WORLDKEEPER_ADDITIONS_DIR: path.join(out, 'additions'), NODE_PATH: '' },
   stdio: ['ignore', 'pipe', 'pipe'],
 });
 let stderr = '';

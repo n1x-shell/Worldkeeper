@@ -52,6 +52,11 @@ export const characters = makeCrud({
         equipment: z.string().max(20000).optional(),
         lastRest: z.string().max(200).optional(),
         shardscarred: z.string().max(5000).optional(),
+        hometown: z.string().max(40).nullable().optional(),
+        ties: z
+          .array(z.object({ entity_id: z.string().max(40), kind: z.string().max(40), note: z.string().max(2000).default('') }))
+          .max(60)
+          .optional(),
       })
       .passthrough()
       .default({}),
@@ -526,4 +531,23 @@ export function decideProposal(db: DB, id: number, decision: 'approved' | 'rejec
   });
   tx();
   return db.prepare('SELECT * FROM proposals WHERE id = ?').get(id);
+}
+
+/** Party members tied to a record (hometown or a tie), in one campaign or all. */
+export function partyTiesFor(db: DB, entityId: string, campaignId?: number | null) {
+  const rows = db
+    .prepare(`SELECT id, campaign_id, name, kind, sheet FROM characters ${campaignId ? 'WHERE campaign_id = ?' : ''} ORDER BY name`)
+    .all(...(campaignId ? [campaignId] : [])) as { id: number; campaign_id: number; name: string; kind: string; sheet: string }[];
+  const out: { character_id: number; campaign_id: number; name: string; tie: string; note: string }[] = [];
+  for (const r of rows) {
+    let sheet: { hometown?: string | null; ties?: { entity_id: string; kind: string; note?: string }[] } = {};
+    try {
+      sheet = JSON.parse(r.sheet || '{}');
+    } catch {
+      sheet = {};
+    }
+    if (sheet.hometown === entityId) out.push({ character_id: r.id, campaign_id: r.campaign_id, name: r.name, tie: 'Hometown', note: '' });
+    for (const t of sheet.ties ?? []) if (t.entity_id === entityId) out.push({ character_id: r.id, campaign_id: r.campaign_id, name: r.name, tie: t.kind, note: t.note ?? '' });
+  }
+  return out;
 }

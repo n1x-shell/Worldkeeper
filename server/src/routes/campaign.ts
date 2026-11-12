@@ -27,6 +27,7 @@ import {
   sessionLog,
   sessions,
   setActiveCampaign,
+  partyTiesFor,
 } from '../repo/campaigns.js';
 import { createClue, createMystery, createSecret, deleteClue, deleteSecret, listMysteries, setClueFound, setSecretState, syncMysteries, updateMystery, updateSecret, type SecretState } from '../repo/mysteries.js';
 import { TRUTHS, createRumour, deleteRumour, listRumours, readPlayerText, setHeard, syncRumours, updateRumour, type Truth } from '../repo/rumours.js';
@@ -89,6 +90,7 @@ export function campaignRoutes(ctx: AppContext) {
     }),
   );
   r.post('/rumours', h((req) => createRumour(ctx.db, req.body)));
+  r.get('/party-ties', h((req) => partyTiesFor(ctx.db, String(req.query.entity ?? ''), req.query.campaign_id ? Number(req.query.campaign_id) : getActiveCampaignId(ctx.db))));
   // How factions feel about each other: links between groups (allied, uneasy, rival, at war).
   r.get(
     '/faction-stances',

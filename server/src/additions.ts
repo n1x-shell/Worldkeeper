@@ -17,7 +17,10 @@ import { RELATIONSHIP_TYPES, type RelationshipType } from '../../shared/domain.j
 import { readPlayerText, syncRumours } from './repo/rumours.js';
 import { syncMysteries } from './repo/mysteries.js';
 
-export const DEFAULT_ADDITIONS_DIR = path.resolve(import.meta.dirname, '../../assets/lore');
+/** The additions' lore folder: bundled with the desktop app (WORLDKEEPER_ADDITIONS_DIR), or assets/lore in the repo. */
+export const DEFAULT_ADDITIONS_DIR = process.env.WORLDKEEPER_ADDITIONS_DIR
+  ? path.join(process.env.WORLDKEEPER_ADDITIONS_DIR, 'lore')
+  : path.resolve(import.meta.dirname, '../../assets/lore');
 
 /** The new lore records, as source files the importer understands. */
 export function loreFiles(dir = DEFAULT_ADDITIONS_DIR): SourceFile[] {

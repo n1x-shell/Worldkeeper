@@ -58,6 +58,7 @@ export function ImportExportPage() {
       {done && <div className="panel border-ok/50 bg-ok/10 p-3 text-sm text-ok">{done}</div>}
       {tab === 'import' && (
         <div className="space-y-4">
+          <AdditionsPanel onDone={(msg) => (setDone(msg), reloadIndex(), reloadMeta(), void reloadRuns())} />
           <div className="panel-pad flex flex-wrap items-end gap-3">
             <Field label="World archive (.zip of Markdown files)">
               <input type="file" accept=".zip,application/zip" onChange={(e) => (setFile(e.target.files?.[0] ?? null), setPreview(null), setDone(null))} />
@@ -760,6 +761,39 @@ function DebugToggle() {
           </span>
         </span>
       </label>
+    </div>
+  );
+}
+
+/** Bring in the Worldkeeper additions: lore written for this world on top of the archive. */
+function AdditionsPanel({ onDone }: { onDone: (msg: string) => void }) {
+  const { data } = useApi<{ available: boolean; records: number }>('/api/additions');
+  const [busy, setBusy] = useState(false);
+  if (!data?.available) return null;
+  return (
+    <div className="panel-pad flex flex-wrap items-center gap-3">
+      <div className="flex-1 min-w-[16rem]">
+        <div className="font-display text-gold">Worldkeeper additions</div>
+        <p className="text-sm text-dim">
+          New lore written for this world: {data.records} records (people, places, creatures), their links, the handbook's rumours, and the mysteries with their
+          secrets and clues. Your archive records are never changed, and anything you've edited is kept. Safe to run again after an update.
+        </p>
+      </div>
+      <button
+        className="btn-primary"
+        disabled={busy}
+        onClick={async () => {
+          setBusy(true);
+          try {
+            const r = await api.post<{ records: number; links: { added: number }; rumours: { total: number }; mysteries: { secrets: number } }>('/api/additions/apply', {});
+            onDone(`Additions applied: ${r.records} records, ${r.links.added} new links, ${r.rumours.total} rumours and ${r.mysteries.secrets} secrets. A backup was taken first.`);
+          } finally {
+            setBusy(false);
+          }
+        }}
+      >
+        {busy ? 'Applying…' : 'Apply additions'}
+      </button>
     </div>
   );
 }

@@ -87,3 +87,18 @@ describe('Worldkeeper additions', () => {
     expect(ctx.db.prepare(`SELECT 1 FROM entities WHERE id = 'FAC-001'`).get()).toBeTruthy(); // archive records untouched
   });
 });
+
+describe('names in prose', () => {
+  it('links a record named in a sentence, including the possessive, but not inside another word', () => {
+    const ctx = tempContext();
+    const prose: SourceFile[] = [
+      rec('SET-001', 'Test Town', 'Settlement', 'A town.'),
+      rec('NPC-001', 'Mira Quill', 'NPC', 'She lives near Test Town\'s gate.'),
+      rec('NPC-002', 'Other Person', 'NPC', 'Nothing about Test Townsfolk here.'),
+    ];
+    commitPlan(ctx.db, prose, buildPlan(ctx.db, prose, 'test'));
+    const refs = ctx.db.prepare(`SELECT source_id, target_id FROM relationships WHERE type = 'references'`).all() as { source_id: string; target_id: string }[];
+    expect(refs).toContainEqual({ source_id: 'NPC-001', target_id: 'SET-001' });
+    expect(refs).not.toContainEqual({ source_id: 'NPC-002', target_id: 'SET-001' });
+  });
+});
