@@ -296,6 +296,69 @@
       "x": 1192,
       "y": 330,
       "category": "landmark"
+    },
+    {
+      "id": "SET-015",
+      "label": "Archwell",
+      "x": 1085,
+      "y": 377,
+      "category": "location"
+    },
+    {
+      "id": "SET-016",
+      "label": "Tallowmarch",
+      "x": 1300,
+      "y": 345,
+      "category": "location"
+    },
+    {
+      "id": "SET-017",
+      "label": "Lastlight",
+      "x": 1082,
+      "y": 512,
+      "category": "location"
+    },
+    {
+      "id": "SET-018",
+      "label": "Stakewall",
+      "x": 1375,
+      "y": 560,
+      "category": "location"
+    },
+    {
+      "id": "SET-019",
+      "label": "Dawnmere",
+      "x": 1415,
+      "y": 255,
+      "category": "location"
+    },
+    {
+      "id": "SET-020",
+      "label": "Ironwake",
+      "x": 1548,
+      "y": 580,
+      "category": "location"
+    },
+    {
+      "id": "SET-021",
+      "label": "Driftholm",
+      "x": 1130,
+      "y": 122,
+      "category": "location"
+    },
+    {
+      "id": "SET-022",
+      "label": "Mothhaven",
+      "x": 935,
+      "y": 378,
+      "category": "location"
+    },
+    {
+      "id": "SET-023",
+      "label": "Highbough",
+      "x": 1120,
+      "y": 690,
+      "category": "location"
     }
   ]
 }

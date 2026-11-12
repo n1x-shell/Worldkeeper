@@ -400,6 +400,144 @@
      280
     ]
    ]
+  },
+  {
+   "label": "Archwell to Hollow Refuge: a day on foot, past the Ashen Spire",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1085,
+     377
+    ],
+    [
+     1135,
+     457
+    ],
+    [
+     1210,
+     495
+    ]
+   ]
+  },
+  {
+   "label": "Tallowmarch to Hollow Refuge: a day on foot, past Blackveil Fortress",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1300,
+     345
+    ],
+    [
+     1245,
+     322
+    ],
+    [
+     1210,
+     495
+    ]
+   ]
+  },
+  {
+   "label": "Lastlight to Hollow Refuge: half a day, on the road",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1082,
+     512
+    ],
+    [
+     1210,
+     495
+    ]
+   ]
+  },
+  {
+   "label": "Stakewall to Hollow Refuge: a day, round the edge of the Fields",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1375,
+     560
+    ],
+    [
+     1290,
+     560
+    ],
+    [
+     1210,
+     495
+    ]
+   ]
+  },
+  {
+   "label": "Dawnmere to Empyrean Spire: about three days, as pilgrims walk",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1415,
+     255
+    ],
+    [
+     1290,
+     135
+    ]
+   ]
+  },
+  {
+   "label": "Ironwake to Varkhaal: about two days",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1548,
+     580
+    ],
+    [
+     1460,
+     465
+    ]
+   ]
+  },
+  {
+   "label": "Driftholm to Zepharyos: about two days, by chain-ladder and mountain road",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1130,
+     122
+    ],
+    [
+     1020,
+     175
+    ]
+   ]
+  },
+  {
+   "label": "Mothhaven to Noctis: about three days down the coast",
+   "color": "#c9a24a",
+   "points": [
+    [
+     935,
+     378
+    ],
+    [
+     925,
+     515
+    ]
+   ]
+  },
+  {
+   "label": "Highbough to the Rootspire: about four days through roadless forest, with a guide",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1120,
+     690
+    ],
+    [
+     1275,
+     700
+    ]
+   ]
   }
  ]
 }

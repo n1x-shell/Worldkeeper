@@ -26,7 +26,7 @@ In Kaelmar they roost on the cliffs of the Eastern Mountains and the northern ic
 
 Aasimar are born to ordinary families, most often in the Radiant Ascendancy, and the Celestial Order claims every one it can find. Many serve gladly. Many run. Since the Cycle broke, aasimar have been born who say they dream of a light that isn't Solenne's.
 
-In Kaelmar aasimar are rare and quietly watched. Kaelholm records every one in its rolls, and the Continuity is said to keep a list of its own.
+In Kaelmar aasimar are rare and quietly watched. Kaelholm records every one in its rolls, and someone else is said to keep a list of its own.
 
 **Strengths and flaws.** Healers and fighters with a light of their own. Hunted for it, and held to standards nobody else is.
 
@@ -490,7 +490,7 @@ In Kaelmar tabaxi are another people the spore-storms rewrote, and they live in 
 
 Tieflings are born all over Aetheris, more often in Noctis than anywhere else, and they're distrusted everywhere except there. Many go into magic, law or crime, as the three professions where nobody asks where you came from. Each says theirs is the honest one.
 
-In Kaelmar tieflings are rare, and Kaelholm's tribunals have a bad record of burning their names.
+In Kaelmar, tieflings say their ancestors were carved with Kaelith's glyphs, and the marks came out in the blood. Kaelholm's tribunals have a bad record of burning their names.
 
 **Strengths and flaws.** Fiendish magic and a resistance to fire. Distrusted on sight.
 
@@ -534,11 +534,11 @@ In Kaelmar tritons are rare. The few who have come say there's something in the 
 
 ## Warforged
 
-*Made people of iron and old work, who woke up somewhere they weren't built for.*
+*Made people of iron and old work: leftovers of erased worlds in Aetheris, and Kaelith's sleeping vessels in Kaelmar.*
 
 Warforged in Aetheris are leftovers of worlds that don't exist any more. When the Cycle broke, a few dozen of them were found standing on battlefields and in ruins, built for wars nobody remembers, and they've had to work out who to be since. Some serve the factions. Most just want to know who made them.
 
-In Kaelmar everyone takes the warforged for Kaelith's iron vessels, and Kaelholm would very much like to examine one. They aren't vessels. Nobody can say what they are instead.
+In Kaelmar, a warforged would be one of Kaelith's guardians or vessels, woken. As far as anyone knows, none has woken yet, so a warforged walking in Kaelmar would be the first, and everyone from Kaelholm to the Ascendancy would want to know who woke them.
 
 **Strengths and flaws.** Tireless and hard to hurt. Uncertain of their own past, and other people's reactions.
 
@@ -586,7 +586,7 @@ In Kaelmar yuan-ti are almost unknown, and the few who have crossed keep their d
 
 Shadowkin are born from an erased past and live between light and dark. They are masters of stealth, and they are distrusted everywhere. They value hidden identity, chosen family and performance. Some Shadowkin families say their ancestors came from places that no longer exist.
 
-In Kaelmar there are almost no Shadowkin, and the few who've crossed the Black Tides say the dark there feels different: older, and listening.
+In Kaelmar the same people are called shadar-kai, and they tell their own story of where they came from, which isn't Aetheris's. Some of their elders say they were born in the between.
 
 **Strengths and flaws.** Masters of stealth. Distrusted everywhere.
 
@@ -600,7 +600,7 @@ In Kaelmar there are almost no Shadowkin, and the few who've crossed the Black T
 
 The Taur'n are horned nomads, seven to nine feet tall, with runes marked into their horns. They are warriors and storm-calling shamans. They value migration, family oaths, craftsmanship and spiritual memory. Many live in cities, and assuming they are all Wildborn annoys them.
 
-In Kaelmar the Taur'n are known only from sailors' stories, and the first few to cross the Black Tides have been mistaken for minotaurs and spore-rewritten folk alike. They're not pleased.
+In Kaelmar the same people are called minotaurs, and they tell their own story of where they came from. Now that ships cross the Black Tides, Taur'n and minotaurs are meeting for the first time, and arguing about whose story is right.
 
 **Strengths and flaws.** Warriors and storm-callers. Honoured by the Wildborn, feared in the Legion.
 

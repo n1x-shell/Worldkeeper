@@ -17,7 +17,7 @@ People with a mark of the fiendish in their blood, judged for it from birth.
 Tieflings are born all over Aetheris, more often in Noctis than anywhere else, and they're distrusted everywhere except there. Many go into magic, law or crime, as the three professions where nobody asks where you came from. Each says theirs is the honest one.
 
 ## In Kaelmar
-In Kaelmar tieflings are rare, and Kaelholm's tribunals have a bad record of burning their names.
+In Kaelmar, tieflings say their ancestors were carved with Kaelith's glyphs, and the marks came out in the blood. Kaelholm's tribunals have a bad record of burning their names.
 
 ## Strengths and flaws
 Fiendish magic and a resistance to fire. Distrusted on sight.
