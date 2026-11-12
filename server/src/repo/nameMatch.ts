@@ -38,7 +38,12 @@ function variants(name: string): string[] {
 export interface NameIndex {
   find(text: string): string | null;
   typeOf(id: string): string | undefined;
+  /** Records named in running text, written as proper names (case-sensitive, whole words). */
+  scan(text: string): string[];
 }
+
+/** Kinds whose names are often ordinary words ("Guardian", "Warrior"); they are only found in lists, not prose. */
+const GENERIC_TYPES = new Set(['creature', 'calling', 'people', 'item', 'rule', 'system', 'species', 'culture']);
 
 export function loadNameIndex(db: DB): NameIndex {
   const rows = db
@@ -61,7 +66,25 @@ export function loadNameIndex(db: DB): NameIndex {
       }
     }
   }
+  // Proper names for prose scanning: written as in the record, without a leading "The" and without nicknames.
+  const proper = new Map<string, Set<string>>();
+  for (const r of rows) {
+    if (GENERIC_TYPES.has(r.type)) continue;
+    const base = r.name.split(/[“"]/)[0].replace(/\s*\([^)]*\)\s*$/, '').replace(/^The\s+/, '').trim();
+    if (base.length < 5) continue;
+    if (!proper.has(base)) proper.set(base, new Set());
+    proper.get(base)!.add(r.id);
+  }
+  const names = [...proper.entries()].filter(([, ids]) => ids.size === 1).map(([n]) => n).sort((a, b) => b.length - a.length);
+  const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = names.length ? new RegExp(`(?<![\\w'’-])(${names.map(esc).join('|')})(?![\\w-]|['’](?!s\\b))`, 'g') : null;
   return {
+    scan(text: string) {
+      if (!re) return [];
+      const out = new Set<string>();
+      for (const m of text.matchAll(re)) out.add([...proper.get(m[1])!][0]);
+      return [...out];
+    },
     find(text: string) {
       for (const v of variants(text)) {
         const hit = byName.get(v);

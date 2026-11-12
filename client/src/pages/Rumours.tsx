@@ -236,3 +236,98 @@ export function RumoursPanel({ entityId }: { entityId: string }) {
     </div>
   );
 }
+
+// ------------------------------------------------------------------ Faction stances matrix
+interface Stances {
+  groups: { id: string; name: string; type: string; realm: string }[];
+  links: { source_id: string; target_id: string; type: string; label: string; description: string }[];
+}
+const STANCE_STYLE: Record<string, string> = {
+  Allied: 'bg-emerald-500/40',
+  Friendly: 'bg-emerald-500/20',
+  Uneasy: 'bg-white/5',
+  Rival: 'bg-gold/30',
+  'At war': 'bg-danger/50',
+};
+const REALM_NAMES: Record<string, string> = { aetheris: 'Aetheris', kaelmar: 'Kaelmar', ethereal: 'The Ethereal Realm', world: 'The World' };
+
+/** How factions and cults feel about each other, one grid per realm. */
+export function StanceMatrix() {
+  const { data } = useApi<Stances>('/api/faction-stances');
+  const [pick, setPick] = useState<{ a: string; b: string; label: string; description: string } | null>(null);
+  if (!data) return null;
+  const stance = new Map<string, { label: string; description: string }>();
+  for (const l of data.links) {
+    const v = { label: l.label || (l.type === 'opposes' ? 'Rival' : l.type === 'allied_with' ? 'Allied' : 'Uneasy'), description: l.description };
+    stance.set(`${l.source_id}|${l.target_id}`, v);
+    stance.set(`${l.target_id}|${l.source_id}`, v);
+  }
+  const realms = [...new Set(data.groups.map((g) => g.realm))];
+  const name = (id: string) => data.groups.find((g) => g.id === id)?.name ?? id;
+  return (
+    <div className="panel-pad space-y-4">
+      <div>
+        <div className="section-title">How factions feel about each other</div>
+        <div className="flex flex-wrap gap-3 text-xs text-dim mt-1">
+          {Object.entries(STANCE_STYLE).map(([k, c]) => (
+            <span key={k} className="flex items-center gap-1">
+              <span className={`inline-block w-3 h-3 rounded-sm ${c}`} /> {k}
+            </span>
+          ))}
+          <span>Choose a square to read why. Edit a stance from either faction's Relationships tab.</span>
+        </div>
+      </div>
+      {realms.map((realm) => {
+        const gs = data.groups.filter((g) => g.realm === realm && data.links.some((l) => l.source_id === g.id || l.target_id === g.id));
+        if (gs.length < 2) return null;
+        return (
+          <div key={realm} className="overflow-x-auto">
+            <div className="text-sm font-display text-gold mb-1">{REALM_NAMES[realm] ?? realm}</div>
+            <table className="text-xs border-collapse">
+              <thead>
+                <tr>
+                  <th />
+                  {gs.map((g) => (
+                    <th key={g.id} className="px-0.5 align-bottom">
+                      <div className="[writing-mode:vertical-rl] rotate-180 whitespace-nowrap text-dim font-normal py-1">{g.name}</div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {gs.map((a) => (
+                  <tr key={a.id}>
+                    <th className="text-right pr-2 font-normal text-dim whitespace-nowrap">{a.name}</th>
+                    {gs.map((b) => {
+                      const s = a.id === b.id ? null : stance.get(`${a.id}|${b.id}`);
+                      return (
+                        <td key={b.id} className="p-0.5">
+                          {a.id === b.id ? (
+                            <span className="block w-5 h-5" />
+                          ) : (
+                            <button
+                              className={`block w-5 h-5 rounded-sm border border-line/40 ${s ? STANCE_STYLE[s.label] ?? 'bg-white/5' : ''}`}
+                              title={s ? `${a.name} and ${b.name}: ${s.label}. ${s.description}` : `${a.name} and ${b.name}: not set`}
+                              aria-label={s ? `${a.name} and ${b.name}: ${s.label}` : `${a.name} and ${b.name}: not set`}
+                              onClick={() => s && setPick({ a: a.id, b: b.id, ...s })}
+                            />
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+      })}
+      {pick && (
+        <p className="text-sm">
+          <EntityLink id={pick.a} /> and <EntityLink id={pick.b} />: <strong>{pick.label}</strong>. {pick.description}{' '}
+          <span className="text-dim">(Changes here would go in {name(pick.a)}'s Relationships tab.)</span>
+        </p>
+      )}
+    </div>
+  );
+}

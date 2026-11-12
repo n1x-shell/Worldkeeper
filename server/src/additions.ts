@@ -40,6 +40,7 @@ interface LinkSpec {
   target: string;
   type: string;
   label?: string;
+  description?: string;
 }
 
 /** Add the curated links. Links whose records do not exist (yet) are skipped and reported. */
@@ -62,7 +63,7 @@ export function applyLinks(db: DB, dir = DEFAULT_ADDITIONS_DIR): { added: number
     }
     if (already.get(l.source, l.target, l.type, l.type)) continue;
     if (curated.get(l.source, l.target, l.type)) continue;
-    createRelationship(db, { source_id: l.source, target_id: l.target, type: l.type as RelationshipType, label: l.label ?? '', canon_status: 'CANON' });
+    createRelationship(db, { source_id: l.source, target_id: l.target, type: l.type as RelationshipType, label: l.label ?? '', description: l.description ?? '', canon_status: 'CANON' });
     added++;
   }
   return { added, skipped };

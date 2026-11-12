@@ -2066,6 +2066,975 @@
    "label": "Serves"
   },
   {
+   "source": "LOC-036",
+   "target": "ART-001",
+   "type": "contains",
+   "label": "Kept at the Sanctuary of the Last Light"
+  },
+  {
+   "source": "NPC-024",
+   "target": "ART-002",
+   "type": "controls",
+   "label": "Worn by the Warlord"
+  },
+  {
+   "source": "NPC-046",
+   "target": "ART-003",
+   "type": "controls",
+   "label": "Passed with the name Kaelen Voris"
+  },
+  {
+   "source": "LOC-005",
+   "target": "ART-004",
+   "type": "contains",
+   "label": "Still lies at the Titan's Fall"
+  },
+  {
+   "source": "NPC-001",
+   "target": "ART-005",
+   "type": "controls",
+   "label": "The Blind Seer keeps it"
+  },
+  {
+   "source": "NPC-074",
+   "target": "ART-006",
+   "type": "controls",
+   "label": "Worn by Varik the Bloodforged"
+  },
+  {
+   "source": "NPC-087",
+   "target": "ART-007",
+   "type": "controls",
+   "label": "Carried by Father Iskar"
+  },
+  {
+   "source": "NPC-045",
+   "target": "ART-008",
+   "type": "controls",
+   "label": "Selene Duskveil's blade"
+  },
+  {
+   "source": "NPC-078",
+   "target": "ART-009",
+   "type": "controls",
+   "label": "Hadrek the Emberborn carries it"
+  },
+  {
+   "source": "NPC-095",
+   "target": "ART-010",
+   "type": "controls",
+   "label": "Justicar Quell weighs verdicts on it"
+  },
+  {
+   "source": "NPC-901",
+   "target": "SHD-013",
+   "type": "controls",
+   "label": "Made it from their own Thread"
+  },
+  {
+   "source": "FAC-001",
+   "target": "FAC-002",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "Rivals for the Hollow Marches; the Order converts Legion captives, and the Legion has not forgiven it."
+  },
+  {
+   "source": "FAC-001",
+   "target": "FAC-003",
+   "type": "opposes",
+   "label": "At war",
+   "description": "The Order would erase forbidden magic; the Consortium is forbidden magic."
+  },
+  {
+   "source": "FAC-001",
+   "target": "FAC-004",
+   "type": "opposes",
+   "label": "At war",
+   "description": "Light against secrecy: the Inquisition hunts the Pact's agents in every Radiant city."
+  },
+  {
+   "source": "FAC-001",
+   "target": "FAC-005",
+   "type": "opposes",
+   "label": "At war",
+   "description": "The Order hunts Wildborn; the Thornward Grove shelters those who flee it."
+  },
+  {
+   "source": "FAC-001",
+   "target": "CLT-001",
+   "type": "opposes",
+   "label": "At war",
+   "description": "The Ashen Covenant would burn the world the Order wants to keep pure."
+  },
+  {
+   "source": "FAC-001",
+   "target": "CLT-002",
+   "type": "opposes",
+   "label": "At war",
+   "description": "An endless eclipse against a sun that never sets."
+  },
+  {
+   "source": "FAC-001",
+   "target": "CLT-003",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-001",
+   "target": "CLT-004",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-001",
+   "target": "CLT-005",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-001",
+   "target": "CLT-006",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-001",
+   "target": "CLT-007",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-001",
+   "target": "CLT-008",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-001",
+   "target": "FAM-001",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "Two of the Vales serve the Order: Altharion and Elyra."
+  },
+  {
+   "source": "FAC-002",
+   "target": "FAC-003",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "The Legion fights mages in the Warbound Coliseum, and respects them only when they win."
+  },
+  {
+   "source": "FAC-002",
+   "target": "FAC-004",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Legion despises the Pact's methods, and still buys its secrets."
+  },
+  {
+   "source": "FAC-002",
+   "target": "FAC-005",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "An old feud between warlords and clan chiefs, which a marriage may yet end."
+  },
+  {
+   "source": "FAC-002",
+   "target": "CLT-001",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-002",
+   "target": "CLT-002",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-002",
+   "target": "CLT-003",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-002",
+   "target": "CLT-004",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "The Bloodbound Company recruits in the Legion's arenas."
+  },
+  {
+   "source": "FAC-002",
+   "target": "CLT-005",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-002",
+   "target": "CLT-006",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-002",
+   "target": "CLT-007",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-002",
+   "target": "CLT-008",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-003",
+   "target": "FAC-004",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "The Woven Sanctum trades spells for secrets; neither side admits it."
+  },
+  {
+   "source": "FAC-003",
+   "target": "FAC-005",
+   "type": "opposes",
+   "label": "At war",
+   "description": "Limitless magic against a world with weaker magic: no common ground."
+  },
+  {
+   "source": "FAC-003",
+   "target": "CLT-001",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "Duskbane will not join the Covenant, but the Consortium studies its fire."
+  },
+  {
+   "source": "FAC-003",
+   "target": "CLT-002",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-003",
+   "target": "CLT-003",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-003",
+   "target": "CLT-004",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-003",
+   "target": "CLT-005",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-003",
+   "target": "CLT-006",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-003",
+   "target": "CLT-007",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-003",
+   "target": "CLT-008",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-003",
+   "target": "FAM-001",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "Orin Vale is a Consortium scholar."
+  },
+  {
+   "source": "FAC-004",
+   "target": "FAC-005",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Pact's Hollow Grove takes in Wildborn deserters and gives them new names."
+  },
+  {
+   "source": "FAC-004",
+   "target": "CLT-001",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-004",
+   "target": "CLT-002",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-004",
+   "target": "CLT-003",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Drowned Saints preach on the Veil's docks, and the Pact lets them."
+  },
+  {
+   "source": "FAC-004",
+   "target": "CLT-004",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "Company killers work for the Pact when it pays."
+  },
+  {
+   "source": "FAC-004",
+   "target": "CLT-005",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-004",
+   "target": "CLT-006",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-004",
+   "target": "CLT-007",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-004",
+   "target": "CLT-008",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-004",
+   "target": "FAM-001",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "Tobias Vale is the Pact's spymaster."
+  },
+  {
+   "source": "FAC-005",
+   "target": "CLT-001",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-005",
+   "target": "CLT-002",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-005",
+   "target": "CLT-003",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-005",
+   "target": "CLT-004",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-005",
+   "target": "CLT-005",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-005",
+   "target": "CLT-006",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-005",
+   "target": "CLT-007",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-005",
+   "target": "CLT-008",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-001",
+   "target": "CLT-002",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "Fire against darkness: both want the world to end, in opposite ways."
+  },
+  {
+   "source": "CLT-001",
+   "target": "CLT-003",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "Fire and the drowned sea."
+  },
+  {
+   "source": "CLT-001",
+   "target": "CLT-004",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-001",
+   "target": "CLT-005",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-001",
+   "target": "CLT-006",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-001",
+   "target": "CLT-007",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-001",
+   "target": "CLT-008",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-002",
+   "target": "CLT-003",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-002",
+   "target": "CLT-004",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-002",
+   "target": "CLT-005",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-002",
+   "target": "CLT-006",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-002",
+   "target": "CLT-007",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-002",
+   "target": "CLT-008",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-002",
+   "target": "FAC-007",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "The Black Sun waits for something older than the gods; the Hidden Ones would keep it hidden."
+  },
+  {
+   "source": "CLT-003",
+   "target": "CLT-004",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-003",
+   "target": "CLT-005",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-003",
+   "target": "CLT-006",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-003",
+   "target": "CLT-007",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-003",
+   "target": "CLT-008",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-004",
+   "target": "CLT-005",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-004",
+   "target": "CLT-006",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-004",
+   "target": "CLT-007",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-004",
+   "target": "CLT-008",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-005",
+   "target": "CLT-006",
+   "type": "allied_with",
+   "label": "Allied",
+   "description": "Both seek the truth behind the erasures, and share what they find."
+  },
+  {
+   "source": "CLT-005",
+   "target": "CLT-007",
+   "type": "opposes",
+   "label": "At war",
+   "description": "The Nameless want to know who erases people; the Hollow Tribunal makes people vanish."
+  },
+  {
+   "source": "CLT-005",
+   "target": "CLT-008",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "The Circle remembers what the Nameless have lost."
+  },
+  {
+   "source": "CLT-005",
+   "target": "FAC-007",
+   "type": "opposes",
+   "label": "At war",
+   "description": "The Hidden Ones erased the Nameless."
+  },
+  {
+   "source": "CLT-006",
+   "target": "CLT-007",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-006",
+   "target": "CLT-008",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "The Silent Accord and the Whispering Circle compare what they remember."
+  },
+  {
+   "source": "CLT-006",
+   "target": "FAC-007",
+   "type": "opposes",
+   "label": "At war",
+   "description": "The Silent Accord believes the Aetherfall was a prison, and hunts its jailers."
+  },
+  {
+   "source": "CLT-007",
+   "target": "CLT-008",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "CLT-007",
+   "target": "FAC-007",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Tribunal claims to serve the hidden laws of reality. Whose laws, it does not say."
+  },
+  {
+   "source": "CLT-008",
+   "target": "FAC-007",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "The Circle remembers what the Hidden Ones made the world forget."
+  },
+  {
+   "source": "FAC-301",
+   "target": "FAC-302",
+   "type": "opposes",
+   "label": "At war",
+   "description": "The Eastern Tendril burns the Kaelith work that Kaelholm's expeditions come to catalogue."
+  },
+  {
+   "source": "FAC-301",
+   "target": "FAC-303",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Continuity watches Kaelholm from inside its archives. Kaelholm does not know."
+  },
+  {
+   "source": "FAC-301",
+   "target": "FAC-304",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "Kaelholm would turn the change back; the Collective would finish it."
+  },
+  {
+   "source": "FAC-301",
+   "target": "FAC-305",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "Both want the old works: Kaelholm to catalogue them, the Ascendancy to use them."
+  },
+  {
+   "source": "FAC-301",
+   "target": "FAC-306",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "Kaelholm wants the vaults opened; the Boundary Keepers want the lid held."
+  },
+  {
+   "source": "FAC-301",
+   "target": "FAC-307",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "Kaelholm studies the Bloom-Speakers' marks with too much interest."
+  },
+  {
+   "source": "FAC-301",
+   "target": "FAC-308",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "Kaelholm buys the Wrights' salvage."
+  },
+  {
+   "source": "FAC-302",
+   "target": "FAC-303",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Continuity fears the Spore Circle's deepest Tendril."
+  },
+  {
+   "source": "FAC-302",
+   "target": "FAC-304",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Circle tends the Bloom; the Collective would finish the change through it."
+  },
+  {
+   "source": "FAC-302",
+   "target": "FAC-305",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "The Tendrils burn the Ascendancy's salvage and its grafts."
+  },
+  {
+   "source": "FAC-302",
+   "target": "FAC-306",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "Both keep something; neither trusts the other's reasons."
+  },
+  {
+   "source": "FAC-302",
+   "target": "FAC-307",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "Both commune with the Bloom; the Speakers learned from the Circle."
+  },
+  {
+   "source": "FAC-302",
+   "target": "FAC-308",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "The Eastern Tendril burns the Kaelith work the Wrights salvage."
+  },
+  {
+   "source": "FAC-303",
+   "target": "FAC-304",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Continuity fears what the Collective would wake."
+  },
+  {
+   "source": "FAC-303",
+   "target": "FAC-305",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "The Continuity fears the Ascendancy most of all."
+  },
+  {
+   "source": "FAC-303",
+   "target": "FAC-306",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Continuity watches Ashvale's stones and the Keepers who sing at them."
+  },
+  {
+   "source": "FAC-303",
+   "target": "FAC-307",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "Watched, and unaware of it."
+  },
+  {
+   "source": "FAC-303",
+   "target": "FAC-308",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "Watched, and unaware of it."
+  },
+  {
+   "source": "FAC-304",
+   "target": "FAC-305",
+   "type": "opposes",
+   "label": "At war",
+   "description": "Two readings of one Kaelith text, and already hatred: consent against a ladder."
+  },
+  {
+   "source": "FAC-304",
+   "target": "FAC-306",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Collective would finish what the Keepers keep asleep."
+  },
+  {
+   "source": "FAC-304",
+   "target": "FAC-307",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "Both believe the change can be chosen safely."
+  },
+  {
+   "source": "FAC-304",
+   "target": "FAC-308",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Collective covets the Wrights' walkers."
+  },
+  {
+   "source": "FAC-305",
+   "target": "FAC-306",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "The Ascendancy recruits Ashvale's young; the Keepers want them home."
+  },
+  {
+   "source": "FAC-305",
+   "target": "FAC-307",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Ascendancy would raise a few through the change; the Speakers teach it to all."
+  },
+  {
+   "source": "FAC-305",
+   "target": "FAC-308",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Ascendancy wants the Wrights' skills, not their consent."
+  },
+  {
+   "source": "FAC-306",
+   "target": "FAC-307",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "They agree on the rite and little else: the Keepers guard old restrictions the Speakers would teach past."
+  },
+  {
+   "source": "FAC-306",
+   "target": "FAC-308",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Keepers fear the Wrights will wake old work in the waygate."
+  },
+  {
+   "source": "FAC-307",
+   "target": "FAC-308",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "Speakers and Wrights both build Ashvale's future, in different ways."
+  },
+  {
+   "source": "FAC-501",
+   "target": "FAC-502",
+   "type": "allied_with",
+   "label": "Allied",
+   "description": "Breakers and Architects both want a world that cannot be rewritten."
+  },
+  {
+   "source": "FAC-501",
+   "target": "FAC-503",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "The Veilborn remember what the Breakers escaped."
+  },
+  {
+   "source": "FAC-501",
+   "target": "FAC-504",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-501",
+   "target": "FAC-505",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "Both want out; they disagree on where to."
+  },
+  {
+   "source": "FAC-501",
+   "target": "FAC-007",
+   "type": "opposes",
+   "label": "At war",
+   "description": "The Cycle Breakers escaped the Cycle the Hidden Ones ran."
+  },
+  {
+   "source": "FAC-502",
+   "target": "FAC-503",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-502",
+   "target": "FAC-504",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-502",
+   "target": "FAC-505",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Architects build inside the realm; the Echoborn want to leave it."
+  },
+  {
+   "source": "FAC-502",
+   "target": "FAC-007",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "The Architects build a world that can never be erased."
+  },
+  {
+   "source": "FAC-503",
+   "target": "FAC-504",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-503",
+   "target": "FAC-505",
+   "type": "allied_with",
+   "label": "Friendly",
+   "description": "The Veilborn's memories feed the Echoborn's questions."
+  },
+  {
+   "source": "FAC-503",
+   "target": "FAC-007",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "The Veilborn remember too much of what the Hidden Ones erased."
+  },
+  {
+   "source": "FAC-504",
+   "target": "FAC-505",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "No open quarrel, and no trust."
+  },
+  {
+   "source": "FAC-504",
+   "target": "FAC-007",
+   "type": "related_to",
+   "label": "Uneasy",
+   "description": "The Titans hold that strength, not hidden hands, must decide fate."
+  },
+  {
+   "source": "FAC-505",
+   "target": "FAC-007",
+   "type": "opposes",
+   "label": "Rival",
+   "description": "The Echoborn believe the realm is one more layer of the Hidden Ones' control."
+  },
+  {
    "source": "NPC-303",
    "target": "SET-301",
    "type": "created",
