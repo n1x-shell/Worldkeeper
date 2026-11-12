@@ -3,6 +3,7 @@
  *
  *  - assets/lore/*.md        new records, in the archive's record format (drafts/ folders are skipped)
  *  - assets/lore/links.json  links between records (homes, origins, groups) that the archive text does not give
+ *  - timeline.json files under assets/lore: rows for the World Timeline (eras the GM has set by hand are kept)
  *
  * Applying them never changes or removes archive records. Links are stored as curated links, so the GM can edit or
  * delete them in the app like any other.
@@ -16,6 +17,7 @@ import { createRelationship } from './repo/relationships.js';
 import { RELATIONSHIP_TYPES, type RelationshipType } from '../../shared/domain.js';
 import { readPlayerText, syncRumours } from './repo/rumours.js';
 import { syncMysteries } from './repo/mysteries.js';
+import { deriveTimelineEras } from './repo/eras.js';
 
 /** The additions' lore folder: bundled with the desktop app (WORLDKEEPER_ADDITIONS_DIR), or assets/lore in the repo. */
 export const DEFAULT_ADDITIONS_DIR = process.env.WORLDKEEPER_ADDITIONS_DIR
@@ -72,6 +74,45 @@ export function applyLinks(db: DB, dir = DEFAULT_ADDITIONS_DIR): { added: number
   return { added, skipped };
 }
 
+interface TimelineSpec {
+  sort_order: number;
+  time_label: string;
+  event: string;
+  realm_label?: string;
+  access?: string;
+  entity_ids?: string[];
+  era?: string;
+}
+
+/** Replace the additions' World Timeline rows. Rows imported from the archive, and the GM's own rows, are untouched. */
+export function applyTimeline(db: DB, dir = DEFAULT_ADDITIONS_DIR): number {
+  const specs: TimelineSpec[] = [];
+  const walk = (d: string) => {
+    for (const ent of fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }) : []) {
+      if (ent.name.startsWith('.') || ent.name === 'drafts') continue;
+      const full = path.join(d, ent.name);
+      if (ent.isDirectory()) walk(full);
+      else if (ent.name === 'timeline.json') specs.push(...(JSON.parse(fs.readFileSync(full, 'utf8')) as { rows: TimelineSpec[] }).rows);
+    }
+  };
+  walk(dir);
+  const kept = new Map(
+    (db.prepare(`SELECT event, era FROM timeline_rows WHERE origin = 'additions' AND era_origin = 'user'`).all() as { event: string; era: string | null }[]).map((r) => [r.event, r.era]),
+  );
+  const ins = db.prepare(
+    `INSERT INTO timeline_rows (sort_order, time_label, event, realm_label, source, access, entity_ids, origin, era, era_origin) VALUES (?, ?, ?, ?, '', ?, ?, 'additions', ?, ?)`,
+  );
+  db.transaction(() => {
+    db.prepare(`DELETE FROM timeline_rows WHERE origin = 'additions'`).run();
+    for (const r of specs) {
+      const userEra = kept.get(r.event);
+      ins.run(r.sort_order, r.time_label, r.event, r.realm_label ?? '', r.access ?? 'CANON', JSON.stringify(r.entity_ids ?? []), kept.has(r.event) ? userEra : (r.era ?? null), kept.has(r.event) ? 'user' : null);
+    }
+  })();
+  deriveTimelineEras(db);
+  return specs.length;
+}
+
 /** Bring the additions into an existing library: the new records first, then the links. */
 export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR) {
   const files = loreFiles(dir);
@@ -79,5 +120,6 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR) {
   const links = applyLinks(db, dir);
   const rumours = syncRumours(db, readPlayerText(path.resolve(dir, '../player-text')));
   const mysteries = syncMysteries(db, path.join(dir, 'mysteries.json'));
-  return { records: files.length, imported, links, rumours, mysteries };
+  const timeline = applyTimeline(db, dir);
+  return { records: files.length, imported, links, rumours, mysteries, timeline };
 }

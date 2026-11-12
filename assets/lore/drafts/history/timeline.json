@@ -1,0 +1,137 @@
+{
+ "note": "Rows for the World Timeline, between the end of the Cycle and the present.",
+ "rows": [
+  {
+   "sort_order": 15.01,
+   "time_label": "Year 1 Unbound (270 AB)",
+   "event": "The First Morning [HIS-010]",
+   "realm_label": "World",
+   "access": "CANON",
+   "entity_ids": [
+    "HIS-010"
+   ],
+   "era": "unbound"
+  },
+  {
+   "sort_order": 15.02,
+   "time_label": "Year 2 Unbound (271 AB)",
+   "event": "The Lantern Truce [HIS-011]",
+   "realm_label": "Aetheris",
+   "access": "CANON",
+   "entity_ids": [
+    "HIS-011"
+   ],
+   "era": "unbound"
+  },
+  {
+   "sort_order": 15.03,
+   "time_label": "Years 3 to 8 Unbound (272 to 277 AB)",
+   "event": "The Border Years [HIS-012]",
+   "realm_label": "Aetheris",
+   "access": "CANON",
+   "entity_ids": [
+    "HIS-012"
+   ],
+   "era": "unbound"
+  },
+  {
+   "sort_order": 15.04,
+   "time_label": "Year 9 Unbound (278 AB)",
+   "event": "The Purging of the Halls [HIS-013]",
+   "realm_label": "Aetheris",
+   "access": "CANON",
+   "entity_ids": [
+    "HIS-013"
+   ],
+   "era": "unbound"
+  },
+  {
+   "sort_order": 15.05,
+   "time_label": "Years 10 to 14 Unbound (279 to 283 AB)",
+   "event": "The Enclave Compacts [HIS-014]",
+   "realm_label": "Aetheris",
+   "access": "CANON",
+   "entity_ids": [
+    "HIS-014"
+   ],
+   "era": "unbound"
+  },
+  {
+   "sort_order": 15.06,
+   "time_label": "Year 11 Unbound (280 AB)",
+   "event": "The Lanternless Crossing [HIS-015]",
+   "realm_label": "World",
+   "access": "CANON",
+   "entity_ids": [
+    "HIS-015"
+   ],
+   "era": "unbound"
+  },
+  {
+   "sort_order": 15.07,
+   "time_label": "Year 15 Unbound (284 AB)",
+   "event": "The First Riftwalker [HIS-016]",
+   "realm_label": "Kaelmar",
+   "access": "CANON",
+   "entity_ids": [
+    "HIS-016"
+   ],
+   "era": "unbound"
+  },
+  {
+   "sort_order": 15.08,
+   "time_label": "Year 18 Unbound (287 AB)",
+   "event": "The Breaking of the Text [HIS-017]",
+   "realm_label": "Kaelmar",
+   "access": "CANON",
+   "entity_ids": [
+    "HIS-017"
+   ],
+   "era": "unbound"
+  },
+  {
+   "sort_order": 15.09,
+   "time_label": "Year 22 Unbound (291 AB)",
+   "event": "The Night the Stones Listened [HIS-018]",
+   "realm_label": "Kaelmar",
+   "access": "CANON",
+   "entity_ids": [
+    "HIS-018"
+   ],
+   "era": "unbound"
+  },
+  {
+   "sort_order": 15.1,
+   "time_label": "Year 25 Unbound (294 AB)",
+   "event": "The Burned Expedition [HIS-019]",
+   "realm_label": "Kaelmar",
+   "access": "CANON",
+   "entity_ids": [
+    "HIS-019"
+   ],
+   "era": "unbound"
+  },
+  {
+   "sort_order": 15.11,
+   "time_label": "Year 27 Unbound (296 AB)",
+   "event": "The First Glass [HIS-020]",
+   "realm_label": "Kaelmar",
+   "access": "CANON",
+   "entity_ids": [
+    "HIS-020"
+   ],
+   "era": "unbound"
+  },
+  {
+   "sort_order": 15.12,
+   "time_label": "Year 30 Unbound (299 AB)",
+   "event": "The Word from the Fields [HIS-021]",
+   "realm_label": "Aetheris",
+   "access": "CANON",
+   "entity_ids": [
+    "HIS-021"
+   ],
+   "era": "unbound"
+  }
+ ]
+}

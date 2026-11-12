@@ -28,7 +28,7 @@ import { getEntity, updateEntity } from '../server/src/repo/entities.js';
 import { splitSections } from '../server/src/import/parseMarkdown.js';
 import { isSecretHeading } from '../server/src/player/projection.js';
 import { buildPlayerSite } from '../server/src/publish/site.js';
-import { maps, markers } from '../server/src/repo/maps.js';
+import { maps, markers, shapes } from '../server/src/repo/maps.js';
 import { imageSize } from '../server/src/routes/atlas.js';
 import { ENTITY_TYPE_LABELS, type EntityType } from '../shared/domain.js';
 import { applyLinks, loreFiles } from '../server/src/additions.js';
@@ -101,14 +101,23 @@ if (fs.existsSync(pinsFile)) {
   if (!size) throw new Error(`Could not read the size of ${spec.image}`);
   const file = `map-world-${img.length.toString(16)}${path.extname(spec.image)}`;
   fs.writeFileSync(path.join(ctx.paths.uploadsDir, file), img);
-  const map = maps.create(ctx.db, { name: spec.name, kind: 'image', image_file: file, width: size.width, height: size.height, player_visible: true, layers: ['Locations'] }) as { id: number };
+  const map = maps.create(ctx.db, { name: spec.name, kind: 'image', image_file: file, width: size.width, height: size.height, player_visible: true, layers: ['Locations', 'Routes'] }) as { id: number };
   let placed = 0;
   for (const p of spec.pins) {
     if (!getEntity(ctx.db, p.id).revealed) continue;
     markers.create(ctx.db, { map_id: map.id, entity_id: p.id, label: p.label, x: p.x, y: size.height - p.y, category: p.category, layer: 'Locations', hidden: false });
     placed++;
   }
-  console.log(`world map: ${size.width}x${size.height}, ${placed} pins`);
+  const routesFile = path.join(mapDir, 'world-map.routes.json');
+  let routeCount = 0;
+  if (fs.existsSync(routesFile)) {
+    const r = JSON.parse(fs.readFileSync(routesFile, 'utf8')) as { routes: { label: string; color: string; points: [number, number][] }[] };
+    for (const route of r.routes) {
+      shapes.create(ctx.db, { map_id: map.id, kind: 'route', label: route.label, color: route.color, points: route.points.map(([x, y]) => [x, size.height - y]), layer: 'Routes', hidden: false });
+      routeCount++;
+    }
+  }
+  console.log(`world map: ${size.width}x${size.height}, ${placed} pins, ${routeCount} routes`);
 }
 
 const { files: site, summary } = buildPlayerSite(ctx.db, ctx.paths);

@@ -102,3 +102,19 @@ describe('names in prose', () => {
     expect(refs).not.toContainEqual({ source_id: 'NPC-002', target_id: 'SET-001' });
   });
 });
+
+describe('timeline additions', () => {
+  it('adds the additions’ timeline rows, replaces them on a second run, and keeps an era the GM set', () => {
+    const ctx = tempContext();
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wk-timeline-'));
+    const rows = [{ sort_order: 15.01, time_label: 'Year 1 Unbound', event: 'The First Morning', entity_ids: [] }];
+    fs.writeFileSync(path.join(dir, 'timeline.json'), JSON.stringify({ rows }));
+    fs.mkdirSync(path.join(dir, 'drafts'));
+    fs.writeFileSync(path.join(dir, 'drafts', 'timeline.json'), JSON.stringify({ rows: [{ sort_order: 1, time_label: 'x', event: 'Draft row' }] }));
+    expect(applyAdditions(ctx.db, dir).timeline).toBe(1);
+    ctx.db.prepare(`UPDATE timeline_rows SET era = 'the-cycle', era_origin = 'user'`).run();
+    applyAdditions(ctx.db, dir);
+    const all = ctx.db.prepare(`SELECT event, era, era_origin FROM timeline_rows`).all();
+    expect(all).toEqual([{ event: 'The First Morning', era: 'the-cycle', era_origin: 'user' }]);
+  });
+});

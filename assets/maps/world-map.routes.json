@@ -1,0 +1,405 @@
+{
+ "note": "Travel routes on the world map, pixels from the top-left. Players see them. Times are what travellers say, not distances measured from the map.",
+ "routes": [
+  {
+   "label": "Hollow Refuge to the Crossroads of Fate: half a day, watched, usually safe",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1210,
+     495
+    ],
+    [
+     1192,
+     447
+    ]
+   ]
+  },
+  {
+   "label": "Hollow Refuge to the Bloodmarked Fields: half a day, risky",
+   "color": "#d08a3c",
+   "points": [
+    [
+     1210,
+     495
+    ],
+    [
+     1320,
+     515
+    ]
+   ]
+  },
+  {
+   "label": "Hollow Refuge to Blackveil Fortress: a day, risky",
+   "color": "#d08a3c",
+   "points": [
+    [
+     1210,
+     495
+    ],
+    [
+     1245,
+     322
+    ]
+   ]
+  },
+  {
+   "label": "the Crossroads of Fate to the Scar: half a day, dangerous",
+   "color": "#c0563a",
+   "points": [
+    [
+     1192,
+     447
+    ],
+    [
+     1270,
+     395
+    ]
+   ]
+  },
+  {
+   "label": "the Crossroads of Fate to the Sunken Archive: a day, risky",
+   "color": "#d08a3c",
+   "points": [
+    [
+     1192,
+     447
+    ],
+    [
+     1100,
+     560
+    ]
+   ]
+  },
+  {
+   "label": "the Bloodmarked Fields to the Scar: half a day, dangerous",
+   "color": "#c0563a",
+   "points": [
+    [
+     1320,
+     515
+    ],
+    [
+     1270,
+     395
+    ]
+   ]
+  },
+  {
+   "label": "the Bloodmarked Fields to Wither's Hollow: a day, dangerous",
+   "color": "#c0563a",
+   "points": [
+    [
+     1320,
+     515
+    ],
+    [
+     1045,
+     482
+    ]
+   ]
+  },
+  {
+   "label": "Blackveil Fortress to the Rift: a day, openly hostile",
+   "color": "#9b2d2d",
+   "points": [
+    [
+     1245,
+     322
+    ],
+    [
+     1005,
+     430
+    ]
+   ]
+  },
+  {
+   "label": "the Sunken Archive to the Rift: half a day, openly hostile",
+   "color": "#9b2d2d",
+   "points": [
+    [
+     1100,
+     560
+    ],
+    [
+     1005,
+     430
+    ]
+   ]
+  },
+  {
+   "label": "Wither's Hollow to the Rift: half a day, openly hostile",
+   "color": "#9b2d2d",
+   "points": [
+    [
+     1045,
+     482
+    ],
+    [
+     1005,
+     430
+    ]
+   ]
+  },
+  {
+   "label": "Hollow Refuge to Empyrean Spire: about two weeks, a week to the border and a week through the Radiant Expanse",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1210,
+     495
+    ],
+    [
+     1250,
+     330
+    ],
+    [
+     1290,
+     135
+    ]
+   ]
+  },
+  {
+   "label": "Hollow Refuge to Varkhaal: about two weeks, a week to the border and a week through the iron mountains",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1210,
+     495
+    ],
+    [
+     1340,
+     470
+    ],
+    [
+     1460,
+     465
+    ]
+   ]
+  },
+  {
+   "label": "Hollow Refuge to Zepharyos: about two weeks, a week to the border and a week through storm country",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1210,
+     495
+    ],
+    [
+     1110,
+     330
+    ],
+    [
+     1020,
+     175
+    ]
+   ]
+  },
+  {
+   "label": "Hollow Refuge to Noctis: about two weeks, a week to the border and a week through the dusk",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1210,
+     495
+    ],
+    [
+     1060,
+     500
+    ],
+    [
+     925,
+     515
+    ]
+   ]
+  },
+  {
+   "label": "Hollow Refuge to the Rootspire: about two weeks, a week to the border and a week through roadless forest",
+   "color": "#c9a24a",
+   "points": [
+    [
+     1210,
+     495
+    ],
+    [
+     1240,
+     600
+    ],
+    [
+     1275,
+     700
+    ]
+   ]
+  },
+  {
+   "label": "The crossing of the Black Tides, Noctis to Kaelholm: about two weeks by ship, in the dark",
+   "color": "#7aa0c4",
+   "points": [
+    [
+     925,
+     515
+    ],
+    [
+     820,
+     545
+    ],
+    [
+     700,
+     570
+    ],
+    [
+     600,
+     590
+    ]
+   ]
+  },
+  {
+   "label": "Kaelholm to Ashvale: about 1,500 km, right across the continent",
+   "color": "#c9a24a",
+   "points": [
+    [
+     572,
+     588
+    ],
+    [
+     450,
+     470
+    ],
+    [
+     300,
+     360
+    ],
+    [
+     185,
+     280
+    ]
+   ]
+  },
+  {
+   "label": "Coldwater to Ashvale: about a day on foot",
+   "color": "#a8b07a",
+   "points": [
+    [
+     75,
+     470
+    ],
+    [
+     185,
+     280
+    ]
+   ]
+  },
+  {
+   "label": "Haskett's Mill to Ashvale: half a day by cart, along the river road",
+   "color": "#a8b07a",
+   "points": [
+    [
+     152,
+     630
+    ],
+    [
+     185,
+     280
+    ]
+   ]
+  },
+  {
+   "label": "Greyfold to Ashvale: a day's walk",
+   "color": "#a8b07a",
+   "points": [
+    [
+     90,
+     535
+    ],
+    [
+     185,
+     280
+    ]
+   ]
+  },
+  {
+   "label": "Low Fenn to Ashvale: a day and a half: a day by barge, then half a day by road",
+   "color": "#a8b07a",
+   "points": [
+    [
+     330,
+     712
+    ],
+    [
+     185,
+     280
+    ]
+   ]
+  },
+  {
+   "label": "Oakhallow to Ashvale: a day's walk, through the woods",
+   "color": "#a8b07a",
+   "points": [
+    [
+     120,
+     512
+    ],
+    [
+     185,
+     280
+    ]
+   ]
+  },
+  {
+   "label": "Sallow Cross to Ashvale: half a day, on the best road in the hills",
+   "color": "#a8b07a",
+   "points": [
+    [
+     238,
+     646
+    ],
+    [
+     185,
+     280
+    ]
+   ]
+  },
+  {
+   "label": "Kettleby to Ashvale: a day's walk",
+   "color": "#a8b07a",
+   "points": [
+    [
+     115,
+     590
+    ],
+    [
+     185,
+     280
+    ]
+   ]
+  },
+  {
+   "label": "Brannock to Ashvale: a day and a half, over the ridges",
+   "color": "#a8b07a",
+   "points": [
+    [
+     160,
+     505
+    ],
+    [
+     185,
+     280
+    ]
+   ]
+  },
+  {
+   "label": "Thornmere to Ashvale: a day's walk",
+   "color": "#a8b07a",
+   "points": [
+    [
+     235,
+     680
+    ],
+    [
+     185,
+     280
+    ]
+   ]
+  }
+ ]
+}
