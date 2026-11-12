@@ -1,6 +1,4 @@
-# Player Adventure Book: The Nine Villages (DRAFT)
-
-Drafted for review. Nothing here is published until this file is moved up into assets/player-text/ and the records in assets/lore/drafts/villages/ move up to assets/lore/.
+# Player Adventure Book: The Nine Villages
 
 ## How to use this
 

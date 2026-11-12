@@ -184,6 +184,69 @@
       "x": 185,
       "y": 280,
       "category": "settlement"
+    },
+    {
+      "id": "SET-320",
+      "label": "Coldwater",
+      "x": 75,
+      "y": 470,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-322",
+      "label": "Greyfold",
+      "x": 90,
+      "y": 535,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-324",
+      "label": "Oakhallow",
+      "x": 120,
+      "y": 512,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-327",
+      "label": "Brannock",
+      "x": 160,
+      "y": 505,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-326",
+      "label": "Kettleby",
+      "x": 115,
+      "y": 590,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-321",
+      "label": "Haskett's Mill",
+      "x": 152,
+      "y": 630,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-325",
+      "label": "Sallow Cross",
+      "x": 238,
+      "y": 646,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-328",
+      "label": "Thornmere",
+      "x": 235,
+      "y": 680,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-323",
+      "label": "Low Fenn",
+      "x": 330,
+      "y": 712,
+      "category": "settlement"
     }
   ]
 }

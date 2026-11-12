@@ -5,12 +5,12 @@ Everything found in the lore audit (November 2026), as one list. Ticked items ar
 ## 1. Do first
 
 - [x] **Link what the archive already says.** Turn text like "Associated groups", "Leaders", "Known figures", "Approved leader", "Known relationships and locations" and family lines into real links (member of, leads, lives in), in the GM library and the handbook.
-- [ ] **Fill out Kaelmar's people.** A leader and a few members for each Kaelmar faction, a headperson for each of the nine villages, and more of Kaelholm, to bring Kaelmar closer to Aetheris.
+- [x] **Fill out Kaelmar's people.** 42 new people: faction leaders and members, nine village headfolk, regional figures. A leader and a few members for each Kaelmar faction, a headperson for each of the nine villages, and more of Kaelholm, to bring Kaelmar closer to Aetheris.
 - [ ] **Give named places their own records**, with pages and map pins where they are drawn:
   - [ ] The Hollow Marches: Ashen Spire, the Scar, Blackveil Fortress, the Sunken Archive, Wither's Hollow, the Cairn of the Forgotten
   - [ ] The dominions: the five chief fortresses, the Bloodfields, the Purged Halls, Fangholt and the other named sites
   - [ ] The 20 rival enclaves
-  - [ ] Kaelmar's nine villages: Coldwater, Haskett's Mill, Greyfold, Low Fenn, Oakhallow, Sallow Cross, Kettleby, Brannock, Thornmere
+  - [x] Kaelmar's nine villages, with pages, headfolk and map pins: Coldwater, Haskett's Mill, Greyfold, Low Fenn, Oakhallow, Sallow Cross, Kettleby, Brannock, Thornmere
 - [ ] **A creature bestiary** for both continents, from what the setting bibles describe.
 - [ ] **Rumours and secrets as proper records**: true, false or partly true, who knows them, and whether the players have heard them.
 
@@ -23,7 +23,7 @@ Everything found in the lore audit (November 2026), as one list. Ticked items ar
 
 ## 3. Links
 
-- [x] NPC to place (home, usual haunt) for every NPC. Left unplaced on purpose: Archon Vaelion (a legend), Justicar Quell (nobody knows), the founder (long dead). Odran Reeve gets Low Fenn when the villages have records.
+- [x] NPC to place (home, usual haunt) for every NPC. Left unplaced on purpose: Archon Vaelion (a legend), Justicar Quell (nobody knows), the founder (long dead). Odran Reeve now lives in Low Fenn.
 - [x] NPC to faction or cult for every NPC
 - [x] Cult figures linked back from each cult, and each cult given a base (the Hollow Tribunal's stays unknown)
 - [ ] The 357 places where one record names another without linking
