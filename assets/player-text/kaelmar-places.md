@@ -16,7 +16,7 @@ Thirteen stones lean together in the middle of @[Ashvale], older than Kaelith's 
 - Once, in 291 AB, the stones listened. Everyone there felt it.
 - The keeping song has more verses than anyone sings.
 
-## The Memory-House
+## The Memory-House (Landmark)
 
 *A sphere hanging in a root-lit canyon in the south-east, which trades knowledge for memories.*
 

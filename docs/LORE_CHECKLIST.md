@@ -44,9 +44,9 @@ Everything found in the lore audit (November 2026), as one list. Ticked items ar
 
 ## 5. Evening out the handbook
 
-- [ ] Player pages for Aetheris's five great factions and eight cults (their secrets stay GM-only)
-- [ ] Player pages for the Shards and for Aetheris's magic: what everyone knows, not the truth
-- [ ] Aetheris towns and villages, given the same treatment as Ashvale's villages
-- [ ] Kaelmar artifacts and items; Kaelmar's hidden places that are safe to show
-- [ ] A Kaelmar line for every calling, and a player page for building a character
-- [ ] The Ethereal Realm made playable: a place players can start, with its secrets kept GM-only
+- [x] Player pages for Aetheris's five great factions and eight cults (their secrets stay GM-only)
+- [x] Player pages for the Shards and for Aetheris's magic: what everyone knows, not the truth
+- [x] Aetheris towns and villages, given the same treatment as Ashvale's villages
+- [x] Kaelmar artifacts and items; Kaelmar's hidden places that are safe to show
+- [x] A Kaelmar line for every calling, and a player page for building a character
+- [x] The Ethereal Realm made playable: a place players can start, with its secrets kept GM-only

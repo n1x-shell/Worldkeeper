@@ -86,86 +86,6 @@ Bloomborn grow no husk against the Bloom, since they are already part of it. The
 
 **At the table.** Use the firbolg rules, or a custom lineage.
 
-## Warrior
-
-*The Iron Vanguard: heavy armour, blocks, parries and brute force.*
-
-Warriors are the Iron Vanguard. They fight in heavy armour and win with blocks, parries and brute force. Every army, mercenary company and caravan guard in the world is built around them.
-
-**At the table.** A fighter, usually a Champion or a Battle Master.
-
-## Rogue
-
-*The Silent Blade: stealth, twin weapons, poison and the perfect strike.*
-
-The Silent Blades work by stealth, with twin weapons, poison and a single perfect strike. The Shadow Pact has the most famous of them, but every faction employs a few.
-
-**At the table.** A rogue, usually an Assassin or a Thief.
-
-## Mage
-
-*The Arcane Scholar: elemental destruction at range, and fragile up close.*
-
-Mages are the Arcane Scholars. They destroy with the elements, at range, and are fragile when anything reaches them. The Arcane Consortium trains more of them than anyone.
-
-**At the table.** A wizard (often an Evoker) or a sorcerer.
-
-## Ranger
-
-*The Hunter of Beasts: bows, traps, tracking and animal companions.*
-
-Rangers are the Hunters of Beasts. They work with bows and traps, track anything that leaves a trail, and often travel with an animal companion. The Wildborn hold them in high honour.
-
-**At the table.** A ranger, usually a Beast Master or a Hunter.
-
-## Paladin
-
-*The Divine Champion: a holy warrior who protects and heals.*
-
-Paladins are the Divine Champions: holy warriors sworn to protect and to heal. The Celestial Order's knights are the most famous, but not every paladin serves the Order, and some it has cast out.
-
-**At the table.** A paladin, usually of the Oath of Devotion or of Vengeance.
-
-## Necromancer
-
-*The Harbinger of Death: undead servants, stolen life and curses.*
-
-Necromancers are the Harbingers of Death. They command undead servants, drain life and lay curses. Most people fear them. Some factions find them very useful.
-
-**At the table.** A wizard who favours necromancy spells.
-
-## Spellblade
-
-*The Arcane Swordsman: blade and spell together.*
-
-Spellblades are the Arcane Swordsmen. They enchant their weapons and fight with blade and spell together. The arenas of Varkhaal love them.
-
-**At the table.** A fighter who is an Eldritch Knight.
-
-## Monk
-
-*The Way of the Fist: unarmed speed, breath and inner power.*
-
-Monks follow the Way of the Fist: unarmed speed, breath control and inner energy. Monasteries of every faith and none train them.
-
-**At the table.** A monk, usually a Warrior of the Open Hand.
-
-## Shaman
-
-*The Spiritwalker: ancestral guardians, elemental forces and visions.*
-
-Shamans are the Spiritwalkers. They call on ancestral guardians and elemental forces, and they see visions. The Wildborn and the Taur'n honour them above most.
-
-**At the table.** A druid, usually of the Circle of the Land or of the Moon.
-
-## Mystic
-
-*The Fatebinder: divination, bending chance and magic of the mind.*
-
-Mystics are the Fatebinders. They read what is coming, bend chance, and work magic on the mind. People seek them out, and are careful what they ask.
-
-**At the table.** A wizard (Diviner), a sorcerer (Clockwork Sorcery) or a bard (College of Lore).
-
 ## Kaelholm (Faction)
 
 *Kaelmar's strongest power: grey-robed archivists who want the change turned back.*
@@ -261,20 +181,6 @@ The Bloom is not a single mind that speaks. It is a weather of minds in the myce
 **What the spore-bound can do.** Listen through roots. Read memories in old mycelia. Grow living houses. Heal with membranes that remember the body's intended form, though the membranes cannot take iron. Adaptive spores let a traveller pass through hostile Bloom for a while.
 
 **What it learned.** The Bloom drank Kaelith's constructs and learned from them. Circuit-roots and Arbors followed.
-
-## Glyph-Work and the First Grammar
-
-*Kaelith's magic of call and answer: intention, resonance, pattern, world.*
-
-Kaelith's glyph-work follows the First Grammar: intention wakes resonance, resonance makes a pattern, and the pattern becomes the world. It is the same grammar the Bloom speaks, in another voice.
-
-Kaelith doors listen. Outer gates may demand a sequence of notes, a tuning fork, a key or marked blood.
-
-**Glyph-scars.** Glyphs can be carved into living flesh, and some grow on their own. Carving them is forbidden in Kaelholm, and a rite in the Collective's Warband.
-
-**Kaelith materials.** Everstone does not rot. Hatch-metal drives roots away.
-
-**At the table.** Glyph-work uses ordinary arcane spells.
 
 ## The Myths of Aetheris
 

@@ -179,3 +179,22 @@ Four NPCs are not people and have no build: the Hidden Ones Vyrithar and Vyrathu
 | The Salvager Nubb | Kaelmar | Hobgoblin (MotM) | Rogue (Thief) | Criminal | he/him | The Eastern Deepwood |  |
 | Watcher Senna Glass | The Continuity | Sea Elf (MotM) | Sorcerer (Aberrant Sorcery) | Sage | she/her | The southern lakes |  |
 | Old Ash | The Central Bloom Country | Water Genasi (MotM) | Warlock (Archfey Patron) | Hermit | he/him | Nobody knows |  |
+
+## People of Aetheris's villages and towns, and of the Nameless Asylum (14)
+
+| Name | Group | Species | Class | Background | Pronouns | From | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Well-Warden Ysolde Varn | Archwell | Sea Elf (MotM) | Sorcerer (Wild Magic) | Hermit | she/her | Archwell |  |
+| Chandler Ossery Thane | Tallowmarch | Half-orc (PHB 2014) | Monk (Warrior of Mercy) | Artisan | he/him | Tallowmarch |  |
+| Lamplighter Ezri | Lastlight | Fairy (MotM) | Warlock (Archfey Patron) | Guide | they/them | Lastlight |  |
+| Reeve Bram Hollis | Stakewall | Minotaur (MotM) | Barbarian (Path of the Wild Heart) | Farmer | he/him | Stakewall |  |
+| Magistrate Seline Ashby | Dawnmere | Yuan-ti (MotM) | Sorcerer (Clockwork Sorcery) | Noble | she/her | Dawnmere |  |
+| Forgemaster Kiro Vashti | Ironwake | Dragonborn (PHB) | Barbarian (Path of the Berserker) | Artisan | they/them | Ironwake |  |
+| Anchor-Master Wenna Gale | Driftholm | Air Genasi (MotM) | Monk (Warrior of the Elements) | Sailor | she/her | Driftholm |  |
+| Harbourmaster Gulen Saltback | Mothhaven | Tortle (MotM) | Warlock (Great Old One Patron) | Sailor | he/him | Mothhaven |  |
+| Elder Aelis Thornweave | Highbough | Eladrin (MotM) | Barbarian (Path of the World Tree) | Guide | they/them | Highbough |  |
+| Keeper Lantern | The Nameless Asylum | Warforged (Eberron: Rising from the Last War) | Paladin (Oath of Glory) | Guard | they/them | A battlefield that no longer exists |  |
+| Tessk the Wayfinder | The Nameless Asylum | Githyanki (MotM) | Monk (Warrior of Shadow) | Guide | she/her | A war-band that crossed the Rift of Unmaking |  |
+| Brindle Quickfoot | The Nameless Asylum | Harengon (MotM) | Wizard (Abjurer) | Merchant | he/him | The Hollow Marches, once |  |
+| Sister Nobody | The Nameless Asylum | Changeling (MotM) | Cleric (Life Domain) | Acolyte | she/her | Nowhere she can name |  |
+| Inkling | The Nameless Asylum | Kenku (MotM) | Sorcerer (Aberrant Sorcery) | Scribe | he/him | Born in the Verge |  |
