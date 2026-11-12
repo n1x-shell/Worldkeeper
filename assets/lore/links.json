@@ -1856,6 +1856,216 @@
    "label": "Chief fortress"
   },
   {
+   "source": "CRE-001",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-002",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-003",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-004",
+   "target": "FAC-001",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-005",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-006",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-007",
+   "target": "FAC-002",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-008",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-009",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-010",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-011",
+   "target": "FAC-003",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-012",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-013",
+   "target": "LOC-033",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-014",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-015",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-016",
+   "target": "FAC-004",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-017",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-018",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-019",
+   "target": "FAC-005",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-020",
+   "target": "REG-006",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-021",
+   "target": "REG-004",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-022",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-023",
+   "target": "LOC-901",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-024",
+   "target": "LOC-901",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-025",
+   "target": "REG-004",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-026",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-027",
+   "target": "LOC-031",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-028",
+   "target": "LOC-031",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-029",
+   "target": "LOC-031",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-030",
+   "target": "CLT-001",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-031",
+   "target": "CLT-002",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-032",
+   "target": "CLT-003",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-033",
+   "target": "FAC-007",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-034",
+   "target": "FAC-007",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
+   "source": "CRE-035",
+   "target": "FAC-007",
+   "type": "member_of",
+   "label": "Serves"
+  },
+  {
    "source": "NPC-303",
    "target": "SET-301",
    "type": "created",
