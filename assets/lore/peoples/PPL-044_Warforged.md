@@ -11,13 +11,13 @@ Tags: realm/world, cat/people, status/canon, vis/player
 # Warforged
 
 ## Established identity
-Made people of iron and old work, who woke up somewhere they weren't built for.
+Made people of iron and old work: leftovers of erased worlds in Aetheris, and Kaelith's sleeping vessels in Kaelmar.
 
 ## In Aetheris
 Warforged in Aetheris are leftovers of worlds that don't exist any more. When the Cycle broke, a few dozen of them were found standing on battlefields and in ruins, built for wars nobody remembers, and they've had to work out who to be since. Some serve the factions. Most just want to know who made them.
 
 ## In Kaelmar
-In Kaelmar everyone takes the warforged for Kaelith's iron vessels, and Kaelholm would very much like to examine one. They aren't vessels. Nobody can say what they are instead.
+In Kaelmar, a warforged would be one of Kaelith's guardians or vessels, woken. As far as anyone knows, none has woken yet, so a warforged walking in Kaelmar would be the first, and everyone from Kaelholm to the Ascendancy would want to know who woke them.
 
 ## Strengths and flaws
 Tireless and hard to hurt. Uncertain of their own past, and other people's reactions.
