@@ -33,8 +33,18 @@ With an invitation, a party can go deeper sooner. The deep realm's dangers don't
 - The Ossuary: gothic undead courts.
 - The Archive onward: the Far Realm, arriving gradually. Psychic creatures, then star spawn in the Loom, then nothing recognisable at the Black Horizon.
 
-## Why it gets stranger (GM)
-The Ethereal Realm sits between the world and whatever lies past the Black Horizon. While the Cycle ran, the Hidden Ones kept the world hidden, and the deep realm was quiet. Since the Cycle broke, nothing hides it, and the outside has started to seep inward, through the Horizon, into the Loom, and toward the Archive. The star spawn are that seep given shape. They are not the Watchers. The Watchers' nature and aims stay undefined; a Watcher's Fragment [CRE-036] is the closest anything comes.
+## The realm and its powers (GM)
+The Cycle was how the world was controlled: it remade Aetheris through the Loom, and its hiding held both continents, Kaelmar included, out of sight and out of reach. Now that the Cycle is broken, the way out of the world is open, and reaching the Ethereal Realm is possible for anyone who finds a door.
+
+The Ethereal Realm lies outside the world. Whoever holds power there could remake the Cycle, create new worlds, or destroy reality itself. Powers do hold it: cosmic horrors beyond comprehension.
+- **The Watchers**, at the realm's far shore beyond the Black Horizon [COS-904]. Their nature and aims stay undefined.
+- **The Hidden Ones** [FAC-007], in their Citadel, who ran the Cycle and have lost it.
+- **The elder gods**, older than the six living gods and the three dead ones. The myth that "the Elders" broke the Ethereal Crystal [COS-910] may be about them; what sleeps in the Nameless Sepulcher [LOC-509] may be one; the Black Sun's "something older than the gods" may be another. Who they are is left to the GM.
+- **Other entities**, unnamed, which the GM may add.
+
+They have their own conflicts and their own goals, and mostly they overlook the people coming and going, the way a storm overlooks a moth. Mostly. A party that is tested, by drawing attention, taking something, or getting in the way, finds out what it is to be noticed.
+
+The deeper the party goes, the nearer it is to these powers, and the stranger everything becomes. The star spawn and their kin are the attendants, spillage and leavings of the outer powers, drifting inward through the Black Horizon into the Loom, and lately toward the Archive. They are not the Watchers.
 
 ## Driftships
 Salvagers in the Fields sail driftships: hulls patched from wreckage of several worlds, moved by astral currents and by whoever is willing to steer. Use Spelljammer's ship rules if you like them, or treat a driftship as a sailing ship that ignores up and down.

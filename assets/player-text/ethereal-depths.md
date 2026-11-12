@@ -8,7 +8,7 @@ How the Ethereal Realm changes the deeper you go, and the creatures you'll meet 
 
 *The deeper you go, the less the realm remembers being a world.*
 
-The Hollow Verge is the world misremembered: quiet, grey, familiar and wrong. Every region past it is further from anything people were made for. By the Black Horizon, nothing is.
+The Ethereal Realm lies outside the world. While the Cycle ran, the world was held shut; since it broke, the way in is open, for anyone who finds a door. The Hollow Verge, nearest the world, is the world misremembered: quiet, grey, familiar and wrong. Every region past it is further from anything people were made for. By the Black Horizon, nothing is.
 
 | Depth | Region | What it's like |
 | --- | --- | --- |
@@ -29,6 +29,8 @@ The Hollow Verge is the world misremembered: quiet, grey, familiar and wrong. Ev
 - The deeper you go, the less you'll be able to describe it when you get back.
 - Since the Cycle broke, something from outside has been creeping in from the Black Horizon. It's reached the Loom. Some say the Archive.
 - Past the Archive, keep your eyes down and your friends' names in your mouth.
+- There are powers out there older than the gods, with their own wars. Mostly they don't notice people. Mostly.
+- Whoever holds the deep realm could start the Cycle again, or make a new world, or end this one.
 
 ## Greyling
 
