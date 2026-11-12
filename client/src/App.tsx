@@ -25,6 +25,7 @@ import {
 import { LiveSession } from './pages/Live';
 import { AgendasPage, ConditionsPage, DicePage, DmScreen, NotesPage, NpcRefPage, RulesPage, TablesPage, TrackerPage, WorldEventsPage } from './pages/DmTools';
 import { BackupsPage, BrokenPage, HistoryPage, ImportExportPage, ReviewPage, SettingsPage } from './pages/Library';
+import { RumoursPage } from './pages/Rumours';
 import { PlayerApp } from './player/PlayerApp';
 import { PublishPage } from './pages/Publish';
 
@@ -79,6 +80,7 @@ export function App() {
           <Route path="conditions" element={<Page><ConditionsPage /></Page>} />
           <Route path="npc-ref" element={<Page><NpcRefPage /></Page>} />
           <Route path="agendas" element={<Page><AgendasPage /></Page>} />
+          <Route path="rumours" element={<Page><RumoursPage /></Page>} />
           <Route path="world-events" element={<Page><WorldEventsPage /></Page>} />
           <Route path="tables" element={<Page><TablesPage /></Page>} />
           <Route path="dice" element={<Page><DicePage /></Page>} />

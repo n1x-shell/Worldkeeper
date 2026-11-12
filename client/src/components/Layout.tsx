@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
+  MessageCircleQuestion,
   Atom,
   BookOpen,
   BookMarked,
@@ -110,6 +111,7 @@ const NAV: { title: string; items: Item[] }[] = [
       { to: '/conditions', label: 'Combat Conditions', icon: <Scale size={I} /> },
       { to: '/npc-ref', label: 'NPC Quick Reference', icon: <UserSquare2 size={I} /> },
       { to: '/agendas', label: 'Faction Agendas', icon: <Flag size={I} /> },
+      { to: '/rumours', label: 'Rumours', icon: <MessageCircleQuestion size={I} /> },
       { to: '/world-events', label: 'World Events', icon: <Sparkles size={I} /> },
       { to: '/tables', label: 'Random Tables', icon: <Table2 size={I} /> },
       { to: '/dice', label: 'Dice Roller', icon: <Dice5 size={I} /> },

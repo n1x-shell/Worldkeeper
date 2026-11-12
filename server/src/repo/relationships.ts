@@ -4,6 +4,7 @@ import { RELATIONSHIP_TYPES, CANON_STATUSES, SYMMETRIC_RELATIONSHIPS, type Relat
 import { parseJson } from '../lib/json.js';
 import { collectRefs, type MentionIndex } from '../../../shared/mentions.js';
 import { loadMentionIndex } from './mentions.js';
+import { listItems, loadNameIndex, type NameIndex } from './nameMatch.js';
 import { badRequest, notFound } from '../lib/errors.js';
 
 interface RelRow {
@@ -30,12 +31,39 @@ const FIELD_RELATIONS: { match: RegExp; type: Relationship['type']; reverse: boo
   { match: /^region$/i, type: 'part_of', reverse: false },
 ];
 
+const PLACE_TYPES = new Set(['continent', 'realm', 'region', 'nation', 'settlement', 'landmark', 'building', 'dungeon', 'vault', 'ethereal_domain', 'adventure_location', 'world']);
+const GROUP_TYPES = new Set(['faction', 'cult', 'family']);
+
+/** Section headings whose text is a list of people, groups or places. */
+const LIST_SECTION = /^(?:associated groups|known relationships and locations|associated people and places|known figures|approved leader|leaders?|leadership|family|members?)\b/i;
+
+/**
+ * What a name in a list section means, given who wrote it and what it names.
+ * Returns [type, reverse]: reverse means the named record is the source (e.g. a faction's "Leaders" list gives
+ * "NPC leads faction").
+ */
+function sectionRelation(heading: string, sourceType: string, targetType: string): [Relationship['type'], boolean] | null {
+  const h = heading.toLowerCase();
+  if (sourceType === 'npc') {
+    if (GROUP_TYPES.has(targetType)) return ['member_of', false];
+    if (PLACE_TYPES.has(targetType)) return ['lives_in', false];
+    if (targetType === 'npc') return ['related_to', false];
+    return null;
+  }
+  if (GROUP_TYPES.has(sourceType)) {
+    if (targetType === 'npc') return /leader|leadership/.test(h) ? ['leads', true] : ['member_of', true];
+    if (PLACE_TYPES.has(targetType)) return ['related_to', false];
+    if (GROUP_TYPES.has(targetType)) return ['related_to', false];
+  }
+  return null;
+}
+
 /**
  * Regenerate relationships derived from a record's own text: its Parent field, structured metadata fields,
  * and every `Name [ID]` cross-reference in the body. User-curated relationships are never touched.
  * Redirect IDs (e.g. a legacy locator) resolve to their authoritative record.
  */
-export function rebuildDerivedRelationships(db: DB, id: string, index: MentionIndex = loadMentionIndex(db)) {
+export function rebuildDerivedRelationships(db: DB, id: string, index: MentionIndex = loadMentionIndex(db), names?: NameIndex) {
   const row = db.prepare('SELECT id, type, parent_id, fields, body, redirect_to FROM entities WHERE id = ?').get(id) as
     | { id: string; type: string; parent_id: string | null; fields: string; body: string; redirect_to: string | null }
     | undefined;
@@ -78,6 +106,34 @@ export function rebuildDerivedRelationships(db: DB, id: string, index: MentionIn
       linked.add(t);
     }
   }
+  // Lists written in plain names ("Associated groups: Celestial Order", "Known figures: Hadrek, Sister Kallisa").
+  const nameIndex = names ?? loadNameIndex(db);
+  {
+    let heading = '';
+    const sections = new Map<string, string[]>();
+    for (const line of row.body.split(/\r?\n/)) {
+      const h = /^#{1,4}\s+(.+)/.exec(line);
+      if (h) heading = h[1].trim();
+      else if (LIST_SECTION.test(heading)) sections.set(heading, [...(sections.get(heading) ?? []), line]);
+    }
+    for (const [sec, lines] of sections) {
+      const text = lines.join('\n');
+      const targets = new Set<string>(collectRefs(text, index).ids.map((r) => resolve(r)).filter((t): t is string => !!t));
+      for (const item of listItems(text)) {
+        const t = nameIndex.find(item);
+        if (t) targets.add(t);
+      }
+      for (const t of targets) {
+        if (t === id) continue;
+        const rel = sectionRelation(sec, row.type, nameIndex.typeOf(t) ?? '');
+        if (!rel) continue;
+        const [s, d] = rel[1] ? [t, id] : [id, t];
+        insert.run(s, d, rel[0], 1, sec, 'import-field', `field:${id}:section:${sec}`);
+        linked.add(t);
+      }
+    }
+  }
+
   let heading = '';
   for (const line of row.body.split(/\r?\n/)) {
     const h = /^#{1,4}\s+(.+)/.exec(line);

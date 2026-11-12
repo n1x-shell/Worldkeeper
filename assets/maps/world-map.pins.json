@@ -184,6 +184,118 @@
       "x": 185,
       "y": 280,
       "category": "settlement"
+    },
+    {
+      "id": "SET-320",
+      "label": "Coldwater",
+      "x": 75,
+      "y": 470,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-322",
+      "label": "Greyfold",
+      "x": 90,
+      "y": 535,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-324",
+      "label": "Oakhallow",
+      "x": 120,
+      "y": 512,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-327",
+      "label": "Brannock",
+      "x": 160,
+      "y": 505,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-326",
+      "label": "Kettleby",
+      "x": 115,
+      "y": 590,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-321",
+      "label": "Haskett's Mill",
+      "x": 152,
+      "y": 630,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-325",
+      "label": "Sallow Cross",
+      "x": 238,
+      "y": 646,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-328",
+      "label": "Thornmere",
+      "x": 235,
+      "y": 680,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-323",
+      "label": "Low Fenn",
+      "x": 330,
+      "y": 712,
+      "category": "settlement"
+    },
+    {
+      "id": "LOC-003",
+      "label": "The Crossroads of Fate",
+      "x": 1192,
+      "y": 447,
+      "category": "landmark"
+    },
+    {
+      "id": "LOC-030",
+      "label": "Ashen Spire",
+      "x": 1135,
+      "y": 457,
+      "category": "landmark"
+    },
+    {
+      "id": "LOC-031",
+      "label": "The Scar",
+      "x": 1270,
+      "y": 395,
+      "category": "landmark"
+    },
+    {
+      "id": "LOC-032",
+      "label": "Blackveil Fortress",
+      "x": 1245,
+      "y": 322,
+      "category": "landmark"
+    },
+    {
+      "id": "LOC-033",
+      "label": "The Sunken Archive",
+      "x": 1100,
+      "y": 560,
+      "category": "landmark"
+    },
+    {
+      "id": "LOC-034",
+      "label": "Wither's Hollow",
+      "x": 1045,
+      "y": 482,
+      "category": "landmark"
+    },
+    {
+      "id": "LOC-035",
+      "label": "The Cairn of the Forgotten",
+      "x": 1192,
+      "y": 330,
+      "category": "landmark"
     }
   ]
 }

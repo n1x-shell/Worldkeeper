@@ -4,14 +4,14 @@ The 5e build behind every NPC. Species come from the Player's Handbook (2024, pl
 
 Anything already established about a person (a species, a gender, a role, a secret) is kept. Everything else here is yours to change.
 
-## Spread across all 106 people
+## Spread across all 148 people
 
 Four NPCs are not people and have no build: the Hidden Ones Vyrithar and Vyrathus, Eryndor the First Shard, and the Root Core.
 
-- **Species (44):** Human 8, Dwarf 4, Shadar-kai 4, Changeling 3, Elf 3, Fire Genasi 3, Githzerai 3, Goliath 3, Hobgoblin 3, Kobold 3, Orc 3, Tiefling 3, Aarakocra 2, Aasimar 2, Air Genasi 2, Bloomborn 2, Bugbear 2, Centaur 2, Deep Gnome 2, Dragonborn 2, Duergar 2, Earth Genasi 2, Eladrin 2, Fairy 2, Firbolg 2, Githyanki 2, Gnome 2, Goblin 2, Half-elf 2, Half-orc 2, Halfling 2, Harengon 2, Kenku 2, Lizardfolk 2, Minotaur 2, Satyr 2, Shifter 2, Tabaxi 2, Tortle 2, Triton 2, Warforged 2, Water Genasi 2, Yuan-ti 2, Sea Elf 1
-- **Classes:** Druid 9, Fighter 9, Paladin 9, Rogue 9, Warlock 9, Wizard 9, Barbarian 8, Bard 8, Cleric 8, Ranger 8, Artificer 7, Sorcerer 7, Monk 6
-- **Pronouns:** she/her 47, he/him 44, they/them 12, any 1, it/its 1, unknown 1
-- **Backgrounds:** Soldier 12, Hermit 11, Acolyte 9, Sage 9, Scribe 8, Entertainer 7, Wayfarer 7, Criminal 6, Guard 6, Guide 6, Merchant 6, Artisan 5, Charlatan 5, Noble 5, Sailor 3, Farmer 1
+- **Species (44):** Human 13, Dwarf 7, Halfling 6, Goliath 5, Orc 5, Shadar-kai 5, Elf 4, Fire Genasi 4, Hobgoblin 4, Kobold 4, Tiefling 4, Aarakocra 3, Aasimar 3, Bloomborn 3, Bugbear 3, Centaur 3, Changeling 3, Deep Gnome 3, Duergar 3, Earth Genasi 3, Firbolg 3, Githzerai 3, Gnome 3, Goblin 3, Half-elf 3, Kenku 3, Lizardfolk 3, Satyr 3, Shifter 3, Tabaxi 3, Triton 3, Water Genasi 3, Air Genasi 2, Dragonborn 2, Eladrin 2, Fairy 2, Githyanki 2, Half-orc 2, Harengon 2, Minotaur 2, Sea Elf 2, Tortle 2, Warforged 2, Yuan-ti 2
+- **Classes:** Rogue 14, Artificer 13, Druid 13, Ranger 13, Bard 12, Cleric 12, Fighter 12, Paladin 11, Wizard 11, Barbarian 10, Warlock 10, Sorcerer 9, Monk 8
+- **Pronouns:** she/her 67, he/him 60, they/them 18, any 1, it/its 1, unknown 1
+- **Backgrounds:** Soldier 16, Hermit 15, Acolyte 13, Artisan 11, Guide 11, Sage 11, Scribe 11, Entertainer 9, Wayfarer 9, Criminal 7, Guard 7, Merchant 7, Charlatan 6, Noble 6, Sailor 5, Farmer 4
 
 ## Player-facing (79)
 
@@ -132,3 +132,50 @@ Four NPCs are not people and have no build: the Hidden Ones Vyrithar and Vyrathu
 | Warden Ilsabet Crane | The Continuity | Shadar-kai (MotM) | Ranger (Gloom Stalker) | Guard | she/her | Sentinel Hold |  |
 | Nib | The memory-house | Kobold (MotM) | Druid (Circle of the Land) | Guide | he/him | The under-roads |  |
 | The Forgotten One | None | Changeling (MotM) | Wizard (Order of Scribes) | Hermit | they/them | Aetheris, many lives ago |  |
+
+## People of Kaelmar (42)
+
+| Name | Group | Species | Class | Background | Pronouns | From | Notes |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Archivist-Elder Mirela Sand | Kaelholm | Dwarf (PHB) | Cleric (Order Domain) | Scribe | she/her | The northern highlands |  |
+| Corin Tull | Kaelholm | Gnome (PHB) | Ranger (Hunter) | Guide | he/him | Kaelholm |  |
+| Harbourmaster Ottiline Brask | Kaelholm | Halfling (PHB) | Rogue (Thief) | Sailor | she/her | The southern river country |  |
+| Ives Varrow | Kaelholm | Tiefling (PHB) | Artificer (Artillerist) | Artisan | they/them | Lampblack, Kaelholm |  |
+| Archivist Teodor Wrenn | Kaelholm (secretly the Continuity) | Human (PHB) | Wizard (Diviner) | Scribe | he/him | Kaelholm |  |
+| Sister Abra Lune | Kaelholm | Aasimar (PHB) | Monk (Warrior of Mercy) | Acolyte | she/her | Greyfold |  |
+| Elder Tamsin Rook | The Spore Circle | Elf (PHB) | Druid (Circle of Spores) | Hermit | she/her | The Central Bloom Country |  |
+| Hollin | The Spore Circle | Bloomborn (Firbolg (MotM) or Custom Lineage (Tasha's)) | Druid (Circle of the Land) | Wayfarer | they/them | The Eastern Deepwood |  |
+| Wick | The Spore Circle | Kenku (MotM) | Ranger (Gloom Stalker) | Guide | he/him | Thornhaven |  |
+| Healer Ama Doss | The Spore Circle | Tabaxi (MotM) | Cleric (Life Domain) | Acolyte | she/her | The southern fens |  |
+| Deputy Warden Ossian Duskmere | The Continuity | Shadar-kai (MotM) | Wizard (Abjurer) | Guard | he/him | Sentinel Hold |  |
+| Mags Kettle | The Continuity | Goblin (MotM) | Rogue (Arcane Trickster) | Charlatan | she/her | Kettleby |  |
+| Lock-Cutter Ennis Moor | The Continuity | Deep Gnome (MotM) | Artificer (Armorer) | Artisan | they/them | The under-roads |  |
+| Elder Saba Grane | The Convergence Collective | Orc (PHB) | Paladin (Oath of Devotion) | Acolyte | she/her | The ash barrens |  |
+| Captain Tor Varga | The Convergence Collective | Centaur (MotM) | Fighter (Champion) | Soldier | he/him | The ash barrens |  |
+| Scribe Ilo Fen | The Convergence Collective | Triton (MotM) | Bard (College of Lore) | Scribe | they/them | The southern lakes |  |
+| Graftwright Desh | The Convergence Collective | Bugbear (MotM) | Artificer (Alchemist) | Artisan | he/him | The Eastern Deepwood |  |
+| Riv Ashdown | The Convergence Collective | Fire Genasi (MotM) | Sorcerer (Wild Magic Sorcery) | Wayfarer | she/her | Haskett's Mill |  |
+| Scout-Captain Hesk Varn | The Ascendancy | Goliath (PHB) | Ranger (Hunter) | Guide | he/him | The eastern mountains |  |
+| Siege-Engineer Yarrow Kask | The Ascendancy | Duergar (MotM) | Artificer (Artillerist) | Soldier | she/her | The under-roads |  |
+| Sergeant Bram Ironjaw | The Ascendancy | Human (PHB) | Fighter (Battle Master) | Soldier | he/him | Brannock |  |
+| Keeper Jory Hesk | Boundary Keepers | Half-elf (PHB 2014) | Bard (College of Lore) | Entertainer | he/him | Ashvale |  |
+| Lark Lin | Bloom-Speakers | Halfling (PHB) | Druid (Circle of the Stars) | Sage | she/her | Ashvale |  |
+| Sanctuary-Keeper Oda Fernlow | Bloom-Speakers | Firbolg (MotM) | Cleric (Peace Domain) | Hermit | she/her | Oakhallow |  |
+| Edda Halvor | The Wrights | Human (PHB) | Artificer (Battle Smith) | Artisan | she/her | Ashvale |  |
+| Foreman Dunmar | The Wrights | Earth Genasi (MotM) | Fighter (Rune Knight) | Artisan | he/him | The northern highlands |  |
+| Reeve Hanna Colt | Coldwater | Human (PHB) | Ranger (Beast Master) | Farmer | she/her | Coldwater |  |
+| Miller Tobin Haskett | Haskett's Mill | Halfling (PHB) | Bard (College of Eloquence) | Merchant | he/him | Haskett's Mill |  |
+| Elder Mott Greyfold | Greyfold | Dwarf (PHB) | Cleric (Light Domain) | Acolyte | he/him | Greyfold |  |
+| Headwoman Sel Marrow | Low Fenn | Lizardfolk (MotM) | Druid (Circle of the Sea) | Guide | she/her | Low Fenn |  |
+| Warden Brin Oakhallow | Oakhallow | Shifter (MotM) | Ranger (Fey Wanderer) | Guide | they/them | Oakhallow |  |
+| Goodwife Marta Sallow | Sallow Cross | Human (PHB) | Rogue (Thief) | Farmer | she/her | Sallow Cross |  |
+| Reeve Odo Kettleby | Kettleby | Kobold (MotM) | Artificer (Alchemist) | Artisan | he/him | Kettleby |  |
+| Thane Gerda Brannock | Brannock | Goliath (PHB) | Barbarian (Path of the World Tree) | Soldier | she/her | Brannock |  |
+| Mother Wren Thornmere | Thornmere | Satyr (MotM) | Bard (College of Glamour) | Entertainer | she/her | Thornmere |  |
+| Herd-Mother Ruun | The Ash Barrens | Orc (PHB) | Barbarian (Path of the Wild Heart) | Farmer | she/her | The ash barrens |  |
+| Thane Kolla Stonebrow | The Northern Highlands and Ice | Dwarf (PHB) | Paladin (Oath of the Ancients) | Noble | she/her | The northern highlands |  |
+| Captain Bell Ottery | The Southern Fens, Lakes and River Country | Halfling (PHB) | Rogue (Phantom) | Sailor | he/him | The southern river country |  |
+| Aerie-Speaker Kree | The Eastern Mountains | Aarakocra (MotM) | Monk (Warrior of the Open Hand) | Hermit | they/them | The eastern peaks |  |
+| The Salvager Nubb | Kaelmar | Hobgoblin (MotM) | Rogue (Thief) | Criminal | he/him | The Eastern Deepwood |  |
+| Watcher Senna Glass | The Continuity | Sea Elf (MotM) | Sorcerer (Aberrant Sorcery) | Sage | she/her | The southern lakes |  |
+| Old Ash | The Central Bloom Country | Water Genasi (MotM) | Warlock (Archfey Patron) | Hermit | he/him | Nobody knows |  |

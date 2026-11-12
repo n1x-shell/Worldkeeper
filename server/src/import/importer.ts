@@ -6,6 +6,7 @@ import { blockToDraft, extractRefs, ID_RE_STRICT, isTemplatePlaceholder, type En
 import type { SourceFile } from './scan.js';
 import { contentHash, getEntity, rowToEntity, saveRevision, type EntityRow } from '../repo/entities.js';
 import { rebuildDerivedRelationships } from '../repo/relationships.js';
+import { loadNameIndex } from '../repo/nameMatch.js';
 import { loadMentionIndex } from '../repo/mentions.js';
 import { reindexAll } from '../repo/search.js';
 import { deriveTimelineEras, eraVocabularyFromText, seedEras } from '../repo/eras.js';
@@ -361,7 +362,8 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
     // 3. Derived relationships for every imported record (refs may now resolve to newly created records).
     const importedIds = (db.prepare(`SELECT id FROM entities WHERE origin = 'import'`).all() as { id: string }[]).map((r) => r.id);
     const mentionIndex = loadMentionIndex(db);
-    for (const id of importedIds) rebuildDerivedRelationships(db, id, mentionIndex);
+    const nameIndex = loadNameIndex(db);
+    for (const id of importedIds) rebuildDerivedRelationships(db, id, mentionIndex, nameIndex);
     result.relationships = (db.prepare('SELECT COUNT(*) AS n FROM relationships').get() as { n: number }).n;
 
     // 4. Timeline index rows (imported rows only; DM-added rows are kept).
