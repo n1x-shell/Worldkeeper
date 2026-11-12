@@ -12,7 +12,7 @@ Everything found in the lore audit (November 2026), as one list. Ticked items ar
   - [x] The 20 rival enclaves, as a table on each dominion page
   - [x] Kaelmar's nine villages, with pages, headfolk and map pins: Coldwater, Haskett's Mill, Greyfold, Low Fenn, Oakhallow, Sallow Cross, Kettleby, Brannock, Thornmere
 - [x] **A creature bestiary** for both continents: 49 creatures and 5 hazards, 45 with public pages, each with a GM stat-block section.
-- [ ] **Rumours and secrets as proper records** (GM decision: a Rumours tool in the app): true, false or partly true, who knows them, and whether the players have heard them.
+- [x] **Rumours as proper records**: the Rumours tool (DM Tools → Rumours, and a panel on every record). 573 handbook rumours, each true, false, partly true or not decided, linked to the records they mention, and ticked off as heard per campaign. Who knows which secret is still to do, under "Secrets, their clues, and which NPC knows what".: true, false or partly true, who knows them, and whether the players have heard them.
 
 ## 2. Gaps in what we have
 
@@ -33,7 +33,7 @@ Everything found in the lore audit (November 2026), as one list. Ticked items ar
 
 - [ ] Bring the Worldkeeper additions into your own app: run `npx tsx scripts/apply-additions.ts` on your laptop (adds the new records and links; archive records are untouched)
 
-- [ ] Rumours (see "Do first")
+- [x] Rumours (see "Do first")
 - [ ] Secrets, their clues, and which NPC knows what
 - [ ] Where things are and who holds them: shards, relics, keys
 - [ ] How factions feel about each other: allied, at war, at truce, uneasy

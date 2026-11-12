@@ -28,6 +28,7 @@ import {
   sessions,
   setActiveCampaign,
 } from '../repo/campaigns.js';
+import { TRUTHS, createRumour, deleteRumour, listRumours, readPlayerText, setHeard, syncRumours, updateRumour, type Truth } from '../repo/rumours.js';
 import { rollDice } from '../../../shared/play.js';
 import { badRequest } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
@@ -72,6 +73,28 @@ export function campaignRoutes(ctx: AppContext) {
 
   r.post('/faction-plans/:id/advance', h((req) => advancePlan(ctx.db, intParam(req.params.id), Number(req.body?.delta ?? 1), String(req.body?.reason ?? ''))));
   mountCrud(r, ctx, '/faction-plans', factionPlans, ['campaign_id', 'faction_id', 'status']);
+  // Rumours (GM only; never part of player data).
+  r.get(
+    '/rumours',
+    h((req) => {
+      const q = req.query as Record<string, string | undefined>;
+      return listRumours(ctx.db, {
+        campaignId: q.campaign_id ? Number(q.campaign_id) : getActiveCampaignId(ctx.db),
+        entityId: q.entity || undefined,
+        truth: TRUTHS.includes(q.truth as Truth) ? (q.truth as Truth) : undefined,
+        heard: q.heard === 'heard' || q.heard === 'unheard' ? q.heard : undefined,
+        q: q.q,
+      });
+    }),
+  );
+  r.post('/rumours', h((req) => createRumour(ctx.db, req.body)));
+  r.post('/rumours/sync', h(() => syncRumours(ctx.db, readPlayerText())));
+  r.patch('/rumours/:id', h((req) => updateRumour(ctx.db, intParam(req.params.id), req.body)));
+  r.delete('/rumours/:id', h((req) => (deleteRumour(ctx.db, intParam(req.params.id)), { ok: true })));
+  r.post(
+    '/rumours/:id/heard',
+    h((req) => setHeard(ctx.db, intParam(req.params.id), Number(req.body?.campaign_id ?? getActiveCampaignId(ctx.db) ?? 0), !!req.body?.heard, String(req.body?.note ?? ''))),
+  );
   mountCrud(r, ctx, '/encounters', encounters, ['campaign_id', 'session_id', 'status']);
   mountCrud(r, ctx, '/notes', notes, ['campaign_id']);
   r.post('/random-tables/:id/roll', h((req) => rollTable(ctx.db, intParam(req.params.id))));

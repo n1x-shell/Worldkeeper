@@ -394,6 +394,34 @@ ALTER TABLE timeline_rows ADD COLUMN era TEXT;
 ALTER TABLE timeline_rows ADD COLUMN era_origin TEXT;
 `,
   },
+  {
+    version: 5,
+    name: 'rumours',
+    sql: `
+CREATE TABLE rumours (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  key TEXT NOT NULL UNIQUE,
+  text TEXT NOT NULL,
+  truth TEXT NOT NULL DEFAULT 'unknown' CHECK (truth IN ('true','false','partly','unknown')),
+  gm_note TEXT NOT NULL DEFAULT '',
+  source_id TEXT,
+  about TEXT NOT NULL DEFAULT '[]',
+  origin TEXT NOT NULL DEFAULT 'handbook',
+  stale INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE INDEX rumours_source ON rumours(source_id);
+
+CREATE TABLE rumour_heard (
+  campaign_id INTEGER NOT NULL,
+  rumour_id INTEGER NOT NULL REFERENCES rumours(id) ON DELETE CASCADE,
+  heard_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  note TEXT NOT NULL DEFAULT '',
+  PRIMARY KEY (campaign_id, rumour_id)
+);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

@@ -14,6 +14,7 @@ import type { SourceFile } from './import/scan.js';
 import { buildPlan, commitPlan } from './import/importer.js';
 import { createRelationship } from './repo/relationships.js';
 import { RELATIONSHIP_TYPES, type RelationshipType } from '../../shared/domain.js';
+import { readPlayerText, syncRumours } from './repo/rumours.js';
 
 export const DEFAULT_ADDITIONS_DIR = path.resolve(import.meta.dirname, '../../assets/lore');
 
@@ -71,5 +72,6 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR) {
   const files = loreFiles(dir);
   const imported = files.length ? commitPlan(db, files, buildPlan(db, files, 'Worldkeeper additions')) : null;
   const links = applyLinks(db, dir);
-  return { records: files.length, imported, links };
+  const rumours = syncRumours(db, readPlayerText(path.resolve(dir, '../player-text')));
+  return { records: files.length, imported, links, rumours };
 }
