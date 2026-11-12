@@ -1664,6 +1664,60 @@
    "label": "Home"
   },
   {
+   "source": "FAC-001",
+   "target": "LOC-036",
+   "type": "controls",
+   "label": "Camp in the Hollow Marches"
+  },
+  {
+   "source": "FAC-002",
+   "target": "LOC-037",
+   "type": "controls",
+   "label": "Camp in the Hollow Marches"
+  },
+  {
+   "source": "FAC-003",
+   "target": "LOC-038",
+   "type": "controls",
+   "label": "Camp in the Hollow Marches"
+  },
+  {
+   "source": "FAC-004",
+   "target": "LOC-039",
+   "type": "controls",
+   "label": "Camp in the Hollow Marches"
+  },
+  {
+   "source": "FAC-005",
+   "target": "LOC-040",
+   "type": "controls",
+   "label": "Camp in the Hollow Marches"
+  },
+  {
+   "source": "NPC-005",
+   "target": "LOC-037",
+   "type": "present_at",
+   "label": "Works from the camp"
+  },
+  {
+   "source": "NPC-007",
+   "target": "LOC-038",
+   "type": "present_at",
+   "label": "Works from the camp"
+  },
+  {
+   "source": "NPC-008",
+   "target": "LOC-039",
+   "type": "present_at",
+   "label": "Works from the camp"
+  },
+  {
+   "source": "NPC-009",
+   "target": "LOC-040",
+   "type": "present_at",
+   "label": "Works from the camp"
+  },
+  {
    "source": "NPC-303",
    "target": "SET-301",
    "type": "created",
