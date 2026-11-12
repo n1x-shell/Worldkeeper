@@ -11,8 +11,8 @@ Everything found in the lore audit (November 2026), as one list. Ticked items ar
   - [x] The dominions: the five chief fortresses and 12 other named sites, plus the six legendary places of the myths
   - [x] The 20 rival enclaves, as a table on each dominion page
   - [x] Kaelmar's nine villages, with pages, headfolk and map pins: Coldwater, Haskett's Mill, Greyfold, Low Fenn, Oakhallow, Sallow Cross, Kettleby, Brannock, Thornmere
-- [ ] **A creature bestiary** for both continents, from what the setting bibles describe.
-- [ ] **Rumours and secrets as proper records**: true, false or partly true, who knows them, and whether the players have heard them.
+- [x] **A creature bestiary** for both continents: 49 creatures and 5 hazards, 45 with public pages, each with a GM stat-block section.
+- [ ] **Rumours and secrets as proper records** (GM decision: a Rumours tool in the app): true, false or partly true, who knows them, and whether the players have heard them.
 
 ## 2. Gaps in what we have
 

@@ -1,6 +1,4 @@
-# Player Adventure Book: Bestiary (DRAFT)
-
-Drafted for review. Nothing here is published until this file is moved up into assets/player-text/ and the records in assets/lore/drafts/bestiary/ move up to assets/lore/.
+# Player Adventure Book: Bestiary
 
 ## How to use this
 
