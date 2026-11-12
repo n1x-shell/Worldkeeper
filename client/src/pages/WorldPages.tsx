@@ -509,26 +509,6 @@ function EventList({ eras = [] }: { eras?: string[] }) {
   return rows.length ? <EntityTable rows={rows} /> : <p className="text-sm text-dim">No event records carry these era tags.</p>;
 }
 
-export function MysteriesPage() {
-  const { data } = useApi<EntitySummary[]>('/api/entities?canon=SECRET');
-  return (
-    <div className="space-y-4">
-      <PageHeader title="Mysteries and Secrets" subtitle="Records that contain SECRET material. None of this is visible to players unless you reveal it." />
-      <div className="grid gap-4 md:grid-cols-3">
-        {['WLD-907', 'WLD-908', 'DEC-901'].map((id) => (
-          <Link key={id} to={`/e/${id}`} className="panel p-4 hover:border-gold/60">
-            <EntityLink id={id} />
-            <Dev>
-              <div className="text-xs text-dim mt-1">{id}</div>
-            </Dev>
-          </Link>
-        ))}
-      </div>
-      {data ? <EntityTable rows={data} /> : <Loading />}
-    </div>
-  );
-}
-
 export function SearchPage() {
   const [sp, setSp] = useSearchParams();
   const [q, setQ] = useState(sp.get('q') ?? sp.get('tag') ?? '');

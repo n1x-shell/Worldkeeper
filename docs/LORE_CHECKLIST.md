@@ -34,7 +34,7 @@ Everything found in the lore audit (November 2026), as one list. Ticked items ar
 - [ ] Bring the Worldkeeper additions into your own app: run `npx tsx scripts/apply-additions.ts` on your laptop (adds the new records and links; archive records are untouched)
 
 - [x] Rumours (see "Do first")
-- [ ] Secrets, their clues, and which NPC knows what
+- [x] Secrets, their clues, and which NPC knows what: Mysteries and Secrets (World → Mysteries and Secrets, and a Secrets panel on every record). 10 mysteries, 50 secrets and 99 drafted clues (rumours, people who know, places, items), with the party's progress per campaign: unknown, suspected or known, and clues found.
 - [ ] Where things are and who holds them: shards, relics, keys
 - [ ] How factions feel about each other: allied, at war, at truce, uneasy
 - [ ] Travel routes and distances, tied to the map

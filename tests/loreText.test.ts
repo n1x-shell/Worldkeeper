@@ -38,3 +38,10 @@ describe('lore text clean-up: futures', () => {
     expect(loreText('The 927 AB novel is a possible future, not the current world.')).toBe('927 AB is a possible future, not the current world.');
   });
 });
+
+describe('lore text clean-up: established-only notes', () => {
+  it('drops notes about what the source establishes', () => {
+    expect(loreText('Only appearance/age/species information explicitly given above is established.')).toBe('');
+    expect(loreText('Human, in her sixties. Leads the Keepers.')).toBe('Human, in her sixties. Leads the Keepers.');
+  });
+});

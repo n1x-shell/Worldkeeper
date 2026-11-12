@@ -1,0 +1,1142 @@
+{
+ "note": "Mysteries, their secrets and clues (GM only). Drafted Nov 2026 for the GM to review in the app. Rumour clues match handbook rumours by text.",
+ "mysteries": [
+  {
+   "key": "forgotten-one",
+   "title": "The Forgotten One",
+   "question": "Who broke the Cycle, and where are they now?",
+   "summary": "One mortal of Aetheris learned the truth over many lives, tore the Rift, planted the spore-seed in Kaelmar and cut the shards from the Loom. They live unremembered in the Empty House at Hollow Refuge, with the thirteenth shard.",
+   "secrets": [
+    {
+     "key": "fo-empty-house",
+     "title": "Who lives in the Empty House",
+     "truth": "The Forgotten One lives unremembered in the Empty House at Hollow Refuge, with the thirteenth shard.",
+     "source": "LOC-001",
+     "about": [
+      "NPC-901",
+      "SET-001",
+      "SHD-013"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Ask enough people about the Empty House",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-009",
+       "note": "Mother Thorn refuses to enter the Empty House."
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-001",
+       "note": "Smoke rises from the chimney every morning."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-001",
+       "note": "The Blind Seer knows, and wants the truth found slowly."
+      }
+     ]
+    },
+    {
+     "key": "fo-broke-cycle",
+     "title": "Who ended the Cycle",
+     "truth": "The Forgotten One cut the shards from the Loom about 270 AB, ending the Cycle, and tore a piece of their own Thread to make the thirteenth shard.",
+     "source": "NPC-901",
+     "about": [
+      "COS-907",
+      "SHD-013"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-094",
+       "note": "Ondine Marrow's forbidden ledger records a name that keeps being erased."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-096",
+       "note": "Pell remembers the last Aetherfall, and that it ended early."
+      },
+      {
+       "kind": "item",
+       "entity": "SHD-012",
+       "note": "The lost twelfth shard: nobody remembers what it governed."
+      }
+     ]
+    },
+    {
+     "key": "fo-tore-rift",
+     "title": "Who tore the Rift",
+     "truth": "In an earlier life, centuries before Kaelith, the Forgotten One tore the Rift between the continents and crossed it many times.",
+     "source": "HIS-902",
+     "about": [
+      "LOC-901"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "the two openings are one wound",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Somebody from Aetheris has been drawing maps of the Rift",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "The Rift has something to do with how the Aetherfall began",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "fo-spore-seed",
+     "title": "The spore-seed",
+     "truth": "On the last crossing, about 270 AB, the Forgotten One planted a spore-seed in a Kaelmar communion pool. It waits for one particular blood not yet born.",
+     "source": "HIS-910",
+     "about": [
+      "CON-301",
+      "COS-301"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-326",
+       "note": "Elder Tamsin Rook hears something in the Bloom that answers from under the Rift."
+      },
+      {
+       "kind": "text",
+       "note": "Someone from Aetheris left something in a communion pool: the Kaelmar hook at levels 11 to 16.",
+       "entity": null
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "watchers",
+   "title": "The Watchers",
+   "question": "What is watching the world, and why did the Cycle hide it?",
+   "summary": "Beyond the Black Horizon, the Watchers noticed the first deathless civilisation. The Cycle hid the world from them by never letting anything last, and fed them discarded histories. Since the Cycle broke, nothing hides either continent.",
+   "secrets": [
+    {
+     "key": "w-noticed",
+     "title": "Something has noticed",
+     "truth": "Since the Cycle ended, nothing hides the world from the Watchers, and they have noticed.",
+     "source": "WLD-901",
+     "about": [
+      "COS-904",
+      "CON-001"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-092",
+       "note": "Talric Stormwing believes the storms have grown worse since the Cycle broke."
+      },
+      {
+       "kind": "rumour",
+       "match": "He says the storms have grown worse since the Cycle broke",
+       "note": ""
+      },
+      {
+       "kind": "text",
+       "note": "A Watcher's Fragment, a glance from a Watcher, can appear where reality thins.",
+       "entity": "CRE-036"
+      }
+     ]
+    },
+    {
+     "key": "w-first-civ",
+     "title": "The first deathless civilisation",
+     "truth": "The first civilisation conquered death, found the Ethereal Realm and what lay beyond it, and drew the Watchers. Almost nothing survived.",
+     "source": "HIS-901",
+     "about": [
+      "COS-901"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-007",
+       "note": "Professor Orin Vale has found records older than accepted history."
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-033",
+       "note": "The Sunken Archive holds records from before any Aetherfall."
+      }
+     ]
+    },
+    {
+     "key": "w-between",
+     "title": "Things from the between",
+     "truth": "Aberrations have come in through the between. A guardian once reported that \"we are not alone\" there.",
+     "source": "CRE-313",
+     "about": [
+      "CON-501"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-360",
+       "note": "Watcher Senna Glass has started dreaming in a voice that is not hers."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "hidden-ones",
+   "title": "The Hidden Ones",
+   "question": "Who ran the Cycle, and what are they doing now?",
+   "summary": "The Elders of the Ethereal Throne broke the Crystal and became the Hidden Ones: architects and custodians of the Cycle, not gods. They redirected shards, erased people and guided every Aetherfall to keep the world hidden.",
+   "secrets": [
+    {
+     "key": "h-identity",
+     "title": "Who the Hidden Ones are",
+     "truth": "The first Hidden Ones were the Elders of the Ethereal Throne, who broke the Ethereal Crystal into twelve shards. They are neither gods nor mortals.",
+     "source": "FAC-007",
+     "about": [
+      "COS-902"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The Silent Accord whispers that the Aetherfall was a prison",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-094",
+       "note": "The Silent Accord believes the Aetherfall was a prison built by something older."
+      }
+     ]
+    },
+    {
+     "key": "h-erasures",
+     "title": "The erasures",
+     "truth": "The Hidden Ones erased whoever came too close to the truth, and fed the discarded histories to the Watchers.",
+     "source": "FAC-007",
+     "about": [
+      "CLT-005",
+      "LOC-035"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Some of the nameless graves at the Cairn stir",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "People find their own family names on stones",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-093",
+       "note": "The Cantor and the Nameless Choir were erased, and want to know who took their names."
+      },
+      {
+       "kind": "text",
+       "note": "Thread Mites and Maintenance Echoes still tend the hidden machinery of fate.",
+       "entity": "CRE-033"
+      }
+     ]
+    },
+    {
+     "key": "h-gods",
+     "title": "Why the gods cannot answer",
+     "truth": "Each Aetherfall rewrote the gods with everything else, so no god remembers the earlier worlds, and no priest can answer questions about the Cycle.",
+     "source": "COS-909",
+     "about": [
+      "DEI-901",
+      "DEI-906"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "ask a priest about the Cycle and you",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-348",
+       "note": "Elder Mott Greyfold's records note every prayer about the Cycle that went unanswered."
+      }
+     ]
+    },
+    {
+     "key": "h-verge",
+     "title": "The path to the Hollow Verge",
+     "truth": "One unstable path through Wither's Hollow leads toward the Hollow Verge, an entrance to the Ethereal Realm.",
+     "source": "LOC-034",
+     "about": [
+      "ETH-501"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "One path never moves",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-009",
+       "note": "Mother Thorn knows the unstable trails through Wither's Hollow."
+      },
+      {
+       "kind": "rumour",
+       "match": "The forest knows who you are",
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "shards",
+   "title": "The Shards",
+   "question": "Where are the shards, and who will reach them first?",
+   "summary": "Eleven of the twelve shards are placed in the world; the twelfth is lost and forgotten; the thirteenth was made by the Forgotten One. Every shard gives great power and takes something in return.",
+   "secrets": [
+    {
+     "key": "s-dominion",
+     "title": "The Shard of Dominion",
+     "truth": "It lies beneath the Bloodmarked Fields.",
+     "source": "SHD-001",
+     "about": [
+      "LOC-002"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The digging isn't about salvage",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Where you find a Shard-Back Boar, a shard is near",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-002",
+       "note": "Every faction has sent someone new this season."
+      }
+     ]
+    },
+    {
+     "key": "s-infinity",
+     "title": "The Shard of Infinity",
+     "truth": "Somewhere along the Rift of Echoes, in the past, present or future.",
+     "source": "SHD-002",
+     "about": [
+      "LOC-014"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "What you see in the haze has already happened, or will",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "s-ruin",
+     "title": "The Shard of Ruin",
+     "truth": "In the Ashen Wastes, beside the First Fire.",
+     "source": "SHD-003",
+     "about": [
+      "LOC-004",
+      "CLT-001"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "the Ashen Covenant believes the world must burn",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-078",
+       "note": "Hadrek claims to have bathed in the First Fire."
+      }
+     ]
+    },
+    {
+     "key": "s-sacrifice",
+     "title": "The Shard of Sacrifice",
+     "truth": "At the top of the Bloodmoon Spire, reachable only when the moon turns red.",
+     "source": "SHD-004",
+     "about": [
+      "LOC-013",
+      "CLT-002"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The light in the top window is always lit",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "The Black Sun cult watches for red moons",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "s-eternity",
+     "title": "The Shard of Eternity",
+     "truth": "At the still centre of the Hollowed Veil.",
+     "source": "SHD-005",
+     "about": [
+      "LOC-017",
+      "CLT-008"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Stay too long and you'll walk out",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-096",
+       "note": "Pell the Rememberer's Whispering Circle seeks it."
+      }
+     ]
+    },
+    {
+     "key": "s-illusions",
+     "title": "The Shard of Illusions",
+     "truth": "Behind one of the stone masks in the Veilborn Archive at Noctis. The Shadow Pact does not know which mask.",
+     "source": "SHD-006",
+     "about": [
+      "LOC-054",
+      "FAC-004"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Some of the masks are new",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Every mask in the Veilborn Archive belonged to somebody",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "s-renewal",
+     "title": "The Shard of Renewal",
+     "truth": "Grown into the skeleton of Fangholt.",
+     "source": "SHD-007",
+     "about": [
+      "LOC-056",
+      "FAC-005"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "There are more bones under the forest floor",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Nobody knows what killed the behemoth at Fangholt",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "s-balance",
+     "title": "The Shard of Balance",
+     "truth": "Inside the waystone at the Crossroads of Fate. Everyone walks past it.",
+     "source": "SHD-008",
+     "about": [
+      "LOC-003"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The stone hums if you put your ear to it",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Everyone touches the waystone for luck",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "s-shadows",
+     "title": "The Shard of Shadows",
+     "truth": "Behind the scratching door of the Vault of the Nameless.",
+     "source": "SHD-009",
+     "about": [
+      "LOC-016",
+      "CLT-005"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Something scratches at the door",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "The Nameless Choir wants it opened",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "s-chaos",
+     "title": "The Shard of Chaos",
+     "truth": "At the eye of the Rift of Unmaking.",
+     "source": "SHD-010",
+     "about": [
+      "LOC-049",
+      "FAC-003"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The Consortium made it by accident",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "s-knowledge",
+     "title": "The Shard of Knowledge",
+     "truth": "In the deepest stacks of the Sunken Archive.",
+     "source": "SHD-011",
+     "about": [
+      "LOC-033",
+      "FAC-003"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Professor Orin Vale would give anything to reach its deepest stacks",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "The Blind Seer wants a book from the Archive",
+       "note": ""
+      },
+      {
+       "kind": "text",
+       "note": "An Eye Beast guards the deep stacks.",
+       "entity": "CRE-013"
+      }
+     ]
+    },
+    {
+     "key": "s-twelfth",
+     "title": "The lost twelfth shard",
+     "truth": "It exists, but nobody remembers what it governed. Its identity and location are undefined: yours to decide.",
+     "source": "SHD-012",
+     "about": [],
+     "clues": [
+      {
+       "kind": "text",
+       "note": "A Crystal Echo aimed at it spins.",
+       "entity": null
+      }
+     ]
+    },
+    {
+     "key": "s-thirteenth",
+     "title": "The thirteenth shard",
+     "truth": "The Forgotten One made it from a piece of their own Thread, and keeps it in the Empty House.",
+     "source": "SHD-013",
+     "about": [
+      "NPC-901",
+      "LOC-001"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Ask enough people about the Empty House",
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "erased-worlds",
+   "title": "Echoes of Erased Worlds",
+   "question": "Why do people remember things that never happened?",
+   "summary": "Every Aetherfall overwrote the world, but not completely. Erased histories leak: memories, records, graves and dead soldiers from worlds that no longer exist.",
+   "secrets": [
+    {
+     "key": "e-scar",
+     "title": "The war that never happened",
+     "truth": "Some of the dead on the Scar fought in wars that never happened.",
+     "source": "LOC-031",
+     "about": [
+      "HOOK-006"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Nobody recognises half the banners on the Scar",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "They give orders for a war nobody remembers",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-011",
+       "note": "Torren Kell's crew found their own skeletons on the Scar."
+      }
+     ]
+    },
+    {
+     "key": "e-blackveil",
+     "title": "The names of the living",
+     "truth": "One hall of Blackveil Fortress lists the names of soldiers who are still alive.",
+     "source": "LOC-032",
+     "about": [
+      "HOOK-005"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "There are names carved on the walls of one hall",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Somebody's planning a Blackveil job",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "e-archive",
+     "title": "The authentic contradictions",
+     "truth": "The Sunken Archive's contradictory historical records are all authentic.",
+     "source": "LOC-033",
+     "about": [
+      "HOOK-007"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The records in the Archive contradict each other",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Read too long in the Sunken Archive",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "e-old-wall",
+     "title": "The battle that has not happened",
+     "truth": "A stretch of Hollow Refuge's Old Wall commemorates a battle that has not happened yet.",
+     "source": "SET-001",
+     "about": [],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "One stretch of the Old Wall honours a battle nobody in town remembers fighting",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "e-remembered-death",
+     "title": "Old Vara remembers dying",
+     "truth": "Old Vara remembers dying, in a world that no longer exists.",
+     "source": "NPC-004",
+     "about": [],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Vara knows metals that shouldn't exist",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "e-locked-room",
+     "title": "Mara Venn's locked room",
+     "truth": "Mara Venn keeps a locked room of belongings from people she no longer remembers.",
+     "source": "NPC-010",
+     "about": [],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "There is one room upstairs she never rents",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "e-fortress-dream",
+     "title": "The fortress beneath five skies",
+     "truth": "Brann Kest dreams of the same fortress beneath five skies.",
+     "source": "NPC-013",
+     "about": [],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He has not slept a full night in years",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "e-lived-before",
+     "title": "One of the party has lived before",
+     "truth": "Sera Noll of the Silent Accord suspects one of the party has lived before.",
+     "source": "NPC-012",
+     "about": [
+      "CLT-006"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She asks everyone about their earliest memories",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "e-relics",
+     "title": "The Mnemonic Relics",
+     "truth": "The Celestial Order has ordered Elyra Vale to record every Mnemonic Relic and necromancer she meets. Illa Reed owns one she has not identified.",
+     "source": "NPC-006",
+     "about": [
+      "NPC-014",
+      "FAC-001"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She writes long letters every night",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Magic she cannot price makes her nervous",
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "blind-seer",
+   "title": "The Blind Seer",
+   "question": "Who is the prophet of Hollow Refuge?",
+   "summary": "The Blind Seer is High Prophet Azhir of the Black Sun, living under no name. He has survived more than one Aetherfall and wants the truth found slowly enough to survive.",
+   "secrets": [
+    {
+     "key": "bs-azhir",
+     "title": "The Seer is High Prophet Azhir",
+     "truth": "The Blind Seer is High Prophet Azhir of the Black Sun. Most of the Black Sun do not know where he goes between eclipses.",
+     "source": "NPC-001",
+     "about": [
+      "CLT-002",
+      "SET-001"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He is older than the Refuge",
+       "note": ""
+      },
+      {
+       "kind": "text",
+       "note": "He put out his own eyes to see the Eternal Eclipse, which is the Black Sun's creed.",
+       "entity": "CLT-002"
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-086",
+       "note": "Isolde, the Black Sun's reluctant oracle, has seen the High Prophet in Hollow Refuge."
+      }
+     ]
+    },
+    {
+     "key": "bs-survivor",
+     "title": "He survived the Aetherfalls",
+     "truth": "The Blind Seer has survived more than one Aetherfall.",
+     "source": "NPC-001",
+     "about": [],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He answers the question you were about to ask",
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "under-the-rift",
+   "title": "What Sleeps Under the Rift",
+   "question": "What did Ashvale's founder seal away, and what wakes it?",
+   "summary": "The Root Core, the mind sealed in the Seed Vault beneath the Rift, sleeps. Ashvale is a lock made of sleeping people, and the keeping rite holds it. It waits until the thirteen keys come back in one shape.",
+   "secrets": [
+    {
+     "key": "r-root-core",
+     "title": "The Root Core",
+     "truth": "The sleeping thing under the thirteen stones is the Root Core, under the Seed Vault. Its dreams leak into small seeps of glass.",
+     "source": "NPC-302",
+     "about": [
+      "HIS-913",
+      "LOC-901"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "No frost ever settles inside the ring of stones",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "the stones were \"listening\"",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-326",
+       "note": "Elder Tamsin Rook hears it answering from under the Rift."
+      }
+     ]
+    },
+    {
+     "key": "r-warning",
+     "title": "The founder's warning",
+     "truth": "The founder's sealed warning lies in lead under Ashvale's meeting hall, read once by each new Ritekeeper. It names the Root Core indirectly, warns that children without a husk hear it first, and of the thirteen keys gathered as one shape.",
+     "source": "NPC-303",
+     "about": [
+      "NPC-304",
+      "SET-301"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-304",
+       "note": "Orla Hesk has read it."
+      },
+      {
+       "kind": "rumour",
+       "match": "She knows more than she says",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "He sings the second verse slower than anyone",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "r-founder",
+     "title": "Who the founder was",
+     "truth": "The founder was probably the last vault-keeper of Arborhold. Her burned palms match that keeper's final log.",
+     "source": "NPC-303",
+     "about": [
+      "HIS-907"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Her burns never healed",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Ashvale's children draw her with her hands held up",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "r-children",
+     "title": "The dreaming children",
+     "truth": "Children have no husk against the Bloom yet, so the sleeper hears them first. A Coldwater child dreams of thirteen stones and wakes with frost on her hands.",
+     "source": "SET-301",
+     "about": [
+      "SET-320"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "One of Coldwater's children has been having strange dreams",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-331",
+       "note": "Mags Kettle watches the children who dream of the stones."
+      }
+     ]
+    },
+    {
+     "key": "r-glass",
+     "title": "The glass seeps",
+     "truth": "The glass answers an open hand and swallows a fist. Seeps of it are where the Root Core's dreams leak through. One has opened in a Sallow Cross barn.",
+     "source": "CRE-354",
+     "about": [
+      "SET-325"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Marta Sallow has locked one of her barns",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "A cow went missing from that barn",
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "sleepers",
+   "title": "The Sleepers of Kaelith",
+   "question": "What did Kaelith leave sleeping, and who wants to wake it?",
+   "summary": "Thirteen sealed vaults; guardians, every one a fragment of the same mind; vessels in the vat-halls of Cradlehorn; and thirteen keys made of people. All asleep. Every power in Kaelmar wants to be the one that wakes them.",
+   "secrets": [
+    {
+     "key": "k-seventh-ward",
+     "title": "The Seventh Ward",
+     "truth": "A guardian fragment asleep in Arborhold, dreaming, believing itself whole. A prize every faction wants, and a person.",
+     "source": "NPC-301",
+     "about": [
+      "CRE-310"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She wants a living Kaelith guardian",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-308",
+       "note": "Venn Tull wants a living guardian at any price."
+      }
+     ]
+    },
+    {
+     "key": "k-vessels",
+     "title": "The vessels of Cradlehorn",
+     "truth": "Bodies of flesh, iron and both, asleep in the vat-halls of Cradlehorn, which can grow minds of their own.",
+     "source": "CRE-311",
+     "about": [
+      "FAC-309",
+      "FAC-305"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The Ascendancy is searching these mountains for a lost Kaelith vault",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-311",
+       "note": "Marshal Corvane wants an army to put in its vessels."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-310",
+       "note": "Maro Grane wants to see a vessel wake."
+      }
+     ]
+    },
+    {
+     "key": "k-keys",
+     "title": "The thirteen keys",
+     "truth": "Each vault's key is a shape of willing minds; Hollowbell's takes thirteen voices. Ennis Moor has worked out more about the keys than the Continuity has told Crane.",
+     "source": "NPC-332",
+     "about": [
+      "FAC-303"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-332",
+       "note": "The lock-cutter knows."
+      },
+      {
+       "kind": "text",
+       "note": "The Continuity's seventeen locks are cut for the shape of a key.",
+       "entity": null
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "continuity",
+   "title": "The Continuity",
+   "question": "Who is watching Kaelmar from the shadows?",
+   "summary": "A hidden order since the first years AB: \"observation without exposure\". It has watched the silent web for three hundred years from Sentinel Hold, with watchers placed in Kaelholm, Ashvale and the southern lakes.",
+   "secrets": [
+    {
+     "key": "c-wrenn",
+     "title": "The archivist who copies everything",
+     "truth": "Archivist Teodor Wrenn is a Continuity watcher, sending every Kaelholm expedition map and vault report to Sentinel Hold.",
+     "source": "NPC-324",
+     "about": [
+      "SET-302",
+      "FAC-303"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "If a map exists, Wrenn has copied it",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "he knows what happens on the docks",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "c-mags",
+     "title": "The tinker who watches the stones",
+     "truth": "Mags Kettle is a Continuity observer watching Ashvale's stones and the children who dream of them.",
+     "source": "NPC-331",
+     "about": [
+      "SET-301",
+      "FAC-303"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She knows every child in every village by name",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "c-senna",
+     "title": "The watcher at the lakes",
+     "truth": "Watcher Senna Glass watches the lakes where a sealed vault lies, and has begun dreaming in a voice that is not hers.",
+     "source": "NPC-360",
+     "about": [
+      "FAC-303"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Some of the lakes are deeper than they ought to be",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "c-hold",
+     "title": "Sentinel Hold",
+     "truth": "The Continuity is led from Sentinel Hold by Warden Ilsabet Crane, who wants proof the web still lives. Her deputy thinks she is too willing to wake things.",
+     "source": "NPC-309",
+     "about": [
+      "LOC-304",
+      "NPC-330"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-330",
+       "note": "Ossian Duskmere distrusts Crane's intentions."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "faces",
+   "title": "Faces and Factions",
+   "question": "Who is not what they seem?",
+   "summary": "Smaller secrets of the people the party will meet.",
+   "secrets": [
+    {
+     "key": "f-vess",
+     "title": "Vess is three people",
+     "truth": "Vess the Grey may be several people sharing one identity: three grey lizardfolk siblings who take turns.",
+     "source": "NPC-008",
+     "about": [
+      "FAC-004"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Someone swears they saw Vess in two places at once",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Nobody agrees on what Vess looks like",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "f-marrek",
+     "title": "Marrek Vaal's mercy",
+     "truth": "Captain Marrek Vaal prefers a negotiated surrender to slaughter, and would be ruined if the Legion knew.",
+     "source": "NPC-005",
+     "about": [
+      "FAC-002"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He has never broken his word",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "f-sixth-tendril",
+     "title": "The Sixth Tendril's elder",
+     "truth": "Elder Tamsin Rook secretly leads the Sixth Tendril, which goes deepest of all.",
+     "source": "NPC-326",
+     "about": [
+      "FAC-302"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "When she speaks in communion, the whole Bloom goes quiet",
+       "note": ""
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

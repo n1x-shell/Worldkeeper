@@ -18,6 +18,7 @@ import type { Entity, EntitySummary, RelationshipView, StateRow } from '../lib/t
 import { displaySections, isEditorial, splitSections } from '../lib/sections';
 import { loreText } from '@shared/loreText';
 import { RumoursPanel } from './Rumours';
+import { SecretsPanel } from './Mysteries';
 import { Dev, useDebug } from '../components/Dev';
 import {
   AutoTextarea,
@@ -234,6 +235,7 @@ export function EntityPage() {
               </div>
             )}
             <RelationshipSummary rels={data.relationships} selfId={e.id} onMore={() => setTab('relationships')} />
+            <SecretsPanel entityId={e.id} />
             <RumoursPanel entityId={e.id} />
           </aside>
         </div>
