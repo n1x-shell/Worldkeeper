@@ -118,3 +118,28 @@ describe('timeline additions', () => {
     expect(all).toEqual([{ event: 'The First Morning', era: 'the-cycle', era_origin: 'user' }]);
   });
 });
+
+describe('player text links', () => {
+  it('links the first plain mention of a revealed record, never an unrevealed one, and not inside name lists', async () => {
+    const { playerEntity } = await import('../server/src/player/projection');
+    const { updateEntity } = await import('../server/src/repo/entities');
+    const ctx = tempContext();
+    const recs: SourceFile[] = [
+      rec('SET-001', 'Test Town', 'Settlement', 'A town.'),
+      rec('SET-002', 'Secret Keep', 'Settlement', 'Hidden.'),
+      rec('NPC-001', 'Mira Quill', 'NPC', 'A person.'),
+    ];
+    commitPlan(ctx.db, recs, buildPlan(ctx.db, recs, 'test'));
+    updateEntity(ctx.db, 'SET-001', { revealed: true, player_summary: 'A town.', revealed_sections: [], reason: 'test' });
+    updateEntity(ctx.db, 'NPC-001', {
+      revealed: true,
+      player_summary: 'She lives in Test Town, near Secret Keep. Test Town again.\n\n**Common names.** Test Town, Mira',
+      revealed_sections: [],
+      reason: 'test',
+    });
+    const s = playerEntity(ctx.db, 'NPC-001')!.summary;
+    expect(s).toContain('[Test Town](/player/e/SET-001), near Secret Keep. Test Town again.');
+    expect(s).toContain('**Common names.** Test Town, Mira');
+    expect(s).not.toContain('SET-002');
+  });
+});
