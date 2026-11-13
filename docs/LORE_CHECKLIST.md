@@ -28,6 +28,7 @@ Everything found in the lore audit (November 2026), as one list. Ticked items ar
 - [x] Cult figures linked back from each cult, and each cult given a base (the Hollow Tribunal's stays unknown)
 - [x] The 357 places where one record names another without linking. Names in prose now link; about 100 left are generic words (Warrior, Guardian) that shouldn't link
 - [x] Specific link types (member of, leads, allied with, opposes, lives in) instead of plain "references", for people and for factions to each other
+- [x] Every link the lore states, typed: each person to their people; family members to each other; every faction, cult and family to its base; Ethereal leaders and members; every creature to where it lives; who took part in each historical event and where it happened; who worships each god; who holds or seeks each relic; curiosities to what they belong to; the vaults to their regions; the shards to the Orb; adventure hooks to where they happen and who they involve; settlements joined by a road. Left unlinked on purpose: Archon Vaelion's and Justicar Quell's homes, the Hollow Tribunal's base, and loot with no owner
 
 ## 4. Things to start tracking
 
