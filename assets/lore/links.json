@@ -3039,6 +3039,5604 @@
    "target": "SET-301",
    "type": "created",
    "label": "Founded it in 2 AB"
+  },
+  {
+   "source": "NPC-015",
+   "target": "PPL-029",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-016",
+   "target": "PPL-040",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-017",
+   "target": "PPL-041",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-018",
+   "target": "PPL-007",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-019",
+   "target": "PPL-003",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-020",
+   "target": "PPL-001",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-021",
+   "target": "PPL-044",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-022",
+   "target": "PPL-015",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-023",
+   "target": "PPL-018",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-024",
+   "target": "PPL-034",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-025",
+   "target": "PPL-039",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-026",
+   "target": "PPL-020",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-027",
+   "target": "PPL-004",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-028",
+   "target": "PPL-010",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-029",
+   "target": "PPL-003",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-030",
+   "target": "PPL-046",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-031",
+   "target": "PPL-013",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-032",
+   "target": "PPL-029",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-033",
+   "target": "PPL-034",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-034",
+   "target": "PPL-028",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-035",
+   "target": "PPL-002",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-036",
+   "target": "PPL-017",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-037",
+   "target": "PPL-043",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-038",
+   "target": "PPL-033",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-039",
+   "target": "PPL-016",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-040",
+   "target": "PPL-024",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-041",
+   "target": "PPL-006",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-042",
+   "target": "PPL-041",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-043",
+   "target": "PPL-026",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-044",
+   "target": "PPL-001",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-045",
+   "target": "PPL-040",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-046",
+   "target": "PPL-016",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-047",
+   "target": "PPL-006",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-048",
+   "target": "PPL-030",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-049",
+   "target": "PPL-011",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-050",
+   "target": "PPL-037",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-051",
+   "target": "PPL-001",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-052",
+   "target": "PPL-036",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-053",
+   "target": "PPL-019",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-054",
+   "target": "PPL-005",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-055",
+   "target": "PPL-004",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-056",
+   "target": "PPL-002",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-057",
+   "target": "PPL-024",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-058",
+   "target": "PPL-006",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-059",
+   "target": "PPL-003",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-060",
+   "target": "PPL-023",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-061",
+   "target": "PPL-010",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-062",
+   "target": "PPL-039",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-073",
+   "target": "PPL-046",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-074",
+   "target": "PPL-031",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-075",
+   "target": "PPL-032",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-076",
+   "target": "PPL-028",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-077",
+   "target": "PPL-014",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-078",
+   "target": "PPL-018",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-079",
+   "target": "PPL-011",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-080",
+   "target": "PPL-041",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-081",
+   "target": "PPL-036",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-082",
+   "target": "PPL-021",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-083",
+   "target": "PPL-025",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-084",
+   "target": "PPL-026",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-085",
+   "target": "PPL-012",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-086",
+   "target": "PPL-017",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-087",
+   "target": "PPL-043",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-088",
+   "target": "PPL-045",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-089",
+   "target": "PPL-042",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-090",
+   "target": "PPL-038",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-091",
+   "target": "PPL-035",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-093",
+   "target": "PPL-021",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-094",
+   "target": "PPL-032",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-095",
+   "target": "PPL-022",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-096",
+   "target": "PPL-027",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-304",
+   "target": "PPL-001",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-305",
+   "target": "PPL-001",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-306",
+   "target": "PPL-001",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-307",
+   "target": "PPL-002",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-308",
+   "target": "PPL-027",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-310",
+   "target": "PPL-004",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-311",
+   "target": "PPL-034",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-312",
+   "target": "PPL-042",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-001",
+   "target": "PPL-007",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-004",
+   "target": "PPL-003",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-005",
+   "target": "PPL-015",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-006",
+   "target": "PPL-001",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-007",
+   "target": "PPL-030",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-008",
+   "target": "PPL-005",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-009",
+   "target": "PPL-023",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-010",
+   "target": "PPL-014",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-011",
+   "target": "PPL-020",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-012",
+   "target": "PPL-033",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-013",
+   "target": "PPL-031",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-014",
+   "target": "PPL-037",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-092",
+   "target": "PPL-013",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-064",
+   "target": "PPL-025",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-065",
+   "target": "PPL-012",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-066",
+   "target": "PPL-019",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-067",
+   "target": "PPL-024",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-068",
+   "target": "PPL-045",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-069",
+   "target": "PPL-029",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-070",
+   "target": "PPL-022",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-071",
+   "target": "PPL-026",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-072",
+   "target": "PPL-035",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-301",
+   "target": "PPL-044",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-303",
+   "target": "PPL-001",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-309",
+   "target": "PPL-006",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-313",
+   "target": "PPL-036",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-901",
+   "target": "PPL-016",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-320",
+   "target": "PPL-003",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-321",
+   "target": "PPL-027",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-322",
+   "target": "PPL-032",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-323",
+   "target": "PPL-041",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-324",
+   "target": "PPL-001",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-325",
+   "target": "PPL-012",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-326",
+   "target": "PPL-002",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-327",
+   "target": "PPL-010",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-328",
+   "target": "PPL-035",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-329",
+   "target": "PPL-040",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-330",
+   "target": "PPL-006",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-331",
+   "target": "PPL-028",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-332",
+   "target": "PPL-017",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-333",
+   "target": "PPL-004",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-334",
+   "target": "PPL-015",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-335",
+   "target": "PPL-043",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-336",
+   "target": "PPL-014",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-337",
+   "target": "PPL-024",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-338",
+   "target": "PPL-029",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-339",
+   "target": "PPL-019",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-340",
+   "target": "PPL-001",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-341",
+   "target": "PPL-030",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-342",
+   "target": "PPL-032",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-343",
+   "target": "PPL-023",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-344",
+   "target": "PPL-001",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-345",
+   "target": "PPL-020",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-346",
+   "target": "PPL-001",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-347",
+   "target": "PPL-032",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-348",
+   "target": "PPL-003",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-349",
+   "target": "PPL-005",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-350",
+   "target": "PPL-039",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-351",
+   "target": "PPL-001",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-352",
+   "target": "PPL-036",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-353",
+   "target": "PPL-029",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-354",
+   "target": "PPL-037",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-355",
+   "target": "PPL-004",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-356",
+   "target": "PPL-003",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-357",
+   "target": "PPL-032",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-358",
+   "target": "PPL-011",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-359",
+   "target": "PPL-034",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-360",
+   "target": "PPL-038",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-361",
+   "target": "PPL-045",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-362",
+   "target": "PPL-038",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-363",
+   "target": "PPL-031",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-364",
+   "target": "PPL-022",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-365",
+   "target": "PPL-007",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-366",
+   "target": "PPL-046",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-367",
+   "target": "PPL-018",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-368",
+   "target": "PPL-013",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-369",
+   "target": "PPL-042",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-370",
+   "target": "PPL-021",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-371",
+   "target": "PPL-044",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-372",
+   "target": "PPL-025",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-373",
+   "target": "PPL-033",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-374",
+   "target": "PPL-016",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-375",
+   "target": "PPL-035",
+   "type": "member_of",
+   "label": "People"
+  },
+  {
+   "source": "NPC-020",
+   "target": "NPC-006",
+   "type": "related_to",
+   "label": "Sibling"
+  },
+  {
+   "source": "NPC-020",
+   "target": "NPC-007",
+   "type": "related_to",
+   "label": "Sibling"
+  },
+  {
+   "source": "NPC-020",
+   "target": "NPC-051",
+   "type": "related_to",
+   "label": "Sibling"
+  },
+  {
+   "source": "NPC-006",
+   "target": "NPC-007",
+   "type": "related_to",
+   "label": "Sibling"
+  },
+  {
+   "source": "NPC-006",
+   "target": "NPC-051",
+   "type": "related_to",
+   "label": "Sibling"
+  },
+  {
+   "source": "NPC-007",
+   "target": "NPC-051",
+   "type": "related_to",
+   "label": "Sibling"
+  },
+  {
+   "source": "NPC-024",
+   "target": "NPC-033",
+   "type": "related_to",
+   "label": "Father and son"
+  },
+  {
+   "source": "NPC-091",
+   "target": "NPC-094",
+   "type": "related_to",
+   "label": "Raised together in the foundling house"
+  },
+  {
+   "source": "NPC-304",
+   "target": "NPC-341",
+   "type": "related_to",
+   "label": "Grandmother and grandson"
+  },
+  {
+   "source": "NPC-305",
+   "target": "NPC-342",
+   "type": "related_to",
+   "label": "Cousins"
+  },
+  {
+   "source": "NPC-306",
+   "target": "NPC-344",
+   "type": "related_to",
+   "label": "Sisters"
+  },
+  {
+   "source": "NPC-308",
+   "target": "NPC-321",
+   "type": "related_to",
+   "label": "Aunt and nephew"
+  },
+  {
+   "source": "NPC-310",
+   "target": "NPC-333",
+   "type": "related_to",
+   "label": "Brother and sister"
+  },
+  {
+   "source": "FAC-001",
+   "target": "SET-010",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-002",
+   "target": "SET-011",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-003",
+   "target": "SET-012",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-004",
+   "target": "SET-013",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-005",
+   "target": "SET-014",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-007",
+   "target": "ETH-506",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-301",
+   "target": "SET-302",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-302",
+   "target": "REG-301",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-303",
+   "target": "LOC-304",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-304",
+   "target": "REG-306",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-305",
+   "target": "REG-302",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-306",
+   "target": "SET-301",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-307",
+   "target": "SET-301",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-308",
+   "target": "SET-301",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-309",
+   "target": "VLT-304",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-310",
+   "target": "VLT-301",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-501",
+   "target": "LOC-503",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-502",
+   "target": "LOC-502",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-503",
+   "target": "LOC-506",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-504",
+   "target": "LOC-504",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-505",
+   "target": "LOC-508",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAM-001",
+   "target": "LOC-030",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAM-002",
+   "target": "SET-011",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAM-003",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAM-004",
+   "target": "SET-301",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAM-005",
+   "target": "SET-322",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAM-006",
+   "target": "SET-321",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAM-007",
+   "target": "SET-302",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAM-008",
+   "target": "REG-306",
+   "type": "lives_in",
+   "label": "Based in"
+  },
+  {
+   "source": "FAC-302",
+   "target": "LOC-308",
+   "type": "controls",
+   "label": "The Eastern Tendril's seat"
+  },
+  {
+   "source": "FAC-311",
+   "target": "LOC-302",
+   "type": "same_as",
+   "label": "The same being, as a power and as a place"
+  },
+  {
+   "source": "NPC-302",
+   "target": "FAC-310",
+   "type": "same_as",
+   "label": "The same being, as a person and as a power"
+  },
+  {
+   "source": "NPC-066",
+   "target": "FAC-502",
+   "type": "leads",
+   "label": "Leader"
+  },
+  {
+   "source": "NPC-069",
+   "target": "FAC-504",
+   "type": "leads",
+   "label": "Leader"
+  },
+  {
+   "source": "NPC-063",
+   "target": "FAC-501",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-070",
+   "target": "FAC-503",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-072",
+   "target": "FAC-505",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-371",
+   "target": "LOC-506",
+   "type": "leads",
+   "label": "Leader"
+  },
+  {
+   "source": "NPC-071",
+   "target": "CON-501",
+   "type": "controls",
+   "label": "Keeps its laws"
+  },
+  {
+   "source": "NPC-362",
+   "target": "SET-015",
+   "type": "leads",
+   "label": "Leader"
+  },
+  {
+   "source": "NPC-363",
+   "target": "SET-016",
+   "type": "leads",
+   "label": "Leader"
+  },
+  {
+   "source": "NPC-364",
+   "target": "SET-017",
+   "type": "leads",
+   "label": "Leader"
+  },
+  {
+   "source": "NPC-365",
+   "target": "SET-018",
+   "type": "leads",
+   "label": "Leader"
+  },
+  {
+   "source": "NPC-366",
+   "target": "SET-019",
+   "type": "leads",
+   "label": "Leader"
+  },
+  {
+   "source": "NPC-367",
+   "target": "SET-020",
+   "type": "leads",
+   "label": "Leader"
+  },
+  {
+   "source": "NPC-368",
+   "target": "SET-021",
+   "type": "leads",
+   "label": "Leader"
+  },
+  {
+   "source": "NPC-369",
+   "target": "SET-022",
+   "type": "leads",
+   "label": "Leader"
+  },
+  {
+   "source": "NPC-370",
+   "target": "SET-023",
+   "type": "leads",
+   "label": "Leader"
+  },
+  {
+   "source": "CRE-501",
+   "target": "ETH-501",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-502",
+   "target": "ETH-501",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-503",
+   "target": "ETH-501",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-504",
+   "target": "ETH-501",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-505",
+   "target": "ETH-501",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-506",
+   "target": "ETH-502",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-507",
+   "target": "ETH-502",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-508",
+   "target": "ETH-502",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-509",
+   "target": "ETH-502",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-510",
+   "target": "ETH-502",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-511",
+   "target": "ETH-502",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-512",
+   "target": "ETH-503",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-513",
+   "target": "ETH-503",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-514",
+   "target": "ETH-503",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-515",
+   "target": "ETH-504",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-516",
+   "target": "ETH-504",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-517",
+   "target": "ETH-504",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-518",
+   "target": "ETH-504",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-519",
+   "target": "ETH-505",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-520",
+   "target": "ETH-505",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-521",
+   "target": "ETH-505",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-522",
+   "target": "ETH-505",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-533",
+   "target": "ETH-505",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-523",
+   "target": "ETH-506",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-524",
+   "target": "ETH-506",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-525",
+   "target": "ETH-507",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-526",
+   "target": "ETH-507",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-527",
+   "target": "ETH-507",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-528",
+   "target": "ETH-507",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-529",
+   "target": "ETH-507",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-530",
+   "target": "ETH-507",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-531",
+   "target": "ETH-507",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-532",
+   "target": "ETH-507",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-508",
+   "target": "FAC-502",
+   "type": "allied_with",
+   "label": "Trades with"
+  },
+  {
+   "source": "CRE-533",
+   "target": "ETH-505",
+   "type": "controls",
+   "label": "Guards"
+  },
+  {
+   "source": "CRE-523",
+   "target": "FAC-007",
+   "type": "member_of",
+   "label": "Door-wardens of the Hidden Ones"
+  },
+  {
+   "source": "CRE-035",
+   "target": "ETH-506",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-036",
+   "target": "COS-904",
+   "type": "related_to",
+   "label": "A glance from the Watchers"
+  },
+  {
+   "source": "CRE-036",
+   "target": "ETH-507",
+   "type": "lives_in",
+   "label": "Comes from beyond"
+  },
+  {
+   "source": "CRE-301",
+   "target": "COS-301",
+   "type": "part_of",
+   "label": "The Bloom's own people"
+  },
+  {
+   "source": "CRE-301",
+   "target": "REG-303",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-302",
+   "target": "COS-301",
+   "type": "part_of",
+   "label": "One of the Bloom's moods"
+  },
+  {
+   "source": "CRE-302",
+   "target": "REG-303",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-303",
+   "target": "COS-301",
+   "type": "part_of",
+   "label": "One of the Bloom's moods"
+  },
+  {
+   "source": "CRE-303",
+   "target": "REG-305",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-304",
+   "target": "COS-301",
+   "type": "part_of",
+   "label": "One of the Bloom's moods"
+  },
+  {
+   "source": "CRE-304",
+   "target": "REG-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-305",
+   "target": "SET-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-305",
+   "target": "LOC-303",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-306",
+   "target": "LOC-306",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-307",
+   "target": "LOC-303",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-308",
+   "target": "VLT-304",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-309",
+   "target": "LOC-306",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-310",
+   "target": "VLT-311",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-311",
+   "target": "VLT-304",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-312",
+   "target": "LOC-058",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-313",
+   "target": "ETH-501",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-350",
+   "target": "REG-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-351",
+   "target": "REG-303",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-352",
+   "target": "LOC-306",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-353",
+   "target": "LOC-303",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "CRE-305",
+   "target": "FAC-308",
+   "type": "related_to",
+   "label": "The Wrights build new ones"
+  },
+  {
+   "source": "CRE-353",
+   "target": "COS-301",
+   "type": "part_of",
+   "label": "Part of the Bloom"
+  },
+  {
+   "source": "CRE-354",
+   "target": "COS-303",
+   "type": "same_as",
+   "label": "The same thing, as a hazard and as lore"
+  },
+  {
+   "source": "CRE-310",
+   "target": "NPC-301",
+   "type": "related_to",
+   "label": "The Seventh Ward is one"
+  },
+  {
+   "source": "CRE-311",
+   "target": "FAC-309",
+   "type": "same_as",
+   "label": "The vessels themselves"
+  },
+  {
+   "source": "HIS-010",
+   "target": "SET-001",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-011",
+   "target": "SET-001",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "FAC-001",
+   "target": "HIS-011",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-002",
+   "target": "HIS-011",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-003",
+   "target": "HIS-011",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-004",
+   "target": "HIS-011",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-005",
+   "target": "HIS-011",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-012",
+   "target": "REG-001",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-012",
+   "target": "REG-003",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-012",
+   "target": "REG-006",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-013",
+   "target": "LOC-043",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "FAC-001",
+   "target": "HIS-013",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "NPC-017",
+   "target": "HIS-013",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-001",
+   "target": "HIS-014",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-002",
+   "target": "HIS-014",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-003",
+   "target": "HIS-014",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-004",
+   "target": "HIS-014",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-005",
+   "target": "HIS-014",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-015",
+   "target": "LOC-902",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-015",
+   "target": "SET-013",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-015",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "NPC-310",
+   "target": "HIS-016",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-304",
+   "target": "HIS-016",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-016",
+   "target": "LOC-901",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-016",
+   "target": "SET-301",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "FAC-305",
+   "target": "HIS-017",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "NPC-311",
+   "target": "HIS-017",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-304",
+   "target": "HIS-017",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-017",
+   "target": "REG-302",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-018",
+   "target": "SET-301",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "FAC-306",
+   "target": "HIS-018",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-018",
+   "target": "LOC-301",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "FAC-301",
+   "target": "HIS-019",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-302",
+   "target": "HIS-019",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-019",
+   "target": "REG-301",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-020",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-021",
+   "target": "LOC-002",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-021",
+   "target": "SET-001",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "FAC-007",
+   "target": "COS-902",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "COS-907",
+   "target": "LOC-901",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "NPC-901",
+   "target": "COS-907",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "COS-911",
+   "target": "LOC-001",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "COS-911",
+   "target": "LOC-901",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "NPC-901",
+   "target": "COS-911",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "COS-912",
+   "target": "VLT-301",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-902",
+   "target": "LOC-901",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "NPC-901",
+   "target": "HIS-902",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-903",
+   "target": "LOC-303",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "NPC-301",
+   "target": "HIS-904",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-904",
+   "target": "VLT-303",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-905",
+   "target": "REG-001",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "FAC-303",
+   "target": "HIS-906",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-907",
+   "target": "LOC-301",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "NPC-303",
+   "target": "HIS-907",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-907",
+   "target": "SET-301",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-907",
+   "target": "VLT-303",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-908",
+   "target": "SET-302",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-908",
+   "target": "VLT-303",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "FAC-302",
+   "target": "HIS-909",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-304",
+   "target": "HIS-909",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "FAC-305",
+   "target": "HIS-909",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-909",
+   "target": "SET-301",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-909",
+   "target": "SET-302",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "NPC-901",
+   "target": "HIS-910",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-911",
+   "target": "LOC-002",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "NPC-301",
+   "target": "HIS-911",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "NPC-302",
+   "target": "HIS-911",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-911",
+   "target": "SET-001",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-912",
+   "target": "SET-302",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-913",
+   "target": "LOC-301",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "HIS-913",
+   "target": "LOC-901",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "NPC-302",
+   "target": "HIS-913",
+   "type": "present_at",
+   "label": "Took part"
+  },
+  {
+   "source": "HIS-913",
+   "target": "VLT-301",
+   "type": "related_to",
+   "label": "Where it happened"
+  },
+  {
+   "source": "FAC-001",
+   "target": "DEI-901",
+   "type": "related_to",
+   "label": "Worships"
+  },
+  {
+   "source": "FAC-002",
+   "target": "DEI-902",
+   "type": "related_to",
+   "label": "Worships"
+  },
+  {
+   "source": "FAC-003",
+   "target": "DEI-903",
+   "type": "related_to",
+   "label": "Worships"
+  },
+  {
+   "source": "FAC-004",
+   "target": "DEI-904",
+   "type": "related_to",
+   "label": "Worships"
+  },
+  {
+   "source": "FAC-005",
+   "target": "DEI-905",
+   "type": "related_to",
+   "label": "Worships"
+  },
+  {
+   "source": "SET-001",
+   "target": "DEI-906",
+   "type": "related_to",
+   "label": "Worships"
+  },
+  {
+   "source": "CLT-003",
+   "target": "DEI-907",
+   "type": "related_to",
+   "label": "Worships her, as sleeping"
+  },
+  {
+   "source": "FAC-306",
+   "target": "DEI-906",
+   "type": "related_to",
+   "label": "Clerics of Sephane"
+  },
+  {
+   "source": "FAC-302",
+   "target": "DEI-905",
+   "type": "related_to",
+   "label": "Honours him"
+  },
+  {
+   "source": "FAC-301",
+   "target": "DEI-903",
+   "type": "related_to",
+   "label": "Patron of the archives"
+  },
+  {
+   "source": "FAC-301",
+   "target": "DEI-906",
+   "type": "related_to",
+   "label": "Keeps names in her honour"
+  },
+  {
+   "source": "DEI-907",
+   "target": "LOC-005",
+   "type": "related_to",
+   "label": "Fell there"
+  },
+  {
+   "source": "DEI-908",
+   "target": "LOC-012",
+   "type": "related_to",
+   "label": "Broken there"
+  },
+  {
+   "source": "DEI-909",
+   "target": "LOC-011",
+   "type": "related_to",
+   "label": "Its forge"
+  },
+  {
+   "source": "DEI-901",
+   "target": "COS-909",
+   "type": "part_of",
+   "label": "The pantheon"
+  },
+  {
+   "source": "DEI-902",
+   "target": "COS-909",
+   "type": "part_of",
+   "label": "The pantheon"
+  },
+  {
+   "source": "DEI-903",
+   "target": "COS-909",
+   "type": "part_of",
+   "label": "The pantheon"
+  },
+  {
+   "source": "DEI-904",
+   "target": "COS-909",
+   "type": "part_of",
+   "label": "The pantheon"
+  },
+  {
+   "source": "DEI-905",
+   "target": "COS-909",
+   "type": "part_of",
+   "label": "The pantheon"
+  },
+  {
+   "source": "DEI-906",
+   "target": "COS-909",
+   "type": "part_of",
+   "label": "The pantheon"
+  },
+  {
+   "source": "DEI-907",
+   "target": "COS-909",
+   "type": "part_of",
+   "label": "The pantheon"
+  },
+  {
+   "source": "DEI-908",
+   "target": "COS-909",
+   "type": "part_of",
+   "label": "The pantheon"
+  },
+  {
+   "source": "DEI-909",
+   "target": "COS-909",
+   "type": "part_of",
+   "label": "The pantheon"
+  },
+  {
+   "source": "ART-007",
+   "target": "DEI-907",
+   "type": "related_to",
+   "label": "Her heart"
+  },
+  {
+   "source": "NPC-304",
+   "target": "ART-308",
+   "type": "controls",
+   "label": "Keeps it"
+  },
+  {
+   "source": "NPC-310",
+   "target": "ART-309",
+   "type": "controls",
+   "label": "Keeps it"
+  },
+  {
+   "source": "FAM-007",
+   "target": "ART-310",
+   "type": "controls",
+   "label": "Keep it locked away"
+  },
+  {
+   "source": "VLT-303",
+   "target": "ART-303",
+   "type": "contains",
+   "label": "Lost inside"
+  },
+  {
+   "source": "FAC-307",
+   "target": "ART-307",
+   "type": "controls",
+   "label": "Their meeting house"
+  },
+  {
+   "source": "FAC-302",
+   "target": "ART-305",
+   "type": "controls",
+   "label": "Worn in the Deepwood"
+  },
+  {
+   "source": "FAC-301",
+   "target": "ART-306",
+   "type": "controls",
+   "label": "Confiscated one"
+  },
+  {
+   "source": "SET-302",
+   "target": "ART-301",
+   "type": "contains",
+   "label": "A copy, under glass"
+  },
+  {
+   "source": "FAC-308",
+   "target": "ART-304",
+   "type": "seeks",
+   "label": "Would trade almost anything"
+  },
+  {
+   "source": "FAC-305",
+   "target": "ART-304",
+   "type": "seeks",
+   "label": "Wants it"
+  },
+  {
+   "source": "FAC-307",
+   "target": "ART-302",
+   "type": "seeks",
+   "label": "Tevan knows it exists"
+  },
+  {
+   "source": "ITM-301",
+   "target": "COS-302",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-302",
+   "target": "COS-302",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-303",
+   "target": "COS-301",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-304",
+   "target": "COS-912",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-305",
+   "target": "COS-302",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-306",
+   "target": "LOC-303",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-307",
+   "target": "COS-301",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-308",
+   "target": "FAC-301",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-309",
+   "target": "SYS-907",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-310",
+   "target": "COS-303",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-311",
+   "target": "FAC-308",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-312",
+   "target": "COS-301",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-006",
+   "target": "COS-908",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-008",
+   "target": "COS-908",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-012",
+   "target": "COS-906",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-015",
+   "target": "ETH-501",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-016",
+   "target": "ETH-501",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-021",
+   "target": "ETH-505",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-022",
+   "target": "ETH-505",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "ITM-009",
+   "target": "DEI-906",
+   "type": "related_to",
+   "label": "Tied to"
+  },
+  {
+   "source": "LOC-058",
+   "target": "VLT-301",
+   "type": "contains",
+   "label": "One of the thirteen"
+  },
+  {
+   "source": "LOC-058",
+   "target": "VLT-302",
+   "type": "contains",
+   "label": "One of the thirteen"
+  },
+  {
+   "source": "LOC-058",
+   "target": "VLT-303",
+   "type": "contains",
+   "label": "One of the thirteen"
+  },
+  {
+   "source": "LOC-058",
+   "target": "VLT-304",
+   "type": "contains",
+   "label": "One of the thirteen"
+  },
+  {
+   "source": "LOC-058",
+   "target": "VLT-305",
+   "type": "contains",
+   "label": "One of the thirteen"
+  },
+  {
+   "source": "LOC-058",
+   "target": "VLT-306",
+   "type": "contains",
+   "label": "One of the thirteen"
+  },
+  {
+   "source": "LOC-058",
+   "target": "VLT-307",
+   "type": "contains",
+   "label": "One of the thirteen"
+  },
+  {
+   "source": "LOC-058",
+   "target": "VLT-308",
+   "type": "contains",
+   "label": "One of the thirteen"
+  },
+  {
+   "source": "LOC-058",
+   "target": "VLT-309",
+   "type": "contains",
+   "label": "One of the thirteen"
+  },
+  {
+   "source": "LOC-058",
+   "target": "VLT-310",
+   "type": "contains",
+   "label": "One of the thirteen"
+  },
+  {
+   "source": "LOC-058",
+   "target": "VLT-311",
+   "type": "contains",
+   "label": "One of the thirteen"
+  },
+  {
+   "source": "LOC-058",
+   "target": "VLT-312",
+   "type": "contains",
+   "label": "One of the thirteen"
+  },
+  {
+   "source": "LOC-058",
+   "target": "VLT-313",
+   "type": "contains",
+   "label": "One of the thirteen"
+  },
+  {
+   "source": "SHD-001",
+   "target": "COS-022",
+   "type": "part_of",
+   "label": "One of the twelve"
+  },
+  {
+   "source": "SHD-002",
+   "target": "COS-022",
+   "type": "part_of",
+   "label": "One of the twelve"
+  },
+  {
+   "source": "SHD-003",
+   "target": "COS-022",
+   "type": "part_of",
+   "label": "One of the twelve"
+  },
+  {
+   "source": "SHD-004",
+   "target": "COS-022",
+   "type": "part_of",
+   "label": "One of the twelve"
+  },
+  {
+   "source": "SHD-005",
+   "target": "COS-022",
+   "type": "part_of",
+   "label": "One of the twelve"
+  },
+  {
+   "source": "SHD-006",
+   "target": "COS-022",
+   "type": "part_of",
+   "label": "One of the twelve"
+  },
+  {
+   "source": "SHD-007",
+   "target": "COS-022",
+   "type": "part_of",
+   "label": "One of the twelve"
+  },
+  {
+   "source": "SHD-008",
+   "target": "COS-022",
+   "type": "part_of",
+   "label": "One of the twelve"
+  },
+  {
+   "source": "SHD-009",
+   "target": "COS-022",
+   "type": "part_of",
+   "label": "One of the twelve"
+  },
+  {
+   "source": "SHD-010",
+   "target": "COS-022",
+   "type": "part_of",
+   "label": "One of the twelve"
+  },
+  {
+   "source": "SHD-011",
+   "target": "COS-022",
+   "type": "part_of",
+   "label": "One of the twelve"
+  },
+  {
+   "source": "SHD-012",
+   "target": "COS-022",
+   "type": "part_of",
+   "label": "One of the twelve"
+  },
+  {
+   "source": "SHD-013",
+   "target": "COS-022",
+   "type": "related_to",
+   "label": "The thirteenth"
+  },
+  {
+   "source": "COS-022",
+   "target": "ETH-505",
+   "type": "related_to",
+   "label": "Tells the Loom what to weave"
+  },
+  {
+   "source": "CRE-533",
+   "target": "COS-022",
+   "type": "related_to",
+   "label": "Guards a candidate forge"
+  },
+  {
+   "source": "DEC-910",
+   "target": "COS-021",
+   "type": "references",
+   "label": "Decision"
+  },
+  {
+   "source": "DEC-910",
+   "target": "COS-022",
+   "type": "references",
+   "label": "Decision"
+  },
+  {
+   "source": "HOOK-001",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-001",
+   "target": "HOOK-002",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-001",
+   "target": "NPC-010",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-001",
+   "target": "REG-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-001",
+   "target": "SET-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-002",
+   "target": "CLT-003",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-002",
+   "target": "FAC-002",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-002",
+   "target": "HOOK-001",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-002",
+   "target": "HOOK-003",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-002",
+   "target": "HOOK-007",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-002",
+   "target": "LOC-003",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-002",
+   "target": "LOC-032",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-002",
+   "target": "LOC-035",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-002",
+   "target": "REG-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-002",
+   "target": "SET-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-003",
+   "target": "HOOK-004",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-003",
+   "target": "HOOK-010",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-003",
+   "target": "LOC-002",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-003",
+   "target": "NPC-005",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-003",
+   "target": "SHD-001",
+   "type": "seeks",
+   "label": "The prize"
+  },
+  {
+   "source": "HOOK-004",
+   "target": "HOOK-003",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-004",
+   "target": "LOC-002",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-004",
+   "target": "REG-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-004",
+   "target": "SHD-001",
+   "type": "seeks",
+   "label": "The prize"
+  },
+  {
+   "source": "HOOK-005",
+   "target": "LOC-032",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-005",
+   "target": "REG-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-006",
+   "target": "REG-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-007",
+   "target": "HOOK-002",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-007",
+   "target": "LOC-033",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-007",
+   "target": "REG-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-007",
+   "target": "SHD-011",
+   "type": "seeks",
+   "label": "The prize"
+  },
+  {
+   "source": "HOOK-008",
+   "target": "ETH-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-008",
+   "target": "LOC-034",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-008",
+   "target": "REG-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-009",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-009",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-009",
+   "target": "LOC-901",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-009",
+   "target": "REG-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-009",
+   "target": "SET-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-010",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-010",
+   "target": "ETH-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-010",
+   "target": "LOC-002",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-010",
+   "target": "NPC-901",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-010",
+   "target": "REG-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-010",
+   "target": "SET-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-010",
+   "target": "SHD-001",
+   "type": "seeks",
+   "label": "The prize"
+  },
+  {
+   "source": "HOOK-010",
+   "target": "SHD-013",
+   "type": "seeks",
+   "label": "The prize"
+  },
+  {
+   "source": "HOOK-011",
+   "target": "HOOK-002",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-011",
+   "target": "LOC-002",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-011",
+   "target": "LOC-003",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-011",
+   "target": "LOC-030",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-011",
+   "target": "LOC-033",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-011",
+   "target": "LOC-035",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-011",
+   "target": "NPC-001",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-011",
+   "target": "REG-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-011",
+   "target": "SET-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-011",
+   "target": "SHD-001",
+   "type": "seeks",
+   "label": "The prize"
+  },
+  {
+   "source": "HOOK-011",
+   "target": "WLD-901",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-012",
+   "target": "LOC-053",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-012",
+   "target": "NPC-017",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-012",
+   "target": "NPC-023",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-012",
+   "target": "NPC-033",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-012",
+   "target": "NPC-046",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-012",
+   "target": "REG-002",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-012",
+   "target": "REG-003",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-012",
+   "target": "REG-005",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-012",
+   "target": "SET-011",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-012",
+   "target": "SET-013",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-013",
+   "target": "ART-007",
+   "type": "seeks",
+   "label": "The prize"
+  },
+  {
+   "source": "HOOK-013",
+   "target": "CLT-001",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-013",
+   "target": "CLT-003",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-013",
+   "target": "CLT-006",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-013",
+   "target": "CLT-007",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-013",
+   "target": "ETH-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-013",
+   "target": "FAC-007",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-013",
+   "target": "LOC-004",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-013",
+   "target": "NPC-063",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-013",
+   "target": "NPC-082",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-014",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-014",
+   "target": "ETH-505",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-014",
+   "target": "FAC-007",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-014",
+   "target": "LOC-509",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-014",
+   "target": "LOC-902",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-014",
+   "target": "NPC-002",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-014",
+   "target": "NPC-901",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-014",
+   "target": "SHD-012",
+   "type": "seeks",
+   "label": "The prize"
+  },
+  {
+   "source": "HOOK-014",
+   "target": "SHD-013",
+   "type": "seeks",
+   "label": "The prize"
+  },
+  {
+   "source": "HOOK-301",
+   "target": "FAC-302",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-301",
+   "target": "LOC-305",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-301",
+   "target": "NPC-304",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-301",
+   "target": "NPC-305",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-301",
+   "target": "NPC-306",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-301",
+   "target": "NPC-312",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-301",
+   "target": "SET-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-301",
+   "target": "SET-320",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-301",
+   "target": "SET-325",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-302",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-302",
+   "target": "FAC-003",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-302",
+   "target": "FAC-311",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-302",
+   "target": "LOC-302",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-302",
+   "target": "LOC-303",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-302",
+   "target": "NPC-308",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-302",
+   "target": "NPC-310",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-302",
+   "target": "NPC-311",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-302",
+   "target": "SET-302",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-302",
+   "target": "VLT-302",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-302",
+   "target": "VLT-303",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-302",
+   "target": "VLT-304",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-303",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-303",
+   "target": "FAC-305",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-303",
+   "target": "FAC-309",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-303",
+   "target": "NPC-301",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-303",
+   "target": "SET-302",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-303",
+   "target": "VLT-304",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-303",
+   "target": "VLT-307",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-304",
+   "target": "LOC-901",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-304",
+   "target": "REG-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-304",
+   "target": "VLT-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-901",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-901",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-901",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-901",
+   "target": "LOC-902",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-901",
+   "target": "REG-005",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-902",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-902",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-902",
+   "target": "NPC-010",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-902",
+   "target": "SET-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-902",
+   "target": "SET-302",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-903",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-903",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-903",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-903",
+   "target": "NPC-312",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-903",
+   "target": "REG-305",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-903",
+   "target": "SET-323",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-904",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-904",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-904",
+   "target": "REG-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-905",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-905",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-905",
+   "target": "LOC-003",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-906",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-906",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-906",
+   "target": "FAC-001",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-906",
+   "target": "FAC-302",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-906",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-906",
+   "target": "LOC-042",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-906",
+   "target": "LOC-308",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-906",
+   "target": "REG-002",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-907",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-907",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-907",
+   "target": "REG-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-907",
+   "target": "SET-327",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-908",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-908",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-908",
+   "target": "SET-302",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-909",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-909",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-909",
+   "target": "LOC-303",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-910",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-910",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-910",
+   "target": "REG-005",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-910",
+   "target": "SET-013",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-910",
+   "target": "SET-302",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-911",
+   "target": "CLT-004",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-911",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-911",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-912",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-912",
+   "target": "FAC-002",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-912",
+   "target": "FAC-005",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-912",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-912",
+   "target": "REG-003",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-912",
+   "target": "REG-006",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-912",
+   "target": "SET-011",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-912",
+   "target": "SET-014",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-913",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-913",
+   "target": "FAC-002",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-913",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-913",
+   "target": "REG-003",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-913",
+   "target": "SET-011",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-914",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-914",
+   "target": "FAC-002",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-914",
+   "target": "FAC-005",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-914",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-914",
+   "target": "LOC-056",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-914",
+   "target": "REG-003",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-914",
+   "target": "REG-006",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-915",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-915",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-915",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-915",
+   "target": "REG-302",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-916",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-916",
+   "target": "FAC-004",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-916",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-916",
+   "target": "REG-005",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-916",
+   "target": "SET-013",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-917",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-917",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-917",
+   "target": "SET-302",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-917",
+   "target": "VLT-310",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-918",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-918",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-918",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-918",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-919",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-919",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-919",
+   "target": "LOC-005",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-919",
+   "target": "SET-302",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-920",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-920",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-920",
+   "target": "FAC-305",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-920",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-920",
+   "target": "REG-302",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-920",
+   "target": "VLT-304",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-921",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-921",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-921",
+   "target": "LOC-902",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-922",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-922",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-923",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-923",
+   "target": "FAC-003",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-923",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-923",
+   "target": "REG-004",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-923",
+   "target": "SET-012",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-924",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-924",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-924",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-924",
+   "target": "LOC-006",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-925",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-925",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-926",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-926",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-926",
+   "target": "LOC-304",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-927",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-927",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-927",
+   "target": "LOC-504",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-928",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-928",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-928",
+   "target": "NPC-071",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-929",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-929",
+   "target": "HOOK-930",
+   "type": "part_of",
+   "label": "Listed in"
+  },
+  {
+   "source": "HOOK-929",
+   "target": "LOC-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-929",
+   "target": "LOC-308",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-929",
+   "target": "NPC-096",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-929",
+   "target": "NPC-307",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-929",
+   "target": "SET-001",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-930",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-930",
+   "target": "CON-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-930",
+   "target": "ETH-501",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-930",
+   "target": "FAC-004",
+   "type": "related_to",
+   "label": "Involves"
+  },
+  {
+   "source": "HOOK-930",
+   "target": "LOC-003",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-930",
+   "target": "LOC-053",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-930",
+   "target": "LOC-310",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-930",
+   "target": "LOC-901",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-930",
+   "target": "LOC-902",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-930",
+   "target": "REG-005",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "HOOK-930",
+   "target": "SET-302",
+   "type": "related_to",
+   "label": "Takes place in"
+  },
+  {
+   "source": "SET-001",
+   "target": "LOC-003",
+   "type": "connected_through",
+   "label": "Half a day, watched, usually safe"
+  },
+  {
+   "source": "SET-001",
+   "target": "LOC-002",
+   "type": "connected_through",
+   "label": "Half a day, risky"
+  },
+  {
+   "source": "SET-001",
+   "target": "LOC-032",
+   "type": "connected_through",
+   "label": "A day, risky"
+  },
+  {
+   "source": "LOC-003",
+   "target": "LOC-031",
+   "type": "connected_through",
+   "label": "Half a day, dangerous"
+  },
+  {
+   "source": "LOC-003",
+   "target": "LOC-033",
+   "type": "connected_through",
+   "label": "A day, risky"
+  },
+  {
+   "source": "LOC-002",
+   "target": "LOC-031",
+   "type": "connected_through",
+   "label": "Half a day, dangerous"
+  },
+  {
+   "source": "LOC-002",
+   "target": "LOC-034",
+   "type": "connected_through",
+   "label": "A day, dangerous"
+  },
+  {
+   "source": "SET-001",
+   "target": "SET-010",
+   "type": "connected_through",
+   "label": "About two weeks, a week to the border and a week through the radiant expanse"
+  },
+  {
+   "source": "SET-001",
+   "target": "SET-011",
+   "type": "connected_through",
+   "label": "About two weeks, a week to the border and a week through the iron mountains"
+  },
+  {
+   "source": "SET-001",
+   "target": "SET-012",
+   "type": "connected_through",
+   "label": "About two weeks, a week to the border and a week through storm country"
+  },
+  {
+   "source": "SET-001",
+   "target": "SET-013",
+   "type": "connected_through",
+   "label": "About two weeks, a week to the border and a week through the dusk"
+  },
+  {
+   "source": "SET-001",
+   "target": "SET-014",
+   "type": "connected_through",
+   "label": "About two weeks, a week to the border and a week through roadless forest"
+  },
+  {
+   "source": "SET-013",
+   "target": "SET-302",
+   "type": "connected_through",
+   "label": "About two weeks by ship, in the dark"
+  },
+  {
+   "source": "SET-302",
+   "target": "SET-301",
+   "type": "connected_through",
+   "label": "About 1,500 km, right across the continent"
+  },
+  {
+   "source": "SET-320",
+   "target": "SET-301",
+   "type": "connected_through",
+   "label": "About a day on foot"
+  },
+  {
+   "source": "SET-321",
+   "target": "SET-301",
+   "type": "connected_through",
+   "label": "Half a day by cart, along the river road"
+  },
+  {
+   "source": "SET-322",
+   "target": "SET-301",
+   "type": "connected_through",
+   "label": "A day's walk"
+  },
+  {
+   "source": "SET-323",
+   "target": "SET-301",
+   "type": "connected_through",
+   "label": "A day and a half: a day by barge, then half a day by road"
+  },
+  {
+   "source": "SET-324",
+   "target": "SET-301",
+   "type": "connected_through",
+   "label": "A day's walk, through the woods"
+  },
+  {
+   "source": "SET-325",
+   "target": "SET-301",
+   "type": "connected_through",
+   "label": "Half a day, on the best road in the hills"
+  },
+  {
+   "source": "SET-326",
+   "target": "SET-301",
+   "type": "connected_through",
+   "label": "A day's walk"
+  },
+  {
+   "source": "SET-327",
+   "target": "SET-301",
+   "type": "connected_through",
+   "label": "A day and a half, over the ridges"
+  },
+  {
+   "source": "SET-328",
+   "target": "SET-301",
+   "type": "connected_through",
+   "label": "A day's walk"
+  },
+  {
+   "source": "SET-015",
+   "target": "SET-001",
+   "type": "connected_through",
+   "label": "A day on foot, past the ashen spire"
+  },
+  {
+   "source": "SET-016",
+   "target": "SET-001",
+   "type": "connected_through",
+   "label": "A day on foot, past blackveil fortress"
+  },
+  {
+   "source": "SET-017",
+   "target": "SET-001",
+   "type": "connected_through",
+   "label": "Half a day, on the road"
+  },
+  {
+   "source": "SET-018",
+   "target": "SET-001",
+   "type": "connected_through",
+   "label": "A day, round the edge of the fields"
+  },
+  {
+   "source": "SET-019",
+   "target": "SET-010",
+   "type": "connected_through",
+   "label": "About three days, as pilgrims walk"
+  },
+  {
+   "source": "SET-020",
+   "target": "SET-011",
+   "type": "connected_through",
+   "label": "About two days"
+  },
+  {
+   "source": "SET-021",
+   "target": "SET-012",
+   "type": "connected_through",
+   "label": "About two days, by chain-ladder and mountain road"
+  },
+  {
+   "source": "SET-022",
+   "target": "SET-013",
+   "type": "connected_through",
+   "label": "About three days down the coast"
+  },
+  {
+   "source": "SET-023",
+   "target": "SET-014",
+   "type": "connected_through",
+   "label": "About four days through roadless forest, with a guide"
+  },
+  {
+   "source": "COS-909",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-901",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-901",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-902",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-902",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-903",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-903",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-904",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-904",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-905",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-905",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-906",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-906",
+   "target": "CON-301",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-907",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-908",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "DEI-909",
+   "target": "CON-001",
+   "type": "related_to",
+   "label": "Worshipped in"
+  },
+  {
+   "source": "PPL-001",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-002",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-003",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-004",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-005",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-006",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-007",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-010",
+   "target": "REG-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-011",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-011",
+   "target": "REG-004",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-011",
+   "target": "REG-302",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-012",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-012",
+   "target": "REG-002",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-013",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-013",
+   "target": "REG-004",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-014",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-014",
+   "target": "REG-003",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-014",
+   "target": "REG-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-015",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-015",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-016",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-016",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-017",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-017",
+   "target": "REG-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-017",
+   "target": "REG-003",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-018",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-018",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-018",
+   "target": "REG-002",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-018",
+   "target": "REG-003",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-019",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-019",
+   "target": "REG-003",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-020",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-020",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-020",
+   "target": "REG-003",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-020",
+   "target": "REG-302",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-021",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-021",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-022",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-022",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-022",
+   "target": "REG-006",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-022",
+   "target": "REG-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-023",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-023",
+   "target": "REG-006",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-024",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-024",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-024",
+   "target": "REG-003",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-025",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-025",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-025",
+   "target": "REG-004",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-026",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-026",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-026",
+   "target": "REG-004",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-027",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-027",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-028",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-028",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-029",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-029",
+   "target": "REG-003",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-029",
+   "target": "REG-004",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-029",
+   "target": "REG-302",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-030",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-030",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-031",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-031",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-032",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-032",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-033",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-033",
+   "target": "REG-006",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-034",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-035",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-035",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-036",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-036",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-036",
+   "target": "REG-003",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-037",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-037",
+   "target": "REG-006",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-038",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-038",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-039",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-039",
+   "target": "REG-006",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-040",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-040",
+   "target": "REG-006",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-041",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-041",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-042",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-042",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-042",
+   "target": "REG-006",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-043",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-043",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-044",
+   "target": "CON-001",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-044",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-045",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-046",
+   "target": "CON-301",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-046",
+   "target": "REG-002",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "PPL-046",
+   "target": "REG-005",
+   "type": "lives_in",
+   "label": "Found in"
+  },
+  {
+   "source": "REG-301",
+   "target": "VLT-303",
+   "type": "contains",
+   "label": "In this region"
+  },
+  {
+   "source": "REG-302",
+   "target": "VLT-304",
+   "type": "contains",
+   "label": "In this region"
+  },
+  {
+   "source": "REG-303",
+   "target": "VLT-308",
+   "type": "contains",
+   "label": "In this region"
+  },
+  {
+   "source": "REG-304",
+   "target": "VLT-306",
+   "type": "contains",
+   "label": "In this region"
+  },
+  {
+   "source": "REG-304",
+   "target": "VLT-307",
+   "type": "contains",
+   "label": "In this region"
+  },
+  {
+   "source": "REG-305",
+   "target": "VLT-302",
+   "type": "contains",
+   "label": "In this region"
+  },
+  {
+   "source": "REG-305",
+   "target": "VLT-312",
+   "type": "contains",
+   "label": "In this region"
+  },
+  {
+   "source": "REG-305",
+   "target": "VLT-313",
+   "type": "contains",
+   "label": "In this region"
+  },
+  {
+   "source": "REG-306",
+   "target": "VLT-305",
+   "type": "contains",
+   "label": "In this region"
+  },
+  {
+   "source": "REG-901",
+   "target": "VLT-301",
+   "type": "contains",
+   "label": "In this region"
+  },
+  {
+   "source": "REG-901",
+   "target": "VLT-303",
+   "type": "contains",
+   "label": "In this region"
+  },
+  {
+   "source": "REG-901",
+   "target": "VLT-304",
+   "type": "contains",
+   "label": "In this region"
+  },
+  {
+   "source": "REG-901",
+   "target": "VLT-305",
+   "type": "contains",
+   "label": "In this region"
+  },
+  {
+   "source": "NPC-006",
+   "target": "SET-001",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-013",
+   "target": "SET-001",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-014",
+   "target": "SET-001",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-015",
+   "target": "REG-002",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-016",
+   "target": "REG-002",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-017",
+   "target": "REG-002",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-018",
+   "target": "REG-002",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-019",
+   "target": "REG-002",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-020",
+   "target": "REG-002",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-021",
+   "target": "REG-002",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-024",
+   "target": "REG-003",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-025",
+   "target": "REG-003",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-026",
+   "target": "REG-003",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-027",
+   "target": "REG-003",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-028",
+   "target": "REG-003",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-029",
+   "target": "REG-003",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-030",
+   "target": "REG-003",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-031",
+   "target": "REG-003",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-032",
+   "target": "REG-003",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-033",
+   "target": "REG-003",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-034",
+   "target": "REG-004",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-035",
+   "target": "REG-004",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-036",
+   "target": "REG-004",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-037",
+   "target": "REG-004",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-038",
+   "target": "REG-004",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-039",
+   "target": "REG-004",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-040",
+   "target": "REG-004",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-041",
+   "target": "REG-004",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-042",
+   "target": "REG-004",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-043",
+   "target": "REG-004",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-044",
+   "target": "REG-005",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-045",
+   "target": "REG-005",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-046",
+   "target": "REG-005",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-047",
+   "target": "REG-005",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-048",
+   "target": "REG-005",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-049",
+   "target": "REG-005",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-050",
+   "target": "REG-005",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-051",
+   "target": "REG-005",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-052",
+   "target": "REG-005",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-053",
+   "target": "REG-005",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-054",
+   "target": "REG-006",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-055",
+   "target": "REG-006",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-056",
+   "target": "REG-006",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-057",
+   "target": "REG-006",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-058",
+   "target": "REG-006",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-059",
+   "target": "REG-006",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-060",
+   "target": "REG-006",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-061",
+   "target": "REG-006",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-062",
+   "target": "REG-006",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-092",
+   "target": "REG-006",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "NPC-311",
+   "target": "REG-302",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-010",
+   "target": "NPC-015",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-010",
+   "target": "NPC-016",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-010",
+   "target": "NPC-017",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-011",
+   "target": "NPC-024",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-011",
+   "target": "NPC-033",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-011",
+   "target": "NPC-025",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-011",
+   "target": "NPC-026",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-011",
+   "target": "NPC-027",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-011",
+   "target": "NPC-031",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-012",
+   "target": "NPC-034",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-012",
+   "target": "NPC-035",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-012",
+   "target": "NPC-038",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-012",
+   "target": "NPC-037",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-012",
+   "target": "NPC-040",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-012",
+   "target": "NPC-042",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-013",
+   "target": "NPC-044",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-013",
+   "target": "NPC-047",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-013",
+   "target": "NPC-053",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-014",
+   "target": "NPC-054",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-014",
+   "target": "NPC-060",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-014",
+   "target": "NPC-062",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-014",
+   "target": "NPC-056",
+   "type": "references",
+   "label": "Named in its page"
+  },
+  {
+   "source": "SET-014",
+   "target": "NPC-059",
+   "type": "references",
+   "label": "Named in its page"
   }
  ]
 }

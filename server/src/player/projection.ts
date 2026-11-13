@@ -64,11 +64,71 @@ function scrubRefs(text: string, revealed: Set<string>, index: MentionIndex): st
     .join('');
 }
 
-function project(r: Row, revealed: Set<string>, index: MentionIndex): PlayerEntity {
+/** Kinds of record whose names are ordinary words too often to link from prose. */
+const NO_AUTOLINK = new Set(['creature', 'calling', 'people', 'item', 'rule', 'system', 'species', 'culture', 'index', 'register', 'redirect', 'adventure_hook']);
+const PLACE_TYPES = new Set(['world', 'continent', 'realm', 'region', 'nation', 'settlement', 'landmark', 'building', 'vault', 'ethereal_domain']);
+interface Lexicon {
+  re: RegExp | null;
+  byName: Map<string, string>;
+}
+
+/** Names of revealed records, as they are written in prose (no leading "The", no nickname or bracketed note; a god by the name before the comma). */
+function buildLexicon(db: DB): Lexicon {
+  const rows = db.prepare(`SELECT id, name, type FROM entities WHERE revealed = 1 AND archived = 0`).all() as { id: string; name: string; type: string }[];
+  const groups = new Map<string, { id: string; type: string }[]>();
+  for (const r of rows) {
+    if (NO_AUTOLINK.has(r.type)) continue;
+    let base = r.name.split(/["“]/)[0].replace(/\s*\([^)]*\)\s*$/, '').replace(/^The\s+/, '').trim();
+    if (r.type === 'deity') base = base.split(',')[0].trim();
+    if (base.length < 5 || base === 'World') continue;
+    if (!groups.has(base)) groups.set(base, []);
+    groups.get(base)!.push({ id: r.id, type: r.type });
+  }
+  const byName = new Map<string, string>();
+  for (const [name, rs] of groups) {
+    // A name shared by a place and something else (Kaelholm the city, Kaelholm the power) links to the place.
+    const pick = rs.length === 1 ? rs[0] : rs.filter((x) => PLACE_TYPES.has(x.type)).length === 1 ? rs.find((x) => PLACE_TYPES.has(x.type))! : null;
+    if (pick) byName.set(name, pick.id);
+  }
+  const names = [...byName.keys()].sort((a, b) => b.length - a.length);
+  const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = names.length ? new RegExp(`(?<![\\w'’-])(${names.map(esc).join('|')})(?![\\w-]|['’](?!s\\b))`, 'g') : null;
+  return { re, byName };
+}
+
+/** Link the first plain mention of each revealed record on a page. Existing links, and the page's own record, are left alone. */
+function autoLink(md: string, selfId: string, lex: Lexicon, linked: Set<string>): string {
+  if (!lex.re || !md) return md;
+  for (const m of md.matchAll(/\]\(\/player\/e\/([^)]+)\)/g)) linked.add(decodeURIComponent(m[1]));
+  // Name lists ("Common names.") are lists of names, not mentions of people.
+  return md
+    .split('\n')
+    .map((line) => (/Common names/.test(line) ? line : autoLinkLine(line, selfId, lex, linked)))
+    .join('\n');
+}
+
+function autoLinkLine(md: string, selfId: string, lex: Lexicon, linked: Set<string>): string {
+  return md
+    .split(/(\[[^\]]*\]\([^)]*\))/)
+    .map((part, i) =>
+      i % 2 === 1
+        ? part
+        : part.replace(lex.re!, (name: string) => {
+            const id = lex.byName.get(name);
+            if (!id || id === selfId || linked.has(id)) return name;
+            linked.add(id);
+            return `[${name}](/player/e/${encodeURIComponent(id)})`;
+          }),
+    )
+    .join('');
+}
+
+function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexicon): PlayerEntity {
   const wanted = new Set(parseJson<string[]>(r.revealed_sections, []));
   const sections = splitSections(r.body)
     .filter((s) => s.heading && wanted.has(s.heading) && !isSecretHeading(s.heading))
     .map((s) => ({ heading: s.heading, content: scrubRefs(s.content, revealed, index) }));
+  const linked = new Set<string>();
   return {
     id: r.id,
     name: r.name,
@@ -76,9 +136,9 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex): PlayerEnti
     typeLabel: ENTITY_TYPE_LABELS[r.type as EntityType] ?? r.type,
     realm: r.realm,
     realmLabel: REALM_LABELS[r.realm as Realm] ?? r.realm,
-    summary: scrubRefs(r.player_summary, revealed, index),
+    summary: lex ? autoLink(scrubRefs(r.player_summary, revealed, index), r.id, lex, linked) : scrubRefs(r.player_summary, revealed, index),
     facts: parseJson<string[]>(r.revealed_facts, []).map((f) => scrubRefs(f, revealed, index)),
-    sections,
+    sections: lex ? sections.map((x) => ({ ...x, content: autoLink(x.content, r.id, lex, linked) })) : sections,
   };
 }
 
@@ -87,14 +147,15 @@ const COLS = 'id, name, type, realm, body, player_summary, revealed_sections, re
 export function playerEntities(db: DB): PlayerEntity[] {
   const revealed = revealedIdSet(db);
   const index = loadMentionIndex(db);
+  const lex = buildLexicon(db);
   return (db.prepare(`SELECT ${COLS} FROM entities WHERE revealed = 1 AND archived = 0 ORDER BY name`).all() as Row[]).map((r) =>
-    project(r, revealed, index),
+    project(r, revealed, index, lex),
   );
 }
 
 export function playerEntity(db: DB, id: string): PlayerEntity | null {
   const r = db.prepare(`SELECT ${COLS} FROM entities WHERE id = ? AND revealed = 1 AND archived = 0`).get(id) as Row | undefined;
-  return r ? project(r, revealedIdSet(db), loadMentionIndex(db)) : null;
+  return r ? project(r, revealedIdSet(db), loadMentionIndex(db), buildLexicon(db)) : null;
 }
 
 export function playerSearch(db: DB, q: string): PlayerEntity[] {
