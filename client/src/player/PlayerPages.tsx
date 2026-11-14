@@ -1,7 +1,5 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import L from 'leaflet';
-import { ImageOverlay, MapContainer, Marker, Polygon, Polyline, Rectangle, Tooltip } from 'react-leaflet';
 import ReactMarkdown, { defaultUrlTransform } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ArrowRight, BookOpen, Feather, ListChecks, Map as MapIcon } from 'lucide-react';
@@ -238,7 +236,7 @@ export function PlayerRealm() {
 export function PlayerEntry() {
   const { id = '' } = useParams();
   const { source, base } = usePlayer();
-  const { byId } = usePlayerIndex();
+  const { byId, maps } = usePlayerIndex();
   const { data, error } = usePlayerData<PEntity | null>(() => source.entity(id), id);
   if (error || data === null) return <p className="text-dim">This entry is not known to you.</p>;
   if (!data) return null;
@@ -248,6 +246,8 @@ export function PlayerEntry() {
     .map((x) => byId.get(x))
     .filter((x): x is PEntity => !!x);
   const g = groupOf(data.type);
+  const pinMap = maps?.find((mp) => mp.markers.some((mk) => mk.entity_id === data.id));
+  const onMap = pinMap ? { map: pinMap.id } : null;
   return (
     <div className="space-y-4">
       <div>
@@ -306,6 +306,11 @@ export function PlayerEntry() {
               </div>
             )}
           </div>
+          {onMap && (
+            <Link to={`${base}/maps/${onMap.map}?place=${encodeURIComponent(data.id)}`} className="btn w-full justify-center">
+              <MapIcon size={15} /> Show on the map
+            </Link>
+          )}
           {mentioned.length > 0 && (
             <div className="panel-pad">
               <div className="section-title mb-2">Connections</div>
@@ -337,76 +342,6 @@ export function PlayerSearch() {
     <div>
       <Header title={`Search: ${q}`} subtitle={data ? `${data.length} ${data.length === 1 ? 'result' : 'results'}` : undefined} />
       {data && <EntryGrid list={[...data].sort(byName)} />}
-    </div>
-  );
-}
-
-// ------------------------------------------------------------------ Maps
-export function PlayerMaps() {
-  const { id } = useParams();
-  const { source, base } = usePlayer();
-  const { maps } = usePlayerIndex();
-  const nav = useNavigate();
-  if (!maps) return null;
-  if (!maps.length) return <p className="text-dim">No maps have been shared yet.</p>;
-  const m = maps.find((x) => String(x.id) === id) ?? maps.find((x) => x.parent_map_id == null) ?? maps[0];
-  const bounds: L.LatLngBoundsExpression = [
-    [0, 0],
-    [m.height, m.width],
-  ];
-  return (
-    <div className="space-y-3">
-      <Header title="Maps" />
-      <div className="flex flex-wrap gap-2">
-        {maps.map((x) => (
-          <Link key={x.id} to={`${base}/maps/${x.id}`} className={`chip ${x.id === m.id ? 'border-gold text-gold' : 'border-line text-dim'}`}>
-            {x.name}
-          </Link>
-        ))}
-      </div>
-      <div className="panel overflow-hidden">
-        {/* The frame takes the image's own shape (no empty letterbox on phones), up to 75% of the screen height. */}
-        <MapContainer
-          key={m.id}
-          crs={L.CRS.Simple}
-          bounds={bounds}
-          minZoom={-5}
-          maxZoom={4}
-          zoomSnap={0.25}
-          style={{ width: '100%', aspectRatio: `${m.width} / ${m.height}`, maxHeight: '75vh', background: 'transparent' }}
-          attributionControl={false}
-        >
-          {m.image_file ? <ImageOverlay url={source.imageUrl(m.image_file)} bounds={bounds} /> : <Rectangle bounds={bounds} pathOptions={{ color: '#c9a24a', weight: 1, fillOpacity: 0.3 }} />}
-          {m.shapes.map((s) =>
-            s.kind === 'region' ? (
-              <Polygon key={s.id} positions={s.points.map(([x, y]) => [y, x] as [number, number])} pathOptions={{ color: s.color, fillOpacity: 0.12 }}>
-                {s.label && <Tooltip sticky>{s.label}</Tooltip>}
-              </Polygon>
-            ) : (
-              <Polyline key={s.id} positions={s.points.map(([x, y]) => [y, x] as [number, number])} pathOptions={{ color: s.color, weight: 2, dashArray: '5 5' }}>
-                {s.label && <Tooltip sticky>{s.label}</Tooltip>}
-              </Polyline>
-            ),
-          )}
-          {m.markers.map((mk) => (
-            <Marker
-              key={mk.id}
-              position={[mk.y, mk.x]}
-              icon={L.divIcon({ className: '', iconSize: [14, 14], iconAnchor: [7, 7], html: '<div class="wk-marker" style="width:14px;height:14px;background:#c9a24a"></div>' })}
-              eventHandlers={{
-                click: () => {
-                  if (mk.child_map_id) nav(`${base}/maps/${mk.child_map_id}`);
-                  else if (mk.entity_id) nav(`${base}/e/${encodeURIComponent(mk.entity_id)}`);
-                },
-              }}
-            >
-              <Tooltip direction="top" offset={[0, -8]}>
-                {mk.label}
-              </Tooltip>
-            </Marker>
-          ))}
-        </MapContainer>
-      </div>
     </div>
   );
 }

@@ -30,6 +30,8 @@ The Ethereal Realm as the people who live there and the people who've been there
 - Since the Cycle broke, the realm has been filling up more slowly. Nobody's sure that's good news.
 - There's something past the Black Horizon. Nobody who's gone to look has said what.
 
+**The chart.** Copies of a chart of the realm go round the Nameless Asylum. The places on it are where it says they are. How far apart they are is another matter: routes are connections, not roads, and the chart gets less trustworthy toward its edges. Some say it changes when nobody's looking.
+
 ## The Hollow Verge
 
 > The door was in a wall you've walked past a hundred times. Behind it, a corridor of every corridor you've ever been down, going on and on, and then: a quiet country of grey grass and long shadows, full of people who look up when you arrive and are kind enough not to ask how.

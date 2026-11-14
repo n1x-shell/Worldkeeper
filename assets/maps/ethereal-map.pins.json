@@ -1,0 +1,119 @@
+{
+  "name": "The Ethereal Realm",
+  "image": "ethereal-map.png",
+  "note": "A chart of the Ethereal Realm, as players know it. Pin positions are pixels from the image's top-left corner. Places are where the chart says; distances between them are not to be trusted.",
+  "pins": [
+    {
+      "id": "ETH-501",
+      "label": "The Hollow Verge",
+      "x": 700,
+      "y": 520,
+      "category": "location"
+    },
+    {
+      "id": "LOC-506",
+      "label": "The Nameless Asylum",
+      "x": 813,
+      "y": 445,
+      "category": "location"
+    },
+    {
+      "id": "LOC-901",
+      "label": "The Rift",
+      "x": 1005,
+      "y": 505,
+      "category": "location"
+    },
+    {
+      "id": "ETH-502",
+      "label": "The Fields of Lost Realities",
+      "x": 370,
+      "y": 420,
+      "category": "location"
+    },
+    {
+      "id": "LOC-502",
+      "label": "The Crucible of Creation",
+      "x": 320,
+      "y": 290,
+      "category": "location"
+    },
+    {
+      "id": "LOC-501",
+      "label": "The Rifts Edge",
+      "x": 95,
+      "y": 380,
+      "category": "location"
+    },
+    {
+      "id": "ETH-503",
+      "label": "The Ossuary of Kings",
+      "x": 1250,
+      "y": 230,
+      "category": "location"
+    },
+    {
+      "id": "LOC-503",
+      "label": "The Fractured Throne",
+      "x": 955,
+      "y": 160,
+      "category": "location"
+    },
+    {
+      "id": "LOC-504",
+      "label": "The Colosseum of Echoes",
+      "x": 1420,
+      "y": 265,
+      "category": "location"
+    },
+    {
+      "id": "ETH-504",
+      "label": "The Silent Archive",
+      "x": 1330,
+      "y": 470,
+      "category": "location"
+    },
+    {
+      "id": "ETH-505",
+      "label": "The Loom of Eternity",
+      "x": 470,
+      "y": 650,
+      "category": "location"
+    },
+    {
+      "id": "ETH-506",
+      "label": "The Citadel of the Hidden",
+      "x": 1130,
+      "y": 640,
+      "category": "location"
+    },
+    {
+      "id": "ETH-507",
+      "label": "The Black Horizon",
+      "x": 1600,
+      "y": 860,
+      "category": "location"
+    },
+    {
+      "id": "LOC-507",
+      "label": "The Veil of Eternity",
+      "x": 265,
+      "y": 150,
+      "category": "location"
+    },
+    {
+      "id": "LOC-508",
+      "label": "The Observatory of the Last Question",
+      "x": 105,
+      "y": 200,
+      "category": "location"
+    },
+    {
+      "id": "LOC-509",
+      "label": "The Nameless Sepulcher",
+      "x": 1555,
+      "y": 95,
+      "category": "location"
+    }
+  ]
+}

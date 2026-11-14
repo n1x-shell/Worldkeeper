@@ -5,7 +5,7 @@
  *
  *   npx tsx scripts/build-player-tagged-handbook.ts <fresh data dir> <archive.zip> <output dir>
  *
- * The world map in assets/maps/ (world-map.png + world-map.pins.json) is added as a player-visible map.
+ * Maps in assets/maps/ (each <name>.pins.json with its image, and an optional <name>.routes.json) are added as player-visible maps.
  * Pins link only to records that end up revealed; the others are left off.
  *
  * DM-written player text in assets/player-text/*.md is published too: each "## Name" section becomes the player
@@ -91,24 +91,26 @@ for (const f of fs.existsSync(textDir) ? fs.readdirSync(textDir).filter((n) => n
     console.log(`player text: ${name} -> ${rows[0].id}`);
   }
 }
-// World map: image + pins (pixel positions from the top-left; the atlas measures y from the bottom).
+// Maps: each <name>.pins.json in assets/maps (the world map first) is an image + pins, with optional <name>.routes.json.
+// Pin positions are pixels from the image's top-left; the atlas measures y from the bottom.
 const mapDir = path.resolve(import.meta.dirname, '../assets/maps');
-const pinsFile = path.join(mapDir, 'world-map.pins.json');
-if (fs.existsSync(pinsFile)) {
-  const spec = JSON.parse(fs.readFileSync(pinsFile, 'utf8')) as { name: string; image: string; pins: { id: string; label: string; x: number; y: number; category: string }[] };
+const pinFiles = fs.existsSync(mapDir) ? fs.readdirSync(mapDir).filter((f) => f.endsWith('.pins.json')).sort((a, b) => Number(b.startsWith('world')) - Number(a.startsWith('world')) || a.localeCompare(b)) : [];
+for (const pf of pinFiles) {
+  const base = pf.replace(/\.pins\.json$/, '');
+  const spec = JSON.parse(fs.readFileSync(path.join(mapDir, pf), 'utf8')) as { name: string; image: string; pins: { id: string; label: string; x: number; y: number; category: string }[] };
   const img = fs.readFileSync(path.join(mapDir, spec.image));
   const size = imageSize(img);
   if (!size) throw new Error(`Could not read the size of ${spec.image}`);
-  const file = `map-world-${img.length.toString(16)}${path.extname(spec.image)}`;
+  const file = `map-${base}-${img.length.toString(16)}${path.extname(spec.image)}`;
   fs.writeFileSync(path.join(ctx.paths.uploadsDir, file), img);
-  const map = maps.create(ctx.db, { name: spec.name, kind: 'image', image_file: file, width: size.width, height: size.height, player_visible: true, layers: ['Locations', 'Routes'] }) as { id: number };
+  const routesFile = path.join(mapDir, `${base}.routes.json`);
+  const map = maps.create(ctx.db, { name: spec.name, kind: 'image', image_file: file, width: size.width, height: size.height, player_visible: true, layers: fs.existsSync(routesFile) ? ['Locations', 'Routes'] : ['Locations'] }) as { id: number };
   let placed = 0;
   for (const p of spec.pins) {
     if (!getEntity(ctx.db, p.id).revealed) continue;
     markers.create(ctx.db, { map_id: map.id, entity_id: p.id, label: p.label, x: p.x, y: size.height - p.y, category: p.category, layer: 'Locations', hidden: false });
     placed++;
   }
-  const routesFile = path.join(mapDir, 'world-map.routes.json');
   let routeCount = 0;
   if (fs.existsSync(routesFile)) {
     const r = JSON.parse(fs.readFileSync(routesFile, 'utf8')) as { routes: { label: string; color: string; points: [number, number][] }[] };
@@ -117,7 +119,7 @@ if (fs.existsSync(pinsFile)) {
       routeCount++;
     }
   }
-  console.log(`world map: ${size.width}x${size.height}, ${placed} pins, ${routeCount} routes`);
+  console.log(`${spec.name}: ${size.width}x${size.height}, ${placed} pins, ${routeCount} routes`);
 }
 
 const { files: site, summary } = buildPlayerSite(ctx.db, ctx.paths);

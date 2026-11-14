@@ -172,3 +172,55 @@ h3 {
 .react-flow__attribution {
   display: none;
 }
+
+/* Map explorer (handbook): full-screen map with slide-out panels. */
+.wk-pin {
+  @apply flex items-center justify-center rounded-full border border-gold/80 text-gold shadow-lg transition-transform;
+  width: 28px;
+  height: 28px;
+  background: rgb(14 13 18 / 0.88);
+  box-shadow: 0 0 0 2px rgb(0 0 0 / 0.35), 0 2px 8px rgb(0 0 0 / 0.6);
+}
+.wk-pin:hover {
+  transform: scale(1.15);
+}
+.wk-pin-region {
+  @apply border-dashed;
+  background: rgb(14 13 18 / 0.6);
+}
+.wk-pin-active {
+  @apply text-bg;
+  background: rgb(var(--gold));
+  transform: scale(1.2);
+  box-shadow: 0 0 0 3px rgb(var(--gold) / 0.35), 0 0 18px rgb(var(--gold) / 0.6);
+}
+.wk-pin-legend {
+  width: 24px;
+  height: 24px;
+}
+.wk-map-btn {
+  @apply inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-sm text-ink hover:border-gold/60 hover:text-gold transition-colors;
+  background: rgb(14 13 18 / 0.82);
+  backdrop-filter: blur(6px);
+}
+.wk-map-panel {
+  @apply absolute z-[1000] rounded-lg border border-line shadow-2xl overflow-hidden transition-transform duration-300 ease-out;
+  background: rgb(14 13 18 / 0.92);
+  backdrop-filter: blur(8px);
+}
+.wk-map-panel-hidden-left {
+  transform: translateX(calc(-100% - 2rem));
+}
+.wk-map-panel-hidden-right {
+  transform: translateX(calc(100% + 2rem));
+}
+.wk-map-tip {
+  @apply rounded-md border border-gold/40 px-2.5 py-1 text-ink shadow-xl;
+  background: rgb(14 13 18 / 0.95) !important;
+}
+.wk-map-tip::before {
+  display: none;
+}
+.wk-codex button.wk-ref {
+  @apply text-arcane underline decoration-dotted underline-offset-2 hover:text-gold;
+}
