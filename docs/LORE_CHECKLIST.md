@@ -1,6 +1,6 @@
 # Lore Checklist
 
-Everything found in the lore audit (November 2026), as one list. Ticked items are done. New lore is always drafted for review before it is published.
+Everything found in the lore audit (November 2026), as one list. Ticked items are done. New lore is always drafted for review before it is published. What comes next is in `FUTURE_WORK.md`.
 
 ## 1. Do first
 
