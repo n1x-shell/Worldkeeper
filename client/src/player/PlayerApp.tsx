@@ -3,7 +3,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { apiSource, type PlayerSource } from './source';
 import { PlayerProvider } from './context';
 import { PlayerLayout } from './PlayerLayout';
-import { PlayerBrowse, PlayerEntry, PlayerHome, PlayerMaps, PlayerQuests, PlayerRealm, PlayerRecaps, PlayerSearch } from './PlayerPages';
+import { PlayerBrowse, PlayerEntry, PlayerHome, PlayerQuests, PlayerRealm, PlayerRecaps, PlayerSearch } from './PlayerPages';
+import { MapExplorer } from './MapExplorer';
 
 /**
  * PLAYER VIEW. It only reads from a PlayerSource: the live player API or a published snapshot, both of which
@@ -28,8 +29,8 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
           <Route path="realm/:realm" element={<PlayerRealm />} />
           <Route path="e/:id" element={<PlayerEntry />} />
           <Route path="search" element={<PlayerSearch />} />
-          <Route path="maps" element={<PlayerMaps />} />
-          <Route path="maps/:id" element={<PlayerMaps />} />
+          <Route path="maps" element={<MapExplorer />} />
+          <Route path="maps/:id" element={<MapExplorer />} />
           <Route path="quests" element={<PlayerQuests />} />
           <Route path="recaps" element={<PlayerRecaps />} />
           <Route path="journal" element={<Navigate to={`${base}/quests`} replace />} />
