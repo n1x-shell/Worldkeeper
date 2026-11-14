@@ -168,7 +168,7 @@ export function playerSearch(db: DB, q: string): PlayerEntity[] {
 
 export function playerMaps(db: DB) {
   const revealed = revealedIdSet(db);
-  const maps = db.prepare('SELECT id, name, kind, parent_map_id, image_file, width, height FROM maps WHERE player_visible = 1 ORDER BY name').all() as {
+  const maps = db.prepare('SELECT id, name, kind, parent_map_id, image_file, width, height FROM maps WHERE player_visible = 1 ORDER BY id').all() as {
     id: number;
     name: string;
     kind: string;
