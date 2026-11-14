@@ -52,7 +52,7 @@ const icon = (kind: Kind, active: boolean) =>
     className: '',
     iconSize: [28, 28],
     iconAnchor: [14, 14],
-    html: `<div class="wk-pin${active ? ' wk-pin-active' : ''}${kind === 'region' ? ' wk-pin-region' : ''}"><svg viewBox="0 0 24 24" width="16" height="16">${GLYPH[kind]}</svg></div>`,
+    html: `<div class="wk-pin wk-pin-k-${kind}${active ? ' wk-pin-active' : ''}${kind === 'region' ? ' wk-pin-region' : ''}"><svg viewBox="0 0 24 24" width="16" height="16">${GLYPH[kind]}</svg></div>`,
   });
 
 /** Point a pin's name card away from the nearest screen edge (top by default; below near the top; sideways near the sides). */
@@ -330,7 +330,7 @@ export function MapExplorer() {
                   {k.key === 'routes' ? (
                     <span className="w-6 h-0 border-t-2 border-dashed border-gold/80 shrink-0" />
                   ) : (
-                    <span className="wk-pin wk-pin-legend shrink-0" dangerouslySetInnerHTML={{ __html: `<svg viewBox="0 0 24 24" width="14" height="14">${GLYPH[k.key as Kind]}</svg>` }} />
+                    <span className={`wk-pin wk-pin-legend wk-pin-k-${k.key} shrink-0`} dangerouslySetInnerHTML={{ __html: `<svg viewBox="0 0 24 24" width="14" height="14">${GLYPH[k.key as Kind]}</svg>` }} />
                   )}
                   <span className="flex-1 text-left text-sm">{k.label}</span>
                   <span className="text-xs text-dim">{counts[k.key]}</span>

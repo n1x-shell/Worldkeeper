@@ -175,11 +175,33 @@ h3 {
 
 /* Map explorer (handbook): full-screen map with slide-out panels. */
 .wk-pin {
-  @apply flex items-center justify-center rounded-full border border-gold/80 text-gold shadow-lg transition-transform;
+  @apply flex items-center justify-center rounded-full border shadow-lg transition-transform;
+  --pin: 201 162 74;
   width: 28px;
   height: 28px;
+  color: rgb(var(--pin));
+  border-color: rgb(var(--pin) / 0.85);
   background: rgb(14 13 18 / 0.88);
   box-shadow: 0 0 0 2px rgb(0 0 0 / 0.35), 0 2px 8px rgb(0 0 0 / 0.6);
+}
+/* One colour per kind of place, readable on parchment and on the dark Ethereal chart. */
+.wk-pin-k-region {
+  --pin: 207 214 224;
+}
+.wk-pin-k-settlement {
+  --pin: 222 178 82;
+}
+.wk-pin-k-landmark {
+  --pin: 102 196 168;
+}
+.wk-pin-k-fortress {
+  --pin: 226 112 96;
+}
+.wk-pin-k-vault {
+  --pin: 176 146 236;
+}
+.wk-pin-k-other {
+  --pin: 126 182 236;
 }
 .wk-pin:hover {
   transform: scale(1.15);
@@ -189,10 +211,10 @@ h3 {
   background: rgb(14 13 18 / 0.6);
 }
 .wk-pin-active {
-  @apply text-bg;
-  background: rgb(var(--gold));
+  color: rgb(14 13 18);
+  background: rgb(var(--pin));
   transform: scale(1.2);
-  box-shadow: 0 0 0 3px rgb(var(--gold) / 0.35), 0 0 18px rgb(var(--gold) / 0.6);
+  box-shadow: 0 0 0 3px rgb(var(--pin) / 0.35), 0 0 18px rgb(var(--pin) / 0.6);
 }
 .wk-pin-legend {
   width: 24px;
@@ -229,6 +251,7 @@ h3 {
   z-index: 1100;
 }
 .wk-map-tip {
+  width: max-content;
   max-width: 280px;
   white-space: normal;
 }
