@@ -186,7 +186,7 @@ h3 {
 }
 /* One colour per kind of place, readable on parchment and on the dark Ethereal chart. */
 .wk-pin-k-region {
-  --pin: 207 214 224;
+  --pin: 232 237 245;
 }
 .wk-pin-k-settlement {
   --pin: 222 178 82;
@@ -207,8 +207,8 @@ h3 {
   transform: scale(1.15);
 }
 .wk-pin-region {
-  @apply border-dashed;
-  background: rgb(14 13 18 / 0.6);
+  border-width: 2px;
+  background: rgb(14 13 18 / 0.9);
 }
 .wk-pin-active {
   color: rgb(14 13 18);
