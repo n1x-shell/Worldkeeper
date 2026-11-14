@@ -37,10 +37,10 @@ const kindOf = (type: string | undefined): Kind =>
             ? 'vault'
             : 'other';
 /** How far past "whole map in view" you must zoom before a kind of pin appears. */
-const SHOW_FROM: Record<Kind, number> = { region: -9, settlement: -9, landmark: 0.6, fortress: 1, vault: 0.6, other: 0 };
+const SHOW_FROM: Record<Kind, number> = { region: -9, settlement: -9, landmark: -9, fortress: 0.5, vault: 0.5, other: -9 };
 
 const GLYPH: Record<Kind, string> = {
-  region: '<path d="M12 3l6 9-6 9-6-9z" fill="none" stroke="currentColor" stroke-width="2"/>',
+  region: '<path d="M12 3l6 9-6 9-6-9z" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="12" cy="12" r="2" fill="currentColor"/>',
   settlement: '<path d="M5 20V11l7-6 7 6v9h-5v-5h-4v5z" fill="currentColor"/>',
   landmark: '<path d="M4 20l6-12 3 5 2-3 5 10z" fill="currentColor"/>',
   fortress: '<path d="M5 20V8h2v2h2V8h2v2h2V8h2v2h2V8h2v12z" fill="currentColor"/>',
@@ -320,7 +320,7 @@ export function MapExplorer() {
       {/* Legend: slides out from the left. */}
       <aside className={`wk-map-panel left-3 top-16 w-64 ${legend ? '' : 'wk-map-panel-hidden-left'}`}>
         <div className="font-display text-gold text-lg px-4 pt-3">{m.name}</div>
-        <div className="text-xs text-dim px-4 pb-2">Zoom in to see more. Click a place to read about it.</div>
+        <div className="text-xs text-dim px-4 pb-2">Click a place to read about it.{counts.fortress || counts.vault ? ' Zoom in for fortresses and vaults.' : ''}</div>
         <ul className="px-2 pb-3">
           {KINDS.filter((k) => counts[k.key]).map((k) => {
             const off = hidden.has(k.key);
