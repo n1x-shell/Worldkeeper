@@ -224,3 +224,11 @@ h3 {
 .wk-codex button.wk-ref {
   @apply text-arcane underline decoration-dotted underline-offset-2 hover:text-gold;
 }
+/* Name cards sit above the map's side panels and bars, never under them. */
+.wk-explorer .leaflet-tooltip-pane {
+  z-index: 1100;
+}
+.wk-map-tip {
+  max-width: 280px;
+  white-space: normal;
+}

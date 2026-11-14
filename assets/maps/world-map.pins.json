@@ -1,363 +1,363 @@
 {
   "name": "The World",
-  "image": "world-map.png",
+  "image": "world-map.webp",
   "note": "Pin positions are pixels from the image's top-left corner, placed on drawn features rather than over the lettering. Only pins whose record is revealed are added for players.",
   "pins": [
     {
       "id": "CON-301",
       "label": "Kaelmar",
-      "x": 330,
-      "y": 560,
+      "x": 660,
+      "y": 1120,
       "category": "location"
     },
     {
       "id": "CON-001",
       "label": "Aetheris",
-      "x": 1180,
-      "y": 300,
+      "x": 2360,
+      "y": 600,
       "category": "location"
     },
     {
       "id": "LOC-902",
       "label": "The Black Tides",
-      "x": 790,
-      "y": 575,
+      "x": 1580,
+      "y": 1150,
       "category": "landmark"
     },
     {
       "id": "SET-302",
       "label": "Kaelholm",
-      "x": 572,
-      "y": 588,
+      "x": 1144,
+      "y": 1176,
       "category": "settlement"
     },
     {
       "id": "SET-010",
       "label": "Empyrean Spire",
-      "x": 1290,
-      "y": 135,
+      "x": 2580,
+      "y": 270,
       "category": "settlement"
     },
     {
       "id": "REG-002",
       "label": "The Radiant Ascendancy",
-      "x": 1440,
-      "y": 250,
+      "x": 2880,
+      "y": 500,
       "category": "location"
     },
     {
       "id": "SET-012",
       "label": "Zepharyos",
-      "x": 1020,
-      "y": 175,
+      "x": 2040,
+      "y": 350,
       "category": "settlement"
     },
     {
       "id": "REG-004",
       "label": "The Fractured Nexus",
-      "x": 1115,
-      "y": 140,
+      "x": 2230,
+      "y": 280,
       "category": "location"
     },
     {
       "id": "SET-011",
       "label": "Varkhaal",
-      "x": 1460,
-      "y": 465,
+      "x": 2920,
+      "y": 930,
       "category": "settlement"
     },
     {
       "id": "REG-003",
       "label": "The Tyrant's Dominion",
-      "x": 1525,
-      "y": 335,
+      "x": 3050,
+      "y": 670,
       "category": "location"
     },
     {
       "id": "SET-013",
       "label": "Noctis",
-      "x": 925,
-      "y": 515,
+      "x": 1850,
+      "y": 1030,
       "category": "settlement"
     },
     {
       "id": "REG-005",
       "label": "The Eternal Veil",
-      "x": 960,
-      "y": 365,
+      "x": 1920,
+      "y": 730,
       "category": "location"
     },
     {
       "id": "SET-014",
       "label": "The Rootspire",
-      "x": 1275,
-      "y": 700,
+      "x": 2550,
+      "y": 1400,
       "category": "settlement"
     },
     {
       "id": "REG-006",
       "label": "The Verdant Rebirth",
-      "x": 1000,
-      "y": 630,
+      "x": 2000,
+      "y": 1260,
       "category": "location"
     },
     {
       "id": "LOC-007",
       "label": "The Luminara Gate",
-      "x": 1580,
-      "y": 85,
+      "x": 3160,
+      "y": 170,
       "category": "landmark"
     },
     {
       "id": "REG-306",
       "label": "The Ash Barrens",
-      "x": 370,
-      "y": 330,
+      "x": 740,
+      "y": 660,
       "category": "location"
     },
     {
       "id": "REG-301",
       "label": "The Eastern Deepwood",
-      "x": 520,
-      "y": 385,
+      "x": 1040,
+      "y": 770,
       "category": "location"
     },
     {
       "id": "REG-302",
       "label": "The Eastern Mountains",
-      "x": 650,
-      "y": 290,
+      "x": 1300,
+      "y": 580,
       "category": "location"
     },
     {
       "id": "REG-303",
       "label": "The Central Bloom Country",
-      "x": 270,
-      "y": 405,
+      "x": 540,
+      "y": 810,
       "category": "location"
     },
     {
       "id": "REG-305",
       "label": "The Southern Fens, Lakes and River Country",
-      "x": 255,
-      "y": 640,
+      "x": 510,
+      "y": 1280,
       "category": "location"
     },
     {
       "id": "REG-304",
       "label": "The Northern Highlands and Ice",
-      "x": 130,
-      "y": 95,
+      "x": 260,
+      "y": 190,
       "category": "location"
     },
     {
       "id": "REG-001",
       "label": "The Hollow Marches",
-      "x": 1135,
-      "y": 380,
+      "x": 2270,
+      "y": 760,
       "category": "region"
     },
     {
       "id": "SET-001",
       "label": "Hollow Refuge",
-      "x": 1210,
-      "y": 495,
+      "x": 2420,
+      "y": 990,
       "category": "settlement"
     },
     {
       "id": "LOC-002",
       "label": "The Bloodmarked Fields",
-      "x": 1320,
-      "y": 515,
+      "x": 2640,
+      "y": 1030,
       "category": "landmark"
     },
     {
       "id": "LOC-901",
       "label": "The Rift",
-      "x": 110,
-      "y": 400,
+      "x": 220,
+      "y": 800,
       "category": "landmark"
     },
     {
       "id": "SET-301",
       "label": "Ashvale",
-      "x": 185,
-      "y": 280,
+      "x": 370,
+      "y": 560,
       "category": "settlement"
     },
     {
       "id": "SET-320",
       "label": "Coldwater",
-      "x": 75,
-      "y": 470,
+      "x": 150,
+      "y": 940,
       "category": "settlement"
     },
     {
       "id": "SET-322",
       "label": "Greyfold",
-      "x": 90,
-      "y": 535,
+      "x": 180,
+      "y": 1070,
       "category": "settlement"
     },
     {
       "id": "SET-324",
       "label": "Oakhallow",
-      "x": 120,
-      "y": 512,
+      "x": 240,
+      "y": 1024,
       "category": "settlement"
     },
     {
       "id": "SET-327",
       "label": "Brannock",
-      "x": 160,
-      "y": 505,
+      "x": 320,
+      "y": 1010,
       "category": "settlement"
     },
     {
       "id": "SET-326",
       "label": "Kettleby",
-      "x": 115,
-      "y": 590,
+      "x": 230,
+      "y": 1180,
       "category": "settlement"
     },
     {
       "id": "SET-321",
       "label": "Haskett's Mill",
-      "x": 152,
-      "y": 630,
+      "x": 304,
+      "y": 1260,
       "category": "settlement"
     },
     {
       "id": "SET-325",
       "label": "Sallow Cross",
-      "x": 238,
-      "y": 646,
+      "x": 476,
+      "y": 1292,
       "category": "settlement"
     },
     {
       "id": "SET-328",
       "label": "Thornmere",
-      "x": 235,
-      "y": 680,
+      "x": 470,
+      "y": 1360,
       "category": "settlement"
     },
     {
       "id": "SET-323",
       "label": "Low Fenn",
-      "x": 330,
-      "y": 712,
+      "x": 660,
+      "y": 1424,
       "category": "settlement"
     },
     {
       "id": "LOC-003",
       "label": "The Crossroads of Fate",
-      "x": 1192,
-      "y": 447,
+      "x": 2384,
+      "y": 894,
       "category": "landmark"
     },
     {
       "id": "LOC-030",
       "label": "Ashen Spire",
-      "x": 1135,
-      "y": 457,
+      "x": 2270,
+      "y": 914,
       "category": "landmark"
     },
     {
       "id": "LOC-031",
       "label": "The Scar",
-      "x": 1270,
-      "y": 395,
+      "x": 2540,
+      "y": 790,
       "category": "landmark"
     },
     {
       "id": "LOC-032",
       "label": "Blackveil Fortress",
-      "x": 1245,
-      "y": 322,
+      "x": 2490,
+      "y": 644,
       "category": "landmark"
     },
     {
       "id": "LOC-033",
       "label": "The Sunken Archive",
-      "x": 1100,
-      "y": 560,
+      "x": 2200,
+      "y": 1120,
       "category": "landmark"
     },
     {
       "id": "LOC-034",
       "label": "Wither's Hollow",
-      "x": 1045,
-      "y": 482,
+      "x": 2090,
+      "y": 964,
       "category": "landmark"
     },
     {
       "id": "LOC-035",
       "label": "The Cairn of the Forgotten",
-      "x": 1192,
-      "y": 330,
+      "x": 2384,
+      "y": 660,
       "category": "landmark"
     },
     {
       "id": "SET-015",
       "label": "Archwell",
-      "x": 1085,
-      "y": 377,
+      "x": 2170,
+      "y": 754,
       "category": "location"
     },
     {
       "id": "SET-016",
       "label": "Tallowmarch",
-      "x": 1300,
-      "y": 345,
+      "x": 2600,
+      "y": 690,
       "category": "location"
     },
     {
       "id": "SET-017",
       "label": "Lastlight",
-      "x": 1082,
-      "y": 512,
+      "x": 2164,
+      "y": 1024,
       "category": "location"
     },
     {
       "id": "SET-018",
       "label": "Stakewall",
-      "x": 1375,
-      "y": 560,
+      "x": 2750,
+      "y": 1120,
       "category": "location"
     },
     {
       "id": "SET-019",
       "label": "Dawnmere",
-      "x": 1415,
-      "y": 255,
+      "x": 2830,
+      "y": 510,
       "category": "location"
     },
     {
       "id": "SET-020",
       "label": "Ironwake",
-      "x": 1548,
-      "y": 580,
+      "x": 3096,
+      "y": 1160,
       "category": "location"
     },
     {
       "id": "SET-021",
       "label": "Driftholm",
-      "x": 1130,
-      "y": 122,
+      "x": 2260,
+      "y": 244,
       "category": "location"
     },
     {
       "id": "SET-022",
       "label": "Mothhaven",
-      "x": 935,
-      "y": 378,
+      "x": 1870,
+      "y": 756,
       "category": "location"
     },
     {
       "id": "SET-023",
       "label": "Highbough",
-      "x": 1120,
-      "y": 690,
+      "x": 2240,
+      "y": 1380,
       "category": "location"
     }
   ]

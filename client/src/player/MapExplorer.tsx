@@ -55,6 +55,18 @@ const icon = (kind: Kind, active: boolean) =>
     html: `<div class="wk-pin${active ? ' wk-pin-active' : ''}${kind === 'region' ? ' wk-pin-region' : ''}"><svg viewBox="0 0 24 24" width="16" height="16">${GLYPH[kind]}</svg></div>`,
   });
 
+/** Point a pin's name card away from the nearest screen edge (top by default; below near the top; sideways near the sides). */
+function placeTip(marker: L.Marker) {
+  const tip = marker.getTooltip();
+  const map = (marker as unknown as { _map?: L.Map })._map;
+  if (!tip || !map) return;
+  const pt = map.latLngToContainerPoint(marker.getLatLng());
+  const size = map.getSize();
+  const dir = pt.y < 110 ? 'bottom' : pt.x < 140 ? 'right' : pt.x > size.x - 140 ? 'left' : 'top';
+  tip.options.direction = dir;
+  tip.options.offset = L.point(dir === 'top' ? [0, -12] : dir === 'bottom' ? [0, 12] : dir === 'left' ? [-12, 0] : [12, 0]);
+}
+
 const read = (k: string, d: string) => {
   try {
     return localStorage.getItem(k) ?? d;
@@ -97,7 +109,7 @@ function Viewport({ bounds, onZoom, focus }: { bounds: L.LatLngBoundsExpression;
   }, [map]);
   useEffect(() => {
     if (!focus) return;
-    const z = Math.max(map.getZoom(), fit.current + 1);
+    const z = Math.min(Math.max(map.getZoom(), fit.current + 1), map.getMaxZoom());
     // With the codex open beside it on a wide screen, centre the place in the space left of the panel.
     const shift = window.innerWidth >= 640 ? 220 : 0;
     const target = map.unproject(map.project(focus.at, z).add([shift, 0]), z);
@@ -232,13 +244,13 @@ export function MapExplorer() {
   const visible = pins.filter((p) => !hidden.has(p.kind) && (rel >= SHOW_FROM[p.kind] || p.entity_id === selected));
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#0b0b10] text-ink">
+    <div className="wk-explorer fixed inset-0 z-50 bg-[#0b0b10] text-ink">
       <MapContainer
         key={m.id}
         crs={L.CRS.Simple}
         bounds={bounds}
         minZoom={-5}
-        maxZoom={3}
+        maxZoom={0.5}
         zoomSnap={0.25}
         zoomControl={false}
         style={{ position: 'absolute', inset: 0, background: '#0b0b10' }}
@@ -249,11 +261,19 @@ export function MapExplorer() {
         {m.shapes.map((s) =>
           s.kind === 'region' ? (
             <Polygon key={s.id} positions={s.points.map(([x, y]) => [y, x] as [number, number])} pathOptions={{ color: s.color, fillOpacity: 0.12 }}>
-              {s.label && <Tooltip sticky>{s.label}</Tooltip>}
+              {s.label && (
+                <Tooltip sticky direction="bottom" offset={[0, 14]} className="wk-map-tip">
+                  <span className="text-[12px]">{s.label}</span>
+                </Tooltip>
+              )}
             </Polygon>
           ) : hidden.has('routes') ? null : (
             <Polyline key={s.id} positions={s.points.map(([x, y]) => [y, x] as [number, number])} pathOptions={{ color: s.color, weight: 2, dashArray: '5 5' }}>
-              {s.label && <Tooltip sticky>{s.label}</Tooltip>}
+              {s.label && (
+                <Tooltip sticky direction="bottom" offset={[0, 14]} className="wk-map-tip">
+                  <span className="text-[12px]">{s.label}</span>
+                </Tooltip>
+              )}
             </Polyline>
           ),
         )}
@@ -268,6 +288,8 @@ export function MapExplorer() {
                 if (mk.child_map_id) nav(`${base}/maps/${mk.child_map_id}`);
                 else if (mk.entity_id) select(mk.entity_id);
               },
+              // Open the name card on whichever side of the pin has room, so it never runs off the screen.
+              mouseover: (ev) => placeTip(ev.target as L.Marker),
             }}
           >
             <Tooltip direction="top" offset={[0, -12]} className="wk-map-tip">
