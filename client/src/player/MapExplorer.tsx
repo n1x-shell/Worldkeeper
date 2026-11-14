@@ -97,7 +97,7 @@ function Viewport({ bounds, onZoom, focus }: { bounds: L.LatLngBoundsExpression;
   }, [map]);
   useEffect(() => {
     if (!focus) return;
-    const z = Math.max(map.getZoom(), fit.current + 1);
+    const z = Math.min(Math.max(map.getZoom(), fit.current + 1), map.getMaxZoom());
     // With the codex open beside it on a wide screen, centre the place in the space left of the panel.
     const shift = window.innerWidth >= 640 ? 220 : 0;
     const target = map.unproject(map.project(focus.at, z).add([shift, 0]), z);
@@ -238,7 +238,7 @@ export function MapExplorer() {
         crs={L.CRS.Simple}
         bounds={bounds}
         minZoom={-5}
-        maxZoom={3}
+        maxZoom={0.5}
         zoomSnap={0.25}
         zoomControl={false}
         style={{ position: 'absolute', inset: 0, background: '#0b0b10' }}
@@ -249,11 +249,19 @@ export function MapExplorer() {
         {m.shapes.map((s) =>
           s.kind === 'region' ? (
             <Polygon key={s.id} positions={s.points.map(([x, y]) => [y, x] as [number, number])} pathOptions={{ color: s.color, fillOpacity: 0.12 }}>
-              {s.label && <Tooltip sticky>{s.label}</Tooltip>}
+              {s.label && (
+                <Tooltip sticky className="wk-map-tip">
+                  <span className="text-[12px]">{s.label}</span>
+                </Tooltip>
+              )}
             </Polygon>
           ) : hidden.has('routes') ? null : (
             <Polyline key={s.id} positions={s.points.map(([x, y]) => [y, x] as [number, number])} pathOptions={{ color: s.color, weight: 2, dashArray: '5 5' }}>
-              {s.label && <Tooltip sticky>{s.label}</Tooltip>}
+              {s.label && (
+                <Tooltip sticky className="wk-map-tip">
+                  <span className="text-[12px]">{s.label}</span>
+                </Tooltip>
+              )}
             </Polyline>
           ),
         )}
