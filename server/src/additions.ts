@@ -13,7 +13,7 @@ import path from 'node:path';
 import type { DB } from './db/connection.js';
 import type { SourceFile } from './import/scan.js';
 import { buildPlan, commitPlan } from './import/importer.js';
-import { createRelationship } from './repo/relationships.js';
+import { createRelationship, rebuildAllDerivedRelationships } from './repo/relationships.js';
 import { RELATIONSHIP_TYPES, type RelationshipType } from '../../shared/domain.js';
 import { readPlayerText, syncRumours } from './repo/rumours.js';
 import { syncMysteries } from './repo/mysteries.js';
@@ -125,6 +125,8 @@ export function applyTimeline(db: DB, dir = DEFAULT_ADDITIONS_DIR): number {
 export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?: string) {
   const files = loreFiles(dir);
   const imported = files.length ? commitPlan(db, files, buildPlan(db, files, 'Worldkeeper additions')) : null;
+  // Derived links follow the current rules (they're rebuilt from each record's own text; curated links are kept).
+  rebuildAllDerivedRelationships(db);
   const links = applyLinks(db, dir);
   const rumours = syncRumours(db, readPlayerText(path.resolve(dir, '../player-text')));
   const mysteries = syncMysteries(db, path.join(dir, 'mysteries.json'));
