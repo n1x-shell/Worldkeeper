@@ -1,3 +1,4 @@
+import { BriefingPanel, briefingFill } from './Briefing';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ReactFlow, Background, Controls, MarkerType, type Connection, type Edge, type Node, type NodeChange, applyNodeChanges } from '@xyflow/react';
@@ -857,6 +858,23 @@ export function SessionPage() {
       />
       {tab === 'prep' && (
         <div className="grid gap-3 lg:grid-cols-2">
+          <BriefingPanel
+            sessionId={s.id}
+            onFill={(b) => {
+              // Only fields that are still empty: nothing you've written is changed.
+              const fill = briefingFill(b);
+              const prep = { ...s.prep } as Record<string, unknown>;
+              let n = 0;
+              for (const [k, v] of Object.entries(fill)) {
+                const cur = prep[k];
+                if (Array.isArray(cur) ? cur.length : typeof cur === 'string' && cur.trim()) continue;
+                prep[k] = v;
+                n++;
+              }
+              set({ prep: prep as Session['prep'] });
+              toast(n ? `Filled ${n} empty field${n === 1 ? '' : 's'}.` : 'Every field already has something in it.');
+            }}
+          />
           {PREP_FIELDS.map(([k, label]) => (
             <Field key={k} label={label}>
               <AutoTextarea minRows={3} value={(s.prep[k] as string) ?? ''} onChange={(e) => setPrep(k, e.target.value)} />

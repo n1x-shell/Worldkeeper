@@ -88,6 +88,8 @@ export interface Combatant {
   isPC: boolean;
   hidden: boolean;
   entityId: string | null;
+  /** What players call it on their phones; blank shows its name. */
+  playerName?: string;
   notes: string;
   defeated: boolean;
 }

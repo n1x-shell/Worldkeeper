@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
+import { handouts } from '../repo/handouts.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { randomBytes } from 'node:crypto';
@@ -59,8 +60,29 @@ export function atlasRoutes(ctx: AppContext) {
   const r = Router();
   const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 60 * 1024 * 1024, files: 1 } });
 
-  r.get('/maps/unplaced', h((req) => unplacedLocations(ctx.db, req.query.scope ? String(req.query.scope) : null)));
-  r.get('/maps/:id/detail', h((req) => mapDetail(ctx.db, intParam(req.params.id))));
+  r.get(
+    '/maps/unplaced',
+    h((req) => unplacedLocations(ctx.db, req.query.scope ? String(req.query.scope) : null)),
+  );
+  r.get(
+    '/maps/:id/detail',
+    h((req) => mapDetail(ctx.db, intParam(req.params.id))),
+  );
+  r.post(
+    '/handouts/:id/image',
+    upload.single('image'),
+    h((req) => {
+      const id = intParam(req.params.id);
+      handouts.get(ctx.db, id);
+      if (!req.file) throw badRequest('Choose an image file');
+      if (!IMAGE_TYPES[req.file.mimetype]) throw badRequest('Handout pictures must be PNG, JPEG, WEBP or GIF images');
+      const ext = sniffImage(req.file.buffer);
+      if (!ext) throw badRequest('The file is not a valid image');
+      const name = `handout-${id}-${randomBytes(6).toString('hex')}${ext}`;
+      fs.writeFileSync(path.join(ctx.paths.uploadsDir, name), req.file.buffer);
+      return handouts.update(ctx.db, id, { image_file: name });
+    }),
+  );
   r.post(
     '/maps/:id/image',
     upload.single('image'),
@@ -97,8 +119,14 @@ export function atlasRoutes(ctx: AppContext) {
     if (!id || !Number.isInteger(id)) throw badRequest('Choose an active campaign first');
     return id;
   };
-  r.get('/exploration/status', h(() => ({ active_campaign_id: getActiveCampaignId(ctx.db), in_play: inPlay(ctx.db) })));
-  r.get('/exploration', h((req) => explorationFor(ctx.db, campaignOf(req.query.campaign_id), Number(req.query.map_id))));
+  r.get(
+    '/exploration/status',
+    h(() => ({ active_campaign_id: getActiveCampaignId(ctx.db), in_play: inPlay(ctx.db) })),
+  );
+  r.get(
+    '/exploration',
+    h((req) => explorationFor(ctx.db, campaignOf(req.query.campaign_id), Number(req.query.map_id))),
+  );
   r.post(
     '/exploration/discover',
     h((req) => setDiscovered(ctx.db, campaignOf(req.body?.campaign_id), Number(req.body?.map_id), String(req.body?.entity_id ?? ''), req.body?.discovered !== false)),
@@ -114,8 +142,14 @@ export function atlasRoutes(ctx: AppContext) {
       }),
     ),
   );
-  r.delete('/exploration/travel/:id', h((req) => removeTravel(ctx.db, campaignOf(req.query.campaign_id), intParam(req.params.id))));
-  r.delete('/exploration/trail', h((req) => clearTrail(ctx.db, campaignOf(req.query.campaign_id), Number(req.query.map_id))));
+  r.delete(
+    '/exploration/travel/:id',
+    h((req) => removeTravel(ctx.db, campaignOf(req.query.campaign_id), intParam(req.params.id))),
+  );
+  r.delete(
+    '/exploration/trail',
+    h((req) => clearTrail(ctx.db, campaignOf(req.query.campaign_id), Number(req.query.map_id))),
+  );
   mountCrud(r, ctx, '/maps', maps, ['parent_map_id', 'entity_id']);
   mountCrud(r, ctx, '/markers', markers, ['map_id', 'entity_id']);
   mountCrud(r, ctx, '/shapes', shapes, ['map_id']);

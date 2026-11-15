@@ -558,6 +558,64 @@ CREATE TABLE party_treasure (
 CREATE INDEX party_treasure_campaign ON party_treasure(campaign_id, status);
 `,
   },
+  {
+    version: 10,
+    name: 'handouts: letters, read-aloud and pictures pushed to players during play',
+    sql: `
+CREATE TABLE handouts (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  body TEXT NOT NULL DEFAULT '',
+  image_file TEXT,
+  pushed_at TEXT,
+  session_id INTEGER,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE INDEX handouts_campaign ON handouts(campaign_id, pushed_at);
+`,
+  },
+  {
+    version: 11,
+    name: "bastions and downtime: the party's strongholds, their turns, and what characters do between adventures",
+    sql: `
+CREATE TABLE bastions (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  owner TEXT NOT NULL DEFAULT '',
+  location_id TEXT,
+  host_faction_id TEXT,
+  gold INTEGER NOT NULL DEFAULT 0,
+  defenders INTEGER NOT NULL DEFAULT 0,
+  facilities TEXT NOT NULL DEFAULT '[]',
+  notes TEXT NOT NULL DEFAULT '',
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE TABLE bastion_turns (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  bastion_id INTEGER NOT NULL REFERENCES bastions(id) ON DELETE CASCADE,
+  number INTEGER NOT NULL,
+  orders TEXT NOT NULL DEFAULT '[]',
+  event TEXT NOT NULL DEFAULT '',
+  notes TEXT NOT NULL DEFAULT '',
+  session_id INTEGER,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE TABLE downtime (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  character TEXT NOT NULL,
+  activity TEXT NOT NULL,
+  days INTEGER NOT NULL DEFAULT 0,
+  cost_gp INTEGER NOT NULL DEFAULT 0,
+  result TEXT NOT NULL DEFAULT '',
+  session_id INTEGER,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

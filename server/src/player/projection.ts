@@ -11,6 +11,7 @@
  */
 import { playerStanding } from '../repo/standing.js';
 import { playerTreasure } from '../repo/treasure.js';
+import { playerHandouts } from '../repo/handouts.js';
 import type { DB } from '../db/connection.js';
 import { SECRET_HEADING_RE, ENTITY_TYPE_LABELS, REALM_LABELS, type EntityType, type Realm } from '../../../shared/domain.js';
 import { parseJson } from '../lib/json.js';
@@ -277,6 +278,8 @@ export function playerCampaign(db: DB, campaignId: number) {
       recap: scrubRefs(r.recap, revealed, index),
     })),
     // The party's standing with the factions it has dealt with, and what the ranks it has reached bring.
+    // Handouts the GM has given the players.
+    handouts: playerHandouts(db, c.id).map((h) => ({ ...h, body: scrubRefs(h.body, revealed, index) })),
     // What the party carries or has stored (the GM can hide any line).
     treasure: playerTreasure(db, c.id),
     standing: playerStanding(db, c.id).map((f) => ({ ...f, earned: f.earned.map((e) => ({ rank: e.rank, text: scrubRefs(e.text, revealed, index) })) })),

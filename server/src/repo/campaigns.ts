@@ -217,7 +217,7 @@ export const sessionLog = makeCrud({
   table: 'session_log',
   schema: z.object({
     session_id: z.number().int(),
-    kind: z.enum(['note', 'quest', 'combat', 'npc', 'location', 'loot', 'change', 'scene', 'reveal']).default('note'),
+    kind: z.enum(['note', 'quest', 'combat', 'npc', 'location', 'loot', 'change', 'scene', 'reveal', 'travel', 'standing', 'treasure', 'handout', 'roll']).default('note'),
     text: z.string().trim().min(1).max(20000),
     entity_id: zId,
   }),
@@ -401,6 +401,8 @@ export const encounters = makeCrud({
           isPC: z.boolean().default(false),
           hidden: z.boolean().default(false),
           entityId: z.string().max(40).nullable().default(null),
+          /** What players call it, on their phones (a monster's real name stays with the GM). */
+          playerName: z.string().max(200).default(''),
           notes: z.string().max(5000).default(''),
           defeated: z.boolean().default(false),
         }),

@@ -36,6 +36,8 @@ export interface PCampaign {
   current_date: string;
   quests: { id: number; title: string; status: string; description: string }[];
   recaps: { id: number; number: number; title: string; played_on: string; recap: string }[];
+  /** Handouts the GM has given the players, newest first. */
+  handouts?: { id: number; title: string; body: string; image_file: string | null; pushed_at: string }[];
   /** What the party carries or has stored. */
   treasure?: {
     id: number;
@@ -63,6 +65,13 @@ export interface PlayerSnapshot {
   campaigns: PCampaign[];
 }
 
+/** During a live session: the running fight's turn order (no monster numbers) and the newest handout. */
+export interface PLive {
+  live: boolean;
+  fight?: { round: number; order: { name: string; pc: boolean; current: boolean; hp: { hp: number; max: number } | null }[] } | null;
+  latest_handout?: { id: number; title: string } | null;
+}
+
 export interface PlayerSource {
   info(): Promise<{ appName: string; publishedAt?: string }>;
   entities(): Promise<PEntity[]>;
@@ -71,6 +80,8 @@ export interface PlayerSource {
   maps(): Promise<PMap[]>;
   campaigns(): Promise<PCampaign[]>;
   imageUrl(file: string): string;
+  /** Only in the app (not the published handbook): the live session feed. */
+  live?(): Promise<PLive>;
 }
 
 async function getJson<T>(url: string): Promise<T> {
@@ -90,6 +101,7 @@ export const apiSource: PlayerSource = {
   maps: () => getJson('/api/player/maps'),
   campaigns: () => getJson('/api/player/campaigns'),
   imageUrl: (file) => `/api/player/uploads/${encodeURIComponent(file)}`,
+  live: () => getJson('/api/player/live'),
 };
 
 export function staticSource(snapshotUrl: string, uploadsBase: string): PlayerSource {

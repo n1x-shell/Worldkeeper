@@ -54,6 +54,10 @@ const TABLES = [
   'faction_standing',
   'renown_log',
   'party_treasure',
+  'handouts',
+  'bastions',
+  'bastion_turns',
+  'downtime',
 ];
 
 const slug = (s: string) =>
