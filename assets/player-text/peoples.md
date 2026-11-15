@@ -2,7 +2,7 @@
 
 ## How to use this
 
-Every people found on both continents. Each section becomes that people's page in the handbook, with a one-line blurb, how they live in Aetheris and in Kaelmar, and an "At the table" note for building a character.
+Every people found on both continents, and the peoples of the Ethereal Realm. Each section becomes that people's page in the handbook, with a one-line blurb, how they live in Aetheris and in Kaelmar (or in the realm and in the world), and an "At the table" note for building a character.
 
 ## Aarakocra
 
@@ -617,3 +617,111 @@ The Moonborn were Wildborn druids who could step between the physical world and 
 Nobody in Kaelmar has ever seen a Moonborn. The Spore Circle's eldest say the Bloom has a spirit-world of its own, and that a Moonborn might be able to walk in it.
 
 **At the table.** Play a Moonborn as an elf with the Fey Touched feat.
+
+## Astral Elves
+
+*Elves who went looking for their gods, and stayed.*
+
+Long ago, during an Aetherfall, a company of elves from the fey places of Aetheris slipped out of the world while it was being remade, and crossed into the Ethereal Realm to be nearer their gods. They settled on the brightest wreck-islands of the Fields of Lost Realities.
+
+The silver void left a spark of light in them, which shows as stars in their eyes. Time runs thin out there, and those who stay barely age. Some astral elves remember the world before the last three Aetherfalls, and talk about the present as if it were already over.
+
+**In the world.** A few have come home through the Verge. They find Aetheris loud, short-lived and painfully brief.
+
+**Strengths and flaws.** Graceful, starlit and very old. Detached, melancholy, and slow to care about anything that won't last.
+
+**Culture.** Starlight, devotion, and courts that keep the calendars of years nobody else remembers.
+
+**Common names.** Aelith, Corvanne, Ilsarion, Myrrel, Sennith, Tavarre, Velis, Zhaerin
+
+**At the table.** Use the astral elf rules.
+
+## Autognomes
+
+*Little made folk, built by gnomes and left with a job to do.*
+
+The glyph-wright gnomes of Kaelholm build autognomes in their own image, each made for one task: keeping an archive, opening a vault, mapping a road. Since the Cycle broke, the gnomes have sent many through the Verge to chart the Ethereal Realm and salvage the Fields of Lost Realities.
+
+The realm makes people forget. Some autognomes' makers died, some vanished, and some forgot they ever built them. Others were simply set free. Masterless autognomes drift through the realm looking for a greater purpose, and the Architects of Eternity are happy to offer one. Keeper Lantern of the Nameless Asylum is very fond of them.
+
+**In the world.** An autognome that walks back into Kaelholm can cause a very awkward conversation.
+
+**Strengths and flaws.** Tireless, sturdy and clever with tools. Literal-minded, and haunted by instructions nobody can cancel.
+
+**Culture.** A maker's mark, a mission, and a name they chose themselves.
+
+**Common names.** Bolt, Cog, Fennick, Gauge, Pip, Spindle, Tock, Wren
+
+**At the table.** Use the autognome rules. Ask your GM about the autognome history table: did your maker die, go missing, or set you free?
+
+## Giff
+
+*Hippo-headed soldiers from a world nobody can find.*
+
+The giff's homeworld was one of the worlds the Cycle threw away. It lies somewhere in the Fields of Lost Realities, and no living giff has ever seen it. Their gods were forgotten along with it. Their great petrified bodies drift through the silver void, still in the attitudes in which they died.
+
+The giff don't know why the deep realm calls to them, but it does. Something of their dead gods still reaches them: a spark of the void, and a gift for gunpowder that those gods, it's said, delighted in. Giff crews sell their guns to driftship captains, and they fight at the Colosseum of Echoes for the joy of it.
+
+**In the world.** The Crimson Legion would hire every giff it could find. The giff who have met the Legion think it lacks discipline.
+
+**Strengths and flaws.** Huge, brave and devastating with a firearm. Loud, literal, and fond of explosions.
+
+**Culture.** Regiments, ranks, songs about battles, and a sense of honour that doesn't bend.
+
+**Common names.** Brannoc, Dunmore, Halloway, Kettering, Mabry, Pemberton, Stroud, Wexley
+
+**At the table.** Use the giff rules.
+
+## Hadozee
+
+*Long-armed gliding sailors from a forest world.*
+
+Yazir is a forest world that drifts whole among the wrecks of the Fields of Lost Realities, and the hadozee are its people. Their ancestors were small tree-dwellers hunted by fierce predators. They learned to glide from branch to branch on the membranes under their arms, and to look out for one another. In time they left Yazir and its hunters behind and took to the void.
+
+Half the driftships in the Fields have a hadozee crew. Hadozee read the void's currents better than anyone, and they're never more at home than in the rigging.
+
+**In the world.** Some came through the Rift and work Kaelmar's river boats and the Consortium's airships. They say a sky with a ground under it is restful.
+
+**Strengths and flaws.** Nimble, gliding, and fearless at height. Restless, and bad at staying put.
+
+**Culture.** Ship-families, rope-lore, and a song for every current.
+
+**Common names.** Akko, Bannu, Chiri, Doma, Kesh, Moro, Tunni, Zaza
+
+**At the table.** Use the hadozee rules.
+
+## Plasmoids
+
+*Shapeless, curious folk of the silver void.*
+
+Nobody knows where plasmoids come from, including the plasmoids. They live in the silver void between the wreck-islands of the Fields of Lost Realities, breathing and feeding through their skin, with no fixed shape and nothing inside them that anyone could call an organ.
+
+Around people, plasmoids firm up into a head, a body and arms, so they can wear clothes and shake hands. In the Nameless Asylum's Remembering Rooms they make wonderful listeners.
+
+**In the world.** In Kaelmar, the Bloom-Speakers took the first plasmoids they met for Bloom-kin. The plasmoids were delighted, and didn't correct them for a year.
+
+**Strengths and flaws.** Flexible, hard to hold, and impossible to keep out. Easily mistaken for a monster.
+
+**Culture.** Borrowed shapes, borrowed names, and a habit of trying everything once.
+
+**Common names.** Bloop, Ember, Glim, Ooma, Quiver, Shale, Sip, Velle
+
+**At the table.** Use the plasmoid rules.
+
+## Thri-kreen
+
+*Six-limbed mantis-folk found on every desert, in every world.*
+
+Thri-kreen have no single homeland. Every desert world in the Fields of Lost Realities seems to have had them, as if every version of the world grew its own. They've spread from wreck to wreck ever since.
+
+Thri-kreen never sleep. They speak with clacking mandibles, waving antennae and a quiet telepathy. Their shells change colour to match whatever they stand against. They walk the Hollow Verge as hunters and guides.
+
+**In the world.** A few have crossed into the Hollow Marches. People there take their clicking for a threat until they learn better.
+
+**Strengths and flaws.** Four arms, chitin armour, and no need for sleep. Hard to read, and harder to understand.
+
+**Culture.** Hunting clutches, colour-speech and a long patience.
+
+**Common names.** Chak'ta, Kik'reth, Ssa-tik, Tch'kala, Vrik, Zaktik, Kkhai, T'chess
+
+**At the table.** Use the thri-kreen rules.
