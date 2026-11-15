@@ -386,4 +386,4 @@ The same peoples live on both continents, and they use the same rules. Some go b
 
 Humans, elves, dwarves and orcs live everywhere, under the same names. So do most other peoples: see each people's page.
 
-Two names are Aetheris's own. @[Moonborn] were Wildborn druids who could step into the spirit world, and perhaps only one is left. @[Stormborn] are people born in a thunderstorm, with the storm still in them.
+Two names are Aetheris's own. @[Moonborn] were Wildborn druids who could step into the spirit world, and perhaps only one is left. @[Stormborn] are people born in a thunderstorm, with the storm still in them: what the rulebooks call air genasi.
