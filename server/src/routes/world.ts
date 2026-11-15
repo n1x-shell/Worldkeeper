@@ -15,14 +15,7 @@ import {
   revertToRevision,
   updateEntity,
 } from '../repo/entities.js';
-import {
-  brokenReferences,
-  createRelationship,
-  deleteRelationship,
-  listRelationshipsFor,
-  neighbourhood,
-  updateRelationship,
-} from '../repo/relationships.js';
+import { brokenReferences, createRelationship, deleteRelationship, listRelationshipsFor, neighbourhood, updateRelationship } from '../repo/relationships.js';
 import { search } from '../repo/search.js';
 import { stateForEntity, getActiveCampaignId, listProposals } from '../repo/campaigns.js';
 import { entityToMarkdown } from '../backup/exporter.js';
@@ -56,8 +49,14 @@ export function worldRoutes(ctx: AppContext) {
       }),
     ),
   );
-  r.get('/entities/similar', h((req) => findSimilarNames(ctx.db, String(req.query.name ?? ''), req.query.exclude ? String(req.query.exclude) : undefined)));
-  r.post('/entities', h((req) => createEntity(ctx.db, req.body, req.body?.reason || 'Created in The Worldkeeper')));
+  r.get(
+    '/entities/similar',
+    h((req) => findSimilarNames(ctx.db, String(req.query.name ?? ''), req.query.exclude ? String(req.query.exclude) : undefined)),
+  );
+  r.post(
+    '/entities',
+    h((req) => createEntity(ctx.db, req.body, req.body?.reason || 'Created in The Worldkeeper')),
+  );
   r.get(
     '/entities/:id',
     h((req) => {
@@ -77,7 +76,7 @@ export function worldRoutes(ctx: AppContext) {
         redirectedFrom,
         relationships: listRelationshipsFor(ctx.db, id),
         children,
-        parent: e.parent_id ? listEntities(ctx.db, { q: e.parent_id, includeMeta: true }).find((p) => p.id === e.parent_id) ?? null : null,
+        parent: e.parent_id ? (listEntities(ctx.db, { q: e.parent_id, includeMeta: true }).find((p) => p.id === e.parent_id) ?? null) : null,
         campaignState: stateForEntity(ctx.db, id),
         activeCampaignId: getActiveCampaignId(ctx.db),
         sections,
@@ -85,10 +84,22 @@ export function worldRoutes(ctx: AppContext) {
       };
     }),
   );
-  r.patch('/entities/:id', h((req) => updateEntity(ctx.db, String(req.params.id), req.body)));
-  r.post('/entities/:id/duplicate', h((req) => duplicateAsDraft(ctx.db, String(req.params.id))));
-  r.get('/entities/:id/revisions', h((req) => listRevisions(ctx.db, String(req.params.id))));
-  r.get('/revisions/:rev', h((req) => getRevision(ctx.db, intParam(req.params.rev))));
+  r.patch(
+    '/entities/:id',
+    h((req) => updateEntity(ctx.db, String(req.params.id), req.body)),
+  );
+  r.post(
+    '/entities/:id/duplicate',
+    h((req) => duplicateAsDraft(ctx.db, String(req.params.id))),
+  );
+  r.get(
+    '/entities/:id/revisions',
+    h((req) => listRevisions(ctx.db, String(req.params.id))),
+  );
+  r.get(
+    '/revisions/:rev',
+    h((req) => getRevision(ctx.db, intParam(req.params.rev))),
+  );
   r.post(
     '/entities/:id/revert',
     h((req) => revertToRevision(ctx.db, String(req.params.id), intParam(req.body?.revisionId, 'revisionId'), String(req.body?.reason ?? ''))),
@@ -104,8 +115,14 @@ export function worldRoutes(ctx: AppContext) {
   );
 
   // Relationships & graph
-  r.post('/relationships', h((req) => createRelationship(ctx.db, req.body)));
-  r.patch('/relationships/:id', h((req) => updateRelationship(ctx.db, intParam(req.params.id), req.body)));
+  r.post(
+    '/relationships',
+    h((req) => createRelationship(ctx.db, req.body)),
+  );
+  r.patch(
+    '/relationships/:id',
+    h((req) => updateRelationship(ctx.db, intParam(req.params.id), req.body)),
+  );
   r.delete(
     '/relationships/:id',
     h((req) => {
@@ -128,15 +145,30 @@ export function worldRoutes(ctx: AppContext) {
       }),
     ),
   );
-  r.get('/broken', h(() => brokenReferences(ctx.db)));
+  r.get(
+    '/broken',
+    h(() => brokenReferences(ctx.db)),
+  );
 
   // Live reveal (record + session log in one transaction)
-  r.post('/entities/:id/reveal', h((req) => revealDuringPlay(ctx.db, String(req.params.id), req.body)));
+  r.post(
+    '/entities/:id/reveal',
+    h((req) => revealDuringPlay(ctx.db, String(req.params.id), req.body)),
+  );
 
   // Eras
-  r.get('/eras', h(() => listEras(ctx.db)));
-  r.post('/eras', h((req) => createEra(ctx.db, req.body)));
-  r.patch('/eras/:key', h((req) => updateEra(ctx.db, String(req.params.key), req.body)));
+  r.get(
+    '/eras',
+    h(() => listEras(ctx.db)),
+  );
+  r.post(
+    '/eras',
+    h((req) => createEra(ctx.db, req.body)),
+  );
+  r.patch(
+    '/eras/:key',
+    h((req) => updateEra(ctx.db, String(req.params.key), req.body)),
+  );
   r.patch(
     '/timeline/:id/era',
     h((req) => {
@@ -147,7 +179,10 @@ export function worldRoutes(ctx: AppContext) {
   );
 
   // Structured NPC / faction profiles
-  r.get('/profiles/influence', h((req) => influenceMatrix(ctx.db, intParam(req.query.campaign, 'campaign'))));
+  r.get(
+    '/profiles/influence',
+    h((req) => influenceMatrix(ctx.db, intParam(req.query.campaign, 'campaign'))),
+  );
   r.get(
     '/profiles/:id',
     h((req) => getProfile(ctx.db, String(req.params.id), req.query.campaign ? intParam(req.query.campaign, 'campaign') : getActiveCampaignId(ctx.db))),
@@ -197,7 +232,10 @@ export function worldRoutes(ctx: AppContext) {
       return { ok: true };
     }),
   );
-  r.get('/documents', h(() => ctx.db.prepare('SELECT id, path, title, kind, doc_id, immutable, imported_at, length(content) AS size FROM source_documents ORDER BY path').all()));
+  r.get(
+    '/documents',
+    h(() => ctx.db.prepare('SELECT id, path, title, kind, doc_id, immutable, imported_at, length(content) AS size FROM source_documents ORDER BY path').all()),
+  );
   r.get(
     '/documents/content',
     h((req) => {
@@ -206,12 +244,30 @@ export function worldRoutes(ctx: AppContext) {
       return d;
     }),
   );
-  r.get('/templates', h(() => (ctx.db.prepare('SELECT * FROM templates ORDER BY name').all() as { fields: string; sections: string }[]).map((t) => ({ ...t, fields: parseJson(t.fields, []), sections: parseJson(t.sections, []) }))));
+  r.get(
+    '/templates',
+    h(() =>
+      (ctx.db.prepare('SELECT * FROM templates ORDER BY name').all() as { fields: string; sections: string }[]).map((t) => ({
+        ...t,
+        fields: parseJson(t.fields, []),
+        sections: parseJson(t.sections, []),
+      })),
+    ),
+  );
 
   // Canon review
-  r.get('/review', h(() => canonReview(ctx.db)));
-  r.post('/review/:id', h((req) => reviewDecision(ctx.db, String(req.params.id), req.body?.decision === 'revert' ? 'revert' : 'approve', String(req.body?.note ?? ''))));
-  r.get('/proposals', h((req) => listProposals(ctx.db, String(req.query.status ?? 'pending'))));
+  r.get(
+    '/review',
+    h(() => canonReview(ctx.db)),
+  );
+  r.post(
+    '/review/:id',
+    h((req) => reviewDecision(ctx.db, String(req.params.id), req.body?.decision === 'revert' ? 'revert' : 'approve', String(req.body?.note ?? ''))),
+  );
+  r.get(
+    '/proposals',
+    h((req) => listProposals(ctx.db, String(req.query.status ?? 'pending'))),
+  );
   r.post(
     '/proposals/:id',
     h((req) => {
@@ -238,10 +294,14 @@ export function worldRoutes(ctx: AppContext) {
             nextSession: db.prepare(`SELECT * FROM sessions WHERE campaign_id = ? AND status = 'planned' ORDER BY number ASC LIMIT 1`).get(activeId) ?? null,
             openQuests: db.prepare(`SELECT id, title, status FROM quests WHERE campaign_id = ? AND status IN ('open','active') ORDER BY updated_at DESC LIMIT 8`).all(activeId),
             plans: db
-              .prepare(`SELECT p.*, e.name AS faction_name FROM faction_plans p LEFT JOIN entities e ON e.id = p.faction_id WHERE p.campaign_id = ? AND p.status = 'active' ORDER BY p.updated_at DESC LIMIT 8`)
+              .prepare(
+                `SELECT p.*, e.name AS faction_name FROM faction_plans p LEFT JOIN entities e ON e.id = p.faction_id WHERE p.campaign_id = ? AND p.status = 'active' ORDER BY p.updated_at DESC LIMIT 8`,
+              )
               .all(activeId),
             recentChanges: db
-              .prepare(`SELECT s.*, e.name AS entity_name FROM campaign_state s LEFT JOIN entities e ON e.id = s.entity_id WHERE s.campaign_id = ? AND s.status IN ('active','proposed') ORDER BY s.id DESC LIMIT 8`)
+              .prepare(
+                `SELECT s.*, e.name AS entity_name FROM campaign_state s LEFT JOIN entities e ON e.id = s.entity_id WHERE s.campaign_id = ? AND s.status IN ('active','proposed') ORDER BY s.id DESC LIMIT 8`,
+              )
               .all(activeId),
           }
         : null;
@@ -249,12 +309,16 @@ export function worldRoutes(ctx: AppContext) {
         const e = db.prepare('SELECT id, name, realm, body FROM entities WHERE id = ?').get(id) as { id: string; name: string; realm: string; body: string } | undefined;
         if (!e) return null;
         const first = splitSections(e.body).find((s) => s.heading && s.content && !isSecretHeading(s.heading));
-        return { id: e.id, name: e.name, realm: e.realm, excerpt: first ? first.content.slice(0, 420) : '', count: count(`SELECT COUNT(*) n FROM entities WHERE realm = ? AND archived = 0 AND type NOT IN ('redirect','index','register')`, e.realm) };
+        return {
+          id: e.id,
+          name: e.name,
+          realm: e.realm,
+          excerpt: first ? first.content.slice(0, 420) : '',
+          count: count(`SELECT COUNT(*) n FROM entities WHERE realm = ? AND archived = 0 AND type NOT IN ('redirect','index','register')`, e.realm),
+        };
       });
       const quick = (types: string[], limit = 8) =>
-        db
-          .prepare(`SELECT id, name, type, realm FROM entities WHERE type IN (${types.map(() => '?').join(',')}) AND archived = 0 ORDER BY favorite DESC, id LIMIT ?`)
-          .all(...types, limit);
+        db.prepare(`SELECT id, name, type, realm FROM entities WHERE type IN (${types.map(() => '?').join(',')}) AND archived = 0 ORDER BY favorite DESC, id LIMIT ?`).all(...types, limit);
       return {
         worldDate: (db.prepare(`SELECT value FROM settings WHERE key = 'world_date'`).get() as { value: string } | undefined)?.value ?? null,
         counts: {
@@ -271,9 +335,7 @@ export function worldRoutes(ctx: AppContext) {
         recentViews: recentViews(db, 10),
         recentEdits: recentlyEdited(db, 8),
         favorites: listEntities(db, { favorite: true }).slice(0, 12),
-        mysteries: db
-          .prepare(`SELECT id, name, type, realm FROM entities WHERE archived = 0 AND (id IN ('WLD-907','WLD-908','DEC-901') OR tags LIKE '%"cat/secret"%') ORDER BY id LIMIT 10`)
-          .all(),
+        mysteries: db.prepare(`SELECT id, name, type, realm FROM entities WHERE archived = 0 AND (id IN ('WLD-907','WLD-908','DEC-901') OR tags LIKE '%"cat/secret"%') ORDER BY id LIMIT 10`).all(),
         keyPlaces: quick(['settlement', 'vault', 'ethereal_domain'], 10),
         keyPeople: db.prepare(`SELECT id, name, type, realm FROM entities WHERE type = 'npc' AND archived = 0 ORDER BY favorite DESC, id LIMIT 8`).all(),
         factions: quick(['faction', 'cult'], 12),

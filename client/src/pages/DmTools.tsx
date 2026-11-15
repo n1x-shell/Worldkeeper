@@ -192,6 +192,15 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
                       <input className="bg-transparent outline-none font-medium min-w-0" value={c.name} onChange={(e) => setC(c.id, (x) => ({ ...x, name: e.target.value }))} />
                     </div>
                     {c.entityId && <EntityLink id={c.entityId} className="text-[11px]" />}
+                    {!c.isPC && (
+                      <input
+                        className="block bg-transparent outline-none text-[11px] text-dim w-full"
+                        placeholder="Players see it as…"
+                        title="The name players see on their phones. Leave blank to show its name."
+                        value={c.playerName ?? ''}
+                        onChange={(e) => setC(c.id, (x) => ({ ...x, playerName: e.target.value }))}
+                      />
+                    )}
                   </td>
                   <td className="w-14">
                     <input className="input w-12 py-0.5 text-center" value={c.ac ?? ''} onChange={(e) => setC(c.id, (x) => ({ ...x, ac: e.target.value === '' ? null : Number(e.target.value) }))} aria-label="AC" />
@@ -806,7 +815,8 @@ interface RTable {
 }
 export function TablesPage() {
   const { data, reload } = useApi<RTable[]>('/api/random-tables');
-  const [sel, setSel] = useState<number | null>(null);
+  // A table can be opened directly with ?t=<id> (from session prep, for example).
+  const [sel, setSel] = useState<number | null>(() => Number(new URLSearchParams(window.location.search).get('t')) || null);
   const [result, setResult] = useState<string | null>(null);
   const t = data?.find((x) => x.id === sel) ?? data?.[0];
   return (

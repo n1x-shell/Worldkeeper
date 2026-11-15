@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { consistencyReport } from '../repo/consistency.js';
 import multer from 'multer';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -29,6 +30,8 @@ export function debugEnabled(ctx: AppContext): boolean {
 
 export function libraryRoutes(ctx: AppContext) {
   const r = Router();
+  // The consistency checker: a report of things that don't agree. Changes nothing.
+  r.get('/library/consistency', h(() => consistencyReport(ctx.db)));
   const staging = new Map<string, Staged>();
   const sweep = () => {
     for (const [k, v] of staging) if (Date.now() - v.created > 60 * 60 * 1000) staging.delete(k);
@@ -51,7 +54,12 @@ export function libraryRoutes(ctx: AppContext) {
       const plan = buildPlan(ctx.db, files, req.file.originalname.replace(/[^\w. -]/g, '_'));
       const token = randomBytes(12).toString('hex');
       staging.set(token, { files, plan, created: Date.now() });
-      return { token, summary: summarisePlan(plan), entities: plan.entities.map((e) => ({ id: e.draft.id, name: e.draft.name, type: e.draft.type, realm: e.draft.realm, action: e.action, note: e.note })), files: plan.files };
+      return {
+        token,
+        summary: summarisePlan(plan),
+        entities: plan.entities.map((e) => ({ id: e.draft.id, name: e.draft.name, type: e.draft.type, realm: e.draft.realm, action: e.action, note: e.note })),
+        files: plan.files,
+      };
     }),
   );
   r.post(
@@ -66,7 +74,10 @@ export function libraryRoutes(ctx: AppContext) {
       return { result, backup };
     }),
   );
-  r.get('/import/runs', h(() => listImportRuns(ctx.db)));
+  r.get(
+    '/import/runs',
+    h(() => listImportRuns(ctx.db)),
+  );
 
   // ---- Exports ----
   const sendFile = (res: import('express').Response, name: string, type: string, data: Buffer | string) => {
@@ -75,10 +86,22 @@ export function libraryRoutes(ctx: AppContext) {
     res.send(data);
   };
   const day = () => new Date().toISOString().slice(0, 10);
-  r.get('/export/json', h((_req, res) => sendFile(res, `worldkeeper-${day()}.json`, 'application/json', JSON.stringify(exportJson(ctx.db)))));
-  r.get('/export/markdown', h((_req, res) => sendFile(res, `worldkeeper-markdown-${day()}.zip`, 'application/zip', exportMarkdownZip(ctx.db))));
-  r.get('/export/full', h((_req, res) => sendFile(res, `worldkeeper-world-${day()}.zip`, 'application/zip', exportFullWorldZip(ctx.db, ctx.paths))));
-  r.get('/export/player', h((_req, res) => sendFile(res, `worldkeeper-player-${day()}.zip`, 'application/zip', exportPlayerZip(ctx.db))));
+  r.get(
+    '/export/json',
+    h((_req, res) => sendFile(res, `worldkeeper-${day()}.json`, 'application/json', JSON.stringify(exportJson(ctx.db)))),
+  );
+  r.get(
+    '/export/markdown',
+    h((_req, res) => sendFile(res, `worldkeeper-markdown-${day()}.zip`, 'application/zip', exportMarkdownZip(ctx.db))),
+  );
+  r.get(
+    '/export/full',
+    h((_req, res) => sendFile(res, `worldkeeper-world-${day()}.zip`, 'application/zip', exportFullWorldZip(ctx.db, ctx.paths))),
+  );
+  r.get(
+    '/export/player',
+    h((_req, res) => sendFile(res, `worldkeeper-player-${day()}.zip`, 'application/zip', exportPlayerZip(ctx.db))),
+  );
   r.get(
     '/export/campaign/:id',
     h((req, res) => sendFile(res, `worldkeeper-campaign-${req.params.id}-${day()}.json`, 'application/json', JSON.stringify(exportCampaign(ctx.db, intParam(req.params.id))))),
@@ -96,7 +119,10 @@ export function libraryRoutes(ctx: AppContext) {
   );
 
   // ---- Backups ----
-  r.get('/backups', h(() => listBackups(ctx.paths)));
+  r.get(
+    '/backups',
+    h(() => listBackups(ctx.paths)),
+  );
   // Worldkeeper additions: new lore records, links, rumours and mysteries shipped with the app.
   r.get(
     '/additions',
@@ -109,7 +135,10 @@ export function libraryRoutes(ctx: AppContext) {
       return { backup: backup.file, ...applyAdditions(ctx.db, undefined, ctx.paths.uploadsDir) };
     }),
   );
-  r.post('/backups', h((req) => createBackup(ctx.db, ctx.paths, String(req.body?.reason ?? 'manual'))));
+  r.post(
+    '/backups',
+    h((req) => createBackup(ctx.db, ctx.paths, String(req.body?.reason ?? 'manual'))),
+  );
   r.get(
     '/backups/:file',
     h((req, res) => {
@@ -155,7 +184,10 @@ export function libraryRoutes(ctx: AppContext) {
   );
 
   // ---- Settings & meta ----
-  r.get('/settings', h(() => Object.fromEntries((ctx.db.prepare('SELECT key, value FROM settings').all() as { key: string; value: string }[]).map((s) => [s.key, s.value]))));
+  r.get(
+    '/settings',
+    h(() => Object.fromEntries((ctx.db.prepare('SELECT key, value FROM settings').all() as { key: string; value: string }[]).map((s) => [s.key, s.value]))),
+  );
   r.put(
     '/settings',
     h((req) => {

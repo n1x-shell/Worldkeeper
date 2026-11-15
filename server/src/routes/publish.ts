@@ -32,8 +32,7 @@ export function publishRoutes(ctx: AppContext) {
   const r = Router();
   const readConfig = (): PublishConfig | null =>
     parseJson<PublishConfig | null>((ctx.db.prepare(`SELECT value FROM settings WHERE key = 'publish_github'`).get() as { value: string } | undefined)?.value, null);
-  const setSetting = (k: string, v: string) =>
-    ctx.db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').run(k, v);
+  const setSetting = (k: string, v: string) => ctx.db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').run(k, v);
   const status = () => ({
     config: readConfig(),
     tokenSaved: !!getSecret(ctx.paths, 'github_token'),
@@ -42,7 +41,10 @@ export function publishRoutes(ctx: AppContext) {
     preview: siteBuildAvailable() ? buildPlayerSite(ctx.db, ctx.paths).summary : null,
   });
 
-  r.get('/publish', h(() => status()));
+  r.get(
+    '/publish',
+    h(() => status()),
+  );
 
   r.put(
     '/publish/config',
@@ -76,11 +78,7 @@ export function publishRoutes(ctx: AppContext) {
         (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'publish_last'`).get() as { value: string } | undefined)?.value,
         null,
       );
-      const { files, summary, contentHash } = buildPlayerSite(
-        ctx.db,
-        ctx.paths,
-        prev?.contentHash && prev.summary ? { contentHash: prev.contentHash, generated_at: prev.summary.generated_at } : null,
-      );
+      const { files, summary, contentHash } = buildPlayerSite(ctx.db, ctx.paths, prev?.contentHash && prev.summary ? { contentHash: prev.contentHash, generated_at: prev.summary.generated_at } : null);
       const [owner, repo] = cfg.repo.split('/');
       try {
         const result = await publishToGitHub({

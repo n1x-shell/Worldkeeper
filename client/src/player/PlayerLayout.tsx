@@ -7,6 +7,8 @@ import {
   Crown,
   Flag,
   Gem,
+  Gift,
+  CalendarDays,
   Ghost,
   Globe2,
   Home,
@@ -29,6 +31,7 @@ import {
 } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
 import { PLAYER_GROUPS, PLAYER_REALMS, OTHER_GROUP } from './categories';
+import { PlayerLiveCard } from './LivePlay';
 
 const I = 16;
 const GROUP_ICONS: Record<string, ReactNode> = {
@@ -84,14 +87,28 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
 
   const types = new Set((entities ?? []).map((e) => e.type));
   const realms = new Set((entities ?? []).map((e) => e.realm));
-  const groups = [...PLAYER_GROUPS, OTHER_GROUP].filter((g) => (g === OTHER_GROUP ? (entities ?? []).some((e) => !PLAYER_GROUPS.some((p) => p.types.includes(e.type))) : g.types.some((t) => types.has(t))));
+  const groups = [...PLAYER_GROUPS, OTHER_GROUP].filter((g) =>
+    g === OTHER_GROUP ? (entities ?? []).some((e) => !PLAYER_GROUPS.some((p) => p.types.includes(e.type))) : g.types.some((t) => types.has(t)),
+  );
   const quests = (campaigns ?? []).reduce((n, c) => n + c.quests.length, 0);
   const recaps = (campaigns ?? []).reduce((n, c) => n + c.recaps.length, 0);
   const standing = (campaigns ?? []).reduce((n, c) => n + (c.standing?.length ?? 0), 0);
   const treasure = (campaigns ?? []).reduce((n, c) => n + (c.treasure?.length ?? 0), 0);
+  const handouts = (campaigns ?? []).reduce((n, c) => n + (c.handouts?.length ?? 0), 0);
+  const calendar = (campaigns ?? []).some((c) => c.calendar);
+  const regionsSeen = (campaigns ?? []).reduce((n, c) => n + (c.regions?.length ?? 0), 0);
   const sections: { title: string; items: { to: string; label: string; icon: ReactNode; end?: boolean }[] }[] = [
-    { title: 'World', items: [{ to: base || '/', label: 'Home', icon: <Home size={I} />, end: true }, ...PLAYER_REALMS.filter((r) => realms.has(r.key)).map((r) => ({ to: `${base}/realm/${r.key}`, label: r.label, icon: REALM_ICONS[r.key] }))] },
-    { title: 'Encyclopedia', items: [{ to: `${base}/browse/all`, label: 'All Lore', icon: <BookOpen size={I} /> }, ...groups.map((g) => ({ to: `${base}/browse/${g.key}`, label: g.label, icon: GROUP_ICONS[g.key] }))] },
+    {
+      title: 'World',
+      items: [
+        { to: base || '/', label: 'Home', icon: <Home size={I} />, end: true },
+        ...PLAYER_REALMS.filter((r) => realms.has(r.key)).map((r) => ({ to: `${base}/realm/${r.key}`, label: r.label, icon: REALM_ICONS[r.key] })),
+      ],
+    },
+    {
+      title: 'Encyclopedia',
+      items: [{ to: `${base}/browse/all`, label: 'All Lore', icon: <BookOpen size={I} /> }, ...groups.map((g) => ({ to: `${base}/browse/${g.key}`, label: g.label, icon: GROUP_ICONS[g.key] }))],
+    },
     {
       title: 'Campaign',
       items: [
@@ -100,6 +117,9 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
         ...(recaps ? [{ to: `${base}/recaps`, label: 'Session Recaps', icon: <Feather size={I} /> }] : []),
         ...(standing ? [{ to: `${base}/standing`, label: 'Faction Standing', icon: <Scale size={I} /> }] : []),
         ...(treasure ? [{ to: `${base}/treasure`, label: 'Party Treasure', icon: <Gem size={I} /> }] : []),
+        ...(handouts ? [{ to: `${base}/handouts`, label: 'Handouts', icon: <Gift size={I} /> }] : []),
+        ...(calendar ? [{ to: `${base}/calendar`, label: 'Calendar', icon: <CalendarDays size={I} /> }] : []),
+        ...(regionsSeen ? [{ to: `${base}/regions`, label: 'Around the World', icon: <Globe2 size={I} /> }] : []),
       ],
     },
   ].filter((s) => s.items.length);
@@ -200,6 +220,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
         <main className="flex-1 overflow-y-auto" id="main">
           <div className="mx-auto max-w-[1200px] p-4 md:p-6">
             <Outlet />
+            <PlayerLiveCard />
           </div>
         </main>
       </div>

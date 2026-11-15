@@ -30,9 +30,13 @@ export function createApp(ctx: AppContext, opts: { staticDir?: string } = {}) {
   app.get('/api/health', (_req, res) => res.json({ ok: true, mode: ctx.mode }));
 
   const player = playerRoutes(ctx);
-  // Player-visible map images only.
+  // Player-visible map images and given handouts only.
   player.get('/uploads/:file', (req, res, next) => {
-    const ok = ctx.db.prepare('SELECT 1 FROM maps WHERE image_file = ? AND player_visible = 1').get(String(req.params.file));
+    const f = String(req.params.file);
+    const ok =
+      ctx.db.prepare('SELECT 1 FROM maps WHERE image_file = ? AND player_visible = 1').get(f) ||
+      // Handout pictures, once given to the players.
+      ctx.db.prepare('SELECT 1 FROM handouts WHERE image_file = ? AND pushed_at IS NOT NULL').get(f);
     if (!ok) return next(new HttpError(404, 'File not found'));
     return uploadsHandler(ctx)(req, res, next);
   });

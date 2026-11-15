@@ -1,3 +1,4 @@
+import { LiveTools } from './LiveTools';
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Check, Plus, Square, Swords } from 'lucide-react';
@@ -323,6 +324,7 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
             <div className="section-title mb-2">Dice</div>
             <DiceRoller compact />
           </div>
+          {activeCampaignId && <LiveTools sessionId={session.id} campaignId={activeCampaignId} onLogged={() => void reloadLog()} />}
         </div>
       </div>
     </div>

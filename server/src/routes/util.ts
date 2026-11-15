@@ -6,16 +6,14 @@ import { badRequest } from '../lib/errors.js';
 export type Handler = (req: Request, res: Response) => unknown | Promise<unknown>;
 
 /** Wrap a handler: sync or async results are sent as JSON; thrown errors go to the error middleware. */
-export const h =
-  (fn: Handler) =>
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const out = await fn(req, res);
-      if (!res.headersSent) res.json(out ?? { ok: true });
-    } catch (e) {
-      next(e);
-    }
-  };
+export const h = (fn: Handler) => async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const out = await fn(req, res);
+    if (!res.headersSent) res.json(out ?? { ok: true });
+  } catch (e) {
+    next(e);
+  }
+};
 
 export const intParam = (v: unknown, name = 'id'): number => {
   const n = Number(v);
@@ -47,9 +45,18 @@ export function mountCrud(router: Router, ctx: AppContext, path: string, crud: C
       return crud.list(ctx.db, where);
     }),
   );
-  router.get(`${path}/:id`, h((req) => crud.get(ctx.db, intParam(req.params.id))));
-  router.post(path, h((req) => crud.create(ctx.db, req.body)));
-  router.patch(`${path}/:id`, h((req) => crud.update(ctx.db, intParam(req.params.id), req.body)));
+  router.get(
+    `${path}/:id`,
+    h((req) => crud.get(ctx.db, intParam(req.params.id))),
+  );
+  router.post(
+    path,
+    h((req) => crud.create(ctx.db, req.body)),
+  );
+  router.patch(
+    `${path}/:id`,
+    h((req) => crud.update(ctx.db, intParam(req.params.id), req.body)),
+  );
   router.delete(
     `${path}/:id`,
     h((req) => {

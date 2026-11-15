@@ -45,6 +45,12 @@ import {
 } from '../repo/mysteries.js';
 import { TRUTHS, createRumour, deleteRumour, listRumours, readPlayerText, setHeard, syncRumours, updateRumour, type Truth } from '../repo/rumours.js';
 import { rollDice } from '../../../shared/play.js';
+import { sessionBriefing } from '../repo/briefing.js';
+import { partyExport } from '../player/partyExport.js';
+import { allRegionStates } from '../repo/regionState.js';
+import { calendarEvents, campaignDate, comingUp, setCampaignDate } from '../repo/calendar.js';
+import { handouts, pushHandout } from '../repo/handouts.js';
+import { bastionTurns, bastions, downtime, hostStanding, takeBastionTurn } from '../repo/bastions.js';
 import { adjustRenown, setStandingOptions, standingFor, undoRenown } from '../repo/standing.js';
 import { addRollToParty, catalogueFor, partyTreasure, rollTreasure, treasureData } from '../repo/treasure.js';
 import { badRequest } from '../lib/errors.js';
@@ -84,6 +90,10 @@ export function campaignRoutes(ctx: AppContext) {
   r.post(
     '/sessions/next',
     h((req) => createNextSession(ctx.db, intParam(req.body?.campaignId, 'campaignId'), String(req.body?.title ?? ''))),
+  );
+  r.get(
+    '/sessions/:id/briefing',
+    h((req) => sessionBriefing(ctx.db, intParam(req.params.id))),
   );
   r.post(
     '/sessions/:id/recap-draft',
@@ -342,6 +352,60 @@ export function campaignRoutes(ctx: AppContext) {
     h((req) => addRollToParty(ctx.db, standingCampaign(req.body?.campaign_id), req.body?.roll, String(req.body?.found_at ?? ''))),
   );
   mountCrud(r, ctx, '/party-treasure', partyTreasure, ['campaign_id', 'status']);
+  // The state of the world, region by region.
+  r.get('/regions/state', h((req) => allRegionStates(ctx.db, standingCampaign(req.query.campaign_id))));
+  // "What the party knows", for players: JSON for the page, or a Markdown file.
+  r.get(
+    '/campaigns/:id/party-export',
+    h((req) => partyExport(ctx.db, intParam(req.params.id))),
+  );
+  r.get('/campaigns/:id/party-export.md', (req, res, next) => {
+    try {
+      const x = partyExport(ctx.db, intParam(req.params.id));
+      res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="${x.title.replace(/[^\w -]/g, '').trim() || 'campaign'} - what the party knows.md"`);
+      res.send(x.markdown);
+    } catch (e) {
+      next(e);
+    }
+  });
+  // The campaign calendar: its date, time passing, and the GM's events.
+  mountCrud(r, ctx, '/calendar-events', calendarEvents, ['campaign_id']);
+  r.get(
+    '/calendar',
+    h((req) => {
+      const id = standingCampaign(req.query.campaign_id);
+      return { date: campaignDate(ctx.db, id), coming: comingUp(ctx.db, id, Number(req.query.days) || 30) };
+    }),
+  );
+  r.post(
+    '/calendar/date',
+    h((req) => setCampaignDate(ctx.db, standingCampaign(req.body?.campaign_id), { date: req.body?.date, days: req.body?.days == null ? undefined : Number(req.body.days), reason: req.body?.reason })),
+  );
+  // Bastions and downtime.
+  mountCrud(r, ctx, '/bastions', bastions, ['campaign_id']);
+  r.get(
+    '/bastions/:id/turns',
+    h((req) => bastionTurns(ctx.db, intParam(req.params.id))),
+  );
+  r.post(
+    '/bastions/:id/turn',
+    h((req) => takeBastionTurn(ctx.db, intParam(req.params.id), { event: req.body?.event, notes: req.body?.notes })),
+  );
+  r.get(
+    '/bastions/:id/host',
+    h((req) => {
+      const b = bastions.get(ctx.db, intParam(req.params.id)) as { campaign_id: number; host_faction_id: string | null };
+      return hostStanding(ctx.db, b.campaign_id, b.host_faction_id);
+    }),
+  );
+  mountCrud(r, ctx, '/downtime', downtime, ['campaign_id']);
+  // Handouts: give one to the players (or take it back).
+  mountCrud(r, ctx, '/handouts', handouts, ['campaign_id']);
+  r.post(
+    '/handouts/:id/push',
+    h((req) => pushHandout(ctx.db, intParam(req.params.id), req.body?.pushed !== false)),
+  );
   // Faction standing: the party's Renown with each faction in a campaign (the active one unless named).
 
   r.get(
