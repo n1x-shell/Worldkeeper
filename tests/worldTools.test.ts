@@ -89,3 +89,24 @@ describe('the world as the campaign has left it', () => {
     expect(r.problems.some((p) => p.check === 'Missing records cited' && p.ids[0] === 'NPC-801')).toBe(true);
   });
 });
+
+describe('derived links', () => {
+  it('reads a Family section place as where they come from, and never has anyone living in a vault', () => {
+    const ctx = tempContext();
+    const files = [
+      rec('LOC-901', 'Old Spire', 'Landmark'),
+      rec('VLT-901', 'Sealed Vault', 'Vault'),
+      {
+        path: 'Lib/NPC-901.md',
+        content:
+          'ID: NPC-901\nName: Tess Vale\nAlternate names: None\nCategory: NPC\nParent: None\nContinent or realm: Aetheris\nCanon status: CANON\nSource: Test\nTags: realm/aetheris, vis/gm\n\n# Tess Vale\n\n## Family\nA daughter of Old Spire [LOC-901].\n\n## Known relationships and locations\nSealed Vault [VLT-901]\n',
+      },
+    ];
+    commitPlan(ctx.db, files, buildPlan(ctx.db, files, 'test'));
+    const rels = ctx.db.prepare(`SELECT target_id, type FROM relationships WHERE source_id = 'NPC-901' AND origin = 'import-field' ORDER BY target_id`).all();
+    expect(rels).toEqual([
+      { target_id: 'LOC-901', type: 'comes_from' },
+      { target_id: 'VLT-901', type: 'related_to' },
+    ]);
+  });
+});

@@ -20,9 +20,7 @@ interface RelRow {
   source_context: string;
 }
 
-const toRel = (r: RelRow): Relationship => ({ ...r, directed: !!r.directed } as Relationship);
-
-
+const toRel = (r: RelRow): Relationship => ({ ...r, directed: !!r.directed }) as Relationship;
 
 /** Field names whose `[ID]` values express a specific relationship. */
 const FIELD_RELATIONS: { match: RegExp; type: Relationship['type']; reverse: boolean }[] = [
@@ -35,7 +33,8 @@ const PLACE_TYPES = new Set(['continent', 'realm', 'region', 'nation', 'settleme
 const GROUP_TYPES = new Set(['faction', 'cult', 'family']);
 
 /** Section headings whose text is a list of people, groups or places. */
-const LIST_SECTION = /^(?:associated groups|known relationships and locations|associated people and places|known figures|approved leader|leaders?|leadership|family|members?|canon location|location|closest interested party|held by|holder|bearer)\b/i;
+const LIST_SECTION =
+  /^(?:associated groups|known relationships and locations|associated people and places|known figures|approved leader|leaders?|leadership|family|members?|canon location|location|closest interested party|held by|holder|bearer)\b/i;
 const HELD_TYPES = new Set(['shard', 'artifact', 'item', 'vault_key']);
 
 /**
@@ -54,7 +53,13 @@ function sectionRelation(heading: string, sourceType: string, targetType: string
   }
   if (sourceType === 'npc') {
     if (GROUP_TYPES.has(targetType)) return ['member_of', false];
-    if (PLACE_TYPES.has(targetType)) return ['lives_in', false];
+    if (PLACE_TYPES.has(targetType)) {
+      // A place in a Family section is the family's seat, not necessarily where this person lives now.
+      if (/^family/.test(h)) return ['comes_from', false];
+      // Nobody lives in a sealed vault; they want it, guard it or came from it.
+      if (targetType === 'vault') return ['related_to', false];
+      return ['lives_in', false];
+    }
     if (targetType === 'npc') return ['related_to', false];
     return null;
   }
@@ -126,7 +131,11 @@ export function rebuildDerivedRelationships(db: DB, id: string, index: MentionIn
     }
     for (const [sec, lines] of sections) {
       const text = lines.join('\n');
-      const targets = new Set<string>(collectRefs(text, index).ids.map((r) => resolve(r)).filter((t): t is string => !!t));
+      const targets = new Set<string>(
+        collectRefs(text, index)
+          .ids.map((r) => resolve(r))
+          .filter((t): t is string => !!t),
+      );
       for (const item of listItems(text)) {
         const t = nameIndex.find(item);
         if (t) targets.add(t);
@@ -202,9 +211,7 @@ export function createRelationship(db: DB, input: z.input<typeof relationshipInp
          canon_status = excluded.canon_status, directed = excluded.directed`,
     )
     .run(d.source_id, d.target_id, d.type, directed ? 1 : 0, d.label, d.description, d.canon_status);
-  const row = db
-    .prepare('SELECT * FROM relationships WHERE source_id = ? AND target_id = ? AND type = ? AND origin = ?')
-    .get(d.source_id, d.target_id, d.type, 'user') as RelRow;
+  const row = db.prepare('SELECT * FROM relationships WHERE source_id = ? AND target_id = ? AND type = ? AND origin = ?').get(d.source_id, d.target_id, d.type, 'user') as RelRow;
   void res;
   return toRel(row);
 }
@@ -217,9 +224,14 @@ export function updateRelationship(db: DB, relId: number, patch: Partial<z.input
     // Promote a text-derived link into a curated one; the derived link stays derivable from the text.
     return createRelationship(db, merged);
   }
-  db.prepare(
-    `UPDATE relationships SET type = ?, directed = ?, label = ?, description = ?, canon_status = ? WHERE id = ?`,
-  ).run(merged.type, (merged.directed ?? true) ? 1 : 0, merged.label, merged.description, merged.canon_status, relId);
+  db.prepare(`UPDATE relationships SET type = ?, directed = ?, label = ?, description = ?, canon_status = ? WHERE id = ?`).run(
+    merged.type,
+    (merged.directed ?? true) ? 1 : 0,
+    merged.label,
+    merged.description,
+    merged.canon_status,
+    relId,
+  );
   return toRel(db.prepare('SELECT * FROM relationships WHERE id = ?').get(relId) as RelRow);
 }
 
@@ -315,4 +327,15 @@ export function brokenReferences(db: DB) {
     )
     .all();
   return { references: out, danglingRelationships: danglingRels };
+}
+
+/** Rebuild every record's derived links (after a change to how they're derived). Curated links are never touched. */
+export function rebuildAllDerivedRelationships(db: DB) {
+  const ids = (db.prepare(`SELECT id FROM entities WHERE type != 'redirect'`).all() as { id: string }[]).map((r) => r.id);
+  const index = loadMentionIndex(db);
+  const names = loadNameIndex(db);
+  db.transaction(() => {
+    for (const id of ids) rebuildDerivedRelationships(db, id, index, names);
+  })();
+  return ids.length;
 }

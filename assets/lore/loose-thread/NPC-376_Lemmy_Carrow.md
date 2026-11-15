@@ -20,7 +20,10 @@ Species: Human
 To deliver the message he was carrying. He can't remember what it was.
 
 ## Known relationships and locations
-Hollow Refuge [SET-001]; the Crooked Nail and Mara Venn [NPC-010]; the Crossroads of Fate [LOC-003]; Ashvale Waygate [LOC-305]; the Nameless Asylum [LOC-506]
+The Nameless Asylum [LOC-506]; Mara Venn [NPC-010]
+
+## Where his thread runs
+From Hollow Refuge [SET-001] and the Crooked Nail, along the Crossroads of Fate [LOC-003], to the Ashvale Waygate [LOC-305].
 
 ## Appearance and voice
 A lean man of about forty, weathered, in a long courier's coat with a waystone knot on the band of his cap. His fingertips are burned from thirty years of wicks. Dry and cheerful. He says "the road" as if there were only one.
