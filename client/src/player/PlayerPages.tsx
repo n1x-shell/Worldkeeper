@@ -86,7 +86,7 @@ export function PlayerHome() {
         <p className="text-dim">Your Dungeon Master hasn't revealed anything yet.</p>
       </div>
     );
-  const realmCounts = PLAYER_REALMS.map((r) => ({ ...r, n: entities.filter((e) => e.realm === r.key).length })).filter((r) => r.n);
+  const realmCounts = PLAYER_REALMS.map((r) => ({ ...r, n: entities.filter((e) => inRealm(e, r.key)).length })).filter((r) => r.n);
   const quests = (campaigns ?? []).flatMap((c) => c.quests.filter((q) => ['open', 'active'].includes(q.status)));
   const recaps = (campaigns ?? []).flatMap((c) => c.recaps).sort((a, b) => b.number - a.number);
   const overview = entities.find((e) => e.type === 'world');
@@ -169,15 +169,18 @@ export function PlayerHome() {
   );
 }
 
+/** Whether an entry belongs to a realm: its own, or any continent it's found on (a people of both continents counts for each). */
+const inRealm = (e: PEntity, realm: string) => e.realm === realm || !!e.realms?.includes(realm);
+
 // ------------------------------------------------------------------ Browse by category
 export function PlayerBrowse() {
   const { group = 'all' } = useParams();
   const { entities } = usePlayerIndex();
   const [realm, setRealm] = useState('');
   const g = group === 'all' ? null : [...PLAYER_GROUPS, OTHER_GROUP].find((x) => x.key === group);
-  const list = useMemo(() => (entities ?? []).filter((e) => (!g || groupOf(e.type).key === g.key) && (!realm || e.realm === realm)).sort(byName), [entities, g, realm]);
+  const list = useMemo(() => (entities ?? []).filter((e) => (!g || groupOf(e.type).key === g.key) && (!realm || inRealm(e, realm))).sort(byName), [entities, g, realm]);
   if (!entities) return null;
-  const realmsHere = PLAYER_REALMS.filter((r) => (entities ?? []).some((e) => e.realm === r.key && (!g || groupOf(e.type).key === g.key)));
+  const realmsHere = PLAYER_REALMS.filter((r) => (entities ?? []).some((e) => inRealm(e, r.key) && (!g || groupOf(e.type).key === g.key)));
   return (
     <div>
       <Header title={g?.label ?? 'All Lore'} subtitle={`${list.length} ${list.length === 1 ? 'entry' : 'entries'}`} />
@@ -205,7 +208,7 @@ export function PlayerRealm() {
   const { base } = usePlayer();
   if (!entities) return null;
   const label = PLAYER_REALMS.find((r) => r.key === realm)?.label ?? realm;
-  const here = entities.filter((e) => e.realm === realm);
+  const here = entities.filter((e) => inRealm(e, realm));
   const intro = here.find((e) => e.type === 'continent' || e.type === 'realm' || e.type === 'world');
   const groups = [...PLAYER_GROUPS, OTHER_GROUP].map((g) => ({ g, list: here.filter((e) => e !== intro && groupOf(e.type).key === g.key).sort(byName) })).filter((x) => x.list.length);
   return (

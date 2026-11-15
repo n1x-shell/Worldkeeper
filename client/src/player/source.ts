@@ -14,6 +14,8 @@ export interface PEntity {
   realm: string;
   typeLabel: string;
   realmLabel: string;
+  /** Every continent it belongs to (older handbooks don't have this). */
+  realms?: string[];
   summary: string;
   facts?: string[];
   sections?: { heading: string; content: string }[];
