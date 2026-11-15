@@ -8,6 +8,8 @@ import { h, intParam, mountCrud } from './util.js';
 import { mapDetail, maps, markers, shapes, unplacedLocations } from '../repo/maps.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { kindOf, saveProfile } from '../repo/profiles.js';
+import { clearTrail, explorationFor, inPlay, removeTravel, setDiscovered, travel } from '../repo/exploration.js';
+import { getActiveCampaignId } from '../repo/campaigns.js';
 
 const IMAGE_TYPES: Record<string, string> = {
   'image/png': '.png',
@@ -89,6 +91,31 @@ export function atlasRoutes(ctx: AppContext) {
       return saveProfile(ctx.db, id, 'world', null, { portrait: name });
     }),
   );
+  // Exploration: what the active campaign's party has discovered on a map, and where it has travelled.
+  const campaignOf = (v: unknown) => {
+    const id = v != null && v !== '' ? Number(v) : getActiveCampaignId(ctx.db);
+    if (!id || !Number.isInteger(id)) throw badRequest('Choose an active campaign first');
+    return id;
+  };
+  r.get('/exploration/status', h(() => ({ active_campaign_id: getActiveCampaignId(ctx.db), in_play: inPlay(ctx.db) })));
+  r.get('/exploration', h((req) => explorationFor(ctx.db, campaignOf(req.query.campaign_id), Number(req.query.map_id))));
+  r.post(
+    '/exploration/discover',
+    h((req) => setDiscovered(ctx.db, campaignOf(req.body?.campaign_id), Number(req.body?.map_id), String(req.body?.entity_id ?? ''), req.body?.discovered !== false)),
+  );
+  r.post(
+    '/exploration/travel',
+    h((req) =>
+      travel(ctx.db, campaignOf(req.body?.campaign_id), Number(req.body?.map_id), {
+        entity_id: req.body?.entity_id ? String(req.body.entity_id) : null,
+        x: req.body?.x != null ? Number(req.body.x) : undefined,
+        y: req.body?.y != null ? Number(req.body.y) : undefined,
+        label: req.body?.label ? String(req.body.label).slice(0, 200) : undefined,
+      }),
+    ),
+  );
+  r.delete('/exploration/travel/:id', h((req) => removeTravel(ctx.db, campaignOf(req.query.campaign_id), intParam(req.params.id))));
+  r.delete('/exploration/trail', h((req) => clearTrail(ctx.db, campaignOf(req.query.campaign_id), Number(req.query.map_id))));
   mountCrud(r, ctx, '/maps', maps, ['parent_map_id', 'entity_id']);
   mountCrud(r, ctx, '/markers', markers, ['map_id', 'entity_id']);
   mountCrud(r, ctx, '/shapes', shapes, ['map_id']);

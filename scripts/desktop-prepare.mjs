@@ -34,7 +34,7 @@ fs.cpSync(path.join(root, 'dist'), path.join(out, 'client'), { recursive: true }
 fs.cpSync(path.join(root, 'dist-player'), path.join(out, 'player-site'), { recursive: true });
 // The Worldkeeper additions (new lore records, links, rumour text, mysteries) for Library > Worldkeeper additions.
 fs.rmSync(path.join(out, 'additions'), { recursive: true, force: true });
-for (const dir of ['lore', 'player-text'])
+for (const dir of ['lore', 'player-text', 'maps'])
   fs.cpSync(path.join(root, 'assets', dir), path.join(out, 'additions', dir), { recursive: true, filter: (src) => !src.split(path.sep).includes('drafts') });
 
 // 2. Server bundle (everything except the native driver)

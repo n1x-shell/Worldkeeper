@@ -28,8 +28,7 @@ import { getEntity, updateEntity } from '../server/src/repo/entities.js';
 import { splitSections } from '../server/src/import/parseMarkdown.js';
 import { isSecretHeading } from '../server/src/player/projection.js';
 import { buildPlayerSite } from '../server/src/publish/site.js';
-import { maps, markers, shapes } from '../server/src/repo/maps.js';
-import { imageSize } from '../server/src/routes/atlas.js';
+import { applyMaps } from '../server/src/mapAdditions.js';
 import { ENTITY_TYPE_LABELS, type EntityType } from '../shared/domain.js';
 import { applyLinks, loreFiles } from '../server/src/additions.js';
 
@@ -91,36 +90,9 @@ for (const f of fs.existsSync(textDir) ? fs.readdirSync(textDir).filter((n) => n
     console.log(`player text: ${name} -> ${rows[0].id}`);
   }
 }
-// Maps: each <name>.pins.json in assets/maps (the world map first) is an image + pins, with optional <name>.routes.json.
-// Pin positions are pixels from the image's top-left; the atlas measures y from the bottom.
-const mapDir = path.resolve(import.meta.dirname, '../assets/maps');
-const pinFiles = fs.existsSync(mapDir) ? fs.readdirSync(mapDir).filter((f) => f.endsWith('.pins.json')).sort((a, b) => Number(b.startsWith('world')) - Number(a.startsWith('world')) || a.localeCompare(b)) : [];
-for (const pf of pinFiles) {
-  const base = pf.replace(/\.pins\.json$/, '');
-  const spec = JSON.parse(fs.readFileSync(path.join(mapDir, pf), 'utf8')) as { name: string; image: string; pins: { id: string; label: string; x: number; y: number; category: string }[] };
-  const img = fs.readFileSync(path.join(mapDir, spec.image));
-  const size = imageSize(img);
-  if (!size) throw new Error(`Could not read the size of ${spec.image}`);
-  const file = `map-${base}-${img.length.toString(16)}${path.extname(spec.image)}`;
-  fs.writeFileSync(path.join(ctx.paths.uploadsDir, file), img);
-  const routesFile = path.join(mapDir, `${base}.routes.json`);
-  const map = maps.create(ctx.db, { name: spec.name, kind: 'image', image_file: file, width: size.width, height: size.height, player_visible: true, layers: fs.existsSync(routesFile) ? ['Locations', 'Routes'] : ['Locations'] }) as { id: number };
-  let placed = 0;
-  for (const p of spec.pins) {
-    if (!getEntity(ctx.db, p.id).revealed) continue;
-    markers.create(ctx.db, { map_id: map.id, entity_id: p.id, label: p.label, x: p.x, y: size.height - p.y, category: p.category, layer: 'Locations', hidden: false });
-    placed++;
-  }
-  let routeCount = 0;
-  if (fs.existsSync(routesFile)) {
-    const r = JSON.parse(fs.readFileSync(routesFile, 'utf8')) as { routes: { label: string; color: string; points: [number, number][] }[] };
-    for (const route of r.routes) {
-      shapes.create(ctx.db, { map_id: map.id, kind: 'route', label: route.label, color: route.color, points: route.points.map(([x, y]) => [x, size.height - y]), layer: 'Routes', hidden: false });
-      routeCount++;
-    }
-  }
-  console.log(`${spec.name}: ${size.width}x${size.height}, ${placed} pins, ${routeCount} routes`);
-}
+// Maps: every map in assets/maps, with its pins, routes and region outlines (only revealed places).
+for (const r of applyMaps(ctx.db, ctx.paths.uploadsDir, path.resolve(import.meta.dirname, '../assets/maps'), { onlyRevealed: true }))
+  console.log(`${r.name}: ${r.pins} pins, ${r.routes} routes, ${r.regions} regions`);
 
 const { files: site, summary } = buildPlayerSite(ctx.db, ctx.paths);
 fs.rmSync(outDir, { recursive: true, force: true });

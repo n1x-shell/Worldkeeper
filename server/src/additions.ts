@@ -18,6 +18,7 @@ import { RELATIONSHIP_TYPES, type RelationshipType } from '../../shared/domain.j
 import { readPlayerText, syncRumours } from './repo/rumours.js';
 import { syncMysteries } from './repo/mysteries.js';
 import { deriveTimelineEras } from './repo/eras.js';
+import { applyMaps } from './mapAdditions.js';
 
 /** The additions' lore folder: bundled with the desktop app (WORLDKEEPER_ADDITIONS_DIR), or assets/lore in the repo. */
 export const DEFAULT_ADDITIONS_DIR = process.env.WORLDKEEPER_ADDITIONS_DIR
@@ -114,12 +115,14 @@ export function applyTimeline(db: DB, dir = DEFAULT_ADDITIONS_DIR): number {
 }
 
 /** Bring the additions into an existing library: the new records first, then the links. */
-export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR) {
+export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?: string) {
   const files = loreFiles(dir);
   const imported = files.length ? commitPlan(db, files, buildPlan(db, files, 'Worldkeeper additions')) : null;
   const links = applyLinks(db, dir);
   const rumours = syncRumours(db, readPlayerText(path.resolve(dir, '../player-text')));
   const mysteries = syncMysteries(db, path.join(dir, 'mysteries.json'));
   const timeline = applyTimeline(db, dir);
-  return { records: files.length, imported, links, rumours, mysteries, timeline };
+  // The world's maps (pins, routes, region outlines). Maps the library already has are only topped up.
+  const mapsAdded = uploadsDir ? applyMaps(db, uploadsDir, path.resolve(dir, '../maps'), { onlyRevealed: false }) : [];
+  return { records: files.length, imported, links, rumours, mysteries, timeline, maps: mapsAdded };
 }

@@ -255,3 +255,28 @@ h3 {
   max-width: 280px;
   white-space: normal;
 }
+.wk-pin-k-note {
+  --pin: 245 240 225;
+}
+.wk-pin-k-party {
+  --pin: 242 227 179;
+  width: 32px !important;
+  height: 32px !important;
+  box-shadow: 0 0 0 3px rgb(242 227 179 / 0.3), 0 0 16px rgb(242 227 179 / 0.55);
+}
+.wk-pin-undiscovered {
+  opacity: 0.45;
+  filter: grayscale(0.6);
+}
+.wk-pin-gmonly {
+  border-style: dotted;
+}
+.wk-fog {
+  pointer-events: none;
+}
+.wk-note-popup .leaflet-popup-content-wrapper,
+.wk-note-popup .leaflet-popup-tip {
+  background: rgb(14 13 18 / 0.96);
+  color: rgb(var(--ink));
+  border: 1px solid rgb(var(--line));
+}

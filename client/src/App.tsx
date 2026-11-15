@@ -7,6 +7,7 @@ import { EntityList } from './pages/EntityList';
 import { EntityPage } from './pages/EntityPage';
 import { DocumentsPage, NewEntity, RealmPage, SearchPage, TimelinePage, WorldOverview } from './pages/WorldPages';
 import { MysteriesPage } from './pages/Mysteries';
+import { AtlasExplorer } from './pages/AtlasExplorer';
 import { AtlasPage } from './pages/Atlas';
 import { GraphPage } from './pages/Graph';
 import { DominionsPage, EtherealExplorer, ShardsPage, VaultsPage } from './pages/Special';
@@ -48,6 +49,8 @@ export function App() {
         >
           <Route index element={<Page><Dashboard /></Page>} />
           <Route path="world" element={<Page><WorldOverview /></Page>} />
+          <Route path="atlas/explore" element={<AtlasExplorer />} />
+          <Route path="atlas/explore/:mapId" element={<AtlasExplorer />} />
           <Route path="atlas" element={<Page><AtlasPage /></Page>} />
           <Route path="atlas/:mapId" element={<Page><AtlasPage /></Page>} />
           <Route path="realm/:realm" element={<Page><RealmPage /></Page>} />
