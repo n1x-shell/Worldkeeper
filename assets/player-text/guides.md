@@ -21,7 +21,7 @@ Guides for players beginning in each of the three starting places, and the moons
 
 **Good backgrounds.** Refuge Scavenger, Shardwar Orphan, Aetherfall Survivor, Legion Deserter, Mercenary and Cult Escapee all have a reason to be here. So does anyone running from one of the five factions.
 
-**Good callings.** Any. Warriors, rogues and rangers find work at the Crooked Nail; mages and mystics come for the Market of Lost Things; paladins and shamans come because the Marches need them.
+**Good classes.** Any. Warriors, rogues and rangers find work at the Crooked Nail; mages and mystics come for the Market of Lost Things; paladins and shamans come because the Marches need them.
 
 **Why you're here (roll or choose)**
 
@@ -61,7 +61,7 @@ Guides for players beginning in each of the three starting places, and the moons
 
 **Good backgrounds.** Stone-Singer, Graft-Keeper, Circle Initiate, Camp Healer and Burned Scholar all fit Ashvale. So does a child of any of the nine villages.
 
-**Good callings.** Bards and clerics of Sephane keep the song; druids and rangers walk with the Bloom-Speakers; artificers, fighters and rogues work with the Wrights.
+**Good classes.** Bards and clerics of Sephane keep the song; druids and rangers walk with the Bloom-Speakers; artificers, fighters and rogues work with the Wrights.
 
 **Why you're here (roll or choose)**
 
@@ -102,7 +102,7 @@ Guides for players beginning in each of the three starting places, and the moons
 
 **Good backgrounds.** Slipped the Cycle, Asylum Ward, Fields Salvager, Colosseum Echo and Root-road Stray are made for the Asylum.
 
-**Good callings.** Any, but the realm rewards some: clerics of Sephane and monks keep names steady, warlocks and sorcerers hear things here, and rangers and rogues know the grey paths.
+**Good classes.** Any, but the realm rewards some: clerics of Sephane and monks keep names steady, warlocks and sorcerers hear things here, and rangers and rogues know the grey paths.
 
 **Why you're here (roll or choose)**
 

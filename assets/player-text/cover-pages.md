@@ -8,9 +8,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *The blind Taur'n prophet of Hollow Refuge, in his windowless tower.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Taur'n | Mystic | He/him | Nobody knows |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Taur'n | Cleric | Mystic | He/him | Nobody knows |
 
 **Looks.** A huge, stooped Taur'n with rune-marked horns worn smooth, and two white scars where his eyes were. He never seems to bump into anything.
 
@@ -32,9 +32,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *Hollow Refuge's dwarf smith, with an iron hand and a taste for strange metals.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Dwarf | Wright | She/her | The Anvil of Dominion, the Tyrant's Dominion |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Dwarf | Artificer | Wright | She/her | The Anvil of Dominion, the Tyrant's Dominion |
 
 **Looks.** A broad old dwarf with a white braid down her back and a hand of black iron that she built herself. The joints hiss when she grips a hammer.
 
@@ -56,9 +56,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *A centaur Legion captain in the Marches who always keeps his word.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Centaur | Warrior | He/him | The Bloodfields, the Tyrant's Dominion |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Centaur | Fighter | Warrior | He/him | The Bloodfields, the Tyrant's Dominion |
 
 **Looks.** A grey-coated centaur in red-lacquered barding, with a captain's braid and a scarred, careful face.
 
@@ -78,9 +78,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *The youngest Vale: an Order healer who treats anyone bleeding.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Votary | She/her | Ashen Spire, the Hollow Marches |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Cleric | Votary | She/her | Ashen Spire, the Hollow Marches |
 
 **Looks.** A young woman with the Vale family's grey eyes, sleeves always rolled up, and a healer's satchel stitched with the Order's sun.
 
@@ -101,9 +101,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *A half-elf Consortium scholar, desperate to get into the Sunken Archive.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Half-elf | Mage | He/him | Ashen Spire, the Hollow Marches |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Half-elf | Wizard | Mage | He/him | Ashen Spire, the Hollow Marches |
 
 **Looks.** A lanky half-elf with ink-blacked fingers, a scholar's coat full of notebooks, and the Vale grey eyes.
 
@@ -124,9 +124,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *A Shadow Pact information broker nobody can describe the same way twice.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Reptilian (lizardfolk) | Rogue | They/them | Noctis, the Eternal Veil |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Reptilian (lizardfolk) | Rogue | Silent Blade | They/them | Noctis, the Eternal Veil |
 
 **Looks.** A grey-scaled lizardfolk in a grey cloak. Witnesses disagree on height, eye colour and how many teeth showed.
 
@@ -147,9 +147,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *A sharp-tongued Wildborn elder who knows Wither's Hollow better than anyone.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Firbolg | Shaman | She/her | Wither's Hollow, the Hollow Marches |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Firbolg | Druid | Shaman | She/her | Wither's Hollow, the Hollow Marches |
 
 **Looks.** A tall, bent firbolg with bark-brown skin and thorn-twigs woven through grey hair. She smells of crushed nettles.
 
@@ -170,9 +170,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *The bugbear who runs the Crooked Nail and remembers every face.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Bugbear | Loresinger | She/her | Hollow Refuge |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Bugbear | Bard | Loresinger | She/her | Hollow Refuge |
 
 **Looks.** A tall bugbear with a mane of rust-brown fur, spectacles on a chain and an apron with too many pockets.
 
@@ -193,9 +193,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *A scavenger captain who wants wealth without allegiance, and avoids the Scar.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Earth Genasi | Rogue | He/him | The Scar, the Hollow Marches |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Earth Genasi | Rogue | Rogue | He/him | The Scar, the Hollow Marches |
 
 **Looks.** A rust-coloured earth genasi whose skin is pitted like old iron, in scavenged armour from five armies.
 
@@ -215,9 +215,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *A travelling harengon scribe who asks about your earliest memories.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Harengon | Mystic | She/her | Kaelholm, she says |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Harengon | Rogue | Scribe | She/her | Kaelholm, she says |
 
 **Looks.** A neat harengon with ink-spotted ears, a travelling desk on her back and a pen behind each ear.
 
@@ -236,9 +236,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *A shardscarred veteran who has not slept a full night in years.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Half-orc | Warrior | He/him | The Tyrant's Dominion |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Half-orc | Fighter | Warrior | He/him | The Tyrant's Dominion |
 
 **Looks.** A tired half-orc veteran whose arms are crossed with glassy, glittering scars where shard-fragments went in.
 
@@ -258,9 +258,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *A fast-talking satyr merchant who wants anything rare enough to sell twice.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Satyr | Loresinger | She/her | The Market of Lost Things, Hollow Refuge |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Satyr | Bard | Loresinger | She/her | The Market of Lost Things, Hollow Refuge |
 
 **Looks.** A satyr with gilded horn-tips, a pack mule called Ledger and a coat sewn with sample pockets.
 
@@ -280,9 +280,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *A Stormborn storm-caller who rides a great eagle over the high passes.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Stormborn | Ranger | He/him | The high passes above the Green Expanse |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Stormborn | Ranger | Ranger | He/him | The high passes above the Green Expanse |
 
 **Looks.** A Stormborn man with grey-blue skin and wind-whipped white hair, riding a great storm-eagle named Gale.
 
@@ -302,9 +302,9 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 *The nameless woman with burned palms who founded Ashvale.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Unknown | She/her | Unknown |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Unknown | Unknown | She/her | Unknown |
 
 **Looks.** Remembered as a small woman with burned palms. Ashvale's children draw her with her hands held up.
 

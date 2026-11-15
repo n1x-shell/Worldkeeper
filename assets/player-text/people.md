@@ -4,7 +4,7 @@
 
 Each person has:
 
-- **At a glance.** Their people, calling, pronouns and where they come from.
+- **At a glance.** Their people, class, what the world calls them, pronouns and where they come from.
 - **Looks** and **Manner.** What you notice when you meet them.
 - **Who they are.** What any traveller has heard.
 - **What people say.** Rumours. Some are true, some aren't.
@@ -13,9 +13,9 @@ Each person has:
 
 *The goliath paladin who commands the Celestial Order, and may once have doubted it.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Goliath | Paladin | He/him | Empyrean Spire, the Radiant Ascendancy |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Goliath | Paladin | Paladin | He/him | Empyrean Spire, the Radiant Ascendancy |
 
 **Looks.** A goliath of nearly eight feet in white-and-gold plate, his grey skin marked with dark lines like cracks in marble. He keeps his head bare so his soldiers can see his face.
 
@@ -36,9 +36,9 @@ Each person has:
 
 *The Order's greatest holy mage, whose half-understood visions become law.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Tabaxi | Votary | She/her | A farming village on the Radiant Expanse |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Tabaxi | Cleric | Votary | She/her | A farming village on the Radiant Expanse |
 
 **Looks.** A small tabaxi with sun-gold fur gone white at the muzzle, and eyes clouded pale gold, as if she had stared too long at the sun.
 
@@ -60,9 +60,9 @@ Each person has:
 
 *The Order's quiet tiefling inquisitor. When he arrives, someone is already guilty.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Tiefling | Paladin | He/him | The Purged Halls, the Radiant Ascendancy |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Tiefling | Ranger | Inquisitor | He/him | The Purged Halls, the Radiant Ascendancy |
 
 **Looks.** A lean tiefling with swept-back horns filed blunt, dressed in plain grey with the Order's golden sun hidden inside his collar.
 
@@ -84,9 +84,9 @@ Each person has:
 
 *A Taur'n Legion warrior who chose the Order over death, and is still torn.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Taur'n | Warrior | He/him | The Bloodfang Warcamp, the Tyrant's Dominion |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Taur'n | Fighter | Warrior | He/him | The Bloodfang Warcamp, the Tyrant's Dominion |
 
 **Looks.** A Taur'n knight with one horn sawn short, wearing Order plate over old Legion scars he refuses to have healed.
 
@@ -107,9 +107,9 @@ Each person has:
 
 *A loud, warm dwarven warpriest who keeps asking why mercy has limits.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Dwarf | Votary | She/her | The iron mountains of the Tyrant's Dominion |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Dwarf | Cleric | Warpriest | She/her | The iron mountains of the Tyrant's Dominion |
 
 **Looks.** A broad dwarf with a braided red-gold beard threaded with prayer beads, carrying a warhammer older than she is.
 
@@ -131,9 +131,9 @@ Each person has:
 
 *Eldest of the Vales: a Wildborn warrior turned Order monk.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Monk | He/him | Ashen Spire, the Hollow Marches |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Monk | Monk | He/him | Ashen Spire, the Hollow Marches |
 
 **Looks.** A weathered man in his forties, head shaved, in a plain undyed habit. Wildborn tattoos of antlers still run down both forearms.
 
@@ -155,9 +155,9 @@ Each person has:
 
 *The Order's silent executioner, in white armour that never ages.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Unknown | Paladin | They/them | Unknown |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Unknown | Paladin | Paladin | They/them | Unknown |
 
 **Looks.** A tall figure in seamless white armour that never dents or tarnishes. Light leaks from the joints. Nobody has seen a face inside, because there may not be one.
 
@@ -178,9 +178,9 @@ Each person has:
 
 *The Order's legendary first champion. Possibly alive. Possibly only an idea.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Centaur | Warrior | He/him | The Radiant Expanse, long ago |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Centaur | Fighter | Warrior | He/him | The Radiant Expanse, long ago |
 
 **Looks.** Every statue shows a centaur in gilded barding with a lance and a sun-shield. No two statues agree on his face.
 
@@ -200,9 +200,9 @@ Each person has:
 
 *A dragonborn paladin cast out of the Order who never stopped following the light.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Dragonborn | Paladin | She/her | Zepharyos, the Fractured Nexus |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Dragonborn | Paladin | Paladin | She/her | Zepharyos, the Fractured Nexus |
 
 **Looks.** A gold-scaled dragonborn in battered plate with the Order's sun scraped off the breastplate. She still wears the empty circle where it was.
 
@@ -224,9 +224,9 @@ Each person has:
 
 *The hobgoblin warlord who rules the Crimson Legion from the battlefield.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Hobgoblin | Warrior | He/him | Varkhaal, the Tyrant's Dominion |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Hobgoblin | Barbarian | Reaver | He/him | Varkhaal, the Tyrant's Dominion |
 
 **Looks.** A heavy-set hobgoblin with a grey-streaked crest of hair and a jaw full of gold teeth, each one taken from a rival.
 
@@ -247,9 +247,9 @@ Each person has:
 
 *The Legion's two-axed general: reckless or brilliant, and always victorious.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Shifter | Warrior | She/her | The Hollow Marches |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Shifter | Barbarian | Reaver | She/her | The Hollow Marches |
 
 **Looks.** A rangy shifter with close-cropped black hair, a long scar through both lips and the yellow eyes of a hunting cat. Carries two axes on her back, crossed like a letter.
 
@@ -271,9 +271,9 @@ Each person has:
 
 *The Legion's stone-skinned champion, who has never been seen to fall.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Earth Genasi | Warrior | She/her | The Great Arena of Varkhaal |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Earth Genasi | Barbarian | Reaver | She/her | The Great Arena of Varkhaal |
 
 **Looks.** An earth genasi whose skin is grey stone veined with quartz. Old wounds have healed into seams of raw crystal.
 
@@ -294,9 +294,9 @@ Each person has:
 
 *An orc warlord who fought her way up from the gladiator pits.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Orc | Warrior | She/her | The gladiator pits of Varkhaal |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Orc | Fighter | Warrior | She/her | The gladiator pits of Varkhaal |
 
 **Looks.** A grey-green orc with a shaved head, tusks capped in iron, and arms covered in tally marks from the pits.
 
@@ -316,9 +316,9 @@ Each person has:
 
 *The Legion's strange necromancer, unlike anyone Aetheris has seen.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Unknown | Necromancer | They/them | Unknown, possibly across the Black Tides |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Unknown | Druid | Necromancer | They/them | Unknown, possibly across the Black Tides |
 
 **Looks.** Something like a tall, thin person grown from pale fungus and dark bark, with a crown of grey mushroom caps. A faint dusty smell follows them everywhere.
 
@@ -340,9 +340,9 @@ Each person has:
 
 *A dwarven juggernaut in armour he built himself. No blade has pierced it.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Dwarf | Wright | He/him | The Anvil of Dominion, the Tyrant's Dominion |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Dwarf | Artificer | Wright | He/him | The Anvil of Dominion, the Tyrant's Dominion |
 
 **Looks.** A stout dwarf almost never seen out of his own armour: black iron plates, riveted and glowing faintly at the seams.
 
@@ -363,9 +363,9 @@ Each person has:
 
 *The Legion's smiling executioner of kings.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Yuan-ti | Rogue | She/her | The dusk coast of the Eternal Veil |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Yuan-ti | Rogue | Silent Blade | She/her | The dusk coast of the Eternal Veil |
 
 **Looks.** A yuan-ti with copper-red scales across her cheeks and hands, and a heavy executioner's blade she carries as if it weighs nothing.
 
@@ -384,9 +384,9 @@ Each person has:
 
 *A Stormborn gladiator who fights with blade and lightning.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Stormborn | Spellblade | She/her | Born in a thunderstorm over the Fractured Nexus |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Stormborn | Fighter | Spellblade | She/her | Born in a thunderstorm over the Fractured Nexus |
 
 **Looks.** A Stormborn woman with blue-grey skin, hair that drifts as if underwater, and eyes that flicker when she is angry.
 
@@ -406,9 +406,9 @@ Each person has:
 
 *An escaped pit slave turned berserker. He fights for the Legion. Nobody owns him.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Goliath | Warrior | He/him | A slave pit in the Ruins of the Old Kings |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Goliath | Barbarian | Reaver | He/him | A slave pit in the Ruins of the Old Kings |
 
 **Looks.** A goliath with broken manacles still riveted to both wrists, which he refuses to remove.
 
@@ -428,9 +428,9 @@ Each person has:
 
 *The Warlord's ink-stained heir, who doubts that war is the only path.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Hobgoblin | Loresinger | He/him | Varkhaal, the Tyrant's Dominion |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Hobgoblin | Bard | Loresinger | He/him | Varkhaal, the Tyrant's Dominion |
 
 **Looks.** A slim young hobgoblin in fine red coats, with ink on his fingers and no scars at all, which in Varkhaal is its own kind of scandal.
 
@@ -450,9 +450,9 @@ Each person has:
 
 *The tiny goblin archmage who leads the Consortium, one experiment from disaster.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Goblin | Mage | He/him | Zepharyos, the Fractured Nexus |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Goblin | Sorcerer | Mage | He/him | Zepharyos, the Fractured Nexus |
 
 **Looks.** A tiny old goblin with wild white ear-tufts, burn marks on every robe he owns, and spectacles that change colour on their own.
 
@@ -472,9 +472,9 @@ Each person has:
 
 *Keeper of the Consortium's most dangerous books. Every answer has a price.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Elf | Mystic | She/her | The Veilborn Archive, the Eternal Veil |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Elf | Bard | Mystic | She/her | The Veilborn Archive, the Eternal Veil |
 
 **Looks.** A tall elf in archive greys with silver rings on every finger, each one engraved with the title of a book she has refused to lend.
 
@@ -494,9 +494,9 @@ Each person has:
 
 *A deep gnome necromancer who treats death as an equation.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Deep Gnome | Necromancer | He/him | The Ember Archives, the Tyrant's Dominion |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Deep Gnome | Wizard | Necromancer | He/him | The Ember Archives, the Tyrant's Dominion |
 
 **Looks.** A grey-skinned deep gnome with no hair at all, ink-stained to the elbows, followed by a silent dead assistant in a clean apron.
 
@@ -516,9 +516,9 @@ Each person has:
 
 *A triton king who gave up his throne for storm magic.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Triton | Mage | He/him | An undersea kingdom off the dusk coast |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Triton | Warlock | Mage | He/him | An undersea kingdom off the dusk coast |
 
 **Looks.** A triton with blue-green skin and a crown of grey coral he still wears out of habit. Static crackles in his hair.
 
@@ -538,9 +538,9 @@ Each person has:
 
 *A harengon chronomancer living every timeline at once.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Harengon | Mystic | They/them | Hollow Refuge |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Harengon | Sorcerer | Mystic | They/them | Hollow Refuge |
 
 **Looks.** A small harengon with silver-tipped ears, wearing three watches that all show different times.
 
@@ -561,9 +561,9 @@ Each person has:
 
 *An illusionist whose true face nobody has ever seen.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Unknown | Mage | He/him | Unknown |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Unknown | Wizard | Mage | He/him | Unknown |
 
 **Looks.** Whoever you remember seeing. Witnesses describe a different man every time, and once a woman.
 
@@ -582,9 +582,9 @@ Each person has:
 
 *A fire genasi mage who has burned cities and called it purification.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Fire Genasi | Mage | She/her | The edge of the Ashen Wastes |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Fire Genasi | Wizard | Mage | She/her | The edge of the Ashen Wastes |
 
 **Looks.** A fire genasi with ember-orange skin and hair that burns low like coals. Her robes are fireproof and still scorched.
 
@@ -604,9 +604,9 @@ Each person has:
 
 *A Shadowkin mage who speaks with beings beyond the waking world.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Shadowkin | Mystic | They/them | The Hollowed Veil, perhaps |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Shadowkin | Warlock | Mystic | They/them | The Hollowed Veil, perhaps |
 
 **Looks.** A Shadowkin with ash-grey skin, colourless eyes and a veil of black gauze that moves when there is no wind.
 
@@ -625,9 +625,9 @@ Each person has:
 
 *A tiefling merchant-mage whose power comes from contracts written in blood.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Tiefling | Mage | She/her | Noctis, the Eternal Veil |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Tiefling | Warlock | Pactbound | She/her | Noctis, the Eternal Veil |
 
 **Looks.** A tiefling with ram horns capped in gold and a ledger chained to her belt, its pages written in blood.
 
@@ -647,9 +647,9 @@ Each person has:
 
 *A githzerai sorcerer who rewrites reality, valued and feared by his own side.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Githzerai | Mage | He/him | The Echoing Halls, the Fractured Nexus |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Githzerai | Sorcerer | Mage | He/him | The Echoing Halls, the Fractured Nexus |
 
 **Looks.** A gaunt githzerai with a long braid and tattoos of shifting geometry that rearrange themselves while you watch.
 
@@ -669,9 +669,9 @@ Each person has:
 
 *The charming leader of the Shadow Pact, whose past is a fabrication.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Rogue | He/him | He says Noctis |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Rogue | Silent Blade | He/him | He says Noctis |
 
 **Looks.** A handsome, forgettable man of middle years, with a silver mask he wears pushed up on his forehead like a pair of spectacles.
 
@@ -691,9 +691,9 @@ Each person has:
 
 *A tabaxi assassin no target has ever survived.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Tabaxi | Rogue | She/her | The Green Expanse, the Verdant Rebirth |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Tabaxi | Rogue | Silent Blade | She/her | The Green Expanse, the Verdant Rebirth |
 
 **Looks.** A black-furred tabaxi with one white ear, and no jewellery or perfume. Nothing about her makes a sound.
 
@@ -713,9 +713,9 @@ Each person has:
 
 *The Pact's master of disguise. Maybe one person. Maybe many.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Changes | Rogue | Any | Nobody knows |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Changes | Rogue | Silent Blade | Any | Nobody knows |
 
 **Looks.** Anyone. Kaelen Voris has been a dock worker, a bishop and a child selling flowers.
 
@@ -734,9 +734,9 @@ Each person has:
 
 *A Shadowkin singer of the Midnight Court whose words break minds.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Shadowkin | Mystic | She/her | Noctis, the Eternal Veil |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Shadowkin | Bard | Mystic | She/her | Noctis, the Eternal Veil |
 
 **Looks.** A Shadowkin woman with grey skin and silver lips, who sings in the Midnight Court with her eyes closed.
 
@@ -756,9 +756,9 @@ Each person has:
 
 *A Pact enforcer whose name and past were taken from him.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Half-elf | Rogue | He/him | Unknown |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Half-elf | Rogue | Silent Blade | He/him | Unknown |
 
 **Looks.** A plain half-elf in black with an empty sheath at his hip. When he fights, a blade of grey light fills it.
 
@@ -777,9 +777,9 @@ Each person has:
 
 *A Pact sniper who kills from impossible distances. Nobody knows who.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Unknown | Ranger | Unknown | Unknown |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Unknown | Fighter | Ranger | Unknown | Unknown |
 
 **Looks.** Nobody knows. A grey feather is sometimes found near the bodies.
 
@@ -798,9 +798,9 @@ Each person has:
 
 *A merry satyr mind-mage who plants false memories and erases real ones.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Satyr | Mystic | She/her | The Fading Grove, the Eternal Veil |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Satyr | Sorcerer | Mystic | She/her | The Fading Grove, the Eternal Veil |
 
 **Looks.** A satyr with curling black horns, silver bells in her hair and a laugh you remember long after her face is gone.
 
@@ -819,9 +819,9 @@ Each person has:
 
 *The Pact's spymaster, and the first of the Vales to leave home.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Mystic | He/him | Ashen Spire, the Hollow Marches |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Wizard | Mystic | He/him | Ashen Spire, the Hollow Marches |
 
 **Looks.** A neat man in his late thirties, prematurely grey, in clothes so ordinary they are almost a disguise.
 
@@ -841,9 +841,9 @@ Each person has:
 
 *A kobold killer whose twin daggers silence sound.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Kobold | Rogue | She/her | The back alleys of Noctis |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Kobold | Monk | Silent Blade | She/her | The back alleys of Noctis |
 
 **Looks.** A small black-scaled kobold with twin daggers whose blades seem to drink the light. She is much quieter than anything that size has a right to be.
 
@@ -863,9 +863,9 @@ Each person has:
 
 *The duergar judge who sentences those who betray the Pact.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Duergar | Votary | She/her | Nightglass, the Eternal Veil |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Duergar | Cleric | Votary | She/her | Nightglass, the Eternal Veil |
 
 **Looks.** A grey-skinned duergar with an iron chain of office and a voice that never rises above a murmur.
 
@@ -885,9 +885,9 @@ Each person has:
 
 *The towering lizardfolk shaman of the Wildborn, who commands storms and beasts.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Reptilian (lizardfolk) | Shaman | He/him | The jungle rivers of the Verdant Rebirth |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Reptilian (lizardfolk) | Druid | Shaman | He/him | The jungle rivers of the Verdant Rebirth |
 
 **Looks.** A towering lizardfolk, green-black scales gone grey at the snout, wearing a cloak of storm-bird feathers.
 
@@ -907,9 +907,9 @@ Each person has:
 
 *An orc warband leader betrayed by her own kin, who now hunts alone.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Orc | Ranger | She/her | The Bloodfang Warcamp, the Tyrant's Dominion |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Orc | Ranger | Ranger | She/her | The Bloodfang Warcamp, the Tyrant's Dominion |
 
 **Looks.** A scarred orc with one broken tusk, a bow taller than she is, and nothing else she could not carry at a run.
 
@@ -929,9 +929,9 @@ Each person has:
 
 *The last of the Moonborn, an elf who walks between worlds.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Elf | Shaman | She/her | The Green Expanse, the Verdant Rebirth |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Elf | Druid | Shaman | She/her | The Green Expanse, the Verdant Rebirth |
 
 **Looks.** A pale elf with silver hair, bare feet and eyes that shine like an animal's in the dark.
 
@@ -951,9 +951,9 @@ Each person has:
 
 *A fire genasi warrior born under an eclipse.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Fire Genasi | Monk | She/her | Born under an eclipse in the Ravaged Pass |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Fire Genasi | Monk | Monk | She/her | Born under an eclipse in the Ravaged Pass |
 
 **Looks.** A fire genasi with charcoal skin cracked with glowing seams, who fights barefoot and leaves scorched footprints.
 
@@ -972,9 +972,9 @@ Each person has:
 
 *A Shadowkin jungle assassin you will not see coming.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Shadowkin | Ranger | He/him | The jungles of the Verdant Rebirth |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Shadowkin | Ranger | Ranger | He/him | The jungles of the Verdant Rebirth |
 
 **Looks.** A wiry Shadowkin painted in green and black, with filed teeth and a blowgun worn like a necklace.
 
@@ -993,9 +993,9 @@ Each person has:
 
 *A mossy-bearded dwarf who earned his place among the Wildborn by never falling.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Dwarf | Warrior | He/him | The iron mountains of the Tyrant's Dominion |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Dwarf | Barbarian | Reaver | He/him | The iron mountains of the Tyrant's Dominion |
 
 **Looks.** A huge-shouldered dwarf with moss growing in his beard on purpose, and skin like old leather.
 
@@ -1014,9 +1014,9 @@ Each person has:
 
 *An ancient firbolg druid who remembers the world before the wars.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Firbolg | Shaman | She/her | The Rootspire, the Verdant Rebirth |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Firbolg | Druid | Shaman | She/her | The Rootspire, the Verdant Rebirth |
 
 **Looks.** An enormous, stooped firbolg with blue-grey skin and a beard of hanging lichen, leaning on a staff that has started to sprout.
 
@@ -1035,9 +1035,9 @@ Each person has:
 
 *A Wildborn ranger who leaves no tracks. Maybe a spirit of the hunt.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Unknown | Ranger | He/him | Unknown |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Unknown | Ranger | Ranger | He/him | Unknown |
 
 **Looks.** A lean shape of bark and green moss with antler-like growths, whose footprints sprout grass by morning.
 
@@ -1056,9 +1056,9 @@ Each person has:
 
 *A shifter who leads a great wolf pack and wants the Clans to stand as one.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Shifter | Ranger | They/them | Fangholt, the Verdant Rebirth |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Shifter | Ranger | Ranger | They/them | Fangholt, the Verdant Rebirth |
 
 **Looks.** A shifter with grey wolf's eyes and a mane of grey hair, always surrounded by wolves.
 
@@ -1078,9 +1078,9 @@ Each person has:
 
 *A grandmotherly yuan-ti who may be the Bloodbound Company's real power.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Yuan-ti | Mystic | She/her | The Eclipsed Chamber, the Radiant Ascendancy |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Yuan-ti | Warlock | Mystic | She/her | The Eclipsed Chamber, the Radiant Ascendancy |
 
 **Looks.** An elderly yuan-ti with a serpent's lower body coiled under a wide skirt, and eyes that never seem to close.
 
@@ -1099,9 +1099,9 @@ Each person has:
 
 *A half-orc mercenary lord covered in contract scars. Never lost a duel.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Half-orc | Paladin | He/him | The Bleeding Arena, the Eternal Veil |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Half-orc | Paladin | Paladin | He/him | The Bleeding Arena, the Eternal Veil |
 
 **Looks.** A broad half-orc covered in contract scars: a raised line for every oath sworn in blood.
 
@@ -1120,9 +1120,9 @@ Each person has:
 
 *A cheerful halfling who is the quietest killer there is.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Halfling | Rogue | She/her | The Market of Lost Things, Hollow Refuge |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Halfling | Rogue | Silent Blade | She/her | The Market of Lost Things, Hollow Refuge |
 
 **Looks.** A cheerful halfling in a red scarf. Looks like someone's favourite aunt.
 
@@ -1142,9 +1142,9 @@ Each person has:
 
 *A goblin ex-banker who decides which wars get funded.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Goblin | Wright | She/her | A counting-house in Noctis |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Goblin | Artificer | Wright | She/her | A counting-house in Noctis |
 
 **Looks.** A small goblin in spectacles and a good coat, with an abacus of black beads that clicks while she thinks.
 
@@ -1163,9 +1163,9 @@ Each person has:
 
 *The bugbear berserker the Company unleashes when it wants terror.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Bugbear | Warrior | She/her | The Bloodfang Pit, the Verdant Rebirth |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Bugbear | Barbarian | Reaver | She/her | The Bloodfang Pit, the Verdant Rebirth |
 
 **Looks.** A huge bugbear in a spiked iron collar, with a chain hanging from it that nobody ever holds.
 
@@ -1183,9 +1183,9 @@ Each person has:
 
 *An Ashen Covenant leader who claims to have bathed in the First Fire.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Dragonborn | Mage | They/them | The edge of the Ashen Wastes |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Dragonborn | Sorcerer | Mage | They/them | The edge of the Ashen Wastes |
 
 **Looks.** A red dragonborn whose scales have blackened and split, with fire glowing in the cracks.
 
@@ -1204,9 +1204,9 @@ Each person has:
 
 *An aarakocra singer whose hymns raise infernos.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Aarakocra | Loresinger | She/her | A village burned by the Legion |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Aarakocra | Bard | Loresinger | She/her | A village burned by the Legion |
 
 **Looks.** A tall aarakocra with scorched red-black feathers at her throat and a voice that carries over any fire.
 
@@ -1225,9 +1225,9 @@ Each person has:
 
 *A tiefling king who burned his own people, cursed to burn forever.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Tiefling | Mage | He/him | A kingdom nobody remembers the name of |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Tiefling | Warlock | Pactbound | He/him | A kingdom nobody remembers the name of |
 
 **Looks.** A tiefling king in a melted crown, his body always smouldering, ash falling from him like snow.
 
@@ -1247,9 +1247,9 @@ Each person has:
 
 *A kobold builder who makes fire permanent, and mostly works for pay.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Kobold | Wright | They/them | The Anvil of Dominion, the Tyrant's Dominion |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Kobold | Artificer | Wright | They/them | The Anvil of Dominion, the Tyrant's Dominion |
 
 **Looks.** A rust-red kobold in a leather apron, goggles and singed whiskers, carrying a wand made of furnace parts.
 
@@ -1268,9 +1268,9 @@ Each person has:
 
 *An eladrin elder who remembers the First Fire, and does not preach destruction.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Eladrin | Votary | He/him | Nobody knows |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Eladrin | Cleric | Votary | He/him | Nobody knows |
 
 **Looks.** An eladrin whose hair and eyes have stayed autumn-red for longer than any record. His hands are always warm.
 
@@ -1289,9 +1289,9 @@ Each person has:
 
 *A githyanki warrior priestess of the Black Sun with a sword of darkness.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Githyanki | Paladin | She/her | The Rift of Unmaking, the Fractured Nexus |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Githyanki | Paladin | Paladin | She/her | The Rift of Unmaking, the Fractured Nexus |
 
 **Looks.** A githyanki warrior priestess with yellow-green skin and a greatsword whose blade is a shaft of solid darkness.
 
@@ -1310,9 +1310,9 @@ Each person has:
 
 *A githzerai who never speaks or acts. His eyes show the end of all things.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Githzerai | Monk | He/him | Unknown |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Githzerai | Monk | Monk | He/him | Unknown |
 
 **Looks.** A githzerai in a plain grey robe who sits perfectly still, eyes open, for days at a time.
 
@@ -1331,9 +1331,9 @@ Each person has:
 
 *A fallen Order paladin who decided the gods lied.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Aasimar | Mage | He/him | Empyrean Spire, the Radiant Ascendancy |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Aasimar | Warlock | Pactbound | He/him | Empyrean Spire, the Radiant Ascendancy |
 
 **Looks.** An aasimar whose inner light has dimmed to a cold violet. He wears his old Order armour painted black.
 
@@ -1352,9 +1352,9 @@ Each person has:
 
 *A reluctant deep gnome oracle who foresees the end, and does not want it.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Deep Gnome | Mystic | She/her | She will not say |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Deep Gnome | Wizard | Mystic | She/her | She will not say |
 
 **Looks.** A young deep gnome with grey skin, ink-dark hair and red-rimmed eyes, who carries a lantern that never quite goes out.
 
@@ -1373,9 +1373,9 @@ Each person has:
 
 *A triton preacher who drowned, and came back.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Triton | Mage | He/him | The dusk coast of the Eternal Veil |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Triton | Warlock | Pactbound | He/him | The dusk coast of the Eternal Veil |
 
 **Looks.** A gaunt triton with blue lips and grey, waterlogged skin. Tritons are not supposed to drown. He did.
 
@@ -1395,9 +1395,9 @@ Each person has:
 
 *A water genasi who drifts instead of walking and remembers only the sea.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Water Genasi | Shaman | She/her | The Black Tides |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Water Genasi | Druid | Shaman | She/her | The Black Tides |
 
 **Looks.** A water genasi with pale blue skin and hair that flows like a current. Her feet never quite touch the ground.
 
@@ -1416,9 +1416,9 @@ Each person has:
 
 *A tortle knight the ocean will not release.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Tortle | Paladin | He/him | A wreck off the Eternal Veil |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Tortle | Paladin | Paladin | He/him | A wreck off the Eternal Veil |
 
 **Looks.** A tortle in rusted plate, his shell crusted with barnacles and weed, smelling always of low tide.
 
@@ -1436,9 +1436,9 @@ Each person has:
 
 *A sea elf whose song calls the drowned home.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Sea Elf | Votary | She/her | The waters under the Black Tides, she says |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Sea Elf | Cleric | Votary | She/her | The waters under the Black Tides, she says |
 
 **Looks.** A sea elf with grey-green skin, dressed in black mourning lace that floats around her even on land.
 
@@ -1456,9 +1456,9 @@ Each person has:
 
 *A mute kenku seer whose writing in the sand survives the tide.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Kenku | Monk | They/them | A fishing village on the dusk coast |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Kenku | Monk | Monk | They/them | A fishing village on the dusk coast |
 
 **Looks.** An old grey kenku with a crooked beak, always carrying a stick for writing in the sand.
 
@@ -1476,9 +1476,9 @@ Each person has:
 
 *The erased leader of the Nameless Choir, who cannot keep a name.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Eladrin | Loresinger | She/her | Erased |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Eladrin | Bard | Loresinger | She/her | Erased |
 
 **Looks.** A winter eladrin whose face slides out of memory the moment you look away. People remember her voice, and frost, and nothing else.
 
@@ -1498,9 +1498,9 @@ Each person has:
 
 *The halfling archivist who leads the Silent Accord and copies its forbidden ledger.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Halfling | Mage | She/her | Hollow Refuge |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Halfling | Wizard | Mage | She/her | Hollow Refuge |
 
 **Looks.** A round, bright-eyed halfling with ink to the elbows and seven pairs of spectacles on a chain.
 
@@ -1518,9 +1518,9 @@ Each person has:
 
 *The masked judge of the Hollow Tribunal. Verdicts come before words.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Unknown | Paladin | Unknown | Unknown |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Unknown | Paladin | Paladin | Unknown | Unknown |
 
 **Looks.** A small judge in a blank white mask and grey robes, with gauzy wings folded tight beneath them. No skin shows anywhere.
 
@@ -1540,9 +1540,9 @@ Each person has:
 
 *An old gnome who leads the Whispering Circle and remembers three Aetherfalls.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Gnome | Mystic | He/him | Hollow Refuge, he says, three times over |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Gnome | Sorcerer | Mystic | He/him | Hollow Refuge, he says, three times over |
 
 **Looks.** A very old gnome with a cloud of white hair and a coat covered in pinned notes to himself.
 
@@ -1561,9 +1561,9 @@ Each person has:
 
 *Ashvale's Ritekeeper, who keeps the song sung right.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Votary | She/her | Ashvale |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Cleric | Votary | She/her | Ashvale |
 
 **Looks.** A tall woman in her sixties with iron-grey braids, a keeper's grey shawl and hands that are never still.
 
@@ -1583,9 +1583,9 @@ Each person has:
 
 *Ashvale's Master Speaker, who teaches communion with the Bloom to anyone who asks.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Shaman | He/him | Greyfold, near Ashvale |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Druid | Shaman | He/him | Greyfold, near Ashvale |
 
 **Looks.** A slight man in his thirties with branching pale lines up both forearms and eyes faintly clouded with fine crystal, the marks of long communion.
 
@@ -1606,9 +1606,9 @@ Each person has:
 
 *Ashvale's Chief Wright: practical, generous, and always hiring.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Wright | She/her | Haskett's Mill, near Ashvale |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Artificer | Wright | She/her | Haskett's Mill, near Ashvale |
 
 **Looks.** A sturdy woman with sawdust in her hair, a grafting knife on her belt, and a clockwork dog that follows her everywhere.
 
@@ -1628,9 +1628,9 @@ Each person has:
 
 *An elf of the Spore Circle who saw the Shrouding, and wants every Kaelith work burned.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Elf | Shaman | She/her | Thornhaven, the Eastern Deepwood |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Elf | Druid | Shaman | She/her | Thornhaven, the Eastern Deepwood |
 
 **Looks.** An elf of about 320, small and brown-skinned, with grey hair cropped short and a gourd-lamp glowing green at her belt.
 
@@ -1650,9 +1650,9 @@ Each person has:
 
 *A Kaelholm tribunal head who wants a living Kaelith guardian at any price.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Gnome | Wright | She/her | Kaelholm |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Gnome | Artificer | Wright | She/her | Kaelholm |
 
 **Looks.** A thin, upright gnome in tribunal grey, with a ledger under one arm and a small brass construct that follows two steps behind her.
 
@@ -1673,9 +1673,9 @@ Each person has:
 
 *The glyph-cut orc who is the Convergence Collective's first Riftwalker.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Orc | Spellblade | He/him | The ash barrens |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Orc | Fighter | Spellblade | He/him | The ash barrens |
 
 **Looks.** A big orc, bare to the waist, with Kaelith glyphs cut into his chest and arms. They glow faintly when he is moved.
 
@@ -1695,9 +1695,9 @@ Each person has:
 
 *The reasonable-sounding hobgoblin marshal of the Ascendancy.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Hobgoblin | Warrior | He/him | The eastern mountains |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Hobgoblin | Fighter | Warrior | He/him | The eastern mountains |
 
 **Looks.** A neat hobgoblin captain with an iron jaw, close-cropped hair and a tally-board of marks always at his belt.
 
@@ -1717,9 +1717,9 @@ Each person has:
 
 *A tortle salt trader of Low Fenn who knows every ford and every price.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Tortle | Ranger | He/him | Low Fenn, near Ashvale |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Tortle | Ranger | Ranger | He/him | Low Fenn, near Ashvale |
 
 **Looks.** An old tortle with a salt-stained shell and a wide straw hat, poling a flat boat stacked with salt.
 

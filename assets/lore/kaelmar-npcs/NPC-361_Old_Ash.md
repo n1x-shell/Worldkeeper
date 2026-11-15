@@ -9,6 +9,7 @@ Source: Worldkeeper additions (GM decision, 2026)
 Tags: realm/kaelmar, cat/npc, status/canon, vis/gm
 Pronouns: he/him
 Species: Water Genasi
+Class: Warlock (Archfey Patron). Kept from players: his handbook page shows the class as Unknown.
 
 # Old Ash
 

@@ -416,9 +416,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *The oldest being in the Ethereal Realm, and the first to break free of the Cycle.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Unknown | Unknown | He/him | Before everything |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Unknown | Unknown | Unknown | He/him | Before everything |
 
 **Looks.** A tall shape of cracked crystal, light moving inside it like a slow heartbeat.
 
@@ -438,9 +438,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *A chronomancer who swears there's a way out of the realm, and can prove it, nearly.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Githyanki | Mage | He/him | He says the Astral Sea, and laughs |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Githyanki | Sorcerer | Mage | He/him | He says the Astral Sea, and laughs |
 
 **Looks.** A wiry old githyanki in a coat of a hundred pockets, each holding a different broken clock.
 
@@ -460,9 +460,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *A former champion of the Celestial Order who broke her oath, and her fate with it.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Aasimar | Warrior | She/her | Empyrean Spire, the Radiant Ascendancy |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Aasimar | Barbarian | Reaver | She/her | Empyrean Spire, the Radiant Ascendancy |
 
 **Looks.** An aasimar whose inner light has gone wild and flickering, wearing broken Order plate and chains she snapped herself.
 
@@ -482,9 +482,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *The Architect of Eternity who builds for whatever comes after.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Duergar | Mage | He/him | Nobody knows |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Duergar | Artificer | Wright | He/him | Nobody knows |
 
 **Looks.** A grey duergar architect with star-charts tattooed across his scalp, always measuring something.
 
@@ -504,9 +504,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *A woman who was meant to die in every turn of the Cycle, and never did.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Fire genasi | Paladin | She/her | Every turn of the Cycle |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Fire genasi | Paladin | Paladin | She/her | Every turn of the Cycle |
 
 **Looks.** A fire genasi with ash-grey skin and embers for hair, carrying a sword that has been broken and reforged many times.
 
@@ -526,9 +526,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *A silent scribe who records histories that never happened.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Water genasi | Mage | They/them | Nobody knows |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Water genasi | Wizard | Mage | They/them | Nobody knows |
 
 **Looks.** A thin water genasi with sea-blue skin and a library of floating pages orbiting slowly around them.
 
@@ -548,9 +548,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *The giant who rules the Titans of the Rift by being the strongest.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Goliath | Warrior | He/him | The Rift's Edge |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Goliath | Barbarian | Reaver | He/him | The Rift's Edge |
 
 **Looks.** A giant goliath, far bigger than any living goliath, his grey skin cracked like a dry riverbed.
 
@@ -570,9 +570,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *A Veilborn mystic who is said to speak with the Unmade.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Fairy | Mystic | She/her | The Veilborn Archive, the Eternal Veil |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Fairy | Warlock | Mystic | She/her | The Veilborn Archive, the Eternal Veil |
 
 **Looks.** A tiny fairy with dusk-grey moth wings and empty white eyes, speaking with voices that are not hers.
 
@@ -592,9 +592,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *The githzerai who keeps the Ethereal Realm's laws, by pure logic.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Githzerai | Monk | He/him | Nobody knows |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Githzerai | Monk | Monk | He/him | Nobody knows |
 
 **Looks.** A githzerai in plain white, perfectly still, with eyes that track everything.
 
@@ -614,9 +614,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *An Echoborn who believes the realm is one more cage, and wants out.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Kenku | Mystic | She/her | Nobody knows |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Kenku | Warlock | Mystic | She/her | Nobody knows |
 
 **Looks.** A slim black kenku who speaks only in the voices of other people, often the person she is talking to.
 
@@ -636,9 +636,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *The Nameless Asylum's warforged keeper, who doesn't remember being made.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Warforged | Paladin | They/them | A battlefield that no longer exists |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Warforged | Paladin | Paladin | They/them | A battlefield that no longer exists |
 
 **Looks.** A tall warforged of blackened iron in a grey wool cloak, with a small lamp burning behind the grille of its chest.
 
@@ -658,9 +658,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *A githyanki guide who knows the Hollow Verge's paths better than anyone.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Githyanki | Monk | She/her | A war-band that crossed the Rift of Unmaking |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Githyanki | Monk | Monk | She/her | A war-band that crossed the Rift of Unmaking |
 
 **Looks.** A lean, yellow-skinned githyanki with a shaved head, bare feet and a silver cord tied around one wrist.
 
@@ -680,9 +680,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *A harengon trader who deals in things salvaged from the Fields of Lost Realities.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Harengon | Mage | He/him | The Hollow Marches, once |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Harengon | Wizard | Mage | He/him | The Hollow Marches, once |
 
 **Looks.** A sandy-furred harengon in a coat of patched velvet, with a trader's pack bigger than he is.
 
@@ -702,9 +702,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *The Nameless Asylum's healer, who wears whichever face you need.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Changeling | Shaman | She/her | Nowhere she can name |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Changeling | Cleric | Votary | She/her | Nowhere she can name |
 
 **Looks.** A changeling whose face is a little different for everyone who looks at her, in a plain grey habit with Sephane's three stones on a cord.
 
@@ -724,9 +724,9 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 *A young kenku who copies down every life told in the Remembering Rooms.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Kenku | Mage | He/him | Born in the Verge |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Kenku | Sorcerer | Mage | He/him | Born in the Verge |
 
 **Looks.** A small, scruffy young kenku with ink-black feathers and ink-black fingers, never without a quill.
 

@@ -8,9 +8,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *The Lampblack ink-seller whose ink, they say, can't be scraped.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Halfling | Wright | He/him | Kaelholm |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Halfling | Artificer | Wright | He/him | Kaelholm |
 
 **Looks.** A tiny, ink-stained halfling with a white beard tucked into his apron and blue fingertips that never wash clean.
 
@@ -30,9 +30,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *Keeper of the Blank Page, the Kaelholm tavern where the burned still drink.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Tiefling | Loresinger | She/her | Kaelholm |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Tiefling | Bard | Loresinger | She/her | Kaelholm |
 
 **Looks.** A tall, red-skinned tiefling with one broken horn, a waistcoat of patched velvet and a voice like smoke.
 
@@ -52,9 +52,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A Tollmouth dockhand and fence who can get you anything, and has something he shouldn't.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Rogue | He/him | The Tollmouth |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Rogue | Rogue | He/him | The Tollmouth |
 
 **Looks.** A lean young man with a shaved head, a sailor's tattoos and very calm, very tired eyes.
 
@@ -74,9 +74,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *The tribunal prosecutor hunting a cult nobody else believes is in Kaelholm.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Gnome | Mage | She/her | Kaelholm |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Gnome | Wizard | Mage | She/her | Kaelholm |
 
 **Looks.** A sharp-featured gnome in tribunal grey with a heavy veil of powder on her face and a voice like a closing ledger.
 
@@ -96,9 +96,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A runaway Copyhouse child who can copy any hand, and has copied something dangerous.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Rogue | They/them | The Copyhouses |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Rogue | Rogue | They/them | The Copyhouses |
 
 **Looks.** A small, quick kid of about thirteen with ink to the elbows and a too-big Copyhouse smock cut short.
 
@@ -118,9 +118,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A Scholar Corps veteran turned guide, who drinks so he won't hear names.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Dwarf | Warrior | He/him | Kaelholm |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Dwarf | Fighter | Warrior | He/him | Kaelholm |
 
 **Looks.** A broad grey dwarf with a glyph-lance he won't sell, a missing ear and a flask he never puts down.
 
@@ -140,9 +140,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A goliath song-keeper who sings the mountains' oldest songs, and one she shouldn't know.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Goliath | Loresinger | She/her | The Eastern Mountains |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Goliath | Bard | Loresinger | She/her | The Eastern Mountains |
 
 **Looks.** A tall goliath with grey stone-patterned skin, a drum on her back and every finger ringed in carved bone.
 
@@ -162,9 +162,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *The innkeeper at the top of the pass, who's seen everyone come through.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Dwarf | Warrior | He/him | The Eastern Mountains |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Dwarf | Fighter | Warrior | He/him | The Eastern Mountains |
 
 **Looks.** A short, round dwarf with a red beard, a cook's apron over mail, and a crossbow behind the bar.
 
@@ -184,9 +184,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *An Ascendancy deserter turned bandit chief, who knows the way into Cradlehorn.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Goliath | Warrior | He/him | The Eastern Mountains |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Goliath | Fighter | Warrior | He/him | The Eastern Mountains |
 
 **Looks.** A huge goliath with Ascendancy brands burned off his arms and a necklace of teeth.
 
@@ -206,9 +206,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A goliath cairn-keeper who tends the numbered cairns on the peaks.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Goliath | Votary | She/her | The Eastern Mountains |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Goliath | Cleric | Votary | She/her | The Eastern Mountains |
 
 **Looks.** A lean old goliath with frost-white markings, wrapped in grey wool, carrying a chisel and a single stone.
 
@@ -228,9 +228,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A young aarakocra courier who carries messages between the peaks, and has seen something on one.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Aarakocra | Ranger | They/them | The eastern peaks |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Aarakocra | Ranger | Ranger | They/them | The eastern peaks |
 
 **Looks.** A small aarakocra with grey-and-gold feathers, a satchel bigger than their body and one bent flight feather.
 
@@ -250,9 +250,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A Kaelholm prospector in the mountains, who seems to turn up wherever the Goliath Feud flares.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Rogue | She/her | Kaelholm |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Rogue | Rogue | She/her | Kaelholm |
 
 **Looks.** A weathered woman in a fur-lined coat, a prospector's hammer at one hip and a very good knife at the other.
 
@@ -272,9 +272,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A Cycle Breaker sentinel who slipped out of an Aetherfall in the middle of a battle.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Paladin | She/her | An erased world |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Paladin | Paladin | She/her | An erased world |
 
 **Looks.** A tall woman in dented armour of an unknown order, with a broken sword-oath carved into her breastplate.
 
@@ -294,9 +294,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A Cycle Breaker who remembers seven Aetherfalls, and keeps the Throne's lamps and records.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Gnome | Mage | He/him | Seven erased worlds |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Gnome | Wizard | Mage | He/him | Seven erased worlds |
 
 **Looks.** A tiny, ancient gnome in seven layers of robes from seven worlds, with a lamp on a pole and ink on his nose.
 
@@ -316,9 +316,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A stonewright of the Architects of Eternity who builds with the stone of dead worlds.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Dwarf | Wright | He/him | An erased world |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Dwarf | Artificer | Wright | He/him | An erased world |
 
 **Looks.** A heavy dwarf with stone dust in every wrinkle and a mason's hammer older than his world.
 
@@ -338,9 +338,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *The Architects' buyer at the edge of the Fields, who pays well and asks nothing.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Gnome | Rogue | She/her | The Hollow Verge |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Gnome | Rogue | Rogue | She/her | The Hollow Verge |
 
 **Looks.** A neat little gnome in a spotless coat, with a jeweller's loupe and a ledger on a chain.
 
@@ -360,9 +360,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A Veilborn storyteller in the Remembering Rooms who remembers the oldest life of all.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Elf | Shaman | She/her | Older than the Cycle |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Elf | Druid | Shaman | She/her | Older than the Cycle |
 
 **Looks.** A tiny, ancient elf wrapped in a shawl of grey grass, with eyes like a deep well.
 
@@ -382,9 +382,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A Veilborn runner who fetches the newly forgotten from the grey grass.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Tabaxi | Ranger | He/him | The Hollow Verge |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Tabaxi | Ranger | Ranger | He/him | The Hollow Verge |
 
 **Looks.** A lean grey tabaxi with a lantern on a pole and a scarf over his nose against the Verge's dust.
 
@@ -404,9 +404,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A Titan champion who fought her own echo, and won.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Giff | Reaver | She/her | The Colosseum of Echoes |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Giff | Barbarian | Reaver | She/her | The Colosseum of Echoes |
 
 **Looks.** A scarred giff with a black-stone axe-gun and a second shadow that doesn't quite match her.
 
@@ -426,9 +426,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *The Colosseum's herald and bookmaker, who can sell you a summons.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Loresinger | He/him | The Ossuary of Kings |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Bard | Loresinger | He/him | The Ossuary of Kings |
 
 **Looks.** A slim man in a coat of gold thread from a dead king's court, with a voice that fills the arena without trying.
 
@@ -448,9 +448,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *An Echoborn star-watcher who keeps count of the stars over the Black Horizon.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Astral Elf | Pactbound | They/them | The Black Horizon |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Astral Elf | Warlock | Pactbound | They/them | The Black Horizon |
 
 **Looks.** A pale, thin astral elf with star-charts tattooed on both arms and stars moving in eyes that don't blink often enough.
 
@@ -470,9 +470,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A child born at the Observatory who can hear singing in the silence.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Human | Wildsoul | She/her | The Observatory of the Last Question |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Human | Sorcerer | Wildsoul | She/her | The Observatory of the Last Question |
 
 **Looks.** A small, serious girl with black hair, a too-big Echoborn coat, and a star-shaped birthmark on her palm.
 
@@ -492,9 +492,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *An astral elf who holds a court of starlight on a wreck-island, and pays for news of the gods.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Astral Elf | Votary | She/her | The Starlit Court, the Fields of Lost Realities |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Astral Elf | Cleric | Votary | She/her | The Starlit Court, the Fields of Lost Realities |
 
 **Looks.** A tall astral elf in silver court dress a thousand years out of fashion, with whole constellations turning in her eyes.
 
@@ -514,9 +514,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *The autognome whose maps of the realm everyone in the Asylum carries.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Autognome | Wright | It/its | Kaelholm, Kaelmar |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Autognome | Artificer | Wright | It/its | Kaelholm, Kaelmar |
 
 **Looks.** A small brass autognome with ink-stained fingers, a lens on one eye and a satchel stuffed with maps.
 
@@ -536,9 +536,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *The giff who commands the Twelfth Regiment of Nowhere, guns for hire across the Fields.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Giff | Warrior | He/him | A world nobody can find |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Giff | Fighter | Warrior | He/him | A world nobody can find |
 
 **Looks.** A vast grey giff in a red coat with brass buttons, a pistol on each hip and a moustache waxed to points.
 
@@ -558,9 +558,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A hadozee driftship captain who will take you anywhere in the Fields, for a price.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Hadozee | Rogue | She/her | Yazir |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Hadozee | Rogue | Rogue | She/her | Yazir |
 
 **Looks.** A wiry hadozee with grey-brown fur, a captain's hat that's too big for her and three knives on a bandolier.
 
@@ -580,9 +580,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A plasmoid listener in the Remembering Rooms, who becomes whoever's story they're hearing.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Plasmoid | Loresinger | They/them | The silver void |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Plasmoid | Bard | Loresinger | They/them | The silver void |
 
 **Looks.** A soft, faintly glowing shape, the colour of weak tea, that settles into the face of whoever is talking.
 
@@ -602,9 +602,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 *A thri-kreen hunter who never sleeps, and keeps the Asylum's night watch.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Thri-kreen | Ranger | She/her | A desert in the Fields |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Thri-kreen | Ranger | Ranger | She/her | A desert in the Fields |
 
 **Looks.** A tall thri-kreen whose shell turns grey to match the Verge's grass, with a bone spear and a necklace of desert stones.
 

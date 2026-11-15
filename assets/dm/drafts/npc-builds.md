@@ -1,6 +1,6 @@
 # NPC Builds (GM only, DRAFT)
 
-The 5e build behind every NPC. Species come from the Player's Handbook (2024, plus the 2014 half-elf and half-orc), Tasha's Cauldron of Everything (Tasha's), Mordenkainen Presents: Monsters of the Multiverse (MotM) and Eberron: Rising from the Last War (warforged). Classes and subclasses come from the 2024 PHB and Tasha's. The "calling" is what players see.
+The 5e build behind every NPC. Species come from the Player's Handbook (2024, plus the 2014 half-elf and half-orc), Tasha's Cauldron of Everything (Tasha's), Mordenkainen Presents: Monsters of the Multiverse (MotM) and Eberron: Rising from the Last War (warforged). Classes and subclasses come from the 2024 PHB and Tasha's. Players see the class (not the subclass) and what the world calls the person; a class that would give away a secret is shown as Unknown.
 
 Anything already established about a person (a species, a gender, a role, a secret) is kept. Everything else here is yours to change.
 
