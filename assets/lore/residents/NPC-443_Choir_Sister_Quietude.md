@@ -16,6 +16,9 @@ Class: Bard
 ## Public role and identity
 - Camps at the sealed door, and sings to it.
 
+## Appearance and voice
+A woman in grey Choir robes with a shaved head and a voice like a low bell. Serene, patient, and never stops singing for long.
+
 ## Known relationships and locations
 The Vault of the Nameless [LOC-016]; The Nameless (the Nameless Choir) [CLT-005]
 

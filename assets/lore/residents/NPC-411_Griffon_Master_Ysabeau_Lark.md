@@ -16,6 +16,9 @@ Class: Ranger
 ## Public role and identity
 - Keeps the griffon roost.
 
+## Appearance and voice
+An aasimar with sunlit freckles, cropped gold hair and arms scored by talons. Warm, loud, and proud of her birds.
+
 ## Known relationships and locations
 The Golden Aerie [LOC-041]; Celestial Order [FAC-001]
 

@@ -16,6 +16,9 @@ Class: Druid
 ## Public role and identity
 - Leaves the food at Watchbarrow's barrow.
 
+## Appearance and voice
+A round old halfling with a covered basket and a walking stick. Motherly, firm, and won't gossip about the barrow.
+
 ## Known relationships and locations
 Watchbarrow [VLT-311]
 

@@ -16,6 +16,9 @@ Class: Ranger
 ## Public role and identity
 - Kaelholm's watcher at Rimeholt, in the ice.
 
+## Appearance and voice
+A frost-rimed goliath in white furs, with snow-goggles and a slate of frost-notes. Steady, solitary, and precise.
+
 ## Known relationships and locations
 Rimeholt [VLT-307]; Kaelholm [FAC-301]
 

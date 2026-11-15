@@ -16,6 +16,9 @@ Class: Artificer
 ## Public role and identity
 - Runs the deep terraces.
 
+## Appearance and voice
+A stout grey duergar with braids bound in iron wire, and burn scars to the elbows. Few words, iron patience, and no fear of heat.
+
 ## Known relationships and locations
 The Anvil of Dominion [LOC-047]; Crimson Legion [FAC-002]
 

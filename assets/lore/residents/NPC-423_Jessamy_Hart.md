@@ -16,6 +16,9 @@ Class: Rogue
 ## Public role and identity
 - Crew-boss of Salvage Row.
 
+## Appearance and voice
+A scarred woman in a scavenger's leathers hung with keys, and a crowbar on her back. Loud, fair in a deal, and quick with a knife.
+
 ## Known relationships and locations
 Ashen Spire [LOC-030]
 

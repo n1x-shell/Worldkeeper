@@ -16,6 +16,9 @@ Class: Unknown
 ## Public role and identity
 - A hollow-eyed child seen on the shifting paths of Wither's Hollow.
 
+## Appearance and voice
+A barefoot girl with mist-grey eyes, seen at the edge of the paths. Silent, curious, and always just out of reach.
+
 ## Known relationships and locations
 Wither's Hollow [LOC-034]; Wildborn Clans [FAC-005]
 

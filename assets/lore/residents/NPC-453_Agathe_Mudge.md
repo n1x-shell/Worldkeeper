@@ -16,6 +16,9 @@ Class: Warlock
 ## Public role and identity
 - A fen-witch who sleeps near Mirewell, and sells the dreams.
 
+## Appearance and voice
+A green-scaled reptilian fen-witch with reed charms and a sack of dream-jars. Sly, sleepy, and pleased with herself.
+
 ## Known relationships and locations
 Mirewell [VLT-302]
 

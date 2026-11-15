@@ -16,6 +16,9 @@ Class: Unknown
 ## Public role and identity
 - A woman in a kitchen with no house, offering warm bread.
 
+## Appearance and voice
+A woman in a flour-dusted apron in a kitchen with no walls, with warm bread always ready. Kind, homely, and hurt when you refuse.
+
 ## Known relationships and locations
 The Rifts Edge [LOC-501]
 

@@ -16,6 +16,9 @@ Class: Wizard
 ## Public role and identity
 - Measures the tower's lean every morning and writes it on the wall.
 
+## Appearance and voice
+A small grey-feathered aarakocra in a scholar's coat, with a plumb-line and chalk in his talons. Fussy, precise and nervous.
+
 ## Known relationships and locations
 The Nexus Outpost [LOC-038]; Arcane Consortium [FAC-003]
 

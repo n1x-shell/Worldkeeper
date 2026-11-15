@@ -16,6 +16,9 @@ Class: Rogue
 ## Public role and identity
 - A Pact courier who never gets lost.
 
+## Appearance and voice
+A black-feathered kenku with a courier's satchel and a dozen compasses on cords. Confident, quick, and repeats directions in other people's voices.
+
 ## Known relationships and locations
 The Umbral Paths [LOC-053]; Shadow Pact [FAC-004]
 

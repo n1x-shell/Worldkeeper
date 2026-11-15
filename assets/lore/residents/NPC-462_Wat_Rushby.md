@@ -16,6 +16,9 @@ Class: Ranger
 ## Public role and identity
 - A fisher on Glassmere's strange, still lake.
 
+## Appearance and voice
+A lanky fisherman with glass-cut hands and a boat full of strange nets. Quiet, stubborn, and secretive about his catch.
+
 ## Known relationships and locations
 Glassmere [VLT-312]
 

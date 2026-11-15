@@ -16,6 +16,9 @@ Class: Unknown
 ## Public role and identity
 - A hermit who sits in the under-roads where Deepcall's calling is loudest.
 
+## Appearance and voice
+A gaunt man sitting cross-legged in the dark, ears bound with cloth. Distant, gentle, and slow to answer.
+
 ## Known relationships and locations
 Deepcall [VLT-308]
 

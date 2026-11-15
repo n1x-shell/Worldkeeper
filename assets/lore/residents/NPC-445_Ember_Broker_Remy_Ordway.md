@@ -16,6 +16,9 @@ Class: Warlock
 ## Public role and identity
 - Names the forge's price.
 
+## Appearance and voice
+A fire genasi with ember-hair and soot-dark skin, carrying a rack of small sealed jars. Smooth, friendly, and never names a price in coin.
+
 ## Known relationships and locations
 The Crucible of Renewal [LOC-010]
 

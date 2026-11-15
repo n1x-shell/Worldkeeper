@@ -16,6 +16,9 @@ Class: Monk
 ## Public role and identity
 - Keeps the stone masks, and walks the hall at night.
 
+## Appearance and voice
+A githzerai in grey wrappings, wearing a blank stone mask of their own. Silent, slow, and unbothered by the whispering.
+
 ## Known relationships and locations
 The Veilborn Archive [LOC-054]
 

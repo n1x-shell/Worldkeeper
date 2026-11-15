@@ -16,6 +16,9 @@ Class: Rogue
 ## Public role and identity
 - Runs a dig crew on the Fields for whoever pays.
 
+## Appearance and voice
+A sun-browned halfling in a battered helmet, with a shovel taller than she is. Chatty, shrewd, and impossible to get a straight answer from.
+
 ## Known relationships and locations
 The Bloodmarked Fields [LOC-002]
 

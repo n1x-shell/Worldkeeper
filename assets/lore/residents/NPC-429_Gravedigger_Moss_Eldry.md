@@ -16,6 +16,9 @@ Class: Cleric
 ## Public role and identity
 - Sephane's gravekeeper at the Cairn.
 
+## Appearance and voice
+A stooped gnome with mud to the knees and a ledger in a waxed bag. Gentle, unhurried, and fond of the dead.
+
 ## Known relationships and locations
 The Cairn of the Forgotten [LOC-035]
 

@@ -16,6 +16,9 @@ Class: Wizard
 ## Public role and identity
 - Has lived in the labyrinth so long she knows its shelves blind.
 
+## Appearance and voice
+A thin, grey woman with ink-stained hands, who never carries a lamp. Distracted, gentle, and sometimes calls you by someone else's name.
+
 ## Known relationships and locations
 The Sunken Archive [LOC-033]
 

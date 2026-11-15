@@ -16,6 +16,9 @@ Class: Wizard
 ## Public role and identity
 - A scholar copying the deepest carvings.
 
+## Appearance and voice
+A grey-bearded dwarf with chalk and rubbing-paper, his beard full of stone dust. Absorbed, polite, and secretive about his work.
+
 ## Known relationships and locations
 The Ruins of the Old Kings [LOC-046]
 

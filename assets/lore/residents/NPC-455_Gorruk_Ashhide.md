@@ -16,6 +16,9 @@ Class: Barbarian
 ## Public role and identity
 - Winters his flock on the warm ground over Cinderlock.
 
+## Appearance and voice
+A grey-tusked orc herder in sheepskins, with a crook and a dozen dogs. Gruff, kind to animals, and suspicious of scholars.
+
 ## Known relationships and locations
 Cinderlock [VLT-305]
 

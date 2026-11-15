@@ -16,6 +16,9 @@ Class: Sorcerer
 ## Public role and identity
 - Watches the vortex from the Consortium's station.
 
+## Appearance and voice
+A windburned man with lightning-burned fingertips and goggles pushed up on his head. Excitable, sleepless, and full of figures.
+
 ## Known relationships and locations
 The Rift of Unmaking [LOC-049]; Arcane Consortium [FAC-003]
 

@@ -16,6 +16,9 @@ Class: Warlock
 ## Public role and identity
 - Holds riders' names for a fee while they travel the roots.
 
+## Appearance and voice
+A small old woman wrapped in shawls, with a string of knotted cords at her wrist. Kindly, sharp-eyed, and good at remembering.
+
 ## Known relationships and locations
 Root Crossroads and the Rot [LOC-310]
 

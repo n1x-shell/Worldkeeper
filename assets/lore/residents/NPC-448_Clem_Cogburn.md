@@ -16,6 +16,9 @@ Class: Artificer
 ## Public role and identity
 - Salvages the waygate for the Wrights.
 
+## Appearance and voice
+A stocky halfling in a Wright's apron full of tools, with copper wire wound round her fingers. Practical, cheerful, and protective of her finds.
+
 ## Known relationships and locations
 Ashvale Waygate [LOC-305]; The Wrights [FAC-308]
 

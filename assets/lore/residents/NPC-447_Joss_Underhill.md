@@ -16,6 +16,9 @@ Class: Rogue
 ## Public role and identity
 - Rides the empty rune-sleds of the under-roads for a living.
 
+## Appearance and voice
+A wiry goblin with glyph-burned gloves and a sled-driver's goggles. Jumpy, fast-talking, and very sure of the tunnels.
+
 ## Known relationships and locations
 The Under-Roads [LOC-303]
 

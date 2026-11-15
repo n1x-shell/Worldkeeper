@@ -16,6 +16,9 @@ Class: Wizard
 ## Public role and identity
 - A student who failed the final test once.
 
+## Appearance and voice
+A rumpled gnome with ink to the wrists and one eye that doesn't quite focus. Eager, distracted, and stubborn.
+
 ## Known relationships and locations
 The Nexus Collegium [LOC-048]; Arcane Consortium [FAC-003]
 

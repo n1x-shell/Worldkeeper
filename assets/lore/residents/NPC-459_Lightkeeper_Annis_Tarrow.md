@@ -16,6 +16,9 @@ Class: Cleric
 ## Public role and identity
 - Keeps a lamp above the calm sea at Saltgate.
 
+## Appearance and voice
+A weathered woman in oilskins, with a lamp-glyph pendant and salt in her hair. Steady, devout, and watchful of ships.
+
 ## Known relationships and locations
 Saltgate [VLT-309]
 

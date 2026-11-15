@@ -16,6 +16,9 @@ Class: Fighter
 ## Public role and identity
 - One of the two guards keeping something in.
 
+## Appearance and voice
+A huge goliath in warded mail, with her back always to the iron door. Steady, silent, and very hard to bribe.
+
 ## Known relationships and locations
 The Repository of the Unwritten [LOC-051]; Arcane Consortium [FAC-003]
 
