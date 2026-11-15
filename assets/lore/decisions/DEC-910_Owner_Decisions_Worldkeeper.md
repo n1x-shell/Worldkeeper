@@ -35,3 +35,6 @@ The seven split over the first civilisation [COS-901]. Three taught it to cheat 
 
 ## The Bloom-shaped species belong to Kaelmar (November 2026)
 The Bloom happened in Kaelmar, so the species its spore-storms rewrote are Kaelmar's: the Bloomborn [PPL-010], Centaurs [PPL-015], Harengon [PPL-033], Kenku [PPL-035], Satyrs [PPL-037], Shifters [PPL-039] and Tabaxi [PPL-040]. Each carries the mark "Shaped by the Bloom" (tag origin/bloom). Those also found in Aetheris still appear under Aetheris. The Aarakocra [PPL-011] are left as they were: whether the Bloom shaped them is still disputed.
+
+## Sixteen callings, one for every class (November 2026)
+The archive's ten callings stand as written. Six more join them so that every class has a calling: Reaver (barbarian) [CAL-011], Loresinger (bard) [CAL-012], Votary (cleric) [CAL-013], Wildsoul (sorcerer) [CAL-014], Pactbound (warlock) [CAL-015] and Wright (artificer) [CAL-016]. Each calling's page lists the subclasses that fit it, from the Player's Handbook (2024), Xanathar's Guide to Everything, Tasha's Cauldron of Everything and Eberron: Forge of the Artificer. Spelljammer and Monsters of the Multiverse add no classes. Subclasses written for the 2014 rules are marked by book and used with the GM's permission; where the 2024 Player's Handbook reprints one, its version is the one used.
