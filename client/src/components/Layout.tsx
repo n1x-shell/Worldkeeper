@@ -96,6 +96,7 @@ const NAV: { title: string; items: Item[] }[] = [
       { to: '/campaign/adventures', label: 'Adventures', icon: <MapPinned size={I} /> },
       { to: '/campaign/arcs', label: 'Story Arcs', icon: <Waypoints size={I} /> },
       { to: '/campaign/quests', label: 'Quests', icon: <ListChecks size={I} /> },
+      { to: '/campaign/standing', label: 'Faction Standing', icon: <Scale size={I} /> },
       { to: '/campaign/sessions', label: 'Sessions', icon: <BookOpen size={I} /> },
       { to: '/campaign/encounters', label: 'Encounters', icon: <Swords size={I} /> },
       { to: '/campaign/party', label: 'Party and Characters', icon: <Shield size={I} /> },

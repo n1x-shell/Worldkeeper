@@ -175,10 +175,7 @@ export function PlayerBrowse() {
   const { entities } = usePlayerIndex();
   const [realm, setRealm] = useState('');
   const g = group === 'all' ? null : [...PLAYER_GROUPS, OTHER_GROUP].find((x) => x.key === group);
-  const list = useMemo(
-    () => (entities ?? []).filter((e) => (!g || groupOf(e.type).key === g.key) && (!realm || e.realm === realm)).sort(byName),
-    [entities, g, realm],
-  );
+  const list = useMemo(() => (entities ?? []).filter((e) => (!g || groupOf(e.type).key === g.key) && (!realm || e.realm === realm)).sort(byName), [entities, g, realm]);
   if (!entities) return null;
   const realmsHere = PLAYER_REALMS.filter((r) => (entities ?? []).some((e) => e.realm === r.key && (!g || groupOf(e.type).key === g.key)));
   return (
@@ -281,7 +278,9 @@ export function PlayerEntry() {
               </ul>
             </>
           )}
-          {data.sections?.map((s) => <Md key={s.heading} text={`## ${s.heading}\n\n${s.content}`} />)}
+          {data.sections?.map((s) => (
+            <Md key={s.heading} text={`## ${s.heading}\n\n${s.content}`} />
+          ))}
           {!data.summary && !data.facts?.length && !data.sections?.length && <p className="text-dim">You know of this, but little more.</p>}
         </article>
         <aside className="space-y-3">
@@ -384,6 +383,53 @@ export function PlayerQuests() {
           </ul>
         </>
       )}
+    </div>
+  );
+}
+
+const RANK_ORDER = ['Hostile', 'Distrusted', 'Neutral', 'Initiate', 'Trusted', 'Exalted', 'Champion'];
+
+/** The party's standing with each faction the GM shares: its rank, how far to the next, and what its ranks bring. */
+export function PlayerStanding() {
+  const { campaigns } = usePlayerIndex();
+  if (!campaigns) return null;
+  const all = campaigns.flatMap((c) => (c.standing ?? []).map((f) => ({ ...f, campaign: c.title })));
+  return (
+    <div className="space-y-5">
+      <Header title="Faction Standing" />
+      <p className="text-sm text-dim max-w-prose">Your party's Renown with the factions you've dealt with. Each rank you reach brings something, and losing standing closes doors.</p>
+      {!all.length && <p className="text-dim">Nobody has noticed you yet.</p>}
+      <ul className="space-y-3">
+        {all.map((f) => {
+          const at = RANK_ORDER.indexOf(f.rank);
+          return (
+            <li key={`${f.campaign}-${f.faction_id}`} className="panel p-4 space-y-2">
+              <div className="flex flex-wrap items-baseline gap-2">
+                <span className="font-display text-gold text-lg">{f.name}</span>
+                <Chip>{f.rank}</Chip>
+                <span className="text-sm text-dim">Renown {f.renown}</span>
+                {campaigns.length > 1 && <span className="text-xs text-dim">{f.campaign}</span>}
+              </div>
+              <div className="flex gap-1" aria-hidden>
+                {RANK_ORDER.map((r, i) => (
+                  <span key={r} title={r} className={`h-1.5 flex-1 rounded-full ${i === at ? (i < 2 ? 'bg-danger' : 'bg-gold') : i < at && i > 2 ? 'bg-gold/50' : 'bg-line'}`} />
+                ))}
+              </div>
+              {f.next && (
+                <div className="text-xs text-dim">
+                  {f.next.name} at Renown {f.next.at}
+                </div>
+              )}
+              {f.earned.map((e) => (
+                <div key={e.rank}>
+                  <div className="text-xs uppercase tracking-widest text-dim mt-1">{e.rank}</div>
+                  <Md text={e.text} />
+                </div>
+              ))}
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }

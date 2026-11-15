@@ -506,6 +506,31 @@ CREATE TABLE map_travel (
 CREATE INDEX map_travel_campaign ON map_travel(campaign_id, map_id, id);
 `,
   },
+  {
+    version: 8,
+    name: "faction standing: the party's Renown with each faction, and how it changed",
+    sql: `
+CREATE TABLE faction_standing (
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  faction_id TEXT NOT NULL,
+  renown INTEGER NOT NULL DEFAULT 0,
+  player_visible INTEGER NOT NULL DEFAULT 1,
+  notes TEXT NOT NULL DEFAULT '',
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  PRIMARY KEY (campaign_id, faction_id)
+);
+CREATE TABLE renown_log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  faction_id TEXT NOT NULL,
+  delta INTEGER NOT NULL,
+  reason TEXT NOT NULL DEFAULT '',
+  session_id INTEGER,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE INDEX renown_log_campaign ON renown_log(campaign_id, faction_id, id);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

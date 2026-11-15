@@ -87,6 +87,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
   const groups = [...PLAYER_GROUPS, OTHER_GROUP].filter((g) => (g === OTHER_GROUP ? (entities ?? []).some((e) => !PLAYER_GROUPS.some((p) => p.types.includes(e.type))) : g.types.some((t) => types.has(t))));
   const quests = (campaigns ?? []).reduce((n, c) => n + c.quests.length, 0);
   const recaps = (campaigns ?? []).reduce((n, c) => n + c.recaps.length, 0);
+  const standing = (campaigns ?? []).reduce((n, c) => n + (c.standing?.length ?? 0), 0);
   const sections: { title: string; items: { to: string; label: string; icon: ReactNode; end?: boolean }[] }[] = [
     { title: 'World', items: [{ to: base || '/', label: 'Home', icon: <Home size={I} />, end: true }, ...PLAYER_REALMS.filter((r) => realms.has(r.key)).map((r) => ({ to: `${base}/realm/${r.key}`, label: r.label, icon: REALM_ICONS[r.key] }))] },
     { title: 'Encyclopedia', items: [{ to: `${base}/browse/all`, label: 'All Lore', icon: <BookOpen size={I} /> }, ...groups.map((g) => ({ to: `${base}/browse/${g.key}`, label: g.label, icon: GROUP_ICONS[g.key] }))] },
@@ -96,6 +97,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
         ...((maps ?? []).length ? [{ to: `${base}/maps`, label: 'Maps', icon: <MapIcon size={I} /> }] : []),
         ...(quests ? [{ to: `${base}/quests`, label: 'Quests', icon: <ListChecks size={I} /> }] : []),
         ...(recaps ? [{ to: `${base}/recaps`, label: 'Session Recaps', icon: <Feather size={I} /> }] : []),
+        ...(standing ? [{ to: `${base}/standing`, label: 'Faction Standing', icon: <Scale size={I} /> }] : []),
       ],
     },
   ].filter((s) => s.items.length);

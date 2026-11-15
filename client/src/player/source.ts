@@ -36,6 +36,8 @@ export interface PCampaign {
   current_date: string;
   quests: { id: number; title: string; status: string; description: string }[];
   recaps: { id: number; number: number; title: string; played_on: string; recap: string }[];
+  /** The party's standing with factions (only ones the GM shares), and what its ranks bring. */
+  standing?: { faction_id: string; name: string; renown: number; rank: string; next: { name: string; at: number } | null; earned: { rank: string; text: string }[] }[];
 }
 export interface PlayerSnapshot {
   app: string;
