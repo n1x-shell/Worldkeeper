@@ -2275,6 +2275,1641 @@
      ]
     }
    ]
+  },
+  {
+   "key": "residents-fortresses",
+   "title": "Behind the Fortress Walls",
+   "question": "What are the people of the great factions' strongholds keeping quiet?",
+   "summary": "Every fortress, camp and archive of the great factions has someone inside keeping a secret: sealed orders, hidden deserters, walking dead, books that write their readers, and a fortress that walks.",
+   "secrets": [
+    {
+     "key": "res-npc-405",
+     "title": "The Sanctuary's sealed orders",
+     "truth": "Her sealed orders: if Hollow Refuge's neutrality breaks, the Sanctuary becomes the Order's forward base for a crusade into the Marches. That's why they're fortifying.",
+     "source": "NPC-405",
+     "about": [
+      "NPC-405",
+      "LOC-036",
+      "NPC-006"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The Sanctuary's walls go up a course of stone a week. Nobody's said why.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-036",
+       "note": "The new walls and arrow slits on the hilltop face Hollow Refuge, not the Rift."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-006",
+       "note": "Elyra Vale asks why her infirmary is being moved into the crypt."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-406",
+     "title": "The pilgrims who weren't",
+     "truth": "He hides Legion deserters in the crypt and smuggles them out as pilgrims.",
+     "source": "NPC-406",
+     "about": [
+      "NPC-406",
+      "LOC-036",
+      "NPC-005"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "More pilgrims leave the Sanctuary than ever arrive.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-036",
+       "note": "The crypt has bedrolls for twenty, and Legion boots under the straw."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-005",
+       "note": "Marrek Vaal is four soldiers short, and hasn't reported them."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-407",
+     "title": "The dead who walk back in",
+     "truth": "The old dead turning up in the trenches aren't being dug up. They walk back in at night, and he buries them again before the camp wakes.",
+     "source": "NPC-407",
+     "about": [
+      "NPC-407",
+      "LOC-037",
+      "NPC-005"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He sleeps by day. Nobody knows what he does at night.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-037",
+       "note": "Some of the old dead in the trenches have fresh mud on their boots."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-005",
+       "note": "Marrek Vaal has doubled the night watch, and won't say why."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-408",
+     "title": "Where the tower leans",
+     "truth": "The tower leans toward the Sunken Archive, a little further each time someone there remembers too much.",
+     "source": "NPC-408",
+     "about": [
+      "NPC-408",
+      "LOC-038",
+      "NPC-007"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He won't say which way it's leaning.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-038",
+       "note": "Pim's chalk marks on the tower wall make a line, and it points at the Sunken Archive."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-007",
+       "note": "Orin Vale has asked Pim to measure twice a day."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-409",
+     "title": "The Doorkeeper's guest list",
+     "truth": "Sells the Pact's guest list to the Silent Accord.",
+     "source": "NPC-409",
+     "about": [
+      "NPC-409",
+      "LOC-039",
+      "NPC-012"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The Doorkeeper forgets nobody who's been in, and so is easy to pay for a name.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-039",
+       "note": "The Chamber's guest-book has pages cut out, neatly."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-012",
+       "note": "Sera Noll knows the names of people who've been inside the Chamber."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-410",
+     "title": "The wolf who was a chief",
+     "truth": "The pack's old leader is a Wildborn chief cursed into a wolf a lifetime ago. Ghent is trying to find a way to break the curse, and isn't sure the chief wants it broken.",
+     "source": "NPC-410",
+     "about": [
+      "NPC-410",
+      "LOC-040",
+      "NPC-009"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Ghent can talk to the pack's old leader.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-040",
+       "note": "The oldest wolf at the Den wears a Wildborn chief's torc, sunk deep in its fur."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-009",
+       "note": "Mother Thorn calls the old wolf by a name."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-411",
+     "title": "The griffons won't fly to the Spire",
+     "truth": "For a month the griffons have refused to fly toward Empyrean Spire, and she hasn't told the Highlord.",
+     "source": "NPC-411",
+     "about": [
+      "NPC-411",
+      "LOC-041",
+      "NPC-015"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Ysabeau has stopped taking riders to the Spire.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-041",
+       "note": "The Aerie's roost-log shows no griffon flight to Empyrean Spire this month."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-015",
+       "note": "Highlord Valcairn hasn't been told why his messages go by road."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-412",
+     "title": "What the drums keep asleep",
+     "truth": "The drums keep something in the deepest cell asleep: a warlord who lost a duel a century ago and didn't die.",
+     "source": "NPC-412",
+     "about": [
+      "NPC-412",
+      "LOC-044",
+      "NPC-030"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He won't let anyone else take a turn on the deep drum.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-044",
+       "note": "The deep drum's skin is carved on the inside with a sleeping-rune."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-030",
+       "note": "Riven the Red keeps the key to the deepest cell, and won't say whose cell it is."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-413",
+     "title": "The forge below the forges",
+     "truth": "Below her deepest forge, something is still working an older one, and it isn't the Legion.",
+     "source": "NPC-413",
+     "about": [
+      "NPC-413",
+      "LOC-047",
+      "NPC-414"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She's banned anyone from the lowest terrace.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-047",
+       "note": "On the lowest terrace, the anvils are warm in the morning, though nobody worked them."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-414",
+       "note": "Kip has heard hammering below the lowest terrace."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-415",
+     "title": "Where the failed students go",
+     "truth": "Failed students go to the rooms that are somewhere else, and serve there as wardens.",
+     "source": "NPC-415",
+     "about": [
+      "NPC-415",
+      "LOC-048",
+      "NPC-416"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She knows every failed student's name, and says them in her sleep.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-048",
+       "note": "Some Collegium doors open onto rooms where students in old uniforms stand guard."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-416",
+       "note": "Bix describes the somewhere-else rooms exactly."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-416",
+     "title": "Bix came back",
+     "truth": "Bix remembers the somewhere-else rooms, and nobody believes it.",
+     "source": "NPC-416",
+     "about": [
+      "NPC-416",
+      "LOC-048",
+      "NPC-415"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Bix failed the final test and came back, which nobody else has.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-048",
+       "note": "Inside one of the somewhere-else rooms, Bix's initials are carved on the back of the door."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-415",
+       "note": "Dean Ithil has told Bix to stop telling stories."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-417",
+     "title": "The book that writes Saska",
+     "truth": "One of the books has started writing about her.",
+     "source": "NPC-417",
+     "about": [
+      "NPC-417",
+      "LOC-051",
+      "NPC-035"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She's started reading in her off-hours, and won't say what.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-051",
+       "note": "A book behind the iron door gains a new chapter every week, about its warden."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-035",
+       "note": "Lissara Wynne has asked to move Saska to another post."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-418",
+     "title": "The faces in the glass",
+     "truth": "The glass remembers every face it has reflected, and he sells those faces to the Pact's disguisers.",
+     "source": "NPC-418",
+     "about": [
+      "NPC-418",
+      "LOC-052",
+      "NPC-046"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He's rich for a man who polishes walls.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-052",
+       "note": "Some of Nightglass's panes show faces when nobody stands in front of them."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-046",
+       "note": "Kaelen Voris has worn a face nobody in the Pact has seen alive."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-419",
+     "title": "The new masks",
+     "truth": "The new masks appear by themselves. Last week one had Archivist Lissara Wynne's face.",
+     "source": "NPC-419",
+     "about": [
+      "NPC-419",
+      "LOC-054",
+      "NPC-035"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "They count the masks every night, and the count keeps going up.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-054",
+       "note": "One of the new masks in the Archive has Archivist Lissara Wynne's face."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-035",
+       "note": "Lissara Wynne hasn't been back to the Veilborn Archive in twenty years, and won't say why."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-420",
+     "title": "The Crown is walking",
+     "truth": "The Crown has started walking again, faster, north toward the Rift, and he can't stop it.",
+     "source": "NPC-420",
+     "about": [
+      "NPC-420",
+      "LOC-055",
+      "NPC-054"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He's been measuring how far the Crown has moved.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-055",
+       "note": "Fresh-torn roots trail behind the Verdant Crown's north wall."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-054",
+       "note": "High Shaman Raethan has stopped speaking of the Crown at council."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "residents-marches",
+   "title": "The Marches' Quiet Keepers",
+   "question": "What do the people who keep the Hollow Marches' strange places know?",
+   "summary": "The diggers, keepers, guides and gravediggers of the Hollow Marches each know one strange thing about the place they keep.",
+   "secrets": [
+    {
+     "key": "res-npc-421",
+     "title": "The doors under the Fields",
+     "truth": "Her crew struck a buried wall with doors in it. All five factions pay her to keep digging, and she tells each one that the others haven't found it.",
+     "source": "NPC-421",
+     "about": [
+      "NPC-421",
+      "LOC-002",
+      "NPC-008"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Every faction's agent buys her a drink.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-002",
+       "note": "Gussie's deepest pit is covered by a tarpaulin and five different factions' seals."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-008",
+       "note": "Vess the Grey pays Gussie, and thinks nobody else does."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-422",
+     "title": "Every road leads to the Rift",
+     "truth": "Every road that appears leads toward the Rift, and the stone hums louder each time.",
+     "source": "NPC-422",
+     "about": [
+      "NPC-422",
+      "LOC-003",
+      "NPC-009"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Orlo writes down every road that appears at the Crossroads.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-003",
+       "note": "In Orlo's book of roads, every road that appears bends the same way."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-009",
+       "note": "Mother Thorn asks Orlo about the roads every new moon."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-423",
+     "title": "The Vale house-vault",
+     "truth": "She's found the Vale family's sealed house-vault, and is selling access to each of the Vale siblings separately.",
+     "source": "NPC-423",
+     "about": [
+      "NPC-423",
+      "LOC-030",
+      "NPC-051"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She's been asking after the Vales.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-030",
+       "note": "A door in the Vale family's ruin has a new lock on it, and it's Jessamy's."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-051",
+       "note": "Tobias Vale has paid for a key he hasn't been given."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-424",
+     "title": "The Lady's warning",
+     "truth": "Her warnings are all about one thing: what happens if the four Vale siblings are ever in one room.",
+     "source": "NPC-424",
+     "about": [
+      "NPC-424",
+      "LOC-030",
+      "NPC-006"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She only appears to people with Ashen Spire blood.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-030",
+       "note": "Written down, every one of the Lady's warnings counts to four."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-006",
+       "note": "Elyra Vale has seen the Lady in the Needle, and won't go back."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-425",
+     "title": "Wim is one of the dead",
+     "truth": "He's one of the Scar's dead, raised with the rest, and he never noticed.",
+     "source": "NPC-425",
+     "about": [
+      "NPC-425",
+      "LOC-031",
+      "NPC-011"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Nobody knows whose army Wim marched with.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-031",
+       "note": "Wim's regimental badge matches the banners on the Scar that nobody recognises."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-011",
+       "note": "Torren Kell's crew once saw Wim stand up with the rest."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-426",
+     "title": "Corla's name on the wall",
+     "truth": "Her own name is carved in the hall of names, and it was carved before she was born.",
+     "source": "NPC-426",
+     "about": [
+      "NPC-426",
+      "LOC-032",
+      "NPC-004"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She's been to the hall of names, and came back quiet.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-032",
+       "note": "In Blackveil's hall of names, Corla's is carved in the oldest hand."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-004",
+       "note": "Old Vara won't sell Corla any Blackveil metal."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-427",
+     "title": "Lenore's memories",
+     "truth": "She remembers other people's lives now, and isn't sure which memories are hers. One of them is the Blind Seer's.",
+     "source": "NPC-427",
+     "about": [
+      "NPC-427",
+      "LOC-033",
+      "NPC-001"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She talks about her childhood, and it's different every time.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-033",
+       "note": "Lenore's notes in the Archive are in three different handwritings."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-001",
+       "note": "The Blind Seer asks after Lenore by name, though they've never met."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-428",
+     "title": "The girl on the path that never moves",
+     "truth": "A Wildborn girl who followed the one path that never moves. Mother Thorn knows, and won't say.",
+     "source": "NPC-428",
+     "about": [
+      "NPC-428",
+      "LOC-034",
+      "NPC-009"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "If she leads you in, don't follow.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-034",
+       "note": "There are small bare footprints on the one path in Wither's Hollow that never moves."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-009",
+       "note": "Mother Thorn leaves a child's shoes at the edge of Wither's Hollow."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-429",
+     "title": "The new names",
+     "truth": "He reburies the ones who climb out, and writes down the new names they give themselves.",
+     "source": "NPC-429",
+     "about": [
+      "NPC-429",
+      "LOC-035",
+      "NPC-006"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "His ledger has more names than the Cairn has graves.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-035",
+       "note": "Moss's ledger has names beside graves that were empty the next morning."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-006",
+       "note": "Elyra Vale has asked Moss for his ledger, twice."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "residents-far",
+   "title": "Far Places of Aetheris",
+   "question": "Who keeps watch at Aetheris's far and lost places, and what have they seen?",
+   "summary": "From the Luminara Gate to the drowned Abyssal Hollow, the people at Aetheris's far places have seen what nobody else has, and some of them are places nobody can find.",
+   "secrets": [
+    {
+     "key": "res-npc-430",
+     "title": "The knocking at the Gate",
+     "truth": "Something has knocked on the far side of the Gate three times this year.",
+     "source": "NPC-430",
+     "about": [
+      "NPC-430",
+      "LOC-007",
+      "NPC-015"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She's doubled the watch this year, and won't say why.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-007",
+       "note": "The Gate's watch-log records its light dimming three times this year, then brightening."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-015",
+       "note": "The Highlord has sent more knights north, and called it training."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-431",
+     "title": "The herd's hidden passengers",
+     "truth": "Her herd smuggles heretics north, past the Order's watch.",
+     "source": "NPC-431",
+     "about": [
+      "NPC-431",
+      "LOC-042",
+      "NPC-017"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Her herd is always larger leaving than arriving.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-042",
+       "note": "Some of Saraphine's centaurs carry packs that are too heavy, and too quiet."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-017",
+       "note": "Inquisitor Vael is watching the pilgrim road."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-432",
+     "title": "The Lamplighter of the Purged Halls",
+     "truth": "A survivor of the purge, who lights the lamps for the dead. She is Inquisitor Malrik Vael's sister.",
+     "source": "NPC-432",
+     "about": [
+      "NPC-432",
+      "LOC-043",
+      "NPC-017"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Nobody lives in the Purged Halls, but lamps still get lit there.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-043",
+       "note": "There's fresh lamp-oil in a city where nobody lives."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-017",
+       "note": "Malrik Vael visits the Purged Halls alone, once a year."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-433",
+     "title": "Nobody on the other side",
+     "truth": "There's nobody on the other side. The Legion keeps the front going to blood its recruits and to justify the war, and she has the records to prove it.",
+     "source": "NPC-433",
+     "about": [
+      "NPC-433",
+      "LOC-045",
+      "NPC-025"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She keeps a box of records she won't let anyone read.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-045",
+       "note": "The enemy trenches across the Bloodfields are empty, and have been for years."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-025",
+       "note": "General Volkash signs the Bloodfields' casualty lists without reading them."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-434",
+     "title": "The last name on the list",
+     "truth": "He can read the script. It lists the kings the Legion erased, and the last name on it is the current Warlord's.",
+     "source": "NPC-434",
+     "about": [
+      "NPC-434",
+      "LOC-046",
+      "NPC-024"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He goes pale when anyone mentions the Warlord.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-046",
+       "note": "The deepest carving in the Ruins ends with a name that's freshly cut."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-024",
+       "note": "Warlord Kael has ordered the deepest carvings smashed."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-435",
+     "title": "The vortex and Seraine",
+     "truth": "The vortex shrinks whenever Seraine of the Black Sun is near.",
+     "source": "NPC-435",
+     "about": [
+      "NPC-435",
+      "LOC-049",
+      "NPC-083"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He writes down who visits the Rift.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-049",
+       "note": "Lorcan's logs show the vortex shrinking on the same days, year after year."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-083",
+       "note": "Seraine of the Black Sun has been seen at the Rift's edge."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-436",
+     "title": "The reflection who walked out",
+     "truth": "He's a reflection that walked out. The real Ivo is still inside.",
+     "source": "NPC-436",
+     "about": [
+      "NPC-436",
+      "LOC-050",
+      "NPC-043"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He never looks at his own reflection.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-050",
+       "note": "One mirror in the Echoing Halls shows Ivo, beating on the glass."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-043",
+       "note": "Lirian Althos won't walk with Ivo."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-437",
+     "title": "Lost for nine years",
+     "truth": "She has been lost for nine years. The Paths let her think she isn't.",
+     "source": "NPC-437",
+     "about": [
+      "NPC-437",
+      "LOC-053",
+      "NPC-051"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She talks about places that aren't on any map.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-053",
+       "note": "The seals on Shae's deliveries are nine years out of date."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-051",
+       "note": "Tobias Vale stopped sending Shae letters years ago. She still delivers his replies."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-438",
+     "title": "The second behemoth",
+     "truth": "There's a second behemoth under the forest, alive and asleep, and she sings to keep it that way.",
+     "source": "NPC-438",
+     "about": [
+      "NPC-438",
+      "LOC-056",
+      "NPC-062"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She won't let anyone dig at Fangholt.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-056",
+       "note": "The forest floor at Fangholt rises and falls, very slowly."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-062",
+       "note": "Brynn Wolfsong says the ground at Fangholt breathes."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-439",
+     "title": "The army that waits",
+     "truth": "He saw the marching army arrive once, on the night of an eclipse, waiting for someone born that night.",
+     "source": "NPC-439",
+     "about": [
+      "NPC-439",
+      "LOC-057",
+      "NPC-057"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He locks the doors on eclipse nights.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-057",
+       "note": "Hobb's waystation has a room made up for one guest, and it's never used."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-057",
+       "note": "Yvara Ashborn won't sleep in the Ravaged Pass."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-440",
+     "title": "The god-weapon",
+     "truth": "Lives in a god's ribcage and salvages the gods' weapons. She lifted one, and can't put it down.",
+     "source": "NPC-440",
+     "about": [
+      "NPC-440",
+      "LOC-005"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The gods' weapons are still there, if you can lift them.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-005",
+       "note": "A goliath's camp sits in a god's ribcage, and a weapon nobody could lift has been lifted."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-441",
+     "title": "The last who knew the Smith's name",
+     "truth": "Answers when the anvil is struck. He's the last person who knew the Smith's name.",
+     "source": "NPC-441",
+     "about": [
+      "NPC-441",
+      "LOC-011"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The anvil still rings if you strike it, and something hears.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-011",
+       "note": "Strike the Nameless Forge's anvil and a voice answers."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-442",
+     "title": "Aurex's steward",
+     "truth": "Sweeps the steps. He was Aurex's steward, and the Throne keeps him alive.",
+     "source": "NPC-442",
+     "about": [
+      "NPC-442",
+      "LOC-012"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Aurex is still there, in a way.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-012",
+       "note": "The steps of the Shattered Throne are swept clean."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-443",
+     "title": "What the Choir answers",
+     "truth": "She isn't trying to open it. She's answering whatever scratches.",
+     "source": "NPC-443",
+     "about": [
+      "NPC-443",
+      "LOC-016"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The scratching stops when she sings.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-016",
+       "note": "The scratching at the vault door has a rhythm, and Quietude sings in time with it."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-444",
+     "title": "The Hollow's people come back",
+     "truth": "The missing people are coming back one at a time, and each one asks him the date.",
+     "source": "NPC-444",
+     "about": [
+      "NPC-444",
+      "LOC-006",
+      "NPC-087"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He says the city isn't empty.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-006",
+       "note": "A lamp burns in a drowned house's window in the Abyssal Hollow."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-087",
+       "note": "Father Iskar preaches that the Hollow's people will rise with it."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-445",
+     "title": "The price is memory",
+     "truth": "The price is a memory, and he keeps them in jars.",
+     "source": "NPC-445",
+     "about": [
+      "NPC-445",
+      "LOC-010"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "People who pay him forget something, and don't know what.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-010",
+       "note": "Rows of sealed jars in Remy's rooms, each labelled with a name."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "residents-kaelmar",
+   "title": "Kaelmar's Watchers",
+   "question": "What do the watchers of Kaelmar's vaults and deep places know?",
+   "summary": "Every sealed vault has someone outside it, and every deep place someone who lives with it. Each has noticed something Kaelholm hasn't.",
+   "secrets": [
+    {
+     "key": "res-npc-446",
+     "title": "The thirteenth door-mark",
+     "truth": "Each of the twelve has a thirteenth door-mark carved on it, and they all point the same way. She hasn't told Kaelholm which way.",
+     "source": "NPC-446",
+     "about": [
+      "NPC-446",
+      "LOC-058",
+      "NPC-308"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She's stopped telling Kaelholm where she's going.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-058",
+       "note": "Every vault door bears a thirteenth mark, newly rubbed clean."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-308",
+       "note": "Venn Tull has asked where Oriel has been."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-447",
+     "title": "The sled that stops for Joss",
+     "truth": "One sled always stops for him, and it carries passengers he can't see.",
+     "source": "NPC-447",
+     "about": [
+      "NPC-447",
+      "LOC-303"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He always waits for one particular sled.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-303",
+       "note": "One rune-sled's benches are warm when it pulls in."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-448",
+     "title": "The sled that says return",
+     "truth": "She's found what hums: a sled that still has power, pointed east, with a glyph that says return.",
+     "source": "NPC-448",
+     "about": [
+      "NPC-448",
+      "LOC-305",
+      "NPC-306"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She's been sleeping down there.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-305",
+       "note": "Under Ashvale there's a rune-sled that still has power, with a glyph pointing east."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-306",
+       "note": "Brenna Halvor has been told the waygate is empty."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-449",
+     "title": "The tracks from the forge",
+     "truth": "Whatever came out of the split forge left tracks, and Kestrel has been following them.",
+     "source": "NPC-449",
+     "about": [
+      "NPC-449",
+      "LOC-306"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "They go in alone sometimes, without a client.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-306",
+       "note": "Prints lead out of the split forge in the Dead Zone, too big and too regular."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-450",
+     "title": "The older Idony",
+     "truth": "The plants record someone walking the Garden every night. It's her, older.",
+     "source": "NPC-450",
+     "about": [
+      "NPC-450",
+      "LOC-307"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She won't let anyone in the Garden after dark.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-307",
+       "note": "The Survey Garden's plants record two Idonys, years apart."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-451",
+     "title": "The Cathedral refuses Kaelholm",
+     "truth": "The Cathedral has started refusing anyone carrying Kaelholm's goods. Aun tells Kaelholm it's random.",
+     "source": "NPC-451",
+     "about": [
+      "NPC-451",
+      "LOC-309",
+      "NPC-308"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Kaelholm's caravans have been waiting longer than anyone else's.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-309",
+       "note": "Kaelholm's caravans wait at the Bloom Cathedral, sometimes for weeks."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-308",
+       "note": "Venn Tull has written to the Bloom-Speakers to complain."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-452",
+     "title": "Bettany keeps a little",
+     "truth": "She keeps a little of every name she holds.",
+     "source": "NPC-452",
+     "about": [
+      "NPC-452",
+      "LOC-310"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She never forgets a name. Not one.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-310",
+       "note": "Bettany's knotted cords hold more names than she has riders."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-453",
+     "title": "Mirewell dreams of someone",
+     "truth": "The dreams are the vault's own. It's dreaming of being opened, by one particular person.",
+     "source": "NPC-453",
+     "about": [
+      "NPC-453",
+      "VLT-302",
+      "NPC-349"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Agathe sells dreams, and some of them come true.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "VLT-302",
+       "note": "All of Agathe's dream-jars hold dreams of the same dreamer."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-349",
+       "note": "Sel Marrow dreamed of Mirewell's door opening."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-454",
+     "title": "The vessel",
+     "truth": "A vessel walked out to meet her company, and she's hiding it.",
+     "source": "NPC-454",
+     "about": [
+      "NPC-454",
+      "VLT-304",
+      "NPC-338"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "They've stopped searching, and stopped talking.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "VLT-304",
+       "note": "Darra's camp has one tent nobody sleeps in, and it's guarded."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-338",
+       "note": "Teague Dunmarsh has seen something iron walking in the eastern mountains."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-455",
+     "title": "The warm ground",
+     "truth": "The ground got warmer this year, and the sheep won't graze one patch.",
+     "source": "NPC-455",
+     "about": [
+      "NPC-455",
+      "VLT-305"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "This year he's moved the flock away from one stretch.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "VLT-305",
+       "note": "One patch of ground over Cinderlock is too hot to stand on."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-456",
+     "title": "The thirteen names",
+     "truth": "The hold keeps a list of thirteen names, the cores' names, and she's the last person who can read it.",
+     "source": "NPC-456",
+     "about": [
+      "NPC-456",
+      "VLT-306",
+      "NPC-320"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She knows something about the cores, and won't say.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "VLT-306",
+       "note": "The hold's oldest records hold a list of thirteen names."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-320",
+       "note": "Mirela Sand would give anything for the hold's oldest records."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-457",
+     "title": "The countdown",
+     "truth": "Frost-writing on the door changes every day. It's counting down.",
+     "source": "NPC-457",
+     "about": [
+      "NPC-457",
+      "VLT-307"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He copies the frost on the door every morning.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "VLT-307",
+       "note": "Sorin's slates of frost-writing get shorter, one after another."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-458",
+     "title": "Part of him went in",
+     "truth": "He answered once, and part of him went in.",
+     "source": "NPC-458",
+     "about": [
+      "NPC-458",
+      "VLT-308"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Talk to him long enough and you'll hear it too.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "VLT-308",
+       "note": "Where the Listener sits, the tunnel wall is warm, like skin."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-459",
+     "title": "The captain Saltgate waits for",
+     "truth": "The door hums loudest when one particular Aetheris captain is in port.",
+     "source": "NPC-459",
+     "about": [
+      "NPC-459",
+      "VLT-309"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She asks every captain their name.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "VLT-309",
+       "note": "In Annis's log, the door's hum rises whenever one Aetheris ship is in port."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-460",
+     "title": "Her name on the door",
+     "truth": "She read a line nobody else has seen, and it's her own name.",
+     "source": "NPC-460",
+     "about": [
+      "NPC-460",
+      "VLT-310",
+      "NPC-308"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She's stopped sharing her notes.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "VLT-310",
+       "note": "There's a line on Greyhall's door that only Thessaly has copied."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-308",
+       "note": "Venn Tull has asked for Thessaly's notes, and been refused."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-461",
+     "title": "What takes the food",
+     "truth": "She has seen what takes it.",
+     "source": "NPC-461",
+     "about": [
+      "NPC-461",
+      "VLT-311"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She knows what eats it.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "VLT-311",
+       "note": "At the barrow there are tracks, bare and heavy, leading back in."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-462",
+     "title": "The glass fish",
+     "truth": "He's been netting glass fish that are still alive.",
+     "source": "NPC-462",
+     "about": [
+      "NPC-462",
+      "VLT-312"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "He keeps his catch in a covered barrel.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "VLT-312",
+       "note": "Wat's covered barrel clinks, and something inside it moves."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-463",
+     "title": "Hollowbell sang back",
+     "truth": "Hollowbell once sang back to her, alone, and she's been afraid to sing since.",
+     "source": "NPC-463",
+     "about": [
+      "NPC-463",
+      "VLT-313"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "She hasn't sung since last year.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "VLT-313",
+       "note": "On Evernight, a second voice on the river answers the vault."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "residents-ethereal",
+   "title": "The Ethereal Edges",
+   "question": "Who lives at the edges of the Ethereal Realm?",
+   "summary": "A baker at the Rifts Edge, a wanderer on the Veil of Eternity, and the Doorward of the Hidden Ones' Sanctum.",
+   "secrets": [
+    {
+     "key": "res-npc-464",
+     "title": "The Baker's life",
+     "truth": "She's a fragment of a real woman in Kaelmar. Eat the bread and you remember that woman's whole life.",
+     "source": "NPC-464",
+     "about": [
+      "NPC-464",
+      "LOC-501"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Don't eat the bread.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-501",
+       "note": "The Baker's bread tastes of a kitchen in Kaelmar."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-465",
+     "title": "The stars follow him",
+     "truth": "The stars have started following him.",
+     "source": "NPC-465",
+     "about": [
+      "NPC-465",
+      "LOC-507",
+      "NPC-397"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The stars over the plain move when he does.",
+       "note": ""
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-507",
+       "note": "Every night the stars over the Veil sit a little nearer the Wanderer."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-397",
+       "note": "Vantis Orm's star-count changes whenever the Wanderer moves."
+      }
+     ]
+    },
+    {
+     "key": "res-npc-466",
+     "title": "The judge at the Sanctum's door",
+     "truth": "The Hidden Ones' servant who judges who is worthy to find the Sanctum.",
+     "source": "NPC-466",
+     "about": [
+      "NPC-466",
+      "LOC-505"
+     ],
+     "clues": [
+      {
+       "kind": "place",
+       "entity": "LOC-505",
+       "note": "In the Citadel of the Hidden there's a door that isn't always there."
+      }
+     ]
+    }
+   ]
   }
  ]
 }
