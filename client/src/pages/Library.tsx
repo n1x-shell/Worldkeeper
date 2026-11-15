@@ -818,7 +818,8 @@ function AdditionsPanel({ onDone }: { onDone: (msg: string) => void }) {
         <div className="font-display text-gold">Worldkeeper additions</div>
         <p className="text-sm text-dim">
           New lore written for this world: {data.records} records (people, places, peoples, families, history, creatures), their links, the years on the World Timeline, the handbook's rumours, the
-          mysteries with their secrets and clues, the maps, and ready-to-run adventures. Your archive records are never changed, and anything you've edited is kept. Safe to run again after an update.
+          mysteries with their secrets and clues, the maps, ready-to-run adventures and random encounter tables. Your archive records are never changed, and anything you've edited is kept. Safe to run
+          again after an update.
         </p>
       </div>
       <button
@@ -827,9 +828,12 @@ function AdditionsPanel({ onDone }: { onDone: (msg: string) => void }) {
         onClick={async () => {
           setBusy(true);
           try {
-            const r = await api.post<{ records: number; links: { added: number }; rumours: { total: number }; mysteries: { secrets: number }; adventures?: string[] }>('/api/additions/apply', {});
+            const r = await api.post<{ records: number; links: { added: number }; rumours: { total: number }; mysteries: { secrets: number }; adventures?: string[]; tables?: string[] }>(
+              '/api/additions/apply',
+              {},
+            );
             onDone(
-              `Additions applied: ${r.records} records, ${r.links.added} new links, ${r.rumours.total} rumours and ${r.mysteries.secrets} secrets${r.adventures?.length ? `, and ${r.adventures.length} new adventures` : ''}. A backup was taken first.`,
+              `Additions applied: ${r.records} records, ${r.links.added} new links, ${r.rumours.total} rumours and ${r.mysteries.secrets} secrets${r.adventures?.length ? `, ${r.adventures.length} new adventures` : ''}${r.tables?.length ? `, ${r.tables.length} new random tables` : ''}. A backup was taken first.`,
             );
           } finally {
             setBusy(false);

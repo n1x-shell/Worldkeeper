@@ -20,6 +20,7 @@ import { syncMysteries } from './repo/mysteries.js';
 import { deriveTimelineEras } from './repo/eras.js';
 import { applyMaps } from './mapAdditions.js';
 import { applyAdventures } from './adventureAdditions.js';
+import { applyTables } from './tableAdditions.js';
 
 /** The additions' lore folder: bundled with the desktop app (WORLDKEEPER_ADDITIONS_DIR), or assets/lore in the repo. */
 export const DEFAULT_ADDITIONS_DIR = process.env.WORLDKEEPER_ADDITIONS_DIR ? path.join(process.env.WORLDKEEPER_ADDITIONS_DIR, 'lore') : path.resolve(import.meta.dirname, '../../assets/lore');
@@ -131,5 +132,7 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?:
   const mapsAdded = uploadsDir ? applyMaps(db, uploadsDir, path.resolve(dir, '../maps'), { onlyRevealed: false }) : [];
   // Ready-to-run adventures, added to the GM's Adventures (ones the library already has are left alone).
   const adventuresAdded = applyAdventures(db, path.resolve(dir, '../adventures'));
-  return { records: files.length, imported, links, rumours, mysteries, timeline, maps: mapsAdded, adventures: adventuresAdded };
+  // Random encounter tables, added to the GM's Random Tables (ones the library already has are left alone).
+  const tablesAdded = applyTables(db, path.resolve(dir, '../tables'));
+  return { records: files.length, imported, links, rumours, mysteries, timeline, maps: mapsAdded, adventures: adventuresAdded, tables: tablesAdded };
 }
