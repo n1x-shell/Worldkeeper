@@ -32,6 +32,11 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 - The spirits give warnings, but nobody understands them.
 - Every crew wants to salvage the Needle first.
 
+**Who you'll find here**
+
+- @[Jessamy Hart], crew-boss of Salvage Row.
+- @[The Lady in the Needle], a restless spirit in the last standing tower, who gives warnings nobody understands.
+
 ## The Scar
 
 *An endless battlefield of rusted steel, where the dead do not stay down.*
@@ -57,6 +62,10 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 - Nobody recognises half the banners on the Scar.
 - The scavenger Torren Kell's crew won't go near it.
 
+**Who you'll find here**
+
+- @[Iron Wim], walks the Scar, burying the dead who won't stay down.
+
 ## Blackveil Fortress
 
 *An abandoned stronghold whose vaults may hold relics, and whose depths nobody returns from.*
@@ -81,6 +90,10 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 - Old Vara wants Blackveil metal, and pays well for it.
 - There are names carved on the walls of one hall, hundreds of them.
 - Somebody's planning a Blackveil job, and hiring.
+
+**Who you'll find here**
+
+- @[Corla Thresh], a smuggler hiring for the Blackveil job.
 
 ## The Sunken Archive
 
@@ -108,6 +121,10 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 - The Blind Seer wants a book from the Archive.
 - Professor Orin Vale would give anything to reach its deepest stacks.
 
+**Who you'll find here**
+
+- @[Archive-Warden Lenore Gast], has lived in the labyrinth so long she knows its shelves blind.
+
 ## Wither's Hollow
 
 *A dead forest in endless mist, whose paths shift once you've walked past them.*
@@ -133,6 +150,10 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 - One path never moves, and nobody who follows it comes back the same.
 - The forest knows who you are.
 
+**Who you'll find here**
+
+- @[The Mist-Child], a hollow-eyed child seen on the shifting paths of Wither's Hollow.
+
 ## The Cairn of the Forgotten
 
 *A field of unmarked graves for people whose histories were erased. Some of them stir.*
@@ -150,6 +171,10 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 - Some of the nameless graves at the Cairn stir.
 - Sometimes a grave is empty, and nobody knows who climbed out.
 - People find their own family names on stones that were blank the day before.
+
+**Who you'll find here**
+
+- @[Gravedigger Moss Eldry], sephane's gravekeeper at the Cairn.
 
 ## The Crossroads of Fate
 
@@ -176,6 +201,10 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 - A road appears at the Crossroads sometimes that wasn't there before, and isn't there after.
 - The stone hums if you put your ear to it.
 
+**Who you'll find here**
+
+- @[Orlo Pennick], keeps the shelter by the waystone, and a book of every road that has appeared at the Crossroads.
+
 ## The Sanctuary of the Last Light
 
 *The Celestial Order's camp in the Marches: a ruined hilltop cathedral held as a holy bastion.*
@@ -191,6 +220,11 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 
 - Sister Elyra Vale treats anyone who comes to its doors, whatever their colours.
 - The Order is quietly fortifying it, as if expecting a siege.
+
+**Who you'll find here**
+
+- @[Sister-Captain Odile Brightwater], commands the garrison and drills the knights in the roofless nave.
+- @[Brother Abelard Ashgrove], works beside Sister Elyra Vale and treats anyone at the door.
 
 ## The Warlord's Rest
 
@@ -209,6 +243,10 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 - Vaal keeps his agreements, which makes the other factions trust him more than his superiors.
 - Anyone can challenge for rank in the Rest. Most people only do it once.
 
+**Who you'll find here**
+
+- @[Duel-Marshal Durro Oruun], keeps the duelling ring and the ledger of rank.
+
 ## The Nexus Outpost
 
 *The Arcane Consortium's ruined tower in the Marches, where reality is fragile.*
@@ -226,6 +264,10 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 - Professor Orin Vale works out of it, when he isn't trying to get into the Sunken Archive.
 - Don't drink from the stream.
 
+**Who you'll find here**
+
+- @[Pim Quillfeather], measures the tower's lean every morning and writes it on the wall.
+
 ## The Veiled Chamber
 
 *The Shadow Pact's hidden hall under a dead city, hidden by illusion.*
@@ -242,6 +284,10 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 - Vess the Grey can get you in, for a price.
 - Nobody agrees which dead city it's under.
 
+**Who you'll find here**
+
+- @[Merrin Rell], the Doorkeeper, who holds the illusion over the hall.
+
 ## The Wolf's Den
 
 *The Wildborn Clans' overgrown ruin in the Marches, shared with wolves.*
@@ -257,3 +303,8 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 
 - The wolves decide who's welcome, not the Wildborn.
 - Mother Thorn is afraid of what lies beneath the Rift.
+
+**Who you'll find here**
+
+- @[Ghent Two-Wolves], runs with the wolves and speaks for them.
+

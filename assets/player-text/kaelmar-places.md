@@ -42,6 +42,10 @@ Under Ashvale's west road, a stair goes down to a ruined halt of the under-roads
 - The Boundary Keepers don't like the Wrights digging so close to the stones.
 - The old line runs east, all the way to the mountains. Nobody's walked it.
 
+**Who you'll find here**
+
+- @[Clem Cogburn], salvages the waygate for the Wrights.
+
 ## The Dead Zone
 
 *A stretch of crimson and black-crystal Bloom over a broken Kaelith forge, where the air burns.*
@@ -54,6 +58,10 @@ Somewhere in the Eastern Deepwood, the Bloom turns crimson and black and grows i
 - The forge under it is split down the middle. Something came out of it, or tried to.
 - Scholar Corps expeditions go round it. The long way.
 
+**Who you'll find here**
+
+- @[Kestrel Vane], guides travellers across the Dead Zone, in warded plate.
+
 ## Root Crossroads and the Rot
 
 *Where the Bloom's roots meet, and can carry a traveller a hundred miles in minutes, for a price.*
@@ -64,6 +72,10 @@ Where the Bloom's roots cross, they can carry travellers through the between, fr
 
 - Ride with someone who knows your name.
 - The rot near the crossroads is building something. Nobody knows what.
+
+**Who you'll find here**
+
+- @[Old Bettany], holds riders' names for a fee while they travel the roots.
 
 ## The Thirteen Vaults
 
@@ -78,6 +90,10 @@ The vaults don't open to force. Kaelholm's scholars say each one asks for someth
 - A Kaelholm crew went into Arborhold in 22 AB, and never came out.
 - Every vault door hums a note before it refuses you.
 - Kaelholm wants every vault opened and catalogued. The Spore Circle wants every one burned shut.
+
+**Who you'll find here**
+
+- @[Vault-Seeker Oriel Faulk], has walked to all twelve known vaults, and is looking for the thirteenth.
 
 ## Arborhold
 
@@ -101,6 +117,10 @@ Somewhere in the eastern mountains, Kaelith grew bodies: iron vessels for minds 
 - The vessels are still in there, asleep.
 - Mercenaries in the eastern mountains have been asking about it.
 
+**Who you'll find here**
+
+- @[Darra Vosk], the mercenary captain who's been asking about Cradlehorn.
+
 ## Mirewell
 
 *A vault in the southern fens, which asks for a dream.*
@@ -111,6 +131,10 @@ Mirewell lies under the southern fens. The fen folk say people who sleep near it
 
 - The Convergence Collective wants to read the Root Texts at its door.
 - Low Fenn's headwoman won't go near it.
+
+**Who you'll find here**
+
+- @[Agathe Mudge], a fen-witch who sleeps near Mirewell, and sells the dreams.
 
 ## Cinderlock
 
@@ -123,6 +147,10 @@ Cinderlock lies in the ash barrens, east of the centre. Kaelholm's catalogue say
 - The orc herders winter their flocks on the warm ground, and don't dig.
 - What burned there once could burn again.
 
+**Who you'll find here**
+
+- @[Gorruk Ashhide], winters his flock on the warm ground over Cinderlock.
+
 ## Anvilreach
 
 *A vault in the northern highlands, where Kaelith forged something it called cores.*
@@ -133,6 +161,10 @@ Anvilreach lies in the northern highlands, under dwarf holds that were built ove
 
 - The dwarves of the highlands say they were Kaelith's masons. They say less about Anvilreach.
 - Whatever was forged there, it was made to be named.
+
+**Who you'll find here**
+
+- @[Hold-Warden Brisa Deepmantle], keeps the highland hold built over Anvilreach.
 
 ## Rimeholt
 
@@ -145,6 +177,10 @@ Rimeholt lies under the northern ice. Kaelholm's catalogue calls it the vault of
 - Kaelholm's scholars argue about Rimeholt more than any other vault.
 - If anyone opens Rimeholt, everyone should be there.
 
+**Who you'll find here**
+
+- @[Ice-Watcher Sorin Icemark], kaelholm's watcher at Rimeholt, in the ice.
+
 ## Deepcall
 
 *A vault deep under the centre of Kaelmar, where the under-roads meet.*
@@ -155,6 +191,10 @@ Deepcall lies deep under the centre of Kaelmar, where the under-roads meet. Kael
 
 - You can hear it from the under-roads, calling.
 - Root-road riders say they pass close to it, in the between.
+
+**Who you'll find here**
+
+- @[The Listener], a hermit who sits in the under-roads where Deepcall's calling is loudest.
 
 ## Saltgate
 
@@ -167,6 +207,10 @@ Saltgate lies on Kaelmar's east coast. Kaelholm's catalogue says it was the vaul
 - Since the Aetheris ships started coming, its door has started to hum.
 - The sea near Saltgate is calm in every weather.
 
+**Who you'll find here**
+
+- @[Lightkeeper Annis Tarrow], keeps a lamp above the calm sea at Saltgate.
+
 ## Greyhall
 
 *A vault beside Kaelholm, said to hold Kaelith's archive.*
@@ -177,6 +221,10 @@ Greyhall lies right beside @[Kaelholm|SET-302], and Kaelholm was built where it 
 
 - Kaelholm's archivists have been reading its door for three hundred years.
 - Every Archivist-Elder swears to open it one day.
+
+**Who you'll find here**
+
+- @[Door-Reader Thessaly Ammond], a Kaelholm archivist reading Greyhall's door in the First Grammar.
 
 ## Watchbarrow
 
@@ -189,6 +237,10 @@ Watchbarrow lies in the western hills, not far from Ashvale's villages. Kaelholm
 - The hill folk leave food at its barrow. It's always gone in the morning.
 - Something in there is still keeping watch.
 
+**Who you'll find here**
+
+- @[Nan Hollowell], leaves the food at Watchbarrow's barrow.
+
 ## Glassmere
 
 *A vault under the southern lakes, said to have made the glass.*
@@ -200,6 +252,10 @@ Glassmere lies under the southern lakes. Kaelholm's catalogue says the glass was
 - The lake looks like glass on still days. On windy days, too.
 - Since the glass came, the fishing's been strange.
 
+**Who you'll find here**
+
+- @[Wat Rushby], a fisher on Glassmere's strange, still lake.
+
 ## Hollowbell
 
 *A vault in the southern river country, which sings.*
@@ -210,6 +266,10 @@ Hollowbell lies in the river country of the south. On still nights, people say, 
 
 - Kaelholm's archivists have tried singing to it. It didn't sing back.
 - The river folk sing back to it, on Evernight.
+
+**Who you'll find here**
+
+- @[Oona Reedwater], leads the river folk's singing to Hollowbell on Evernight.
 
 ## Glyph-Work and the First Grammar
 

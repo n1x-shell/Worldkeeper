@@ -21,6 +21,11 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 - The Aerie has never been taken.
 - Highlord Valcairn trains his knights here himself.
 
+**Who you'll find here**
+
+- @[Knight-Commander Edric Thalmos].
+- @[Griffon-Master Ysabeau Lark], keeps the griffon roost.
+
 ## The Radiant Expanse
 
 *The golden plains of the Radiant Ascendancy, running north to the Luminara Gate.*
@@ -38,6 +43,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 
 - Nothing casts a shadow on the Expanse at noon.
 - The pilgrim road north is watched by the Order every step of the way.
+
+**Who you'll find here**
+
+- @[Herd-Leader Saraphine Dawnhoof], leads a centaur herd along the pilgrim road.
 
 ## The Purged Halls
 
@@ -72,6 +81,11 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 - The Bastion has a cell for every warlord who ever lost a duel.
 - The drums never stop.
 
+**Who you'll find here**
+
+- @[Riven the Red].
+- @[Drum-Sergeant Okko Grall], keeps the drums that beat the hours.
+
 ## The Bloodfields
 
 *The Tyrant's Dominion's permanent warfront, on the border facing the Hollow Marches.*
@@ -88,6 +102,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 
 - The Legion sends its new recruits to the Bloodfields first.
 - Nobody remembers who the Legion was fighting when the Bloodfields began.
+
+**Who you'll find here**
+
+- @[Sergeant Brannagh Holt], trains the Legion's recruits at the front.
 
 ## The Ruins of the Old Kings
 
@@ -106,6 +124,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 - The Legion knocked the faces off the statues so nobody would remember who ruled before.
 - The deepest carvings are in a script nobody reads.
 
+**Who you'll find here**
+
+- @[Ammon Sefaro], a scholar copying the deepest carvings.
+
 ## The Anvil of Dominion
 
 *The Crimson Legion's war-forges, deep under the iron mountains.*
@@ -123,6 +145,11 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 - The deepest forges are older than the Legion.
 - Some of the smiths have never seen daylight.
 
+**Who you'll find here**
+
+- @[Forge-Mother Ilda Cragg], runs the deep terraces.
+- @[Kip], a smith's child who has never seen daylight, and wants to.
+
 ## The Nexus Collegium
 
 *The Arcane Consortium's chief fortress and greatest school, near Zepharyos.*
@@ -138,6 +165,11 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 
 - Some of its rooms are in other places entirely.
 - Students who fail their final test are never seen again. Or they graduate. Nobody is sure which.
+
+**Who you'll find here**
+
+- @[Dean Melisande Ithil], sets the Collegium's final test.
+- @[Bix Tallowmere], a student who failed the final test once.
 
 ## The Rift of Unmaking
 
@@ -156,6 +188,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 - The Consortium made it by accident.
 - Seraine of the Black Sun came out of it.
 
+**Who you'll find here**
+
+- @[Storm-Watcher Lorcan Drey], watches the vortex from the Consortium's station.
+
 ## The Echoing Halls
 
 *A labyrinth of mirrors in the Fractured Nexus.*
@@ -171,6 +207,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 
 - Lirian Althos walked out of the Echoing Halls one day, and nobody remembers him going in.
 - Not every reflection is yours.
+
+**Who you'll find here**
+
+- @[Ivo Penhallow], guides people through the mirrors.
 
 ## The Repository of the Unwritten
 
@@ -189,6 +229,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 - What goes into the Repository of the Unwritten does not come out.
 - Some of the books in it are still being written.
 
+**Who you'll find here**
+
+- @[Warden Saska Ironvow], one of the two guards keeping something in.
+
 ## Nightglass
 
 *The Shadow Pact's chief fortress, just outside Noctis.*
@@ -205,6 +249,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 
 - Nobody who goes into Nightglass as a prisoner comes out with the same name.
 - The glass remembers every face it has reflected.
+
+**Who you'll find here**
+
+- @[Lisle Vantarro], polishes the black glass.
 
 ## The Umbral Paths
 
@@ -223,6 +271,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 - The Umbral Paths will take you anywhere, but not always where you asked.
 - The Pact's couriers use them, and never get lost.
 
+**Who you'll find here**
+
+- @[Courier-Captain Shae Darrow], a Pact courier who never gets lost.
+
 ## The Veilborn Archive
 
 *A hall of stone masks in the Eternal Veil.*
@@ -239,6 +291,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 
 - Every mask in the Veilborn Archive belonged to somebody.
 - Some of the masks are new.
+
+**Who you'll find here**
+
+- @[The Mask-Warden], keeps the stone masks, and walks the hall at night.
 
 ## The Verdant Crown
 
@@ -257,6 +313,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 - The Crown has walked a mile north in the last hundred years.
 - No axe has ever cut its walls.
 
+**Who you'll find here**
+
+- @[Rootwarden Bramwell Barkmantle], tends the root-and-bone guardians.
+
 ## Fangholt
 
 *The skeleton of a behemoth in the Verdant Rebirth.*
@@ -274,6 +334,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 - Nobody knows what killed the behemoth at Fangholt.
 - There are more bones under the forest floor.
 
+**Who you'll find here**
+
+- @[Bone-Singer Maeve Rootgrave], a Wildborn ritualist who camps in the behemoth's bones.
+
 ## The Ravaged Pass
 
 *A haunted canyon in the Verdant Rebirth.*
@@ -290,6 +354,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 
 - Travellers who camp in the Ravaged Pass hear an army marching all night.
 - The army never arrives.
+
+**Who you'll find here**
+
+- @[Hobb Larchmont], keeps the waystation at the mouth of the canyon.
 
 ## The Titan's Fall
 
@@ -324,6 +392,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 - Something waits below it.
 - The Drowned Saints say it is the city that will rise.
 
+**Who you'll find here**
+
+- @[Deacon Rhys Tidewell], keeps vigil in the drowned cathedral.
+
 ## The Crucible of Renewal
 
 *An eternal forge under the volcanic heart of Aetheris that reforges anything, for a price.*
@@ -339,6 +411,10 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 
 - Its deepest fires open into a realm of flame.
 - Whatever you put in comes out changed, and so do you.
+
+**Who you'll find here**
+
+- @[Ember-Broker Remy Ordway], names the forge's price.
 
 ## The Nameless Forge
 
@@ -386,3 +462,8 @@ The named sites of the five dominions, and the legendary places of the myths, wh
 
 - Something scratches at the door.
 - The Nameless Choir wants it opened.
+
+**Who you'll find here**
+
+- @[Choir-Sister Quietude], camps at the sealed door, and sings to it.
+

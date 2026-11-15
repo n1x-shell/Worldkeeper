@@ -128,6 +128,10 @@ At the edge of the Fields of Lost Realities, the ground breaks up into fragments
 - Everything here belonged to someone. Some of it still does.
 - Don't eat the bread.
 
+**Who you'll find here**
+
+- @[The Baker], a woman in a kitchen with no house, offering warm bread.
+
 ## The Crucible of Creation
 
 *A city built out of the remains of lost worlds, by people who mean never to be erased again.*
@@ -240,6 +244,10 @@ Inside the Black Horizon there's a plain that goes on forever, under stars that 
 **What people say**
 
 - The stars move when you're not looking. Then they're looking at you.
+
+**Who you'll find here**
+
+- @[The Wanderer], an Echoborn who walked out onto the plain forty years ago, and never stopped.
 
 ## The Observatory of the Last Question
 
