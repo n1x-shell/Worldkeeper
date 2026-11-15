@@ -20,6 +20,11 @@ const CONTINENTS = [
   { key: 'ethereal', label: 'The Ethereal', dot: 'bg-dim' },
 ];
 
+/** The D&D classes a calling's page lists ("- Fighter: Champion, ..."), for a hint under its name. */
+const classesOf = (e: PEntity) => [
+  ...new Set([...(e.summary ?? '').matchAll(/^- (Barbarian|Bard|Cleric|Druid|Fighter|Monk|Paladin|Ranger|Rogue|Sorcerer|Warlock|Wizard|Artificer)\b/gm)].map((m) => m[1])),
+];
+
 const sortName = (n: string) => n.replace(/^["'“‘\s]+/, '');
 const where = (e: PEntity) => CONTINENTS.filter((c) => e.realm === c.key || e.realms?.includes(c.key));
 
@@ -81,7 +86,10 @@ export function SpeciesBuilder({ entities }: { entities: PEntity[] }) {
                   onClick={() => set({ pick: e.id })}
                   aria-current={shown?.id === e.id}
                 >
-                  <span className="flex-1 truncate font-display">{e.name}</span>
+                  <span className="flex-1 min-w-0">
+                    <span className="block truncate font-display">{e.name}</span>
+                    {e.type === 'calling' && classesOf(e).length > 0 && <span className="block truncate text-xs text-dim">{classesOf(e).join(', ')}</span>}
+                  </span>
                   {e.bloom && <Flower2 size={13} className="text-gold shrink-0" aria-label="Shaped by the Bloom" />}
                   <span className="flex gap-0.5 shrink-0">
                     {where(e).map((c) => (
