@@ -108,7 +108,7 @@ In Kaelmar, mystics are often glyph-burned visionaries, carrying glyphs that gre
 
 *How to make a character in this world: a people, a calling, a background and a place to start.*
 
-**1. Choose a people.** Every people in the world has a page under Peoples and Callings, with how they live on each continent, common names and the rules to use. Some peoples go by different names on each continent: see @[Ancestries Across the World].
+**1. Choose a people.** Every people in the world has a page under Species and Callings, with how they live on each continent, common names and the rules to use. Some peoples go by different names on each continent: see @[Ancestries Across the World].
 
 **2. Choose a calling.** The ten callings are how the world sees what you do: Warrior, Rogue, Mage, Ranger, Paladin, Necromancer, Spellblade, Monk, Shaman and Mystic. Each page says which class and subclass to use.
 
