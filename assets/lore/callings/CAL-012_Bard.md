@@ -1,19 +1,22 @@
 ID: CAL-012
-Name: Loresinger
-Alternate names: The Keeper of the Song
+Name: Bard
+Alternate names: Loresinger
 Category: Calling
-Parent: The World [WLD-901] / Callings
+Parent: The World [WLD-901] / Classes
 Continent or realm: World
 Canon status: CANON
-Source: Worldkeeper additions (callings for every class, owner decision, November 2026)
+Source: Worldkeeper additions (classes first, callings as the world's names for them, owner decision, November 2026)
 Tags: realm/world, cat/calling, status/canon, vis/player
 
-# Loresinger
+# Bard
 
-## Calling
-**Title:** The Keeper of the Song
+## Class
+**Class:** Bard (D&D 2024).
 
 **Established role:** Music, memory, and words that move people.
+
+## What the world calls it
+Loresinger
 
 ## D&D 2024 adaptation
 Bard. The handbook page lists every subclass from the books in use.

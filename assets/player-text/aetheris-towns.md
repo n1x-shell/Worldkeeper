@@ -269,9 +269,9 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 
 *Archwell's well-keeper, a sea elf who came up a well and never went back.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Sea elf | Mage | She/her | Archwell |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Sea elf | Sorcerer | Mage | She/her | Archwell |
 
 **Looks.** A tall, grey-skinned sea elf with dark wet-looking hair that never quite dries, and a bronze key on a chain.
 
@@ -291,9 +291,9 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 
 *Tallowmarch's guild-master, a half-orc candlemaker with a monk's patience and a merchant's nose.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Half-orc | Monk | He/him | Tallowmarch |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Half-orc | Monk | Monk | He/him | Tallowmarch |
 
 **Looks.** A big, slow-moving half-orc with burn-scarred hands, a leather apron and a beard that smells of honey.
 
@@ -313,9 +313,9 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 
 *Lastlight's fairy lamplighter, who has never once let a lamp go out.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Fairy | Mystic | They/them | Lastlight |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Fairy | Warlock | Mystic | They/them | Lastlight |
 
 **Looks.** A fairy no taller than a hand, with moth-brown wings, a soot-black face and a taper twice their height.
 
@@ -335,9 +335,9 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 
 *Stakewall's Taur'n reeve, who has held its wall against every army in the Marches.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Taur'n | Warrior | He/him | Stakewall |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Taur'n | Barbarian | Reaver | He/him | Stakewall |
 
 **Looks.** A huge brown-furred Taur'n with one horn broken short and runes cut into the other, in a farmer's smock with a greataxe never far away.
 
@@ -357,9 +357,9 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 
 *Dawnmere's yuan-ti magistrate, who keeps the Order's law without believing a word of it.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Yuan-ti | Mage | She/her | Dawnmere |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Yuan-ti | Sorcerer | Mage | She/her | Dawnmere |
 
 **Looks.** A slender yuan-ti with pale gold scales, a magistrate's white collar and spectacles she doesn't need.
 
@@ -379,9 +379,9 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 
 *Ironwake's dragonborn Forgemaster, who made the Warlord's sword and has opinions about it.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Dragonborn | Warrior | They/them | Ironwake |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Dragonborn | Barbarian | Reaver | They/them | Ironwake |
 
 **Looks.** A broad copper-scaled dragonborn with a leather apron over old Legion armour, and a hammer in each hand.
 
@@ -401,9 +401,9 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 
 *Driftholm's Stormborn chain-keeper, who can talk the wind into anything.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Stormborn | Monk | She/her | Driftholm |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Stormborn | Monk | Monk | She/her | Driftholm |
 
 **Looks.** A wiry Stormborn woman with sky-blue skin, hair that streams upward, and rope burns on both palms.
 
@@ -423,9 +423,9 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 
 *Mothhaven's old tortle harbourmaster, who crossed the Black Tides once and won't again.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Tortle | Mystic | He/him | Mothhaven |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Tortle | Unknown | Mystic | He/him | Mothhaven |
 
 **Looks.** An old tortle with a barnacled shell, a harbourmaster's chain of office, and a fishing line always in the water.
 
@@ -445,9 +445,9 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 
 *Highbough's eladrin elder, whose temper follows the seasons and whose word is law in the canopy.*
 
-| People | Calling | Pronouns | From |
-| --- | --- | --- | --- |
-| Eladrin | Warrior | They/them | Highbough |
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Eladrin | Barbarian | Reaver | They/them | Highbough |
 
 **Looks.** A tall eladrin whose hair turns with the seasons, green, gold, rust and white, and whose skin is patterned like bark.
 

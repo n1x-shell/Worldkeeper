@@ -1,5 +1,5 @@
 ID: NPC-398
-Name: Little Quell
+Name: Little Hush
 Alternate names: None recorded
 Category: NPC
 Parent: People and Organizations (Ethereal Realm)
@@ -10,7 +10,7 @@ Tags: realm/ethereal, cat/npc, status/canon, vis/gm
 Pronouns: she/her
 Species: Human
 
-# Little Quell
+# Little Hush
 
 ## Public role and identity
 - Born at the Observatory of the Last Question, eight years ago.
@@ -26,4 +26,4 @@ The Echoborn [FAC-505]; Vantis Orm [NPC-397]
 A small, serious girl with black hair, a too-big Echoborn coat, and a star-shaped birthmark on her palm. Solemn, curious and fearless.
 
 ## Pressure and secrets
-Quell hears Oru-Ngathal [DEI-917] singing, and sings back. The Black Sun has heard of her and wants her, believing she can call the teachers home faster. She could. She could also tell them no.
+Hush hears Oru-Ngathal [DEI-917] singing, and sings back. The Black Sun has heard of her and wants her, believing she can call the teachers home faster. She could. She could also tell them no.

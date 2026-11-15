@@ -1,5 +1,5 @@
 ID: NPC-338
-Name: Scout-Captain Hesk Varn
+Name: Scout-Captain Teague Dunmarsh
 Alternate names: None recorded
 Category: NPC
 Parent: People and Organizations (Kaelmar)
@@ -10,7 +10,7 @@ Tags: realm/kaelmar, cat/npc, status/canon, vis/gm
 Pronouns: he/him
 Species: Goliath
 
-# Scout-Captain Hesk Varn
+# Scout-Captain Teague Dunmarsh
 
 ## Public role and identity
 - Scout-captain of The Ascendancy, in The Eastern Mountains.

@@ -9,6 +9,7 @@ Source: Worldkeeper additions (villages and towns of Aetheris, GM decision, 2026
 Tags: realm/aetheris, cat/npc, status/canon, vis/gm
 Pronouns: he/him
 Species: Tortle
+Class: Warlock (Great Old One Patron). Kept from players: his handbook page shows the class as Unknown.
 
 # Harbourmaster Gulen Saltback
 

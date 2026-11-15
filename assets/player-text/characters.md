@@ -1,116 +1,106 @@
-# Callings and making a character
+# Classes and making a character
 
 ## How to use this
 
-The sixteen callings, with a line on each in Kaelmar and every class and subclass that fits them, and the pages for making a character on either continent.
+The thirteen classes, with every subclass from the books in use and what the world calls people of each class, and the pages for making a character on either continent. People in the world don't say "fighter" or "wizard": they say Warrior, Mage, Silent Blade or Votary. Each class page gives its names, and the names the world uses most (Warrior, Mage, Shaman, Necromancer, Spellblade and Mystic) have pages of their own.
 
-Subclasses from Xanathar's and Tasha's were written for the 2014 rules. They work with the 2024 rules if your GM allows them. Where the 2024 Player's Handbook has its own version of a subclass, use that one.
+Subclasses come from the Player's Handbook (2024), Xanathar's Guide to Everything, Tasha's Cauldron of Everything and Eberron: Forge of the Artificer. Those from Xanathar's and Tasha's were written for the 2014 rules: they work with the 2024 rules if your GM allows them, and where the 2024 Player's Handbook has its own version of a subclass, use that one.
 
-## Warrior
+## Artificer
 
-*The Iron Vanguard: heavy armour, blocks, parries and brute force.*
+*Tools, devices, and gear that remembers how to work.*
 
-Warriors are the Iron Vanguard. They fight in heavy armour and win with blocks, parries and brute force. Every army, mercenary company and caravan guard in the world is built around them.
+**Known in the world as** a **Wright**.
 
-In Kaelmar, warriors guard Kaelholm's expeditions, ride in the Convergence Collective's Warband, or sell their swords to the mercenary companies of the eastern mountains.
+Wrights make things that work: infused armour, alchemical kits, turrets and maps that draw themselves. The Anvil of Dominion and the Consortium's workshops pay them handsomely.
 
-**At the table.** A fighter, usually a Champion or a Battle Master.
+In Kaelmar, the Wrights of Ashvale are one of the three groups that run the town, and every vault-salvaging crew wants one along.
 
-**Classes and subclasses.**
+**Subclasses.**
 
-- Fighter: Champion, Battle Master, Psi Warrior *(PHB 2024)*; Cavalier, Samurai *(Xanathar's)*; Rune Knight *(Tasha's)*
+- Alchemist, Armorer, Artillerist, Battle Smith, Cartographer *(Eberron: Forge of the Artificer)*
+- Tasha's has an older artificer, written for the 2014 rules.
 
-## Rogue
+## Barbarian
 
-*The Silent Blade: stealth, twin weapons, poison and the perfect strike.*
+*Rage, endurance and the strength of the wild.*
 
-The Silent Blades work by stealth, with twin weapons, poison and a single perfect strike. The Shadow Pact has the most famous of them, but every faction employs a few.
+**Known in the world as** a **Reaver**.
 
-In Kaelmar, rogues are vault-breakers and salvagers, picking Kaelith locks that hum before they open. Kaelholm calls them thieves, and hires them anyway.
+Reavers fight on fury alone, and they keep fighting long after they should have fallen. The Wildborn Clans raise them, and the Crimson Legion puts them at the front of its charges, where they don't need to be told twice.
 
-**At the table.** A rogue, usually an Assassin or a Thief.
+In Kaelmar, reavers ride with the Convergence Collective's Warband and walk with the Riftwalkers. Some say the Bloom's roots answer their anger.
 
-**Classes and subclasses.**
+**Subclasses.**
 
-- Rogue: Thief, Assassin, Arcane Trickster, Soulknife *(PHB 2024)*; Inquisitive, Mastermind, Scout, Swashbuckler *(Xanathar's)*; Phantom *(Tasha's)*
+- Path of the Berserker, Path of the Wild Heart, Path of the World Tree, Path of the Zealot *(PHB 2024)*
+- Path of the Ancestral Guardian, Path of the Storm Herald *(Xanathar's)*
+- Path of the Beast, Path of Wild Magic *(Tasha's)*
 
-## Mage
+## Bard
 
-*The Arcane Scholar: elemental destruction at range, and fragile up close.*
+*Music, memory, and words that move people.*
 
-Mages are the Arcane Scholars. They destroy with the elements, at range, and are fragile when anything reaches them. The Arcane Consortium trains more of them than anyone.
+**Known in the world as** a **Loresinger**. A bard of the College of Lore who reads what's coming may be called a @[Mystic].
 
-In Kaelmar, mages are glyph-wrights: their spells show as glyphs of pale light, learned from books in Kaelholm or from teachers in Ashvale. Some carry glyphs in their skin.
+Loresingers carry what the world forgets in songs, stories and names. Every market in Hollow Refuge has one, and every court pretends not to need them.
 
-**At the table.** A wizard (often an Evoker) or a sorcerer.
+In Kaelmar, loresingers are the Boundary Keepers, who sing the keeping song at Ashvale's thirteen stones, and nobody has ever let it stop.
 
-**Classes and subclasses.**
+**Subclasses.**
 
-- Wizard: Evoker, Abjurer, Illusionist *(PHB 2024)*; War Magic *(Xanathar's)*; Order of Scribes *(Tasha's)*
-- Sorcerers who were born to their magic rather than taught it: see @[Wildsoul].
+- College of Dance, College of Glamour, College of Lore, College of Valor *(PHB 2024)*
+- College of Swords, College of Whispers *(Xanathar's)*
+- College of Creation, College of Eloquence *(Tasha's)*
 
-## Ranger
+## Cleric
 
-*The Hunter of Beasts: bows, traps, tracking and animal companions.*
+*Prayer, healing, and a god's own light.*
 
-Rangers are the Hunters of Beasts. They work with bows and traps, track anything that leaves a trail, and often travel with an animal companion. The Wildborn hold them in high honour.
+**Known in the world as** a **Votary**.
 
-In Kaelmar, rangers guide travellers through the Bloom, read the spore-weather, and know which roots not to step on. The Scholar Corps never leaves Kaelholm without one.
+Votaries serve a god directly: they heal in its name, speak for it and, when they have to, fight for it. Solenne's votaries tend the sick, Karrath's bless the Legion's banners, and Sephane's keep the cairns.
 
-**At the table.** A ranger, usually a Beast Master or a Hunter.
+In Kaelmar, votaries pray to the same gods. Sephane's sing at the stones beside the Boundary Keepers.
 
-**Classes and subclasses.**
+**Subclasses.**
 
-- Ranger: Hunter, Beast Master, Gloom Stalker, Fey Wanderer *(PHB 2024)*; Horizon Walker, Monster Slayer *(Xanathar's)*; Swarmkeeper *(Tasha's)*
+- Life Domain, Light Domain, Trickery Domain, War Domain *(PHB 2024)*
+- Forge Domain, Grave Domain *(Xanathar's)*
+- Order Domain, Peace Domain, Twilight Domain *(Tasha's)*
 
-## Paladin
+## Druid
 
-*The Divine Champion: a holy warrior who protects and heals.*
+*Nature's magic: shapes, storms, and the voices of the wild.*
 
-Paladins are the Divine Champions: holy warriors sworn to protect and to heal. The Celestial Order's knights are the most famous, but not every paladin serves the Order, and some it has cast out.
+**Known in the world as** a @[Shaman], one of the Spiritwalkers.
 
-In Kaelmar, paladins swear to the same gods, and some swear to the Collective's cycles instead, as its Riftwalkers do.
+Druids are the world's Shamans, the Spiritwalkers. See @[Shaman] for how they're seen in Aetheris and in Kaelmar.
 
-**At the table.** A paladin, usually of the Oath of Devotion or of Vengeance.
+**Subclasses.**
 
-**Classes and subclasses.**
+- Circle of the Land, Circle of the Moon, Circle of the Sea, Circle of the Stars *(PHB 2024)*
+- Circle of Dreams, Circle of the Shepherd *(Xanathar's)*
+- Circle of Spores, Circle of Wildfire *(Tasha's)*
 
-- Paladin: Oath of Devotion, Oath of Vengeance, Oath of Glory, Oath of the Ancients *(PHB 2024)*; Oath of Conquest, Oath of Redemption *(Xanathar's)*; Oath of the Watchers *(Tasha's)*
+## Fighter
 
-## Necromancer
+*Masters of weapons, armour and the fight itself.*
 
-*The Harbinger of Death: undead servants, stolen life and curses.*
+**Known in the world as** a @[Warrior], one of the Iron Vanguard. An Eldritch Knight or an Arcane Archer is called a @[Spellblade].
 
-Necromancers are the Harbingers of Death. They command undead servants, drain life and lay curses. Most people fear them. Some factions find them very useful.
+Fighters are the world's Warriors and Spellblades. See @[Warrior] and @[Spellblade] for how they're seen in Aetheris and in Kaelmar.
 
-In Kaelmar, necromancy is rare and hated. The Bloom takes back the dead quickly, and Kaelholm's tribunals burn the names of anyone caught raising them.
+**Subclasses.**
 
-**At the table.** A wizard who favours necromancy spells.
-
-**Classes and subclasses.**
-
-- Wizard of any tradition who favours necromancy spells. None of the books in use has a school of necromancy.
-- Sorcerer: Shadow Magic *(Xanathar's)*
-
-## Spellblade
-
-*The Arcane Swordsman: blade and spell together.*
-
-Spellblades are the Arcane Swordsmen. They enchant their weapons and fight with blade and spell together. The arenas of Varkhaal love them.
-
-In Kaelmar, spellblades fight with glyph-cut blades and glyph-lances. Many of the Warband's riders are spellblades, cut with glyphs from shoulder to wrist.
-
-**At the table.** A fighter who is an Eldritch Knight.
-
-**Classes and subclasses.**
-
-- Fighter: Eldritch Knight *(PHB 2024)*; Arcane Archer *(Xanathar's)*
-- Wizard: Bladesinging *(Tasha's)*
-- Warlock: Hexblade *(Xanathar's)*
+- Warriors: Champion, Battle Master, Psi Warrior *(PHB 2024)*; Cavalier, Samurai *(Xanathar's)*; Rune Knight *(Tasha's)*
+- Spellblades: Eldritch Knight *(PHB 2024)*; Arcane Archer *(Xanathar's)*
 
 ## Monk
 
 *The Way of the Fist: unarmed speed, breath and inner power.*
+
+**Known in the world as** a follower of the Way of the Fist.
 
 Monks follow the Way of the Fist: unarmed speed, breath control and inner energy. Monasteries of every faith and none train them.
 
@@ -118,13 +108,141 @@ In Kaelmar, Kaelholm's archive-monasteries train monks who are scholars and guar
 
 **At the table.** A monk, usually a Warrior of the Open Hand.
 
-**Classes and subclasses.**
+**Subclasses.**
 
-- Monk: Warrior of the Open Hand, Warrior of Shadow, Warrior of the Elements, Warrior of Mercy *(PHB 2024)*; Drunken Master, Kensei, Sun Soul *(Xanathar's)*; Astral Self *(Tasha's)*
+- Warrior of the Open Hand, Warrior of Shadow, Warrior of the Elements, Warrior of Mercy *(PHB 2024)*
+- Drunken Master, Kensei, Sun Soul *(Xanathar's)*
+- Astral Self *(Tasha's)*
+
+## Paladin
+
+*The Divine Champion: a holy warrior who protects and heals.*
+
+**Known in the world as** a Divine Champion.
+
+Paladins are the Divine Champions: holy warriors sworn to protect and to heal. The Celestial Order's knights are the most famous, but not every paladin serves the Order, and some it has cast out.
+
+In Kaelmar, paladins swear to the same gods, and some swear to the Collective's cycles instead, as its Riftwalkers do.
+
+**At the table.** A paladin, usually of the Oath of Devotion or of Vengeance.
+
+**Subclasses.**
+
+- Oath of Devotion, Oath of Glory, Oath of the Ancients, Oath of Vengeance *(PHB 2024)*
+- Oath of Conquest, Oath of Redemption *(Xanathar's)*
+- Oath of the Watchers *(Tasha's)*
+
+## Ranger
+
+*The Hunter of Beasts: bows, traps, tracking and animal companions.*
+
+**Known in the world as** a Hunter of Beasts.
+
+Rangers are the Hunters of Beasts. They work with bows and traps, track anything that leaves a trail, and often travel with an animal companion. The Wildborn hold them in high honour.
+
+In Kaelmar, rangers guide travellers through the Bloom, read the spore-weather, and know which roots not to step on. The Scholar Corps never leaves Kaelholm without one.
+
+**At the table.** A ranger, usually a Beast Master or a Hunter.
+
+**Subclasses.**
+
+- Beast Master, Fey Wanderer, Gloom Stalker, Hunter *(PHB 2024)*
+- Horizon Walker, Monster Slayer *(Xanathar's)*
+- Swarmkeeper *(Tasha's)*
+
+## Rogue
+
+*The Silent Blade: stealth, twin weapons, poison and the perfect strike.*
+
+**Known in the world as** a Silent Blade.
+
+The Silent Blades work by stealth, with twin weapons, poison and a single perfect strike. The Shadow Pact has the most famous of them, but every faction employs a few.
+
+In Kaelmar, rogues are vault-breakers and salvagers, picking Kaelith locks that hum before they open. Kaelholm calls them thieves, and hires them anyway.
+
+**At the table.** A rogue, usually an Assassin or a Thief.
+
+**Subclasses.**
+
+- Arcane Trickster, Assassin, Soulknife, Thief *(PHB 2024)*
+- Inquisitive, Mastermind, Scout, Swashbuckler *(Xanathar's)*
+- Phantom *(Tasha's)*
+
+## Sorcerer
+
+*Magic in the blood, not the book.*
+
+**Known in the world as** a **Wildsoul**, or often just a @[Mage]. Clockwork and Aberrant sorcerers may be called @[Mystic]s, and those with Shadow Magic @[Necromancer]s.
+
+Wildsouls never studied for their magic; they were born with it. Many were born near a shard, or in the years after an Aetherfall. The Arcane Consortium distrusts what it can't teach.
+
+In Kaelmar, wildsouls are spore-touched, children born in a Bloom storm's wake, whose power comes on with the weather.
+
+**Subclasses.**
+
+- Aberrant Sorcery, Clockwork Sorcery, Draconic Sorcery, Wild Magic Sorcery *(PHB 2024)*
+- Divine Soul, Shadow Magic, Storm Sorcery *(Xanathar's)*
+
+## Warlock
+
+*Magic borrowed from something that will want it back.*
+
+**Known in the world as** a **Pactbound**, though many keep their bargain quiet and pass as a @[Mystic] or a @[Mage]. A Hexblade is called a @[Spellblade].
+
+Pactbound have made a bargain with a power: a fey lord, a fiend, a genie, or something with no name at all. Every cult wants one, and few of them read the terms closely enough.
+
+In Kaelmar, some of the glyph-burned are pactbound. The glyphs that grew on them came with a voice, and the voice wants things.
+
+**Subclasses.**
+
+- Archfey Patron, Celestial Patron, Fiend Patron, Great Old One Patron *(PHB 2024)*
+- Hexblade *(Xanathar's)*
+- The Fathomless, The Genie *(Tasha's)*
+
+## Wizard
+
+*Scholars of magic, who learn their spells from books.*
+
+**Known in the world as** a @[Mage], one of the Arcane Scholars. A Diviner is called a @[Mystic], a Bladesinger a @[Spellblade], and a wizard who favours necromancy spells a @[Necromancer].
+
+Wizards are the world's Mages, and some of its Mystics, Spellblades and Necromancers. See @[Mage] for how they're seen in Aetheris and in Kaelmar.
+
+**Subclasses.**
+
+- Mages: Abjurer, Evoker, Illusionist *(PHB 2024)*; War Magic *(Xanathar's)*; Order of Scribes *(Tasha's)*
+- Mystics: Diviner *(PHB 2024)*
+- Spellblades: Bladesinging *(Tasha's)*
+- Necromancers: any tradition. None of the books in use has a school of necromancy.
+
+## Warrior
+
+*The Iron Vanguard: heavy armour, blocks, parries and brute force.*
+
+**What the world calls** a @[Fighter]. It's a name people use, not a class.
+
+Warriors are the Iron Vanguard. They fight in heavy armour and win with blocks, parries and brute force. Every army, mercenary company and caravan guard in the world is built around them.
+
+In Kaelmar, warriors guard Kaelholm's expeditions, ride in the Convergence Collective's Warband, or sell their swords to the mercenary companies of the eastern mountains.
+
+**At the table.** A fighter, usually a Champion or a Battle Master.
+
+## Mage
+
+*The Arcane Scholar: elemental destruction at range, and fragile up close.*
+
+**What the world calls** a @[Wizard], and many a @[Sorcerer]. It's a name people use, not a class.
+
+Mages are the Arcane Scholars. They destroy with the elements, at range, and are fragile when anything reaches them. The Arcane Consortium trains more of them than anyone.
+
+In Kaelmar, mages are glyph-wrights: their spells show as glyphs of pale light, learned from books in Kaelholm or from teachers in Ashvale. Some carry glyphs in their skin.
+
+**At the table.** A wizard (often an Evoker) or a sorcerer.
 
 ## Shaman
 
 *The Spiritwalker: ancestral guardians, elemental forces and visions.*
+
+**What the world calls** a @[Druid]. It's a name people use, not a class.
 
 Shamans are the Spiritwalkers. They call on ancestral guardians and elemental forces, and they see visions. The Wildborn and the Taur'n honour them above most.
 
@@ -132,13 +250,35 @@ In Kaelmar, shamans are the spore-bound: Bloom-Speakers and Spore Circle druids 
 
 **At the table.** A druid, usually of the Circle of the Land or of the Moon.
 
-**Classes and subclasses.**
+## Necromancer
 
-- Druid: Circle of the Land, Circle of the Moon, Circle of the Sea, Circle of the Stars *(PHB 2024)*; Circle of Dreams, Circle of the Shepherd *(Xanathar's)*; Circle of Spores, Circle of Wildfire *(Tasha's)*
+*The Harbinger of Death: undead servants, stolen life and curses.*
+
+**What the world calls** a @[Wizard] who favours necromancy, or a @[Sorcerer] of Shadow Magic. It's a name people use, not a class.
+
+Necromancers are the Harbingers of Death. They command undead servants, drain life and lay curses. Most people fear them. Some factions find them very useful.
+
+In Kaelmar, necromancy is rare and hated. The Bloom takes back the dead quickly, and Kaelholm's tribunals burn the names of anyone caught raising them.
+
+**At the table.** A wizard who favours necromancy spells.
+
+## Spellblade
+
+*The Arcane Swordsman: blade and spell together.*
+
+**What the world calls** a @[Fighter] (Eldritch Knight or Arcane Archer), a @[Wizard] (Bladesinging) or a @[Warlock] (Hexblade). It's a name people use, not a class.
+
+Spellblades are the Arcane Swordsmen. They enchant their weapons and fight with blade and spell together. The arenas of Varkhaal love them.
+
+In Kaelmar, spellblades fight with glyph-cut blades and glyph-lances. Many of the Warband's riders are spellblades, cut with glyphs from shoulder to wrist.
+
+**At the table.** A fighter who is an Eldritch Knight.
 
 ## Mystic
 
 *The Fatebinder: divination, bending chance and magic of the mind.*
+
+**What the world calls** a @[Wizard] (Diviner), a @[Sorcerer] (Clockwork or Aberrant Sorcery) or a @[Bard] (College of Lore). It's a name people use, not a class.
 
 Mystics are the Fatebinders. They read what is coming, bend chance, and work magic on the mind. People seek them out, and are careful what they ask.
 
@@ -146,106 +286,13 @@ In Kaelmar, mystics are often glyph-burned visionaries, carrying glyphs that gre
 
 **At the table.** A wizard (Diviner), a sorcerer (Clockwork Sorcery) or a bard (College of Lore).
 
-**Classes and subclasses.**
-
-- Wizard: Diviner *(PHB 2024)*
-- Sorcerer: Clockwork Sorcery, Aberrant Sorcery *(PHB 2024)*
-- Bard: College of Lore *(PHB 2024)*
-
-## Reaver
-
-*The Unchained Fury: rage, endurance and the strength of the wild.*
-
-Reavers fight on fury alone, and they keep fighting long after they should have fallen. The Wildborn Clans raise them, and the Crimson Legion puts them at the front of its charges, where they don't need to be told twice.
-
-In Kaelmar, reavers ride with the Convergence Collective's Warband and walk with the Riftwalkers. Some say the Bloom's roots answer their anger.
-
-**At the table.** A barbarian.
-
-**Classes and subclasses.**
-
-- Barbarian: Path of the Berserker, Path of the Wild Heart, Path of the World Tree, Path of the Zealot *(PHB 2024)*; Path of the Ancestral Guardian, Path of the Storm Herald *(Xanathar's)*; Path of the Beast, Path of Wild Magic *(Tasha's)*
-
-## Loresinger
-
-*The Keeper of the Song: music, memory, and words that move people.*
-
-Loresingers carry what the world forgets in songs, stories and names. Every market in Hollow Refuge has one, and every court pretends not to need them.
-
-In Kaelmar, loresingers are the Boundary Keepers, who sing the keeping song at Ashvale's thirteen stones, and nobody has ever let it stop.
-
-**At the table.** A bard.
-
-**Classes and subclasses.**
-
-- Bard: College of Dance, College of Glamour, College of Lore, College of Valor *(PHB 2024)*; College of Swords, College of Whispers *(Xanathar's)*; College of Creation, College of Eloquence *(Tasha's)*
-
-## Votary
-
-*The Voice of the Gods: prayer, healing, and a god's own light.*
-
-Votaries serve a god directly: they heal in its name, speak for it and, when they have to, fight for it. Solenne's votaries tend the sick, Karrath's bless the Legion's banners, and Sephane's keep the cairns.
-
-In Kaelmar, votaries pray to the same gods. Sephane's sing at the stones beside the Boundary Keepers.
-
-**At the table.** A cleric.
-
-**Classes and subclasses.**
-
-- Cleric: Life Domain, Light Domain, Trickery Domain, War Domain *(PHB 2024)*; Forge Domain, Grave Domain *(Xanathar's)*; Order Domain, Peace Domain, Twilight Domain *(Tasha's)*
-
-## Wildsoul
-
-*The Born Gifted: magic in the blood, not the book.*
-
-Wildsouls never studied for their magic; they were born with it. Many were born near a shard, or in the years after an Aetherfall. The Arcane Consortium distrusts what it can't teach.
-
-In Kaelmar, wildsouls are spore-touched, children born in a Bloom storm's wake, whose power comes on with the weather.
-
-**At the table.** A sorcerer.
-
-**Classes and subclasses.**
-
-- Sorcerer: Draconic Sorcery, Wild Magic Sorcery *(PHB 2024)*; Divine Soul, Storm Sorcery *(Xanathar's)*
-- Clockwork and Aberrant Sorcery are under @[Mystic], and Shadow Magic is under @[Necromancer].
-
-## Pactbound
-
-*The Oathsworn: magic borrowed from something that will want it back.*
-
-Pactbound have made a bargain with a power: a fey lord, a fiend, a genie, or something with no name at all. Every cult wants one, and few of them read the terms closely enough.
-
-In Kaelmar, some of the glyph-burned are pactbound. The glyphs that grew on them came with a voice, and the voice wants things.
-
-**At the table.** A warlock.
-
-**Classes and subclasses.**
-
-- Warlock: Archfey Patron, Celestial Patron, Fiend Patron, Great Old One Patron *(PHB 2024)*; The Fathomless, The Genie *(Tasha's)*
-- The Hexblade is under @[Spellblade].
-
-## Wright
-
-*The Maker: tools, devices, and gear that remembers how to work.*
-
-Wrights make things that work: infused armour, alchemical kits, turrets and maps that draw themselves. The Anvil of Dominion and the Consortium's workshops pay them handsomely.
-
-In Kaelmar, the Wrights of Ashvale are one of the three groups that run the town, and every vault-salvaging crew wants one along.
-
-**At the table.** An artificer.
-
-**Classes and subclasses.**
-
-- Artificer: Alchemist, Armorer, Artillerist, Battle Smith, Cartographer *(Eberron: Forge of the Artificer)*
-- Tasha's has an older version of the artificer, written for the 2014 rules.
-
 ## Type Builds and Calling Rules
 
 *How to make a character in this world: a people, a calling, a background and a place to start.*
 
-**1. Choose a people.** Every people in the world has a page under Species and Callings, with how they live on each continent, common names and the rules to use. Some peoples go by different names on each continent: see @[Ancestries Across the World].
+**1. Choose a people.** Every people in the world has a page under Species and Classes, with how they live on each continent, common names and the rules to use. Some peoples go by different names on each continent: see @[Ancestries Across the World].
 
-**2. Choose a calling.** The sixteen callings are how the world sees what you do: Warrior, Rogue, Mage, Ranger, Paladin, Necromancer, Spellblade, Monk, Shaman, Mystic, Reaver, Loresinger, Votary, Wildsoul, Pactbound and Wright. Each page lists the classes and subclasses that fit it.
+**2. Choose a class.** Any class from the books in use. Each class page under Species and Classes lists its subclasses, and what the world will call you: a fighter is a Warrior, a wizard a Mage, a rogue a Silent Blade.
 
 **3. Choose a background.** Aetheris, Kaelmar and the Ethereal Realm each have their own backgrounds. See @[Aetheris Backgrounds], @[Character Options and Backgrounds] and @[Ethereal Backgrounds].
 

@@ -29,7 +29,7 @@
       "common": ["Potion of Healing", "Candle of the Deep (XGE)", "Staff of Flowers (XGE)", "Shield of Expression (XGE)", "Masquerade Tattoo (TCE)"],
       "uncommon": ["Amulet of the Devout, +1 (TCE)", "Periapt of Wound Closure", "Sentinel Shield", "Shield, +1", "Lantern of Revealing", "Potion of Greater Healing"],
       "rare": ["Mace of Disruption", "Amulet of the Devout, +2 (TCE)", "Shield, +2", "Elixir of Health", "Sun Blade"],
-      "very rare": ["Holy-blessed Weapon, +3", "Spellguard Shield", "Rod of Alertness", "Potion of Supreme Healing"],
+      "very rare": ["Weapon, +3 (blessed by the Order)", "Spellguard Shield", "Rod of Alertness", "Potion of Supreme Healing"],
       "legendary": ["Holy Avenger", "Talisman of Pure Good", "Armor of Invulnerability"]
     },
     "legion": {
@@ -54,11 +54,11 @@
       "legendary": ["Cloak of Invisibility", "Ring of Spell Turning", "Luck Blade"]
     },
     "wildborn": {
-      "common": ["Staff of Birdcalls (XGE)", "Pot of Awakening (XGE)", "Potion of Healing", "Moon Sickle (TCE)"],
+      "common": ["Staff of Birdcalls (XGE)", "Pot of Awakening (XGE)", "Potion of Healing", "Boots of False Tracks (XGE)"],
       "uncommon": ["Cloak of the Manta Ray", "Boots of Striding and Springing", "Slippers of Spider Climbing", "Moon Sickle, +1 (TCE)", "Bracers of Archery", "Potion of Animal Friendship"],
-      "rare": ["Figurine of Wondrous Power (Ivory Goats)", "Moon Sickle, +2 (TCE)", "Wings of Flying", "Rope of Entanglement", "Periapt of Proof against Poison"],
+      "rare": ["Figurine of Wondrous Power (Ivory Goats)", "Moon Sickle, +2 (TCE)", "Wings of Flying", "Rope of Entanglement", "Periapt of Proof against Poison", "Staff of the Woodlands"],
       "very rare": ["Oathbow", "Staff of Thunder and Lightning", "Ring of Regeneration"],
-      "legendary": ["Rod of Lordly Might", "Staff of the Woodlands, reawakened"]
+      "legendary": ["Rod of Lordly Might"]
     },
     "kaelmar-west": {
       "common": ["Potion of Healing (a Bloom-Speaker's draught)", "Spell Scroll (cantrip), cut as a glyph", "Rope of Mending (XGE)", "Orb of Direction (XGE), a needle in a glass bead"],
@@ -68,8 +68,8 @@
       "legendary": []
     },
     "kaelmar": {
-      "common": ["Spell Scroll (cantrip), cut as a glyph", "Clockwork Amulet (XGE), Kaelith-made", "Ersatz Eye (XGE)", "All-Purpose Tool, +1 (TCE)"],
-      "uncommon": ["Sending Stones (a pair of speaking-stones)", "Wand of Magic Missiles (a glyph-rod)", "Bracers of Archery", "Mithral Armor (dwarven, from the north)", "Driftglobe (a lamp-glyph that follows)", "Wand of Web"],
+      "common": ["Spell Scroll (cantrip), cut as a glyph", "Clockwork Amulet (XGE), Kaelith-made", "Ersatz Eye (XGE)"],
+      "uncommon": ["Sending Stones (a pair of speaking-stones)", "Wand of Magic Missiles (a glyph-rod)", "Bracers of Archery", "Mithral Armor (dwarven, from the north)", "Driftglobe (a lamp-glyph that follows)", "Wand of Web", "All-Purpose Tool, +1 (TCE)"],
       "rare": ["Wand of Lightning Bolts (a glyph-rod)", "Weapon, +2 (glyph-cut)", "Ring of Spell Storing (a glyph-ring)", "Portable Hole (a Kaelith fold-pocket)", "Belt of Dwarvenkind"],
       "very rare": ["Rod of Absorption (a Kaelith ward-rod)", "Dwarven Thrower", "Animated Shield (a Kaelith guardian's plate)", "Manual of Golems"],
       "legendary": ["Apparatus of Kwalish (a Kaelith diving-walker)", "Plate Armor of Etherealness (a between-walker's shell)"]
@@ -78,8 +78,8 @@
       "common": ["Orb of Gonging (SJ)", "Pipe of Remembrance (SJ)", "Candle of the Deep (XGE)", "Spell Scroll (cantrip), from a lost world"],
       "uncommon": ["Star Map (SJ)", "Wildspace Orrery (SJ)", "Armor of Weightlessness (SJ)", "Astral Shard (TCE)", "Driftglobe", "Spelljamming Helm (SJ)"],
       "rare": ["Spyglass of Clairvoyance (SJ)", "Shadowfell Shard (TCE)", "Weapon, +2, from a lost world", "Ring of Feather Falling", "Helm of Teleportation"],
-      "very rare": ["Crystal Ball", "Mirror of Life Trapping", "Armor, +2, of a forgotten order", "Well of Many Worlds"],
-      "legendary": ["Plate Armor of Etherealness", "Sphere of Annihilation", "Cubic Gate"]
+      "very rare": ["Crystal Ball", "Mirror of Life Trapping", "Armor, +2, of a forgotten order"],
+      "legendary": ["Plate Armor of Etherealness", "Sphere of Annihilation", "Cubic Gate", "Well of Many Worlds"]
     }
   },
   "goods": {

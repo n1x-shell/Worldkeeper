@@ -1,6 +1,6 @@
 # NPC Builds (GM only, DRAFT)
 
-The 5e build behind every NPC. Species come from the Player's Handbook (2024, plus the 2014 half-elf and half-orc), Tasha's Cauldron of Everything (Tasha's), Mordenkainen Presents: Monsters of the Multiverse (MotM) and Eberron: Rising from the Last War (warforged). Classes and subclasses come from the 2024 PHB and Tasha's. The "calling" is what players see.
+The 5e build behind every NPC. Species come from the Player's Handbook (2024, plus the 2014 half-elf and half-orc), Tasha's Cauldron of Everything (Tasha's), Mordenkainen Presents: Monsters of the Multiverse (MotM) and Eberron: Rising from the Last War (warforged). Classes and subclasses come from the 2024 PHB and Tasha's. Players see the class (not the subclass) and what the world calls the person; a class that would give away a secret is shown as Unknown.
 
 Anything already established about a person (a species, a gender, a role, a secret) is kept. Everything else here is yours to change.
 
@@ -155,7 +155,7 @@ Four NPCs are not people and have no build: the Hidden Ones Vyrithar and Vyrathu
 | Scribe Ilo Fen | The Convergence Collective | Triton (MotM) | Bard (College of Lore) | Scribe | they/them | The southern lakes |  |
 | Graftwright Desh | The Convergence Collective | Bugbear (MotM) | Artificer (Alchemist) | Artisan | he/him | The Eastern Deepwood |  |
 | Riv Ashdown | The Convergence Collective | Fire Genasi (MotM) | Sorcerer (Wild Magic Sorcery) | Wayfarer | she/her | Haskett's Mill |  |
-| Scout-Captain Hesk Varn | The Ascendancy | Goliath (PHB) | Ranger (Hunter) | Guide | he/him | The eastern mountains |  |
+| Scout-Captain Teague Dunmarsh | The Ascendancy | Goliath (PHB) | Ranger (Hunter) | Guide | he/him | The eastern mountains |  |
 | Siege-Engineer Yarrow Kask | The Ascendancy | Duergar (MotM) | Artificer (Artillerist) | Soldier | she/her | The under-roads |  |
 | Sergeant Bram Ironjaw | The Ascendancy | Human (PHB) | Fighter (Battle Master) | Soldier | he/him | Brannock |  |
 | Keeper Jory Hesk | Boundary Keepers | Half-elf (PHB 2014) | Bard (College of Lore) | Entertainer | he/him | Ashvale |  |
