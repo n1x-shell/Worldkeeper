@@ -2,6 +2,9 @@ import { StandingPage } from './pages/Standing';
 import { TreasurePage } from './pages/Treasure';
 import { HandoutsPage } from './pages/Handouts';
 import { BastionsPage } from './pages/Bastions';
+import { CalendarPage } from './pages/CalendarPage';
+import { PartyExportPage } from './pages/PartyExport';
+import { RegionsPage } from './pages/Regions';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppStateProvider } from './lib/store';
 import { Layout } from './components/Layout';
@@ -30,7 +33,7 @@ import {
 } from './pages/Campaign';
 import { LiveSession } from './pages/Live';
 import { AgendasPage, ConditionsPage, DicePage, DmScreen, NotesPage, NpcRefPage, RulesPage, TablesPage, TrackerPage, WorldEventsPage } from './pages/DmTools';
-import { BackupsPage, BrokenPage, HistoryPage, ImportExportPage, ReviewPage, SettingsPage } from './pages/Library';
+import { BackupsPage, BrokenPage, ConsistencyPage, HistoryPage, ImportExportPage, ReviewPage, SettingsPage } from './pages/Library';
 import { RumoursPage } from './pages/Rumours';
 import { PlayerApp } from './player/PlayerApp';
 import { PublishPage } from './pages/Publish';
@@ -79,6 +82,9 @@ export function App() {
           <Route path="campaign/treasure" element={<Page><TreasurePage /></Page>} />
           <Route path="campaign/handouts" element={<Page><HandoutsPage /></Page>} />
           <Route path="campaign/bastions" element={<Page><BastionsPage /></Page>} />
+          <Route path="campaign/calendar" element={<Page><CalendarPage /></Page>} />
+          <Route path="campaign/party-export" element={<Page><PartyExportPage /></Page>} />
+          <Route path="campaign/regions" element={<Page><RegionsPage /></Page>} />
           <Route path="campaign/sessions" element={<Page><SessionsPage /></Page>} />
           <Route path="campaign/encounters" element={<Page><EncountersPage /></Page>} />
           <Route path="campaign/party" element={<Page><PartyPage /></Page>} />
@@ -101,6 +107,7 @@ export function App() {
           <Route path="import" element={<Page><ImportExportPage /></Page>} />
           <Route path="review" element={<Page><ReviewPage /></Page>} />
           <Route path="broken" element={<Page><BrokenPage /></Page>} />
+          <Route path="consistency" element={<Page><ConsistencyPage /></Page>} />
           <Route path="history" element={<Page><HistoryPage /></Page>} />
           <Route path="backups" element={<Page><BackupsPage /></Page>} />
           <Route path="settings" element={<Page><SettingsPage /></Page>} />

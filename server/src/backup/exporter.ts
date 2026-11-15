@@ -58,6 +58,7 @@ const TABLES = [
   'bastions',
   'bastion_turns',
   'downtime',
+  'calendar_events',
 ];
 
 const slug = (s: string) =>

@@ -311,3 +311,27 @@ h3 {
   transform-origin: center;
   outline: 2px solid rgba(242, 227, 179, 0.5);
 }
+
+/* Printing "What the party knows": only the document, on white. */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .wk-print,
+  .wk-print * {
+    visibility: visible;
+  }
+  .wk-print {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    max-width: none;
+    background: #fff;
+    color: #111;
+    border: 0;
+    box-shadow: none;
+  }
+  .wk-print * {
+    color: #111 !important;
+  }
+}

@@ -4,6 +4,8 @@ import { Gift, Shield, Swords, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { usePlayer, usePlayerIndex } from './context';
+import { CalendarView, TodayCard } from '../components/CalendarView';
+import { formatDate } from '../../../shared/calendar';
 
 /**
  * Live play on the players' phones (the app only, never the published handbook): the running fight's turn order, and
@@ -105,6 +107,80 @@ export function PlayerHandouts() {
             </div>
           )}
         </article>
+      ))}
+    </div>
+  );
+}
+
+/** The campaign's date, the year's festivals, and what's coming. */
+export function PlayerCalendar() {
+  const { campaigns } = usePlayerIndex();
+  if (!campaigns) return null;
+  const c = campaigns.find((x) => x.calendar);
+  if (!c?.calendar) return <p className="text-dim">No calendar yet.</p>;
+  const cal = c.calendar;
+  return (
+    <div className="space-y-5">
+      <h1 className="font-display text-3xl text-gold">Calendar</h1>
+      <TodayCard date={cal.date} />
+      <section className="panel p-4">
+        <h2 className="section-title mb-2">Coming up</h2>
+        {cal.coming.length ? (
+          <ul className="space-y-2 text-sm">
+            {cal.coming.map((x, i) => (
+              <li key={i}>
+                <span className={x.kind === 'festival' ? 'text-gold font-medium' : 'text-arcane font-medium'}>{x.title}</span>{' '}
+                <span className="text-dim text-xs">
+                  {x.inDays === 0 ? 'today' : x.inDays === 1 ? 'tomorrow' : `in ${x.inDays} days`}, {formatDate(x.date, 'ab')}
+                  {x.where ? `, ${x.where}` : ''}
+                </span>
+                {x.notes && <div className="text-xs text-dim">{x.notes}</div>}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-dim">Nothing for a while.</p>
+        )}
+      </section>
+      <CalendarView date={cal.date} events={cal.coming.filter((x) => x.kind === 'event').map((x) => ({ day: x.date.day, year: x.date.year, title: x.title, kind: 'event' as const }))} />
+    </div>
+  );
+}
+
+/** Each region the party knows: what they've found there, when they were last there, and what they've heard. */
+export function PlayerRegions() {
+  const { campaigns } = usePlayerIndex();
+  const { base } = usePlayer();
+  if (!campaigns) return null;
+  const all = campaigns.flatMap((c) => c.regions ?? []);
+  return (
+    <div className="space-y-5">
+      <h1 className="font-display text-3xl text-gold">Around the World</h1>
+      <p className="text-sm text-dim">What your party has seen and heard, region by region.</p>
+      {!all.length && <p className="text-dim">You haven't been anywhere yet.</p>}
+      {all.map((r) => (
+        <section key={r.id} className="panel p-4 space-y-2">
+          <Link to={`${base}/e/${encodeURIComponent(r.id)}`} className="font-display text-xl text-gold">
+            {r.name}
+          </Link>
+          {r.lastVisit && (
+            <p className="text-sm">
+              Last there{r.lastVisit.place ? `: ${r.lastVisit.place}` : ''}
+              {r.lastVisit.session ? <span className="text-dim"> (session {r.lastVisit.session})</span> : null}
+            </p>
+          )}
+          {r.discovered.length > 0 && <p className="text-sm text-dim">Places you've found: {r.discovered.join(', ')}</p>}
+          {r.heard.length > 0 && (
+            <div>
+              <div className="text-xs uppercase tracking-widest text-dim">What you've heard lately</div>
+              <ul className="list-disc pl-5 text-sm">
+                {r.heard.map((h, i) => (
+                  <li key={i}>{h}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
       ))}
     </div>
   );

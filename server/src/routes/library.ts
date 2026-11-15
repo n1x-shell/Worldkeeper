@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { consistencyReport } from '../repo/consistency.js';
 import multer from 'multer';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -29,6 +30,8 @@ export function debugEnabled(ctx: AppContext): boolean {
 
 export function libraryRoutes(ctx: AppContext) {
   const r = Router();
+  // The consistency checker: a report of things that don't agree. Changes nothing.
+  r.get('/library/consistency', h(() => consistencyReport(ctx.db)));
   const staging = new Map<string, Staged>();
   const sweep = () => {
     for (const [k, v] of staging) if (Date.now() - v.created > 60 * 60 * 1000) staging.delete(k);

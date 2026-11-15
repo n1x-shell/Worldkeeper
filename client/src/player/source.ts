@@ -36,6 +36,10 @@ export interface PCampaign {
   current_date: string;
   quests: { id: number; title: string; status: string; description: string }[];
   recaps: { id: number; number: number; title: string; played_on: string; recap: string }[];
+  /** The campaign's date and what's coming (festivals, and events the GM shares). */
+  calendar?: { date: { year: number; day: number }; coming: { kind: string; title: string; notes: string; where: string | null; inDays: number; date: { year: number; day: number } }[] };
+  /** Regions the party knows, and what it has seen and heard there. */
+  regions?: { id: string; name: string; discovered: string[]; lastVisit: { place: string | null; session: number | null } | null; heard: string[] }[];
   /** Handouts the GM has given the players, newest first. */
   handouts?: { id: number; title: string; body: string; image_file: string | null; pushed_at: string }[];
   /** What the party carries or has stored. */

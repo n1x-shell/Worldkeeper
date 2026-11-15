@@ -22,6 +22,7 @@ export interface Briefing {
   level: number;
   tables: { id: number; name: string }[];
   treasure: { region: string; tier: string; label: string } | null;
+  coming: { kind: string; title: string; inDays: number }[];
 }
 
 const bullets = (xs: string[]) => xs.map((x) => `- ${x}`).join('\n');
@@ -123,7 +124,7 @@ export function BriefingPanel({ sessionId, onFill }: { sessionId: number; onFill
           {b.met.length > 0 && <p className="text-xs text-dim mt-1">Includes the {b.met.length} the party has met in play.</p>}
         </Block>
         <Block title="Moving soon">
-          {b.agendas.length || b.standing.some((s) => s.close) ? (
+          {b.agendas.length || b.coming.length || b.standing.some((s) => s.close) ? (
             <ul className="space-y-1">
               {b.agendas.map((a) => (
                 <li key={a.id}>
@@ -131,6 +132,12 @@ export function BriefingPanel({ sessionId, onFill }: { sessionId: number; onFill
                   <span className="text-dim">
                     ({a.progress}/{a.segments})
                   </span>
+                </li>
+              ))}
+              {b.coming.map((c, i) => (
+                <li key={`c${i}`}>
+                  <span className={c.kind === 'festival' ? 'text-gold' : 'text-arcane'}>{c.title}</span>{' '}
+                  <span className="text-dim">{c.inDays === 0 ? 'today' : c.inDays === 1 ? 'tomorrow' : `in ${c.inDays} days`}</span>
                 </li>
               ))}
               {b.standing

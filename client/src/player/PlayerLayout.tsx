@@ -8,6 +8,7 @@ import {
   Flag,
   Gem,
   Gift,
+  CalendarDays,
   Ghost,
   Globe2,
   Home,
@@ -94,6 +95,8 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
   const standing = (campaigns ?? []).reduce((n, c) => n + (c.standing?.length ?? 0), 0);
   const treasure = (campaigns ?? []).reduce((n, c) => n + (c.treasure?.length ?? 0), 0);
   const handouts = (campaigns ?? []).reduce((n, c) => n + (c.handouts?.length ?? 0), 0);
+  const calendar = (campaigns ?? []).some((c) => c.calendar);
+  const regionsSeen = (campaigns ?? []).reduce((n, c) => n + (c.regions?.length ?? 0), 0);
   const sections: { title: string; items: { to: string; label: string; icon: ReactNode; end?: boolean }[] }[] = [
     {
       title: 'World',
@@ -115,6 +118,8 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
         ...(standing ? [{ to: `${base}/standing`, label: 'Faction Standing', icon: <Scale size={I} /> }] : []),
         ...(treasure ? [{ to: `${base}/treasure`, label: 'Party Treasure', icon: <Gem size={I} /> }] : []),
         ...(handouts ? [{ to: `${base}/handouts`, label: 'Handouts', icon: <Gift size={I} /> }] : []),
+        ...(calendar ? [{ to: `${base}/calendar`, label: 'Calendar', icon: <CalendarDays size={I} /> }] : []),
+        ...(regionsSeen ? [{ to: `${base}/regions`, label: 'Around the World', icon: <Globe2 size={I} /> }] : []),
       ],
     },
   ].filter((s) => s.items.length);

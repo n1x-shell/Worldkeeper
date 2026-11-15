@@ -12,6 +12,8 @@
 import { playerStanding } from '../repo/standing.js';
 import { playerTreasure } from '../repo/treasure.js';
 import { playerHandouts } from '../repo/handouts.js';
+import { campaignDate, comingUp } from '../repo/calendar.js';
+import { playerRegions } from '../repo/regionState.js';
 import type { DB } from '../db/connection.js';
 import { SECRET_HEADING_RE, ENTITY_TYPE_LABELS, REALM_LABELS, type EntityType, type Realm } from '../../../shared/domain.js';
 import { parseJson } from '../lib/json.js';
@@ -243,7 +245,7 @@ export function playerMaps(db: DB) {
 }
 
 export function playerCampaign(db: DB, campaignId: number) {
-  const c = db.prepare('SELECT id, title, current_date FROM campaigns WHERE id = ?').get(campaignId) as { id: number; title: string; current_date: string } | undefined;
+  const c = db.prepare('SELECT id, title, "current_date" FROM campaigns WHERE id = ?').get(campaignId) as { id: number; title: string; current_date: string } | undefined;
   if (!c) return null;
   const quests = db.prepare(`SELECT id, title, status, description FROM quests WHERE campaign_id = ? AND player_visible = 1 ORDER BY status = 'completed', id`).all(campaignId) as {
     id: number;
@@ -278,6 +280,10 @@ export function playerCampaign(db: DB, campaignId: number) {
       recap: scrubRefs(r.recap, revealed, index),
     })),
     // The party's standing with the factions it has dealt with, and what the ranks it has reached bring.
+    // The campaign's date, and what's coming in the next 60 days (festivals, and events the GM shares).
+    calendar: { date: campaignDate(db, c.id), coming: comingUp(db, c.id, 60, true) },
+    // Each known region: what the party has seen and heard there.
+    regions: playerRegions(db, c.id),
     // Handouts the GM has given the players.
     handouts: playerHandouts(db, c.id).map((h) => ({ ...h, body: scrubRefs(h.body, revealed, index) })),
     // What the party carries or has stored (the GM can hide any line).

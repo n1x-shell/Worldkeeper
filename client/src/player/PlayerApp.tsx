@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { apiSource, type PlayerSource } from './source';
 import { PlayerProvider } from './context';
 import { PlayerLayout } from './PlayerLayout';
-import { PlayerHandouts } from './LivePlay';
+import { PlayerCalendar, PlayerHandouts, PlayerRegions } from './LivePlay';
 import { PlayerBrowse, PlayerEntry, PlayerHome, PlayerQuests, PlayerRealm, PlayerRecaps, PlayerSearch, PlayerStanding, PlayerTreasure } from './PlayerPages';
 import { MapExplorer } from './MapExplorer';
 
@@ -37,6 +37,8 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
           <Route path="standing" element={<PlayerStanding />} />
           <Route path="treasure" element={<PlayerTreasure />} />
           <Route path="handouts" element={<PlayerHandouts />} />
+          <Route path="calendar" element={<PlayerCalendar />} />
+          <Route path="regions" element={<PlayerRegions />} />
           <Route path="journal" element={<Navigate to={`${base}/quests`} replace />} />
           <Route path="*" element={<PlayerHome />} />
         </Route>

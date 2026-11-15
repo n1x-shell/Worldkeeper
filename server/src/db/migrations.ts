@@ -616,6 +616,22 @@ CREATE TABLE downtime (
 );
 `,
   },
+  {
+    version: 12,
+    name: 'the campaign calendar: the GM\'s own events, once or every year',
+    sql: `
+CREATE TABLE calendar_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  year INTEGER,
+  day INTEGER NOT NULL,
+  title TEXT NOT NULL,
+  notes TEXT NOT NULL DEFAULT '',
+  yearly INTEGER NOT NULL DEFAULT 0,
+  player_visible INTEGER NOT NULL DEFAULT 0
+);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

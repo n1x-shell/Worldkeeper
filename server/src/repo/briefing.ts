@@ -10,6 +10,7 @@ import { notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
 import { standingFor } from './standing.js';
 import { treasureData } from './treasure.js';
+import { comingUp } from './calendar.js';
 
 interface Ent {
   id: string;
@@ -162,6 +163,8 @@ export function sessionBriefing(db: DB, sessionId: number) {
     quests,
     level,
     tables: tables.filter((t) => tLevel(t.name)),
+    // Festivals and the GM's events in the next two weeks.
+    coming: comingUp(db, c.id, 14).map((x) => ({ kind: x.kind, title: x.title, inDays: x.inDays })),
     treasure: treasureRegion ? { region: treasureRegion, tier: tierKey, label: tData.regions[treasureRegion].label } : null,
   };
 }

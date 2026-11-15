@@ -586,6 +586,66 @@ export function BrokenPage() {
   );
 }
 
+// ------------------------------------------------------------------ Consistency
+interface Problem {
+  check: string;
+  severity: 'error' | 'warning';
+  message: string;
+  ids: string[];
+}
+
+/** Things in the library that don't agree with each other. A report only: fix each by hand from its links. */
+export function ConsistencyPage() {
+  const { data, reload, loading } = useApi<{ checked: number; problems: Problem[] }>('/api/library/consistency');
+  const groups = new Map<string, Problem[]>();
+  for (const p of data?.problems ?? []) groups.set(p.check, [...(groups.get(p.check) ?? []), p]);
+  return (
+    <div className="space-y-4">
+      <PageHeader
+        title="Consistency Check"
+        subtitle="Things in the library that don't agree with each other."
+        note="A report only: nothing is changed. Missing records, broken links, people with two homes, duplicate names, campaign tools pointing at records that are gone, and revealed pages players would see as empty."
+        actions={
+          <button className="btn" onClick={reload} disabled={loading}>
+            Check again
+          </button>
+        }
+      />
+      {!data ? (
+        <Loading />
+      ) : !data.problems.length ? (
+        <div className="panel p-6 text-ok flex items-center gap-2">
+          <Check size={16} /> All {data.checked} records agree with each other.
+        </div>
+      ) : (
+        <>
+          <p className="text-sm text-dim">
+            {data.checked} records checked. {data.problems.filter((p) => p.severity === 'error').length} problems and {data.problems.filter((p) => p.severity === 'warning').length} things to look at.
+          </p>
+          {[...groups.entries()].map(([check, list]) => (
+            <details key={check} className="panel" open={list.length <= 8}>
+              <summary className="px-4 py-2 cursor-pointer flex items-center gap-2">
+                <span className={list[0].severity === 'error' ? 'text-danger' : 'text-gold'}>{check}</span>
+                <span className="text-xs text-dim">{list.length}</span>
+              </summary>
+              <ul className="divide-y divide-line text-sm">
+                {list.map((p, i) => (
+                  <li key={i} className="px-4 py-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <span className="flex-1 min-w-[16rem]">{p.message}</span>
+                    {p.ids.map((id) => (
+                      <EntityLink key={id} id={id} className="text-xs" />
+                    ))}
+                  </li>
+                ))}
+              </ul>
+            </details>
+          ))}
+        </>
+      )}
+    </div>
+  );
+}
+
 // ------------------------------------------------------------------ History
 export function HistoryPage() {
   const [all, setAll] = useState(false);
