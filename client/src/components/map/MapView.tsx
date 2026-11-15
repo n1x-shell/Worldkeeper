@@ -37,7 +37,14 @@ const KINDS: { key: Kind | 'routes'; label: string }[] = [
   { key: 'routes', label: 'Routes' },
 ];
 /** How far past "whole map in view" you must zoom before a kind of pin appears. */
-const SHOW_FROM: Record<Kind, number> = { region: -9, settlement: -9, landmark: -9, fortress: 0.5, vault: 0.5, other: -9 };
+const SHOW_FROM: Record<Kind, number> = {
+  region: -9,
+  settlement: -9,
+  landmark: -9,
+  fortress: 0.5,
+  vault: 0.5,
+  other: -9,
+};
 
 export const GLYPH: Record<Kind | 'note' | 'party', string> = {
   region: '<path d="M12 3l6 9-6 9-6-9z" fill="none" stroke="currentColor" stroke-width="2.4"/><circle cx="12" cy="12" r="2" fill="currentColor"/>',
@@ -166,7 +173,18 @@ function Fog({ w, h, clear, strength }: { w: number; h: number; clear: { x: numb
   const r = Math.max(w, h) * 0.07;
   const id = useMemo(() => `wk-fog-${Math.random().toString(36).slice(2)}`, []);
   return (
-    <SVGOverlay bounds={[[0, 0], [h, w]]} attributes={{ viewBox: `0 0 ${w} ${h}`, preserveAspectRatio: 'none', class: 'wk-fog' }} interactive={false}>
+    <SVGOverlay
+      bounds={[
+        [0, 0],
+        [h, w],
+      ]}
+      attributes={{
+        viewBox: `0 0 ${w} ${h}`,
+        preserveAspectRatio: 'none',
+        class: 'wk-fog',
+      }}
+      interactive={false}
+    >
       <defs>
         <filter id={`${id}-blur`}>
           <feGaussianBlur stdDeviation={r * 0.35} />
@@ -186,7 +204,13 @@ function Fog({ w, h, clear, strength }: { w: number; h: number; clear: { x: numb
 }
 
 export interface MapViewProps {
-  map: { id: number; name: string; width: number; height: number; imageUrl: string | null };
+  map: {
+    id: number;
+    name: string;
+    width: number;
+    height: number;
+    imageUrl: string | null;
+  };
   maps: { id: number; name: string }[];
   mapHref: (id: number) => string;
   back: { href: string; label: string };
@@ -205,11 +229,21 @@ export interface MapViewProps {
   /** GM: pins can be dragged, and the map can be clicked to place something. */
   draggable?: boolean;
   onMovePin?: (pin: ViewPin, x: number, y: number) => void;
-  placing?: { prompt: string; onPlace: (x: number, y: number) => void; onCancel: () => void } | null;
+  placing?: {
+    prompt: string;
+    onPlace: (x: number, y: number) => void;
+    onCancel: () => void;
+  } | null;
   /** Extra sections at the bottom of the legend (the GM's tools). */
   legendExtra?: ReactNode;
   /** A banner under the top bar (for example, "Live session: fog of war is on"). */
   banner?: ReactNode;
+  /** GM: an outline being drawn or reshaped, drawn on the map. While it is open, pins and outlines stay still. */
+  editor?: ReactNode;
+  /** The saved outline being reshaped, left out while the editor shows it. */
+  editingShapeId?: number | null;
+  /** GM: show every outline, not only the hovered one. */
+  showOutlines?: boolean;
 }
 
 export function MapView(p: MapViewProps) {
@@ -217,7 +251,10 @@ export function MapView(p: MapViewProps) {
   const [rel, setRel] = useState(0);
   const [legend, setLegend] = useState(readPref('wk.map.legend', window.innerWidth >= 768 ? '1' : '0') === '1');
   const [hidden, setHidden] = useState<Set<string>>(() => new Set(readPref('wk.map.hidden', '').split(',').filter(Boolean)));
-  const [focus, setFocus] = useState<{ at: [number, number]; n: number } | null>(null);
+  const [focus, setFocus] = useState<{
+    at: [number, number];
+    n: number;
+  } | null>(null);
   const [hoverRegion, setHoverRegion] = useState<string | null>(null);
   const notesStore = `wk.notes.${p.notesKey}.${m.id}`;
   const [notes, setNotes] = useState<Note[]>(() => JSON.parse(readPref(notesStore, '[]')) as Note[]);
@@ -225,6 +262,7 @@ export function MapView(p: MapViewProps) {
   const [openNote, setOpenNote] = useState<string | null>(null);
   const saveNotes = (n: Note[]) => (setNotes(n), writePref(notesStore, JSON.stringify(n)));
   const ex = p.exploration ?? null;
+  const editing = !!p.editor;
   const fogMode = p.fog ?? 'hide';
 
   // Arriving with a place already chosen: fly to it.
@@ -235,7 +273,7 @@ export function MapView(p: MapViewProps) {
   }, [p.selected]);
   useEffect(() => {
     const k = (ev: KeyboardEvent) => {
-      if (ev.key !== 'Escape') return;
+      if (ev.key !== 'Escape' || p.editor) return;
       if (p.placing) p.placing.onCancel();
       else if (addingNote) setAddingNote(false);
       else p.onSelect(null);
@@ -248,14 +286,12 @@ export function MapView(p: MapViewProps) {
     [0, 0],
     [m.height, m.width],
   ];
-  const regionShapes = p.shapes.filter((s) => s.kind === 'region');
+  const regionShapes = p.shapes.filter((s) => s.kind === 'region' && s.id !== p.editingShapeId);
   const routes = p.shapes.filter((s) => s.kind !== 'region');
   const known = (pin: ViewPin) => !ex || pin.kind === 'region' || (pin.entity_id != null && ex.discovered.has(pin.entity_id));
   const counts: Record<string, number> = { routes: routes.length };
   for (const pin of p.pins) if (fogMode === 'dim' || known(pin)) counts[pin.kind] = (counts[pin.kind] ?? 0) + 1;
-  const visible = p.pins.filter(
-    (pin) => !hidden.has(pin.kind) && (rel >= SHOW_FROM[pin.kind] || pin.entity_id === p.selected || p.draggable) && (fogMode === 'dim' || known(pin)),
-  );
+  const visible = p.pins.filter((pin) => !hidden.has(pin.kind) && (rel >= SHOW_FROM[pin.kind] || pin.entity_id === p.selected || p.draggable) && (fogMode === 'dim' || known(pin)));
   const discoverable = p.pins.filter((x) => x.kind !== 'region' && x.entity_id);
   const party = ex && ex.trail.length ? ex.trail[ex.trail.length - 1] : null;
   // Fog clears around discovered places and everywhere the party has been.
@@ -272,19 +308,26 @@ export function MapView(p: MapViewProps) {
     const pin = entityId ? p.pins.find((x) => x.entity_id === entityId) : null;
     if (pin) setFocus({ at: [pin.y, pin.x], n: Date.now() });
   };
-  const mapClick = p.placing
-    ? p.placing.onPlace
-    : addingNote
-      ? (x: number, y: number) => {
-          const n: Note = { id: Math.random().toString(36).slice(2), x, y, text: '' };
-          saveNotes([...notes, n]);
-          setAddingNote(false);
-          setOpenNote(n.id);
-        }
-      : null;
+  const mapClick = editing
+    ? null
+    : p.placing
+      ? p.placing.onPlace
+      : addingNote
+        ? (x: number, y: number) => {
+            const n: Note = {
+              id: Math.random().toString(36).slice(2),
+              x,
+              y,
+              text: '',
+            };
+            saveNotes([...notes, n]);
+            setAddingNote(false);
+            setOpenNote(n.id);
+          }
+        : null;
 
   return (
-    <div className="wk-explorer fixed inset-0 z-50 bg-[#0b0b10] text-ink">
+    <div className={`wk-explorer ${editing ? 'wk-editing ' : ''}fixed inset-0 z-50 bg-[#0b0b10] text-ink`}>
       <MapContainer
         key={m.id}
         crs={L.CRS.Simple}
@@ -302,13 +345,21 @@ export function MapView(p: MapViewProps) {
         {ex && <Fog w={m.width} h={m.height} clear={clear} strength={fogMode === 'hide' ? 0.72 : 0.4} />}
         {/* Region outlines: invisible until a region (or its pin) is hovered; clicking one opens its page. */}
         {regionShapes.map((s) => {
-          const on = hoverRegion != null && (hoverRegion === s.entity_id || hoverRegion === `shape:${s.id}`);
+          const hovered = hoverRegion != null && (hoverRegion === s.entity_id || hoverRegion === `shape:${s.id}`);
+          const on = hovered || (!!p.showOutlines && !editing);
           return (
             <Polygon
-              key={s.id}
+              key={`${s.id}-${!mapClick && !editing}`} // interactive is read only when the shape is made
               positions={s.points.map(([x, y]) => [y, x] as [number, number])}
-              interactive={!mapClick}
-              pathOptions={{ color: '#e8edf5', weight: on ? 2.5 : 0, opacity: on ? 0.95 : 0, fillColor: '#e8edf5', fillOpacity: on ? 0.1 : 0, dashArray: '6 6' }}
+              interactive={!mapClick && !editing}
+              pathOptions={{
+                color: '#e8edf5',
+                weight: on ? 2.5 : 0,
+                opacity: on ? (hovered ? 0.95 : 0.6) : 0,
+                fillColor: '#e8edf5',
+                fillOpacity: hovered ? 0.1 : 0,
+                dashArray: '6 6',
+              }}
               eventHandlers={{
                 mouseover: () => setHoverRegion(s.entity_id ?? `shape:${s.id}`),
                 mouseout: () => setHoverRegion(null),
@@ -329,7 +380,17 @@ export function MapView(p: MapViewProps) {
           ))}
         {/* The party's trail and where it is now. */}
         {ex && ex.trail.length > 1 && (
-          <Polyline positions={ex.trail.map((t) => [t.y, t.x] as [number, number])} interactive={false} pathOptions={{ color: '#f2e3b3', weight: 3, dashArray: '2 8', lineCap: 'round', opacity: 0.95 }} />
+          <Polyline
+            positions={ex.trail.map((t) => [t.y, t.x] as [number, number])}
+            interactive={false}
+            pathOptions={{
+              color: '#f2e3b3',
+              weight: 3,
+              dashArray: '2 8',
+              lineCap: 'round',
+              opacity: 0.95,
+            }}
+          />
         )}
         {visible.map((pin) => {
           const undiscovered = fogMode === 'dim' && !known(pin);
@@ -337,7 +398,7 @@ export function MapView(p: MapViewProps) {
             <Marker
               key={pin.id}
               position={[pin.y, pin.x]}
-              draggable={!!p.draggable}
+              draggable={!!p.draggable && !editing}
               icon={pinIcon(pin.kind, `${pin.entity_id === p.selected ? ' wk-pin-active' : ''}${undiscovered ? ' wk-pin-undiscovered' : ''}${pin.hidden ? ' wk-pin-gmonly' : ''}`)}
               zIndexOffset={pin.entity_id === p.selected ? 1000 : pin.kind === 'region' ? -100 : 0}
               eventHandlers={{
@@ -347,9 +408,10 @@ export function MapView(p: MapViewProps) {
                 },
                 mouseover: (ev) => {
                   placeTip(ev.target as L.Marker);
-                  if (pin.kind === 'region' && pin.entity_id) setHoverRegion(pin.entity_id);
+                  // Any place with an outline lights it up.
+                  if (pin.entity_id) setHoverRegion(pin.entity_id);
                 },
-                mouseout: () => pin.kind === 'region' && setHoverRegion(null),
+                mouseout: () => setHoverRegion(null),
                 dragend: (ev) => {
                   const ll = (ev.target as L.Marker).getLatLng();
                   p.onMovePin?.(pin, Math.round(ll.lng), Math.round(ll.lat));
@@ -370,7 +432,14 @@ export function MapView(p: MapViewProps) {
           );
         })}
         {party && (
-          <Marker position={[party.y, party.x]} icon={pinIcon('party')} zIndexOffset={2000} eventHandlers={{ mouseover: (ev) => placeTip(ev.target as L.Marker) }}>
+          <Marker
+            position={[party.y, party.x]}
+            icon={pinIcon('party')}
+            zIndexOffset={2000}
+            eventHandlers={{
+              mouseover: (ev) => placeTip(ev.target as L.Marker),
+            }}
+          >
             <Tooltip direction="top" offset={[0, -12]} className="wk-map-tip">
               <div className="font-display text-[13px]">The party</div>
               {party.label && <div className="text-[10px] uppercase tracking-wider opacity-70">At {party.label}</div>}
@@ -388,6 +457,7 @@ export function MapView(p: MapViewProps) {
             onDelete={() => (saveNotes(notes.filter((x) => x.id !== n.id)), setOpenNote(null))}
           />
         ))}
+        {p.editor}
       </MapContainer>
 
       {/* Top bar: back, the legend, the maps. */}
@@ -432,7 +502,8 @@ export function MapView(p: MapViewProps) {
       <aside className={`wk-map-panel left-3 top-16 w-64 max-h-[calc(100vh-5rem)] overflow-y-auto ${legend ? '' : 'wk-map-panel-hidden-left'}`}>
         <div className="font-display text-gold text-lg px-4 pt-3">{m.name}</div>
         <div className="text-xs text-dim px-4 pb-2">
-          Click a place to read about it.{counts.fortress || counts.vault ? ' Zoom in for fortresses and vaults.' : ''}
+          Click a place to read about it.
+          {counts.fortress || counts.vault ? ' Zoom in for fortresses and vaults.' : ''}
           {regionShapes.length ? ' Hover a region to see its borders.' : ''}
         </div>
         {ex && (
@@ -456,7 +527,12 @@ export function MapView(p: MapViewProps) {
                   {k.key === 'routes' ? (
                     <span className="w-6 h-0 border-t-2 border-dashed border-gold/80 shrink-0" />
                   ) : (
-                    <span className={`wk-pin wk-pin-legend wk-pin-k-${k.key} shrink-0`} dangerouslySetInnerHTML={{ __html: `<svg viewBox="0 0 24 24" width="14" height="14">${GLYPH[k.key as Kind]}</svg>` }} />
+                    <span
+                      className={`wk-pin wk-pin-legend wk-pin-k-${k.key} shrink-0`}
+                      dangerouslySetInnerHTML={{
+                        __html: `<svg viewBox="0 0 24 24" width="14" height="14">${GLYPH[k.key as Kind]}</svg>`,
+                      }}
+                    />
                   )}
                   <span className="flex-1 text-left text-sm">{k.label}</span>
                   <span className="text-xs text-dim">{counts[k.key]}</span>

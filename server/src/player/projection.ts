@@ -9,19 +9,13 @@
  *  - Aliases, sources, notes, fields, canon flags, GM sections and unrevealed records are never included.
  *  - References inside revealed text to unrevealed records are reduced to plain names-free placeholders.
  */
-import type { DB } from "../db/connection.js";
-import {
-  SECRET_HEADING_RE,
-  ENTITY_TYPE_LABELS,
-  REALM_LABELS,
-  type EntityType,
-  type Realm,
-} from "../../../shared/domain.js";
-import { parseJson } from "../lib/json.js";
-import { splitSections } from "../import/parseMarkdown.js";
-import { parseRefs, type MentionIndex } from "../../../shared/mentions.js";
-import { loadMentionIndex } from "../repo/mentions.js";
-import { playerExploration } from "../repo/exploration.js";
+import type { DB } from '../db/connection.js';
+import { SECRET_HEADING_RE, ENTITY_TYPE_LABELS, REALM_LABELS, type EntityType, type Realm } from '../../../shared/domain.js';
+import { parseJson } from '../lib/json.js';
+import { splitSections } from '../import/parseMarkdown.js';
+import { parseRefs, type MentionIndex } from '../../../shared/mentions.js';
+import { loadMentionIndex } from '../repo/mentions.js';
+import { playerExploration } from '../repo/exploration.js';
 
 export interface PlayerEntity {
   id: string;
@@ -53,65 +47,27 @@ export function isSecretHeading(heading: string) {
 }
 
 function revealedIdSet(db: DB): Set<string> {
-  return new Set(
-    (
-      db
-        .prepare("SELECT id FROM entities WHERE revealed = 1 AND archived = 0")
-        .all() as { id: string }[]
-    ).map((r) => r.id),
-  );
+  return new Set((db.prepare('SELECT id FROM entities WHERE revealed = 1 AND archived = 0').all() as { id: string }[]).map((r) => r.id));
 }
 
 /**
  * Rewrite record references for players: links to revealed records become player links showing the name;
  * references to unrevealed records keep only the words the DM wrote (never an ID or a link).
  */
-function scrubRefs(
-  text: string,
-  revealed: Set<string>,
-  index: MentionIndex,
-): string {
+function scrubRefs(text: string, revealed: Set<string>, index: MentionIndex): string {
   return parseRefs(text, index)
     .map((s) => {
-      if (s.kind === "text") return s.text;
-      if (s.kind === "link")
-        return revealed.has(s.id)
-          ? `[${s.label}](/player/e/${encodeURIComponent(s.id)})`
-          : s.label;
-      if (s.kind === "broken")
-        return /^[A-Z]{2,4}-/.test(s.label) ? "" : s.label;
-      return "";
+      if (s.kind === 'text') return s.text;
+      if (s.kind === 'link') return revealed.has(s.id) ? `[${s.label}](/player/e/${encodeURIComponent(s.id)})` : s.label;
+      if (s.kind === 'broken') return /^[A-Z]{2,4}-/.test(s.label) ? '' : s.label;
+      return '';
     })
-    .join("");
+    .join('');
 }
 
 /** Kinds of record whose names are ordinary words too often to link from prose. */
-const NO_AUTOLINK = new Set([
-  "creature",
-  "calling",
-  "people",
-  "item",
-  "rule",
-  "system",
-  "species",
-  "culture",
-  "index",
-  "register",
-  "redirect",
-  "adventure_hook",
-]);
-const PLACE_TYPES = new Set([
-  "world",
-  "continent",
-  "realm",
-  "region",
-  "nation",
-  "settlement",
-  "landmark",
-  "building",
-  "vault",
-  "ethereal_domain",
-]);
+const NO_AUTOLINK = new Set(['creature', 'calling', 'people', 'item', 'rule', 'system', 'species', 'culture', 'index', 'register', 'redirect', 'adventure_hook']);
+const PLACE_TYPES = new Set(['world', 'continent', 'realm', 'region', 'nation', 'settlement', 'landmark', 'building', 'vault', 'ethereal_domain']);
 interface Lexicon {
   re: RegExp | null;
   byName: Map<string, string>;
@@ -119,73 +75,44 @@ interface Lexicon {
 
 /** Names of revealed records, as they are written in prose (no leading "The", no nickname or bracketed note; a god by the name before the comma). */
 function buildLexicon(db: DB): Lexicon {
-  const rows = db
-    .prepare(
-      `SELECT id, name, type FROM entities WHERE revealed = 1 AND archived = 0`,
-    )
-    .all() as { id: string; name: string; type: string }[];
+  const rows = db.prepare(`SELECT id, name, type FROM entities WHERE revealed = 1 AND archived = 0`).all() as { id: string; name: string; type: string }[];
   const groups = new Map<string, { id: string; type: string }[]>();
   for (const r of rows) {
     if (NO_AUTOLINK.has(r.type)) continue;
     let base = r.name
       .split(/["“]/)[0]
-      .replace(/\s*\([^)]*\)\s*$/, "")
-      .replace(/^The\s+/, "")
+      .replace(/\s*\([^)]*\)\s*$/, '')
+      .replace(/^The\s+/, '')
       .trim();
-    if (r.type === "deity") base = base.split(",")[0].trim();
-    if (base.length < 5 || base === "World") continue;
+    if (r.type === 'deity') base = base.split(',')[0].trim();
+    if (base.length < 5 || base === 'World') continue;
     if (!groups.has(base)) groups.set(base, []);
     groups.get(base)!.push({ id: r.id, type: r.type });
   }
   const byName = new Map<string, string>();
   for (const [name, rs] of groups) {
     // A name shared by a place and something else (Kaelholm the city, Kaelholm the power) links to the place.
-    const pick =
-      rs.length === 1
-        ? rs[0]
-        : rs.filter((x) => PLACE_TYPES.has(x.type)).length === 1
-          ? rs.find((x) => PLACE_TYPES.has(x.type))!
-          : null;
+    const pick = rs.length === 1 ? rs[0] : rs.filter((x) => PLACE_TYPES.has(x.type)).length === 1 ? rs.find((x) => PLACE_TYPES.has(x.type))! : null;
     if (pick) byName.set(name, pick.id);
   }
   const names = [...byName.keys()].sort((a, b) => b.length - a.length);
-  const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const re = names.length
-    ? new RegExp(
-        `(?<![\\w'’-])(${names.map(esc).join("|")})(?![\\w-]|['’](?!s\\b))`,
-        "g",
-      )
-    : null;
+  const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = names.length ? new RegExp(`(?<![\\w'’-])(${names.map(esc).join('|')})(?![\\w-]|['’](?!s\\b))`, 'g') : null;
   return { re, byName };
 }
 
 /** Link the first plain mention of each revealed record on a page. Existing links, and the page's own record, are left alone. */
-function autoLink(
-  md: string,
-  selfId: string,
-  lex: Lexicon,
-  linked: Set<string>,
-): string {
+function autoLink(md: string, selfId: string, lex: Lexicon, linked: Set<string>): string {
   if (!lex.re || !md) return md;
-  for (const m of md.matchAll(/\]\(\/player\/e\/([^)]+)\)/g))
-    linked.add(decodeURIComponent(m[1]));
+  for (const m of md.matchAll(/\]\(\/player\/e\/([^)]+)\)/g)) linked.add(decodeURIComponent(m[1]));
   // Name lists ("Common names.") are lists of names, not mentions of people.
   return md
-    .split("\n")
-    .map((line) =>
-      /Common names/.test(line)
-        ? line
-        : autoLinkLine(line, selfId, lex, linked),
-    )
-    .join("\n");
+    .split('\n')
+    .map((line) => (/Common names/.test(line) ? line : autoLinkLine(line, selfId, lex, linked)))
+    .join('\n');
 }
 
-function autoLinkLine(
-  md: string,
-  selfId: string,
-  lex: Lexicon,
-  linked: Set<string>,
-): string {
+function autoLinkLine(md: string, selfId: string, lex: Lexicon, linked: Set<string>): string {
   return md
     .split(/(\[[^\]]*\]\([^)]*\))/)
     .map((part, i) =>
@@ -198,20 +125,13 @@ function autoLinkLine(
             return `[${name}](/player/e/${encodeURIComponent(id)})`;
           }),
     )
-    .join("");
+    .join('');
 }
 
-function project(
-  r: Row,
-  revealed: Set<string>,
-  index: MentionIndex,
-  lex?: Lexicon,
-): PlayerEntity {
+function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexicon): PlayerEntity {
   const wanted = new Set(parseJson<string[]>(r.revealed_sections, []));
   const sections = splitSections(r.body)
-    .filter(
-      (s) => s.heading && wanted.has(s.heading) && !isSecretHeading(s.heading),
-    )
+    .filter((s) => s.heading && wanted.has(s.heading) && !isSecretHeading(s.heading))
     .map((s) => ({
       heading: s.heading,
       content: scrubRefs(s.content, revealed, index),
@@ -224,17 +144,8 @@ function project(
     typeLabel: ENTITY_TYPE_LABELS[r.type as EntityType] ?? r.type,
     realm: r.realm,
     realmLabel: REALM_LABELS[r.realm as Realm] ?? r.realm,
-    summary: lex
-      ? autoLink(
-          scrubRefs(r.player_summary, revealed, index),
-          r.id,
-          lex,
-          linked,
-        )
-      : scrubRefs(r.player_summary, revealed, index),
-    facts: parseJson<string[]>(r.revealed_facts, []).map((f) =>
-      scrubRefs(f, revealed, index),
-    ),
+    summary: lex ? autoLink(scrubRefs(r.player_summary, revealed, index), r.id, lex, linked) : scrubRefs(r.player_summary, revealed, index),
+    facts: parseJson<string[]>(r.revealed_facts, []).map((f) => scrubRefs(f, revealed, index)),
     sections: lex
       ? sections.map((x) => ({
           ...x,
@@ -244,56 +155,29 @@ function project(
   };
 }
 
-const COLS =
-  "id, name, type, realm, body, player_summary, revealed_sections, revealed_facts, revealed, archived";
+const COLS = 'id, name, type, realm, body, player_summary, revealed_sections, revealed_facts, revealed, archived';
 
 export function playerEntities(db: DB): PlayerEntity[] {
   const revealed = revealedIdSet(db);
   const index = loadMentionIndex(db);
   const lex = buildLexicon(db);
-  return (
-    db
-      .prepare(
-        `SELECT ${COLS} FROM entities WHERE revealed = 1 AND archived = 0 ORDER BY name`,
-      )
-      .all() as Row[]
-  ).map((r) => project(r, revealed, index, lex));
+  return (db.prepare(`SELECT ${COLS} FROM entities WHERE revealed = 1 AND archived = 0 ORDER BY name`).all() as Row[]).map((r) => project(r, revealed, index, lex));
 }
 
 export function playerEntity(db: DB, id: string): PlayerEntity | null {
-  const r = db
-    .prepare(
-      `SELECT ${COLS} FROM entities WHERE id = ? AND revealed = 1 AND archived = 0`,
-    )
-    .get(id) as Row | undefined;
-  return r
-    ? project(r, revealedIdSet(db), loadMentionIndex(db), buildLexicon(db))
-    : null;
+  const r = db.prepare(`SELECT ${COLS} FROM entities WHERE id = ? AND revealed = 1 AND archived = 0`).get(id) as Row | undefined;
+  return r ? project(r, revealedIdSet(db), loadMentionIndex(db), buildLexicon(db)) : null;
 }
 
 export function playerSearch(db: DB, q: string): PlayerEntity[] {
   const needle = q.trim().toLowerCase();
   if (!needle) return [];
-  return playerEntities(db).filter((e) =>
-    [
-      e.name,
-      e.summary,
-      ...e.facts,
-      ...e.sections.map((s) => s.heading + " " + s.content),
-    ]
-      .join("\n")
-      .toLowerCase()
-      .includes(needle),
-  );
+  return playerEntities(db).filter((e) => [e.name, e.summary, ...e.facts, ...e.sections.map((s) => s.heading + ' ' + s.content)].join('\n').toLowerCase().includes(needle));
 }
 
 export function playerMaps(db: DB) {
   const revealed = revealedIdSet(db);
-  const maps = db
-    .prepare(
-      "SELECT id, name, kind, parent_map_id, image_file, width, height FROM maps WHERE player_visible = 1 ORDER BY id",
-    )
-    .all() as {
+  const maps = db.prepare('SELECT id, name, kind, parent_map_id, image_file, width, height FROM maps WHERE player_visible = 1 ORDER BY id').all() as {
     id: number;
     name: string;
     kind: string;
@@ -307,19 +191,12 @@ export function playerMaps(db: DB) {
     id: m.id,
     name: m.name,
     kind: m.kind,
-    parent_map_id:
-      m.parent_map_id && visibleMapIds.has(m.parent_map_id)
-        ? m.parent_map_id
-        : null,
+    parent_map_id: m.parent_map_id && visibleMapIds.has(m.parent_map_id) ? m.parent_map_id : null,
     image_file: m.image_file,
     width: m.width,
     height: m.height,
     markers: (
-      db
-        .prepare(
-          "SELECT id, entity_id, label, x, y, category, child_map_id FROM map_markers WHERE map_id = ? AND hidden = 0",
-        )
-        .all(m.id) as {
+      db.prepare('SELECT id, entity_id, label, x, y, category, child_map_id FROM map_markers WHERE map_id = ? AND hidden = 0').all(m.id) as {
         id: number;
         entity_id: string | null;
         label: string;
@@ -334,19 +211,11 @@ export function playerMaps(db: DB) {
       x: mk.x,
       y: mk.y,
       category: mk.category,
-      entity_id:
-        mk.entity_id && revealed.has(mk.entity_id) ? mk.entity_id : null,
-      child_map_id:
-        mk.child_map_id && visibleMapIds.has(mk.child_map_id)
-          ? mk.child_map_id
-          : null,
+      entity_id: mk.entity_id && revealed.has(mk.entity_id) ? mk.entity_id : null,
+      child_map_id: mk.child_map_id && visibleMapIds.has(mk.child_map_id) ? mk.child_map_id : null,
     })),
     shapes: (
-      db
-        .prepare(
-          "SELECT id, kind, label, points, color, entity_id FROM map_shapes WHERE map_id = ? AND hidden = 0",
-        )
-        .all(m.id) as {
+      db.prepare('SELECT id, kind, label, points, color, entity_id FROM map_shapes WHERE map_id = ? AND hidden = 0').all(m.id) as {
         id: number;
         kind: string;
         label: string;
@@ -362,8 +231,7 @@ export function playerMaps(db: DB) {
         kind: s.kind,
         label: s.label,
         color: s.color,
-        entity_id:
-          s.entity_id && revealed.has(s.entity_id) ? s.entity_id : null,
+        entity_id: s.entity_id && revealed.has(s.entity_id) ? s.entity_id : null,
         points: parseJson<[number, number][]>(s.points, []),
       })),
     // Fog of war and the party's trail: only while the active campaign has a live session.
@@ -372,27 +240,15 @@ export function playerMaps(db: DB) {
 }
 
 export function playerCampaign(db: DB, campaignId: number) {
-  const c = db
-    .prepare("SELECT id, title, current_date FROM campaigns WHERE id = ?")
-    .get(campaignId) as
-    | { id: number; title: string; current_date: string }
-    | undefined;
+  const c = db.prepare('SELECT id, title, current_date FROM campaigns WHERE id = ?').get(campaignId) as { id: number; title: string; current_date: string } | undefined;
   if (!c) return null;
-  const quests = db
-    .prepare(
-      `SELECT id, title, status, description FROM quests WHERE campaign_id = ? AND player_visible = 1 ORDER BY status = 'completed', id`,
-    )
-    .all(campaignId) as {
+  const quests = db.prepare(`SELECT id, title, status, description FROM quests WHERE campaign_id = ? AND player_visible = 1 ORDER BY status = 'completed', id`).all(campaignId) as {
     id: number;
     title: string;
     status: string;
     description: string;
   }[];
-  const recaps = db
-    .prepare(
-      `SELECT id, number, title, played_on, recap FROM sessions WHERE campaign_id = ? AND recap_player_visible = 1 ORDER BY number`,
-    )
-    .all(campaignId) as {
+  const recaps = db.prepare(`SELECT id, number, title, played_on, recap FROM sessions WHERE campaign_id = ? AND recap_player_visible = 1 ORDER BY number`).all(campaignId) as {
     id: number;
     number: number;
     title: string;
@@ -422,24 +278,13 @@ export function playerCampaign(db: DB, campaignId: number) {
 }
 
 export function playerCampaigns(db: DB) {
-  return (
-    db
-      .prepare(
-        `SELECT id FROM campaigns WHERE status != 'archived' ORDER BY id`,
-      )
-      .all() as { id: number }[]
-  ).map((c) => playerCampaign(db, c.id)!);
+  return (db.prepare(`SELECT id FROM campaigns WHERE status != 'archived' ORDER BY id`).all() as { id: number }[]).map((c) => playerCampaign(db, c.id)!);
 }
 
 export function playerSnapshot(db: DB) {
   return {
-    app: "worldkeeper-player-snapshot",
-    appName:
-      (
-        db
-          .prepare(`SELECT value FROM settings WHERE key = 'app_name'`)
-          .get() as { value: string } | undefined
-      )?.value ?? "The Worldkeeper",
+    app: 'worldkeeper-player-snapshot',
+    appName: (db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper',
     generated_at: new Date().toISOString(),
     entities: playerEntities(db),
     maps: playerMaps(db),

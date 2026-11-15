@@ -182,7 +182,9 @@ h3 {
   color: rgb(var(--pin));
   border-color: rgb(var(--pin) / 0.85);
   background: rgb(14 13 18 / 0.88);
-  box-shadow: 0 0 0 2px rgb(0 0 0 / 0.35), 0 2px 8px rgb(0 0 0 / 0.6);
+  box-shadow:
+    0 0 0 2px rgb(0 0 0 / 0.35),
+    0 2px 8px rgb(0 0 0 / 0.6);
 }
 /* One colour per kind of place, readable on parchment and on the dark Ethereal chart. */
 .wk-pin-k-region {
@@ -214,7 +216,9 @@ h3 {
   color: rgb(14 13 18);
   background: rgb(var(--pin));
   transform: scale(1.2);
-  box-shadow: 0 0 0 3px rgb(var(--pin) / 0.35), 0 0 18px rgb(var(--pin) / 0.6);
+  box-shadow:
+    0 0 0 3px rgb(var(--pin) / 0.35),
+    0 0 18px rgb(var(--pin) / 0.6);
 }
 .wk-pin-legend {
   width: 24px;
@@ -262,7 +266,9 @@ h3 {
   --pin: 242 227 179;
   width: 32px !important;
   height: 32px !important;
-  box-shadow: 0 0 0 3px rgb(242 227 179 / 0.3), 0 0 16px rgb(242 227 179 / 0.55);
+  box-shadow:
+    0 0 0 3px rgb(242 227 179 / 0.3),
+    0 0 16px rgb(242 227 179 / 0.55);
 }
 .wk-pin-undiscovered {
   opacity: 0.45;
@@ -279,4 +285,29 @@ h3 {
   background: rgb(14 13 18 / 0.96);
   color: rgb(var(--ink));
   border: 1px solid rgb(var(--line));
+}
+
+/* Drawing a place's outline (GM explorer). While it is open, the other pins stay still and let clicks through. */
+.wk-editing .leaflet-marker-icon:not(.wk-handle) {
+  pointer-events: none;
+  opacity: 0.55;
+}
+.wk-handle {
+  border-radius: 9999px;
+  border: 2px solid #f2e3b3;
+  background: #0b0b10;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+  cursor: move;
+}
+.wk-handle-first {
+  background: #c9a24a;
+}
+.wk-handle-mid {
+  border-width: 1px;
+  background: rgba(242, 227, 179, 0.45);
+  cursor: copy;
+}
+.wk-handle:hover {
+  transform-origin: center;
+  outline: 2px solid rgba(242, 227, 179, 0.5);
 }
