@@ -31,6 +31,8 @@ export interface PlayerEntity {
   realmLabel: string;
   /** Every continent it belongs to, for filtering: a people found on both continents counts under each. */
   realms: string[];
+  /** Shaped by the Bloom: a species the spore-storms rewrote (tagged origin/bloom). */
+  bloom?: boolean;
   summary: string;
   facts: string[];
   sections: { heading: string; content: string }[];
@@ -43,6 +45,7 @@ interface Row {
   realm: string;
   body: string;
   player_summary: string;
+  tags?: string;
   revealed_sections: string;
   revealed_facts: string;
   revealed: number;
@@ -135,7 +138,7 @@ function autoLinkLine(md: string, selfId: string, lex: Lexicon, linked: Set<stri
     .join('');
 }
 
-function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexicon): PlayerEntity {
+function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexicon, placeRealm?: Map<string, string>): PlayerEntity {
   const wanted = new Set(parseJson<string[]>(r.revealed_sections, []));
   const sections = splitSections(r.body)
     .filter((s) => s.heading && wanted.has(s.heading) && !isSecretHeading(s.heading))
@@ -152,7 +155,7 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexic
     if (/\bKaelmar\b/.test(text)) realms.add('kaelmar');
     if (/\bAetheris\b/.test(text)) realms.add('aetheris');
   }
-  return {
+  const out: PlayerEntity = {
     id: r.id,
     name: r.name,
     type: r.type,
@@ -160,6 +163,7 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexic
     realm: r.realm,
     realmLabel: REALM_LABELS[r.realm as Realm] ?? r.realm,
     realms: [...realms],
+    ...(parseJson<string[]>(r.tags ?? '[]', []).includes('origin/bloom') ? { bloom: true } : {}),
     summary: lex ? autoLink(scrubRefs(r.player_summary, revealed, index), r.id, lex, linked) : scrubRefs(r.player_summary, revealed, index),
     facts: parseJson<string[]>(r.revealed_facts, []).map((f) => scrubRefs(f, revealed, index)),
     sections: lex
@@ -169,20 +173,39 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexic
         }))
       : sections,
   };
+  // A people found in a named place of a continent (the Radiant Expanse, the Deepwood) is found on that continent.
+  if (placeRealm && (r.type === 'people' || r.type === 'calling')) {
+    for (const m of [out.summary, ...out.sections.map((x) => x.content)].join('\n').matchAll(/\/player\/e\/([A-Z]{2,5}-\d{3,4})/g)) {
+      const realm = placeRealm.get(m[1]);
+      if (realm === 'aetheris' || realm === 'kaelmar') realms.add(realm);
+    }
+    out.realms = [...realms];
+  }
+  return out;
 }
 
-const COLS = 'id, name, type, realm, body, player_summary, revealed_sections, revealed_facts, revealed, archived';
+/** The continent of every place record, for working out where a people is found. */
+function placeRealms(db: DB) {
+  const rows = db.prepare(`SELECT id, realm FROM entities WHERE type IN ('continent','region','nation','settlement','landmark','building','dungeon','vault') AND archived = 0`).all() as {
+    id: string;
+    realm: string;
+  }[];
+  return new Map(rows.map((x) => [x.id, x.realm]));
+}
+
+const COLS = 'id, name, type, realm, tags, body, player_summary, revealed_sections, revealed_facts, revealed, archived';
 
 export function playerEntities(db: DB): PlayerEntity[] {
   const revealed = revealedIdSet(db);
   const index = loadMentionIndex(db);
   const lex = buildLexicon(db);
-  return (db.prepare(`SELECT ${COLS} FROM entities WHERE revealed = 1 AND archived = 0 ORDER BY name`).all() as Row[]).map((r) => project(r, revealed, index, lex));
+  const places = placeRealms(db);
+  return (db.prepare(`SELECT ${COLS} FROM entities WHERE revealed = 1 AND archived = 0 ORDER BY name`).all() as Row[]).map((r) => project(r, revealed, index, lex, places));
 }
 
 export function playerEntity(db: DB, id: string): PlayerEntity | null {
   const r = db.prepare(`SELECT ${COLS} FROM entities WHERE id = ? AND revealed = 1 AND archived = 0`).get(id) as Row | undefined;
-  return r ? project(r, revealedIdSet(db), loadMentionIndex(db), buildLexicon(db)) : null;
+  return r ? project(r, revealedIdSet(db), loadMentionIndex(db), buildLexicon(db), placeRealms(db)) : null;
 }
 
 export function playerSearch(db: DB, q: string): PlayerEntity[] {

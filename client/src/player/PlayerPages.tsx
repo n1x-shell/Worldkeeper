@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { ArrowRight, BookOpen, Feather, ListChecks, Map as MapIcon } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
 import { usePlayerData, type PEntity } from './source';
+import { SpeciesBuilder } from './SpeciesBuilder';
 import { OTHER_GROUP, PLAYER_GROUPS, PLAYER_REALMS, groupOf, linkedIds, previewText } from './categories';
 
 /** Markdown for players: links to other revealed entries (/player/e/ID from the server) stay inside the handbook. */
@@ -180,6 +181,7 @@ export function PlayerBrowse() {
   const g = group === 'all' ? null : [...PLAYER_GROUPS, OTHER_GROUP].find((x) => x.key === group);
   const list = useMemo(() => (entities ?? []).filter((e) => (!g || groupOf(e.type).key === g.key) && (!realm || inRealm(e, realm))).sort(byName), [entities, g, realm]);
   if (!entities) return null;
+  if (group === 'peoples') return <SpeciesBuilder entities={entities} />;
   const realmsHere = PLAYER_REALMS.filter((r) => (entities ?? []).some((e) => inRealm(e, r.key) && (!g || groupOf(e.type).key === g.key)));
   return (
     <div>

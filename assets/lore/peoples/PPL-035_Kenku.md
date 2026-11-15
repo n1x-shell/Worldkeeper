@@ -3,10 +3,10 @@ Name: Kenku
 Alternate names: Crow-folk
 Category: People
 Parent: The World [WLD-901] / Peoples
-Continent or realm: World
+Continent or realm: Kaelmar
 Canon status: CANON
 Source: Worldkeeper additions (peoples of the world, GM decision, 2026)
-Tags: realm/world, cat/people, status/canon, vis/player
+Tags: realm/kaelmar, cat/people, status/canon, vis/player, origin/bloom
 
 # Kenku
 
