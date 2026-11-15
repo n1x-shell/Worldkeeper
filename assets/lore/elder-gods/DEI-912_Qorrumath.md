@@ -28,3 +28,21 @@ The wreck-islands draw together into one mass. The driftwhales go still. Anythin
 
 ## His name
 Spoken in the Fields, his name makes the nearest wreck-island turn, slowly, to face the speaker, and everything loose on it rolls toward them.
+
+## Laws of Existence
+In addition to Immutable Existence and the Unseen Gaze (Elder Gods at the Table [RUL-621]). Save DCs follow its reach.
+
+| Law | Effect |
+| --- | --- |
+| **Kept Endings** | Anything that dies or breaks in his reach becomes part of the hoard. A dead creature turns to a statue of itself and can't be raised; a broken object becomes a wreck-island's worth of pieces. |
+| **The Pull** | At each long rest, every piece of salvage from the Fields that a creature carries pulls toward them. In the realm, the carrier makes a Strength save or is dragged a mile back toward the Fields. In the world, an anchored item takes a step toward fading again. |
+| **Reality Erosion** | Distances in his reach are unreliable. For each hour of travel, roll a d6: on a 1, the party arrives somewhere else, on a wreck from a world that ended. |
+| **Hoard-Sense** | He knows everything in his reach that came from an ended world, and his heralds go for it first. |
+
+## Manifestation
+**The Hoard.** A shape the size of a city made of every keepsake he can't let go of: cathedral spires for ribs, a Legion fortress for a jaw, rising out of the silver void. Start from the Tarrasque (Monster Manual), at the very end of a campaign. Defeating it doesn't kill the god; it pushes the god's reach down a step for a year and a day.
+
+## How it can be stopped
+- **Break the vessel.** His oldest keepsake is the bell of the golden cathedral that lies sideways in the Legion fortress. Ring it until it breaks, and his hold on the Fields slackens: every Law falls to its weakest reach.
+- **Return him to dormancy.** Give him an ending he doesn't have: the true story of a world that ended well, told in the Fields. He'll keep it, content, and sleep.
+- **Sever the way.** Anchor every piece of salvage taken from the Fields into the world. It's a campaign's worth of work, and it cuts his pull for good.

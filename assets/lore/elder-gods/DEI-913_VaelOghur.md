@@ -28,3 +28,21 @@ The dead kings stand. The Colosseum of Echoes falls silent. She will hear one ca
 
 ## Her name
 Spoken in the Ossuary, her name makes every crowned dead within earshot kneel, and wait.
+
+## Laws of Existence
+In addition to Immutable Existence and the Unseen Gaze (Elder Gods at the Table [RUL-621]). Save DCs follow its reach.
+
+| Law | Effect |
+| --- | --- |
+| **The Held Verdict** | When a fight starts in her reach, nobody acts in the first round. Everyone simply waits, unable to look away from each other. |
+| **Crowned Silence** | Speaking is hard. To cast a spell with a Verbal component, the caster makes a Constitution save. On a failure, the spell isn't cast, and the slot isn't spent. |
+| **Precedent** | An oath sworn in her reach binds as the Geas spell, with no duration, on everyone who swore it. |
+| **Court of the Dead** | Any corpse in her reach can be questioned, as Speak with Dead without the spell. Every answer begins with a question of its own, which must be answered truly first. |
+
+## Manifestation
+**The Silent Queen.** A queen in grey on a throne that faces away, crowned in silence. Start from the Lich (Monster Manual), with its spellcasting replaced by Precedent: anything she says is law until the end of her next turn. Defeating it doesn't kill the god; it pushes the god's reach down a step for a year and a day.
+
+## How it can be stopped
+- **Win her case.** She has waited an age to give a verdict. Bring her a case (the people's, the teachers', the Cycle's), a champion and a true argument, and win it in the Colosseum or by words. If her verdict is for the people, she sleeps content.
+- **Break the vessel.** Her throne at the Ossuary's heart. The Shattered Throne in Aetheris [LOC-012] is its echo, which is why Aurex died trying to sit it. Break both, and she can't hold court again.
+- **Speak the true name.** Every crowned dead in the Ossuary knows one syllable of it.

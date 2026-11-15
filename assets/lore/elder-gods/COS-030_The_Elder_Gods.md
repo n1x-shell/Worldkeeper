@@ -50,5 +50,8 @@ The return is a clock, not a date. See The Return [COS-032].
 ## Their names [SECRET]
 The elder gods' names were never meant for human mouths. Written down, they look wrong; spoken aloud in the Ethereal Realm, they are heard. Speaking a sleeper's true name in its own depth makes it stir (see each record). The titles are what the Hidden Ones call them.
 
+## At the table
+The elder gods and the Guests have Laws of Existence instead of statistics, manifestations that can be beaten, and ways to be stopped that don't involve killing them. See Elder Gods at the Table [RUL-621].
+
 ## What mortals know
 Fragments: old myths that disagree, children's rhymes on both continents, and the Black Sun's creed. See the legend, The Ones Before [COS-034].
