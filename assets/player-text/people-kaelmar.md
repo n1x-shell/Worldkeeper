@@ -10,7 +10,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Dwarf | Cleric | She/her | The northern highlands |
+| Dwarf | Votary | She/her | The northern highlands |
 
 **Looks.** A stout dwarf in tribunal grey with a white braid wound into a crown, and an iron stylus she uses for nothing but scraping.
 
@@ -76,7 +76,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Tiefling | Artificer | They/them | Lampblack, Kaelholm |
+| Tiefling | Wright | They/them | Lampblack, Kaelholm |
 
 **Looks.** A tiefling with faint glyph-marks grown along their horns, ink-black fingers and a magnifying lens on a chain.
 
@@ -207,7 +207,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Tabaxi | Cleric | She/her | The southern fens |
+| Tabaxi | Votary | She/her | The southern fens |
 
 **Looks.** A tawny tabaxi with copper binding-lines along her forearms and a satchel of living membranes in damp moss.
 
@@ -294,7 +294,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Triton | Bard | They/them | The southern lakes |
+| Triton | Loresinger | They/them | The southern lakes |
 
 **Looks.** A blue-skinned triton with ink-stained webbed fingers and a writing-board always on their arm.
 
@@ -315,7 +315,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Bugbear | Artificer | He/him | The Eastern Deepwood |
+| Bugbear | Wright | He/him | The Eastern Deepwood |
 
 **Looks.** A huge bugbear with delicate surgical tools in a roll at his belt, and a neat iron graft running down his own spine.
 
@@ -381,7 +381,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Duergar | Artificer | She/her | The under-roads |
+| Duergar | Wright | She/her | The under-roads |
 
 **Looks.** A grey-skinned duergar with iron fingers on one hand and a belt of tools that click as she walks.
 
@@ -425,7 +425,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Half-elf | Bard | He/him | Ashvale |
+| Half-elf | Loresinger | He/him | Ashvale |
 
 **Looks.** A gangly half-elf of twenty with a fiddle on his back and his grandmother's grey eyes.
 
@@ -470,7 +470,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Firbolg | Cleric | She/her | Oakhallow |
+| Firbolg | Votary | She/her | Oakhallow |
 
 **Looks.** A tall blue-grey firbolg with moss-green braids and a lantern of glowing fungus.
 
@@ -491,7 +491,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Human | Artificer | She/her | Ashvale |
+| Human | Wright | She/her | Ashvale |
 
 **Looks.** A wiry young woman with oil to the elbows and a half-built walker following her like a dog.
 
@@ -555,7 +555,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Halfling | Bard | He/him | Haskett's Mill |
+| Halfling | Loresinger | He/him | Haskett's Mill |
 
 **Looks.** A round halfling dusted with flour, with a booming laugh and a waistcoat with too many buttons.
 
@@ -576,7 +576,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Dwarf | Cleric | He/him | Greyfold |
+| Dwarf | Votary | He/him | Greyfold |
 
 **Looks.** A white-bearded dwarf in a faded sun-yellow stole, with spectacles and a ledger of births and deaths.
 
@@ -663,7 +663,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Kobold | Artificer | He/him | Kettleby |
+| Kobold | Wright | He/him | Kettleby |
 
 **Looks.** A small rust-red kobold in a leather cap, smelling always of hops and machine oil.
 
@@ -706,7 +706,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Satyr | Bard | She/her | Thornmere |
+| Satyr | Loresinger | She/her | Thornmere |
 
 **Looks.** A satyr with curling horns wound with flowers and a set of reed pipes always at her lips.
 

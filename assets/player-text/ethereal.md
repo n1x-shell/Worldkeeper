@@ -81,6 +81,9 @@ The Ethereal Realm as the people who live there and the people who've been there
 - @[Brindle Quickfoot], a harengon who trades in things from the Fields of Lost Realities.
 - @[Sister Nobody], the Asylum's healer, who wears whichever face you need.
 - @[Inkling], a young kenku who copies down every life told in the Remembering Rooms.
+- @[Ooma], a plasmoid listener in the Remembering Rooms, who wears the face of whoever is talking.
+- @[Gauge], the autognome who makes the Asylum's charts of the realm.
+- @[Tch'kala], a thri-kreen hunter who keeps the night watch with the keeper.
 
 **Getting around**
 
@@ -106,6 +109,8 @@ The Ethereal Realm as the people who live there and the people who've been there
 Past the Verge, the deep realm begins with the Fields: the wreckage of every world the Cycle threw away. A golden cathedral lies on its side inside a Legion fortress. Rivers run uphill into forests that were cut down in another history. Travellers here sometimes find monuments to themselves, to deeds they never did.
 
 The @[Architects of Eternity] built a city here, the @[The Crucible of Creation], out of the remains of lost worlds.
+
+The Fields have their own peoples now: the @[Astral Elves] of @[Lady Sennith Velarys]'s Starlit Court, the @[Hadozee] crews of the driftships, such as @[Captain Chiri Akko]'s *Rope-and-Wish*, the @[Giff] of @[Major Halloway Stroud]'s Twelfth Regiment of Nowhere, and the @[Plasmoids] and @[Thri-kreen] of the silver void and the desert wrecks.
 
 **What people say**
 
