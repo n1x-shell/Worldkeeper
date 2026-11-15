@@ -18,6 +18,19 @@ Ideas for what comes next, after the lore checklist (`LORE_CHECKLIST.md`) was fi
 - [x] **Treasure.** Loot tables and the world's own items, fleshed out. *Done: the Treasure rules, a catalogue of the 34 setting items and 20 artifacts (rules, where they rest, leads, who wants them), the Treasure tool, magic item tables by region and rarity, and the party's treasure log, which players see in the handbook.*
 - [ ] **A handbook that works offline.** Players install it on their phones and use it at the table without a signal.
 
+## Play tools
+
+- [x] **Session prep from the world.** *Done: a "From the world" briefing on each session that can fill empty prep fields.*
+- [x] **Live-session tools.** *Done: the region's tables, treasure, standing and handouts on the live page, all logged.*
+- [x] **Player turn order and handouts.** *Done: on players' phones in the app's player view; handouts with text and pictures.*
+- [x] **Bastions and downtime.** *Done: tracked by the 2024 DMG, with the host faction's standing.*
+- [x] **State of the World.** *Done: each region as the campaign has left it; "Around the World" for players.*
+- [x] **Starting guides.** *Done: Hollow Refuge, Ashvale and the Nameless Asylum.*
+- [x] **Calendar.** *Done: the campaign date, time passing, festivals, the two moons and your own events, for GM and players.*
+- [x] **Consistency check.** *Done: a Library report.*
+- [x] **What the Party Knows.** *Done: printable and Markdown.*
+- [ ] **The Return as a visible threat.** A panel for the Return clock: what each stage changes, which encounters and rumours switch on. (Parked for now.)
+
 ## Lore
 
 - [x] **The elder gods.** The biggest open creative decision: how many there are, what they want, and how they tie to the Elders and the Nameless Sepulcher. Best done interactively, like the Orb. *Done: seven makers (four asleep, three returning with their Guests), the Return clock, the Unburied Sovereign, the Black Sun's secret, Laws of Existence instead of statistics, heralds, and a players' legend, The Ones Before.*
