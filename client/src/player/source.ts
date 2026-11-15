@@ -26,7 +26,9 @@ export interface PMap {
   height: number;
   parent_map_id: number | null;
   markers: { id: number; label: string; x: number; y: number; entity_id: string | null; child_map_id: number | null }[];
-  shapes: { id: number; kind: string; label: string; color: string; points: [number, number][] }[];
+  shapes: { id: number; kind: string; label: string; color: string; points: [number, number][]; entity_id?: string | null }[];
+  /** Fog of war and the party's trail, sent only while the active campaign has a live session. */
+  exploration?: { discovered: string[]; trail: { x: number; y: number; label: string }[] } | null;
 }
 export interface PCampaign {
   id: number;

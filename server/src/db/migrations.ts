@@ -479,6 +479,33 @@ CREATE TABLE clue_found (
 );
 `,
   },
+  {
+    version: 7,
+    name: 'map exploration: places the party has discovered, and where it has travelled',
+    sql: `
+CREATE TABLE map_discoveries (
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  map_id INTEGER NOT NULL REFERENCES maps(id) ON DELETE CASCADE,
+  entity_id TEXT NOT NULL,
+  session_id INTEGER,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  PRIMARY KEY (campaign_id, map_id, entity_id)
+);
+
+CREATE TABLE map_travel (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  map_id INTEGER NOT NULL REFERENCES maps(id) ON DELETE CASCADE,
+  entity_id TEXT,
+  x REAL NOT NULL,
+  y REAL NOT NULL,
+  label TEXT NOT NULL DEFAULT '',
+  session_id INTEGER,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE INDEX map_travel_campaign ON map_travel(campaign_id, map_id, id);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

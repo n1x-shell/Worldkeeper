@@ -4,11 +4,11 @@ Ideas for what comes next, after the lore checklist (`LORE_CHECKLIST.md`) was fi
 
 ## Maps (building on the explorer)
 
-- [ ] **Fog of war per campaign.** Each campaign keeps its own map, where places stay dim or hidden until the party discovers them, and the GM reveals them during a live session. The most Kingdom Come idea of all, and it fits the rule that the Ethereal chart can't be trusted.
-- [ ] **Party marker and travel log.** Show where the party is now, with a dotted trail of where they've been, drawn from the session logs.
-- [ ] **Region outlines on hover.** Light up a region's borders when its name is hovered, and click to open its codex page.
-- [ ] **Player notes on the map.** Players drop their own pins and notes, saved only on their own device.
-- [ ] **The same explorer in the GM Atlas,** with drag-to-place pins, so pinning the dominion fortresses or Kaelmar's vaults later takes seconds.
+- [x] **Fog of war per campaign.** Each campaign keeps its own map, where places stay dim or hidden until the party discovers them, and the GM reveals them during a live session. The most Kingdom Come idea of all, and it fits the rule that the Ethereal chart can't be trusted. *Done: only while the active campaign has a live session. Players see only the places the party has found (plus the starting place); the GM explorer shows the rest dimmed and can mark places discovered or not.*
+- [x] **Party marker and travel log.** Show where the party is now, with a dotted trail of where they've been, drawn from the session logs. *Done: only during a live session. "The party is here" in the GM explorer moves the party flag, draws the trail and writes the journey into the session log.*
+- [x] **Region outlines on hover.** Light up a region's borders when its name is hovered, and click to open its codex page. *Done: traced for the 11 world regions and 6 Ethereal ones (Kaelmar's are approximate, since its map draws no inner borders). Players see an outline only once that region is revealed. Redraw or reshape any of them, or give any place an outline, in Atlas → Explore: open the place and choose Draw its outline.*
+- [x] **Player notes on the map.** Players drop their own pins and notes, saved only on their own device. *Done.*
+- [x] **The same explorer in the GM Atlas,** with drag-to-place pins, so pinning the dominion fortresses or Kaelmar's vaults later takes seconds. *Done: Atlas → Explore. Drag pins to move them, or pick an unplaced place and click the map.*
 
 ## At the table
 

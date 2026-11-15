@@ -106,7 +106,7 @@ export function libraryRoutes(ctx: AppContext) {
     '/additions/apply',
     h(() => {
       const backup = createBackup(ctx.db, ctx.paths, 'pre-additions');
-      return { backup: backup.file, ...applyAdditions(ctx.db) };
+      return { backup: backup.file, ...applyAdditions(ctx.db, undefined, ctx.paths.uploadsDir) };
     }),
   );
   r.post('/backups', h((req) => createBackup(ctx.db, ctx.paths, String(req.body?.reason ?? 'manual'))));

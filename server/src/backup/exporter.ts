@@ -40,6 +40,17 @@ const TABLES = [
   'maps',
   'map_markers',
   'map_shapes',
+  'profiles',
+  'eras',
+  'rumours',
+  'rumour_heard',
+  'mysteries',
+  'secrets',
+  'clues',
+  'secret_progress',
+  'clue_found',
+  'map_discoveries',
+  'map_travel',
 ];
 
 const slug = (s: string) =>

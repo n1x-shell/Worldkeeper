@@ -15,6 +15,7 @@ import { parseJson } from '../lib/json.js';
 import { splitSections } from '../import/parseMarkdown.js';
 import { parseRefs, type MentionIndex } from '../../../shared/mentions.js';
 import { loadMentionIndex } from '../repo/mentions.js';
+import { playerExploration } from '../repo/exploration.js';
 
 export interface PlayerEntity {
   id: string;
@@ -78,7 +79,11 @@ function buildLexicon(db: DB): Lexicon {
   const groups = new Map<string, { id: string; type: string }[]>();
   for (const r of rows) {
     if (NO_AUTOLINK.has(r.type)) continue;
-    let base = r.name.split(/["“]/)[0].replace(/\s*\([^)]*\)\s*$/, '').replace(/^The\s+/, '').trim();
+    let base = r.name
+      .split(/["“]/)[0]
+      .replace(/\s*\([^)]*\)\s*$/, '')
+      .replace(/^The\s+/, '')
+      .trim();
     if (r.type === 'deity') base = base.split(',')[0].trim();
     if (base.length < 5 || base === 'World') continue;
     if (!groups.has(base)) groups.set(base, []);
@@ -127,7 +132,10 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexic
   const wanted = new Set(parseJson<string[]>(r.revealed_sections, []));
   const sections = splitSections(r.body)
     .filter((s) => s.heading && wanted.has(s.heading) && !isSecretHeading(s.heading))
-    .map((s) => ({ heading: s.heading, content: scrubRefs(s.content, revealed, index) }));
+    .map((s) => ({
+      heading: s.heading,
+      content: scrubRefs(s.content, revealed, index),
+    }));
   const linked = new Set<string>();
   return {
     id: r.id,
@@ -138,7 +146,12 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexic
     realmLabel: REALM_LABELS[r.realm as Realm] ?? r.realm,
     summary: lex ? autoLink(scrubRefs(r.player_summary, revealed, index), r.id, lex, linked) : scrubRefs(r.player_summary, revealed, index),
     facts: parseJson<string[]>(r.revealed_facts, []).map((f) => scrubRefs(f, revealed, index)),
-    sections: lex ? sections.map((x) => ({ ...x, content: autoLink(x.content, r.id, lex, linked) })) : sections,
+    sections: lex
+      ? sections.map((x) => ({
+          ...x,
+          content: autoLink(x.content, r.id, lex, linked),
+        }))
+      : sections,
   };
 }
 
@@ -148,9 +161,7 @@ export function playerEntities(db: DB): PlayerEntity[] {
   const revealed = revealedIdSet(db);
   const index = loadMentionIndex(db);
   const lex = buildLexicon(db);
-  return (db.prepare(`SELECT ${COLS} FROM entities WHERE revealed = 1 AND archived = 0 ORDER BY name`).all() as Row[]).map((r) =>
-    project(r, revealed, index, lex),
-  );
+  return (db.prepare(`SELECT ${COLS} FROM entities WHERE revealed = 1 AND archived = 0 ORDER BY name`).all() as Row[]).map((r) => project(r, revealed, index, lex));
 }
 
 export function playerEntity(db: DB, id: string): PlayerEntity | null {
@@ -161,9 +172,7 @@ export function playerEntity(db: DB, id: string): PlayerEntity | null {
 export function playerSearch(db: DB, q: string): PlayerEntity[] {
   const needle = q.trim().toLowerCase();
   if (!needle) return [];
-  return playerEntities(db).filter((e) =>
-    [e.name, e.summary, ...e.facts, ...e.sections.map((s) => s.heading + ' ' + s.content)].join('\n').toLowerCase().includes(needle),
-  );
+  return playerEntities(db).filter((e) => [e.name, e.summary, ...e.facts, ...e.sections.map((s) => s.heading + ' ' + s.content)].join('\n').toLowerCase().includes(needle));
 }
 
 export function playerMaps(db: DB) {
@@ -206,36 +215,65 @@ export function playerMaps(db: DB) {
       child_map_id: mk.child_map_id && visibleMapIds.has(mk.child_map_id) ? mk.child_map_id : null,
     })),
     shapes: (
-      db.prepare('SELECT id, kind, label, points, color FROM map_shapes WHERE map_id = ? AND hidden = 0').all(m.id) as {
+      db.prepare('SELECT id, kind, label, points, color, entity_id FROM map_shapes WHERE map_id = ? AND hidden = 0').all(m.id) as {
         id: number;
         kind: string;
         label: string;
         points: string;
         color: string;
+        entity_id: string | null;
       }[]
-    ).map((s) => ({ id: s.id, kind: s.kind, label: s.label, color: s.color, points: parseJson<[number, number][]>(s.points, []) })),
+    )
+      // A shape tied to a record (a region's outline) is shown only once that record is revealed.
+      .filter((s) => !s.entity_id || revealed.has(s.entity_id))
+      .map((s) => ({
+        id: s.id,
+        kind: s.kind,
+        label: s.label,
+        color: s.color,
+        entity_id: s.entity_id && revealed.has(s.entity_id) ? s.entity_id : null,
+        points: parseJson<[number, number][]>(s.points, []),
+      })),
+    // Fog of war and the party's trail: only while the active campaign has a live session.
+    exploration: playerExploration(db, m.id, revealed),
   }));
 }
 
 export function playerCampaign(db: DB, campaignId: number) {
-  const c = db.prepare('SELECT id, title, current_date FROM campaigns WHERE id = ?').get(campaignId) as
-    | { id: number; title: string; current_date: string }
-    | undefined;
+  const c = db.prepare('SELECT id, title, current_date FROM campaigns WHERE id = ?').get(campaignId) as { id: number; title: string; current_date: string } | undefined;
   if (!c) return null;
-  const quests = db
-    .prepare(`SELECT id, title, status, description FROM quests WHERE campaign_id = ? AND player_visible = 1 ORDER BY status = 'completed', id`)
-    .all(campaignId) as { id: number; title: string; status: string; description: string }[];
-  const recaps = db
-    .prepare(`SELECT id, number, title, played_on, recap FROM sessions WHERE campaign_id = ? AND recap_player_visible = 1 ORDER BY number`)
-    .all(campaignId) as { id: number; number: number; title: string; played_on: string; recap: string }[];
+  const quests = db.prepare(`SELECT id, title, status, description FROM quests WHERE campaign_id = ? AND player_visible = 1 ORDER BY status = 'completed', id`).all(campaignId) as {
+    id: number;
+    title: string;
+    status: string;
+    description: string;
+  }[];
+  const recaps = db.prepare(`SELECT id, number, title, played_on, recap FROM sessions WHERE campaign_id = ? AND recap_player_visible = 1 ORDER BY number`).all(campaignId) as {
+    id: number;
+    number: number;
+    title: string;
+    played_on: string;
+    recap: string;
+  }[];
   const revealed = revealedIdSet(db);
   const index = loadMentionIndex(db);
   return {
     id: c.id,
     title: c.title,
     current_date: c.current_date,
-    quests: quests.map((q) => ({ id: q.id, title: q.title, status: q.status, description: scrubRefs(q.description, revealed, index) })),
-    recaps: recaps.map((r) => ({ id: r.id, number: r.number, title: r.title, played_on: r.played_on, recap: scrubRefs(r.recap, revealed, index) })),
+    quests: quests.map((q) => ({
+      id: q.id,
+      title: q.title,
+      status: q.status,
+      description: scrubRefs(q.description, revealed, index),
+    })),
+    recaps: recaps.map((r) => ({
+      id: r.id,
+      number: r.number,
+      title: r.title,
+      played_on: r.played_on,
+      recap: scrubRefs(r.recap, revealed, index),
+    })),
   };
 }
 

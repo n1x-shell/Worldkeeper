@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import L from 'leaflet';
 import { ImageOverlay, MapContainer, Marker, Polygon, Polyline, Rectangle, Tooltip, useMapEvents, useMap } from 'react-leaflet';
-import { Eye, EyeOff, Layers, Plus, Trash2, Upload, MapPin, Spline, Hexagon, X, ArrowUpLeft } from 'lucide-react';
+import { Eye, EyeOff, Layers, Plus, Trash2, Upload, MapPin, Spline, Hexagon, X, ArrowUpLeft, Maximize2 } from 'lucide-react';
 import { api, qs, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { Empty, EntityLink, ErrorBox, Field, Loading, Modal, PageHeader, TypeBadge } from '../components/ui';
@@ -144,9 +144,16 @@ export function AtlasPage() {
         title="World Atlas"
         subtitle="Upload your maps and place locations on them." note="The source gives positions in words, so no coordinates are invented."
         actions={
-          <button className="btn-primary" onClick={() => setCreating(true)}>
-            <Plus size={14} /> New map
-          </button>
+          <>
+            {current && (
+              <Link className="btn" to={`/atlas/explore/${current}`} title="Full-screen map with fog of war and the party">
+                <Maximize2 size={14} /> Explore
+              </Link>
+            )}
+            <button className="btn-primary" onClick={() => setCreating(true)}>
+              <Plus size={14} /> New map
+            </button>
+          </>
         }
       />
       {(err || error) && <ErrorBox error={(err ?? error?.message)!} />}
