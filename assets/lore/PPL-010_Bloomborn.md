@@ -6,7 +6,7 @@ Parent: Kaelmar [CON-301] / Peoples
 Continent or realm: Kaelmar
 Canon status: CANON
 Source: Worldkeeper additions (GM decision, 2026)
-Tags: realm/kaelmar, cat/people, status/canon, vis/player
+Tags: realm/kaelmar, cat/people, status/canon, vis/player, origin/bloom
 
 # Bloomborn
 
