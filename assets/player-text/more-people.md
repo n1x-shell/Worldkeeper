@@ -10,7 +10,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Halfling | Artificer | He/him | Kaelholm |
+| Halfling | Wright | He/him | Kaelholm |
 
 **Looks.** A tiny, ink-stained halfling with a white beard tucked into his apron and blue fingertips that never wash clean.
 
@@ -32,7 +32,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Tiefling | Bard | She/her | Kaelholm |
+| Tiefling | Loresinger | She/her | Kaelholm |
 
 **Looks.** A tall, red-skinned tiefling with one broken horn, a waistcoat of patched velvet and a voice like smoke.
 
@@ -76,7 +76,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Gnome | Wizard | She/her | Kaelholm |
+| Gnome | Mage | She/her | Kaelholm |
 
 **Looks.** A sharp-featured gnome in tribunal grey with a heavy veil of powder on her face and a voice like a closing ledger.
 
@@ -120,7 +120,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Dwarf | Fighter | He/him | Kaelholm |
+| Dwarf | Warrior | He/him | Kaelholm |
 
 **Looks.** A broad grey dwarf with a glyph-lance he won't sell, a missing ear and a flask he never puts down.
 
@@ -142,7 +142,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Goliath | Bard | She/her | The Eastern Mountains |
+| Goliath | Loresinger | She/her | The Eastern Mountains |
 
 **Looks.** A tall goliath with grey stone-patterned skin, a drum on her back and every finger ringed in carved bone.
 
@@ -164,7 +164,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Dwarf | Fighter | He/him | The Eastern Mountains |
+| Dwarf | Warrior | He/him | The Eastern Mountains |
 
 **Looks.** A short, round dwarf with a red beard, a cook's apron over mail, and a crossbow behind the bar.
 
@@ -186,7 +186,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Goliath | Fighter | He/him | The Eastern Mountains |
+| Goliath | Warrior | He/him | The Eastern Mountains |
 
 **Looks.** A huge goliath with Ascendancy brands burned off his arms and a necklace of teeth.
 
@@ -208,7 +208,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Goliath | Cleric | She/her | The Eastern Mountains |
+| Goliath | Votary | She/her | The Eastern Mountains |
 
 **Looks.** A lean old goliath with frost-white markings, wrapped in grey wool, carrying a chisel and a single stone.
 
@@ -296,7 +296,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Gnome | Wizard | He/him | Seven erased worlds |
+| Gnome | Mage | He/him | Seven erased worlds |
 
 **Looks.** A tiny, ancient gnome in seven layers of robes from seven worlds, with a lamp on a pole and ink on his nose.
 
@@ -318,7 +318,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Dwarf | Artificer | He/him | An erased world |
+| Dwarf | Wright | He/him | An erased world |
 
 **Looks.** A heavy dwarf with stone dust in every wrinkle and a mason's hammer older than his world.
 
@@ -362,7 +362,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Elf | Druid | She/her | Older than the Cycle |
+| Elf | Shaman | She/her | Older than the Cycle |
 
 **Looks.** A tiny, ancient elf wrapped in a shawl of grey grass, with eyes like a deep well.
 
@@ -406,9 +406,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Half-Orc | Barbarian | She/her | The Colosseum of Echoes |
+| Giff | Reaver | She/her | The Colosseum of Echoes |
 
-**Looks.** A scarred half-orc with an axe of black stone and a second shadow that doesn't quite match her.
+**Looks.** A scarred giff with a black-stone axe-gun and a second shadow that doesn't quite match her.
 
 **Manner.** Loud, generous and frighteningly calm in a fight.
 
@@ -428,7 +428,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Human | Bard | He/him | The Ossuary of Kings |
+| Human | Loresinger | He/him | The Ossuary of Kings |
 
 **Looks.** A slim man in a coat of gold thread from a dead king's court, with a voice that fills the arena without trying.
 
@@ -450,9 +450,9 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Human | Warlock | They/them | The Black Horizon |
+| Astral Elf | Pactbound | They/them | The Black Horizon |
 
-**Looks.** A pale, thin person with star-charts tattooed on both arms and eyes that don't blink often enough.
+**Looks.** A pale, thin astral elf with star-charts tattooed on both arms and stars moving in eyes that don't blink often enough.
 
 **Manner.** Quiet, precise and growing afraid.
 
@@ -472,7 +472,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Human | Sorcerer | She/her | The Observatory of the Last Question |
+| Human | Wildsoul | She/her | The Observatory of the Last Question |
 
 **Looks.** A small, serious girl with black hair, a too-big Echoborn coat, and a star-shaped birthmark on her palm.
 
@@ -487,3 +487,135 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 - Little Quell hums a tune nobody taught her.
 - The Echoborn say she's the first person born at the Observatory. They say it like a question.
+
+## Lady Sennith Velarys
+
+*An astral elf who holds a court of starlight on a wreck-island, and pays for news of the gods.*
+
+| People | Calling | Pronouns | From |
+| --- | --- | --- | --- |
+| Astral Elf | Votary | She/her | The Starlit Court, the Fields of Lost Realities |
+
+**Looks.** A tall astral elf in silver court dress a thousand years out of fashion, with whole constellations turning in her eyes.
+
+**Manner.** Gracious, patient, and faintly sad about everything.
+
+**Who they are**
+
+- Holds the Starlit Court in a palace from a world whose sky was all stars, on a wreck-island in the Fields of Lost Realities.
+- Pays travellers well for news of Aetheris, and better for news of the gods her people left the world to find.
+
+**What people say**
+
+- Lady Sennith keeps a calendar of a year that ended long ago, and celebrates its festivals.
+- Bring her news of the gods and she'll make you rich. Bring her bad news and she'll thank you anyway.
+
+## Gauge
+
+*The autognome whose maps of the realm everyone in the Asylum carries.*
+
+| People | Calling | Pronouns | From |
+| --- | --- | --- | --- |
+| Autognome | Wright | It/its | Kaelholm, Kaelmar |
+
+**Looks.** A small brass autognome with ink-stained fingers, a lens on one eye and a satchel stuffed with maps.
+
+**Manner.** Precise, polite, and delighted by anything it hasn't measured yet.
+
+**Who they are**
+
+- Was built by the Tulls of Kaelholm and sent through the Verge to chart the Ethereal Realm.
+- Its copies are the chart that goes round the Nameless Asylum. It updates them whenever the realm changes, which is often.
+
+**What people say**
+
+- Gauge's chart is right about where things are. It's wrong about how far apart they are, and Gauge will tell you so.
+- Keeper Lantern lets Gauge sleep in the garden. Autognomes don't sleep, but Gauge appreciates the gesture.
+
+## Major Halloway Stroud
+
+*The giff who commands the Twelfth Regiment of Nowhere, guns for hire across the Fields.*
+
+| People | Calling | Pronouns | From |
+| --- | --- | --- | --- |
+| Giff | Warrior | He/him | A world nobody can find |
+
+**Looks.** A vast grey giff in a red coat with brass buttons, a pistol on each hip and a moustache waxed to points.
+
+**Manner.** Booming, courteous, and keen on proper drill.
+
+**Who they are**
+
+- Commands the Twelfth Regiment of Nowhere, a giff company that hires out its guns to driftship captains.
+- Means to find the giff homeworld, and asks every salvager he meets about it.
+
+**What people say**
+
+- The Twelfth Regiment of Nowhere has never lost a fight. It has, the Major admits, lost a ship or two.
+- Ask the Major about the giff homeworld and you'll be there all night.
+
+## Captain Chiri Akko
+
+*A hadozee driftship captain who will take you anywhere in the Fields, for a price.*
+
+| People | Calling | Pronouns | From |
+| --- | --- | --- | --- |
+| Hadozee | Rogue | She/her | Yazir |
+
+**Looks.** A wiry hadozee with grey-brown fur, a captain's hat that's too big for her and three knives on a bandolier.
+
+**Manner.** Cheerful, quick and impossible to pin down on a price.
+
+**Who they are**
+
+- Captains the driftship *Rope-and-Wish*, crewed by her whole extended family.
+- Ferries passengers and cargo from the edge of the Verge out into the Fields of Lost Realities.
+
+**What people say**
+
+- The *Rope-and-Wish* is the fastest ship in the Fields, if you don't mind holding on.
+- Captain Chiri's crew are all her cousins. All forty of them.
+
+## Ooma
+
+*A plasmoid listener in the Remembering Rooms, who becomes whoever's story they're hearing.*
+
+| People | Calling | Pronouns | From |
+| --- | --- | --- | --- |
+| Plasmoid | Loresinger | They/them | The silver void |
+
+**Looks.** A soft, faintly glowing shape, the colour of weak tea, that settles into the face of whoever is talking.
+
+**Manner.** Gentle, curious, and very good at silence.
+
+**Who they are**
+
+- Listens in the Nameless Asylum's Remembering Rooms, where people say their other lives aloud.
+- Takes the shape of whoever's story is being told, which helps more people than you'd think.
+
+**What people say**
+
+- Talk to Ooma and you'll see your own face listening. People find that helps.
+- Ooma and Inkling work together. Inkling writes the stories down. Ooma remembers how they were told.
+
+## Tch'kala
+
+*A thri-kreen hunter who never sleeps, and keeps the Asylum's night watch.*
+
+| People | Calling | Pronouns | From |
+| --- | --- | --- | --- |
+| Thri-kreen | Ranger | She/her | A desert in the Fields |
+
+**Looks.** A tall thri-kreen whose shell turns grey to match the Verge's grass, with a bone spear and a necklace of desert stones.
+
+**Manner.** Still, watchful, and dry in a way people take a while to notice.
+
+**Who they are**
+
+- Hunts and guides in the Hollow Verge, and knows its paths nearly as well as Tessk.
+- Never sleeps, so she keeps the Nameless Asylum's night watch with Keeper Lantern.
+
+**What people say**
+
+- Tch'kala and Keeper Lantern keep the night watch together. Neither has ever been heard to talk.
+- She clicks when she's amused. Most people don't realise how often that is.

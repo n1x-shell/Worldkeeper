@@ -8979,6 +8979,66 @@
    "target": "FAC-505",
    "type": "member_of",
    "label": "Member"
+  },
+  {
+   "source": "NPC-399",
+   "target": "ETH-502",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-399",
+   "target": "FAC-502",
+   "type": "allied_with",
+   "label": "Sells starlight to"
+  },
+  {
+   "source": "NPC-400",
+   "target": "LOC-506",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-400",
+   "target": "FAM-007",
+   "type": "member_of",
+   "label": "Made by"
+  },
+  {
+   "source": "NPC-401",
+   "target": "ETH-502",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-402",
+   "target": "ETH-502",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-403",
+   "target": "LOC-506",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-403",
+   "target": "FAC-503",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-404",
+   "target": "ETH-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-404",
+   "target": "LOC-506",
+   "type": "related_to",
+   "label": "Night watch"
   }
  ]
 }
