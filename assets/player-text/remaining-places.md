@@ -303,6 +303,10 @@ The border is about a week from Hollow Refuge, and the Rootspire is about anothe
 - The Celestial Order guards it. Whether it keeps people in or out depends who you ask.
 - It isn't the edge of the world. It's a door.
 
+**Who you'll find here**
+
+- @[Gate-Warden Corisande Marlowe], guards the Luminara Gate for the Order.
+
 ## The Rift of Echoes
 
 > You hear your own voice before you speak. Then you hear it again, older. The ground ahead drops away into a haze where shapes move: a battle, a wedding, a fire, a city that isn't built yet. Somebody down there turns and looks right at you, and they have your face.
@@ -476,6 +480,10 @@ Three gods are dead: Maruun the Sundered Tide, Aurex the Throne-Breaker and the 
 - Kaelholm would pay well for anyone who can read what the plants have recorded.
 - Some of the old labels describe plants that haven't grown yet.
 
+**Who you'll find here**
+
+- @[Idony Fallowfield], a Scholar Corps botanist who lives in the garden, reading the plants.
+
 ## The Eastern Mountains
 
 > The Deepwood thins out into scree, and the mountains rise ahead, grey and white. Goliath herders watch you climb from the ridges and don't wave. Further up, you pass a camp where soldiers drill in columns, and half of them carry iron grafted onto their bodies.
@@ -539,6 +547,10 @@ Three gods are dead: Maruun the Sundered Tide, Aurex the Throne-Breaker and the 
 - The roots will take you anywhere, but they always take something too.
 - Kaelholm has mapped some of the under-roads. It hasn't shared the maps.
 
+**Who you'll find here**
+
+- @[Joss Underhill], rides the empty rune-sleds of the under-roads for a living.
+
 ## The Bloom Cathedral
 
 > The tunnel opens into a hall. Roots rise like columns to a ceiling you can't see, twisting in slow spirals. The light is green and soft and seems to come from everywhere. There's no door on the far side, only a wall of roots, and the longer you stand here the more certain you are that the hall is waiting for you to say something.
@@ -552,6 +564,10 @@ Three gods are dead: Maruun the Sundered Tide, Aurex the Throne-Breaker and the 
 
 - What you have to pay to pass depends on what you're carrying.
 - The Bloom-Speakers can talk to it. Some people say it talks back.
+
+**Who you'll find here**
+
+- @[Speaker Aun], a Bloom-Speaker who lives among the root columns, and asks the Cathedral for travellers' passage.
 
 ## The Northern Highlands and Ice
 

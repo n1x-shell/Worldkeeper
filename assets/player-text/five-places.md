@@ -92,6 +92,10 @@ Past those three, the roads get worse. The routes out to the Rift are openly hos
 - The digging isn't about salvage. Somebody thinks there's something big under there.
 - Whoever walks off the Fields with a shard won't be left alone afterwards.
 
+**Who you'll find here**
+
+- @[Gussie Bramblecott], runs a dig crew on the Fields for whoever pays.
+
 ## The Rift
 
 The Rift opens in two places, one on each continent. Use the read-aloud text for whichever one the party reaches.
