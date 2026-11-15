@@ -46,6 +46,7 @@ import {
 import { TRUTHS, createRumour, deleteRumour, listRumours, readPlayerText, setHeard, syncRumours, updateRumour, type Truth } from '../repo/rumours.js';
 import { rollDice } from '../../../shared/play.js';
 import { adjustRenown, setStandingOptions, standingFor, undoRenown } from '../repo/standing.js';
+import { addRollToParty, catalogueFor, partyTreasure, rollTreasure, treasureData } from '../repo/treasure.js';
 import { badRequest } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
 
@@ -315,12 +316,34 @@ export function campaignRoutes(ctx: AppContext) {
       }));
     }),
   );
-  // Faction standing: the party's Renown with each faction in a campaign (the active one unless named).
   const standingCampaign = (v: unknown) => {
     const id = v != null && v !== '' ? Number(v) : getActiveCampaignId(ctx.db);
     if (!id || !Number.isInteger(id)) throw badRequest('Choose an active campaign first');
     return id;
   };
+  // Treasure: the world's own items (catalogue), the Treasure tool, and the party's treasure log.
+  r.get(
+    '/treasure/options',
+    h(() => {
+      const d = treasureData();
+      return { tiers: d.tiers.map((t) => ({ key: t.key, label: t.label })), regions: Object.entries(d.regions).map(([key, v]) => ({ key, label: v.label, ids: v.ids })) };
+    }),
+  );
+  r.get(
+    '/treasure/catalogue/:id',
+    h((req) => catalogueFor(String(req.params.id))),
+  );
+  r.post(
+    '/treasure/roll',
+    h((req) => rollTreasure({ tier: String(req.body?.tier ?? ''), region: String(req.body?.region ?? ''), kind: req.body?.kind === 'individual' ? 'individual' : 'hoard' })),
+  );
+  r.post(
+    '/party-treasure/from-roll',
+    h((req) => addRollToParty(ctx.db, standingCampaign(req.body?.campaign_id), req.body?.roll, String(req.body?.found_at ?? ''))),
+  );
+  mountCrud(r, ctx, '/party-treasure', partyTreasure, ['campaign_id', 'status']);
+  // Faction standing: the party's Renown with each faction in a campaign (the active one unless named).
+
   r.get(
     '/standing',
     h((req) => standingFor(ctx.db, standingCampaign(req.query.campaign_id))),

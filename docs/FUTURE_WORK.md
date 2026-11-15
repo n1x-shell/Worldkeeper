@@ -15,6 +15,7 @@ Ideas for what comes next, after the lore checklist (`LORE_CHECKLIST.md`) was fi
 - [x] **Opening adventures for all three starting points.** Equal first-level hooks and a fleshed-out first session each for Hollow Refuge, Ashvale and the Nameless Asylum. Still the biggest content gap. *Done: The Dead Man at the Crooked Nail, The Hum Under the West Road and The Lamplighter, linked by the Loose Thread. Each scales from level 1 to 10 and arrives in Adventures with its scenes.*
 - [x] **Random encounter tables** by region, and by depth in the Ethereal Realm, built from the bestiary. *Done: 41 d12 tables in Random Tables, by region and tier (1–4, 5–10, 11–20), and by depth in the Ethereal Realm.*
 - [x] **Faction standing tracks.** Renown with each faction in the campaign tools, with what each rank unlocks, as the archive's rules describe. *Done: Campaign → Faction Standing, with rank rewards for fifteen factions; players see theirs in the handbook.*
+- [x] **Treasure.** Loot tables and the world's own items, fleshed out. *Done: the Treasure rules, a catalogue of the 34 setting items and 20 artifacts (rules, where they rest, leads, who wants them), the Treasure tool, magic item tables by region and rarity, and the party's treasure log, which players see in the handbook.*
 - [ ] **A handbook that works offline.** Players install it on their phones and use it at the table without a signal.
 
 ## Lore

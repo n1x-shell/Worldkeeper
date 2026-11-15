@@ -36,6 +36,21 @@ export interface PCampaign {
   current_date: string;
   quests: { id: number; title: string; status: string; description: string }[];
   recaps: { id: number; number: number; title: string; played_on: string; recap: string }[];
+  /** What the party carries or has stored. */
+  treasure?: {
+    id: number;
+    name: string;
+    kind: string;
+    quantity: number;
+    value_gp: number;
+    rarity: string;
+    entity_id: string | null;
+    holder: string;
+    status: string;
+    found_at: string;
+    fades: boolean;
+    anchored: boolean;
+  }[];
   /** The party's standing with factions (only ones the GM shares), and what its ranks bring. */
   standing?: { faction_id: string; name: string; renown: number; rank: string; next: { name: string; at: number } | null; earned: { rank: string; text: string }[] }[];
 }
@@ -90,9 +105,7 @@ export function staticSource(snapshotUrl: string, uploadsBase: string): PlayerSo
     search: async (q) => {
       const n = q.trim().toLowerCase();
       if (!n) return [];
-      return (await snap()).entities.filter((e) =>
-        [e.name, e.summary, ...(e.facts ?? []), ...(e.sections ?? []).map((s) => `${s.heading} ${s.content}`)].join('\n').toLowerCase().includes(n),
-      );
+      return (await snap()).entities.filter((e) => [e.name, e.summary, ...(e.facts ?? []), ...(e.sections ?? []).map((s) => `${s.heading} ${s.content}`)].join('\n').toLowerCase().includes(n));
     },
     maps: async () => (await snap()).maps,
     campaigns: async () => (await snap()).campaigns,
