@@ -13,10 +13,10 @@ Tags: realm/ethereal, cat/rule, status/canon, vis/gm, mech/homebrew
 ## Invincible doesn't mean unstoppable
 An elder god or a Guest has no Strength, no Armor Class and no hit points. It has **Laws of Existence**: rules that reality obeys near it. The party can't kill one. They can stop one: break its hold on the world, bind it, or send it back to sleep, while reality comes apart around them. The climax isn't reducing something to 0 hit points. It's doing something impossible in time.
 
-## Three layers
-1. **Influence.** The god's Laws, working on everything in its reach. This is how the party first meets one: as a place where the rules have changed.
-2. **Manifestation.** A fraction of the god given a body: an avatar with a stat block, built from the baseline in its record. It can be defeated, banished or destroyed. That doesn't kill the god, but it knocks the god's reach back one step and buys a year and a day.
-3. **Heralds, vessels and servants.** Prophets, champions, possessed bodies and creatures changed by nearness: Eclipse-Touched, Memory-Drinkers, Angle-Walkers, Voices from Beyond and Dreamspawn [CRE-540 to CRE-544], and anything the GM builds. They are the escalating threats a party can fight all campaign.
+## Three levels of divine existence
+1. **The true elder god.** It exists outside reality, causality and death, and combat rules don't describe it. It can't be fought. The party meets it as its Laws of Existence, working on everything in its reach, and stops it by interrupting its awakening or changing the conditions that let it reach the world (see "How a god can be stopped").
+2. **The manifestation.** A fraction of the god given a body: an avatar with a stat block, built from the baseline in its record. It can be defeated, banished or destroyed. That doesn't kill the god, but it knocks the god's reach back one step for a year and a day. It's the epic fight for a high-level party, without turning a god into a pile of hit points.
+3. **Heralds, vessels and servants.** Mortal prophets, corrupted champions, possessed bodies, and creatures changed by nearness to a god: Eclipse-Touched, Memory-Drinkers, Angle-Walkers, Voices from Beyond and Dreamspawn [CRE-540 to CRE-544], Black Sun prophets, and anyone the GM lets a god reach into. They are the escalating threats a party can fight all campaign, and a vessel destroyed is often how a god is stopped.
 
 ## Every elder god and Guest has these two Laws
 - **Immutable Existence.** No damage, spell, effect or wish can harm, kill, banish or alter the true entity. Only the ways under "How it can be stopped" work.
