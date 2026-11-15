@@ -29,6 +29,8 @@ export interface PlayerEntity {
   typeLabel: string;
   realm: string;
   realmLabel: string;
+  /** Every continent it belongs to, for filtering: a people found on both continents counts under each. */
+  realms: string[];
   summary: string;
   facts: string[];
   sections: { heading: string; content: string }[];
@@ -142,6 +144,14 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexic
       content: scrubRefs(s.content, revealed, index),
     }));
   const linked = new Set<string>();
+  // Peoples and callings belong wherever their player-visible text says they're found (never from GM text).
+  const realms = new Set<string>([r.realm]);
+  if (r.type === 'people' || r.type === 'calling') {
+    if (r.realm === 'world') ['aetheris', 'kaelmar'].forEach((x) => realms.add(x));
+    const text = [r.player_summary, ...sections.map((s) => `${s.heading}\n${s.content}`)].join('\n');
+    if (/\bKaelmar\b/.test(text)) realms.add('kaelmar');
+    if (/\bAetheris\b/.test(text)) realms.add('aetheris');
+  }
   return {
     id: r.id,
     name: r.name,
@@ -149,6 +159,7 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexic
     typeLabel: ENTITY_TYPE_LABELS[r.type as EntityType] ?? r.type,
     realm: r.realm,
     realmLabel: REALM_LABELS[r.realm as Realm] ?? r.realm,
+    realms: [...realms],
     summary: lex ? autoLink(scrubRefs(r.player_summary, revealed, index), r.id, lex, linked) : scrubRefs(r.player_summary, revealed, index),
     facts: parseJson<string[]>(r.revealed_facts, []).map((f) => scrubRefs(f, revealed, index)),
     sections: lex

@@ -9,7 +9,7 @@ export const PLAYER_GROUPS: PlayerGroup[] = [
   { key: 'places', label: 'Places', types: ['world', 'continent', 'realm', 'region', 'nation', 'settlement', 'landmark', 'building', 'dungeon', 'vault', 'ethereal_domain', 'adventure_location'] },
   { key: 'people', label: 'People', types: ['npc'] },
   { key: 'factions', label: 'Factions', types: ['faction', 'cult', 'family'] },
-  { key: 'peoples', label: 'Peoples and Callings', types: ['people', 'culture', 'species', 'calling'] },
+  { key: 'peoples', label: 'Species and Callings', types: ['people', 'culture', 'species', 'calling'] },
   { key: 'gods', label: 'Gods and Myths', types: ['deity', 'cosmology'] },
   { key: 'history', label: 'History', types: ['event'] },
   { key: 'magic', label: 'Magic', types: ['magic_system'] },

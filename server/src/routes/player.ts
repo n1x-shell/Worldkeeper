@@ -17,7 +17,7 @@ export function playerRoutes(ctx: AppContext) {
   );
   r.get(
     '/entities',
-    h(() => playerEntities(ctx.db).map(({ id, name, type, typeLabel, realm, realmLabel, summary }) => ({ id, name, type, typeLabel, realm, realmLabel, summary }))),
+    h(() => playerEntities(ctx.db).map(({ id, name, type, typeLabel, realm, realmLabel, realms, summary }) => ({ id, name, type, typeLabel, realm, realmLabel, realms, summary }))),
   );
   r.get(
     '/entities/:id',
