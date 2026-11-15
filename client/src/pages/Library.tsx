@@ -94,10 +94,10 @@ export function ImportExportPage() {
                   setBusy(true);
                   setErr(null);
                   try {
-                    const r = await api.post<{ result: { created: number; updated: number; unchanged: number; conflictsKept: number; conflictsReplaced: number; relationships: number }; backup: { file: string } | null }>(
-                      '/api/import/commit',
-                      { token: preview.token, resolutions },
-                    );
+                    const r = await api.post<{
+                      result: { created: number; updated: number; unchanged: number; conflictsKept: number; conflictsReplaced: number; relationships: number };
+                      backup: { file: string } | null;
+                    }>('/api/import/commit', { token: preview.token, resolutions });
                     setDone(
                       `Import complete: ${r.result.created} created, ${r.result.updated} updated, ${r.result.unchanged} unchanged, ${r.result.conflictsKept} conflicts kept local, ${r.result.conflictsReplaced} replaced from source. ${r.result.relationships} relationships.${r.backup ? ` Backup first: ${r.backup.file}.` : ''}`,
                     );
@@ -141,16 +141,42 @@ export function ImportExportPage() {
   );
 }
 
-function ImportPreview({ p, resolutions, setResolutions }: { p: PreviewResp; resolutions: Record<string, 'keep-local' | 'take-source'>; setResolutions: (r: Record<string, 'keep-local' | 'take-source'>) => void }) {
+function ImportPreview({
+  p,
+  resolutions,
+  setResolutions,
+}: {
+  p: PreviewResp;
+  resolutions: Record<string, 'keep-local' | 'take-source'>;
+  setResolutions: (r: Record<string, 'keep-local' | 'take-source'>) => void;
+}) {
   const debug = useDebug();
   const s = p.summary;
   const [show, setShow] = useState<'actions' | 'skipped' | 'duplicates' | 'broken' | 'files'>('actions');
   return (
     <div className="space-y-3">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Files" value={s.fileCount} sub={Object.entries(s.filesByKind).map(([k, v]) => `${k} ${v}`).join(' · ')} />
-        <Stat label="Records" value={s.entityCount} sub={Object.entries(s.counts.byRealm).map(([k, v]) => `${k} ${v}`).join(' · ')} />
-        <Stat label="Actions" value={Object.values(s.counts.byAction).reduce((a, b) => a + b, 0)} sub={Object.entries(s.counts.byAction).map(([k, v]) => `${k} ${v}`).join(' · ')} />
+        <Stat
+          label="Files"
+          value={s.fileCount}
+          sub={Object.entries(s.filesByKind)
+            .map(([k, v]) => `${k} ${v}`)
+            .join(' · ')}
+        />
+        <Stat
+          label="Records"
+          value={s.entityCount}
+          sub={Object.entries(s.counts.byRealm)
+            .map(([k, v]) => `${k} ${v}`)
+            .join(' · ')}
+        />
+        <Stat
+          label="Actions"
+          value={Object.values(s.counts.byAction).reduce((a, b) => a + b, 0)}
+          sub={Object.entries(s.counts.byAction)
+            .map(([k, v]) => `${k} ${v}`)
+            .join(' · ')}
+        />
         <Stat label="Broken references" value={s.brokenRefs.length} sub={`${s.duplicates.length} duplicate IDs resolved · ${s.skipped.length} skipped blocks`} />
       </div>
       {s.warnings.map((w, i) => (
@@ -170,7 +196,11 @@ function ImportPreview({ p, resolutions, setResolutions }: { p: PreviewResp; res
           {s.conflicts.map((c) => (
             <div key={c.id} className="flex items-center gap-2 text-sm">
               <span className="flex-1">
-                {c.name} <span className="text-xs text-dim">{debug ? `${c.id} · ` : ''}{c.note}</span>
+                {c.name}{' '}
+                <span className="text-xs text-dim">
+                  {debug ? `${c.id} · ` : ''}
+                  {c.note}
+                </span>
               </span>
               <select className="input w-auto" value={resolutions[c.id] ?? 'keep-local'} onChange={(e) => setResolutions({ ...resolutions, [c.id]: e.target.value as 'keep-local' | 'take-source' })}>
                 <option value="keep-local">Keep my version</option>
@@ -333,7 +363,7 @@ export function ReviewPage() {
   if (error) return <ErrorBox error={error} />;
   if (!data) return <Loading />;
   const decide = async (id: number, decision: string) => {
-    const note = decision === 'approved' ? '' : prompt(decision === 'revise' ? 'What needs revising?' : 'Reason for rejecting (optional)') ?? '';
+    const note = decision === 'approved' ? '' : (prompt(decision === 'revise' ? 'What needs revising?' : 'Reason for rejecting (optional)') ?? '');
     await api.post(`/api/proposals/${id}`, { decision, note });
     toast(`Proposal ${decision}`);
     void reload();
@@ -361,7 +391,8 @@ export function ReviewPage() {
             <div key={p.id} className="panel-pad flex flex-wrap gap-3 items-start">
               <div className="flex-1 min-w-60">
                 <div className="text-xs text-dim">
-                  {p.kind === 'new_entity' ? 'New record' : p.kind === 'campaign_promotion' ? 'From a campaign' : p.kind} · {new Date(p.created_at).toLocaleString()} {p.status === 'revise' && '· needs revision'}
+                  {p.kind === 'new_entity' ? 'New record' : p.kind === 'campaign_promotion' ? 'From a campaign' : p.kind} · {new Date(p.created_at).toLocaleString()}{' '}
+                  {p.status === 'revise' && '· needs revision'}
                 </div>
                 <div className="font-medium">{p.title}</div>
                 {p.entity_id && <EntityLink id={p.entity_id}>{p.entity_name ?? p.entity_id}</EntityLink>}
@@ -486,7 +517,8 @@ function ModifiedDiff({ id }: { id: string }) {
     <div className="mt-2 space-y-2">
       {fieldsChanged && (
         <div className="text-xs">
-          Metadata changed: name “{rev.snapshot.name}” → “{data.entity.name}”, status {rev.snapshot.canon_status} → {data.entity.canon_status}, fields {JSON.stringify(rev.snapshot.fields)} → {JSON.stringify(data.entity.fields)}
+          Metadata changed: name “{rev.snapshot.name}” → “{data.entity.name}”, status {rev.snapshot.canon_status} → {data.entity.canon_status}, fields {JSON.stringify(rev.snapshot.fields)} →{' '}
+          {JSON.stringify(data.entity.fields)}
         </div>
       )}
       <DiffView before={rev.snapshot.body} after={data.entity.body} />
@@ -501,7 +533,12 @@ function SimpleList({ rows, empty }: { rows: { id: string; name: string; extra?:
     <div className="panel p-3 grid sm:grid-cols-2 lg:grid-cols-3 gap-1 text-sm">
       {rows.map((r) => (
         <div key={r.id}>
-          <EntityLink id={r.id}>{r.name}</EntityLink> {debug && <span className="text-xs text-dim">{r.id} {r.extra}</span>}
+          <EntityLink id={r.id}>{r.name}</EntityLink>{' '}
+          {debug && (
+            <span className="text-xs text-dim">
+              {r.id} {r.extra}
+            </span>
+          )}
         </div>
       ))}
     </div>
@@ -552,7 +589,9 @@ export function BrokenPage() {
 // ------------------------------------------------------------------ History
 export function HistoryPage() {
   const [all, setAll] = useState(false);
-  const { data } = useApi<{ id: number; entity_id: string; name: string | null; version: number; change_type: string; reason: string; created_at: string }[]>(`/api/history?limit=300${all ? '&all=1' : ''}`);
+  const { data } = useApi<{ id: number; entity_id: string; name: string | null; version: number; change_type: string; reason: string; created_at: string }[]>(
+    `/api/history?limit=300${all ? '&all=1' : ''}`,
+  );
   return (
     <div className="space-y-4">
       <PageHeader title="Change History" subtitle="Every change to every record: what, when and why." />
@@ -732,15 +771,18 @@ export function SettingsPage() {
       </div>
       <DebugToggle />
       <Dev>
-      <div className="panel-pad text-sm space-y-1">
-        <div className="section-title mb-1">Installation</div>
-        <div>Data folder: <code>{meta?.dataDir}</code></div>
-        <div>Database schema version: {meta?.schemaVersion}</div>
-        <div>Records: {meta?.entities}</div>
-        <div className="text-dim text-xs pt-2">
-          Keyboard: Ctrl+K or / search · Alt+D DM screen · Ctrl+\ collapse sidebar. Player view: open <code>/player</code>, or run <code>npm run start:player</code> for a separate player-only server.
+        <div className="panel-pad text-sm space-y-1">
+          <div className="section-title mb-1">Installation</div>
+          <div>
+            Data folder: <code>{meta?.dataDir}</code>
+          </div>
+          <div>Database schema version: {meta?.schemaVersion}</div>
+          <div>Records: {meta?.entities}</div>
+          <div className="text-dim text-xs pt-2">
+            Keyboard: Ctrl+K or / search · Alt+D DM screen · Ctrl+\ collapse sidebar. Player view: open <code>/player</code>, or run <code>npm run start:player</code> for a separate player-only
+            server.
+          </div>
         </div>
-      </div>
       </Dev>
     </div>
   );
@@ -775,8 +817,9 @@ function AdditionsPanel({ onDone }: { onDone: (msg: string) => void }) {
       <div className="flex-1 min-w-[16rem]">
         <div className="font-display text-gold">Worldkeeper additions</div>
         <p className="text-sm text-dim">
-          New lore written for this world: {data.records} records (people, places, peoples, families, history, creatures), their links, the years on the World Timeline, the handbook's rumours, and the mysteries with their
-          secrets and clues. Your archive records are never changed, and anything you've edited is kept. Safe to run again after an update.
+          New lore written for this world: {data.records} records (people, places, peoples, families, history, creatures), their links, the years on the World Timeline, the handbook's rumours, the
+          mysteries with their secrets and clues, the maps, ready-to-run adventures and random encounter tables. Your archive records are never changed, and anything you've edited is kept. Safe to run
+          again after an update.
         </p>
       </div>
       <button
@@ -785,8 +828,13 @@ function AdditionsPanel({ onDone }: { onDone: (msg: string) => void }) {
         onClick={async () => {
           setBusy(true);
           try {
-            const r = await api.post<{ records: number; links: { added: number }; rumours: { total: number }; mysteries: { secrets: number } }>('/api/additions/apply', {});
-            onDone(`Additions applied: ${r.records} records, ${r.links.added} new links, ${r.rumours.total} rumours and ${r.mysteries.secrets} secrets. A backup was taken first.`);
+            const r = await api.post<{ records: number; links: { added: number }; rumours: { total: number }; mysteries: { secrets: number }; adventures?: string[]; tables?: string[] }>(
+              '/api/additions/apply',
+              {},
+            );
+            onDone(
+              `Additions applied: ${r.records} records, ${r.links.added} new links, ${r.rumours.total} rumours and ${r.mysteries.secrets} secrets${r.adventures?.length ? `, ${r.adventures.length} new adventures` : ''}${r.tables?.length ? `, ${r.tables.length} new random tables` : ''}. A backup was taken first.`,
+            );
           } finally {
             setBusy(false);
           }

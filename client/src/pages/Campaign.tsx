@@ -1150,6 +1150,8 @@ const ADV_FIELDS: [string, string][] = [
   ['approaches', 'Possible approaches'],
   ['consequences', 'Branching consequences'],
   ['ifIgnored', 'If the players ignore it'],
+  ['levels', 'Levels'],
+  ['scaling', 'Scaling by level'],
 ];
 
 export function AdventurePage() {

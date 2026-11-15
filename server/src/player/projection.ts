@@ -9,6 +9,7 @@
  *  - Aliases, sources, notes, fields, canon flags, GM sections and unrevealed records are never included.
  *  - References inside revealed text to unrevealed records are reduced to plain names-free placeholders.
  */
+import { playerStanding } from '../repo/standing.js';
 import type { DB } from '../db/connection.js';
 import { SECRET_HEADING_RE, ENTITY_TYPE_LABELS, REALM_LABELS, type EntityType, type Realm } from '../../../shared/domain.js';
 import { parseJson } from '../lib/json.js';
@@ -274,6 +275,8 @@ export function playerCampaign(db: DB, campaignId: number) {
       played_on: r.played_on,
       recap: scrubRefs(r.recap, revealed, index),
     })),
+    // The party's standing with the factions it has dealt with, and what the ranks it has reached bring.
+    standing: playerStanding(db, c.id).map((f) => ({ ...f, earned: f.earned.map((e) => ({ rank: e.rank, text: scrubRefs(e.text, revealed, index) })) })),
   };
 }
 

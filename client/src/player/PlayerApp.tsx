@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { apiSource, type PlayerSource } from './source';
 import { PlayerProvider } from './context';
 import { PlayerLayout } from './PlayerLayout';
-import { PlayerBrowse, PlayerEntry, PlayerHome, PlayerQuests, PlayerRealm, PlayerRecaps, PlayerSearch } from './PlayerPages';
+import { PlayerBrowse, PlayerEntry, PlayerHome, PlayerQuests, PlayerRealm, PlayerRecaps, PlayerSearch, PlayerStanding } from './PlayerPages';
 import { MapExplorer } from './MapExplorer';
 
 /**
@@ -33,6 +33,7 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
           <Route path="maps/:id" element={<MapExplorer />} />
           <Route path="quests" element={<PlayerQuests />} />
           <Route path="recaps" element={<PlayerRecaps />} />
+          <Route path="standing" element={<PlayerStanding />} />
           <Route path="journal" element={<Navigate to={`${base}/quests`} replace />} />
           <Route path="*" element={<PlayerHome />} />
         </Route>

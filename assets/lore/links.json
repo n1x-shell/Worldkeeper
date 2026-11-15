@@ -8637,6 +8637,30 @@
    "target": "NPC-059",
    "type": "references",
    "label": "Named in its page"
+  },
+  {
+   "source": "NPC-376",
+   "target": "LOC-506",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-376",
+   "target": "SET-001",
+   "type": "comes_from",
+   "label": "Where they come from"
+  },
+  {
+   "source": "NPC-376",
+   "target": "FAC-503",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-376",
+   "target": "NPC-010",
+   "type": "allied_with",
+   "label": "Friend"
   }
  ]
 }

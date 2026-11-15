@@ -51,6 +51,8 @@ const TABLES = [
   'clue_found',
   'map_discoveries',
   'map_travel',
+  'faction_standing',
+  'renown_log',
 ];
 
 const slug = (s: string) =>

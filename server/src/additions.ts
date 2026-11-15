@@ -19,11 +19,11 @@ import { readPlayerText, syncRumours } from './repo/rumours.js';
 import { syncMysteries } from './repo/mysteries.js';
 import { deriveTimelineEras } from './repo/eras.js';
 import { applyMaps } from './mapAdditions.js';
+import { applyAdventures } from './adventureAdditions.js';
+import { applyTables } from './tableAdditions.js';
 
 /** The additions' lore folder: bundled with the desktop app (WORLDKEEPER_ADDITIONS_DIR), or assets/lore in the repo. */
-export const DEFAULT_ADDITIONS_DIR = process.env.WORLDKEEPER_ADDITIONS_DIR
-  ? path.join(process.env.WORLDKEEPER_ADDITIONS_DIR, 'lore')
-  : path.resolve(import.meta.dirname, '../../assets/lore');
+export const DEFAULT_ADDITIONS_DIR = process.env.WORLDKEEPER_ADDITIONS_DIR ? path.join(process.env.WORLDKEEPER_ADDITIONS_DIR, 'lore') : path.resolve(import.meta.dirname, '../../assets/lore');
 
 /** The new lore records, as source files the importer understands. */
 export function loreFiles(dir = DEFAULT_ADDITIONS_DIR): SourceFile[] {
@@ -33,8 +33,7 @@ export function loreFiles(dir = DEFAULT_ADDITIONS_DIR): SourceFile[] {
       if (ent.name.startsWith('.') || ent.name === 'drafts') continue;
       const full = path.join(d, ent.name);
       if (ent.isDirectory()) walk(full);
-      else if (ent.isFile() && ent.name.endsWith('.md'))
-        out.push({ path: `Worldkeeper_Additions/${path.relative(dir, full).split(path.sep).join('/')}`, content: fs.readFileSync(full, 'utf8') });
+      else if (ent.isFile() && ent.name.endsWith('.md')) out.push({ path: `Worldkeeper_Additions/${path.relative(dir, full).split(path.sep).join('/')}`, content: fs.readFileSync(full, 'utf8') });
     }
   };
   walk(dir);
@@ -56,9 +55,7 @@ export function applyLinks(db: DB, dir = DEFAULT_ADDITIONS_DIR): { added: number
   const { links } = JSON.parse(fs.readFileSync(file, 'utf8')) as { links: LinkSpec[] };
   const exists = db.prepare('SELECT 1 FROM entities WHERE id = ?');
   // A link the archive text already gives (or a "leads" that implies membership) is not repeated.
-  const already = db.prepare(
-    `SELECT 1 FROM relationships WHERE source_id = ? AND target_id = ? AND origin <> 'user' AND (type = ? OR (? = 'member_of' AND type = 'leads'))`,
-  );
+  const already = db.prepare(`SELECT 1 FROM relationships WHERE source_id = ? AND target_id = ? AND origin <> 'user' AND (type = ? OR (? = 'member_of' AND type = 'leads'))`);
   const curated = db.prepare(`SELECT 1 FROM relationships WHERE source_id = ? AND target_id = ? AND type = ? AND origin = 'user'`);
   let added = 0;
   const skipped: string[] = [];
@@ -107,7 +104,16 @@ export function applyTimeline(db: DB, dir = DEFAULT_ADDITIONS_DIR): number {
     db.prepare(`DELETE FROM timeline_rows WHERE origin = 'additions'`).run();
     for (const r of specs) {
       const userEra = kept.get(r.event);
-      ins.run(r.sort_order, r.time_label, r.event, r.realm_label ?? '', r.access ?? 'CANON', JSON.stringify(r.entity_ids ?? []), kept.has(r.event) ? userEra : (r.era ?? null), kept.has(r.event) ? 'user' : null);
+      ins.run(
+        r.sort_order,
+        r.time_label,
+        r.event,
+        r.realm_label ?? '',
+        r.access ?? 'CANON',
+        JSON.stringify(r.entity_ids ?? []),
+        kept.has(r.event) ? userEra : (r.era ?? null),
+        kept.has(r.event) ? 'user' : null,
+      );
     }
   })();
   deriveTimelineEras(db);
@@ -124,5 +130,9 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?:
   const timeline = applyTimeline(db, dir);
   // The world's maps (pins, routes, region outlines). Maps the library already has are only topped up.
   const mapsAdded = uploadsDir ? applyMaps(db, uploadsDir, path.resolve(dir, '../maps'), { onlyRevealed: false }) : [];
-  return { records: files.length, imported, links, rumours, mysteries, timeline, maps: mapsAdded };
+  // Ready-to-run adventures, added to the GM's Adventures (ones the library already has are left alone).
+  const adventuresAdded = applyAdventures(db, path.resolve(dir, '../adventures'));
+  // Random encounter tables, added to the GM's Random Tables (ones the library already has are left alone).
+  const tablesAdded = applyTables(db, path.resolve(dir, '../tables'));
+  return { records: files.length, imported, links, rumours, mysteries, timeline, maps: mapsAdded, adventures: adventuresAdded, tables: tablesAdded };
 }
