@@ -8661,6 +8661,324 @@
    "target": "NPC-010",
    "type": "allied_with",
    "label": "Friend"
+  },
+  {
+   "source": "DEI-911",
+   "target": "ETH-501",
+   "type": "lives_in",
+   "label": "Sleeps beneath"
+  },
+  {
+   "source": "DEI-912",
+   "target": "ETH-502",
+   "type": "lives_in",
+   "label": "Sleeps beneath"
+  },
+  {
+   "source": "DEI-913",
+   "target": "ETH-503",
+   "type": "lives_in",
+   "label": "Sleeps beneath"
+  },
+  {
+   "source": "DEI-914",
+   "target": "ETH-504",
+   "type": "lives_in",
+   "label": "Sleeps beneath"
+  },
+  {
+   "source": "DEI-915",
+   "target": "ETH-505",
+   "type": "created",
+   "label": "Made"
+  },
+  {
+   "source": "DEI-916",
+   "target": "ETH-506",
+   "type": "created",
+   "label": "Built"
+  },
+  {
+   "source": "DEI-917",
+   "target": "ETH-507",
+   "type": "created",
+   "label": "Sang into place"
+  },
+  {
+   "source": "NPC-902",
+   "target": "LOC-509",
+   "type": "lives_in",
+   "label": "Sealed in"
+  },
+  {
+   "source": "DEI-917",
+   "target": "NPC-902",
+   "type": "related_to",
+   "label": "Taught"
+  },
+  {
+   "source": "NPC-902",
+   "target": "COS-901",
+   "type": "comes_from",
+   "label": "Last ruler of"
+  },
+  {
+   "source": "FAC-007",
+   "target": "COS-030",
+   "type": "related_to",
+   "label": "Stewards of"
+  },
+  {
+   "source": "CLT-002",
+   "target": "COS-032",
+   "type": "seeks",
+   "label": "Awaits"
+  },
+  {
+   "source": "NPC-001",
+   "target": "COS-033",
+   "type": "related_to",
+   "label": "Knows the truth of"
+  },
+  {
+   "source": "DEI-915",
+   "target": "COS-031",
+   "type": "related_to",
+   "label": "Brings a Guest"
+  },
+  {
+   "source": "DEI-916",
+   "target": "COS-031",
+   "type": "related_to",
+   "label": "Brings a Guest"
+  },
+  {
+   "source": "DEI-917",
+   "target": "COS-031",
+   "type": "related_to",
+   "label": "Brings a Guest"
+  },
+  {
+   "source": "NPC-377",
+   "target": "SET-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-378",
+   "target": "SET-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-379",
+   "target": "SET-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-380",
+   "target": "SET-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-380",
+   "target": "FAC-301",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-380",
+   "target": "CLT-002",
+   "type": "member_of",
+   "label": "Secretly a member"
+  },
+  {
+   "source": "NPC-381",
+   "target": "SET-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-382",
+   "target": "SET-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-382",
+   "target": "FAC-301",
+   "type": "member_of",
+   "label": "Former member"
+  },
+  {
+   "source": "NPC-383",
+   "target": "REG-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-384",
+   "target": "REG-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-385",
+   "target": "REG-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-385",
+   "target": "FAC-305",
+   "type": "opposes",
+   "label": "Deserted"
+  },
+  {
+   "source": "NPC-386",
+   "target": "REG-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-387",
+   "target": "REG-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-388",
+   "target": "REG-302",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-388",
+   "target": "FAC-305",
+   "type": "member_of",
+   "label": "Secretly paid by"
+  },
+  {
+   "source": "NPC-389",
+   "target": "LOC-503",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-389",
+   "target": "FAC-501",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-390",
+   "target": "LOC-503",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-390",
+   "target": "FAC-501",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-391",
+   "target": "LOC-502",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-391",
+   "target": "FAC-502",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-392",
+   "target": "ETH-501",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-392",
+   "target": "FAC-502",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-393",
+   "target": "LOC-506",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-393",
+   "target": "FAC-503",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-394",
+   "target": "LOC-506",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-394",
+   "target": "FAC-503",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-395",
+   "target": "LOC-504",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-395",
+   "target": "FAC-504",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-396",
+   "target": "LOC-504",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-396",
+   "target": "FAC-504",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-397",
+   "target": "LOC-508",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-397",
+   "target": "FAC-505",
+   "type": "member_of",
+   "label": "Member"
+  },
+  {
+   "source": "NPC-398",
+   "target": "LOC-508",
+   "type": "lives_in",
+   "label": "Home"
+  },
+  {
+   "source": "NPC-398",
+   "target": "FAC-505",
+   "type": "member_of",
+   "label": "Member"
   }
  ]
 }

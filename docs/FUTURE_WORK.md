@@ -20,9 +20,9 @@ Ideas for what comes next, after the lore checklist (`LORE_CHECKLIST.md`) was fi
 
 ## Lore
 
-- [ ] **The elder gods.** The biggest open creative decision: how many there are, what they want, and how they tie to the Elders and the Nameless Sepulcher. Best done interactively, like the Orb.
-- [ ] **Mysteries for the newer secrets.** The families', towns', Asylum's and relics' secrets, as clues in the Mysteries tool.
-- [ ] **More people** for Kaelholm, the eastern mountains and the Ethereal factions.
+- [x] **The elder gods.** The biggest open creative decision: how many there are, what they want, and how they tie to the Elders and the Nameless Sepulcher. Best done interactively, like the Orb. *Done: seven makers (four asleep, three returning with their Guests), the Return clock, the Unburied Sovereign, the Black Sun's secret, Laws of Existence instead of statistics, heralds, and a players' legend, The Ones Before.*
+- [x] **Mysteries for the newer secrets.** The families', towns', Asylum's and relics' secrets, as clues in the Mysteries tool. *Done: eight new mysteries and six new secrets for Echoes of Erased Worlds, 45 secrets in all, with clues checked against real rumours and records.*
+- [x] **More people** for Kaelholm, the eastern mountains and the Ethereal factions. *Done: 22 people, with public pages and GM secrets.*
 
 ## Housekeeping
 

@@ -1,0 +1,29 @@
+ID: NPC-395
+Name: Brakka Twice-Born
+Alternate names: None recorded
+Category: NPC
+Parent: People and Organizations (Ethereal Realm)
+Continent or realm: Ethereal Realm
+Canon status: CANON
+Source: Worldkeeper additions (more people, GM decision, 2026)
+Tags: realm/ethereal, cat/npc, status/canon, vis/gm
+Pronouns: she/her
+Species: Half-Orc
+
+# Brakka Twice-Born
+
+## Public role and identity
+- A champion of the Titans of the Rift [FAC-504] at the Colosseum of Echoes [LOC-504].
+- Undefeated in forty bouts.
+
+## Goal
+Titan-King Varuun's crown, by right of combat.
+
+## Known relationships and locations
+The Titans of the Rift [FAC-504]; Titan-King Varuun [NPC-069]
+
+## Appearance and voice
+A scarred half-orc with an axe of black stone and a second shadow that doesn't quite match her. Loud, generous and frighteningly calm in a fight.
+
+## Pressure and secrets
+The echo won. Brakka is the copy, and doesn't know it. The real Brakka's memories are fading out of her, a little more each bout.

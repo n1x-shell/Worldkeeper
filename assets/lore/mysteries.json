@@ -743,6 +743,118 @@
        "note": ""
       }
      ]
+    },
+    {
+     "key": "ew-seline",
+     "title": "Seline Ashby's sorcery",
+     "truth": "Magistrate Seline Ashby's sorcery came from a clockwork order older than the Celestial Order, from an erased world. The Order thinks it's divine. It isn't, and she has no faith at all, only law.",
+     "source": "NPC-366",
+     "about": [
+      "NPC-366",
+      "SET-019"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The magistrate is a yuan-ti. The Order made her magistrate anyway.",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "ew-stakewall",
+     "title": "Stakewall's older wall",
+     "truth": "Stakewall's wall stands on the line of an older wall from a forgotten world. Bram Hollis's runes are a family oath, sworn in that world, to guard this land.",
+     "source": "SET-018",
+     "about": [
+      "SET-018",
+      "NPC-365"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Bram has turned down a Legion commission three times.",
+       "note": "He has an older oath."
+      }
+     ]
+    },
+    {
+     "key": "ew-driftholm",
+     "title": "Driftholm's stone",
+     "truth": "Driftholm is a shard-scarred fragment of an older world, and its stone resists rewriting. A Consortium researcher is cutting the chains to send it to the Rift of Unmaking.",
+     "source": "SET-021",
+     "about": [
+      "SET-021",
+      "NPC-368"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Somebody keeps cutting the chains, one link at a time.",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "The island drifted once, before the Cycle broke, and came back with a different name.",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "ew-tallowmarch",
+     "title": "The seventh niche",
+     "truth": "Tallowmarch's seventh niche is for the Nameless Smith. The founders remembered it; their grandchildren don't.",
+     "source": "SET-016",
+     "about": [
+      "SET-016",
+      "DEI-909"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Somebody lights a candle in the seventh niche every Evernight.",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "ew-aelis",
+     "title": "Aelis Thornweave",
+     "truth": "Elder Aelis Thornweave has no memory before the Cycle broke: they woke in the Green Expanse with a bark-patterned skin and a name nobody gave them.",
+     "source": "NPC-370",
+     "about": [
+      "NPC-370",
+      "SET-023"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-370",
+       "note": "Aelis never talks about childhood."
+      }
+     ]
+    },
+    {
+     "key": "ew-lastlight",
+     "title": "Lastlight's dusk",
+     "truth": "The Eternal Veil's dusk is the Pact's world-rule spilling past its border, and the lamps really hold it back. Ezri's patron is a fey of the old Wildborn world.",
+     "source": "SET-017",
+     "about": [
+      "SET-017",
+      "NPC-364"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "If a Lastlight lamp goes out, something comes in.",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "The dusk is a little closer to the village every year.",
+       "note": ""
+      }
+     ]
     }
    ]
   },
@@ -1382,6 +1494,783 @@
        "kind": "npc",
        "entity": "NPC-068",
        "note": "Master Ilythis has a page for a world the Lesser Orb made. It is unreadable in a way that hurts."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "loose-thread",
+   "title": "The Loose Thread",
+   "question": "Who is the courier who keeps coming back, and why is he in three places at once?",
+   "summary": "Lemmy Carrow, a Crossroads courier, was crossing the shifting road when the shards were cut from the Loom. His thread snapped into three: his body at the Crooked Nail, his voice in the Ashvale waygate, and himself, without his past, as the Asylum's Lamplighter.",
+   "secrets": [
+    {
+     "key": "lt-courier",
+     "title": "The dead man was a Crossroads courier",
+     "truth": "The dead man at the Crooked Nail is Lemmy Carrow, a courier who walked the shifting Crossroads road before the Cycle broke.",
+     "source": "NPC-376",
+     "about": [
+      "NPC-376",
+      "SET-001"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-004",
+       "note": "Old Vara knows the boots: courier's rig, from before."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-014",
+       "note": "Illa Reed bought maps from a courier 'from the other side of the road'."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-013",
+       "note": "Brann Kest dreams the name Lemmy."
+      }
+     ]
+    },
+    {
+     "key": "lt-mara",
+     "title": "Mara kept his room",
+     "truth": "Mara Venn kept a room for Lemmy every ninth night, for years, and keeps his cap in her locked room. She doesn't remember him.",
+     "source": "NPC-010",
+     "about": [
+      "NPC-010",
+      "NPC-376"
+     ],
+     "clues": [
+      {
+       "kind": "place",
+       "entity": "SET-001",
+       "note": "Mara's locked room of forgotten belongings."
+      },
+      {
+       "kind": "text",
+       "note": "A ledger page: a room booked every ninth night under the letter L."
+      }
+     ]
+    },
+    {
+     "key": "lt-three-ends",
+     "title": "One thread, three ends",
+     "truth": "The dead man, the hum in the Ashvale waygate and the Asylum's Lamplighter are the same person, split when the shards were cut from the Loom. The ends tug toward each other.",
+     "source": "HOOK-931",
+     "about": [
+      "NPC-376",
+      "LOC-305",
+      "LOC-506"
+     ],
+     "clues": [
+      {
+       "kind": "text",
+       "note": "The waybill: three stops, consigned to 'myself'."
+      },
+      {
+       "kind": "place",
+       "entity": "LOC-305",
+       "note": "The waygate hums the keeping song, with an extra bar shaped like a name."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-375",
+       "note": "Inkling's blank page: 'He lights the lamps.'"
+      }
+     ]
+    },
+    {
+     "key": "lt-message",
+     "title": "The undelivered message",
+     "truth": "The message Lemmy was carrying was to himself: 'Tell them I'm coming home.'",
+     "source": "NPC-376",
+     "about": [
+      "NPC-376",
+      "NPC-010"
+     ],
+     "clues": [
+      {
+       "kind": "place",
+       "entity": "LOC-305",
+       "note": "The waygate's call: 'Nearly there. Keep the room. Tell them I'm—'"
+      },
+      {
+       "kind": "text",
+       "note": "Tying the thread back at the Crossroads waystone restores the whole message."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "ones-before",
+   "title": "The Ones Before",
+   "question": "Who made the world, and why?",
+   "summary": "Seven elder gods made the world as a hiding place from the Watchers, and what they hid is the people. Three taught the first civilisation and left past the Black Horizon; four sleep under the shallow depths. The three are coming back with Guests.",
+   "secrets": [
+    {
+     "key": "ob-makers",
+     "title": "Seven made the world",
+     "truth": "Seven elder gods made Aetheris, Kaelmar and the Loom. Today's gods are their children and don't know it.",
+     "source": "COS-030",
+     "about": [
+      "COS-030",
+      "COS-909"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Seven made the world",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "The gods are the Ones Before's children",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-001",
+       "note": "The Blind Seer knows more than any priest."
+      }
+     ]
+    },
+    {
+     "key": "ob-hiding-place",
+     "title": "A hiding place, not a prison",
+     "truth": "The world is a hiding place from the Watchers, and what it hides is the people: the last seed of a kind of life the Watchers ended everywhere else.",
+     "source": "COS-030",
+     "about": [
+      "COS-030",
+      "COS-904",
+      "FAC-007"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "They made the world as a prison",
+       "note": "False: the Silent Archive's books say 'kept', never 'held'."
+      },
+      {
+       "kind": "place",
+       "entity": "ETH-504",
+       "note": "The Silent Archive, where the elder gods' own words can be read."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-002",
+       "note": "Vyrithar, if he can be made to talk, calls the Loom 'the lock'."
+      }
+     ]
+    },
+    {
+     "key": "ob-schism",
+     "title": "Three teachers, cast out",
+     "truth": "Three elder gods taught the first civilisation to cheat death, build doors out of the world and call beyond it. That drew the Watchers, and the three left past the Black Horizon. The other four sleep.",
+     "source": "COS-030",
+     "about": [
+      "DEI-915",
+      "DEI-916",
+      "DEI-917",
+      "COS-901"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Three of them were cast out, for teaching people things",
+       "note": ""
+      },
+      {
+       "kind": "text",
+       "note": "The children's rhyme: 'Seven made us, three went far.'"
+      },
+      {
+       "kind": "place",
+       "entity": "ETH-503",
+       "note": "Vael-Oghur's court never gave a verdict on the teachers."
+      }
+     ]
+    },
+    {
+     "key": "ob-return",
+     "title": "The Eternal Eclipse is the Return",
+     "truth": "The Black Sun's eclipse is the three teachers coming home, and the Guests they bargained with coming with them. High Prophet Azhir knows, and is slowing his own cult.",
+     "source": "COS-033",
+     "about": [
+      "CLT-002",
+      "NPC-001",
+      "COS-032"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The Black Sun says the eclipse is the Ones Before coming home",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-084",
+       "note": "Vhalek the Silent Watcher has dreamed a teacher."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-001",
+       "note": "The Blind Seer put out his eyes so as not to see something again."
+      }
+     ]
+    },
+    {
+     "key": "ob-guests",
+     "title": "What comes with them",
+     "truth": "The Guests are vast things from past the Black Horizon: the Hunger in the Weave, the Choir Between Angles and the Shepherd of Quiet Stars. They think the world has been promised to them.",
+     "source": "COS-031",
+     "about": [
+      "COS-031"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "There's something past the Black Horizon",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Travellers who come back from the Horizon don't talk about the stars",
+       "note": ""
+      },
+      {
+       "kind": "text",
+       "note": "A Voice from Beyond speaks with the voice of someone you love."
+      }
+     ]
+    },
+    {
+     "key": "ob-sovereign",
+     "title": "The Unburied Sovereign",
+     "truth": "The Nameless Sepulcher holds the last ruler of the first civilisation, Oru-Ngathal's pupil. It wants to wake the elder gods and take their place, and the Orb is its way in.",
+     "source": "NPC-902",
+     "about": [
+      "NPC-902",
+      "LOC-509",
+      "DEI-917"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Since the Cycle broke, the cracking's got louder",
+       "note": ""
+      },
+      {
+       "kind": "text",
+       "note": "The rhyme's last line, 'one will call the falling star', points at Oru-Ngathal."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "lost-crew",
+   "title": "The Lost Repair Crew of 22 AB",
+   "question": "What happened to the Kaelholm crew that went into Arborhold, and why does a Tull name not exist?",
+   "summary": "A Kaelholm repair crew went into Arborhold in 22 AB and never came out, with the Reading Glass of Kaelith. One of them was a Tull, whose name the family burned with the First Rasp to hide where he went. The Roll of the Lost Crew remembers.",
+   "secrets": [
+    {
+     "key": "lc-tull",
+     "title": "A Tull who isn't",
+     "truth": "Venn Tull keeps one Tull name off every roll: a cousin who went into Arborhold with the lost crew, whose name the family burned to hide where he went.",
+     "source": "FAM-007",
+     "about": [
+      "FAM-007",
+      "NPC-308",
+      "VLT-303"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "A Tull never forgets a name. That's what worries people.",
+       "note": ""
+      },
+      {
+       "kind": "item",
+       "entity": "ART-310",
+       "note": "The Roll of the Lost Crew has one name scraped out."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-321",
+       "note": "Corin Tull wants to open one more Kaelith door."
+      }
+     ]
+    },
+    {
+     "key": "lc-glass",
+     "title": "Where the Reading Glass went",
+     "truth": "The Reading Glass of Kaelith went into Arborhold with the crew in 22 AB and never came out. Kaelholm's records saying otherwise are wrong.",
+     "source": "ART-303",
+     "about": [
+      "ART-303",
+      "VLT-303"
+     ],
+     "clues": [
+      {
+       "kind": "item",
+       "entity": "ART-303",
+       "note": "Kaelholm's records say the Glass came out of Arborhold."
+      },
+      {
+       "kind": "item",
+       "entity": "ART-310",
+       "note": "The Roll names who carried it."
+      }
+     ]
+    },
+    {
+     "key": "lc-rasp",
+     "title": "The Rasp under glass is a copy",
+     "truth": "The First Rasp in Kaelholm's Rasp is a copy. The real one was used to scrape the Tull cousin's name.",
+     "source": "ART-301",
+     "about": [
+      "ART-301",
+      "FAM-007"
+     ],
+     "clues": [
+      {
+       "kind": "item",
+       "entity": "ART-301",
+       "note": "The copy under glass is too clean for what it's done."
+      },
+      {
+       "kind": "text",
+       "note": "Kaelholm's saying: burned names don't come back. Except once, long ago."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "ashvale-keeping",
+   "title": "Ashvale's Keeping",
+   "question": "What is Ashvale really keeping, and who is watching it?",
+   "summary": "Ashvale's rite holds the lid on something under the Rift. Orla holds a verse nobody else knows, the founding families have their own secrets, and the Continuity is watching the stones.",
+   "secrets": [
+    {
+     "key": "ak-verse",
+     "title": "The Ritekeeper's verse",
+     "truth": "Orla Hesk holds a verse of the keeping song that only the Ritekeeper learns, mouth to ear. It's the verse missing from the Keeping Hymnal. She hasn't decided whether Jory will hear it.",
+     "source": "FAM-004",
+     "about": [
+      "NPC-304",
+      "NPC-341",
+      "ART-308"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "There's always a Hesk at the stones.",
+       "note": ""
+      },
+      {
+       "kind": "item",
+       "entity": "ART-308",
+       "note": "The Hymnal has every verse but one."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-341",
+       "note": "Jory knows his grandmother holds something back."
+      }
+     ]
+    },
+    {
+     "key": "ak-lins",
+     "title": "Why the Bloom answers the Lins",
+     "truth": "One of the Lins' founders was a Bloom-born child of the first years. Nobody outside the family knows.",
+     "source": "FAM-005",
+     "about": [
+      "FAM-005",
+      "NPC-305"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The Bloom answers the Lins. Some say it answers them first.",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "ak-halvor",
+     "title": "The mill on Kaelith stone",
+     "truth": "The Halvor mill at Haskett's Mill sits on old Kaelith foundations, and the first Halvor knew it. That's where Brenna learned to read Kaelith work.",
+     "source": "FAM-006",
+     "about": [
+      "FAM-006",
+      "NPC-306"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Every wheel on the river road was built or mended by a Halvor.",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Edda's walker follows her home.",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "ak-watchers",
+     "title": "The Continuity is watching",
+     "truth": "Mags Kettle watches Ashvale's stones and the children who dream of them for the Continuity, and reports to Sentinel Hold every new moon.",
+     "source": "NPC-331",
+     "about": [
+      "NPC-331",
+      "FAC-303",
+      "LOC-304"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-331",
+       "note": "Mags Kettle is always at the singings, and never sings."
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-324",
+       "note": "Teodor Wrenn copies every report on the vaults for Sentinel Hold."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "under-the-tides",
+   "title": "What's Under the Black Tides",
+   "question": "What lies under the Black Tides, and what does it want?",
+   "summary": "The Rift runs beneath the Black Tides. Things come up from it: through Archwell's well, to Mothhaven's harbourmaster in the dark, and to the Drowned Saints.",
+   "secrets": [
+    {
+     "key": "ut-archwell",
+     "title": "Archwell's well",
+     "truth": "Archwell's well taps the edge of the Ethereal Realm. Its warden, Ysolde Varn, came up it from the waters under the Black Tides.",
+     "source": "SET-015",
+     "about": [
+      "SET-015",
+      "NPC-362",
+      "CLT-003"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Consortium scholars pay well for a bucket from the well",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "Last spring the well brought up a fish nobody could name.",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-362",
+       "note": "Ysolde doesn't trust the Drowned Saints, who tell her story as theirs."
+      }
+     ]
+    },
+    {
+     "key": "ut-gulen",
+     "title": "The thing that looked back",
+     "truth": "Gulen Saltback lit a lantern over the trench on the first crossing, saw the Rift, and something in it looked back. It speaks to him in the dark; he keeps the lanterns out so it can't find the ships.",
+     "source": "SET-022",
+     "about": [
+      "NPC-369",
+      "SET-022"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Gulen won't sail. He says he's seen what's under the Tides.",
+       "note": ""
+      },
+      {
+       "kind": "rumour",
+       "match": "The first crew to cross brought someone back with them.",
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "asylum-residents",
+   "title": "The Asylum's Residents",
+   "question": "Who are the people of the Nameless Asylum, really?",
+   "summary": "Everyone at the Nameless Asylum is hiding something: a Tribunal judge who chose to forget, a githyanki who turned back, a trader who sold the wrong thing, a kenku whose copies are turning up where they shouldn't, and a keeper built in an erased world.",
+   "secrets": [
+    {
+     "key": "ar-nobody",
+     "title": "Sister Nobody's past",
+     "truth": "Sister Nobody was a Hollow Tribunal judge. She chose to forget. The Tribunal has not.",
+     "source": "NPC-374",
+     "about": [
+      "NPC-374",
+      "CLT-007"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-071",
+       "note": "Magistrate Althros asks after a judge who resigned without leave."
+      }
+     ]
+    },
+    {
+     "key": "ar-tessk",
+     "title": "The war-band that didn't turn back",
+     "truth": "Tessk's war-band went past the last threshold uninvited. She was the only one who turned back.",
+     "source": "NPC-372",
+     "about": [
+      "NPC-372"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Crossing the last threshold makes you remember every life you've ever lived.",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "ar-brindle",
+     "title": "What Brindle sold",
+     "truth": "Brindle sold the Architects a piece of a world the Hidden Ones erased on purpose.",
+     "source": "NPC-373",
+     "about": [
+      "NPC-373",
+      "FAC-502",
+      "FAC-007"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The Architects will take anything you salvage, and use it.",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "ar-inkling",
+     "title": "Inkling's copies",
+     "truth": "Inkling's copies of the lives told in the Remembering Rooms are turning up in the Silent Archive, in books that used to be blank.",
+     "source": "NPC-375",
+     "about": [
+      "NPC-375",
+      "ETH-504"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "If your book has writing in it, you were someone once.",
+       "note": ""
+      }
+     ]
+    },
+    {
+     "key": "ar-lantern",
+     "title": "Who made Keeper Lantern",
+     "truth": "Keeper Lantern was built for the Celestial Order's army in a world the Order won, and erased when that world was. Veyra the Unchained knows the make.",
+     "source": "NPC-371",
+     "about": [
+      "NPC-371",
+      "NPC-065"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Someone who came in last month swears they've been here before, in another life, as the keeper.",
+       "note": ""
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "kaelith-relics",
+   "title": "The Kaelith Relics",
+   "question": "Where are Kaelmar's lost relics, and who is keeping them?",
+   "summary": "Kaelmar's relics are scattered: some confiscated, some hidden, some worn openly by people who won't say what they are.",
+   "secrets": [
+    {
+     "key": "kr-copper",
+     "title": "Speaker's Copper",
+     "truth": "The first binding-line, Speaker's Copper, is at Thornhaven, taken by the Eastern Tendril to be burned. It hasn't been.",
+     "source": "ART-302",
+     "about": [
+      "ART-302",
+      "LOC-308",
+      "NPC-305"
+     ],
+     "clues": [
+      {
+       "kind": "item",
+       "entity": "ART-302",
+       "note": "Tevan Lin knows it exists, and fears to ask."
+      },
+      {
+       "kind": "rumour",
+       "match": "A green gourd-lamp",
+       "note": "The Tendril watches Ashvale; it has its reasons."
+      }
+     ]
+    },
+    {
+     "key": "kr-crown",
+     "title": "The Ember Crown",
+     "truth": "Elder Sorrel wears the Ember Crown of the first Tendril leader. Anything Kaelith she touches crumbles.",
+     "source": "ART-305",
+     "about": [
+      "ART-305",
+      "NPC-307"
+     ],
+     "clues": [
+      {
+       "kind": "npc",
+       "entity": "NPC-307",
+       "note": "Elder Sorrel never takes off her circlet of charred root."
+      }
+     ]
+    },
+    {
+     "key": "kr-mirrors",
+     "title": "More than one Harmony Mirror",
+     "truth": "Kaelholm confiscated one Harmony Mirror in 297 AB. Others are out there, and people in Low Fenn are coming home Thinner, and happy.",
+     "source": "ART-306",
+     "about": [
+      "ART-306",
+      "SET-302"
+     ],
+     "clues": [
+      {
+       "kind": "item",
+       "entity": "ART-306",
+       "note": "The owner said, 'There are others.'"
+      }
+     ]
+    },
+    {
+     "key": "kr-seeds",
+     "title": "Seven seeds",
+     "truth": "Arborhold's records count seven Arbor Seeds. The Bloom-Speakers planted one; six are unaccounted for.",
+     "source": "ART-307",
+     "about": [
+      "ART-307",
+      "VLT-303",
+      "SET-301"
+     ],
+     "clues": [
+      {
+       "kind": "item",
+       "entity": "ART-307",
+       "note": "The Speakers' meeting house wasn't built. It grew."
+      }
+     ]
+    },
+    {
+     "key": "kr-bridle",
+     "title": "The Walker's Bridle",
+     "truth": "The Walker's Bridle hangs in Cradlehorn's walker stable, on a walker that no longer exists. The Wrights and the Ascendancy both want it.",
+     "source": "ART-304",
+     "about": [
+      "ART-304",
+      "VLT-304",
+      "FAC-308",
+      "FAC-305"
+     ],
+     "clues": [
+      {
+       "kind": "item",
+       "entity": "ART-304",
+       "note": "A stall in Cradlehorn with a harness hook and no walker."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "key": "old-families",
+   "title": "The Old Families",
+   "question": "What are the great families hiding?",
+   "summary": "House Kael, the Marrows and the Granes each keep something from the world: a succession that will be challenged, a name that crosses the sea, and what Saba heard in the Rift.",
+   "secrets": [
+    {
+     "key": "of-kael",
+     "title": "The Kael succession",
+     "truth": "If Darion inherits, he'll be challenged within the week. He knows it, and has been quietly counting who would stand with him.",
+     "source": "FAM-002",
+     "about": [
+      "FAM-002",
+      "NPC-033",
+      "NPC-024"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "The Warlord's son writes poetry.",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-367",
+       "note": "Kiro Vashti fears what Garron will do with an heir who won't fight."
+      }
+     ]
+    },
+    {
+     "key": "of-marrow",
+     "title": "The Marrow across the sea",
+     "truth": "Sel Marrow of Low Fenn is no foundling: Marrow is an old fen name in Kaelmar too. Ondine's ledger lists one Marrow whose name nobody remembers giving.",
+     "source": "FAM-003",
+     "about": [
+      "FAM-003",
+      "NPC-094"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "There's a Marrow across the Black Tides",
+       "note": ""
+      },
+      {
+       "kind": "npc",
+       "entity": "NPC-094",
+       "note": "Ondine's ledger has one name too many."
+      }
+     ]
+    },
+    {
+     "key": "of-saba",
+     "title": "What Saba heard",
+     "truth": "Saba Grane went down into the Rift after Maro, the first night, and came back before he did. She has never said what she heard.",
+     "source": "FAM-008",
+     "about": [
+      "FAM-008",
+      "NPC-333",
+      "NPC-310",
+      "LOC-901"
+     ],
+     "clues": [
+      {
+       "kind": "rumour",
+       "match": "Saba is the only one who can make Maro stop writing.",
+       "note": ""
+      },
+      {
+       "kind": "item",
+       "entity": "ART-309",
+       "note": "Maro won't say what the rope took from him."
       }
      ]
     }
