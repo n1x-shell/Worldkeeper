@@ -1,0 +1,107 @@
+{
+  "note": "What the Treasure tool rolls from. Amounts follow the Dungeon Master's Guide (2024) by tier, with about half its magic items (Treasure [RUL-620]). Item names are from the DMG 2024, Xanathar's Guide to Everything (XGE), Tasha's Cauldron of Everything (TCE) and Spelljammer: Adventures in Space (SJ); the world's own items come from the catalogue.",
+  "tiers": [
+    { "key": "1-4", "label": "Levels 1 to 4", "individual": { "dice": "3d6", "mult": 1, "coin": "gp" }, "hoard": { "dice": "2d4", "mult": 100, "coin": "gp" }, "items": { "dice": "1d3-1", "rarities": { "common": 3, "uncommon": 2 } } },
+    { "key": "5-10", "label": "Levels 5 to 10", "individual": { "dice": "2d8", "mult": 10, "coin": "gp" }, "hoard": { "dice": "8d10", "mult": 100, "coin": "gp" }, "items": { "dice": "1d2", "rarities": { "uncommon": 3, "rare": 2 } } },
+    { "key": "11-16", "label": "Levels 11 to 16", "individual": { "dice": "2d10", "mult": 10, "coin": "pp" }, "hoard": { "dice": "8d8", "mult": 1000, "coin": "gp" }, "items": { "dice": "1d3", "rarities": { "rare": 3, "very rare": 2 } } },
+    { "key": "17-20", "label": "Levels 17 to 20", "individual": { "dice": "2d8", "mult": 100, "coin": "pp" }, "hoard": { "dice": "6d10", "mult": 10000, "coin": "gp" }, "items": { "dice": "1d3", "rarities": { "very rare": 3, "legendary": 1 } } }
+  ],
+  "regions": {
+    "marches": { "label": "The Hollow Marches", "ids": ["REG-001", "SET-001"], "pools": ["marches"], "coins": "Coins of a dozen kingdoms, some of which nobody remembers." },
+    "order": { "label": "The Radiant Ascendancy", "ids": ["REG-002"], "pools": ["order"], "coins": "Golden sun-marks of the Order." },
+    "legion": { "label": "The Tyrant's Dominion", "ids": ["REG-003"], "pools": ["legion"], "coins": "Legion iron-stamped gold, and arena tokens." },
+    "consortium": { "label": "The Fractured Nexus", "ids": ["REG-004"], "pools": ["consortium"], "coins": "Prism-cut Consortium coins, a few still faintly glowing." },
+    "pact": { "label": "The Eternal Veil", "ids": ["REG-005"], "pools": ["pact"], "coins": "Masked coins of Noctis, every face different." },
+    "wildborn": { "label": "The Verdant Rebirth", "ids": ["REG-006"], "pools": ["wildborn"], "coins": "Few coins; the clans value what they can use." },
+    "kaelmar-west": { "label": "Ashvale and the Western Hills", "ids": ["SET-301"], "pools": ["kaelmar-west"], "coins": "Barter country: most of a hoard's worth is in goods, not coin.", "barter": 0.75 },
+    "kaelmar": { "label": "Kaelmar beyond the west", "ids": ["REG-301", "REG-302", "REG-303", "REG-304", "REG-305", "REG-306"], "pools": ["kaelmar"], "coins": "Kaelholm silver, dwarven gold from the north, and Kaelith tokens nobody spends.", "barter": 0.35 },
+    "ethereal": { "label": "The Ethereal Realm", "ids": ["ETH-501", "ETH-502", "ETH-503", "ETH-504", "ETH-505", "ETH-506", "ETH-507"], "pools": ["ethereal"], "coins": "Coins of lost worlds. They fade once taken out, and can't be anchored.", "fades": true }
+  },
+  "pools": {
+    "marches": {
+      "common": ["Potion of Healing", "Spell Scroll (cantrip)", "Moon-Touched Sword (XGE)", "Orb of Direction (XGE)", "Rope of Mending (XGE)", "Veteran's Cane (XGE)", "Shield of Expression (XGE)", "Mystery Key (XGE)"],
+      "uncommon": ["Weapon, +1", "Cloak of Protection", "Lantern of Revealing", "Bag of Holding", "Sentinel Shield", "Goggles of Night", "Potion of Greater Healing", "Spell Scroll (2nd level)"],
+      "rare": ["Weapon, +2", "Armor, +1", "Ring of Protection", "Flame Tongue", "Cloak of Displacement", "Potion of Superior Healing", "Gem of Seeing"],
+      "very rare": ["Weapon, +3", "Armor, +2", "Animated Shield", "Dancing Sword", "Crystal Ball"],
+      "legendary": ["Defender", "Luck Blade", "Armor, +3", "Ioun Stone (Mastery)"]
+    },
+    "order": {
+      "common": ["Potion of Healing", "Candle of the Deep (XGE)", "Staff of Flowers (XGE)", "Shield of Expression (XGE)", "Masquerade Tattoo (TCE)"],
+      "uncommon": ["Amulet of the Devout, +1 (TCE)", "Periapt of Wound Closure", "Sentinel Shield", "Shield, +1", "Lantern of Revealing", "Potion of Greater Healing"],
+      "rare": ["Mace of Disruption", "Amulet of the Devout, +2 (TCE)", "Shield, +2", "Elixir of Health", "Sun Blade"],
+      "very rare": ["Holy-blessed Weapon, +3", "Spellguard Shield", "Rod of Alertness", "Potion of Supreme Healing"],
+      "legendary": ["Holy Avenger", "Talisman of Pure Good", "Armor of Invulnerability"]
+    },
+    "legion": {
+      "common": ["Walloping Ammunition (XGE)", "Smoldering Armor (XGE)", "Veteran's Cane (XGE)", "Unbreakable Arrow (XGE)", "Potion of Healing"],
+      "uncommon": ["Weapon, +1", "Gauntlets of Ogre Power", "Javelin of Lightning", "Mithral Armor", "Bracers of Archery", "Potion of Giant Strength (Hill)"],
+      "rare": ["Weapon, +2", "Vicious Weapon", "Armor, +1", "Belt of Dwarvenkind", "Horn of Valhalla (Silver)", "Dagger of Venom"],
+      "very rare": ["Weapon, +3", "Belt of Fire Giant Strength", "Frost Brand", "Dwarven Thrower"],
+      "legendary": ["Belt of Storm Giant Strength", "Vorpal Sword", "Armor, +3"]
+    },
+    "consortium": {
+      "common": ["Spell Scroll (cantrip)", "Enduring Spellbook (XGE)", "Ruby of the War Mage (XGE)", "Wand of Pyrotechnics (XGE)", "Orb of Time (XGE)", "Spellwrought Tattoo (TCE)"],
+      "uncommon": ["Wand of Magic Missiles", "Arcane Grimoire, +1 (TCE)", "Pearl of Power", "Immovable Rod", "Driftglobe", "Sending Stones", "Spell Scroll (2nd level)"],
+      "rare": ["Wand of Fireballs", "Ring of Spell Storing", "Arcane Grimoire, +2 (TCE)", "Necklace of Fireballs", "Portable Hole", "Spell Scroll (5th level)"],
+      "very rare": ["Rod of Absorption", "Tome of Clear Thought", "Carpet of Flying", "Mirror of Life Trapping"],
+      "legendary": ["Robe of the Archmagi", "Staff of the Magi", "Apparatus of Kwalish"]
+    },
+    "pact": {
+      "common": ["Perfume of Bewitching (XGE)", "Lock of Trickery (XGE)", "Charlatan's Die (XGE)", "Cloak of Many Fashions (XGE)", "Masquerade Tattoo (TCE)"],
+      "uncommon": ["Hat of Disguise", "Cloak of Elvenkind", "Boots of Elvenkind", "Dust of Disappearance", "Oil of Slipperiness", "Eyes of Charming", "Philter of Love"],
+      "rare": ["Dagger of Venom", "Cape of the Mountebank", "Ring of Evasion", "Cloak of Displacement", "Helm of Teleportation"],
+      "very rare": ["Nine Lives Stealer", "Cloak of Arachnida", "Ring of Shooting Stars"],
+      "legendary": ["Cloak of Invisibility", "Ring of Spell Turning", "Luck Blade"]
+    },
+    "wildborn": {
+      "common": ["Staff of Birdcalls (XGE)", "Pot of Awakening (XGE)", "Potion of Healing", "Moon Sickle (TCE)"],
+      "uncommon": ["Cloak of the Manta Ray", "Boots of Striding and Springing", "Slippers of Spider Climbing", "Moon Sickle, +1 (TCE)", "Bracers of Archery", "Potion of Animal Friendship"],
+      "rare": ["Figurine of Wondrous Power (Ivory Goats)", "Moon Sickle, +2 (TCE)", "Wings of Flying", "Rope of Entanglement", "Periapt of Proof against Poison"],
+      "very rare": ["Oathbow", "Staff of Thunder and Lightning", "Ring of Regeneration"],
+      "legendary": ["Rod of Lordly Might", "Staff of the Woodlands, reawakened"]
+    },
+    "kaelmar-west": {
+      "common": ["Potion of Healing (a Bloom-Speaker's draught)", "Spell Scroll (cantrip), cut as a glyph", "Rope of Mending (XGE)", "Orb of Direction (XGE), a needle in a glass bead"],
+      "uncommon": ["Sending Stones (a pair of speaking-stones)", "Driftglobe (a lamp-glyph that follows)", "Decanter of Endless Water (a Wright's well-jar)", "Immovable Rod (a Wright's brace)", "Goggles of Night (reading-lenses for the dark)"],
+      "rare": ["Weapon, +2 (glyph-cut)", "Ring of Protection (a warding ring)", "Gem of Seeing (a reading-lens of true sight)"],
+      "very rare": [],
+      "legendary": []
+    },
+    "kaelmar": {
+      "common": ["Spell Scroll (cantrip), cut as a glyph", "Clockwork Amulet (XGE), Kaelith-made", "Ersatz Eye (XGE)", "All-Purpose Tool, +1 (TCE)"],
+      "uncommon": ["Sending Stones (a pair of speaking-stones)", "Wand of Magic Missiles (a glyph-rod)", "Bracers of Archery", "Mithral Armor (dwarven, from the north)", "Driftglobe (a lamp-glyph that follows)", "Wand of Web"],
+      "rare": ["Wand of Lightning Bolts (a glyph-rod)", "Weapon, +2 (glyph-cut)", "Ring of Spell Storing (a glyph-ring)", "Portable Hole (a Kaelith fold-pocket)", "Belt of Dwarvenkind"],
+      "very rare": ["Rod of Absorption (a Kaelith ward-rod)", "Dwarven Thrower", "Animated Shield (a Kaelith guardian's plate)", "Manual of Golems"],
+      "legendary": ["Apparatus of Kwalish (a Kaelith diving-walker)", "Plate Armor of Etherealness (a between-walker's shell)"]
+    },
+    "ethereal": {
+      "common": ["Orb of Gonging (SJ)", "Pipe of Remembrance (SJ)", "Candle of the Deep (XGE)", "Spell Scroll (cantrip), from a lost world"],
+      "uncommon": ["Star Map (SJ)", "Wildspace Orrery (SJ)", "Armor of Weightlessness (SJ)", "Astral Shard (TCE)", "Driftglobe", "Spelljamming Helm (SJ)"],
+      "rare": ["Spyglass of Clairvoyance (SJ)", "Shadowfell Shard (TCE)", "Weapon, +2, from a lost world", "Ring of Feather Falling", "Helm of Teleportation"],
+      "very rare": ["Crystal Ball", "Mirror of Life Trapping", "Armor, +2, of a forgotten order", "Well of Many Worlds"],
+      "legendary": ["Plate Armor of Etherealness", "Sphere of Annihilation", "Cubic Gate"]
+    }
+  },
+  "goods": {
+    "marches": [["a rusted crown from a kingdom nobody remembers", 25], ["a bundle of battle standards from five factions", 10], ["silver buttons cut from an officer's coat", 10], ["an old map of the Marches with a road that isn't there", 50], ["a reliquary with a finger-bone in it", 250], ["a jewelled sword-hilt, the blade long gone", 250], ["a signet ring of a house erased in the last Aetherfall", 750]],
+    "order": [["a golden sun pendant", 25], ["a silk altar cloth stitched with gold", 25], ["a crystal vial of holy water, sealed", 50], ["a gilded prayer-book", 250], ["an inquisitor's chain of office", 250], ["a reliquary of white gold and amber", 750], ["a sunburst monstrance set with yellow diamonds", 2500]],
+    "legion": [["an arena champion's iron torc", 25], ["a pouch of enemy officers' insignia", 10], ["a warlord's war-banner, bloodied", 50], ["a gladiator's gilded helm", 250], ["a set of matched duelling swords with jewelled hilts", 750], ["a crimson-enamelled breastplate fit for a general", 2500]],
+    "consortium": [["a box of prism-cut lenses", 25], ["a brass astrolabe that tracks a moon nobody has seen", 50], ["a sealed jar of liquid starlight", 50], ["a folio of unpublished research", 250], ["a clockwork songbird with a sapphire eye", 750], ["a floating crystal sculpture", 2500]],
+    "pact": [["a porcelain mask, cracked across one eye", 25], ["a bundle of forged letters of credit", 50], ["a vial of a very rare poison", 250], ["a ring with a hidden compartment and a lock of hair in it", 250], ["a black-pearl choker from the Midnight Court", 750], ["a book of secrets in cipher, worth a fortune to the right buyer", 2500]],
+    "wildborn": [["a necklace of wolf teeth", 10], ["a carved antler drinking horn", 25], ["a pouch of rare herbs", 25], ["a bear-hide cloak with a silver clasp", 50], ["a totem carved from behemoth bone", 250], ["a crown of living roots, still green", 750]],
+    "kaelmar-west": [["a sack of Low Fenn salt", 10], ["a coil of copper wire", 15], ["a bundle of seed-grafts in wet moss", 25], ["a good set of Wright's tools", 50], ["a barrel of Kettleby cider", 10], ["a bolt of fen-dyed wool", 15], ["a Kaelith lamp-glyph, still lit", 50], ["a cracked memory-crystal of someone's wedding", 250]],
+    "kaelmar": [["a Kaelholm silver roll-seal", 25], ["a length of glyph-lit rune-sled runner", 50], ["dwarven gold ingots from Anvilreach", 250], ["a box of Kaelith glyph-tiles", 250], ["a goliath clan's ancestral torc", 750], ["a perfect seep-glass sphere", 750], ["a Kaelith walker's heart-glyph, inert", 2500]],
+    "ethereal": [["a coin from a world that never was", 10], ["a piece of a golden cathedral that lay sideways", 50], ["a silver thread, too fine to see unless it catches the light", 50], ["a crown of a king who can finally die", 750], ["a book from the Silent Archive, mostly blank", 250], ["a monument's stone eye", 750], ["a shard of a world's last sunrise, warm", 2500]]
+  },
+  "hooks": {
+    "marches": ["It was buried by a scavenger crew who never came back for it.", "It belonged to a soldier in a war nobody remembers fighting.", "Mara Venn would recognise one of the pieces.", "A faction agent has been looking for exactly this."],
+    "order": ["It was hidden from the Inquisition by a family that's since been purged.", "An Order reliquary, stolen and never reported.", "It's the price of a pardon somebody never paid."],
+    "legion": ["War-spoils, taken from a warlord who wants them back.", "An arena champion's winnings, and the champion isn't dead.", "A siege company's pay-chest, lost on the Bloodfields."],
+    "consortium": ["Left in a lab that moved to another dimension and came back.", "A researcher's life work, unfinished.", "Payment for an experiment that went wrong."],
+    "pact": ["A dead-drop. Someone is coming to collect it.", "Blackmail, and the victim is still paying.", "A Pact debt, settled in goods, and the debtor regrets it."],
+    "wildborn": ["Offerings left at a sacred grove.", "Taken from a Legion hunting party that didn't make it home.", "A clan's treasure, hidden from the Consortium."],
+    "kaelmar-west": ["A Wright's salvage cache, marked with a chalk sign.", "Odran Reeve's goods, lost off a barge.", "A family's savings, hidden under a hearthstone before a seep opened."],
+    "kaelmar": ["A Kaelith storeroom, sealed before the Shrouding.", "A Kaelholm survey team's cache, never collected.", "A goliath clan's tribute, owed to a rival."],
+    "ethereal": ["Salvage from a world that ended. Learn its story, or it fades.", "A refugee's last belongings, brought through the Verge.", "Something the Hidden Ones meant to erase, and missed."]
+  }
+}

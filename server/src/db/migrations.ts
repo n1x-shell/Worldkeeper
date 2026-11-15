@@ -531,6 +531,33 @@ CREATE TABLE renown_log (
 CREATE INDEX renown_log_campaign ON renown_log(campaign_id, faction_id, id);
 `,
   },
+  {
+    version: 9,
+    name: 'party treasure: what each campaign\'s party has found, and who carries it',
+    sql: `
+CREATE TABLE party_treasure (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  kind TEXT NOT NULL DEFAULT 'item',
+  quantity INTEGER NOT NULL DEFAULT 1,
+  value_gp REAL NOT NULL DEFAULT 0,
+  rarity TEXT NOT NULL DEFAULT '',
+  entity_id TEXT,
+  holder TEXT NOT NULL DEFAULT '',
+  status TEXT NOT NULL DEFAULT 'carried',
+  found_at TEXT NOT NULL DEFAULT '',
+  fades INTEGER NOT NULL DEFAULT 0,
+  anchored INTEGER NOT NULL DEFAULT 0,
+  player_visible INTEGER NOT NULL DEFAULT 1,
+  notes TEXT NOT NULL DEFAULT '',
+  session_id INTEGER,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE INDEX party_treasure_campaign ON party_treasure(campaign_id, status);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

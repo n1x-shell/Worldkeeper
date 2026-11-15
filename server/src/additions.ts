@@ -20,7 +20,8 @@ import { syncMysteries } from './repo/mysteries.js';
 import { deriveTimelineEras } from './repo/eras.js';
 import { applyMaps } from './mapAdditions.js';
 import { applyAdventures } from './adventureAdditions.js';
-import { applyTables } from './tableAdditions.js';
+import { applyTables, applyTableSpecs } from './tableAdditions.js';
+import { itemTables, treasureData } from './repo/treasure.js';
 
 /** The additions' lore folder: bundled with the desktop app (WORLDKEEPER_ADDITIONS_DIR), or assets/lore in the repo. */
 export const DEFAULT_ADDITIONS_DIR = process.env.WORLDKEEPER_ADDITIONS_DIR ? path.join(process.env.WORLDKEEPER_ADDITIONS_DIR, 'lore') : path.resolve(import.meta.dirname, '../../assets/lore');
@@ -133,6 +134,13 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?:
   // Ready-to-run adventures, added to the GM's Adventures (ones the library already has are left alone).
   const adventuresAdded = applyAdventures(db, path.resolve(dir, '../adventures'));
   // Random encounter tables, added to the GM's Random Tables (ones the library already has are left alone).
-  const tablesAdded = applyTables(db, path.resolve(dir, '../tables'));
+  const tablesAdded = [
+    ...applyTables(db, path.resolve(dir, '../tables')),
+    // Magic item tables by region and rarity, from the treasure pools.
+    ...applyTableSpecs(
+      db,
+      itemTables(treasureData(path.resolve(dir, '../treasure'))).map((t) => ({ name: t.name, region: null, entries: t.entries })),
+    ),
+  ];
   return { records: files.length, imported, links, rumours, mysteries, timeline, maps: mapsAdded, adventures: adventuresAdded, tables: tablesAdded };
 }

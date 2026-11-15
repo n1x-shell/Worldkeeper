@@ -1,4 +1,5 @@
 import { StandingPage } from './pages/Standing';
+import { TreasurePage } from './pages/Treasure';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppStateProvider } from './lib/store';
 import { Layout } from './components/Layout';
@@ -73,6 +74,7 @@ export function App() {
           <Route path="campaign/arcs" element={<Page><ArcsPage /></Page>} />
           <Route path="campaign/quests" element={<Page><QuestsPage /></Page>} />
           <Route path="campaign/standing" element={<Page><StandingPage /></Page>} />
+          <Route path="campaign/treasure" element={<Page><TreasurePage /></Page>} />
           <Route path="campaign/sessions" element={<Page><SessionsPage /></Page>} />
           <Route path="campaign/encounters" element={<Page><EncountersPage /></Page>} />
           <Route path="campaign/party" element={<Page><PartyPage /></Page>} />

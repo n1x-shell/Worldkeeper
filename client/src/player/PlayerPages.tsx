@@ -434,6 +434,47 @@ export function PlayerStanding() {
   );
 }
 
+/** What the party carries or has stored, by who carries it. */
+export function PlayerTreasure() {
+  const { campaigns } = usePlayerIndex();
+  const { base } = usePlayer();
+  if (!campaigns) return null;
+  const all = campaigns.flatMap((c) => (c.treasure ?? []).map((t) => ({ ...t, campaign: c.title })));
+  const groups = new Map<string, typeof all>();
+  for (const t of all) groups.set(t.holder || 'The party', [...(groups.get(t.holder || 'The party') ?? []), t]);
+  const worth = all.reduce((n, t) => n + t.value_gp, 0);
+  return (
+    <div className="space-y-5">
+      <Header title="Party Treasure" />
+      {!all.length && <p className="text-dim">Your packs are empty.</p>}
+      {all.length > 0 && <p className="text-sm text-dim">Worth about {Math.round(worth).toLocaleString('en')} gp, before magic.</p>}
+      {[...groups.entries()].map(([who, list]) => (
+        <section key={who} className="space-y-2">
+          <h2 className="section-title">{who}</h2>
+          <ul className="panel divide-y divide-line">
+            {list.map((t) => (
+              <li key={t.id} className="px-4 py-2 flex flex-wrap items-baseline gap-2">
+                {t.quantity > 1 && t.kind !== 'coins' && <span className="text-dim">{t.quantity} ×</span>}
+                {t.entity_id ? (
+                  <Link to={`${base}/e/${encodeURIComponent(t.entity_id)}`} className="wk-ref">
+                    {t.name}
+                  </Link>
+                ) : (
+                  <span>{t.name}</span>
+                )}
+                {t.rarity && <Chip>{t.rarity}</Chip>}
+                {t.status === 'stored' && <span className="text-xs text-dim">stored</span>}
+                {t.fades && <span className="text-xs text-danger">fading: learn its story to anchor it</span>}
+                {t.found_at && <span className="text-xs text-dim ml-auto">{t.found_at}</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+}
+
 export function PlayerRecaps() {
   const { campaigns } = usePlayerIndex();
   if (!campaigns) return null;

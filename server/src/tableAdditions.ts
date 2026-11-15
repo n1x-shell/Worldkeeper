@@ -37,22 +37,27 @@ export function parseTables(text: string): TableSpec[] {
 
 export function applyTables(db: DB, dir: string): string[] {
   if (!fs.existsSync(dir)) return [];
-  const have = db.prepare('SELECT 1 FROM random_tables WHERE name = ?');
-  const added: string[] = [];
-  for (const f of fs
+  const specs = fs
     .readdirSync(dir)
     .filter((x) => x.endsWith('.md'))
-    .sort()) {
-    for (const t of parseTables(fs.readFileSync(path.join(dir, f), 'utf8'))) {
-      if (!t.entries.length || have.get(t.name)) continue;
-      randomTables.create(db, {
-        name: t.name,
-        die: `d${t.entries.length}`,
-        entries: t.entries.map((text) => ({ weight: 1, text })),
-        source: `Worldkeeper additions${t.region ? ` (${t.region})` : ''}`,
-      });
-      added.push(t.name);
-    }
+    .sort()
+    .flatMap((f) => parseTables(fs.readFileSync(path.join(dir, f), 'utf8')));
+  return applyTableSpecs(db, specs);
+}
+
+/** Add tables the library doesn't have yet (by name). */
+export function applyTableSpecs(db: DB, specs: TableSpec[]): string[] {
+  const have = db.prepare('SELECT 1 FROM random_tables WHERE name = ?');
+  const added: string[] = [];
+  for (const t of specs) {
+    if (!t.entries.length || have.get(t.name)) continue;
+    randomTables.create(db, {
+      name: t.name,
+      die: `d${t.entries.length}`,
+      entries: t.entries.map((text) => ({ weight: 1, text })),
+      source: `Worldkeeper additions${t.region ? ` (${t.region})` : ''}`,
+    });
+    added.push(t.name);
   }
   return added;
 }

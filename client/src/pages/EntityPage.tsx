@@ -20,6 +20,7 @@ import { loreText } from '@shared/loreText';
 import { RumoursPanel } from './Rumours';
 import { SecretsPanel } from './Mysteries';
 import { PartyTiesPanel } from './Campaign';
+import { TreasurePanel } from './Treasure';
 import { Dev, useDebug } from '../components/Dev';
 import {
   AutoTextarea,
@@ -236,6 +237,7 @@ export function EntityPage() {
               </div>
             )}
             <RelationshipSummary rels={data.relationships} selfId={e.id} onMore={() => setTab('relationships')} />
+            <TreasurePanel entityId={e.id} type={e.type} />
             <PartyTiesPanel entityId={e.id} />
             <SecretsPanel entityId={e.id} />
             <RumoursPanel entityId={e.id} />
