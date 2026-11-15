@@ -16,6 +16,9 @@ Class: Bard
 ## Public role and identity
 - Leads the river folk's singing to Hollowbell on Evernight.
 
+## Appearance and voice
+A river-brown tabaxi with reed-beads in her fur and a voice made for singing. Warm, musical, and newly quiet.
+
 ## Known relationships and locations
 Hollowbell [VLT-313]
 

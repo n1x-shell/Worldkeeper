@@ -16,6 +16,9 @@ Class: Fighter
 ## Public role and identity
 - Keeps the waystation at the mouth of the canyon.
 
+## Appearance and voice
+A grizzled halfling innkeeper with an old soldier's limp and a lantern always lit. Hospitable, nervous at night, and a good cook.
+
 ## Known relationships and locations
 The Ravaged Pass [LOC-057]
 

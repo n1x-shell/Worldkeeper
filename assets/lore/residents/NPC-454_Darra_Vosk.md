@@ -16,6 +16,9 @@ Class: Fighter
 ## Public role and identity
 - The mercenary captain who's been asking about Cradlehorn.
 
+## Appearance and voice
+A broad mercenary captain in mountain furs, with a scarred jaw and a company badge. Blunt, loyal to her company, and suddenly cagey.
+
 ## Known relationships and locations
 Cradlehorn [VLT-304]
 

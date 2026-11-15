@@ -16,6 +16,9 @@ Class: Paladin
 ## Public role and identity
 - Guards the Luminara Gate for the Order.
 
+## Appearance and voice
+A tall paladin in white-gold plate, her face lit from one side by the Gate. Stern, devout, and tired.
+
 ## Known relationships and locations
 The Luminara Gate [LOC-007]; Celestial Order [FAC-001]
 

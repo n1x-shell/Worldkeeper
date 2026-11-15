@@ -16,6 +16,9 @@ Class: Druid
 ## Public role and identity
 - A Bloom-Speaker who lives among the root columns, and asks the Cathedral for travellers' passage.
 
+## Appearance and voice
+A Bloomborn of pale root and soft fungus, with eyes like wet amber. Slow, courteous, and listens before speaking.
+
 ## Known relationships and locations
 The Bloom Cathedral [LOC-309]; Bloom-Speakers [FAC-307]
 

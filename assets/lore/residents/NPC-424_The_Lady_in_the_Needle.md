@@ -16,6 +16,9 @@ Class: Unknown
 ## Public role and identity
 - A restless spirit in the last standing tower, who gives warnings nobody understands.
 
+## Appearance and voice
+A pale woman in a burned gown, seen at the top window of the Needle. Sad, urgent, and impossible to follow.
+
 ## Known relationships and locations
 Ashen Spire [LOC-030]
 

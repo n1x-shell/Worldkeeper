@@ -16,6 +16,9 @@ Class: Rogue
 ## Public role and identity
 - Polishes the black glass.
 
+## Appearance and voice
+A thin tiefling with polishing cloths at his belt and horns buffed to a shine. Soft-spoken, smiling, and never quite meets your eye.
+
 ## Known relationships and locations
 Nightglass [LOC-052]; Shadow Pact [FAC-004]
 

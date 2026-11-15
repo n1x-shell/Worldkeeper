@@ -16,6 +16,9 @@ Class: Druid
 ## Public role and identity
 - A Scholar Corps botanist who lives in the garden, reading the plants.
 
+## Appearance and voice
+A freckled woman in Scholar Corps green, with pressed leaves in every pocket. Absent-minded, delighted by plants, and awake at odd hours.
+
 ## Known relationships and locations
 The Survey Garden [LOC-307]; Kaelholm [FAC-301]
 

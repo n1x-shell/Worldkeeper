@@ -16,6 +16,9 @@ Class: Ranger
 ## Public role and identity
 - Runs with the wolves and speaks for them.
 
+## Appearance and voice
+A lean shifter with grey-shot hair, wolf-yellow eyes and a bite scar on each arm. Quiet, watchful, and gentle with the wolves.
+
 ## Known relationships and locations
 The Wolf's Den [LOC-040]; Wildborn Clans [FAC-005]
 

@@ -16,6 +16,9 @@ Class: Paladin
 ## Public role and identity
 - Commands the garrison and drills the knights in the roofless nave.
 
+## Appearance and voice
+A tall woman in sun-gilded plate gone dull with Marches mud, grey at the temples, with a scar through one eyebrow. Brisk, fair, and never fully at ease.
+
 ## Known relationships and locations
 The Sanctuary of the Last Light [LOC-036]; Celestial Order [FAC-001]
 

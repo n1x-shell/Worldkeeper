@@ -16,6 +16,9 @@ Class: Druid
 ## Public role and identity
 - Tends the root-and-bone guardians.
 
+## Appearance and voice
+A towering firbolg with moss in his beard and bone charms knotted in his braids. Slow, kind, and worried more than he lets on.
+
 ## Known relationships and locations
 The Verdant Crown [LOC-055]; Wildborn Clans [FAC-005]
 

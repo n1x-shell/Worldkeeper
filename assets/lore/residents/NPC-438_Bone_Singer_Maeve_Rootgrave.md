@@ -16,6 +16,9 @@ Class: Druid
 ## Public role and identity
 - A Wildborn ritualist who camps in the behemoth's bones.
 
+## Appearance and voice
+A Bloomborn woman of bark and moss with bone flutes on her belt and fungus in her hair. Calm, dreamy, and never stops humming.
+
 ## Known relationships and locations
 Fangholt [LOC-056]; Wildborn Clans [FAC-005]
 

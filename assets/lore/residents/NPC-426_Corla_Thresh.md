@@ -16,6 +16,9 @@ Class: Rogue
 ## Public role and identity
 - A smuggler hiring for the Blackveil job.
 
+## Appearance and voice
+A broad half-orc in a smuggler's coat, with gold teeth and a list of names on a scroll. Charming, confident, and always selling.
+
 ## Known relationships and locations
 Blackveil Fortress [LOC-032]
 

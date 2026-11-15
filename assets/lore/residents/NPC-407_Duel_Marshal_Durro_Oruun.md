@@ -16,6 +16,9 @@ Class: Fighter
 ## Public role and identity
 - Keeps the duelling ring and the ledger of rank.
 
+## Appearance and voice
+A broad hobgoblin with a chain of rank-tokens round his neck and a ledger chained to his belt. Gruff, exact, and a stickler for the rules of the ring.
+
 ## Known relationships and locations
 The Warlord's Rest [LOC-037]; Crimson Legion [FAC-002]
 

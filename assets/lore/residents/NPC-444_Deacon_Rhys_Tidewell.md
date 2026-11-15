@@ -16,6 +16,9 @@ Class: Cleric
 ## Public role and identity
 - Keeps vigil in the drowned cathedral.
 
+## Appearance and voice
+A blue-scaled triton in salt-crusted vestments, with sea-glass beads in his hair. Solemn, gentle, and a little too calm.
+
 ## Known relationships and locations
 The Abyssal Hollow [LOC-006]; The Drowned Saints [CLT-003]
 

@@ -16,6 +16,9 @@ Class: Rogue
 ## Public role and identity
 - The Doorkeeper, who holds the illusion over the hall.
 
+## Appearance and voice
+Nobody agrees. Usually an ordinary face, with eyes a little too pale. Polite, unhurried, and never surprised.
+
 ## Known relationships and locations
 The Veiled Chamber [LOC-039]; Shadow Pact [FAC-004]
 

@@ -16,6 +16,9 @@ Class: Wizard
 ## Public role and identity
 - Sets the Collegium's final test.
 
+## Appearance and voice
+A silver-haired elf in sharp black robes, with a ring of keys that don't all open doors here. Precise, cool, and kinder in private than in public.
+
 ## Known relationships and locations
 The Nexus Collegium [LOC-048]; Arcane Consortium [FAC-003]
 

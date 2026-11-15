@@ -16,6 +16,9 @@ Class: Fighter
 ## Public role and identity
 - Walks the Scar, burying the dead who won't stay down.
 
+## Appearance and voice
+A rust-streaked warforged with a shovel and a regiment's badge nobody recognises. Slow, dutiful, and kind to the dead.
+
 ## Known relationships and locations
 The Scar [LOC-031]
 

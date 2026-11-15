@@ -16,5 +16,8 @@ Class: Artificer
 ## Public role and identity
 - A smith's child who has never seen daylight, and wants to.
 
+## Appearance and voice
+A pale, soot-streaked boy of about twelve, squinting even in forge-light. Curious, quick and full of questions about the sky.
+
 ## Known relationships and locations
 The Anvil of Dominion [LOC-047]

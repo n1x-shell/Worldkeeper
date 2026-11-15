@@ -16,6 +16,9 @@ Class: Fighter
 ## Public role and identity
 - Trains the Legion's recruits at the front.
 
+## Appearance and voice
+A scarred orc in battered Legion red, with a voice that carries across a battlefield. Harsh in front of recruits, quiet in private.
+
 ## Known relationships and locations
 The Bloodfields [LOC-045]; Crimson Legion [FAC-002]
 

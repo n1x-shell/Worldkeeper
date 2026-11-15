@@ -16,6 +16,9 @@ Class: Ranger
 ## Public role and identity
 - Has walked to all twelve known vaults, and is looking for the thirteenth.
 
+## Appearance and voice
+A weathered dwarf in travel-worn leathers, with a rubbing of every vault door sewn into her coat. Driven, dry-humoured, and secretive about her notes.
+
 ## Known relationships and locations
 The Thirteen Vaults [LOC-058]
 

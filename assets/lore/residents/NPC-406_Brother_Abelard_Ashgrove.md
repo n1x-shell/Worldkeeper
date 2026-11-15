@@ -16,6 +16,9 @@ Class: Cleric
 ## Public role and identity
 - Works beside Sister Elyra Vale and treats anyone at the door.
 
+## Appearance and voice
+A round halfling in a patched grey habit, sleeves rolled, with smudged spectacles. Cheerful and unshockable. Hums hymns slightly wrong.
+
 ## Known relationships and locations
 The Sanctuary of the Last Light [LOC-036]; Celestial Order [FAC-001]
 

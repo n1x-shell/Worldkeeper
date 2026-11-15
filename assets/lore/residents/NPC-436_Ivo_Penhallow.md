@@ -16,6 +16,9 @@ Class: Bard
 ## Public role and identity
 - Guides people through the mirrors.
 
+## Appearance and voice
+A handsome half-elf whose parting is on the wrong side and whose watch runs backwards. Charming, quick, and a little too eager to please.
+
 ## Known relationships and locations
 The Echoing Halls [LOC-050]
 

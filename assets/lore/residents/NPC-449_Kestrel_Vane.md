@@ -16,6 +16,9 @@ Class: Ranger
 ## Public role and identity
 - Guides travellers across the Dead Zone, in warded plate.
 
+## Appearance and voice
+A lean half-elf in warded plates scorched red, with a spore-mask hanging at the neck. Calm, terse, and never stops moving.
+
 ## Known relationships and locations
 The Dead Zone [LOC-306]
 

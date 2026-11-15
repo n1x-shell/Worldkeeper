@@ -16,6 +16,9 @@ Class: Fighter
 ## Public role and identity
 - Keeps the highland hold built over Anvilreach.
 
+## Appearance and voice
+A stern dwarf in the hold's grey and iron, with a key-ring of thirteen keys. Formal, proud, and protective of the hold's secrets.
+
 ## Known relationships and locations
 Anvilreach [VLT-306]
 

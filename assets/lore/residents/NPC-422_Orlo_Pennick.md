@@ -16,6 +16,9 @@ Class: Druid
 ## Public role and identity
 - Keeps the shelter by the waystone, and a book of every road that has appeared at the Crossroads.
 
+## Appearance and voice
+An old tortle with a shell mapped in chalk and a heavy book under one arm. Slow, patient, and fond of strangers.
+
 ## Known relationships and locations
 The Crossroads of Fate [LOC-003]
 

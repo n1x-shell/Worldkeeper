@@ -16,6 +16,9 @@ Class: Bard
 ## Public role and identity
 - Keeps the drums that beat the hours.
 
+## Appearance and voice
+A wiry goblin with red-lacquered drumsticks in his belt and ears notched by years of noise. Cheerful, deaf in one ear, and never off the beat.
+
 ## Known relationships and locations
 The Red Bastion [LOC-044]; Crimson Legion [FAC-002]
 

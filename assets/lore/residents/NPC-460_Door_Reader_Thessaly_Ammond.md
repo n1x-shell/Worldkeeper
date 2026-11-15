@@ -16,6 +16,9 @@ Class: Wizard
 ## Public role and identity
 - A Kaelholm archivist reading Greyhall's door in the First Grammar.
 
+## Appearance and voice
+A tiny gnome archivist on a tall ladder, with glyph-ink on her nose. Scholarly, excitable, and suddenly secretive.
+
 ## Known relationships and locations
 Greyhall [VLT-310]; Kaelholm [FAC-301]
 

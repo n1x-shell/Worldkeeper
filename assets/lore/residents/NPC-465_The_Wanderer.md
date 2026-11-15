@@ -16,6 +16,9 @@ Class: Unknown
 ## Public role and identity
 - An Echoborn who walked out onto the plain forty years ago, and never stopped.
 
+## Appearance and voice
+A thin figure in an Echoborn cloak worn to threads, walking steadily across the plain. Peaceful, unhurried, and won't stop to talk long.
+
 ## Known relationships and locations
 The Veil of Eternity [LOC-507]; Echoborn [FAC-505]
 
