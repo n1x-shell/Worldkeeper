@@ -25,8 +25,13 @@ Region: ETH-501
 6. **Fight.** A Plasmoid Boarder (Spelljammer) that has taken the shape of the door the party just opened.
 7. **Sign.** Giff boot-prints in neat rows, marching toward the last threshold.
 8. **Strange.** An astral elf sits in the grey grass, weeping starlight. She has just remembered how long it's been.
+9. **Fight.** A giff press-gang from the Twelfth Regiment of Nowhere (2 Giff Shock Troopers (Spelljammer)), recruiting anyone who looks handy with a gun.
+10. **Travellers.** An astral elf pilgrim (an Astral Elf Star Priest (Spelljammer)) on her way back to Aetheris after a thousand years, asking what's changed.
+11. **Sign.** A hadozee rope-ladder hangs out of the grey sky, swaying, with nothing at the top.
+12. **Strange.** A thri-kreen sits perfectly still in the grass, its shell gone grey to match. It has watched the Nameless Asylum for a year, and asks the party who comes and goes.
 
 # Encounters: Aetheris, residents on the road
+Region: CON-001
 1. **Travellers.** Gussie Bramblecott [NPC-421]'s dig crew, moving pits by night, one shovel short.
 2. **Travellers.** Herd-Leader Saraphine Dawnhoof [NPC-431]'s herd on the pilgrim road. One centaur won't take off her pack.
 3. **Travellers.** Corla Thresh [NPC-426], recruiting for the Blackveil job in a roadside inn.
@@ -41,6 +46,7 @@ Region: ETH-501
 12. **Strange.** The Mist-Child [NPC-428] at the roadside, pointing the wrong way.
 
 # Encounters: Kaelmar, residents on the road
+Region: CON-301
 1. **Travellers.** Joss Underhill [NPC-447], off a sled, looking for someone he couldn't see.
 2. **Travellers.** Kestrel Vane [NPC-449], coming out of the Dead Zone alone, scorched.
 3. **Travellers.** Vault-Seeker Oriel Faulk [NPC-446], taking a rubbing of a standing stone.

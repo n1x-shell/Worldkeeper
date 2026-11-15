@@ -1,4 +1,4 @@
-/** The shipped random encounter tables: every table is a full d12, they load once, and the GM's edits are kept. */
+/** The shipped random tables: every encounter table is a full d12 tied to a region, hook tables aren't empty, they load once, and the GM's edits are kept. */
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -12,11 +12,16 @@ const all = fs
   .flatMap((f) => parseTables(fs.readFileSync(path.join(DIR, f), 'utf8')));
 
 describe('random encounter tables', () => {
-  it('are all full d12 tables with unique names, each tied to a region', () => {
-    expect(all.length).toBeGreaterThan(30);
-    for (const t of all) {
+  it('are full d12 encounter tables, each tied to a region, and hook tables with entries, all with unique names', () => {
+    const encounters = all.filter((t) => t.name.startsWith('Encounters: '));
+    expect(encounters.length).toBeGreaterThan(30);
+    for (const t of encounters) {
       expect(t.entries, t.name).toHaveLength(12);
       expect(t.region, t.name).toMatch(/^[A-Z]{2,5}-\d{3,4}$/);
+    }
+    for (const t of all.filter((x) => !x.name.startsWith('Encounters: '))) {
+      expect(t.name, t.name).toMatch(/^Hooks from /);
+      expect(t.entries.length, t.name).toBeGreaterThan(0);
     }
     expect(new Set(all.map((t) => t.name)).size).toBe(all.length);
   });
