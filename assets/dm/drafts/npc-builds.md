@@ -155,7 +155,7 @@ Four NPCs are not people and have no build: the Hidden Ones Vyrithar and Vyrathu
 | Scribe Ilo Fen | The Convergence Collective | Triton (MotM) | Bard (College of Lore) | Scribe | they/them | The southern lakes |  |
 | Graftwright Desh | The Convergence Collective | Bugbear (MotM) | Artificer (Alchemist) | Artisan | he/him | The Eastern Deepwood |  |
 | Riv Ashdown | The Convergence Collective | Fire Genasi (MotM) | Sorcerer (Wild Magic Sorcery) | Wayfarer | she/her | Haskett's Mill |  |
-| Scout-Captain Hesk Varn | The Ascendancy | Goliath (PHB) | Ranger (Hunter) | Guide | he/him | The eastern mountains |  |
+| Scout-Captain Teague Dunmarsh | The Ascendancy | Goliath (PHB) | Ranger (Hunter) | Guide | he/him | The eastern mountains |  |
 | Siege-Engineer Yarrow Kask | The Ascendancy | Duergar (MotM) | Artificer (Artillerist) | Soldier | she/her | The under-roads |  |
 | Sergeant Bram Ironjaw | The Ascendancy | Human (PHB) | Fighter (Battle Master) | Soldier | he/him | Brannock |  |
 | Keeper Jory Hesk | Boundary Keepers | Half-elf (PHB 2014) | Bard (College of Lore) | Entertainer | he/him | Ashvale |  |

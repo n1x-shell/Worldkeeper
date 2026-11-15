@@ -34,7 +34,7 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Dwarf | Artificer | She/her | The Anvil of Dominion, the Tyrant's Dominion |
+| Dwarf | Wright | She/her | The Anvil of Dominion, the Tyrant's Dominion |
 
 **Looks.** A broad old dwarf with a white braid down her back and a hand of black iron that she built herself. The joints hiss when she grips a hammer.
 
@@ -80,7 +80,7 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Human | Cleric | She/her | Ashen Spire, the Hollow Marches |
+| Human | Votary | She/her | Ashen Spire, the Hollow Marches |
 
 **Looks.** A young woman with the Vale family's grey eyes, sleeves always rolled up, and a healer's satchel stitched with the Order's sun.
 
@@ -126,7 +126,7 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Reptilian (lizardfolk) | Silent Blade | They/them | Noctis, the Eternal Veil |
+| Reptilian (lizardfolk) | Rogue | They/them | Noctis, the Eternal Veil |
 
 **Looks.** A grey-scaled lizardfolk in a grey cloak. Witnesses disagree on height, eye colour and how many teeth showed.
 
@@ -172,7 +172,7 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Bugbear | Bard | She/her | Hollow Refuge |
+| Bugbear | Loresinger | She/her | Hollow Refuge |
 
 **Looks.** A tall bugbear with a mane of rust-brown fur, spectacles on a chain and an apron with too many pockets.
 
@@ -217,7 +217,7 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Harengon | Scribe | She/her | Kaelholm, she says |
+| Harengon | Mystic | She/her | Kaelholm, she says |
 
 **Looks.** A neat harengon with ink-spotted ears, a travelling desk on her back and a pen behind each ear.
 
@@ -260,7 +260,7 @@ People whose full records are GM-only, but who live public lives. Their pages sh
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Satyr | Bard | She/her | The Market of Lost Things, Hollow Refuge |
+| Satyr | Loresinger | She/her | The Market of Lost Things, Hollow Refuge |
 
 **Looks.** A satyr with gilded horn-tips, a pack mule called Ledger and a coat sewn with sample pockets.
 

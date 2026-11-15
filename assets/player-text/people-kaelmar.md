@@ -54,7 +54,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Halfling | Silent Blade | She/her | The southern river country |
+| Halfling | Rogue | She/her | The southern river country |
 
 **Looks.** A sharp-eyed halfling in a salt-stained grey coat, with a ledger on a strap and three pencils behind each ear.
 
@@ -229,7 +229,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Goblin | Silent Blade | She/her | Kettleby |
+| Goblin | Rogue | She/her | Kettleby |
 
 **Looks.** A small green goblin with a cart of pots, wires and spare hinges, and a laugh like a kettle whistle.
 
@@ -353,7 +353,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 - Her family in Haskett's Mill wants her home.
 - Her magic flares whenever someone mentions the Ascendancy.
 
-## Scout-Captain Hesk Varn
+## Scout-Captain Teague Dunmarsh
 
 *The goliath scout-captain mapping the eastern mountains for the Ascendancy.*
 
@@ -641,7 +641,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Human | Silent Blade | She/her | Sallow Cross |
+| Human | Rogue | She/her | Sallow Cross |
 
 **Looks.** A tall, thin woman in mud-stained boots with a ring of keys and a hard stare.
 
@@ -770,7 +770,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Halfling | Silent Blade | He/him | The southern river country |
+| Halfling | Rogue | He/him | The southern river country |
 
 **Looks.** A wiry halfling in a red neckerchief, captain of a flat-bottomed barge with a goat for a figurehead.
 
@@ -812,7 +812,7 @@ New people of Kaelmar, in the same layout as the other people pages. Cover pages
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Hobgoblin | Silent Blade | He/him | The Eastern Deepwood |
+| Hobgoblin | Rogue | He/him | The Eastern Deepwood |
 
 **Looks.** A scarred hobgoblin in a coat of patched leather, with a crowbar and a pack of glinting scrap.
 

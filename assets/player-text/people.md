@@ -38,7 +38,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Tabaxi | Cleric | She/her | A farming village on the Radiant Expanse |
+| Tabaxi | Votary | She/her | A farming village on the Radiant Expanse |
 
 **Looks.** A small tabaxi with sun-gold fur gone white at the muzzle, and eyes clouded pale gold, as if she had stared too long at the sun.
 
@@ -62,7 +62,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Tiefling | Inquisitor | He/him | The Purged Halls, the Radiant Ascendancy |
+| Tiefling | Paladin | He/him | The Purged Halls, the Radiant Ascendancy |
 
 **Looks.** A lean tiefling with swept-back horns filed blunt, dressed in plain grey with the Order's golden sun hidden inside his collar.
 
@@ -109,7 +109,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Dwarf | Warpriest | She/her | The iron mountains of the Tyrant's Dominion |
+| Dwarf | Votary | She/her | The iron mountains of the Tyrant's Dominion |
 
 **Looks.** A broad dwarf with a braided red-gold beard threaded with prayer beads, carrying a warhammer older than she is.
 
@@ -342,7 +342,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Dwarf | Artificer | He/him | The Anvil of Dominion, the Tyrant's Dominion |
+| Dwarf | Wright | He/him | The Anvil of Dominion, the Tyrant's Dominion |
 
 **Looks.** A stout dwarf almost never seen out of his own armour: black iron plates, riveted and glowing faintly at the seams.
 
@@ -365,7 +365,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Yuan-ti | Silent Blade | She/her | The dusk coast of the Eternal Veil |
+| Yuan-ti | Rogue | She/her | The dusk coast of the Eternal Veil |
 
 **Looks.** A yuan-ti with copper-red scales across her cheeks and hands, and a heavy executioner's blade she carries as if it weighs nothing.
 
@@ -430,7 +430,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Hobgoblin | Bard | He/him | Varkhaal, the Tyrant's Dominion |
+| Hobgoblin | Loresinger | He/him | Varkhaal, the Tyrant's Dominion |
 
 **Looks.** A slim young hobgoblin in fine red coats, with ink on his fingers and no scars at all, which in Varkhaal is its own kind of scandal.
 
@@ -671,7 +671,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Human | Silent Blade | He/him | He says Noctis |
+| Human | Rogue | He/him | He says Noctis |
 
 **Looks.** A handsome, forgettable man of middle years, with a silver mask he wears pushed up on his forehead like a pair of spectacles.
 
@@ -693,7 +693,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Tabaxi | Silent Blade | She/her | The Green Expanse, the Verdant Rebirth |
+| Tabaxi | Rogue | She/her | The Green Expanse, the Verdant Rebirth |
 
 **Looks.** A black-furred tabaxi with one white ear, and no jewellery or perfume. Nothing about her makes a sound.
 
@@ -715,7 +715,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Changes | Silent Blade | Any | Nobody knows |
+| Changes | Rogue | Any | Nobody knows |
 
 **Looks.** Anyone. Kaelen Voris has been a dock worker, a bishop and a child selling flowers.
 
@@ -758,7 +758,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Half-elf | Silent Blade | He/him | Unknown |
+| Half-elf | Rogue | He/him | Unknown |
 
 **Looks.** A plain half-elf in black with an empty sheath at his hip. When he fights, a blade of grey light fills it.
 
@@ -843,7 +843,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Kobold | Silent Blade | She/her | The back alleys of Noctis |
+| Kobold | Rogue | She/her | The back alleys of Noctis |
 
 **Looks.** A small black-scaled kobold with twin daggers whose blades seem to drink the light. She is much quieter than anything that size has a right to be.
 
@@ -865,7 +865,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Duergar | Cleric | She/her | Nightglass, the Eternal Veil |
+| Duergar | Votary | She/her | Nightglass, the Eternal Veil |
 
 **Looks.** A grey-skinned duergar with an iron chain of office and a voice that never rises above a murmur.
 
@@ -1122,7 +1122,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Halfling | Silent Blade | She/her | The Market of Lost Things, Hollow Refuge |
+| Halfling | Rogue | She/her | The Market of Lost Things, Hollow Refuge |
 
 **Looks.** A cheerful halfling in a red scarf. Looks like someone's favourite aunt.
 
@@ -1144,7 +1144,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Goblin | Artificer | She/her | A counting-house in Noctis |
+| Goblin | Wright | She/her | A counting-house in Noctis |
 
 **Looks.** A small goblin in spectacles and a good coat, with an abacus of black beads that clicks while she thinks.
 
@@ -1206,7 +1206,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Aarakocra | Bard | She/her | A village burned by the Legion |
+| Aarakocra | Loresinger | She/her | A village burned by the Legion |
 
 **Looks.** A tall aarakocra with scorched red-black feathers at her throat and a voice that carries over any fire.
 
@@ -1249,7 +1249,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Kobold | Artificer | They/them | The Anvil of Dominion, the Tyrant's Dominion |
+| Kobold | Wright | They/them | The Anvil of Dominion, the Tyrant's Dominion |
 
 **Looks.** A rust-red kobold in a leather apron, goggles and singed whiskers, carrying a wand made of furnace parts.
 
@@ -1270,7 +1270,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Eladrin | Cleric | He/him | Nobody knows |
+| Eladrin | Votary | He/him | Nobody knows |
 
 **Looks.** An eladrin whose hair and eyes have stayed autumn-red for longer than any record. His hands are always warm.
 
@@ -1438,7 +1438,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Sea Elf | Cleric | She/her | The waters under the Black Tides, she says |
+| Sea Elf | Votary | She/her | The waters under the Black Tides, she says |
 
 **Looks.** A sea elf with grey-green skin, dressed in black mourning lace that floats around her even on land.
 
@@ -1478,7 +1478,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Eladrin | Bard | She/her | Erased |
+| Eladrin | Loresinger | She/her | Erased |
 
 **Looks.** A winter eladrin whose face slides out of memory the moment you look away. People remember her voice, and frost, and nothing else.
 
@@ -1563,7 +1563,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Human | Cleric | She/her | Ashvale |
+| Human | Votary | She/her | Ashvale |
 
 **Looks.** A tall woman in her sixties with iron-grey braids, a keeper's grey shawl and hands that are never still.
 
@@ -1608,7 +1608,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Human | Artificer | She/her | Haskett's Mill, near Ashvale |
+| Human | Wright | She/her | Haskett's Mill, near Ashvale |
 
 **Looks.** A sturdy woman with sawdust in her hair, a grafting knife on her belt, and a clockwork dog that follows her everywhere.
 
@@ -1652,7 +1652,7 @@ Each person has:
 
 | People | Calling | Pronouns | From |
 | --- | --- | --- | --- |
-| Gnome | Artificer | She/her | Kaelholm |
+| Gnome | Wright | She/her | Kaelholm |
 
 **Looks.** A thin, upright gnome in tribunal grey, with a ledger under one arm and a small brass construct that follows two steps behind her.
 

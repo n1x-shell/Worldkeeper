@@ -4,7 +4,7 @@
 
 New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions, in the same layout as the other people pages. Secrets stay with the GM.
 
-## Old Pell Ambry
+## Old Corwin Ambry
 
 *The Lampblack ink-seller whose ink, they say, can't be scraped.*
 
@@ -23,8 +23,8 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 **What people say**
 
-- Pell's ink doesn't fade. Some say it doesn't scrape, either.
-- Never ask Pell what he writes at night.
+- Corwin's ink doesn't fade. Some say it doesn't scrape, either.
+- Never ask Corwin what he writes at night.
 
 ## Hesper Ondry
 
@@ -466,7 +466,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 - Vantis can tell you the name of every star over the Horizon.
 - They say the stars move when you're not looking. Vantis says they're going out.
 
-## Little Quell
+## Little Hush
 
 *A child born at the Observatory who can hear singing in the silence.*
 
@@ -485,7 +485,7 @@ New people of Kaelholm, the eastern mountains and the Ethereal Realm's factions,
 
 **What people say**
 
-- Little Quell hums a tune nobody taught her.
+- Little Hush hums a tune nobody taught her.
 - The Echoborn say she's the first person born at the Observatory. They say it like a question.
 
 ## Lady Sennith Velarys
