@@ -17,7 +17,7 @@ const TABS = [
 const CONTINENTS = [
   { key: 'aetheris', label: 'Aetheris', dot: 'bg-arcane' },
   { key: 'kaelmar', label: 'Kaelmar', dot: 'bg-gold' },
-  { key: 'ethereal', label: 'The Ethereal', dot: 'bg-dim' },
+  { key: 'ethereal', label: 'Ethereal Realm', dot: 'bg-ink/70' },
 ];
 
 /** The D&D classes a calling's page lists ("- Fighter: Champion, ..."), for a hint under its name. */
@@ -102,7 +102,7 @@ export function SpeciesBuilder({ entities }: { entities: PEntity[] }) {
             {!list.length && <li className="text-sm text-dim p-3">Nothing matches.</li>}
           </ul>
           <div className="flex flex-wrap gap-3 text-xs text-dim mt-2 px-1">
-            {CONTINENTS.slice(0, 2).map((c) => (
+            {CONTINENTS.filter((c) => c.key !== 'ethereal' || list.some((e) => where(e).includes(c))).map((c) => (
               <span key={c.key} className="inline-flex items-center gap-1">
                 <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} /> {c.label}
               </span>
