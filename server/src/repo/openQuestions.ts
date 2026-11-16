@@ -104,9 +104,11 @@ function autoStatus(q: OpenQuestion, r: Row, pinned: Database.Statement) {
     return;
   }
   if (r.type === 'npc' && /Unspecified fields|Appearance and voice|Not established/i.test(q.section)) {
-    const looks = /\*\*Looks\.\*\*/.test(summary) && /\| Pronouns \|/.test(summary);
-    const card = !!statblockFor(r.id);
-    const has = [looks && 'its handbook page gives pronouns and looks', card && 'its fight card is on its page'].filter(Boolean);
+    const sb = statblockFor(r.id);
+    // Looks and pronouns from the handbook page, or GM-only looks on the card.
+    const looks = (/\*\*Looks\.\*\*/.test(summary) && /\| Pronouns \|/.test(summary)) || !!sb?.looks;
+    const card = !!sb;
+    const has = [looks && (sb?.looks ? 'its card gives GM-only looks' : 'its handbook page gives pronouns and looks'), card && 'its fight card is on its page'].filter(Boolean);
     const lacks = [!looks && 'pronouns and looks', !card && 'a fight card'].filter(Boolean);
     if (has.length) q.by = [r.id];
     q.status = looks && card ? 'filled' : 'todo';

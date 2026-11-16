@@ -14,6 +14,11 @@ describe('stat blocks', () => {
 
   it('has hit points that match their dice and Constitution', () => {
     for (const s of all.filter((x) => x.kind !== 'hazard')) {
+      // Left-open cards have looks only, no numbers.
+      if (s.open) {
+        expect(s.looks, `${s.id} looks`).toBeTruthy();
+        continue;
+      }
       // Short cards use a Monster Manual stat block's own numbers.
       if (s.base) {
         expect(s.hpAvg, `${s.id} hp`).toBe(Number(/^(\d+)/.exec(s.hp ?? '')?.[1]));

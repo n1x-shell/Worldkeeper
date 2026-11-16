@@ -48,6 +48,10 @@ export interface StatBlock {
   changes?: string;
   /** False for someone who won't fight: the tactics say what they do instead. */
   fights?: boolean;
+  /** GM-only looks, for someone the handbook doesn't describe. */
+  looks?: string;
+  /** True when how they fight is deliberately left open: looks only, no numbers yet. */
+  open?: boolean;
 }
 
 const DIR = path.resolve(import.meta.dirname, '../../../assets/statblocks');
