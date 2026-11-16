@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import type { AppContext } from '../context.js';
 import { h, intParam } from './util.js';
-import { playerCampaign, playerCampaigns, playerEntities, playerEntity, playerMaps, playerSearch } from '../player/projection.js';
+import { activeCampaignId, playerCampaign, playerCampaigns, playerEntities, playerEntity, playerMaps, playerSearch } from '../player/projection.js';
+import { playerFactionWeb } from '../repo/factionWeb.js';
 import { notFound } from '../lib/errors.js';
 import { playerLive } from '../repo/handouts.js';
 
@@ -38,6 +39,11 @@ export function playerRoutes(ctx: AppContext) {
   r.get(
     '/campaigns',
     h(() => playerCampaigns(ctx.db)),
+  );
+  // The faction web as the party knows it.
+  r.get(
+    '/faction-web',
+    h(() => playerFactionWeb(ctx.db, activeCampaignId(ctx.db))),
   );
   // During a live session: the turn order of the running fight, and the newest handout.
   r.get(

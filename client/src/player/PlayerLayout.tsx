@@ -28,6 +28,8 @@ import {
   Feather,
   Scale,
   Library,
+  Eclipse,
+  Network,
 } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
 import { PLAYER_GROUPS, PLAYER_REALMS, OTHER_GROUP } from './categories';
@@ -72,7 +74,7 @@ const write = (k: string, v: string) => {
 /** Same shell as the DM app (sidebar, top search, phone drawer), built only from what players may see. */
 export function PlayerLayout({ appName, publishedAt }: { appName: string; publishedAt?: string }) {
   const { base } = usePlayer();
-  const { entities, campaigns, maps } = usePlayerIndex();
+  const { entities, campaigns, maps, factionWeb } = usePlayerIndex();
   const [collapsed, setCollapsed] = useState(read('wk.player.sidebar', '0') === '1');
   const [theme, setTheme] = useState<'dark' | 'light'>(read('wk.player.theme', 'dark') === 'light' ? 'light' : 'dark');
   const [drawer, setDrawer] = useState(false);
@@ -97,6 +99,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
   const handouts = (campaigns ?? []).reduce((n, c) => n + (c.handouts?.length ?? 0), 0);
   const calendar = (campaigns ?? []).some((c) => c.calendar);
   const regionsSeen = (campaigns ?? []).reduce((n, c) => n + (c.regions?.length ?? 0), 0);
+  const omens = (campaigns ?? []).reduce((n, c) => n + (c.omens?.length ?? 0), 0);
   const sections: { title: string; items: { to: string; label: string; icon: ReactNode; end?: boolean }[] }[] = [
     {
       title: 'World',
@@ -107,7 +110,11 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
     },
     {
       title: 'Encyclopedia',
-      items: [{ to: `${base}/browse/all`, label: 'All Lore', icon: <BookOpen size={I} /> }, ...groups.map((g) => ({ to: `${base}/browse/${g.key}`, label: g.label, icon: GROUP_ICONS[g.key] }))],
+      items: [
+        { to: `${base}/browse/all`, label: 'All Lore', icon: <BookOpen size={I} /> },
+        ...groups.map((g) => ({ to: `${base}/browse/${g.key}`, label: g.label, icon: GROUP_ICONS[g.key] })),
+        ...(factionWeb?.length ? [{ to: `${base}/factions-web`, label: 'Faction Web', icon: <Network size={I} /> }] : []),
+      ],
     },
     {
       title: 'Campaign',
@@ -120,6 +127,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
         ...(handouts ? [{ to: `${base}/handouts`, label: 'Handouts', icon: <Gift size={I} /> }] : []),
         ...(calendar ? [{ to: `${base}/calendar`, label: 'Calendar', icon: <CalendarDays size={I} /> }] : []),
         ...(regionsSeen ? [{ to: `${base}/regions`, label: 'Around the World', icon: <Globe2 size={I} /> }] : []),
+        ...(omens ? [{ to: `${base}/omens`, label: 'Signs and Omens', icon: <Eclipse size={I} /> }] : []),
       ],
     },
   ].filter((s) => s.items.length);

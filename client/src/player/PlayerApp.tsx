@@ -1,3 +1,4 @@
+import { PlayerFactionWeb, PlayerOmens } from './WebAndOmens';
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { apiSource, type PlayerSource } from './source';
@@ -39,6 +40,8 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
           <Route path="handouts" element={<PlayerHandouts />} />
           <Route path="calendar" element={<PlayerCalendar />} />
           <Route path="regions" element={<PlayerRegions />} />
+          <Route path="factions-web" element={<PlayerFactionWeb />} />
+          <Route path="omens" element={<PlayerOmens />} />
           <Route path="journal" element={<Navigate to={`${base}/quests`} replace />} />
           <Route path="*" element={<PlayerHome />} />
         </Route>

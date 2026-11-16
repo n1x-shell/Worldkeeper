@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Coins, Dices, Gift, Minus, Plus, ScrollText } from 'lucide-react';
+import { Coins, Dices, Gift, Minus, Plus, ScrollText, Shuffle, UserRound } from 'lucide-react';
+import { EntityLink } from '../components/ui';
 import { api, useApi } from '../lib/api';
 import type { Briefing } from './Briefing';
 import { Markdown } from '../components/Markdown';
@@ -12,11 +13,89 @@ import { Markdown } from '../components/Markdown';
 export function LiveTools({ sessionId, campaignId, onLogged }: { sessionId: number; campaignId: number; onLogged: () => void }) {
   return (
     <>
+      <WhosNearby sessionId={sessionId} onLogged={onLogged} />
       <QuickTables sessionId={sessionId} onLogged={onLogged} />
       <QuickTreasure sessionId={sessionId} campaignId={campaignId} onLogged={onLogged} />
       <QuickStanding campaignId={campaignId} onLogged={onLogged} />
       <QuickHandouts campaignId={campaignId} onLogged={onLogged} />
     </>
+  );
+}
+
+interface NearbyPerson {
+  id: string;
+  name: string;
+  species: string | null;
+  knownAs: string | null;
+  pronouns: string | null;
+  tagline: string | null;
+  looks: string | null;
+  manner: string | null;
+  rumours: string[];
+  gmOnly: boolean;
+}
+
+/** Someone near the party, ready to play: looks, manner and something they've heard. */
+function WhosNearby({ sessionId, onLogged }: { sessionId: number; onLogged: () => void }) {
+  const { data } = useApi<{ place: string | null; people: NearbyPerson[] }>(`/api/sessions/${sessionId}/nearby`);
+  const [i, setI] = useState<number | null>(null);
+  const [r, setR] = useState(0);
+  if (!data) return null;
+  const list = data.people;
+  const p = i == null ? null : list[i % list.length];
+  const another = () => {
+    if (!list.length) return;
+    let n = Math.floor(Math.random() * list.length);
+    if (list.length > 1 && n === i) n = (n + 1) % list.length;
+    setI(n);
+    setR(Math.floor(Math.random() * 1000));
+  };
+  return (
+    <div className="panel-pad space-y-2">
+      <div className="flex items-center gap-2">
+        <UserRound size={15} className="text-gold" />
+        <div className="section-title">Who's nearby</div>
+        {data.place && <span className="text-xs text-dim">{data.place}</span>}
+        <button className="btn text-xs ml-auto" onClick={another} disabled={!list.length}>
+          <Shuffle size={12} /> {p ? 'Someone else' : 'Someone nearby'}
+        </button>
+      </div>
+      {!list.length && <p className="text-xs text-dim">Nobody lives where the party is. Move the party on the map, or set the campaign's starting place.</p>}
+      {p && (
+        <div className="rounded-md border border-gold/40 p-2 text-sm space-y-1">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <EntityLink id={p.id} />
+            <span className="text-xs text-dim">{[p.species, p.knownAs, p.pronouns].filter((x) => x && x !== 'Unknown').join(', ')}</span>
+            {p.gmOnly && <span className="text-[10px] uppercase tracking-wider text-danger">GM only</span>}
+          </div>
+          {p.tagline && <p className="italic text-dim">{p.tagline}</p>}
+          {p.looks && (
+            <p>
+              <span className="text-dim">Looks:</span> {p.looks}
+            </p>
+          )}
+          {p.manner && (
+            <p>
+              <span className="text-dim">Manner:</span> {p.manner}
+            </p>
+          )}
+          {p.rumours.length > 0 && (
+            <p>
+              <span className="text-dim">They might say:</span> "{p.rumours[r % p.rumours.length]}"
+            </p>
+          )}
+          <button
+            className="btn-ghost text-xs"
+            onClick={async () => {
+              await api.post('/api/session-log', { session_id: sessionId, kind: 'npc', text: `Met ${p.name}.`, entity_id: p.id });
+              onLogged();
+            }}
+          >
+            <ScrollText size={12} /> Log the meeting
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 

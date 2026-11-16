@@ -533,7 +533,7 @@ CREATE INDEX renown_log_campaign ON renown_log(campaign_id, faction_id, id);
   },
   {
     version: 9,
-    name: 'party treasure: what each campaign\'s party has found, and who carries it',
+    name: "party treasure: what each campaign's party has found, and who carries it",
     sql: `
 CREATE TABLE party_treasure (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -618,7 +618,7 @@ CREATE TABLE downtime (
   },
   {
     version: 12,
-    name: 'the campaign calendar: the GM\'s own events, once or every year',
+    name: "the campaign calendar: the GM's own events, once or every year",
     sql: `
 CREATE TABLE calendar_events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -632,6 +632,32 @@ CREATE TABLE calendar_events (
 );
 `,
   },
+  {
+    version: 13,
+    name: 'the Return clock and the faction web',
+    sql: `
+CREATE TABLE return_clock (
+  campaign_id INTEGER PRIMARY KEY REFERENCES campaigns(id) ON DELETE CASCADE,
+  stage INTEGER NOT NULL DEFAULT 0 CHECK (stage BETWEEN 0 AND 7),
+  held_until TEXT NOT NULL DEFAULT '',
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE TABLE return_log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  from_stage INTEGER NOT NULL,
+  to_stage INTEGER NOT NULL,
+  reason TEXT NOT NULL DEFAULT '',
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE TABLE faction_ties_revealed (
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  a TEXT NOT NULL,
+  b TEXT NOT NULL,
+  PRIMARY KEY (campaign_id, a, b)
+);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {
@@ -640,9 +666,7 @@ export function migrate(db: Database.Database): number {
     name TEXT NOT NULL,
     applied_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
   )`);
-  const applied = new Set(
-    (db.prepare('SELECT version FROM schema_migrations').all() as { version: number }[]).map((r) => r.version),
-  );
+  const applied = new Set((db.prepare('SELECT version FROM schema_migrations').all() as { version: number }[]).map((r) => r.version));
   let count = 0;
   for (const m of MIGRATIONS) {
     if (applied.has(m.version)) continue;

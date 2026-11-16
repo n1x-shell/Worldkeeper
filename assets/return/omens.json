@@ -1,0 +1,12 @@
+{
+ "note": "What players see of the Return (The Return [COS-032]), stage by stage: an omen, and rumours that start going round. They never name the elder gods. Owner decision, November 2026.",
+ "stages": [
+  { "stage": 1, "title": "Signs", "omen": "The stars at the edge of the sky flicker, and bells across Aetheris and Kaelmar ring a half-beat late.", "rumours": ["Every bell in Hollow Refuge rang late last night. Nobody touched the ropes.", "Black Sun preachers say they dream of a black star."] },
+  { "stage": 2, "title": "The sleepers stir", "omen": "Travellers back from the Ethereal Realm say the Hollow Verge has gone quiet: the Greylings have stopped whispering.", "rumours": ["The wreck-islands in the Fields have all turned to face the same way.", "In the Ossuary of Kings, the dead kings kneel to nothing."] },
+  { "stage": 3, "title": "Heralds", "omen": "Strange messengers have been seen in the Hollow Verge: tall, wrong-jointed things that speak in borrowed voices.", "rumours": ["The Black Sun preaches in the open now, even in Hollow Refuge.", "Something at the Asylum's door asked for the keeper by a name nobody knew he had."] },
+  { "stage": 4, "title": "The first Guest at the Horizon", "omen": "On clear nights there's a new star in the sky, and over the Black Horizon something vast can be seen.", "rumours": ["There's a new star in the east. It doesn't move with the others.", "Sailors on the Black Tides say the sea has started to lean toward something."] },
+  { "stage": 5, "title": "The Sepulcher opens", "omen": "Word comes from the deep realm: the obsidian tomb at the Black Horizon is open, and something walked out.", "rumours": ["Shard-keepers everywhere are doubling their guards, and won't say why.", "A crowned figure in the Fields is asking salvagers about the shards."] },
+  { "stage": 6, "title": "The door", "omen": "At the Black Horizon a door stands open, and everyone in the Ethereal Realm can feel it, like a draught.", "rumours": ["The Asylum's Threshold Door opens by itself now, always onto the Black Horizon.", "Every cult is moving at once."] },
+  { "stage": 7, "title": "The Return", "omen": "The sky goes dark at noon over both continents. The eclipse has come.", "rumours": ["The Black Sun is singing in the streets.", "Something is standing at the edge of the world, looking in."] }
+ ]
+}

@@ -168,3 +168,38 @@ export function sessionBriefing(db: DB, sessionId: number) {
     treasure: treasureRegion ? { region: treasureRegion, tier: tierKey, label: tData.regions[treasureRegion].label } : null,
   };
 }
+
+/**
+ * Who's nearby, for the live session: the people who live where the party is (or close by), each with what the GM
+ * needs to play them on the spot. Looks and manner come from their handbook page, or from their record.
+ */
+export function nearbyPeople(db: DB, sessionId: number) {
+  const b = sessionBriefing(db, sessionId);
+  const seen = new Set<string>();
+  const people = [...b.locals].filter((p) => !seen.has(p.id) && seen.add(p.id));
+  const row = db.prepare(`SELECT id, name, body, fields, player_summary, revealed FROM entities WHERE id = ?`);
+  const rumours = db.prepare(`SELECT text FROM rumours WHERE source_id = ? AND stale = 0 ORDER BY id`);
+  return {
+    place: b.location?.name ?? null,
+    people: people.map((p) => {
+      const e = row.get(p.id) as { id: string; name: string; body: string; fields: string; player_summary: string; revealed: number };
+      const ps = e.player_summary ?? '';
+      const grab = (label: string) => new RegExp(`\\*\\*${label}\\.\\*\\*\\s*([^\\n]+)`).exec(ps)?.[1]?.trim() ?? null;
+      const appearance = /## Appearance and voice\n([^\n]+)/.exec(e.body)?.[1]?.trim() ?? null;
+      const table = /\| People \| Class \| Known as \| Pronouns \| From \|\n\|[- |]+\|\n\| (.*?) \| (.*?) \| (.*?) \| (.*?) \|/.exec(ps);
+      const field = (k: string) => parseJson<[string, string][]>(e.fields, []).find(([key]) => key.toLowerCase() === k)?.[1] ?? null;
+      return {
+        id: e.id,
+        name: e.name,
+        species: table?.[1] ?? field('species'),
+        knownAs: table?.[3] ?? null,
+        pronouns: table?.[4] ?? field('pronouns'),
+        tagline: /^\*([^*\n]+)\*/.exec(ps.trim())?.[1] ?? null,
+        looks: grab('Looks') ?? appearance,
+        manner: grab('Manner'),
+        rumours: (rumours.all(e.id) as { text: string }[]).map((r) => r.text),
+        gmOnly: !e.revealed,
+      };
+    }),
+  };
+}
