@@ -359,6 +359,69 @@
       "x": 2240,
       "y": 1380,
       "category": "location"
+    },
+    {
+      "id": "LOC-903",
+      "label": "Tollrock",
+      "x": 1712,
+      "y": 1146,
+      "category": "landmark"
+    },
+    {
+      "id": "LOC-904",
+      "label": "The Kneelers",
+      "x": 1345,
+      "y": 1030,
+      "category": "landmark"
+    },
+    {
+      "id": "LOC-905",
+      "label": "Kittiwake",
+      "x": 1150,
+      "y": 1490,
+      "category": "landmark"
+    },
+    {
+      "id": "SET-329",
+      "label": "Hearthdeep",
+      "x": 250,
+      "y": 320,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-330",
+      "label": "Whitecairn",
+      "x": 620,
+      "y": 300,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-331",
+      "label": "Tumblewater",
+      "x": 460,
+      "y": 1500,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-332",
+      "label": "Mossback",
+      "x": 330,
+      "y": 1570,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-333",
+      "label": "Ashgather",
+      "x": 860,
+      "y": 560,
+      "category": "settlement"
+    },
+    {
+      "id": "SET-334",
+      "label": "Cinderwell",
+      "x": 660,
+      "y": 600,
+      "category": "settlement"
     }
   ]
 }
