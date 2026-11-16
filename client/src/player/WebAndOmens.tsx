@@ -55,9 +55,9 @@ export function PlayerFactionWeb() {
 export function WebDiagram({ ties, base, onPick }: { ties: { a: string; b: string; aName: string; bName: string; kind: string; dashed?: boolean }[]; base?: string; onPick?: (id: string) => void }) {
   const nodes = [...new Map(ties.flatMap((t) => [[t.a, t.aName] as const, [t.b, t.bName] as const])).entries()];
   const R = 150;
-  const pos = new Map(nodes.map(([id], i) => [id, { x: 220 + R * Math.cos((2 * Math.PI * i) / nodes.length - Math.PI / 2), y: 200 + R * Math.sin((2 * Math.PI * i) / nodes.length - Math.PI / 2) }]));
+  const pos = new Map(nodes.map(([id], i) => [id, { x: 320 + R * Math.cos((2 * Math.PI * i) / nodes.length - Math.PI / 2), y: 200 + R * Math.sin((2 * Math.PI * i) / nodes.length - Math.PI / 2) }]));
   return (
-    <svg viewBox="0 0 440 400" className="w-full max-w-xl mx-auto block" role="img" aria-label="Diagram of the faction web">
+    <svg viewBox="0 0 640 400" className="w-full max-w-2xl mx-auto block" role="img" aria-label="Diagram of the faction web">
       {ties.map((t) => {
         const a = pos.get(t.a)!;
         const b = pos.get(t.b)!;
@@ -76,7 +76,7 @@ export function WebDiagram({ ties, base, onPick }: { ties: { a: string; b: strin
       })}
       {nodes.map(([id, name]) => {
         const p = pos.get(id)!;
-        const left = p.x < 220;
+        const left = p.x < 319;
         const label = name.replace(/^The /, '').replace(/\s*\(.*\)$/, '');
         const node = (
           <g>

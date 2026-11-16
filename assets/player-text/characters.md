@@ -288,7 +288,9 @@ In Kaelmar, mystics are often glyph-burned visionaries, carrying glyphs that gre
 
 ## Type Builds and Calling Rules
 
-*How to make a character in this world: a people, a calling, a background and a place to start.*
+*How to make a character in this world: a people, a class, a background and a place to start.*
+
+**Or step through it.** The [character builder](/player/builder) walks you through each choice below, and gives you a one-page summary to print or bring to the first session.
 
 **1. Choose a people.** Every people in the world has a page under Species and Classes, with how they live on each continent, common names and the rules to use. Some peoples go by different names on each continent: see @[Ancestries Across the World].
 
@@ -333,7 +335,7 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 
 ## Character Options and Backgrounds
 
-*How to play the people and callings of Kaelmar, and seven backgrounds for a character from there.*
+*How to play the peoples and roles of Kaelmar, and six backgrounds for a character from there.*
 
 **Kaelmar's roles at the table**
 

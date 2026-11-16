@@ -30,6 +30,7 @@ import {
   Library,
   Eclipse,
   Network,
+  UserPlus,
 } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
 import { PLAYER_GROUPS, PLAYER_REALMS, OTHER_GROUP } from './categories';
@@ -114,6 +115,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
         { to: `${base}/browse/all`, label: 'All Lore', icon: <BookOpen size={I} /> },
         ...groups.map((g) => ({ to: `${base}/browse/${g.key}`, label: g.label, icon: GROUP_ICONS[g.key] })),
         ...(factionWeb?.length ? [{ to: `${base}/factions-web`, label: 'Faction Web', icon: <Network size={I} /> }] : []),
+        { to: `${base}/builder`, label: 'Make a Character', icon: <UserPlus size={I} /> },
       ],
     },
     {
