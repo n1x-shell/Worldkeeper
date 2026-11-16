@@ -18,6 +18,9 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 - Its gnomes are the city's scribes and glyph-wrights.
 - Its tribunals can punish someone by scraping their name from every roll. People call it being "burned".
 - Glyph-cutting into living flesh is forbidden here.
+- About 40,000 people live here, more than anywhere else on Kaelmar. Most are human or gnome, but every people of Kaelmar is somewhere in the city, and now a few hundred Aetherians off the ships.
+
+**Wards.** The city climbs from the harbour in terraces, in seven wards named after their landmarks: the Tollmouth, the harbour ward, with the Margin; Lampblack; the Sitting, with the Rasp; Vellum; the Low Terraces, where most people live; the Fair Copies, high up among the monasteries; and Greyhall Gate at the very top, on the road to Greyhall.
 
 **Places in town**
 
