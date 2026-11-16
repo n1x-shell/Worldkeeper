@@ -177,12 +177,16 @@ const inRealm = (e: PEntity, realm: string) => e.realm === realm || !!e.realms?.
 export function PlayerBrowse() {
   const { group = 'all' } = useParams();
   const { entities } = usePlayerIndex();
-  const [realm, setRealm] = useState('');
+  // The realm filter belongs to the page it was picked on: switching to another group starts unfiltered, and a realm
+  // that group has nothing in is ignored (otherwise a page could show nothing, with no button to clear the filter).
+  const [pick, setPick] = useState({ group: '', realm: '' });
+  const setRealm = (realm: string) => setPick({ group, realm });
   const g = group === 'all' ? null : [...PLAYER_GROUPS, OTHER_GROUP].find((x) => x.key === group);
+  const realmsHere = useMemo(() => PLAYER_REALMS.filter((r) => (entities ?? []).some((e) => inRealm(e, r.key) && (!g || groupOf(e.type).key === g.key))), [entities, g]);
+  const realm = pick.group === group && realmsHere.some((r) => r.key === pick.realm) ? pick.realm : '';
   const list = useMemo(() => (entities ?? []).filter((e) => (!g || groupOf(e.type).key === g.key) && (!realm || inRealm(e, realm))).sort(byName), [entities, g, realm]);
   if (!entities) return null;
   if (group === 'peoples') return <SpeciesBuilder entities={entities} />;
-  const realmsHere = PLAYER_REALMS.filter((r) => (entities ?? []).some((e) => inRealm(e, r.key) && (!g || groupOf(e.type).key === g.key)));
   return (
     <div>
       <Header title={g?.label ?? 'All Lore'} subtitle={`${list.length} ${list.length === 1 ? 'entry' : 'entries'}`} />
