@@ -10,7 +10,7 @@ describe('adventure additions', () => {
   it('adds each adventure with its scenes, in order, and only once', () => {
     const { db } = tempContext();
     const added = applyAdventures(db, DIR);
-    expect(added).toEqual(['The Dead Man at the Crooked Nail', 'The Hum Under the West Road', 'The Lamplighter', 'The Lightless Crossing', 'The Return Line', 'The Long Way Out', 'The Waystone at Dusk']);
+    expect(added).toEqual(['The Dead Man at the Crooked Nail', 'The Hum Under the West Road', 'The Lamplighter', 'The Lightless Crossing', 'The Return Line', 'The Long Way Out', 'The Waystone at Dusk', 'Paid Twice', 'The Sunken Nave', 'The First Fire', 'Echoes in the Sand']);
     const adv = db.prepare(`SELECT id, status, arc, data FROM adventures WHERE title = 'The Dead Man at the Crooked Nail'`).get() as { id: number; status: string; arc: string; data: string };
     expect(adv.status).toBe('ready');
     expect(adv.arc).toBe('The Loose Thread');
@@ -27,7 +27,7 @@ describe('adventure additions', () => {
     // Applying again changes nothing, even after the GM has edited one.
     db.prepare(`UPDATE adventures SET arc = 'Mine' WHERE id = ?`).run(adv.id);
     expect(applyAdventures(db, DIR)).toEqual([]);
-    expect((db.prepare('SELECT COUNT(*) n FROM adventures').get() as { n: number }).n).toBe(7);
+    expect((db.prepare('SELECT COUNT(*) n FROM adventures').get() as { n: number }).n).toBe(11);
     expect((db.prepare('SELECT arc FROM adventures WHERE id = ?').get(adv.id) as { arc: string }).arc).toBe('Mine');
   });
 });
