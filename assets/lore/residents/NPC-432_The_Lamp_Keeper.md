@@ -1,5 +1,5 @@
 ID: NPC-432
-Name: The Lamplighter
+Name: The Lamp-Keeper
 Alternate names: None recorded
 Category: NPC
 Parent: People and Organizations (Aetheris)
@@ -11,7 +11,7 @@ Pronouns: she/her
 Species: Tiefling
 Class: Unknown
 
-# The Lamplighter
+# The Lamp-Keeper
 
 ## Public role and identity
 - Known to nobody outside this place. GM only.

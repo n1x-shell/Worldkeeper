@@ -33,7 +33,7 @@ Region: REG-001
 # Hooks from the residents: Aetheris's far places
 1. **The Fourth Knock** (levels 11 to 16). Corisande asks the party to stand watch at the Luminara Gate. The fourth knock is due. See Gate-Warden Corisande Marlowe [NPC-430], at LOC-007 [LOC-007].
 2. **North With the Herd** (levels 5 to 10). A heretic needs to get north. Saraphine needs extra hands, and the Inquisitor is close. See Herd-Leader Saraphine Dawnhoof [NPC-431], at the Radiant Expanse [LOC-042].
-3. **Follow the Lamps** (levels 5 to 10). The party follows the lit lamps into the Purged Halls, and finds someone who has waited a long time to be found. See The Lamplighter [NPC-432], at the Purged Halls [LOC-043].
+3. **Follow the Lamps** (levels 5 to 10). The party follows the lit lamps into the Purged Halls, and finds someone who has waited a long time to be found. See The Lamp-Keeper [NPC-432], at the Purged Halls [LOC-043].
 4. **Brannagh's Records** (levels 5 to 10). Brannagh asks the party to carry her records out of the Dominion, to someone who will listen. See Sergeant Brannagh Holt [NPC-433], at the Bloodfields [LOC-045].
 5. **Before the Hammers** (levels 11 to 16). Ammon needs his copy of the carvings smuggled out of the Ruins before the Legion's hammers arrive. See Ammon Sefaro [NPC-434], at the Ruins of the Old Kings [LOC-046].
 6. **The Next Visitor** (levels 11 to 16). Lorcan asks the party to watch the Rift of Unmaking, and follow the next visitor who makes the vortex shrink. See Storm-Watcher Lorcan Drey [NPC-435], at the Rift of Unmaking [LOC-049].
