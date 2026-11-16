@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Copy, Printer, RotateCcw, Wand2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, ArrowRight, Copy, Printer, RotateCcw, Send, Wand2 } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
 import { usePlayerData, type PEntity } from './source';
 import { generateNames } from '../../../shared/names';
+import { SKILLS } from '../../../shared/sheet';
 
 /**
  * The character builder: a people, a class and subclass, a background, a place to start and ties to the world, one
@@ -117,6 +118,7 @@ export function CharacterBuilder() {
   const { source, base } = usePlayer();
   const [c, save] = useSaved();
   const [step, setStep] = useState(0);
+  const navigate = useNavigate();
   const set = (patch: Partial<Choice>) => save({ ...c, ...patch });
   useEffect(() => {
     window.scrollTo?.(0, 0);
@@ -165,6 +167,52 @@ export function CharacterBuilder() {
     );
     const [n] = generateNames({ seeds, people: people?.name ?? '', used, count: 1, seed: Date.now() });
     if (n) set({ name: n });
+  };
+
+  // On the table server: fill in the player's character sheet from this build (with the code from My Character).
+  const sendToSheet = async () => {
+    let code = '';
+    try {
+      code = localStorage.getItem('wk.player.me') ?? '';
+    } catch {
+      /* private window */
+    }
+    if (!code) code = (prompt('Your character code, from your GM:') ?? '').trim().toUpperCase();
+    if (!code || !source.myPage || !source.saveMyPage) return;
+    const page = await source.myPage(code);
+    if (!page) return alert(`No character has the code ${code}. Check it with your GM.`);
+    if (!confirm(`Fill in ${page.name}'s sheet from this build? Name, species, class, subclass, background, skills, tools, feat and backstory will be replaced.`)) return;
+    const skills = SKILLS.map((k) => k.name).filter((k) => new RegExp(`\\b${k}\\b`, 'i').test(bg?.skills ?? ''));
+    const story = [
+      c.pronouns && `Pronouns: ${c.pronouns}`,
+      c.start && `Starts in ${c.start}.`,
+      c.hometown && `Hometown: ${c.hometown}.`,
+      c.faction && `Faction: ${c.faction}.`,
+      c.family && `Family: ${c.family}.`,
+      c.rival && `Rival: ${c.rival}.`,
+      c.debt && `Owes: ${c.debt}.`,
+      c.notes,
+    ]
+      .filter(Boolean)
+      .join('\n');
+    await source.saveMyPage(code, {
+      character: {
+        name: c.name || page.name,
+        // People pages are plural ("Halflings", "Elves"); a sheet names one ("Halfling", "Elf").
+        species: c.people ? c.people.replace(/ies$/, 'y').replace(/ves$/, 'f').replace(/s$/, '') : page.species,
+        class_name: c.cls || page.class_name,
+        sheet: {
+          ...page.sheet,
+          subclass: c.subclass || page.sheet.subclass,
+          background: c.background || page.sheet.background,
+          skills: skills.length ? [...new Set([...(page.sheet.skills ?? []), ...skills])] : page.sheet.skills,
+          toolProf: bg?.tool ?? page.sheet.toolProf,
+          feats: bg?.feat ?? page.sheet.feats,
+          backstory: story || page.sheet.backstory,
+        },
+      },
+    });
+    navigate(`${base}/me/${code}`);
   };
 
   if (!entities) return null;
@@ -343,6 +391,11 @@ export function CharacterBuilder() {
             <button className="btn" onClick={() => void navigator.clipboard?.writeText(summary)}>
               <Copy size={14} /> Copy as text
             </button>
+            {source.saveMyPage && (
+              <button className="btn" onClick={() => void sendToSheet()}>
+                <Send size={14} /> Send to my sheet
+              </button>
+            )}
             <button className="btn-ghost ml-auto" onClick={() => (save(EMPTY), setStep(0))}>
               <RotateCcw size={14} /> Start again
             </button>

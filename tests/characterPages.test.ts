@@ -112,4 +112,60 @@ describe('character pages', () => {
     expect(copy.code).toMatch(/^[A-Z2-9]{8}$/);
     expect(JSON.stringify(playerSnapshot(ctx.db))).not.toContain('A secret memory');
   });
+
+  it('show the player their 2024 sheet, keep the GM notes private and kept, and never let the player change level', async () => {
+    const { gm, table, ch, page } = await setup();
+    await request(gm)
+      .patch(`/api/characters/${ch.id}`)
+      .send({
+        sheet: {
+          abilities: { DEX: 16 },
+          skills: ['Stealth'],
+          shardscarred: 'GM: touched the shard at Blackveil',
+          hometown: 'SET-001',
+          ties: [{ entity_id: 'NPC-010', kind: 'friend', note: 'GM: secretly owes her' }],
+        },
+      });
+    const me = `/api/player/me/${page.code}`;
+    let r = await request(table).get(me);
+    expect(r.body.sheet.abilities.DEX).toBe(16);
+    expect(r.body.sheet.shardscarred).toBeUndefined();
+    expect(r.body.sheet.ties).toBeUndefined();
+    expect(r.body.sheet.hometown).toBeUndefined();
+    // The player keeps their sheet: abilities, HP, spells, a new background...
+    r = await request(table)
+      .patch(me)
+      .send({
+        character: {
+          species: 'Halfling',
+          sheet: {
+            abilities: { DEX: 17 },
+            skills: ['Stealth'],
+            expertise: ['Stealth'],
+            hp: 18,
+            maxHp: 21,
+            background: 'Refuge Scavenger',
+            spells: [{ name: 'Guidance', level: 0, prepared: true }],
+            ties: [],
+          },
+        },
+      });
+    expect(r.status).toBe(200);
+    expect(r.body.species).toBe('Halfling');
+    expect(r.body.sheet).toMatchObject({ hp: 18, background: 'Refuge Scavenger', expertise: ['Stealth'] });
+    // ...but the GM's notes stay as they were, whatever the player sent.
+    const gmView = (await request(gm).get(`/api/characters/${ch.id}`)).body;
+    expect(gmView.sheet.shardscarred).toBe('GM: touched the shard at Blackveil');
+    expect(gmView.sheet.ties).toHaveLength(1);
+    expect(gmView.sheet.hometown).toBe('SET-001');
+    // The level is the GM's to change.
+    expect(
+      (
+        await request(table)
+          .patch(me)
+          .send({ character: { level: 5 } })
+      ).status,
+    ).toBe(400);
+    expect((await request(gm).get(`/api/characters/${ch.id}`)).body.level).toBe(3);
+  });
 });

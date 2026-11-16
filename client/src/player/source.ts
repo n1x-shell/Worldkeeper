@@ -1,3 +1,4 @@
+import type { Sheet } from '@shared/sheet';
 import { useEffect, useState } from 'react';
 
 /**
@@ -105,7 +106,10 @@ export interface PlayerSource {
   live?(): Promise<PLive>;
   /** Only on the table server: a character's own page, by its private code. */
   myPage?(code: string): Promise<PCharacterPage | null>;
-  saveMyPage?(code: string, patch: Partial<Pick<PCharacterPage, 'true_name' | 'memories' | 'known_by' | 'notes'>>): Promise<PCharacterPage>;
+  saveMyPage?(
+    code: string,
+    patch: Partial<Pick<PCharacterPage, 'true_name' | 'memories' | 'known_by' | 'notes'>> & { character?: Partial<Pick<PCharacterPage, 'name' | 'species' | 'class_name' | 'sheet'>> },
+  ): Promise<PCharacterPage>;
 }
 
 /** A character's own page: memories, true name, who knows it, and Thinning (set by the GM). */
@@ -121,6 +125,8 @@ export interface PCharacterPage {
   shardscarred: boolean;
   notes: string;
   updated_at: string;
+  /** The character's D&D 2024 sheet (without the GM's own notes). */
+  sheet: Sheet;
 }
 
 async function getJson<T>(url: string): Promise<T> {

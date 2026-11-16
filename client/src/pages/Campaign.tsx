@@ -3,14 +3,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ReactFlow, Background, Controls, MarkerType, type Connection, type Edge, type Node, type NodeChange, applyNodeChanges } from '@xyflow/react';
 import { Check, Copy, Download, Play, Plus, Trash2, Upload, Wand2, ArrowUp, ArrowDown, Swords } from 'lucide-react';
-import { proficiencyBonus, abilityModifier } from '@shared/play';
-import { CONDITIONS_2024 } from '@shared/domain';
 import { api, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Campaign, Session, StateRow } from '../lib/types';
 import { AutoTextarea, Empty, EntityLink, ErrorBox, Field, Loading, Modal, PageHeader, SaveStatus, Tabs, useToast } from '../components/ui';
 import { EntityMultiPicker, EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
+import { FullSheet } from '../player/sheet/FullSheet';
+import type { Sheet } from '@shared/sheet';
 
 // ------------------------------------------------------------------ shared helpers
 export interface Overview {
@@ -397,14 +397,22 @@ function CharacterSheet({ ch: initial, onDeleted }: { ch: Character; onDeleted: 
   };
   const sh = ch.sheet;
   const setSheet = (p: Partial<Character['sheet']>) => set({ sheet: { ...sh, ...p } });
-  const pb = proficiencyBonus(ch.level);
-  const abil = sh.abilities ?? {};
   return (
     <div className="panel-pad space-y-4">
-      <div className="flex justify-between">
+      <div className="flex flex-wrap items-end gap-3">
+        <Field label="Player">
+          <input className="input" value={ch.player} onChange={(e) => set({ player: e.target.value })} />
+        </Field>
+        <Field label="Status">
+          <select className="input" value={ch.kind} onChange={(e) => set({ kind: e.target.value })}>
+            {['pc', 'companion', 'retired', 'dead'].map((k) => (
+              <option key={k}>{k}</option>
+            ))}
+          </select>
+        </Field>
         <SaveStatus state={auto.state} error={auto.error} />
         <button
-          className="btn-danger"
+          className="btn-danger ml-auto"
           onClick={async () => {
             if (!confirm(`Delete ${ch.name}?`)) return;
             await api.del(`/api/characters/${ch.id}`);
@@ -414,117 +422,15 @@ function CharacterSheet({ ch: initial, onDeleted }: { ch: Character; onDeleted: 
           <Trash2 size={14} />
         </button>
       </div>
-      <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-6">
-        <Field label="Name">
-          <input className="input" value={ch.name} onChange={(e) => set({ name: e.target.value })} />
-        </Field>
-        <Field label="Player">
-          <input className="input" value={ch.player} onChange={(e) => set({ player: e.target.value })} />
-        </Field>
-        <Field label="Species">
-          <input className="input" value={ch.species} onChange={(e) => set({ species: e.target.value })} />
-        </Field>
-        <Field label="Class">
-          <input className="input" value={ch.class_name} onChange={(e) => set({ class_name: e.target.value })} />
-        </Field>
-        <Field label="Level">
-          <input type="number" min={1} max={20} className="input" value={ch.level} onChange={(e) => set({ level: Math.max(1, Math.min(20, Number(e.target.value) || 1)) })} />
-        </Field>
-        <Field label="Status">
-          <select className="input" value={ch.kind} onChange={(e) => set({ kind: e.target.value })}>
-            {['pc', 'companion', 'retired', 'dead'].map((k) => (
-              <option key={k}>{k}</option>
-            ))}
-          </select>
-        </Field>
-      </div>
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-        {ABILS.map((a) => (
-          <div key={a} className="parchment p-2 text-center">
-            <div className="text-[11px] font-display tracking-widest">{a}</div>
-            <input type="number" className="w-full bg-transparent text-center text-xl font-serif outline-none" value={abil[a] ?? 10} onChange={(e) => setSheet({ abilities: { ...abil, [a]: Number(e.target.value) || 0 } })} aria-label={`${a} score`} />
-            <div className="text-sm">{((m) => (m >= 0 ? `+${m}` : m))(abilityModifier(abil[a] ?? 10))}</div>
-            <label className="text-[10px] flex items-center justify-center gap-1">
-              <input type="checkbox" checked={sh.saves?.includes(a) ?? false} onChange={(e) => setSheet({ saves: e.target.checked ? [...(sh.saves ?? []), a] : (sh.saves ?? []).filter((x) => x !== a) })} /> save
-            </label>
-          </div>
-        ))}
-      </div>
-      <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <Field label="Proficiency">
-          <div className="input">+{pb}</div>
-        </Field>
-        <Field label="Armor Class">
-          <input type="number" className="input" value={sh.ac ?? ''} onChange={(e) => setSheet({ ac: Number(e.target.value) })} />
-        </Field>
-        <Field label="HP / Max">
-          <div className="flex gap-1">
-            <input type="number" className="input" value={sh.hp ?? ''} onChange={(e) => setSheet({ hp: Number(e.target.value) })} />
-            <input type="number" className="input" value={sh.maxHp ?? ''} onChange={(e) => setSheet({ maxHp: Number(e.target.value) })} />
-          </div>
-        </Field>
-        <Field label="Initiative bonus">
-          <input type="number" className="input" value={sh.initiativeBonus ?? abilityModifier(abil.DEX ?? 10)} onChange={(e) => setSheet({ initiativeBonus: Number(e.target.value) })} />
-        </Field>
-        <Field label="Exhaustion">
-          <input type="number" min={0} max={6} className="input" value={sh.exhaustion ?? 0} onChange={(e) => setSheet({ exhaustion: Number(e.target.value) })} />
-        </Field>
-        <Field label="Last rest">
-          <input className="input" value={sh.lastRest ?? ''} onChange={(e) => setSheet({ lastRest: e.target.value })} placeholder="Long rest, day 3" />
-        </Field>
-      </div>
-      <div className="grid gap-3 md:grid-cols-2">
-        <Field label="Concentrating on">
-          <input className="input" value={sh.concentration ?? ''} onChange={(e) => setSheet({ concentration: e.target.value || null })} />
-        </Field>
-        <Field label="Skills (proficient, comma separated)">
-          <input className="input" value={(sh.skills ?? []).join(', ')} onChange={(e) => setSheet({ skills: e.target.value.split(',').map((s) => s.trim()).filter(Boolean) })} />
-        </Field>
-      </div>
-      <div>
-        <span className="label">Conditions</span>
-        <div className="flex flex-wrap gap-1">
-          {CONDITIONS_2024.map((c) => {
-            const on = sh.conditions?.includes(c);
-            return (
-              <button key={c} className={`chip ${on ? 'border-danger text-danger' : 'border-line text-dim'}`} onClick={() => setSheet({ conditions: on ? (sh.conditions ?? []).filter((x) => x !== c) : [...(sh.conditions ?? []), c] })}>
-                {c}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-      <div>
-        <span className="label">Spell slots</span>
-        <div className="flex flex-wrap gap-2">
-          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((lvl) => {
-            const s = sh.spellSlots?.[lvl] ?? { max: 0, used: 0 };
-            const upd = (p: Partial<typeof s>) => setSheet({ spellSlots: { ...(sh.spellSlots ?? {}), [lvl]: { ...s, ...p } } });
-            return (
-              <div key={lvl} className="panel p-1.5 text-center text-xs w-20">
-                <div className="text-dim">Level {lvl}</div>
-                <div className="flex items-center justify-center gap-1">
-                  <input type="number" min={0} className="w-8 bg-transparent text-center" value={s.max - s.used} onChange={(e) => upd({ used: Math.max(0, s.max - Number(e.target.value)) })} aria-label={`Level ${lvl} remaining`} />/
-                  <input type="number" min={0} className="w-8 bg-transparent text-center" value={s.max} onChange={(e) => upd({ max: Number(e.target.value) })} aria-label={`Level ${lvl} max`} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-        <button className="btn-ghost text-xs mt-1" onClick={() => setSheet({ spellSlots: Object.fromEntries(Object.entries(sh.spellSlots ?? {}).map(([k, v]) => [k, { ...v, used: 0 }])), lastRest: `Long rest (${new Date().toLocaleDateString()})` })}>
-          Long rest: restore slots
-        </button>
-      </div>
-      <div className="grid gap-3 md:grid-cols-2">
-        <Field label="Equipment">
-          <AutoTextarea minRows={3} value={sh.equipment ?? ''} onChange={(e) => setSheet({ equipment: e.target.value })} />
-        </Field>
-        <Field label="Shardscarred / setting mechanics (HOMEBREW)">
-          <AutoTextarea minRows={3} value={sh.shardscarred ?? ''} onChange={(e) => setSheet({ shardscarred: e.target.value })} />
-        </Field>
-      </div>
+      <FullSheet
+        value={{ name: ch.name, species: ch.species, class_name: ch.class_name, level: ch.level, sheet: sh as Sheet }}
+        onChange={(next) => set({ name: next.name, species: next.species, class_name: next.class_name, level: next.level, sheet: next.sheet as Character['sheet'] })}
+      />
+      <Field label="Setting mechanics (GM only, HOMEBREW)">
+        <AutoTextarea minRows={2} value={sh.shardscarred ?? ''} onChange={(e) => setSheet({ shardscarred: e.target.value })} />
+      </Field>
       <WorldTies hometown={sh.hometown ?? null} ties={sh.ties ?? []} onChange={(p) => setSheet(p)} />
-      <Field label="Notes">
+      <Field label="Notes (GM only)">
         <AutoTextarea minRows={3} value={ch.notes} onChange={(e) => set({ notes: e.target.value })} />
       </Field>
       <CharacterPagePanel characterId={ch.id} />

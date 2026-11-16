@@ -23,9 +23,11 @@ The separate process listens by default on port `4320` on all interfaces (`0.0.0
 
 ### Character pages
 
-Each character in a campaign has a page with their named memories, their true name and who knows it, and their Thinning track. On the GM's party screen, each character's **Character page** panel shows a private code and a link, `http://<your-computer>:4320/player/me/<code>`. A player opens that link (or **My Character** in the player menu, then types the code) to keep their own page up to date.
+Each character in a campaign has a page with their named memories, their true name and who knows it, their Thinning track, and their full D&D 2024 character sheet. On the GM's party screen, each character's **Character page** panel shows a private code and a link, `http://<your-computer>:4320/player/me/<code>`. A player opens that link (or **My Character** in the player menu, then types the code) to keep their own page up to date.
 
 - Players can add memories, reword the ones they still have, and strike one when their Thinning goes up. A struck memory stays struck.
+- Players keep their whole character sheet up to date, except their level, which the GM changes. The GM's setting mechanics, world ties and notes on the character are never shown to players, and a player's save never changes them.
+- On the table server, the guided **Make a Character** builder has a **Send to my sheet** button that fills in the sheet from the build.
 - Only the GM changes Thinning, and the GM can restore a struck memory if the table agrees.
 - A character's page is visible only to whoever has its code, and to the GM. **New code** in the GM panel stops an old link working.
 - The code is the only protection, so the same network precautions apply.

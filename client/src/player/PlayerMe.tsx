@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Plus, X } from 'lucide-react';
 import { usePlayer } from './context';
 import type { PCharacterPage } from './source';
+import { FullSheet } from './sheet/FullSheet';
 
 const KEY = 'wk.player.me';
 const remember = (code: string) => {
@@ -84,7 +85,7 @@ function MyPage({ code }: { code: string }) {
       setStatus('Saving…');
       try {
         const edit: Edit = { true_name: next.true_name, memories: next.memories, known_by: next.known_by, notes: next.notes };
-        const saved = await source.saveMyPage!(code, edit);
+        const saved = await source.saveMyPage!(code, { ...edit, character: { name: next.name, species: next.species, class_name: next.class_name, sheet: next.sheet } });
         setPage(saved);
         setStatus('Saved');
       } catch (e) {
@@ -118,7 +119,7 @@ function MyPage({ code }: { code: string }) {
   const toStrike = page.thinning > struck.length && kept.length > 0;
 
   return (
-    <div className="space-y-4 max-w-3xl">
+    <div className="space-y-4 max-w-5xl">
       <div>
         <h1 className="text-3xl text-gold">{page.name}</h1>
         <div className="text-sm text-dim">
@@ -230,6 +231,13 @@ function MyPage({ code }: { code: string }) {
         <h2 className="font-display text-lg text-gold">Notes</h2>
         <textarea className="input w-full min-h-[120px]" value={page.notes} onChange={(e) => void save({ ...page, notes: e.target.value })} aria-label="Notes" />
       </section>
+
+      <h2 className="text-2xl text-gold pt-2">Character sheet</h2>
+      <FullSheet
+        value={{ name: page.name, species: page.species, class_name: page.class_name, level: page.level, sheet: page.sheet ?? {} }}
+        onChange={(next) => void save({ ...page, name: next.name, species: next.species, class_name: next.class_name, sheet: next.sheet })}
+        levelLocked
+      />
     </div>
   );
 }

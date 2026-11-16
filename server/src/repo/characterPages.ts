@@ -9,6 +9,8 @@ import { randomInt } from 'node:crypto';
 import type Database from 'better-sqlite3';
 import { z } from 'zod';
 import { badRequest, notFound } from '../lib/errors.js';
+import { characterSheetSchema } from './campaigns.js';
+import { GM_ONLY_SHEET_KEYS } from '../../../shared/sheet.js';
 
 type DB = Database.Database;
 
@@ -34,6 +36,8 @@ export interface PlayerCharacterPage extends Omit<CharacterPage, 'character_id' 
   species: string;
   class_name: string;
   level: number;
+  /** The character's 2024 sheet, without the GM's own notes (setting mechanics, world ties, hometown). */
+  sheet: Record<string, unknown>;
 }
 
 interface Row {
@@ -100,6 +104,16 @@ const playerSchema = z
     notes: z.string().max(5000).optional(),
   })
   .strict();
+// What a player may change on the character itself: everything on the sheet but the GM's own notes, and never the level.
+const playerCharacterSchema = z
+  .object({
+    name: z.string().trim().min(1).max(200).optional(),
+    species: z.string().max(200).optional(),
+    class_name: z.string().max(200).optional(),
+    sheet: characterSheetSchema.optional(),
+  })
+  .strict();
+const playerEditSchema = playerSchema.extend({ character: playerCharacterSchema.optional() }).strict();
 const gmSchema = playerSchema.extend({ thinning: z.number().int().min(0).max(6).optional(), shardscarred: z.boolean().optional() }).strict();
 
 /** Give new memories ids, keeping existing ones. */
@@ -144,16 +158,19 @@ function byCode(db: DB, code: string) {
   return fromRow(row);
 }
 
+const withoutGmNotes = (sheet: Record<string, unknown>) => Object.fromEntries(Object.entries(sheet).filter(([k]) => !(GM_ONLY_SHEET_KEYS as readonly string[]).includes(k)));
+
 function forPlayer(db: DB, page: CharacterPage): PlayerCharacterPage {
-  const c = db.prepare('SELECT name, species, class_name, level FROM characters WHERE id = ?').get(page.character_id) as {
+  const c = db.prepare('SELECT name, species, class_name, level, sheet FROM characters WHERE id = ?').get(page.character_id) as {
     name: string;
     species: string;
     class_name: string;
     level: number;
+    sheet: string;
   };
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { character_id, code, ...rest } = page;
-  return { ...c, ...rest };
+  return { ...c, sheet: withoutGmNotes(JSON.parse(c.sheet || '{}') as Record<string, unknown>), ...rest };
 }
 
 /** On the table server: the page behind a private code. */
@@ -167,7 +184,7 @@ export function playerCharacterPage(db: DB, code: string): PlayerCharacterPage {
  * or remove a memory once it is struck.
  */
 export function updatePlayerCharacterPage(db: DB, code: string, body: unknown): PlayerCharacterPage {
-  const patch = playerSchema.parse(body);
+  const patch = playerEditSchema.parse(body);
   const page = byCode(db, code);
   let memories = page.memories;
   if (patch.memories !== undefined) {
@@ -184,5 +201,20 @@ export function updatePlayerCharacterPage(db: DB, code: string, body: unknown): 
     ...(patch.known_by !== undefined ? { known_by: patch.known_by } : {}),
     ...(patch.notes !== undefined ? { notes: patch.notes } : {}),
   });
+  if (patch.character) {
+    // The sheet the player sends replaces theirs, but the GM's own notes are kept as they were.
+    const row = db.prepare('SELECT name, species, class_name, sheet FROM characters WHERE id = ?').get(page.character_id) as { name: string; species: string; class_name: string; sheet: string };
+    const old = JSON.parse(row.sheet || '{}') as Record<string, unknown>;
+    const kept = Object.fromEntries((GM_ONLY_SHEET_KEYS as readonly string[]).filter((k) => k in old).map((k) => [k, old[k]]));
+    const sheet = patch.character.sheet ? { ...withoutGmNotes(patch.character.sheet as Record<string, unknown>), ...kept } : old;
+    db.prepare('UPDATE characters SET name = ?, species = ?, class_name = ?, sheet = ?, updated_at = ? WHERE id = ?').run(
+      patch.character.name ?? row.name,
+      patch.character.species ?? row.species,
+      patch.character.class_name ?? row.class_name,
+      JSON.stringify(sheet),
+      now(),
+      page.character_id,
+    );
+  }
   return playerCharacterPage(db, page.code);
 }
