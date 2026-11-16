@@ -1,0 +1,399 @@
+{
+ "note": "Fight cards for the archive's people in the Ethereal Realm (GM only), in the same tiers as Aetheris and Kaelmar. Owner decision, November 2026.",
+ "statblocks": {
+  "NPC-063": {
+   "id": "NPC-063",
+   "name": "Eryndor the First Shard",
+   "meta": "Large Construct (Living Crystal), Neutral",
+   "ac": 19,
+   "hp": "152 (16d10 + 64)",
+   "speed": "30 ft.",
+   "ab": [
+    18,
+    10,
+    18,
+    22,
+    20,
+    18
+   ],
+   "cr": "14",
+   "traits": [
+    {
+     "name": "Legendary Resistance (3/Day)",
+     "text": "If Eryndor fails a saving throw, he can choose to succeed instead."
+    },
+    {
+     "name": "First to Break Free",
+     "text": "Nothing can alter Eryndor's memory or rewrite what he is."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Eryndor makes two Crystal Strike attacks."
+    },
+    {
+     "name": "Crystal Strike",
+     "text": "Melee Attack Roll: +9, reach 10 ft. Hit: 15 (2d10 + 4) Bludgeoning damage plus 11 (2d10) Force damage."
+    },
+    {
+     "name": "Recollection (Recharge 5-6)",
+     "text": "Wisdom Saving Throw: DC 19, each creature in a 30-foot Cone. Failure: 44 (8d10) Psychic damage, and the target has the Incapacitated condition until the end of its next turn as it remembers a life before the Cycle. Success: Half damage only."
+    }
+   ],
+   "legendary": [
+    {
+     "name": "Legendary Action Uses: 3",
+     "text": "Immediately after another creature's turn, Eryndor can expend a use to take one of the following actions. He regains all expended uses at the start of each of his turns."
+    },
+    {
+     "name": "Strike",
+     "text": "Eryndor makes one Crystal Strike attack."
+    },
+    {
+     "name": "Shift",
+     "text": "Eryndor teleports up to 30 feet to an unoccupied space he can see."
+    },
+    {
+     "name": "Restore (Costs 2 Uses)",
+     "text": "One creature Eryndor can see within 60 feet regains 22 (4d10) Hit Points."
+    }
+   ],
+   "saves": "Int +11, Wis +10, Cha +9",
+   "skills": "History +16, Insight +10",
+   "imm": "Psychic",
+   "cimm": "Charmed, Frightened",
+   "senses": "Truesight 60 ft., Passive Perception 15",
+   "languages": "All, telepathy 120 ft.",
+   "hpAvg": 152,
+   "init": 0,
+   "xp": 11500,
+   "pb": 5,
+   "kind": "npc",
+   "tactics": "Almost never fights. He answers violence with a memory: he shows the attacker who they were before the Cycle, and waits. Only those who threaten what he remembers learn what he can do."
+  },
+  "NPC-064": {
+   "id": "NPC-064",
+   "name": "Sylas Vaerin",
+   "meta": "Medium Humanoid (Githyanki), Chaotic Neutral",
+   "kind": "npc",
+   "base": "Mage",
+   "changes": "His spells include Haste and Slow. Time Slip (3/Day): as a Reaction when Sylas is hit by an attack roll, the attacker rerolls and must use the new roll.",
+   "tactics": "Stops time for a heartbeat and runs, shouting that he's nearly proved it.",
+   "fights": false,
+   "ac": 15,
+   "hp": "81 (18d8)",
+   "hpAvg": 81,
+   "init": 2,
+   "cr": "6",
+   "xp": 2300,
+   "pb": 3
+  },
+  "NPC-065": {
+   "id": "NPC-065",
+   "name": "Veyra the Unchained",
+   "meta": "Medium Humanoid (Aasimar), Chaotic Good",
+   "ac": 16,
+   "hp": "127 (15d8 + 60)",
+   "speed": "30 ft.",
+   "ab": [
+    20,
+    14,
+    18,
+    10,
+    12,
+    14
+   ],
+   "cr": "8",
+   "traits": [
+    {
+     "name": "Unchained",
+     "text": "Veyra has Advantage on saving throws against the Charmed and Frightened conditions, and spells such as Command and Geas have no effect on her."
+    },
+    {
+     "name": "Unarmored Defense",
+     "text": "While Veyra wears no armor, her AC includes her Constitution modifier."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Veyra makes one Greatsword attack and one Snapped Chain attack."
+    },
+    {
+     "name": "Greatsword",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 12 (2d6 + 5) Slashing damage."
+    },
+    {
+     "name": "Snapped Chain",
+     "text": "Melee Attack Roll: +8, reach 10 ft. Hit: 10 (1d10 + 5) Bludgeoning damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Rage (1/Day)",
+     "text": "For 1 minute, Veyra has Resistance to Bludgeoning, Piercing and Slashing damage, and her weapon attacks deal an extra 2 damage."
+    },
+    {
+     "name": "Wild Radiance (1/Day)",
+     "text": "For 1 minute, Veyra sheds Bright Light in a 10-foot radius, and each creature of her choice that ends its turn within 10 feet of her takes 3 Radiant damage."
+    }
+   ],
+   "saves": "Str +8, Con +7",
+   "skills": "Athletics +8, Intimidation +5",
+   "res": "Necrotic, Radiant",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Celestial",
+   "gear": "Broken Order plate, a snapped chain, a greatsword",
+   "hpAvg": 127,
+   "init": 2,
+   "xp": 3900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Fights loud and grinning, until someone talks about oaths: then she goes for them. Spares anyone who has broken an oath of their own."
+  },
+  "NPC-066": {
+   "id": "NPC-066",
+   "name": "Kaelos \"the Forgotten Star\"",
+   "meta": "Medium Humanoid (Duergar), Lawful Neutral",
+   "ac": 18,
+   "hp": "90 (12d8 + 36)",
+   "speed": "30 ft.",
+   "ab": [
+    12,
+    12,
+    16,
+    18,
+    14,
+    10
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Duergar Magic",
+     "text": "Once each per day, Kaelos can cast Enlarge/Reduce (on himself only) and Invisibility."
+    },
+    {
+     "name": "His Guardian",
+     "text": "An Animated Armor (Monster Manual) built to his design goes everywhere with him."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Kaelos makes two Star-Hammer attacks."
+    },
+    {
+     "name": "Star-Hammer",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 8 (1d8 + 4) Force damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Command the Guardian",
+     "text": "Kaelos's guardian makes one attack."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Flash of Genius (3/Day)",
+     "text": "Trigger: Kaelos or an ally within 30 feet makes an ability check or a saving throw. Response: Add 4 to the roll."
+    }
+   ],
+   "saves": "Con +6, Int +7",
+   "skills": "Arcana +7, History +7, Investigation +7",
+   "res": "Poison",
+   "senses": "Darkvision 120 ft., Passive Perception 12",
+   "languages": "Common, Dwarvish, Undercommon",
+   "gear": "Half plate, Shield, Star-hammer",
+   "hpAvg": 90,
+   "init": 1,
+   "xp": 1800,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Measures the party before he fights them, and fights only to protect what he's building. Offers to build them something instead."
+  },
+  "NPC-067": {
+   "id": "NPC-067",
+   "name": "Lirien Ashborne",
+   "meta": "Medium Humanoid (Fire Genasi), Lawful Neutral",
+   "ac": 18,
+   "hp": "120 (16d8 + 48)",
+   "speed": "30 ft.",
+   "ab": [
+    18,
+    12,
+    16,
+    10,
+    12,
+    18
+   ],
+   "cr": "9",
+   "traits": [
+    {
+     "name": "Meant to Die (1/Day)",
+     "text": "When Lirien is reduced to 0 Hit Points but not killed, she drops to 1 Hit Point instead."
+    },
+    {
+     "name": "Aura of Protection",
+     "text": "Lirien and allies within 10 feet of her add 4 to their saving throws while she doesn't have the Incapacitated condition."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Lirien makes two Reforged Sword attacks."
+    },
+    {
+     "name": "Reforged Sword",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 11 (2d6 + 4) Slashing damage plus 3 (1d6) Fire damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Vow of Enmity (1/Day)",
+     "text": "For 1 minute, Lirien has Advantage on attack rolls against one creature she can see within 30 feet."
+    },
+    {
+     "name": "Divine Smite (2/Day)",
+     "text": "Immediately after hitting a creature with a Reforged Sword attack, Lirien deals an extra 13 (3d8) Radiant damage to it."
+    }
+   ],
+   "saves": "Wis +5, Cha +8",
+   "skills": "Athletics +8, Intimidation +8, Perception +5",
+   "res": "Fire",
+   "senses": "Darkvision 60 ft., Passive Perception 15",
+   "languages": "Common, Primordial",
+   "gear": "Plate Armor, a many-times-reforged greatsword",
+   "hpAvg": 120,
+   "init": 1,
+   "xp": 5000,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Fights the one responsible, and only that one. Walks through anyone in the way, and doesn't stop until the debt is paid."
+  },
+  "NPC-068": {
+   "id": "NPC-068",
+   "name": "Master Ilythis",
+   "meta": "Medium Humanoid (Water Genasi), Neutral",
+   "kind": "npc",
+   "base": "Mage",
+   "changes": "Swim Speed 30 feet; they breathe air and water, and have Resistance to Acid damage. Their floating pages shield them: as a Reaction when hit by an attack roll, they add 5 to their AC against it.",
+   "tactics": "Silent. Hands the attacker a page describing a history where the fight never happened, and in which the attacker lost.",
+   "fights": false,
+   "ac": 15,
+   "hp": "81 (18d8)",
+   "hpAvg": 81,
+   "init": 2,
+   "cr": "6",
+   "xp": 2300,
+   "pb": 3
+  },
+  "NPC-070": {
+   "id": "NPC-070",
+   "name": "Kyrra the Shadeborn",
+   "meta": "Small Fey (Fairy), Neutral",
+   "ac": 13,
+   "hp": "45 (10d6 + 10)",
+   "speed": "30 ft., fly 30 ft.",
+   "ab": [
+    6,
+    16,
+    12,
+    12,
+    14,
+    18
+   ],
+   "cr": "4",
+   "traits": [
+    {
+     "name": "Many Voices",
+     "text": "Kyrra can't be surprised."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Kyrra uses Unmade Whisper twice."
+    },
+    {
+     "name": "Unmade Whisper",
+     "text": "Ranged Attack Roll: +6, range 60 ft. Hit: 11 (2d6 + 4) Necrotic damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Kyrra casts one of the following spells, using Charisma (spell save DC 14): At will: Druidcraft, Minor Illusion. 1/day each: Enlarge/Reduce, Faerie Fire, Fear, Speak with Dead."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "The Unmade Answer (1/Day)",
+     "text": "Trigger: Kyrra takes damage from a creature she can see. Response: Wisdom Saving Throw: DC 14, the attacker. Failure: It has the Frightened condition until the end of its next turn."
+    }
+   ],
+   "saves": "Wis +4, Cha +6",
+   "skills": "Insight +4, Perception +4",
+   "senses": "Passive Perception 14",
+   "languages": "Common, Sylvan",
+   "hpAvg": 45,
+   "init": 3,
+   "xp": 1100,
+   "pb": 2,
+   "kind": "npc",
+   "tactics": "Would rather listen than fight. When she must, the Unmade fight with her: voices nobody remembers, screaming the attacker's name."
+  },
+  "NPC-072": {
+   "id": "NPC-072",
+   "name": "Elyndria the Echo",
+   "meta": "Medium Humanoid (Kenku), Chaotic Neutral",
+   "ac": 14,
+   "hp": "66 (12d8 + 12)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    16,
+    12,
+    12,
+    12,
+    18
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Mimicry",
+     "text": "Elyndria can copy any sound she has heard. Wisdom (Insight) checks to tell the copy is false have Disadvantage."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Elyndria uses Borrowed Voice twice."
+    },
+    {
+     "name": "Borrowed Voice",
+     "text": "Ranged Attack Roll: +7, range 60 ft. Hit: 13 (2d8 + 4) Psychic damage, spoken in the target's own voice."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Elyndria casts one of the following spells, using Charisma (spell save DC 15): At will: Minor Illusion. 2/day each: Mirror Image, Misty Step. 1/day: Hypnotic Pattern."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Mock (2/Day)",
+     "text": "Trigger: A creature within 60 feet misses Elyndria with an attack roll. Response: It takes 7 (2d6) Psychic damage."
+    }
+   ],
+   "saves": "Wis +4, Cha +7",
+   "skills": "Acrobatics +6, Deception +7, Stealth +6",
+   "senses": "Passive Perception 11",
+   "languages": "Understands Common; speaks only by mimicry",
+   "hpAvg": 66,
+   "init": 3,
+   "xp": 1800,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Mocks the party in their own voices. Fights to get free of anything that holds her, and leaves the moment the door is open."
+  }
+ }
+}
