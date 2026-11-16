@@ -43,6 +43,11 @@ export interface StatBlock {
   counter?: string;
   /** For a person: how to play them in a fight. */
   tactics?: string;
+  /** A short card: the Monster Manual stat block it uses, and what's different. */
+  base?: string;
+  changes?: string;
+  /** False for someone who won't fight: the tactics say what they do instead. */
+  fights?: boolean;
 }
 
 const DIR = path.resolve(import.meta.dirname, '../../../assets/statblocks');
