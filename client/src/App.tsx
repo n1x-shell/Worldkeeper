@@ -23,6 +23,7 @@ import { DominionsPage, EtherealExplorer, ShardsPage, VaultsPage } from './pages
 import { ActiveCampaign, AdventurePage, AdventuresPage, ArcsPage, CampaignsPage, EncountersPage, JournalPage, PartyPage, QuestsPage, SessionPage, SessionsPage } from './pages/Campaign';
 import { LiveSession } from './pages/Live';
 import { AgendasPage, ConditionsPage, DicePage, DmScreen, NotesPage, NpcRefPage, RulesPage, TablesPage, TrackerPage, WorldEventsPage } from './pages/DmTools';
+import { QuickReferencePage } from './pages/QuickReference';
 import { BackupsPage, BrokenPage, ConsistencyPage, HistoryPage, ImportExportPage, OpenQuestionsPage, ReviewPage, SettingsPage } from './pages/Library';
 import { RumoursPage } from './pages/Rumours';
 import { PlayerApp } from './player/PlayerApp';
@@ -443,6 +444,14 @@ export function App() {
             element={
               <Page>
                 <RulesPage />
+              </Page>
+            }
+          />
+          <Route
+            path="quick-reference"
+            element={
+              <Page>
+                <QuickReferencePage />
               </Page>
             }
           />

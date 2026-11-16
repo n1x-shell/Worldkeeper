@@ -132,6 +132,7 @@ const NAV: { title: string; items: Item[] }[] = [
       { to: '/tables', label: 'Random Tables', icon: <Table2 size={I} /> },
       { to: '/dice', label: 'Dice Roller', icon: <Dice5 size={I} /> },
       { to: '/rules', label: 'Rules Reference', icon: <Gavel size={I} /> },
+      { to: '/quick-reference', label: 'Quick Reference', icon: <ScrollText size={I} /> },
       { to: '/notes', label: 'Notes and Scratchpad', icon: <NotebookPen size={I} /> },
     ],
   },
