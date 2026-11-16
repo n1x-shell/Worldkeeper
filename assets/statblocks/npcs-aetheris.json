@@ -1,0 +1,2517 @@
+{
+ "note": "Fight cards for the archive's people in Aetheris (GM only), in three tiers: full 2024-format stat blocks for those likely to fight; short cards that use a Monster Manual (2024) stat block with changes; and cards for people who won't fight, saying what they do instead. Built from each person's species and class on their handbook page. Owner decision, November 2026.",
+ "statblocks": {
+  "NPC-001": {
+   "id": "NPC-001",
+   "name": "The Blind Seer",
+   "meta": "Large Humanoid (Taur'n), Neutral",
+   "kind": "npc",
+   "base": "Priest",
+   "changes": "If his secret is out and he chooses to fight, use the Black Sun Prophet stat block instead, with Legendary Resistance (3/Day) and his size.",
+   "tactics": "He has already left, or was never sitting where you thought. Cornered, he answers one question truthfully, and then the lamps go out.",
+   "fights": false,
+   "ac": 13,
+   "hp": "38 (7d8 + 7)",
+   "hpAvg": 38,
+   "init": 0,
+   "cr": "2",
+   "xp": 450,
+   "pb": 2
+  },
+  "NPC-004": {
+   "id": "NPC-004",
+   "name": "Old Vara",
+   "meta": "Medium Humanoid (Dwarf), Neutral Good",
+   "kind": "npc",
+   "base": "Warrior Veteran",
+   "changes": "Darkvision 120 feet, and Resistance to Poison damage. She fights with a smith's Warhammer instead of the Veteran's weapons, and her iron hand hits for 7 (1d8 + 3) Bludgeoning damage.",
+   "tactics": "Fights only in her own forge, and only to put someone out. Throws the nearest hot thing first.",
+   "fights": true,
+   "ac": 17,
+   "hp": "65 (10d8 + 20)",
+   "hpAvg": 65,
+   "init": 1,
+   "cr": "3",
+   "xp": 700,
+   "pb": 2
+  },
+  "NPC-006": {
+   "id": "NPC-006",
+   "name": "Sister Elyra Vale",
+   "meta": "Medium Humanoid (Human), Lawful Good",
+   "kind": "npc",
+   "base": "Priest",
+   "changes": "Her spells include Healing Word, Lesser Restoration and Spare the Dying.",
+   "tactics": "Won't start a fight. Heals whoever is bleeding, on either side, and stands between the wounded and anyone who wants to finish them.",
+   "fights": true,
+   "ac": 13,
+   "hp": "38 (7d8 + 7)",
+   "hpAvg": 38,
+   "init": 0,
+   "cr": "2",
+   "xp": 450,
+   "pb": 2
+  },
+  "NPC-007": {
+   "id": "NPC-007",
+   "name": "Professor Orin Vale",
+   "meta": "Medium Humanoid (Half-elf), Neutral Good",
+   "kind": "npc",
+   "base": "Commoner",
+   "changes": "He knows the Fire Bolt and Shield spells, using Intelligence (spell save DC 12, +4 to hit).",
+   "tactics": "Hides behind the nearest bookcase and offers to explain. If the books are threatened, he finds his nerve.",
+   "fights": false,
+   "ac": 10,
+   "hp": "4 (1d8)",
+   "hpAvg": 4,
+   "init": 0,
+   "cr": "0",
+   "xp": 10,
+   "pb": 2
+  },
+  "NPC-010": {
+   "id": "NPC-010",
+   "name": "Mara Venn",
+   "meta": "Medium Humanoid (Bugbear), Neutral",
+   "kind": "npc",
+   "base": "Bandit Captain",
+   "changes": "Darkvision 60 feet. Long-Limbed: her melee attacks have 5 more feet of reach. She fights with a cudgel from behind the bar, and prefers to grapple and throw.",
+   "tactics": "Puts fighters out of the Crooked Nail, literally. Draws a weapon only if someone else has. Never fights in the street: that's the factions' business.",
+   "fights": true,
+   "ac": 15,
+   "hp": "52 (8d8 + 16)",
+   "hpAvg": 52,
+   "init": 3,
+   "cr": "2",
+   "xp": 450,
+   "pb": 2
+  },
+  "NPC-013": {
+   "id": "NPC-013",
+   "name": "Brann Kest",
+   "meta": "Medium Humanoid (Half-orc), Neutral",
+   "kind": "npc",
+   "base": "Warrior Veteran",
+   "changes": "Darkvision 60 feet. Relentless Endurance (1/Day): when reduced to 0 Hit Points but not killed, he drops to 1 Hit Point instead. Shardscarred: Advantage on saving throws against effects that alter his memory or rewrite reality.",
+   "tactics": "Fights tired, and very well. Stops if anyone shouts his name: he's been woken from too many nightmares to ignore it.",
+   "fights": true,
+   "ac": 17,
+   "hp": "65 (10d8 + 20)",
+   "hpAvg": 65,
+   "init": 1,
+   "cr": "3",
+   "xp": 700,
+   "pb": 2
+  },
+  "NPC-014": {
+   "id": "NPC-014",
+   "name": "Illa Reed",
+   "meta": "Medium Fey (Satyr), Chaotic Neutral",
+   "kind": "npc",
+   "base": "Commoner",
+   "changes": "Speed 35 feet. Magic Resistance: Advantage on saving throws against spells.",
+   "tactics": "Runs, with the mule. Offers everything in her pockets for her life, at a fair price.",
+   "fights": false,
+   "ac": 10,
+   "hp": "4 (1d8)",
+   "hpAvg": 4,
+   "init": 0,
+   "cr": "0",
+   "xp": 10,
+   "pb": 2
+  },
+  "NPC-015": {
+   "id": "NPC-015",
+   "name": "Highlord Theos Valcairn",
+   "meta": "Medium Humanoid (Goliath), Lawful Neutral",
+   "ac": 20,
+   "hp": "153 (18d8 + 72)",
+   "speed": "35 ft.",
+   "ab": [
+    20,
+    10,
+    18,
+    12,
+    14,
+    18
+   ],
+   "cr": "12",
+   "traits": [
+    {
+     "name": "Legendary Resistance (2/Day)",
+     "text": "If Theos fails a saving throw, he can choose to succeed instead."
+    },
+    {
+     "name": "Aura of Protection",
+     "text": "Theos and allies within 10 feet of him add 4 to their saving throws while he doesn't have the Incapacitated condition."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Theos makes three Longsword attacks."
+    },
+    {
+     "name": "Longsword",
+     "text": "Melee Attack Roll: +9, reach 5 ft. Hit: 9 (1d8 + 5) Slashing damage plus 9 (2d8) Radiant damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Theos casts one of the following spells, using Charisma (spell save DC 16): 2/day each: Bless, Command. 1/day each: Banishment, Revivify."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Lay on Hands (3/Day)",
+     "text": "Theos touches a creature and restores 20 Hit Points to it."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Stone's Endurance (3/Day)",
+     "text": "Trigger: Theos takes damage. Response: He reduces the damage by 10 (1d12 + 4)."
+    }
+   ],
+   "legendary": [
+    {
+     "name": "Legendary Action Uses: 3",
+     "text": "Immediately after another creature's turn, Theos can expend a use to take one of the following actions. He regains all expended uses at the start of each of his turns."
+    },
+    {
+     "name": "Strike",
+     "text": "Theos makes one Longsword attack."
+    },
+    {
+     "name": "Hold the Line",
+     "text": "One ally Theos can see within 60 feet moves up to half its Speed and makes one weapon attack as a Reaction."
+    },
+    {
+     "name": "Radiant Rally (Costs 2 Uses)",
+     "text": "Each ally within 30 feet of Theos gains 10 Temporary Hit Points."
+    }
+   ],
+   "saves": "Str +9, Con +8, Wis +6, Cha +8",
+   "skills": "Athletics +9, Insight +6, Intimidation +8, Religion +5",
+   "senses": "Passive Perception 12",
+   "languages": "Common, Celestial, Giant",
+   "gear": "Plate Armor, Shield, Longsword",
+   "hpAvg": 153,
+   "init": 0,
+   "xp": 8400,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Fights at the front, bareheaded, where his soldiers can see him. Offers mercy once, formally, and never twice. Ask him what he once doubted and he hesitates for a heartbeat; what he says is the GM's to decide."
+  },
+  "NPC-016": {
+   "id": "NPC-016",
+   "name": "Grand Theurgist Selara Dawnveil",
+   "meta": "Small Humanoid (Tabaxi), Lawful Neutral",
+   "ac": 15,
+   "hp": "67 (15d6 + 15)",
+   "speed": "30 ft., climb 30 ft.",
+   "ab": [
+    8,
+    14,
+    12,
+    13,
+    20,
+    15
+   ],
+   "cr": "10",
+   "traits": [
+    {
+     "name": "Visions",
+     "text": "Selara can't be surprised, and she has Advantage on Initiative rolls."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Selara uses Sunlance twice."
+    },
+    {
+     "name": "Sunlance",
+     "text": "Ranged Attack Roll: +9, range 120 ft. Hit: 18 (3d8 + 5) Radiant damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Selara casts one of the following spells, using Wisdom (spell save DC 17): At will: Light, Thaumaturgy. 2/day each: Daylight, Guiding Bolt (level 4 version), Mass Healing Word. 1/day each: Flame Strike (level 6 version), Sunbeam."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Warding Flare (3/Day)",
+     "text": "Trigger: A creature Selara can see within 30 feet makes an attack roll against her. Response: The attack roll has Disadvantage."
+    }
+   ],
+   "saves": "Wis +9, Cha +6",
+   "skills": "Insight +9, Perception +9, Religion +5",
+   "senses": "Darkvision 60 ft., Passive Perception 19",
+   "languages": "Common, Celestial",
+   "gear": "Sun-gold vestments",
+   "hpAvg": 67,
+   "init": 2,
+   "xp": 5900,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Never fights alone, and her guards die before she is touched. She speaks her visions aloud as she fights; about half of them come true, and the GM decides which half."
+  },
+  "NPC-019": {
+   "id": "NPC-019",
+   "name": "Lady Aurelia Stormvein",
+   "meta": "Medium Humanoid (Dwarf), Neutral Good",
+   "ac": 18,
+   "hp": "75 (10d8 + 30)",
+   "speed": "30 ft.",
+   "ab": [
+    16,
+    10,
+    16,
+    10,
+    16,
+    14
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Dwarven Resilience",
+     "text": "Aurelia has Advantage on saving throws she makes to avoid or end the Poisoned condition."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Aurelia makes two Warhammer attacks."
+    },
+    {
+     "name": "Warhammer",
+     "text": "Melee Attack Roll: +6, reach 5 ft. Hit: 7 (1d8 + 3) Bludgeoning damage plus 4 (1d8) Thunder damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Aurelia casts one of the following spells, using Wisdom (spell save DC 14): At will: Sacred Flame. 2/day each: Healing Word, Spiritual Weapon. 1/day: Spirit Guardians."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "War Priest (3/Day)",
+     "text": "Aurelia makes one Warhammer attack."
+    }
+   ],
+   "saves": "Con +6, Wis +6",
+   "skills": "Medicine +6, Persuasion +5, Religion +3",
+   "res": "Poison",
+   "senses": "Darkvision 120 ft., Passive Perception 13",
+   "languages": "Common, Dwarvish",
+   "gear": "Chain Mail, Shield, Warhammer",
+   "hpAvg": 75,
+   "init": 0,
+   "xp": 1800,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Heals the wounded first, the enemy's included. Fights hard and laughs louder, and stops the moment anyone asks for mercy, then asks the party why their mercy has limits."
+  },
+  "NPC-020": {
+   "id": "NPC-020",
+   "name": "Brother Altharion Vale",
+   "meta": "Medium Humanoid (Human), Lawful Good",
+   "ac": 17,
+   "hp": "71 (11d8 + 22)",
+   "speed": "45 ft.",
+   "ab": [
+    12,
+    18,
+    14,
+    10,
+    16,
+    10
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Evasion",
+     "text": "If Altharion is subjected to an effect that allows a Dexterity saving throw to take only half damage, he takes no damage on a success and half damage on a failure."
+    },
+    {
+     "name": "The Hunt Still Calls",
+     "text": "On his first turn of a combat, Altharion has Advantage on attack rolls against any creature that hasn't taken a turn yet."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Altharion makes three Unarmed Strike attacks."
+    },
+    {
+     "name": "Unarmed Strike",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 8 (1d8 + 4) Bludgeoning damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Stunning Strike (3/Day)",
+     "text": "Immediately after hitting a creature with an Unarmed Strike, Altharion forces it to make a DC 14 Constitution saving throw. Failure: The target has the Stunned condition until the start of his next turn."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Deflect Attacks",
+     "text": "Trigger: Altharion is hit by an attack roll that deals Bludgeoning, Piercing or Slashing damage. Response: He reduces the damage by 12 (1d10 + 7)."
+    }
+   ],
+   "saves": "Str +4, Dex +7",
+   "skills": "Acrobatics +7, Perception +6, Stealth +7, Survival +6",
+   "senses": "Passive Perception 16",
+   "languages": "Common, Sylvan",
+   "hpAvg": 71,
+   "init": 4,
+   "xp": 1800,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Tries to end a fight without a death. Fights bare-handed, moves like a hunter and goes for the leader. If anyone mentions the Wildborn, he hesitates, and it shows."
+  },
+  "NPC-022": {
+   "id": "NPC-022",
+   "name": "Archon Vaelion",
+   "meta": "Large Fey (Centaur), Lawful Good",
+   "ac": 21,
+   "hp": "189 (18d10 + 90)",
+   "speed": "60 ft.",
+   "ab": [
+    22,
+    14,
+    20,
+    14,
+    18,
+    20
+   ],
+   "cr": "14",
+   "traits": [
+    {
+     "name": "Legendary Resistance (3/Day)",
+     "text": "If Vaelion fails a saving throw, he can choose to succeed instead."
+    },
+    {
+     "name": "An Idea Made Flesh",
+     "text": "If Vaelion drops to 0 Hit Points, he vanishes, leaving only his lance. He returns 1d10 years later, wherever faith in him is strongest. Whether anything can end him for good is the GM's to decide."
+    },
+    {
+     "name": "Charge",
+     "text": "If Vaelion moves at least 30 feet straight toward a target and hits it with Sunlance on the same turn, the target takes an extra 16 (3d10) Radiant damage, and it has the Prone condition if it's Large or smaller."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Vaelion makes three Sunlance attacks and one Hooves attack."
+    },
+    {
+     "name": "Sunlance",
+     "text": "Melee Attack Roll: +11, reach 10 ft. Hit: 19 (2d12 + 6) Piercing damage plus 9 (2d8) Radiant damage."
+    },
+    {
+     "name": "Hooves",
+     "text": "Melee Attack Roll: +11, reach 5 ft. Hit: 13 (2d6 + 6) Bludgeoning damage."
+    }
+   ],
+   "legendary": [
+    {
+     "name": "Legendary Action Uses: 3",
+     "text": "Immediately after another creature's turn, Vaelion can expend a use to take one of the following actions. He regains all expended uses at the start of each of his turns."
+    },
+    {
+     "name": "Gallop",
+     "text": "Vaelion moves up to his Speed without provoking Opportunity Attacks."
+    },
+    {
+     "name": "Lance",
+     "text": "Vaelion makes one Sunlance attack."
+    },
+    {
+     "name": "Sun-Shield Flare (Costs 2 Uses)",
+     "text": "Constitution Saving Throw: DC 18, each creature of Vaelion's choice within 20 feet. Failure: The target has the Blinded condition until the end of its next turn."
+    }
+   ],
+   "saves": "Str +11, Con +10, Wis +9, Cha +10",
+   "skills": "Athletics +11, Intimidation +10, Perception +9",
+   "cimm": "Charmed, Frightened",
+   "senses": "Passive Perception 19",
+   "languages": "Common, Celestial, Sylvan",
+   "gear": "Gilded barding, Lance, Sun-shield",
+   "hpAvg": 189,
+   "init": 2,
+   "xp": 11500,
+   "pb": 5,
+   "kind": "npc",
+   "tactics": "Appears only where the Order's faith is strongest, or most in danger. Courteous to enemies and merciless to cowards: he offers a fair duel to the bravest foe, and ignores anyone who runs."
+  },
+  "NPC-023": {
+   "id": "NPC-023",
+   "name": "Exile Liora Voss",
+   "meta": "Medium Humanoid (Dragonborn), Lawful Good",
+   "ac": 18,
+   "hp": "71 (11d8 + 22)",
+   "speed": "30 ft.",
+   "ab": [
+    17,
+    10,
+    14,
+    10,
+    12,
+    16
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Aura of Protection",
+     "text": "Liora and allies within 10 feet of her add 3 to their saving throws while she doesn't have the Incapacitated condition."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Liora makes two Longsword attacks."
+    },
+    {
+     "name": "Longsword",
+     "text": "Melee Attack Roll: +6, reach 5 ft. Hit: 8 (1d10 + 3) Slashing damage."
+    },
+    {
+     "name": "Breath Weapon (3/Day)",
+     "text": "Dexterity Saving Throw: DC 13, each creature in a 15-foot Cone. Failure: 11 (2d10) Fire damage. Success: Half damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Divine Smite (2/Day)",
+     "text": "Immediately after hitting a creature with a Longsword attack, Liora deals an extra 9 (2d8) Radiant damage to it."
+    },
+    {
+     "name": "Lay on Hands (1/Day)",
+     "text": "Liora touches a creature and restores 25 Hit Points to it."
+    }
+   ],
+   "saves": "Wis +4, Cha +6",
+   "skills": "Athletics +6, Medicine +4, Persuasion +6",
+   "res": "Fire",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Draconic",
+   "gear": "Plate Armor (sun scraped off), Longsword",
+   "hpAvg": 71,
+   "init": 0,
+   "xp": 1800,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Helps first and asks later. Fights to protect, never to punish, and stops once the innocent are safe. She won't fight Order soldiers unless they're hurting someone."
+  },
+  "NPC-025": {
+   "id": "NPC-025",
+   "name": "General Orana Volkash",
+   "meta": "Medium Humanoid (Shifter), Lawful Evil",
+   "ac": 17,
+   "hp": "153 (18d8 + 72)",
+   "speed": "40 ft.",
+   "ab": [
+    20,
+    16,
+    18,
+    10,
+    12,
+    14
+   ],
+   "cr": "11",
+   "traits": [
+    {
+     "name": "Legendary Resistance (2/Day)",
+     "text": "If Orana fails a saving throw, she can choose to succeed instead."
+    },
+    {
+     "name": "Unarmored Defense",
+     "text": "While Orana wears no armor, her AC includes her Constitution modifier."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Orana makes four Handaxe attacks."
+    },
+    {
+     "name": "Handaxe",
+     "text": "Melee or Ranged Attack Roll: +9, reach 5 ft. or range 20/60 ft. Hit: 8 (1d6 + 5) Slashing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Rage (1/Day)",
+     "text": "For 1 minute, Orana has Resistance to Bludgeoning, Piercing and Slashing damage, and her Handaxe attacks deal an extra 3 damage."
+    },
+    {
+     "name": "Shift (Recharges after a Short or Long Rest)",
+     "text": "Orana gains 12 Temporary Hit Points, and her Speed increases by 10 feet for 1 minute."
+    }
+   ],
+   "legendary": [
+    {
+     "name": "Legendary Action Uses: 2",
+     "text": "Immediately after another creature's turn, Orana can expend a use to take one of the following actions. She regains all expended uses at the start of each of her turns."
+    },
+    {
+     "name": "Axe",
+     "text": "Orana makes one Handaxe attack."
+    },
+    {
+     "name": "Order",
+     "text": "One ally Orana can see within 60 feet moves up to half its Speed and makes one weapon attack as a Reaction."
+    }
+   ],
+   "saves": "Str +9, Con +8",
+   "skills": "Athletics +9, Intimidation +6, Perception +5",
+   "senses": "Darkvision 60 ft., Passive Perception 15",
+   "languages": "Common",
+   "gear": "Two Handaxes",
+   "hpAvg": 153,
+   "init": 3,
+   "xp": 7200,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Charges first and thinks fast. Picks out the enemy's leader or healer in the first round and throws both axes at them. Respects anyone who stands their ground, and has no patience for deserters."
+  },
+  "NPC-031": {
+   "id": "NPC-031",
+   "name": "Velkana Stormclad",
+   "meta": "Medium Humanoid (Stormborn), Chaotic Neutral",
+   "ac": 16,
+   "hp": "84 (13d8 + 26)",
+   "speed": "35 ft.",
+   "ab": [
+    16,
+    16,
+    14,
+    12,
+    10,
+    16
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Showstopper",
+     "text": "When Velkana scores a Critical Hit or reduces a creature to 0 Hit Points, each ally who can see her gains 5 Temporary Hit Points."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Velkana makes three Stormblade attacks."
+    },
+    {
+     "name": "Stormblade",
+     "text": "Melee Attack Roll: +6, reach 5 ft. Hit: 6 (1d6 + 3) Slashing damage plus 4 (1d8) Lightning damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Velkana casts one of the following spells, using Intelligence (spell save DC 12): At will: Shocking Grasp. 1/day each: Misty Step, Shield, Thunderwave."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "War Magic",
+     "text": "Immediately after casting Shocking Grasp, Velkana makes one Stormblade attack."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Parry",
+     "text": "Trigger: Velkana is hit by a melee attack roll. Response: She adds 3 to her AC against that attack, possibly causing it to miss."
+    }
+   ],
+   "saves": "Str +6, Con +5",
+   "skills": "Acrobatics +6, Athletics +6, Performance +6",
+   "res": "Lightning",
+   "senses": "Darkvision 60 ft., Passive Perception 10",
+   "languages": "Common, Primordial",
+   "gear": "Shield, Shortsword",
+   "hpAvg": 84,
+   "init": 3,
+   "xp": 2300,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Plays to the crowd, even when there isn't one. Fights for the show first and the kill second, and spares a beaten foe if it pleases the audience."
+  },
+  "NPC-033": {
+   "id": "NPC-033",
+   "name": "Darion Kael",
+   "meta": "Medium Humanoid (Hobgoblin), Neutral Good",
+   "kind": "npc",
+   "base": "Noble",
+   "changes": "Darkvision 60 feet. Fortune of the Many: once per turn, when Darion misses with an attack roll or fails a saving throw, he gains a bonus to the roll equal to the number of allies he can see within 30 feet (maximum +3).",
+   "tactics": "Doesn't fight if talking will do. Surrenders to save his guards' lives, and remembers who let him.",
+   "fights": true,
+   "ac": 15,
+   "hp": "9 (2d8)",
+   "hpAvg": 9,
+   "init": 1,
+   "cr": "1/8",
+   "xp": 25,
+   "pb": 2
+  },
+  "NPC-034": {
+   "id": "NPC-034",
+   "name": "Archmagister Veylan Orithis",
+   "meta": "Small Humanoid (Goblin), Chaotic Good",
+   "ac": 16,
+   "hp": "121 (22d6 + 44)",
+   "speed": "30 ft.",
+   "ab": [
+    8,
+    16,
+    14,
+    18,
+    12,
+    20
+   ],
+   "cr": "13",
+   "traits": [
+    {
+     "name": "Legendary Resistance (3/Day)",
+     "text": "If Veylan fails a saving throw, he can choose to succeed instead."
+    },
+    {
+     "name": "Magic Resistance",
+     "text": "Veylan has Advantage on saving throws against spells and other magical effects."
+    },
+    {
+     "name": "Wild Surge",
+     "text": "Whenever Veylan casts a spell of level 1 or higher, roll a d6. On a 1, roll on the Wild Magic Surge table in the Player's Handbook."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Veylan uses Arcane Burst three times."
+    },
+    {
+     "name": "Arcane Burst",
+     "text": "Ranged Attack Roll: +10, range 120 ft. Hit: 23 (4d8 + 5) Force damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Veylan casts one of the following spells, using Charisma (spell save DC 18): At will: Light, Mage Hand, Prestidigitation. 2/day each: Counterspell, Dimension Door, Fireball (level 5 version). 1/day each: Chain Lightning, Polymorph."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Quickened Spell (2/Day)",
+     "text": "Veylan uses Spellcasting."
+    }
+   ],
+   "legendary": [
+    {
+     "name": "Legendary Action Uses: 3",
+     "text": "Immediately after another creature's turn, Veylan can expend a use to take one of the following actions. He regains all expended uses at the start of each of his turns."
+    },
+    {
+     "name": "Burst",
+     "text": "Veylan uses Arcane Burst."
+    },
+    {
+     "name": "Blink",
+     "text": "Veylan teleports up to 30 feet to an unoccupied space he can see."
+    },
+    {
+     "name": "Experiment (Costs 2 Uses)",
+     "text": "Veylan rolls on the Wild Magic Surge table."
+    }
+   ],
+   "saves": "Con +7, Cha +10",
+   "skills": "Arcana +14, History +9",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Draconic, Goblin, Infernal, Primordial",
+   "hpAvg": 121,
+   "init": 3,
+   "xp": 10000,
+   "pb": 5,
+   "kind": "npc",
+   "tactics": "Would rather study the party than fight them. In a fight he experiments, laughing, and is as likely to help as to harm. He surrenders cheerfully the moment something interests him more than winning."
+  },
+  "NPC-035": {
+   "id": "NPC-035",
+   "name": "Archivist Lissara Wynne",
+   "meta": "Medium Humanoid (Elf), Lawful Neutral",
+   "kind": "npc",
+   "base": "Commoner",
+   "changes": "She can seal the archive once a day: everyone inside makes a DC 15 Wisdom saving throw or forgets why they came.",
+   "tactics": "Won't fight. Seals the archive and waits. Violence in her stacks costs more than any answer.",
+   "fights": false,
+   "ac": 10,
+   "hp": "4 (1d8)",
+   "hpAvg": 4,
+   "init": 0,
+   "cr": "0",
+   "xp": 10,
+   "pb": 2
+  },
+  "NPC-036": {
+   "id": "NPC-036",
+   "name": "Master Thaelris Durn",
+   "meta": "Small Humanoid (Deep Gnome), Neutral Evil",
+   "ac": 15,
+   "hp": "104 (19d6 + 38)",
+   "speed": "30 ft.",
+   "ab": [
+    8,
+    14,
+    14,
+    20,
+    12,
+    10
+   ],
+   "cr": "9",
+   "traits": [
+    {
+     "name": "Gnomish Cunning",
+     "text": "Thaelris has Advantage on Intelligence, Wisdom and Charisma saving throws."
+    },
+    {
+     "name": "Grim Harvest",
+     "text": "Once per turn, when Thaelris kills a creature with a spell, he regains 10 Hit Points."
+    },
+    {
+     "name": "The Assistant",
+     "text": "A silent Zombie (Monster Manual) in a clean apron goes everywhere with him, and takes any hit meant for him that it can reach."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Thaelris uses Grave Bolt twice."
+    },
+    {
+     "name": "Grave Bolt",
+     "text": "Ranged Attack Roll: +9, range 120 ft. Hit: 18 (3d8 + 5) Necrotic damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Thaelris casts one of the following spells, using Intelligence (spell save DC 17): At will: Mage Hand, Toll the Dead. 2/day each: Animate Dead, Blight, Vampiric Touch. 1/day each: Circle of Death, Create Undead."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Command the Dead",
+     "text": "One Undead Thaelris controls within 60 feet makes one attack."
+    }
+   ],
+   "saves": "Int +9, Wis +5",
+   "skills": "Arcana +9, Medicine +5, Stealth +6",
+   "res": "Necrotic",
+   "senses": "Darkvision 120 ft., Passive Perception 11",
+   "languages": "Common, Gnomish, Undercommon",
+   "gear": "Mage Armor, notebooks",
+   "hpAvg": 104,
+   "init": 2,
+   "xp": 5000,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Fights from behind his dead, taking notes. Retreats the moment the numbers stop favouring him, and is polite about it. Will trade what he knows for being left alone."
+  },
+  "NPC-037": {
+   "id": "NPC-037",
+   "name": "Sorcerer-King Jorvas Myrr",
+   "meta": "Medium Humanoid (Triton), Neutral",
+   "ac": 15,
+   "hp": "110 (17d8 + 34)",
+   "speed": "30 ft., swim 30 ft.",
+   "ab": [
+    12,
+    14,
+    14,
+    13,
+    12,
+    20
+   ],
+   "cr": "10",
+   "traits": [
+    {
+     "name": "Amphibious",
+     "text": "Jorvas can breathe air and water."
+    },
+    {
+     "name": "Static",
+     "text": "A creature that touches Jorvas or hits him with a melee attack takes 5 (1d10) Lightning damage."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Jorvas uses Storm Blast three times."
+    },
+    {
+     "name": "Storm Blast",
+     "text": "Ranged Attack Roll: +9, range 120 ft. Hit: 16 (2d10 + 5) Lightning damage, and Jorvas pushes the target up to 10 feet straight away from him."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Jorvas casts one of the following spells, using Charisma (spell save DC 17): At will: Shape Water, Thunderclap. 2/day each: Call Lightning, Lightning Bolt (level 5 version). 1/day each: Control Water, Storm Sphere."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Tentacle of the Deeps (3/Day)",
+     "text": "A spectral tentacle lashes one creature Jorvas can see within 60 feet. The target takes 9 (2d8) Cold damage, and its Speed is reduced by 10 feet until the start of Jorvas's next turn."
+    }
+   ],
+   "saves": "Wis +5, Cha +9",
+   "skills": "Arcana +5, Intimidation +9, Persuasion +9",
+   "res": "Cold, Lightning",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Primordial",
+   "gear": "A crown of grey coral",
+   "hpAvg": 110,
+   "init": 2,
+   "xp": 5900,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Bored by most fights, and ends them quickly with lightning. Fights near water when he can. Will happily talk instead, about anything except the throne he gave up."
+  },
+  "NPC-038": {
+   "id": "NPC-038",
+   "name": "Magister Celith Varis",
+   "meta": "Small Humanoid (Harengon), Neutral",
+   "kind": "npc",
+   "base": "Mage",
+   "changes": "Speed 35 feet. Add a Reaction, Time Slip (3/Day): when Celith or an ally within 30 feet is hit by an attack roll, the attacker rerolls and must use the new roll.",
+   "tactics": "Has already seen how this fight ends, and is mostly trying to land in the right timeline. Leaves the moment it goes the wrong way, sometimes before it starts.",
+   "fights": true,
+   "ac": 15,
+   "hp": "81 (18d8)",
+   "hpAvg": 81,
+   "init": 2,
+   "cr": "6",
+   "xp": 2300,
+   "pb": 3
+  },
+  "NPC-039": {
+   "id": "NPC-039",
+   "name": "Lord Varkoss",
+   "meta": "Medium Humanoid (Unknown), Neutral Evil",
+   "ac": 13,
+   "hp": "88 (16d8 + 16)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    16,
+    12,
+    20,
+    14,
+    16
+   ],
+   "cr": "9",
+   "traits": [
+    {
+     "name": "Nobody's Face",
+     "text": "Magic can't reveal Varkoss's true appearance. Everyone who sees him remembers a different face."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Varkoss uses Phantasmal Strike twice."
+    },
+    {
+     "name": "Phantasmal Strike",
+     "text": "Wisdom Saving Throw: DC 17, one creature Varkoss can see within 120 feet. Failure: 22 (4d10) Psychic damage. Success: Half damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Varkoss casts one of the following spells, using Intelligence (spell save DC 17): At will: Disguise Self, Minor Illusion. 2/day each: Greater Invisibility, Major Image, Phantasmal Killer. 1/day each: Mislead, Programmed Illusion."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Illusory Self (Recharges after a Short or Long Rest)",
+     "text": "Trigger: Varkoss is hit by an attack roll. Response: The attack misses: it struck an illusion."
+    }
+   ],
+   "saves": "Int +9, Wis +6",
+   "skills": "Arcana +9, Deception +7, Insight +6, Perception +6",
+   "senses": "Passive Perception 16",
+   "languages": "Common and five others",
+   "hpAvg": 88,
+   "init": 3,
+   "xp": 5000,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "May not be there at all. The first Varkoss the party fights is usually an illusion; the real one, if there is one, watches from the crowd. He leaves by Mislead the moment he's found."
+  },
+  "NPC-040": {
+   "id": "NPC-040",
+   "name": "Pyromancer Elaris Duskbane",
+   "meta": "Medium Humanoid (Fire Genasi), Lawful Evil",
+   "ac": 15,
+   "hp": "117 (18d8 + 36)",
+   "speed": "30 ft.",
+   "ab": [
+    9,
+    14,
+    14,
+    20,
+    13,
+    14
+   ],
+   "cr": "10",
+   "traits": [
+    {
+     "name": "Purifying Flame",
+     "text": "Elaris's Fire damage ignores Resistance to Fire."
+    },
+    {
+     "name": "Sculpt Spells",
+     "text": "Elaris's allies automatically succeed on saving throws against her spells and take no damage from them."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Elaris uses Searing Bolt three times."
+    },
+    {
+     "name": "Searing Bolt",
+     "text": "Ranged Attack Roll: +9, range 120 ft. Hit: 21 (3d10 + 5) Fire damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Elaris casts one of the following spells, using Intelligence (spell save DC 17): At will: Fire Bolt, Prestidigitation. 2/day each: Fireball (level 5 version), Wall of Fire. 1/day: Immolation."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Cinder Step",
+     "text": "Elaris teleports up to 30 feet to an unoccupied space she can see that is within 5 feet of a fire."
+    }
+   ],
+   "saves": "Int +9, Wis +5",
+   "skills": "Arcana +9, Religion +9",
+   "res": "Fire",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Primordial",
+   "gear": "Mage Armor, scorched fireproof robes",
+   "hpAvg": 117,
+   "init": 2,
+   "xp": 5900,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Burns the battlefield first and the people second. Never runs: she believes fire is the truth and she is its priest. She talks philosophy while she burns things, and listens, which is worse."
+  },
+  "NPC-041": {
+   "id": "NPC-041",
+   "name": "Nyx the Veiled",
+   "meta": "Medium Humanoid (Shadowkin), Chaotic Neutral",
+   "ac": 14,
+   "hp": "91 (14d8 + 28)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    16,
+    14,
+    12,
+    12,
+    18
+   ],
+   "cr": "7",
+   "traits": [
+    {
+     "name": "Two Conversations",
+     "text": "Nyx can't be surprised, and has Advantage on saving throws against the Charmed and Frightened conditions."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Nyx uses Whisper Bolt three times."
+    },
+    {
+     "name": "Whisper Bolt",
+     "text": "Ranged Attack Roll: +7, range 120 ft. Hit: 13 (2d8 + 4) Psychic damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Nyx casts one of the following spells, using Charisma (spell save DC 15): At will: Mage Hand, Minor Illusion. 2/day each: Dissonant Whispers (level 3 version), Hunger of Hadar. 1/day: Evard's Black Tentacles."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Step into Shadow",
+     "text": "While in Dim Light or Darkness, Nyx teleports up to 30 feet to an unoccupied space in Dim Light or Darkness that they can see."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Entropic Ward (Recharges after a Short or Long Rest)",
+     "text": "Trigger: A creature makes an attack roll against Nyx. Response: The attack roll has Disadvantage."
+    }
+   ],
+   "saves": "Wis +4, Cha +7",
+   "skills": "Arcana +4, Deception +7, Insight +4",
+   "res": "Necrotic, Psychic",
+   "senses": "Darkvision 120 ft., Passive Perception 11",
+   "languages": "Common, Deep Speech, telepathy 60 ft.",
+   "hpAvg": 91,
+   "init": 3,
+   "xp": 2900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Rarely fights alone: the beings Nyx listens to fight beside them, unseen. Stops mid-battle to listen to something nobody else hears, then acts on it."
+  },
+  "NPC-042": {
+   "id": "NPC-042",
+   "name": "Master Talen Voros",
+   "meta": "Medium Humanoid (Tiefling), Lawful Neutral",
+   "ac": 14,
+   "hp": "91 (14d8 + 28)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    14,
+    14,
+    14,
+    12,
+    18
+   ],
+   "cr": "7",
+   "traits": [
+    {
+     "name": "Contract Bound",
+     "text": "A creature that has signed one of Talen's contracts has Disadvantage on saving throws against her spells."
+    },
+    {
+     "name": "Dark One's Blessing",
+     "text": "When Talen reduces a creature to 0 Hit Points, she gains 10 Temporary Hit Points."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Talen uses Hellfire Bolt twice."
+    },
+    {
+     "name": "Hellfire Bolt",
+     "text": "Ranged Attack Roll: +7, range 120 ft. Hit: 15 (2d10 + 4) Fire damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Talen casts one of the following spells, using Charisma (spell save DC 15): At will: Minor Illusion, Thaumaturgy. 2/day each: Hellish Rebuke (level 3 version), Scorching Ray. 1/day each: Bestow Curse, Fireball."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Read the Clause",
+     "text": "Trigger: A creature that signed one of Talen's contracts hits her with an attack. Response: The attacker takes 11 (2d10) Psychic damage."
+    }
+   ],
+   "saves": "Wis +4, Cha +7",
+   "skills": "Deception +7, Insight +4, Persuasion +7",
+   "res": "Fire",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Infernal",
+   "gear": "A ledger written in blood",
+   "hpAvg": 91,
+   "init": 2,
+   "xp": 2900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Would rather negotiate than fight, and reads the terms aloud either way. Every fight with her ends in an offer. Breaking a contract with her is a worse idea than fighting her."
+  },
+  "NPC-043": {
+   "id": "NPC-043",
+   "name": "Lirian Althos",
+   "meta": "Medium Humanoid (Githzerai), Lawful Neutral",
+   "ac": 16,
+   "hp": "130 (20d8 + 40)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    14,
+    14,
+    16,
+    16,
+    20
+   ],
+   "cr": "11",
+   "traits": [
+    {
+     "name": "Legendary Resistance (2/Day)",
+     "text": "If Lirian fails a saving throw, he can choose to succeed instead."
+    },
+    {
+     "name": "Mental Discipline",
+     "text": "Lirian has Advantage on saving throws against the Charmed and Frightened conditions."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Lirian uses Rewrite three times."
+    },
+    {
+     "name": "Rewrite",
+     "text": "Ranged Attack Roll: +9, range 120 ft. Hit: 21 (3d10 + 5) Force damage, and the target's Speed is 0 until the end of its next turn."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Lirian casts one of the following spells, using Charisma (spell save DC 17): At will: Mage Hand, Message. 2/day each: Counterspell, Haste, Slow. 1/day each: Disintegrate, Wall of Force."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Revision (3/Day)",
+     "text": "Lirian changes one thing he can see within 60 feet: a wall becomes air, a closed door opens, or two creatures swap places (an unwilling creature resists with a DC 17 Charisma saving throw)."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Undo (1/Day)",
+     "text": "Trigger: A creature Lirian can see within 60 feet succeeds on an attack roll or saving throw. Response: The creature rerolls and must use the new roll."
+    }
+   ],
+   "saves": "Wis +7, Cha +9",
+   "skills": "Arcana +7, Insight +7",
+   "senses": "Passive Perception 13",
+   "languages": "Common, Gith",
+   "hpAvg": 130,
+   "init": 2,
+   "xp": 7200,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Literal and unhurried. Rewrites the ground under the party before he attacks them. His own side keeps its distance, and if he's losing they may not help."
+  },
+  "NPC-044": {
+   "id": "NPC-044",
+   "name": "Grandmaster Lysander Morrow",
+   "meta": "Medium Humanoid (Human), Neutral Evil",
+   "ac": 16,
+   "hp": "104 (16d8 + 32)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    18,
+    14,
+    16,
+    14,
+    18
+   ],
+   "cr": "9",
+   "traits": [
+    {
+     "name": "Sneak Attack (1/Turn)",
+     "text": "Lysander deals an extra 14 (4d6) damage when he hits with an attack roll and has Advantage, or when an ally is within 5 feet of the target."
+    },
+    {
+     "name": "Everyone's Confidant",
+     "text": "Lysander can't be surprised."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Lysander makes two Rapier attacks or two Hand Crossbow attacks."
+    },
+    {
+     "name": "Rapier",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 8 (1d8 + 4) Piercing damage."
+    },
+    {
+     "name": "Hand Crossbow",
+     "text": "Ranged Attack Roll: +8, range 30/120 ft. Hit: 7 (1d6 + 4) Piercing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Cunning Action",
+     "text": "Lysander takes the Dash, Disengage or Hide action."
+    },
+    {
+     "name": "Master of Tactics",
+     "text": "Lysander takes the Help action to help an ally within 30 feet."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Uncanny Dodge",
+     "text": "Trigger: An attacker Lysander can see hits him with an attack roll. Response: He halves the attack's damage against him."
+    }
+   ],
+   "saves": "Dex +8, Int +7, Wis +6",
+   "skills": "Deception +12, Insight +10, Persuasion +8, Stealth +8",
+   "senses": "Passive Perception 12",
+   "languages": "Common and four others",
+   "gear": "Silver mask, Rapier, Hand Crossbow",
+   "hpAvg": 104,
+   "init": 4,
+   "xp": 5000,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Has never been in a fight he didn't arrange. If one starts, it's because he wanted it: his people are already in the room. He leaves by a door nobody noticed, and sends a gift afterwards."
+  },
+  "NPC-046": {
+   "id": "NPC-046",
+   "name": "Kaelen Voris",
+   "meta": "Medium Humanoid (Unknown), Neutral",
+   "ac": 15,
+   "hp": "66 (12d8 + 12)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    18,
+    12,
+    14,
+    12,
+    16
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "A Thousand Faces",
+     "text": "Kaelen can cast Disguise Self at will, and has Advantage on Charisma (Deception) checks to pass as someone else."
+    },
+    {
+     "name": "Assassinate",
+     "text": "Kaelen has Advantage on Initiative rolls, and on their first turn has Advantage on attack rolls against any creature that hasn't taken a turn yet."
+    },
+    {
+     "name": "Sneak Attack (1/Turn)",
+     "text": "Kaelen deals an extra 14 (4d6) damage when they hit with an attack roll and have Advantage, or when an ally is within 5 feet of the target."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Kaelen makes two Dagger attacks."
+    },
+    {
+     "name": "Dagger",
+     "text": "Melee or Ranged Attack Roll: +7, reach 5 ft. or range 20/60 ft. Hit: 6 (1d4 + 4) Piercing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Cunning Action",
+     "text": "Kaelen takes the Dash, Disengage or Hide action."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Uncanny Dodge",
+     "text": "Trigger: An attacker Kaelen can see hits them with an attack roll. Response: Kaelen halves the attack's damage against them."
+    }
+   ],
+   "saves": "Dex +7, Int +5",
+   "skills": "Deception +9, Insight +4, Performance +6, Stealth +10",
+   "senses": "Passive Perception 11",
+   "languages": "Common and three others",
+   "hpAvg": 66,
+   "init": 4,
+   "xp": 2300,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Is already in the room, as someone the party trusts. Strikes once, at the best possible moment, and is gone before the body falls. Kill one Kaelen Voris, and another may take up the name."
+  },
+  "NPC-047": {
+   "id": "NPC-047",
+   "name": "Ilsevre the Whispering Veil",
+   "meta": "Medium Humanoid (Shadowkin), Neutral Evil",
+   "ac": 13,
+   "hp": "82 (15d8 + 15)",
+   "speed": "30 ft.",
+   "ab": [
+    8,
+    14,
+    12,
+    14,
+    12,
+    20
+   ],
+   "cr": "7",
+   "traits": [
+    {
+     "name": "Words That Break",
+     "text": "Psychic damage from Ilsevre ignores Resistance to Psychic damage."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Ilsevre uses Mind-Breaking Verse twice."
+    },
+    {
+     "name": "Mind-Breaking Verse",
+     "text": "Wisdom Saving Throw: DC 16, one creature Ilsevre can see within 60 feet that can hear her. Failure: 18 (4d8) Psychic damage, and the target has the Frightened condition until the end of its next turn. Success: Half damage only."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Ilsevre casts one of the following spells, using Charisma (spell save DC 16): At will: Minor Illusion, Vicious Mockery. 2/day each: Dissonant Whispers (level 3 version), Phantasmal Force. 1/day each: Confusion, Modify Memory."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Bardic Inspiration (3/Day)",
+     "text": "One ally within 60 feet that can hear Ilsevre adds 1d8 to its next d20 Test in the next 10 minutes."
+    }
+   ],
+   "saves": "Dex +5, Cha +8",
+   "skills": "Deception +8, Performance +11, Persuasion +8",
+   "res": "Necrotic",
+   "senses": "Darkvision 120 ft., Passive Perception 11",
+   "languages": "Common, Deep Speech, Elvish",
+   "hpAvg": 82,
+   "init": 2,
+   "xp": 2900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Never raises her voice, so she never needs to. Sings from the back while the Court's guards hold the door. Anyone who shakes off her song gets her full attention."
+  },
+  "NPC-049": {
+   "id": "NPC-049",
+   "name": "\"The Grey Raven\"",
+   "meta": "Medium Humanoid (Unknown), Neutral",
+   "ac": 16,
+   "hp": "91 (14d8 + 28)",
+   "speed": "30 ft.",
+   "ab": [
+    12,
+    20,
+    14,
+    12,
+    16,
+    10
+   ],
+   "cr": "7",
+   "traits": [
+    {
+     "name": "Sharpshooter",
+     "text": "The Raven's ranged attacks ignore Half Cover and Three-Quarters Cover, and long range doesn't impose Disadvantage on them."
+    },
+    {
+     "name": "Unseen",
+     "text": "If the Raven is hidden when it makes a ranged attack, it stays hidden, hit or miss."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Raven makes three Raven's Bow attacks."
+    },
+    {
+     "name": "Raven's Bow",
+     "text": "Ranged Attack Roll: +8, range 600/2,400 ft. Hit: 9 (1d8 + 5) Piercing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Steady Aim (3/Day)",
+     "text": "The Raven has Advantage on its next attack roll this turn. If that attack hits, it deals an extra 9 (2d8) Piercing damage."
+    }
+   ],
+   "saves": "Dex +8, Con +5",
+   "skills": "Perception +9, Stealth +11",
+   "senses": "Passive Perception 19",
+   "languages": "Common, probably",
+   "hpAvg": 91,
+   "init": 5,
+   "xp": 2900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Never fights up close, and is never found. Fires from a mile off, three arrows and gone; a grey feather is all that's left. If the party somehow reaches the nest, it's empty."
+  },
+  "NPC-050": {
+   "id": "NPC-050",
+   "name": "Mistress Zeyara",
+   "meta": "Medium Fey (Satyr), Chaotic Neutral",
+   "ac": 13,
+   "hp": "71 (13d8 + 13)",
+   "speed": "35 ft.",
+   "ab": [
+    8,
+    14,
+    12,
+    14,
+    12,
+    18
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Magic Resistance",
+     "text": "Zeyara has Advantage on saving throws against spells."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Zeyara uses Psychic Lash twice."
+    },
+    {
+     "name": "Psychic Lash",
+     "text": "Ranged Attack Roll: +7, range 60 ft. Hit: 13 (2d8 + 4) Psychic damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Zeyara casts one of the following spells, using Charisma (spell save DC 15): At will: Friends, Minor Illusion. 2/day each: Calm Emotions, Charm Person, Suggestion. 1/day each: Hypnotic Pattern, Modify Memory."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Forget That (Recharges after a Short or Long Rest)",
+     "text": "Trigger: A creature within 30 feet hits Zeyara with an attack. Response: Wisdom Saving Throw: DC 15, the attacker. Failure: It forgets the last minute, including why it was fighting her, and can't attack her until the end of its next turn."
+    }
+   ],
+   "saves": "Con +4, Cha +7",
+   "skills": "Deception +7, Insight +4, Performance +7, Persuasion +7",
+   "senses": "Passive Perception 11",
+   "languages": "Common, Sylvan, telepathy 30 ft.",
+   "hpAvg": 71,
+   "init": 2,
+   "xp": 2300,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Laughs, and makes everyone forget the fight started. She doesn't kill: she edits. A party that beats her may not remember doing it."
+  },
+  "NPC-051": {
+   "id": "NPC-051",
+   "name": "Tobias Vale",
+   "meta": "Medium Humanoid (Human), Lawful Neutral",
+   "kind": "npc",
+   "base": "Spy",
+   "changes": "He knows the Shield, Misty Step and Suggestion spells (spell save DC 13), using Intelligence.",
+   "tactics": "Has already won, or already left. Cornered, he offers the party the thing they most need to hear, true or not.",
+   "fights": false,
+   "ac": 12,
+   "hp": "27 (6d8)",
+   "hpAvg": 27,
+   "init": 2,
+   "cr": "1",
+   "xp": 200,
+   "pb": 2
+  },
+  "NPC-053": {
+   "id": "NPC-053",
+   "name": "Magistrate Renn Varros",
+   "meta": "Medium Humanoid (Duergar), Lawful Neutral",
+   "kind": "npc",
+   "base": "Priest",
+   "changes": "Darkvision 120 feet, and Resistance to Poison damage. Once each per day she can cast Enlarge/Reduce (on herself) and Invisibility.",
+   "tactics": "Never fights in her own court: her guards do. She goes on judging the party, calmly, while they fight.",
+   "fights": true,
+   "ac": 13,
+   "hp": "38 (7d8 + 7)",
+   "hpAvg": 38,
+   "init": 0,
+   "cr": "2",
+   "xp": 450,
+   "pb": 2
+  },
+  "NPC-054": {
+   "id": "NPC-054",
+   "name": "High Shaman Raethan \"Stormcaller\"",
+   "meta": "Medium Humanoid (Lizardfolk), Neutral",
+   "ac": 16,
+   "hp": "135 (18d8 + 54)",
+   "speed": "30 ft., swim 30 ft.",
+   "ab": [
+    16,
+    12,
+    16,
+    12,
+    20,
+    14
+   ],
+   "cr": "11",
+   "traits": [
+    {
+     "name": "Legendary Resistance (2/Day)",
+     "text": "If Raethan fails a saving throw, he can choose to succeed instead."
+    },
+    {
+     "name": "Hold Breath",
+     "text": "Raethan can hold his breath for 15 minutes."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Raethan makes one Bite attack and two Storm Staff attacks, or uses Storm Call."
+    },
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 7 (1d8 + 3) Piercing damage."
+    },
+    {
+     "name": "Storm Staff",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 6 (1d6 + 3) Bludgeoning damage plus 9 (2d8) Lightning damage."
+    },
+    {
+     "name": "Storm Call",
+     "text": "Dexterity Saving Throw: DC 17, each creature in a 10-foot-radius, 60-foot-high Cylinder centered on a point Raethan can see within 120 feet. Failure: 22 (4d10) Lightning damage. Success: Half damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Raethan casts one of the following spells, using Wisdom (spell save DC 17): At will: Druidcraft, Thunderclap. 2/day each: Conjure Animals, Wind Wall. 1/day each: Conjure Elemental (air elemental only), Ice Storm."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Wrath of the Sea",
+     "text": "Constitution Saving Throw: DC 17, one creature Raethan can see within 10 feet. Failure: 9 (2d8) Cold damage, and Raethan pushes the target up to 15 feet straight away from him."
+    }
+   ],
+   "legendary": [
+    {
+     "name": "Legendary Action Uses: 2",
+     "text": "Immediately after another creature's turn, Raethan can expend a use to take one of the following actions. He regains all expended uses at the start of each of his turns."
+    },
+    {
+     "name": "Staff",
+     "text": "Raethan makes one Storm Staff attack."
+    },
+    {
+     "name": "Thunder (Costs 2 Uses)",
+     "text": "Raethan uses Storm Call."
+    }
+   ],
+   "saves": "Int +5, Wis +9",
+   "skills": "Nature +5, Perception +9, Survival +9",
+   "res": "Lightning",
+   "senses": "Passive Perception 19",
+   "languages": "Common, Draconic, Sylvan",
+   "gear": "Shield, Storm staff, cloak of storm-bird feathers",
+   "hpAvg": 135,
+   "init": 1,
+   "xp": 7200,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Calls the storm before the party sees him, and lets the beasts of the river fight first. Speaks once, before the fight. If they listen, there is no fight."
+  },
+  "NPC-056": {
+   "id": "NPC-056",
+   "name": "Faelyn Moondancer",
+   "meta": "Medium Humanoid (Elf), Chaotic Good",
+   "ac": 14,
+   "hp": "84 (13d8 + 26)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    16,
+    14,
+    12,
+    18,
+    12
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Fey Ancestry",
+     "text": "Faelyn has Advantage on saving throws she makes to avoid or end the Charmed condition."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Faelyn makes two Moonstaff attacks."
+    },
+    {
+     "name": "Moonstaff",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 8 (1d8 + 4) Force damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Faelyn casts one of the following spells, using Wisdom (spell save DC 15): At will: Druidcraft. 2/day each: Moonbeam, Pass without Trace. 1/day each: Conjure Woodland Beings, Polymorph."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Wild Shape (2/Day)",
+     "text": "Faelyn shape-shifts into a Dire Wolf (Monster Manual) for up to 1 hour, keeping her Hit Points and gaining 18 Temporary Hit Points."
+    },
+    {
+     "name": "Walk Between (Recharges after a Short or Long Rest)",
+     "text": "Faelyn teleports up to 30 feet, and can bring one willing creature within 5 feet of her."
+    }
+   ],
+   "saves": "Int +4, Wis +7",
+   "skills": "Nature +4, Perception +7, Stealth +6, Survival +7",
+   "senses": "Darkvision 60 ft., Passive Perception 17",
+   "languages": "Common, Elvish, Sylvan",
+   "hpAvg": 84,
+   "init": 3,
+   "xp": 2300,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Fights as a wolf in the moonlight and leaves as an elf. If the party is losing, she may simply step somewhere else, and take them with her."
+  },
+  "NPC-057": {
+   "id": "NPC-057",
+   "name": "Yvara Ashborn",
+   "meta": "Medium Humanoid (Fire Genasi), Lawful Neutral",
+   "ac": 17,
+   "hp": "84 (13d8 + 26)",
+   "speed": "45 ft.",
+   "ab": [
+    10,
+    18,
+    14,
+    10,
+    16,
+    10
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Truth-Bound",
+     "text": "Yvara can't knowingly lie, and has Advantage on Wisdom (Insight) checks to tell when someone else does."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Yvara makes three Unarmed Strike attacks."
+    },
+    {
+     "name": "Unarmed Strike",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 8 (1d8 + 4) Bludgeoning damage plus 3 (1d6) Fire damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Stunning Strike (3/Day)",
+     "text": "Immediately after hitting a creature with an Unarmed Strike, Yvara forces it to make a DC 14 Constitution saving throw. Failure: The target has the Stunned condition until the start of her next turn."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Deflect Attacks",
+     "text": "Trigger: Yvara is hit by an attack roll that deals Bludgeoning, Piercing or Slashing damage. Response: She reduces the damage by 11 (1d10 + 6)."
+    }
+   ],
+   "saves": "Str +3, Dex +7",
+   "skills": "Acrobatics +7, Insight +6, Perception +6",
+   "res": "Fire",
+   "senses": "Darkvision 60 ft., Passive Perception 16",
+   "languages": "Common, Primordial",
+   "hpAvg": 84,
+   "init": 4,
+   "xp": 2300,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Says exactly what she's going to do, then does it. Fights barefoot, leaving burning footprints, and stops if an opponent tells her the true reason they're fighting."
+  },
+  "NPC-059": {
+   "id": "NPC-059",
+   "name": "Ogrim Ironhide",
+   "meta": "Medium Humanoid (Dwarf), Chaotic Good",
+   "ac": 16,
+   "hp": "133 (14d8 + 70)",
+   "speed": "30 ft.",
+   "ab": [
+    18,
+    12,
+    20,
+    8,
+    12,
+    10
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Never Falls",
+     "text": "When Ogrim is reduced to 0 Hit Points but not killed, he makes a DC 10 Constitution saving throw, dropping to 1 Hit Point instead on a success. The DC rises by 5 each time, and resets after a Short or Long Rest."
+    },
+    {
+     "name": "Unarmored Defense",
+     "text": "While Ogrim wears no armor, his AC includes his Constitution modifier."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Ogrim makes two Greataxe attacks."
+    },
+    {
+     "name": "Greataxe",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 10 (1d12 + 4) Slashing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Rage (1/Day)",
+     "text": "For 1 minute, Ogrim has Resistance to Bludgeoning, Piercing and Slashing damage, and his Greataxe attacks deal an extra 2 damage."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Stand Fast",
+     "text": "Trigger: A creature within 5 feet of Ogrim moves away from him. Response: He makes one Greataxe attack against it, and on a hit its Speed becomes 0 until the end of the turn."
+    }
+   ],
+   "saves": "Str +7, Con +8",
+   "skills": "Athletics +7, Survival +4",
+   "res": "Poison",
+   "senses": "Darkvision 120 ft., Passive Perception 11",
+   "languages": "Common, Dwarvish, Sylvan",
+   "gear": "Greataxe",
+   "hpAvg": 133,
+   "init": 1,
+   "xp": 2300,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Plants his feet and doesn't move. Holds a doorway or a bridge until everyone else is safely across, and is very cheerful about it."
+  },
+  "NPC-060": {
+   "id": "NPC-060",
+   "name": "Elder Myrris Thornveil",
+   "meta": "Medium Humanoid (Firbolg), Neutral Good",
+   "kind": "npc",
+   "base": "Druid",
+   "changes": "Once a day each, she can cast Detect Magic and Disguise Self. Hidden Step (Recharges after a Short or Long Rest): as a Bonus Action, she has the Invisible condition until the start of her next turn.",
+   "tactics": "Asks the trees to stop the fight, and usually they do. Fights only to protect the Rootspire.",
+   "fights": true,
+   "ac": 13,
+   "hp": "44 (8d8 + 8)",
+   "hpAvg": 44,
+   "init": 1,
+   "cr": "2",
+   "xp": 450,
+   "pb": 2
+  },
+  "NPC-062": {
+   "id": "NPC-062",
+   "name": "Brynn Wolfsong",
+   "meta": "Medium Humanoid (Shifter), Chaotic Good",
+   "ac": 16,
+   "hp": "71 (11d8 + 22)",
+   "speed": "35 ft.",
+   "ab": [
+    12,
+    18,
+    14,
+    10,
+    16,
+    12
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "The Pack",
+     "text": "Brynn travels with 1d4 + 2 Wolves and a Dire Wolf (Monster Manual)."
+    },
+    {
+     "name": "Pack Leader",
+     "text": "Brynn's wolves have Advantage on attack rolls against any creature Brynn has hit this turn."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Brynn makes two Shortsword attacks or two Longbow attacks."
+    },
+    {
+     "name": "Shortsword",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 7 (1d6 + 4) Piercing damage."
+    },
+    {
+     "name": "Longbow",
+     "text": "Ranged Attack Roll: +7, range 150/600 ft. Hit: 8 (1d8 + 4) Piercing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Howl",
+     "text": "One of Brynn's wolves within 60 feet that can hear it moves up to its Speed and makes one Bite attack."
+    },
+    {
+     "name": "Shift (Recharges after a Short or Long Rest)",
+     "text": "Brynn gains 10 Temporary Hit Points."
+    }
+   ],
+   "saves": "Str +4, Dex +7",
+   "skills": "Animal Handling +6, Perception +6, Stealth +7, Survival +6",
+   "senses": "Darkvision 60 ft., Passive Perception 16",
+   "languages": "Common, Sylvan",
+   "gear": "Shortsword, Longbow",
+   "hpAvg": 71,
+   "init": 4,
+   "xp": 1800,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Fights with the pack, never alone, and howls instead of giving orders. Pulls back the moment the fight stops serving the Clans: Brynn wants allies more than victories."
+  },
+  "NPC-074": {
+   "id": "NPC-074",
+   "name": "Varik \"the Bloodforged\"",
+   "meta": "Medium Humanoid (Half-orc), Lawful Neutral",
+   "ac": 18,
+   "hp": "136 (16d8 + 64)",
+   "speed": "30 ft.",
+   "ab": [
+    20,
+    10,
+    18,
+    10,
+    12,
+    16
+   ],
+   "cr": "9",
+   "traits": [
+    {
+     "name": "Duellist's Oath",
+     "text": "While Varik fights a single opponent who accepted his challenge, he has Advantage on attack rolls against it."
+    },
+    {
+     "name": "Relentless Endurance (1/Day)",
+     "text": "When Varik is reduced to 0 Hit Points but not killed, he drops to 1 Hit Point instead."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Varik makes two Greatsword attacks."
+    },
+    {
+     "name": "Greatsword",
+     "text": "Melee Attack Roll: +9, reach 5 ft. Hit: 12 (2d6 + 5) Slashing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Divine Smite (2/Day)",
+     "text": "Immediately after hitting a creature with a Greatsword attack, Varik deals an extra 13 (3d8) Radiant damage to it."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Parry",
+     "text": "Trigger: Varik is hit by a melee attack roll. Response: He adds 4 to his AC against that attack, possibly causing it to miss."
+    }
+   ],
+   "saves": "Str +9, Con +8, Cha +7",
+   "skills": "Athletics +9, Intimidation +7, Performance +7",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Orc",
+   "gear": "Plate Armor, Greatsword",
+   "hpAvg": 136,
+   "init": 0,
+   "xp": 5000,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Issues a formal challenge to the party's best fighter and keeps every term of it. If they refuse, his company fights instead, and he watches. He pays any debt he loses, in full, at once."
+  },
+  "NPC-075": {
+   "id": "NPC-075",
+   "name": "Lira \"the Red Whisper\"",
+   "meta": "Small Humanoid (Halfling), Neutral Evil",
+   "ac": 16,
+   "hp": "76 (17d6 + 17)",
+   "speed": "30 ft.",
+   "ab": [
+    8,
+    20,
+    12,
+    12,
+    14,
+    14
+   ],
+   "cr": "8",
+   "traits": [
+    {
+     "name": "Assassinate",
+     "text": "Lira has Advantage on Initiative rolls, and on her first turn has Advantage on attack rolls against any creature that hasn't taken a turn yet."
+    },
+    {
+     "name": "Halfling Luck",
+     "text": "When Lira rolls a 1 on a d20 Test, she can reroll the die and must use the new roll."
+    },
+    {
+     "name": "Sneak Attack (1/Turn)",
+     "text": "Lira deals an extra 17 (5d6) damage when she hits with an attack roll and has Advantage, or when an ally is within 5 feet of the target."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Lira makes two Shortsword attacks."
+    },
+    {
+     "name": "Shortsword",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 8 (1d6 + 5) Piercing damage plus 7 (2d6) Poison damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Cunning Action",
+     "text": "Lira takes the Dash, Disengage or Hide action."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Uncanny Dodge",
+     "text": "Trigger: An attacker Lira can see hits her with an attack roll. Response: She halves the attack's damage against her."
+    }
+   ],
+   "saves": "Dex +8, Int +4",
+   "skills": "Acrobatics +8, Deception +5, Perception +5, Stealth +11",
+   "senses": "Passive Perception 15",
+   "languages": "Common, Halfling, Thieves' Cant",
+   "gear": "Two Shortswords, a red scarf",
+   "hpAvg": 76,
+   "init": 5,
+   "xp": 3900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Chats sweetly right up until she stops. Never fights a fair fight, never a long one, and never in front of witnesses she hasn't been paid for."
+  },
+  "NPC-076": {
+   "id": "NPC-076",
+   "name": "Garek \"the Coinbinder\"",
+   "meta": "Small Humanoid (Goblin), Lawful Evil",
+   "kind": "npc",
+   "base": "Commoner",
+   "changes": "Darkvision 60 feet. Nimble Escape: she can take the Disengage or Hide action as a Bonus Action.",
+   "tactics": "Pays someone else to fight. Offers the party a loan instead, at excellent terms, for now.",
+   "fights": false,
+   "ac": 10,
+   "hp": "4 (1d8)",
+   "hpAvg": 4,
+   "init": 0,
+   "cr": "0",
+   "xp": 10,
+   "pb": 2
+  },
+  "NPC-077": {
+   "id": "NPC-077",
+   "name": "Yulrath \"the Warhound\"",
+   "meta": "Medium Humanoid (Bugbear), Chaotic Evil",
+   "ac": 16,
+   "hp": "127 (15d8 + 60)",
+   "speed": "40 ft.",
+   "ab": [
+    20,
+    14,
+    18,
+    7,
+    10,
+    8
+   ],
+   "cr": "7",
+   "traits": [
+    {
+     "name": "Long-Limbed",
+     "text": "Yulrath's melee attacks have 5 more feet of reach (included below)."
+    },
+    {
+     "name": "Unarmored Defense",
+     "text": "While Yulrath wears no armor, her AC includes her Constitution modifier."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Yulrath makes two Maul attacks."
+    },
+    {
+     "name": "Maul",
+     "text": "Melee Attack Roll: +8, reach 10 ft. Hit: 12 (2d6 + 5) Bludgeoning damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Rage (1/Day)",
+     "text": "For 1 minute, Yulrath has Resistance to Bludgeoning, Piercing and Slashing damage, and her Maul attacks deal an extra 2 damage."
+    },
+    {
+     "name": "Frenzy",
+     "text": "While raging, Yulrath makes one Maul attack."
+    }
+   ],
+   "saves": "Str +8, Con +7",
+   "skills": "Athletics +8, Stealth +5",
+   "senses": "Darkvision 60 ft., Passive Perception 10",
+   "languages": "Common, Goblin",
+   "gear": "Maul, spiked iron collar and chain",
+   "hpAvg": 127,
+   "init": 2,
+   "xp": 2900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Sleepy and calm until someone takes off the chain. Then she charges the nearest crowd and doesn't stop until nobody is standing, or until Varik says the word."
+  },
+  "NPC-078": {
+   "id": "NPC-078",
+   "name": "Hadrek \"the Emberborn\"",
+   "meta": "Medium Humanoid (Dragonborn), Chaotic Evil",
+   "ac": 16,
+   "hp": "127 (17d8 + 51)",
+   "speed": "30 ft.",
+   "ab": [
+    14,
+    12,
+    16,
+    12,
+    12,
+    20
+   ],
+   "cr": "9",
+   "traits": [
+    {
+     "name": "Feels No Pain",
+     "text": "Hadrek automatically succeeds on Constitution saving throws to maintain Concentration."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Hadrek uses Ember Bolt three times."
+    },
+    {
+     "name": "Ember Bolt",
+     "text": "Ranged Attack Roll: +9, range 120 ft. Hit: 16 (2d10 + 5) Fire damage."
+    },
+    {
+     "name": "Breath of the First Fire (Recharge 5-6)",
+     "text": "Dexterity Saving Throw: DC 15, each creature in a 30-foot Cone. Failure: 27 (6d8) Fire damage. Success: Half damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Hadrek casts one of the following spells, using Charisma (spell save DC 17): At will: Fire Bolt. 2/day each: Fireball, Wall of Fire. 1/day: Immolation."
+    }
+   ],
+   "saves": "Con +7, Cha +9",
+   "skills": "Intimidation +9, Religion +5",
+   "imm": "Fire",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Draconic",
+   "hpAvg": 127,
+   "init": 1,
+   "xp": 5000,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Walks into the fire and asks the party to follow. Joyful and gentle, even while burning them. Doesn't flee: if beaten, they kneel in the flames and wait."
+  },
+  "NPC-079": {
+   "id": "NPC-079",
+   "name": "Sister Kallisa \"the Pyre-Singer\"",
+   "meta": "Medium Humanoid (Aarakocra), Chaotic Evil",
+   "ac": 14,
+   "hp": "71 (13d8 + 13)",
+   "speed": "30 ft., fly 30 ft.",
+   "ab": [
+    10,
+    14,
+    12,
+    12,
+    12,
+    18
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "The Burning Sing Along",
+     "text": "Allies within 30 feet that can hear Kallisa singing have Resistance to Fire damage."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Kallisa uses Hymn of Flame and makes one Talons attack."
+    },
+    {
+     "name": "Hymn of Flame",
+     "text": "Dexterity Saving Throw: DC 15, each creature in a 10-foot-radius Sphere centered on a point Kallisa can see within 60 feet. Failure: 13 (3d8) Fire damage. Success: Half damage."
+    },
+    {
+     "name": "Talons",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d6 + 2) Slashing damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Kallisa casts one of the following spells, using Charisma (spell save DC 15): At will: Thaumaturgy. 2/day each: Healing Word, Heat Metal. 1/day: Fireball."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Bardic Inspiration (3/Day)",
+     "text": "One ally within 60 feet that can hear Kallisa adds 1d8 to its next d20 Test in the next 10 minutes."
+    }
+   ],
+   "saves": "Dex +5, Cha +7",
+   "skills": "Performance +10, Persuasion +7, Religion +4",
+   "res": "Fire",
+   "senses": "Passive Perception 11",
+   "languages": "Common, Primordial",
+   "hpAvg": 71,
+   "init": 2,
+   "xp": 2300,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Sings from the air, out of reach, while the fire spreads below. Gentle with prisoners. Stops singing only for a better song."
+  },
+  "NPC-081": {
+   "id": "NPC-081",
+   "name": "Vexis \"the Infernal Architect\"",
+   "meta": "Small Humanoid (Kobold), Neutral",
+   "ac": 16,
+   "hp": "55 (10d6 + 20)",
+   "speed": "30 ft.",
+   "ab": [
+    8,
+    16,
+    14,
+    18,
+    12,
+    10
+   ],
+   "cr": "4",
+   "traits": [
+    {
+     "name": "Built to Last",
+     "text": "Fire Vexis starts doesn't go out unless Vexis lets it."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Vexis uses Furnace Wand twice."
+    },
+    {
+     "name": "Furnace Wand",
+     "text": "Ranged Attack Roll: +6, range 60 ft. Hit: 13 (2d8 + 4) Fire damage."
+    },
+    {
+     "name": "Eldritch Cannon (1/Day)",
+     "text": "Vexis sets down a Small flamethrower cannon in an unoccupied space within 5 feet. It has AC 18 and 15 Hit Points, and lasts 1 hour."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Fire the Cannon",
+     "text": "Dexterity Saving Throw: DC 14, each creature in a 15-foot Cone from the cannon. Failure: 9 (2d8) Fire damage. Success: Half damage."
+    }
+   ],
+   "saves": "Con +4, Int +6",
+   "skills": "Arcana +6, Investigation +6",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Draconic",
+   "gear": "Breastplate, furnace wand, tinker's tools",
+   "hpAvg": 55,
+   "init": 3,
+   "xp": 1100,
+   "pb": 2,
+   "kind": "npc",
+   "tactics": "Builds first, then fights from behind what they built. Doesn't care about the cause: if the party pays better, Vexis may change sides mid-fight."
+  },
+  "NPC-082": {
+   "id": "NPC-082",
+   "name": "Elder Thaelon \"the Last Spark\"",
+   "meta": "Medium Fey (Eladrin), Neutral Good",
+   "kind": "npc",
+   "base": "Priest",
+   "changes": "Resistance to Fire damage. Fey Step (Recharges after a Short or Long Rest): as a Bonus Action, he teleports up to 30 feet to a space he can see.",
+   "tactics": "Won't strike first, and won't preach. Stands between the Covenant's zealots and whoever they mean to burn, and asks everyone to stop.",
+   "fights": true,
+   "ac": 13,
+   "hp": "38 (7d8 + 7)",
+   "hpAvg": 38,
+   "init": 0,
+   "cr": "2",
+   "xp": 450,
+   "pb": 2
+  },
+  "NPC-084": {
+   "id": "NPC-084",
+   "name": "Vhalek \"the Silent Watcher\"",
+   "meta": "Medium Humanoid (Githzerai), Neutral",
+   "kind": "npc",
+   "base": "Warrior Veteran",
+   "changes": "He makes no attacks. Anyone who meets his eyes makes a DC 15 Wisdom saving throw or sees the end of all things, and has the Frightened condition for 1 minute (repeating the save at the end of each of its turns).",
+   "tactics": "Doesn't move, speak or fight, even when attacked. Meeting his eyes is the danger.",
+   "fights": false,
+   "ac": 17,
+   "hp": "65 (10d8 + 20)",
+   "hpAvg": 65,
+   "init": 1,
+   "cr": "3",
+   "xp": 700,
+   "pb": 2
+  },
+  "NPC-086": {
+   "id": "NPC-086",
+   "name": "Isolde \"the Last Ember\"",
+   "meta": "Small Humanoid (Deep Gnome), Neutral Good",
+   "kind": "npc",
+   "base": "Commoner",
+   "changes": "Darkvision 120 feet. Gnomish Cunning: Advantage on Intelligence, Wisdom and Charisma saving throws. She can't be surprised.",
+   "tactics": "Already knew it was coming, and left before it started, with the lantern.",
+   "fights": false,
+   "ac": 10,
+   "hp": "4 (1d8)",
+   "hpAvg": 4,
+   "init": 0,
+   "cr": "0",
+   "xp": 10,
+   "pb": 2
+  },
+  "NPC-088": {
+   "id": "NPC-088",
+   "name": "Althisa \"the Saltborn\"",
+   "meta": "Medium Humanoid (Water Genasi), Neutral",
+   "kind": "npc",
+   "base": "Druid",
+   "changes": "Swim Speed 30 feet; she breathes air and water, and has Resistance to Acid damage. She drifts an inch above the ground, so Difficult Terrain doesn't slow her.",
+   "tactics": "Drifts out of reach, calls the tide, and doesn't remember the fight afterwards.",
+   "fights": true,
+   "ac": 13,
+   "hp": "44 (8d8 + 8)",
+   "hpAvg": 44,
+   "init": 1,
+   "cr": "2",
+   "xp": 450,
+   "pb": 2
+  },
+  "NPC-089": {
+   "id": "NPC-089",
+   "name": "Drennal \"the Barnacled Knight\"",
+   "meta": "Medium Humanoid (Tortle), Lawful Neutral",
+   "ac": 19,
+   "hp": "97 (13d8 + 39)",
+   "speed": "30 ft., swim 30 ft.",
+   "ab": [
+    18,
+    8,
+    16,
+    10,
+    12,
+    14
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Hold Breath",
+     "text": "Drennal can hold his breath for 1 hour."
+    },
+    {
+     "name": "Aura of Protection",
+     "text": "Drennal and allies within 10 feet of him add 2 to their saving throws while he doesn't have the Incapacitated condition."
+    },
+    {
+     "name": "The Sea Won't Let Go",
+     "text": "If Drennal dies, he wakes on the nearest shore at the next high tide with 1 Hit Point."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Drennal makes two Longsword attacks."
+    },
+    {
+     "name": "Longsword",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 8 (1d8 + 4) Slashing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Drowning Smite (2/Day)",
+     "text": "Immediately after hitting a creature with a Longsword attack, Drennal deals an extra 9 (2d8) Cold damage to it."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Protection",
+     "text": "Trigger: A creature Drennal can see attacks an ally within 5 feet of him. Response: The attack roll has Disadvantage."
+    }
+   ],
+   "saves": "Wis +4, Cha +5",
+   "skills": "Athletics +7, Survival +4",
+   "senses": "Passive Perception 11",
+   "languages": "Common, Primordial",
+   "gear": "Rusted plate over his shell, Shield, Longsword",
+   "hpAvg": 97,
+   "init": -1,
+   "xp": 2300,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Weary and dutiful. Fights only on the Saints' orders, never against children, and lets go anyone who promises to light a candle for the drowned."
+  },
+  "NPC-090": {
+   "id": "NPC-090",
+   "name": "Sirala \"the Deep Mourner\"",
+   "meta": "Medium Humanoid (Sea Elf), Neutral Evil",
+   "ac": 14,
+   "hp": "91 (14d8 + 28)",
+   "speed": "30 ft., swim 30 ft.",
+   "ab": [
+    10,
+    12,
+    14,
+    12,
+    18,
+    16
+   ],
+   "cr": "7",
+   "traits": [
+    {
+     "name": "Amphibious",
+     "text": "Sirala can breathe air and water."
+    },
+    {
+     "name": "Song for the Drowned",
+     "text": "Undead allies within 60 feet that can hear Sirala have Advantage on attack rolls."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Sirala uses Drowning Dirge twice."
+    },
+    {
+     "name": "Drowning Dirge",
+     "text": "Constitution Saving Throw: DC 15, one creature Sirala can see within 60 feet. Failure: 18 (4d8) Necrotic damage, and the target can't speak until the end of its next turn. Success: Half damage only."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Sirala casts one of the following spells, using Wisdom (spell save DC 15): At will: Shape Water, Toll the Dead. 2/day each: Healing Word, Speak with Dead. 1/day each: Animate Dead, Tidal Wave."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Call the Drowned (1/Day)",
+     "text": "Two Drowned Saints rise from water within 120 feet of Sirala and act immediately after her in the initiative order."
+    }
+   ],
+   "saves": "Wis +7, Cha +6",
+   "skills": "Insight +7, Performance +6, Religion +4",
+   "res": "Cold",
+   "senses": "Darkvision 60 ft., Passive Perception 14",
+   "languages": "Common, Elvish, Primordial",
+   "gear": "Black mourning lace",
+   "hpAvg": 91,
+   "init": 1,
+   "xp": 2900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Sings, and the drowned come. Never fights on dry land if she can help it. Grieves for everyone she kills, the party included."
+  },
+  "NPC-091": {
+   "id": "NPC-091",
+   "name": "Elder Marrow \"the Writeless Prophet\"",
+   "meta": "Medium Humanoid (Kenku), Neutral",
+   "kind": "npc",
+   "base": "Commoner",
+   "changes": "Mimicry: Marrow can copy any sound they have heard. Wisdom (Insight) checks to tell the copy is false have Disadvantage.",
+   "tactics": "Writes one word in the sand, the attacker's name, and then sits and waits.",
+   "fights": false,
+   "ac": 10,
+   "hp": "4 (1d8)",
+   "hpAvg": 4,
+   "init": 0,
+   "cr": "0",
+   "xp": 10,
+   "pb": 2
+  },
+  "NPC-092": {
+   "id": "NPC-092",
+   "name": "Talric Stormwing",
+   "meta": "Medium Humanoid (Stormborn), Neutral",
+   "ac": 15,
+   "hp": "71 (11d8 + 22)",
+   "speed": "35 ft.",
+   "ab": [
+    12,
+    18,
+    14,
+    10,
+    16,
+    12
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Gale",
+     "text": "Talric rides Gale, a Giant Eagle (Monster Manual). While mounted, his ranged attacks don't have Disadvantage from Gale's movement."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Talric makes two Longbow attacks."
+    },
+    {
+     "name": "Longbow",
+     "text": "Ranged Attack Roll: +7, range 150/600 ft. Hit: 8 (1d8 + 4) Piercing damage plus 3 (1d6) Lightning damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Talric casts one of the following spells, using Wisdom (spell save DC 14): At will: Shocking Grasp. 2/day: Hunter's Mark. 1/day each: Lightning Arrow, Wind Wall."
+    }
+   ],
+   "saves": "Str +4, Dex +7",
+   "skills": "Nature +3, Perception +6, Survival +6",
+   "res": "Lightning",
+   "senses": "Darkvision 60 ft., Passive Perception 16",
+   "languages": "Common, Primordial",
+   "gear": "Longbow, Spear",
+   "hpAvg": 71,
+   "init": 4,
+   "xp": 1800,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Reads every gust before a fight, and won't start one under a bad sky. Fights from Gale's back, high and out of reach, and leaves if the wind turns."
+  },
+  "NPC-093": {
+   "id": "NPC-093",
+   "name": "The Cantor",
+   "meta": "Medium Fey (Eladrin), Neutral",
+   "kind": "npc",
+   "base": "Commoner",
+   "changes": "Forgotten: once a creature looks away from the Cantor, it forgets she was there, and can't target her until it sees her again.",
+   "tactics": "Hums, and is forgotten. By the time anyone thinks to fight her, nobody remembers why.",
+   "fights": false,
+   "ac": 10,
+   "hp": "4 (1d8)",
+   "hpAvg": 4,
+   "init": 0,
+   "cr": "0",
+   "xp": 10,
+   "pb": 2
+  },
+  "NPC-094": {
+   "id": "NPC-094",
+   "name": "Scribe-Mother Ondine Marrow",
+   "meta": "Small Humanoid (Halfling), Lawful Good",
+   "kind": "npc",
+   "base": "Commoner",
+   "changes": "Halfling Luck: when she rolls a 1 on a d20 Test, she can reroll the die and must use the new roll.",
+   "tactics": "Hands over a copy, never the original, and makes sure the other copies are somewhere else.",
+   "fights": false,
+   "ac": 10,
+   "hp": "4 (1d8)",
+   "hpAvg": 4,
+   "init": 0,
+   "cr": "0",
+   "xp": 10,
+   "pb": 2
+  },
+  "NPC-096": {
+   "id": "NPC-096",
+   "name": "Pell the Rememberer",
+   "meta": "Small Humanoid (Gnome), Chaotic Good",
+   "kind": "npc",
+   "base": "Commoner",
+   "changes": "Gnomish Cunning: Advantage on Intelligence, Wisdom and Charisma saving throws.",
+   "tactics": "Rambles, right up until he says the one thing that stops the fight.",
+   "fights": false,
+   "ac": 10,
+   "hp": "4 (1d8)",
+   "hpAvg": 4,
+   "init": 0,
+   "cr": "0",
+   "xp": 10,
+   "pb": 2
+  }
+ }
+}

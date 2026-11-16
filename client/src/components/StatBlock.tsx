@@ -37,6 +37,11 @@ export interface StatBlockData {
   effect?: string;
   counter?: string;
   tactics?: string;
+  /** A short card: the Monster Manual stat block it uses, and what's different. */
+  base?: string;
+  changes?: string;
+  /** False for someone who won't fight: the card says what they do instead. */
+  fights?: boolean;
 }
 
 const sg = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
@@ -64,6 +69,45 @@ export function StatBlock({ s }: { s: StatBlockData }) {
                 <b>{k}.</b> {v}
               </p>
             ),
+        )}
+      </div>
+    );
+  if (s.base)
+    return (
+      <div className="space-y-2 text-sm">
+        <div>
+          <div className="font-display text-lg text-gold">{s.name}</div>
+          <div className="italic text-dim text-xs">{s.meta}</div>
+        </div>
+        <div className="flex flex-wrap gap-x-4 gap-y-1">
+          <span>
+            <b>AC</b> {s.ac}
+          </span>
+          <span>
+            <b>Initiative</b> {sg(s.init ?? 0)} ({10 + (s.init ?? 0)})
+          </span>
+          <span>
+            <b>HP</b> {s.hp}
+          </span>
+          {s.cr && (
+            <span>
+              <b>CR</b> {s.cr}
+            </span>
+          )}
+        </div>
+        {s.fights === false && (
+          <p className="rounded border border-line p-2">
+            <b>Won't fight.</b> {s.tactics}
+          </p>
+        )}
+        <p>
+          {s.fights === false ? 'If it comes to it, use' : 'Use'} the <b>{s.base}</b> stat block from the Monster Manual{s.changes ? ', with these changes:' : '.'}
+        </p>
+        {s.changes && <p>{s.changes}</p>}
+        {s.fights !== false && s.tactics && (
+          <p className="rounded border border-line p-2">
+            <b>In a fight.</b> {s.tactics}
+          </p>
         )}
       </div>
     );
