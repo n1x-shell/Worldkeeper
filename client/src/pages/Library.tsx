@@ -646,6 +646,103 @@ export function ConsistencyPage() {
   );
 }
 
+// ------------------------------------------------------------------ Open questions
+type QuestionStatus = 'kept' | 'filled' | 'todo';
+interface OpenQuestion {
+  id: string;
+  name: string;
+  type: string;
+  section: string;
+  text: string;
+  status: QuestionStatus;
+  by: string[];
+  note?: string;
+}
+const QUESTION_LABEL: Record<QuestionStatus, string> = { todo: 'Still to do', filled: 'Filled by an addition', kept: 'Open on purpose' };
+const QUESTION_TONE: Record<QuestionStatus, string> = { todo: 'border-gold/50 text-gold', filled: 'border-ok/50 text-ok', kept: 'border-arcane/50 text-arcane' };
+
+export function OpenQuestionsPage() {
+  const { data } = useApi<{ questions: OpenQuestion[]; counts: Record<QuestionStatus, number> }>('/api/library/open-questions');
+  const [tab, setTab] = useState<QuestionStatus | 'all'>('todo');
+  const [q, setQ] = useState('');
+  const needle = q.trim().toLowerCase();
+  const list = (data?.questions ?? []).filter(
+    (x) => (tab === 'all' || x.status === tab) && (!needle || `${x.name} ${x.section} ${x.text} ${x.note ?? ''}`.toLowerCase().includes(needle)),
+  );
+  const groups = new Map<string, OpenQuestion[]>();
+  for (const x of list) groups.set(x.type, [...(groups.get(x.type) ?? []), x]);
+  const total = data ? data.questions.length : 0;
+  return (
+    <div className="space-y-4">
+      <PageHeader
+        title="Open Questions"
+        subtitle="Everything the library leaves undefined, and where each one stands."
+        note="A report only: nothing is changed. Some questions are open on purpose (the world's mysteries). Some have been answered by Worldkeeper's additions, linked here. The rest are still to do. The Undefined Lore Register lists the subjects the archive left open deliberately."
+      />
+      {!data ? (
+        <Loading />
+      ) : (
+        <>
+          <p className="text-sm text-dim">
+            {total} open questions: {data.counts.todo} still to do, {data.counts.filled} filled by an addition, {data.counts.kept} open on purpose.
+          </p>
+          <Tabs
+            tabs={[
+              { id: 'todo', label: `Still to do (${data.counts.todo})` },
+              { id: 'filled', label: `Filled (${data.counts.filled})` },
+              { id: 'kept', label: `Open on purpose (${data.counts.kept})` },
+              { id: 'all', label: `All (${total})` },
+            ]}
+            value={tab}
+            onChange={setTab}
+          />
+          <input className="input w-full max-w-md" placeholder="Search the questions" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search the questions" />
+          {!list.length ? (
+            <div className="panel p-6 text-dim">Nothing here.</div>
+          ) : (
+            [...groups.entries()].map(([type, items]) => (
+              <details key={type} className="panel" open={items.length <= 12}>
+                <summary className="px-4 py-2 cursor-pointer flex items-center gap-2">
+                  <TypeBadge type={type} />
+                  <span className="text-xs text-dim">{items.length}</span>
+                </summary>
+                <ul className="divide-y divide-line text-sm">
+                  {items.map((x, i) => (
+                    <li key={`${x.id}-${i}`} className="px-4 py-2 space-y-1">
+                      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                        <EntityLink id={x.id} className="font-medium" />
+                        <span className="text-xs text-dim">{x.section}</span>
+                        <span className={`chip ${QUESTION_TONE[x.status]}`}>{QUESTION_LABEL[x.status]}</span>
+                      </div>
+                      {x.text && <p className="text-dim">{x.text}</p>}
+                      {(x.note || x.by.length > 0) && (
+                        <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                          {x.note && <span>{x.note}</span>}
+                          {x.by.length > 0 && (
+                            <span className="text-xs text-dim">
+                              {x.status === 'todo' ? 'Partly filled by' : 'Filled by'}{' '}
+                              {x.by.map((id, j) => (
+                                <span key={id}>
+                                  {j > 0 && ', '}
+                                  <EntityLink id={id} />
+                                </span>
+                              ))}
+                            </span>
+                          )}
+                        </p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            ))
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
 // ------------------------------------------------------------------ History
 export function HistoryPage() {
   const [all, setAll] = useState(false);
