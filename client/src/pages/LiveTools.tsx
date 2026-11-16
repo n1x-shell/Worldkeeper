@@ -33,6 +33,7 @@ interface NearbyPerson {
   manner: string | null;
   rumours: string[];
   gmOnly: boolean;
+  distance: number;
 }
 
 /** Someone near the party, ready to play: looks, manner and something they've heard. */
@@ -45,7 +46,10 @@ function WhosNearby({ sessionId, onLogged }: { sessionId: number; onLogged: () =
   const p = i == null ? null : list[i % list.length];
   const another = () => {
     if (!list.length) return;
-    let n = Math.floor(Math.random() * list.length);
+    // Mostly people right here or close by; now and then someone from further off.
+    const near = list.map((x, k) => k).filter((k) => list[k].distance < 2);
+    const pool = near.length && Math.random() < 0.8 ? near : list.map((_, k) => k);
+    let n = pool[Math.floor(Math.random() * pool.length)];
     if (list.length > 1 && n === i) n = (n + 1) % list.length;
     setI(n);
     setR(Math.floor(Math.random() * 1000));
@@ -66,6 +70,7 @@ function WhosNearby({ sessionId, onLogged }: { sessionId: number; onLogged: () =
           <div className="flex flex-wrap items-baseline gap-2">
             <EntityLink id={p.id} />
             <span className="text-xs text-dim">{[p.species, p.knownAs, p.pronouns].filter((x) => x && x !== 'Unknown').join(', ')}</span>
+            <span className="text-[10px] uppercase tracking-wider text-dim">{['right here', 'close by', 'in the area'][p.distance] ?? ''}</span>
             {p.gmOnly && <span className="text-[10px] uppercase tracking-wider text-danger">GM only</span>}
           </div>
           {p.tagline && <p className="italic text-dim">{p.tagline}</p>}

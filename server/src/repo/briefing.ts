@@ -175,8 +175,17 @@ export function sessionBriefing(db: DB, sessionId: number) {
  */
 export function nearbyPeople(db: DB, sessionId: number) {
   const b = sessionBriefing(db, sessionId);
+  // People at the party's own spot first, then those in what it contains and beside it, then the wider area.
+  const here = b.location?.id ?? null;
+  const rings = [here ? [here] : [], b.nearby.map((n) => n.id), b.chain.slice(0, 1).map((c) => c.id)];
+  const livesIn = db.prepare(
+    `SELECT DISTINCT e.id, e.name FROM relationships r JOIN entities e ON e.id = r.source_id WHERE r.type = 'lives_in' AND e.type = 'npc' AND e.archived = 0 AND r.target_id = ? ORDER BY e.name`,
+  );
   const seen = new Set<string>();
-  const people = [...b.locals].filter((p) => !seen.has(p.id) && seen.add(p.id));
+  const people: { id: string; name: string; ring: number }[] = [];
+  rings.forEach((ids, ring) => {
+    for (const id of ids) for (const p of livesIn.all(id) as { id: string; name: string }[]) if (!seen.has(p.id) && seen.add(p.id)) people.push({ ...p, ring });
+  });
   const row = db.prepare(`SELECT id, name, body, fields, player_summary, revealed FROM entities WHERE id = ?`);
   const rumours = db.prepare(`SELECT text FROM rumours WHERE source_id = ? AND stale = 0 ORDER BY id`);
   return {
@@ -199,6 +208,8 @@ export function nearbyPeople(db: DB, sessionId: number) {
         manner: grab('Manner'),
         rumours: (rumours.all(e.id) as { text: string }[]).map((r) => r.text),
         gmOnly: !e.revealed,
+        /** 0: right here, 1: close by, 2: elsewhere in the area. */
+        distance: p.ring,
       };
     }),
   };

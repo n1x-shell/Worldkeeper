@@ -11,6 +11,19 @@ import '../styles/index.css';
 
 const source = staticSource('data/player.json', 'uploads/');
 
+// Keep the handbook on the device for use with no signal (see public/sw.js). Each visit tops up the saved copy.
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('./sw.js')
+      .then(() => navigator.serviceWorker.ready)
+      .then((reg) => reg.active?.postMessage({ type: 'precache' }))
+      .catch(() => {
+        /* no offline copy; the handbook still works online */
+      });
+  });
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     {/* Hash routing: static hosts (GitHub Pages) have no server-side route fallback. */}

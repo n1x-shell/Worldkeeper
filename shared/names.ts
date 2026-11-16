@@ -290,7 +290,10 @@ export function generateNames({ seeds, people, used, count = 12, seed = Date.now
       if (first.length < 3 || first.length > 10 || taken(first) || !sayable(first)) continue;
       if (single) name = first;
       else {
-        const sur = pick(SURNAME_START, rnd) + pick(SURNAME_END, rnd);
+        const start = pick(SURNAME_START, rnd);
+        const end = pick(SURNAME_END, rnd);
+        if (start.toLowerCase().includes(end) || end.includes(start.toLowerCase().slice(0, 4))) continue;
+        const sur = start + end;
         if (taken(sur) || sur.length > 12) continue;
         name = `${first} ${sur}`;
       }

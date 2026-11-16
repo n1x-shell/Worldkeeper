@@ -49,11 +49,7 @@ function walk(dir: string, prefix = ''): SiteFile[] {
  * Assemble the Player Handbook: the static player app + ONE data file built by the player-safe projection
  * + the images of maps published to players. Nothing else from the library is included.
  */
-export function buildPlayerSite(
-  db: DB,
-  paths: Paths,
-  previous?: { contentHash: string; generated_at: string } | null,
-): { files: SiteFile[]; summary: SiteSummary; contentHash: string } {
+export function buildPlayerSite(db: DB, paths: Paths, previous?: { contentHash: string; generated_at: string } | null): { files: SiteFile[]; summary: SiteSummary; contentHash: string } {
   if (!siteBuildAvailable()) throw new HttpError(500, 'The player handbook has not been built. Run `npm run build` first.');
   const appName = (db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper';
   const fresh = playerSnapshot(db);
@@ -72,6 +68,9 @@ export function buildPlayerSite(
   // GitHub Pages: serve files as-is (no Jekyll); keep the handbook out of search engines.
   files.push({ path: '.nojekyll', data: Buffer.alloc(0) });
   files.push({ path: 'robots.txt', data: Buffer.from('User-agent: *\nDisallow: /\n') });
+  // Every file the offline copy needs (the service worker saves them all on the first visit).
+  const offline = files.map((f) => f.path).filter((p) => !/^(\.nojekyll|robots\.txt|sw\.js)$/.test(p));
+  files.push({ path: 'precache.json', data: Buffer.from(JSON.stringify(['./', ...offline])) });
   files.sort((a, b) => a.path.localeCompare(b.path));
   return {
     files,

@@ -139,6 +139,7 @@ describe('player handbook site', () => {
       'player-handbook/assets/app.js',
       'player-handbook/data/player.json',
       'player-handbook/index.html',
+      'player-handbook/precache.json',
       'player-handbook/robots.txt',
       'player-handbook/uploads/map-1-abc.png',
     ]);
@@ -162,9 +163,9 @@ describe('publishing to GitHub Pages', () => {
 
     const first = await request(app).post('/api/publish/github').send({ confirm: true });
     expect(first.status).toBe(200);
-    expect(first.body).toMatchObject({ changed: true, uploaded: 6, pages: 'created', url: 'https://me.github.io/handbook/' });
+    expect(first.body).toMatchObject({ changed: true, uploaded: 7, pages: 'created', url: 'https://me.github.io/handbook/' });
     const site = gh.filesOn('gh-pages');
-    expect([...site.keys()].sort()).toEqual(['.nojekyll', 'assets/app.js', 'data/player.json', 'index.html', 'robots.txt', 'uploads/map-1-abc.png']);
+    expect([...site.keys()].sort()).toEqual(['.nojekyll', 'assets/app.js', 'data/player.json', 'index.html', 'precache.json', 'robots.txt', 'uploads/map-1-abc.png']);
     const published = site.get('data/player.json')!.toString('utf8');
     expect(published).not.toContain('Hidden Test Villain');
     expect(gh.authSeen.every((a) => a === 'Bearer test-token-123')).toBe(true);
@@ -175,7 +176,7 @@ describe('publishing to GitHub Pages', () => {
     updateEntity(ctx.db, 'SET-001', { revealed_facts: ['The gate is barred at night.'] });
     const firstCommit = gh.refs.get('gh-pages')!;
     const third = await request(app).post('/api/publish/github').send({ confirm: true });
-    expect(third.body).toMatchObject({ changed: true, uploaded: 1, unchanged: 5 });
+    expect(third.body).toMatchObject({ changed: true, uploaded: 1, unchanged: 6 });
     expect(gh.commits.get(gh.refs.get('gh-pages')!)!.parents).toEqual([firstCommit]);
     expect(gh.filesOn('gh-pages').get('data/player.json')!.toString('utf8')).toContain('The gate is barred at night.');
     expect((await request(app).get('/api/publish')).body.last).toMatchObject({ changed: true, uploaded: 1 });

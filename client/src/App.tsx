@@ -263,6 +263,22 @@ export function App() {
             }
           />
           <Route
+            path="campaign/return"
+            element={
+              <Page>
+                <ReturnPage />
+              </Page>
+            }
+          />
+          <Route
+            path="campaign/faction-web"
+            element={
+              <Page>
+                <FactionWebPage />
+              </Page>
+            }
+          />
+          <Route
             path="campaign/party-export"
             element={
               <Page>
