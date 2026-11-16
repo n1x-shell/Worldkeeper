@@ -1,0 +1,4529 @@
+{
+ "note": "Stat blocks for the world's creatures and hazards (GM only): original 2024-format stat blocks that follow each record's own notes (its starting creature, its twist and its CR). Shown on each record's page and used by the encounter tracker. Owner-approved, November 2026.",
+ "statblocks": {
+  "CRE-001": {
+   "id": "CRE-001",
+   "name": "Radiant Squire",
+   "meta": "Medium Humanoid (Any), Lawful Good",
+   "ac": 16,
+   "hp": "27 (5d8 + 5)",
+   "speed": "30 ft.",
+   "ab": [
+    14,
+    11,
+    13,
+    10,
+    12,
+    12
+   ],
+   "cr": "1",
+   "traits": [
+    {
+     "name": "Squire's Zeal",
+     "text": "While an ally within 10 feet of the squire is Bloodied, the squire has Advantage on attack rolls."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Longsword",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Slashing damage plus 2 (1d4) Radiant damage."
+    },
+    {
+     "name": "Javelin",
+     "text": "Ranged Attack Roll: +4, range 30/120 ft. Hit: 5 (1d6 + 2) Piercing damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [
+    {
+     "name": "Shield Wall",
+     "text": "Trigger: An ally within 5 feet is hit by an attack roll. Response: The squire grants the ally +2 AC against that attack, possibly causing it to miss."
+    }
+   ],
+   "legendary": [],
+   "skills": "Athletics +4, Religion +2",
+   "senses": "Passive Perception 11",
+   "languages": "Common",
+   "gear": "Chain Shirt, Shield, Longsword",
+   "hpAvg": 27,
+   "init": 0,
+   "xp": 200,
+   "pb": 2
+  },
+  "CRE-002": {
+   "id": "CRE-002",
+   "name": "Dawnward Healer",
+   "meta": "Medium Humanoid (Any), Lawful Good",
+   "ac": 13,
+   "hp": "22 (5d8)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    10,
+    11,
+    12,
+    15,
+    13
+   ],
+   "cr": "1",
+   "traits": [],
+   "actions": [
+    {
+     "name": "Mace",
+     "text": "Melee Attack Roll: +2, reach 5 ft. Hit: 3 (1d6) Bludgeoning damage plus 4 (1d8) Radiant damage."
+    },
+    {
+     "name": "Dawnlight",
+     "text": "Ranged Attack Roll: +4, range 60 ft. Hit: 9 (2d8) Radiant damage, and the target can't take Reactions until the start of its next turn."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "The healer casts one of the following spells, using Wisdom as the spellcasting ability (spell save DC 12): At will: Light, Thaumaturgy. 2/day each: Bless, Cure Wounds (2d8 + 2), Lesser Restoration."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Word of Mercy (2/Day)",
+     "text": "One creature the healer can see within 60 feet regains 6 (1d8 + 2) Hit Points."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Medicine +4, Religion +3",
+   "senses": "Passive Perception 12",
+   "languages": "Common",
+   "gear": "Leather Armor, Holy Symbol",
+   "hpAvg": 22,
+   "init": 0,
+   "xp": 200,
+   "pb": 2
+  },
+  "CRE-003": {
+   "id": "CRE-003",
+   "name": "Celestial Inquisitor",
+   "meta": "Medium Humanoid (Any), Lawful Neutral",
+   "ac": 16,
+   "hp": "60 (11d8 + 11)",
+   "speed": "30 ft.",
+   "ab": [
+    12,
+    12,
+    12,
+    13,
+    16,
+    14
+   ],
+   "cr": "3",
+   "traits": [],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The inquisitor makes two Mace attacks, or one Mace attack and uses Brand of Silence."
+    },
+    {
+     "name": "Mace",
+     "text": "Melee Attack Roll: +3, reach 5 ft. Hit: 4 (1d6 + 1) Bludgeoning damage plus 7 (2d6) Radiant damage."
+    },
+    {
+     "name": "Brand of Silence",
+     "text": "Wisdom Saving Throw: DC 13, one creature the inquisitor can see within 30 feet. Failure: 10 (3d6) Radiant damage, and the target is branded for 1 minute. A branded creature can't cast spells of level 1 or higher; it repeats the save at the end of each of its turns, ending the brand on a success. Success: Half damage only."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "The inquisitor casts one of the following spells, using Wisdom (spell save DC 13): At will: Thaumaturgy. 1/day each: Detect Thoughts, Hold Person, Zone of Truth."
+    }
+   ],
+   "bonus": [],
+   "reactions": [
+    {
+     "name": "Accuse",
+     "text": "Trigger: A creature the inquisitor can see within 30 feet casts a spell. Response: That creature makes a DC 13 Wisdom save or is branded (see Brand of Silence), after the spell takes effect."
+    }
+   ],
+   "legendary": [],
+   "saves": "Wis +5, Cha +4",
+   "skills": "Insight +7, Intimidation +4, Religion +3",
+   "senses": "Passive Perception 13",
+   "languages": "Common, Celestial",
+   "gear": "Breastplate, Mace, Brand of Silence",
+   "hpAvg": 60,
+   "init": 1,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-004": {
+   "id": "CRE-004",
+   "name": "Avenger Seraph",
+   "meta": "Large Celestial (Angel), Lawful Good",
+   "ac": 18,
+   "hp": "184 (16d10 + 96)",
+   "speed": "30 ft., fly 90 ft.",
+   "ab": [
+    22,
+    18,
+    22,
+    16,
+    20,
+    22
+   ],
+   "cr": "12",
+   "traits": [
+    {
+     "name": "Divine Strikes",
+     "text": "The seraph's weapon attacks deal an extra 18 (4d8) Radiant damage (included below)."
+    },
+    {
+     "name": "Magic Resistance",
+     "text": "The seraph has Advantage on saving throws against spells and other magical effects."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The seraph makes three Burning Blade attacks, or uses Searing Judgment and makes one Burning Blade attack."
+    },
+    {
+     "name": "Burning Blade",
+     "text": "Melee Attack Roll: +10, reach 10 ft. Hit: 13 (2d6 + 6) Slashing damage plus 18 (4d8) Radiant damage."
+    },
+    {
+     "name": "Searing Judgment (Recharge 5-6)",
+     "text": "Dexterity Saving Throw: DC 18, each creature of the seraph's choice in a 30-foot Emanation originating from it. Failure: 36 (8d8) Radiant damage, and the target has the Blinded condition until the end of its next turn. Success: Half damage only."
+    },
+    {
+     "name": "Healing Touch (3/Day)",
+     "text": "The seraph touches another creature, which regains 40 (8d8 + 4) Hit Points and is freed of any curse and the Blinded, Deafened and Poisoned conditions."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Wing Step",
+     "text": "The seraph flies up to half its Fly Speed without provoking Opportunity Attacks."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Wis +9, Cha +10",
+   "skills": "Insight +9, Perception +9",
+   "res": "Radiant",
+   "cimm": "Charmed, Exhaustion, Frightened",
+   "senses": "Truesight 120 ft., Passive Perception 19",
+   "languages": "All, telepathy 120 ft.",
+   "hpAvg": 184,
+   "init": 4,
+   "xp": 8400,
+   "pb": 4
+  },
+  "CRE-005": {
+   "id": "CRE-005",
+   "name": "Shock Trooper",
+   "meta": "Medium Humanoid (Any), Lawful Evil",
+   "ac": 15,
+   "hp": "33 (6d8 + 6)",
+   "speed": "30 ft.",
+   "ab": [
+    15,
+    12,
+    13,
+    8,
+    10,
+    9
+   ],
+   "cr": "1",
+   "traits": [
+    {
+     "name": "Pack Tactics",
+     "text": "The trooper has Advantage on an attack roll against a creature if at least one of the trooper's allies is within 5 feet of the creature and the ally doesn't have the Incapacitated condition."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Spear",
+     "text": "Melee or Ranged Attack Roll: +4, reach 5 ft. or range 20/60 ft. Hit: 6 (1d8 + 2) Piercing damage."
+    },
+    {
+     "name": "Acid Spit (Recharge 5-6)",
+     "text": "Dexterity Saving Throw: DC 11, each creature in a 15-foot Cone. Failure: 10 (3d6) Acid damage. Success: Half damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Athletics +4",
+   "senses": "Passive Perception 10",
+   "languages": "Common",
+   "gear": "Chain Shirt, Shield, Spear",
+   "hpAvg": 33,
+   "init": 1,
+   "xp": 200,
+   "pb": 2
+  },
+  "CRE-006": {
+   "id": "CRE-006",
+   "name": "Legion Scout",
+   "meta": "Medium Humanoid (Any), Lawful Evil",
+   "ac": 13,
+   "hp": "22 (4d8 + 4)",
+   "speed": "35 ft.",
+   "ab": [
+    11,
+    15,
+    12,
+    10,
+    13,
+    10
+   ],
+   "cr": "1",
+   "traits": [],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The scout makes two attacks, using Shortsword or Longbow in any combination."
+    },
+    {
+     "name": "Shortsword",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Piercing damage."
+    },
+    {
+     "name": "Longbow",
+     "text": "Ranged Attack Roll: +4, range 150/600 ft. Hit: 6 (1d8 + 2) Piercing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Mark for the Line",
+     "text": "The scout marks one creature it can see. Until the start of the scout's next turn, the next attack roll an ally makes against that creature has Advantage."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Nature +2, Perception +5, Stealth +6, Survival +5",
+   "senses": "Passive Perception 15",
+   "languages": "Common",
+   "gear": "Leather Armor, Shortsword, Longbow",
+   "hpAvg": 22,
+   "init": 2,
+   "xp": 200,
+   "pb": 2
+  },
+  "CRE-007": {
+   "id": "CRE-007",
+   "name": "Centurion",
+   "meta": "Medium Humanoid (Any), Lawful Evil",
+   "ac": 18,
+   "hp": "71 (11d8 + 22)",
+   "speed": "30 ft.",
+   "ab": [
+    17,
+    11,
+    14,
+    11,
+    13,
+    16
+   ],
+   "cr": "3",
+   "traits": [],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The centurion makes two Longsword attacks and uses Bark of Command."
+    },
+    {
+     "name": "Longsword",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Slashing damage, or 8 (1d10 + 3) if used with two hands."
+    },
+    {
+     "name": "Heavy Crossbow",
+     "text": "Ranged Attack Roll: +2, range 100/400 ft. Hit: 5 (1d10) Piercing damage."
+    },
+    {
+     "name": "Bark of Command",
+     "text": "Up to two allies within 30 feet that can hear the centurion each take a Reaction to move up to half their Speed without provoking Opportunity Attacks, or to make one weapon attack."
+    }
+   ],
+   "bonus": [],
+   "reactions": [
+    {
+     "name": "Hold the Line",
+     "text": "Trigger: An ally within 10 feet of the centurion is hit by an attack roll. Response: The centurion steps into the blow: the attack hits the centurion instead, if it would."
+    }
+   ],
+   "legendary": [],
+   "saves": "Con +4, Wis +3",
+   "skills": "Athletics +5, Intimidation +5",
+   "senses": "Passive Perception 11",
+   "languages": "Common",
+   "gear": "Plate Armor, Longsword, Heavy Crossbow",
+   "hpAvg": 71,
+   "init": 0,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-008": {
+   "id": "CRE-008",
+   "name": "Bloodfang Ravager",
+   "meta": "Large Monstrosity, Chaotic Evil",
+   "ac": 14,
+   "hp": "52 (7d10 + 14)",
+   "speed": "50 ft.",
+   "ab": [
+    17,
+    15,
+    15,
+    6,
+    12,
+    8
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Blood Frenzy",
+     "text": "The ravager has Advantage on attack rolls against any creature that is Bloodied."
+    },
+    {
+     "name": "Pack Tactics",
+     "text": "The ravager has Advantage on an attack roll against a creature if at least one of its allies is within 5 feet of the creature and the ally isn't Incapacitated."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The ravager makes two Bite attacks."
+    },
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Piercing damage. If the target is Large or smaller, it has the Prone condition."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Howl (Recharge 5-6)",
+     "text": "Each creature of the ravager's choice within 60 feet that can hear it makes a DC 12 Wisdom save or has the Frightened condition until the end of its next turn."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Perception +5, Stealth +4",
+   "senses": "Darkvision 60 ft., Passive Perception 15",
+   "languages": "Understands Common but can't speak",
+   "hpAvg": 52,
+   "init": 2,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-009": {
+   "id": "CRE-009",
+   "name": "Arcane Sentinel",
+   "meta": "Medium Construct, Unaligned",
+   "ac": 18,
+   "hp": "33 (6d8 + 6)",
+   "speed": "25 ft.",
+   "ab": [
+    14,
+    11,
+    13,
+    1,
+    3,
+    1
+   ],
+   "cr": "1",
+   "traits": [
+    {
+     "name": "Antimagic Susceptibility",
+     "text": "The sentinel has the Incapacitated condition while in an area of antimagic."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The sentinel makes two Slam attacks, or one Slam and one Force Bolt."
+    },
+    {
+     "name": "Slam",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Bludgeoning damage."
+    },
+    {
+     "name": "Force Bolt",
+     "text": "Ranged Attack Roll: +4, range 120 ft. Hit: 9 (2d8) Force damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "imm": "Poison, Psychic",
+   "cimm": "Blinded, Charmed, Deafened, Exhaustion, Frightened, Paralyzed, Petrified, Poisoned",
+   "senses": "Blindsight 60 ft., Passive Perception 6",
+   "languages": "None",
+   "hpAvg": 33,
+   "init": 0,
+   "xp": 200,
+   "pb": 2
+  },
+  "CRE-010": {
+   "id": "CRE-010",
+   "name": "Phase Construct",
+   "meta": "Large Construct, Unaligned",
+   "ac": 14,
+   "hp": "45 (7d10 + 7)",
+   "speed": "30 ft., climb 30 ft.",
+   "ab": [
+    15,
+    15,
+    12,
+    3,
+    10,
+    1
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Phase Shift",
+     "text": "The construct can see and affect the Ethereal Plane from the Material Plane, and the other way round."
+    },
+    {
+     "name": "Spider Climb",
+     "text": "The construct can climb difficult surfaces, including along ceilings, without making an ability check."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The construct makes two Lance-leg attacks."
+    },
+    {
+     "name": "Lance-leg",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 7 (1d10 + 2) Piercing damage plus 9 (2d8) Force damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Step Out",
+     "text": "The construct shifts to the Ethereal Plane, or back to the Material Plane."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Stealth +6",
+   "imm": "Poison",
+   "cimm": "Charmed, Exhaustion, Poisoned",
+   "senses": "Darkvision 60 ft., Passive Perception 10",
+   "languages": "None",
+   "hpAvg": 45,
+   "init": 2,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-011": {
+   "id": "CRE-011",
+   "name": "Nexus Researcher",
+   "meta": "Medium Humanoid (Any), Neutral",
+   "ac": 12,
+   "hp": "22 (5d8)",
+   "speed": "30 ft.",
+   "ab": [
+    9,
+    14,
+    11,
+    16,
+    12,
+    10
+   ],
+   "cr": "1",
+   "traits": [
+    {
+     "name": "Unstable Experiment",
+     "text": "When the researcher is hit by a critical hit, its instruments burst: each creature within 10 feet makes a DC 12 Dexterity save, taking 7 (2d6) Force damage on a failure."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Dagger",
+     "text": "Melee or Ranged Attack Roll: +4, reach 5 ft. or range 20/60 ft. Hit: 4 (1d4 + 2) Piercing damage."
+    },
+    {
+     "name": "Arcane Burst",
+     "text": "Ranged Attack Roll: +5, range 120 ft. Hit: 12 (2d8 + 3) Force damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "The researcher casts one of the following spells, using Intelligence (spell save DC 13): At will: Mage Hand, Prestidigitation. 1/day each: Detect Magic, Shield, Thunderwave."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Arcana +5, History +5",
+   "senses": "Passive Perception 11",
+   "languages": "Common, two others",
+   "gear": "Instruments that tick and hum",
+   "hpAvg": 22,
+   "init": 2,
+   "xp": 200,
+   "pb": 2
+  },
+  "CRE-012": {
+   "id": "CRE-012",
+   "name": "Veil Adept",
+   "meta": "Medium Humanoid (Any), Neutral Evil",
+   "ac": 12,
+   "hp": "49 (9d8 + 9)",
+   "speed": "30 ft.",
+   "ab": [
+    9,
+    14,
+    12,
+    17,
+    12,
+    14
+   ],
+   "cr": "4",
+   "traits": [],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The adept makes two Shadow Bolt attacks."
+    },
+    {
+     "name": "Shadow Bolt",
+     "text": "Ranged Attack Roll: +5, range 120 ft. Hit: 14 (2d10 + 3) Psychic damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "The adept casts one of the following spells, using Intelligence (spell save DC 13): At will: Minor Illusion. 2/day each: Disguise Self, Invisibility, Major Image. 1/day: Hypnotic Pattern."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "False Self",
+     "text": "The adept creates an illusory double of itself in an unoccupied space within 30 feet, and can swap places with it. The double lasts until hit or until the adept uses this again."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Int +5, Wis +3",
+   "skills": "Arcana +5, Deception +6, Stealth +4",
+   "senses": "Passive Perception 11",
+   "languages": "Common, three others",
+   "hpAvg": 49,
+   "init": 2,
+   "xp": 1100,
+   "pb": 2
+  },
+  "CRE-013": {
+   "id": "CRE-013",
+   "name": "Eye Beast of the Sunken Archive",
+   "meta": "Large Aberration, Lawful Evil",
+   "ac": 18,
+   "hp": "180 (19d10 + 76)",
+   "speed": "0 ft., fly 20 ft. (hover)",
+   "ab": [
+    10,
+    14,
+    18,
+    17,
+    15,
+    17
+   ],
+   "cr": "13",
+   "traits": [
+    {
+     "name": "Dead Pages",
+     "text": "A magic-dampening gaze: in a 150-foot Cone from its central eye, spells and magical effects are suppressed (not ended) while the beast's eye is open. It can close or open the eye at the start of its turn."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 18 (4d6 + 4) Piercing damage."
+    },
+    {
+     "name": "Eye Rays",
+     "text": "The beast shoots three of the following rays at random (roll 1d6 for each, rerolling duplicates), choosing targets it can see within 120 feet. 1. Forgetting Ray: DC 16 Int save or the target forgets the last hour, and has the Incapacitated condition until the end of its next turn. 2. Paralyzing Ray: DC 16 Con save or Paralyzed for 1 minute (save ends at end of each turn). 3. Fear Ray: DC 16 Wis save or Frightened for 1 minute (save ends). 4. Slowing Ray: DC 16 Dex save or its Speed is halved and it can take either an action or a Bonus Action, not both, for 1 minute (save ends). 5. Enervation Ray: DC 16 Con save, 36 (8d8) Necrotic damage on a failure, half on a success. 6. Erasing Ray: DC 16 Dex save or 45 (10d8) Force damage; a creature reduced to 0 Hit Points is reduced to grey dust and fine ash, and a book it carried goes blank."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [
+    {
+     "name": "Uses",
+     "text": "3, regained at the start of the beast's turn. Immediately after another creature's turn, it can expend a use to take one of the following actions."
+    },
+    {
+     "name": "Glance",
+     "text": "The beast uses Eye Rays, shooting one ray."
+    },
+    {
+     "name": "Reshelve",
+     "text": "The beast flies up to half its Fly Speed, and one book within 30 feet flies to its side."
+    }
+   ],
+   "saves": "Int +8, Wis +7",
+   "skills": "Perception +12",
+   "cimm": "Prone",
+   "senses": "Darkvision 120 ft., Passive Perception 22",
+   "languages": "Deep Speech, Undercommon",
+   "hpAvg": 180,
+   "init": 2,
+   "xp": 10000,
+   "pb": 5
+  },
+  "CRE-014": {
+   "id": "CRE-014",
+   "name": "Silent Blade Agent",
+   "meta": "Medium Humanoid (Any), Neutral",
+   "ac": 12,
+   "hp": "27 (6d8)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    15,
+    10,
+    12,
+    14,
+    16
+   ],
+   "cr": "1",
+   "traits": [
+    {
+     "name": "Sneak Attack (1/Turn)",
+     "text": "The agent deals an extra 7 (2d6) damage when it hits with an attack roll and has Advantage, or when an ally of the agent is within 5 feet of the target."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Shortsword",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Piercing damage, and the target can't speak until the start of the agent's next turn."
+    },
+    {
+     "name": "Hand Crossbow",
+     "text": "Ranged Attack Roll: +4, range 30/120 ft. Hit: 5 (1d6 + 2) Piercing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Cunning Action",
+     "text": "The agent takes the Dash, Disengage or Hide action."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Deception +5, Insight +4, Investigation +5, Perception +6, Persuasion +5, Sleight of Hand +4, Stealth +4",
+   "senses": "Passive Perception 16",
+   "languages": "Common, two others",
+   "hpAvg": 27,
+   "init": 2,
+   "xp": 200,
+   "pb": 2
+  },
+  "CRE-015": {
+   "id": "CRE-015",
+   "name": "Nightglass Executioner",
+   "meta": "Medium Humanoid (Any), Lawful Evil",
+   "ac": 16,
+   "hp": "97 (15d8 + 30)",
+   "speed": "30 ft.",
+   "ab": [
+    11,
+    18,
+    14,
+    13,
+    13,
+    10
+   ],
+   "cr": "7",
+   "traits": [
+    {
+     "name": "Evasion",
+     "text": "If the executioner is subjected to an effect that allows a Dexterity save to take half damage, it takes no damage on a success and half on a failure."
+    },
+    {
+     "name": "Sentence Carried Out",
+     "text": "The executioner has Advantage on attack rolls against a creature that hasn't taken a turn yet in the combat. Any hit it scores against a Surprised creature is a critical hit."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The executioner makes three Black Glass Blade attacks."
+    },
+    {
+     "name": "Black Glass Blade",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 7 (1d6 + 4) Slashing damage plus 10 (3d6) Poison damage."
+    },
+    {
+     "name": "Hand Crossbow",
+     "text": "Ranged Attack Roll: +7, range 30/120 ft. Hit: 7 (1d6 + 4) Piercing damage plus 10 (3d6) Poison damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Cunning Action",
+     "text": "The executioner takes the Dash, Disengage or Hide action."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Dex +7, Int +4",
+   "skills": "Acrobatics +7, Perception +4, Stealth +10",
+   "res": "Poison",
+   "senses": "Passive Perception 14",
+   "languages": "Common, Thieves' Cant",
+   "hpAvg": 97,
+   "init": 4,
+   "xp": 2900,
+   "pb": 3
+  },
+  "CRE-016": {
+   "id": "CRE-016",
+   "name": "Shadow Lasher",
+   "meta": "Large Monstrosity, Lawful Evil",
+   "ac": 13,
+   "hp": "85 (10d10 + 30)",
+   "speed": "40 ft.",
+   "ab": [
+    18,
+    15,
+    16,
+    6,
+    12,
+    8
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Never Quite There",
+     "text": "Attack rolls against the lasher have Disadvantage. When it's hit by an attack, this trait stops working until the end of its next turn."
+    },
+    {
+     "name": "Avoidance",
+     "text": "If the lasher is subjected to an effect that allows a save to take half damage, it takes no damage on a success and half on a failure."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The lasher makes two Shadow Tendril attacks and one Bite attack."
+    },
+    {
+     "name": "Shadow Tendril",
+     "text": "Melee Attack Roll: +6, reach 10 ft. Hit: 7 (1d6 + 4) Bludgeoning damage plus 3 (1d6) Psychic damage."
+    },
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +6, reach 5 ft. Hit: 8 (1d8 + 4) Piercing damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "None",
+   "hpAvg": 85,
+   "init": 2,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-017": {
+   "id": "CRE-017",
+   "name": "Root Hunter",
+   "meta": "Medium Humanoid (Any), Neutral",
+   "ac": 13,
+   "hp": "26 (4d8 + 8)",
+   "speed": "35 ft.",
+   "ab": [
+    12,
+    15,
+    14,
+    10,
+    14,
+    9
+   ],
+   "cr": "1",
+   "traits": [
+    {
+     "name": "Reads the Forest",
+     "text": "In forest, the hunter can't be Surprised, and it and its allies within 30 feet leave no tracks."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The hunter makes two attacks, using Shortsword or Longbow in any combination."
+    },
+    {
+     "name": "Shortsword",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Piercing damage."
+    },
+    {
+     "name": "Longbow",
+     "text": "Ranged Attack Roll: +4, range 150/600 ft. Hit: 6 (1d8 + 2) Piercing damage, and the target's Speed is reduced by 10 feet until the end of its next turn."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Nature +2, Perception +6, Stealth +6, Survival +6",
+   "senses": "Passive Perception 16",
+   "languages": "Common, Sylvan",
+   "gear": "Hide Armor, Shortsword, Longbow",
+   "hpAvg": 26,
+   "init": 2,
+   "xp": 200,
+   "pb": 2
+  },
+  "CRE-018": {
+   "id": "CRE-018",
+   "name": "Briar Wolf",
+   "meta": "Medium Beast, Unaligned",
+   "ac": 13,
+   "hp": "26 (4d8 + 8)",
+   "speed": "40 ft.",
+   "ab": [
+    14,
+    15,
+    14,
+    3,
+    12,
+    6
+   ],
+   "cr": "1",
+   "traits": [
+    {
+     "name": "Thorned Hide",
+     "text": "A creature that hits the wolf with a melee attack while within 5 feet of it takes 2 (1d4) Piercing damage."
+    },
+    {
+     "name": "Pack Tactics",
+     "text": "The wolf has Advantage on an attack roll against a creature if at least one of its allies is within 5 feet of the creature and the ally isn't Incapacitated."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 7 (2d4 + 2) Piercing damage plus 3 (1d6) Piercing damage from thorns. If the target is Medium or smaller, it has the Prone condition."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Perception +5, Stealth +4",
+   "senses": "Darkvision 60 ft., Passive Perception 15",
+   "languages": "None",
+   "hpAvg": 26,
+   "init": 2,
+   "xp": 200,
+   "pb": 2
+  },
+  "CRE-019": {
+   "id": "CRE-019",
+   "name": "Spirit Bear",
+   "meta": "Large Beast (Spirit), Neutral",
+   "ac": 12,
+   "hp": "68 (8d10 + 24)",
+   "speed": "40 ft., climb 30 ft.",
+   "ab": [
+    19,
+    10,
+    16,
+    5,
+    14,
+    10
+   ],
+   "cr": "3",
+   "traits": [],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The bear makes one Bite and one Claw attack."
+    },
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +6, reach 5 ft. Hit: 11 (2d6 + 4) Piercing damage."
+    },
+    {
+     "name": "Claw",
+     "text": "Melee Attack Roll: +6, reach 5 ft. Hit: 9 (1d10 + 4) Slashing damage. If the target is Large or smaller, it has the Prone condition."
+    },
+    {
+     "name": "Forest Roar (Recharge 5-6)",
+     "text": "Wisdom Saving Throw: DC 13, each creature of the bear's choice in a 30-foot Emanation. Failure: The target has the Frightened condition for 1 minute (it repeats the save at the end of each of its turns). Success: The target is immune to this roar for 24 hours."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Perception +6",
+   "res": "Necrotic",
+   "senses": "Darkvision 60 ft., Passive Perception 16",
+   "languages": "Understands Sylvan but can't speak",
+   "hpAvg": 68,
+   "init": 0,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-020": {
+   "id": "CRE-020",
+   "name": "Briar Mother",
+   "meta": "Medium Fey, Neutral Evil",
+   "ac": 17,
+   "hp": "97 (13d8 + 39)",
+   "speed": "30 ft.",
+   "ab": [
+    18,
+    12,
+    16,
+    14,
+    15,
+    16
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Thorn Stride",
+     "text": "The Briar Mother ignores Difficult Terrain caused by plants, and plants don't hinder her."
+    },
+    {
+     "name": "Memory Bargain",
+     "text": "A creature that bargains with the Briar Mother can trade a memory for a favour. The memory is gone; she keeps it in a thorn on her crown, and returns it if the thorn is plucked."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Briar Mother makes two Thorn Claw attacks."
+    },
+    {
+     "name": "Thorn Claw",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Slashing damage plus 7 (2d6) Poison damage."
+    },
+    {
+     "name": "Grasping Briars (Recharge 5-6)",
+     "text": "Strength Saving Throw: DC 14, each creature in a 20-foot-radius Sphere within 60 feet. Failure: 14 (4d6) Piercing damage, and the target has the Restrained condition until it uses an action to make a DC 14 Strength (Athletics) check and succeeds. Success: Half damage only."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "The Briar Mother casts one of the following spells, using Charisma (spell save DC 14): At will: Druidcraft, Minor Illusion. 1/day each: Invisibility, Modify Memory, Plant Growth."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Arcana +5, Deception +6, Perception +5, Stealth +4",
+   "senses": "Darkvision 60 ft., Passive Perception 15",
+   "languages": "Common, Sylvan",
+   "hpAvg": 97,
+   "init": 1,
+   "xp": 1800,
+   "pb": 3
+  },
+  "CRE-021": {
+   "id": "CRE-021",
+   "name": "Reality-Warped Wolf",
+   "meta": "Medium Fey, Unaligned",
+   "ac": 13,
+   "hp": "22 (4d8 + 4)",
+   "speed": "40 ft.",
+   "ab": [
+    12,
+    17,
+    12,
+    6,
+    13,
+    8
+   ],
+   "cr": "1",
+   "traits": [],
+   "actions": [
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Piercing damage plus 3 (1d6) Force damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Flicker",
+     "text": "The wolf teleports up to 40 feet to an unoccupied space it can see."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Perception +5, Stealth +5",
+   "senses": "Passive Perception 15",
+   "languages": "None",
+   "hpAvg": 22,
+   "init": 3,
+   "xp": 200,
+   "pb": 2
+  },
+  "CRE-022": {
+   "id": "CRE-022",
+   "name": "Shard-Back Boar",
+   "meta": "Large Beast, Unaligned",
+   "ac": 13,
+   "hp": "52 (7d10 + 14)",
+   "speed": "40 ft.",
+   "ab": [
+    17,
+    10,
+    15,
+    2,
+    8,
+    5
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Crystal Charge",
+     "text": "If the boar moves at least 20 feet straight toward a target and then hits it with Tusk, the target takes an extra 10 (3d6) Force damage and, if Large or smaller, has the Prone condition."
+    },
+    {
+     "name": "Relentless (1/Day)",
+     "text": "If the boar would be reduced to 0 Hit Points by damage of 15 or less, it's reduced to 1 instead."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Tusk",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 13 (3d6 + 3) Slashing damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [
+    {
+     "name": "Shard Flare",
+     "text": "Trigger: The boar takes damage. Response: Crystal on its back flares; each creature within 5 feet makes a DC 12 Constitution save or has the Blinded condition until the end of its next turn."
+    }
+   ],
+   "legendary": [],
+   "res": "Force",
+   "senses": "Passive Perception 9",
+   "languages": "None",
+   "hpAvg": 52,
+   "init": 0,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-023": {
+   "id": "CRE-023",
+   "name": "Void Feeder",
+   "meta": "Large Aberration, Neutral Evil",
+   "ac": 13,
+   "hp": "52 (8d10 + 8)",
+   "speed": "30 ft., climb 30 ft.",
+   "ab": [
+    14,
+    15,
+    12,
+    6,
+    10,
+    6
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Rift-Touched",
+     "text": "The feeder can see into the between. It can't be Surprised by creatures crossing the Rift or the Hollow Verge."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 7 (1d10 + 2) Piercing damage plus 9 (2d8) Necrotic damage, and the target's Strength score is reduced by 1d4. The target dies if this reduces its Strength to 0. The reduction lasts until the target finishes a Short or Long Rest."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Slip Between",
+     "text": "The feeder steps into the between and back, teleporting up to 30 feet to an unoccupied space it can see."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Stealth +6",
+   "senses": "Darkvision 120 ft., Passive Perception 10",
+   "languages": "None",
+   "hpAvg": 52,
+   "init": 2,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-024": {
+   "id": "CRE-024",
+   "name": "Rift Stalker",
+   "meta": "Large Elemental, Neutral",
+   "ac": 14,
+   "hp": "120 (16d10 + 32)",
+   "speed": "50 ft., fly 50 ft. (hover)",
+   "ab": [
+    16,
+    19,
+    14,
+    10,
+    15,
+    11
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Unseen",
+     "text": "The stalker has the Invisible condition."
+    },
+    {
+     "name": "Faultless Tracker",
+     "text": "The stalker is given a quarry by whatever bound it. It knows the direction and distance to its quarry while both are on the same plane."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The stalker makes three Slam attacks."
+    },
+    {
+     "name": "Slam",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 11 (2d6 + 4) Bludgeoning damage. If this is the third hit on the same target this turn, the target has the Grappled condition (escape DC 15)."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Perception +8, Stealth +10",
+   "res": "Bludgeoning, Piercing, Slashing",
+   "imm": "Poison",
+   "cimm": "Exhaustion, Grappled, Paralyzed, Petrified, Poisoned, Prone, Restrained, Unconscious",
+   "senses": "Darkvision 60 ft., Passive Perception 18",
+   "languages": "Understands Common but doesn't speak",
+   "hpAvg": 120,
+   "init": 4,
+   "xp": 2300,
+   "pb": 3
+  },
+  "CRE-025": {
+   "id": "CRE-025",
+   "name": "Mirror Stalker",
+   "meta": "Medium Monstrosity, Chaotic Neutral",
+   "ac": 14,
+   "hp": "52 (8d8 + 16)",
+   "speed": "30 ft.",
+   "ab": [
+    11,
+    18,
+    14,
+    11,
+    12,
+    14
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Wears Your Reflection",
+     "text": "The stalker has Advantage on attack rolls against a creature whose reflection it has copied this day. It has copied the reflection of anyone who has looked into a mirror in the Echoing Halls."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The stalker makes two Glass Claw attacks."
+    },
+    {
+     "name": "Glass Claw",
+     "text": "Melee Attack Roll: +6, reach 5 ft. Hit: 11 (2d6 + 4) Slashing damage."
+    },
+    {
+     "name": "Read Thoughts",
+     "text": "The stalker learns the surface thoughts of one creature within 60 feet. Until the end of its next turn, it has Advantage on attack rolls and Wisdom (Insight) and Charisma (Deception) checks against that creature."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Shape-Shift",
+     "text": "The stalker shape-shifts into a Small or Medium Humanoid it has seen, or back into its true form. Its game statistics are the same in each form."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Deception +6, Insight +5",
+   "cimm": "Charmed",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common",
+   "hpAvg": 52,
+   "init": 4,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-026": {
+   "id": "CRE-026",
+   "name": "Nameless Walker",
+   "meta": "Medium Monstrosity, Neutral",
+   "ac": 14,
+   "hp": "52 (8d8 + 16)",
+   "speed": "30 ft.",
+   "ab": [
+    11,
+    18,
+    14,
+    11,
+    12,
+    14
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Borrowed Name",
+     "text": "While the walker wears a borrowed name, creatures that knew the name's owner have Disadvantage on Wisdom (Insight) checks against it. Speaking its true lack of a name aloud ends the disguise."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The walker makes two Slam attacks."
+    },
+    {
+     "name": "Slam",
+     "text": "Melee Attack Roll: +6, reach 5 ft. Hit: 11 (2d6 + 4) Bludgeoning damage."
+    },
+    {
+     "name": "Take a Name",
+     "text": "Charisma Saving Throw: DC 13, one creature the walker can see within 30 feet. Failure: The walker learns the target's name and can take its shape and voice. The target can't say its own name until it finishes a Long Rest."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Shape-Shift",
+     "text": "The walker shape-shifts into a Small or Medium Humanoid whose name it holds, or back into its true form."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Deception +6, Insight +5, Stealth +6",
+   "cimm": "Charmed",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, and any language of a name it has borrowed",
+   "hpAvg": 52,
+   "init": 4,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-027": {
+   "id": "CRE-027",
+   "name": "Forgotten Legionnaire",
+   "meta": "Medium Undead (Skeleton), Lawful Evil",
+   "ac": 14,
+   "hp": "16 (3d8 + 3)",
+   "speed": "30 ft.",
+   "ab": [
+    14,
+    12,
+    13,
+    6,
+    8,
+    5
+   ],
+   "cr": "1/2",
+   "traits": [
+    {
+     "name": "Won't Stay Down",
+     "text": "When the legionnaire drops to 0 Hit Points on the Scar, roll a d6 at the start of its next turn: on a 5 or 6, it rises with 1 Hit Point. Radiant damage or a critical hit prevents this."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Shortsword",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 5 (1d6 + 2) Piercing damage."
+    },
+    {
+     "name": "Shortbow",
+     "text": "Ranged Attack Roll: +3, range 80/320 ft. Hit: 4 (1d6 + 1) Piercing damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "vuln": "Bludgeoning",
+   "imm": "Poison",
+   "cimm": "Exhaustion, Poisoned",
+   "senses": "Darkvision 60 ft., Passive Perception 9",
+   "languages": "Understands Common but can't speak",
+   "gear": "Rusted Armor, Shield, Shortsword",
+   "hpAvg": 16,
+   "init": 1,
+   "xp": 100,
+   "pb": 2
+  },
+  "CRE-028": {
+   "id": "CRE-028",
+   "name": "Forgotten Captain",
+   "meta": "Medium Undead, Lawful Evil",
+   "ac": 15,
+   "hp": "82 (11d8 + 33)",
+   "speed": "30 ft.",
+   "ab": [
+    15,
+    14,
+    16,
+    10,
+    13,
+    15
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Commands the Fallen",
+     "text": "Forgotten Legionnaires within 30 feet of the captain have Advantage on attack rolls, and roll their Won't Stay Down on a 4 or higher."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The captain makes two Rusted Blade attacks."
+    },
+    {
+     "name": "Rusted Blade",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Slashing damage plus 4 (1d8) Necrotic damage."
+    },
+    {
+     "name": "Life Drain",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Necrotic damage, and the target's Hit Point maximum decreases by the damage taken. A Humanoid slain this way rises 24 hours later as a Forgotten Legionnaire."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Rally the Dead",
+     "text": "One Forgotten Legionnaire the captain can see within 30 feet that has 0 Hit Points rises with 8 Hit Points. Once used, this can't be used again until the start of the captain's next turn."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Perception +3, Stealth +4",
+   "res": "Necrotic",
+   "imm": "Poison",
+   "cimm": "Exhaustion, Poisoned",
+   "senses": "Darkvision 60 ft., Passive Perception 13",
+   "languages": "Common",
+   "hpAvg": 82,
+   "init": 2,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-029": {
+   "id": "CRE-029",
+   "name": "Ghost Artillerist",
+   "meta": "Medium Undead (Spirit), Lawful Neutral",
+   "ac": 12,
+   "hp": "22 (5d8)",
+   "speed": "0 ft., fly 50 ft. (hover)",
+   "ab": [
+    1,
+    14,
+    11,
+    10,
+    10,
+    11
+   ],
+   "cr": "1",
+   "traits": [
+    {
+     "name": "Incorporeal Movement",
+     "text": "The artillerist can move through other creatures and objects as if they were Difficult Terrain. It takes 5 (1d10) Force damage if it ends its turn inside an object."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Phantom Shot",
+     "text": "Ranged Attack Roll: +4, range 150 ft. Hit: 10 (3d6) Necrotic damage, and the target is pushed up to 10 feet away."
+    },
+    {
+     "name": "Phantom Barrage (Recharge 6)",
+     "text": "Dexterity Saving Throw: DC 12, each creature in a 10-foot-radius Sphere within 150 feet. Failure: 14 (4d6) Thunder damage. Success: Half damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "res": "Acid, Cold, Fire, Lightning, Thunder; Bludgeoning, Piercing, Slashing",
+   "imm": "Necrotic, Poison",
+   "cimm": "Charmed, Exhaustion, Grappled, Paralyzed, Petrified, Poisoned, Prone, Restrained, Unconscious",
+   "senses": "Darkvision 60 ft., Passive Perception 10",
+   "languages": "Understands Common but can't speak",
+   "hpAvg": 22,
+   "init": 2,
+   "xp": 200,
+   "pb": 2
+  },
+  "CRE-030": {
+   "id": "CRE-030",
+   "name": "Ashen Zealot",
+   "meta": "Medium Humanoid (Any), Chaotic Evil",
+   "ac": 13,
+   "hp": "33 (6d8 + 6)",
+   "speed": "30 ft.",
+   "ab": [
+    11,
+    14,
+    12,
+    10,
+    13,
+    14
+   ],
+   "cr": "1",
+   "traits": [
+    {
+     "name": "Burn With Me",
+     "text": "When the zealot dies, it bursts into flame: each creature within 5 feet makes a DC 12 Dexterity save, taking 7 (2d6) Fire damage on a failure or half on a success."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The zealot makes two Burning Knife attacks."
+    },
+    {
+     "name": "Burning Knife",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 4 (1d4 + 2) Piercing damage plus 3 (1d6) Fire damage."
+    },
+    {
+     "name": "Cinder Hurl",
+     "text": "Ranged Attack Roll: +4, range 60 ft. Hit: 9 (2d8) Fire damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Deception +4, Religion +2",
+   "res": "Fire",
+   "senses": "Passive Perception 11",
+   "languages": "Common",
+   "hpAvg": 33,
+   "init": 2,
+   "xp": 200,
+   "pb": 2
+  },
+  "CRE-031": {
+   "id": "CRE-031",
+   "name": "Black Sun Prophet",
+   "meta": "Medium Humanoid (Any), Neutral Evil",
+   "ac": 13,
+   "hp": "60 (11d8 + 11)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    14,
+    12,
+    11,
+    15,
+    17
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Eclipse Sight",
+     "text": "Magical darkness doesn't impede the prophet's Darkvision."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The prophet makes two Black Ray attacks."
+    },
+    {
+     "name": "Black Ray",
+     "text": "Ranged Attack Roll: +5, range 120 ft. Hit: 13 (3d6 + 3) Necrotic damage, and the target can't regain Hit Points until the start of the prophet's next turn."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "The prophet casts one of the following spells, using Charisma (spell save DC 13): At will: Thaumaturgy. 2/day each: Darkness, Command. 1/day: Fear."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Call the Dark (Recharge 5-6)",
+     "text": "The prophet casts Darkness without expending a use of the spell."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Deception +5, Persuasion +5, Religion +2",
+   "res": "Necrotic",
+   "senses": "Darkvision 60 ft. (sees through magical darkness), Passive Perception 12",
+   "languages": "Common",
+   "hpAvg": 60,
+   "init": 2,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-032": {
+   "id": "CRE-032",
+   "name": "Drowned Saint",
+   "meta": "Medium Undead, Chaotic Evil",
+   "ac": 14,
+   "hp": "60 (8d8 + 24)",
+   "speed": "30 ft., swim 40 ft.",
+   "ab": [
+    16,
+    13,
+    16,
+    12,
+    12,
+    13
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Amphibious",
+     "text": "The saint can breathe air and water."
+    },
+    {
+     "name": "Horrific Grace",
+     "text": "When a creature that can see the saint starts its turn within 30 feet of it, the creature makes a DC 12 Wisdom save or has the Frightened condition until the start of its next turn."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The saint makes two Drowning Grip attacks."
+    },
+    {
+     "name": "Drowning Grip",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Bludgeoning damage plus 4 (1d8) Cold damage. If the target is Medium or smaller, it has the Grappled condition (escape DC 13), and while grappled it can't breathe."
+    },
+    {
+     "name": "Sea's Embrace (Recharge 5-6)",
+     "text": "Constitution Saving Throw: DC 13, one creature within 30 feet. Failure: Its lungs fill with seawater: 18 (4d8) Cold damage, and it can't speak until the end of its next turn. Success: Half damage only."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "res": "Cold",
+   "imm": "Poison",
+   "cimm": "Exhaustion, Poisoned",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Aquan",
+   "hpAvg": 60,
+   "init": 1,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-033": {
+   "id": "CRE-033",
+   "name": "Thread Mite",
+   "meta": "Tiny Aberration, Unaligned",
+   "ac": 13,
+   "hp": "7 (2d4 + 2)",
+   "speed": "10 ft., fly 40 ft.",
+   "ab": [
+    4,
+    16,
+    12,
+    2,
+    8,
+    6
+   ],
+   "cr": "1/4",
+   "traits": [
+    {
+     "name": "Drawn to Loose Ends",
+     "text": "The mite can sense any creature within 120 feet that is carrying a loose end: a broken promise, an unfinished journey, a thread of the Loom."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Bond Drain",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3) Psychic damage, and the mite attaches to the target. While attached, the target takes 5 (2d4) Psychic damage at the start of each of its turns and can't benefit from the Help action or an ally's Bardic Inspiration. The mite detaches after dealing 10 damage, or when it or the target uses an action to pull it free."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "senses": "Darkvision 60 ft., Passive Perception 9",
+   "languages": "None",
+   "hpAvg": 7,
+   "init": 3,
+   "xp": 50,
+   "pb": 2
+  },
+  "CRE-034": {
+   "id": "CRE-034",
+   "name": "Maintenance Echo",
+   "meta": "Medium Construct, Lawful Neutral",
+   "ac": 20,
+   "hp": "60 (8d8 + 24)",
+   "speed": "30 ft., fly 30 ft.",
+   "ab": [
+    18,
+    13,
+    16,
+    10,
+    10,
+    10
+   ],
+   "cr": "4",
+   "traits": [
+    {
+     "name": "Spell Immunity",
+     "text": "The echo is unaffected by Counterspell, Dispel Magic and Magic Missile."
+    },
+    {
+     "name": "Repairs Reality",
+     "text": "At the start of each of the echo's turns, one illusion, teleportation effect or Thinning within 30 feet of it ends, if any are there."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The echo makes two Patching Blade attacks."
+    },
+    {
+     "name": "Patching Blade",
+     "text": "Melee Attack Roll: +6, reach 5 ft. Hit: 13 (2d8 + 4) Force damage. If the target was created or summoned by magic, it takes an extra 9 (2d8) Force damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "res": "Bludgeoning, Piercing, Slashing",
+   "imm": "Force, Necrotic, Poison",
+   "cimm": "Blinded, Charmed, Deafened, Frightened, Paralyzed, Petrified, Poisoned",
+   "senses": "Blindsight 60 ft., Passive Perception 14",
+   "languages": "Understands the languages of its maker but can't speak",
+   "hpAvg": 60,
+   "init": 1,
+   "xp": 1100,
+   "pb": 2
+  },
+  "CRE-035": {
+   "id": "CRE-035",
+   "name": "Hidden Warden",
+   "meta": "Large Construct, Lawful Neutral",
+   "ac": 17,
+   "hp": "147 (14d10 + 70)",
+   "speed": "30 ft.",
+   "ab": [
+    22,
+    9,
+    20,
+    3,
+    11,
+    1
+   ],
+   "cr": "8",
+   "traits": [
+    {
+     "name": "Magic Resistance",
+     "text": "The warden has Advantage on saving throws against spells and other magical effects."
+    },
+    {
+     "name": "Erasure",
+     "text": "At the end of each of the warden's turns, one object it is holding loses one degree of existence. After three turns the object never existed; anyone who remembered it remembers a gap instead."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The warden makes two Slam attacks."
+    },
+    {
+     "name": "Slam",
+     "text": "Melee Attack Roll: +10, reach 5 ft. Hit: 19 (3d8 + 6) Bludgeoning damage. If the target is carrying an object it isn't wearing, the warden can take that object instead of dealing damage."
+    },
+    {
+     "name": "Unwrite (Recharge 5-6)",
+     "text": "Constitution Saving Throw: DC 17, each creature in a 15-foot Cone. Failure: 27 (6d8) Force damage, and the target has the Slowed condition (its Speed is halved, and it can take an action or a Bonus Action, not both) until the end of its next turn. Success: Half damage only."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Step Behind",
+     "text": "The warden teleports up to 60 feet to an unoccupied space it can see."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "imm": "Poison, Psychic",
+   "cimm": "Charmed, Exhaustion, Frightened, Paralyzed, Petrified, Poisoned",
+   "senses": "Darkvision 120 ft., Passive Perception 10",
+   "languages": "None",
+   "hpAvg": 147,
+   "init": -1,
+   "xp": 3900,
+   "pb": 3
+  },
+  "CRE-036": {
+   "id": "CRE-036",
+   "name": "Watcher's Fragment",
+   "meta": "Large Aberration, Lawful Neutral",
+   "ac": 19,
+   "hp": "250 (20d10 + 140)",
+   "speed": "0 ft., fly 20 ft. (hover)",
+   "ab": [
+    10,
+    14,
+    24,
+    22,
+    20,
+    24
+   ],
+   "cr": "16",
+   "traits": [
+    {
+     "name": "Glance of the Watchers",
+     "text": "The fragment emits an aura: a creature that starts its turn within 120 feet and can see it makes a DC 20 Wisdom save or forgets one thing it knows about the Watchers, the Cycle or the Hidden Ones until it finishes a Long Rest."
+    },
+    {
+     "name": "Legendary Resistance (3/Day)",
+     "text": "If the fragment fails a saving throw, it can choose to succeed instead."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The fragment uses Gaze twice."
+    },
+    {
+     "name": "Gaze",
+     "text": "Wisdom Saving Throw: DC 20, one creature it can see within 120 feet. Failure: 45 (10d8) Psychic damage, and the target has the Stunned condition until the end of its next turn. Success: Half damage only."
+    },
+    {
+     "name": "Unremember (Recharge 5-6)",
+     "text": "Charisma Saving Throw: DC 20, each creature of its choice in a 60-foot Emanation. Failure: 54 (12d8) Force damage, and the target is forgotten: until the end of its next turn, no creature can see or target it, and it can't affect any creature. Success: Half damage only."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [
+    {
+     "name": "Uses",
+     "text": "3, regained at the start of its turn. Immediately after another creature's turn, it can expend a use to take one of the following actions."
+    },
+    {
+     "name": "Notice",
+     "text": "It uses Gaze."
+    },
+    {
+     "name": "Turn Aside",
+     "text": "It moves up to its Fly Speed, and one creature it can see within 60 feet makes a DC 20 Wisdom save or has the Charmed condition until the end of its next turn."
+    }
+   ],
+   "saves": "Str +5, Con +12, Int +11, Wis +10, Cha +12",
+   "skills": "Perception +15",
+   "imm": "Psychic",
+   "cimm": "Charmed, Frightened, Prone",
+   "senses": "Truesight 120 ft., Passive Perception 25",
+   "languages": "All, telepathy 1 mile",
+   "hpAvg": 250,
+   "init": 2,
+   "xp": 15000,
+   "pb": 5
+  },
+  "CRE-301": {
+   "id": "CRE-301",
+   "name": "Myconid",
+   "meta": "Medium Plant, Lawful Neutral",
+   "ac": 13,
+   "hp": "45 (7d8 + 14)",
+   "speed": "20 ft.",
+   "ab": [
+    14,
+    10,
+    14,
+    13,
+    15,
+    10
+   ],
+   "cr": "2",
+   "traits": [
+    {
+     "name": "Communion",
+     "text": "The elder can link minds with creatures within 30 feet through spores. Linked creatures can share thoughts and images, and understand each other, whatever their languages. A creature can refuse the link."
+    },
+    {
+     "name": "Sun Sickness",
+     "text": "While in sunlight, the elder has Disadvantage on ability checks, attack rolls and saving throws."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The elder makes two Fist attacks, or one Fist attack and uses Pacifying Spores."
+    },
+    {
+     "name": "Fist",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 7 (2d4 + 2) Bludgeoning damage plus 7 (3d4) Poison damage."
+    },
+    {
+     "name": "Pacifying Spores (3/Day)",
+     "text": "Constitution Saving Throw: DC 12, one creature within 5 feet. Failure: The target has the Stunned condition for 1 minute (it repeats the save at the end of each of its turns)."
+    },
+    {
+     "name": "Animating Spores (1/Day)",
+     "text": "The elder targets one corpse of a Medium or Small creature within 5 feet. It rises 24 hours later as a spore servant (use Zombie) for 1 week, unless the elder releases it."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Hallucination Spores",
+     "text": "Constitution Saving Throw: DC 12, one creature within 5 feet. Failure: The target has the Poisoned condition for 1 minute and sees what the Bloom wants it to see. It repeats the save at the end of each of its turns."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "senses": "Darkvision 120 ft., Passive Perception 12",
+   "languages": "None, but can communicate by Communion",
+   "hpAvg": 45,
+   "init": 0,
+   "xp": 450,
+   "pb": 2
+  },
+  "CRE-302": {
+   "id": "CRE-302",
+   "name": "Blight",
+   "meta": "Medium Plant, Neutral Evil",
+   "ac": 12,
+   "hp": "26 (4d8 + 8)",
+   "speed": "30 ft.",
+   "ab": [
+    13,
+    12,
+    14,
+    4,
+    8,
+    3
+   ],
+   "cr": "1",
+   "traits": [
+    {
+     "name": "Still as Brush",
+     "text": "While motionless among plants, the blight is indistinguishable from dead brush."
+    },
+    {
+     "name": "One of Many",
+     "text": "The Bloom sends blights in groups when it's angry. Use 1 per party member at levels 1 to 2, and add Vine-lash blights (same statistics, reach 15 ft.) at level 3 or higher."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The blight makes two Thorn attacks."
+    },
+    {
+     "name": "Thorn",
+     "text": "Melee Attack Roll: +3, reach 5 ft. Hit: 5 (1d6 + 2) Piercing damage plus 2 (1d4) Poison damage."
+    },
+    {
+     "name": "Needle Volley",
+     "text": "Ranged Attack Roll: +3, range 30/60 ft. Hit: 6 (2d4 + 1) Piercing damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Stealth +3",
+   "imm": "Poison",
+   "cimm": "Blinded, Deafened, Poisoned",
+   "senses": "Blindsight 60 ft., Passive Perception 9",
+   "languages": "None",
+   "hpAvg": 26,
+   "init": 1,
+   "xp": 200,
+   "pb": 2
+  },
+  "CRE-303": {
+   "id": "CRE-303",
+   "name": "Shambling Mound",
+   "meta": "Large Plant, Unaligned",
+   "ac": 15,
+   "hp": "110 (13d10 + 39)",
+   "speed": "20 ft., swim 20 ft.",
+   "ab": [
+    18,
+    8,
+    16,
+    5,
+    10,
+    5
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Lightning Absorption",
+     "text": "Whenever the mound is subjected to Lightning damage, it takes no damage and regains a number of Hit Points equal to the Lightning damage dealt."
+    },
+    {
+     "name": "Rot Gut",
+     "text": "A creature Engulfed by the mound is broken down: the Bloom builds something new from whatever it digests, and a creature that dies inside it is never found."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The mound makes two Slam attacks. If both hit one Medium or smaller target, it uses Engulf on that target."
+    },
+    {
+     "name": "Slam",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Bludgeoning damage."
+    },
+    {
+     "name": "Engulf",
+     "text": "The mound engulfs a Medium or smaller creature Grappled by it or hit by both Slams. The target has the Blinded and Restrained conditions, can't breathe, and takes 13 (3d8) Bludgeoning damage at the start of each of the mound's turns until it escapes (DC 14 Strength check as an action) or the mound dies."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Stealth +3",
+   "res": "Cold, Fire",
+   "imm": "Lightning",
+   "cimm": "Blinded, Deafened, Exhaustion",
+   "senses": "Blindsight 60 ft., Passive Perception 10",
+   "languages": "None",
+   "hpAvg": 110,
+   "init": -1,
+   "xp": 1800,
+   "pb": 3
+  },
+  "CRE-304": {
+   "id": "CRE-304",
+   "name": "Treant",
+   "meta": "Huge Plant, Chaotic Good",
+   "ac": 16,
+   "hp": "138 (12d12 + 60)",
+   "speed": "30 ft.",
+   "ab": [
+    23,
+    8,
+    21,
+    12,
+    16,
+    12
+   ],
+   "cr": "9",
+   "traits": [
+    {
+     "name": "Siege Monster",
+     "text": "The treant deals double damage to objects and structures."
+    },
+    {
+     "name": "The Slowest Mood",
+     "text": "The treant is the Bloom being patient. It can't be Charmed or Frightened by anything the Bloom wouldn't fear."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The treant makes two Slam attacks."
+    },
+    {
+     "name": "Slam",
+     "text": "Melee Attack Roll: +10, reach 5 ft. Hit: 16 (3d6 + 6) Bludgeoning damage."
+    },
+    {
+     "name": "Hurl Rock",
+     "text": "Ranged Attack Roll: +10, range 60/180 ft. Hit: 28 (4d10 + 6) Bludgeoning damage."
+    },
+    {
+     "name": "Wake the Trees (1/Day)",
+     "text": "The treant wakes up to two trees it can see within 60 feet. Each uses the treant's statistics, except it has 69 Hit Points, Intelligence 1 and Charisma 1, and can't use this action. It takes root again after 1 day."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "vuln": "Fire",
+   "res": "Bludgeoning, Piercing",
+   "senses": "Passive Perception 13",
+   "languages": "Common, Sylvan, and the Bloom's Communion",
+   "hpAvg": 138,
+   "init": -1,
+   "xp": 5000,
+   "pb": 4
+  },
+  "CRE-305": {
+   "id": "CRE-305",
+   "name": "Walker",
+   "meta": "Large Construct, Unaligned",
+   "ac": 16,
+   "hp": "68 (8d10 + 24)",
+   "speed": "30 ft.",
+   "ab": [
+    18,
+    10,
+    16,
+    3,
+    10,
+    1
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Careful Steps",
+     "text": "The walker ignores Difficult Terrain, and never steps on anything it was told to protect."
+    },
+    {
+     "name": "Heart-stone",
+     "text": "A walker has a heart-stone. If it's removed (a Walker's Heart-stone, ITM-311), the walker stops. Placed in another walker, it wakes as an ally."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The walker makes two Leg Strike attacks."
+    },
+    {
+     "name": "Leg Strike",
+     "text": "Melee Attack Roll: +6, reach 10 ft. Hit: 11 (2d6 + 4) Bludgeoning damage."
+    },
+    {
+     "name": "Carry Off",
+     "text": "Strength Saving Throw: DC 14, one Medium or smaller creature within 10 feet. Failure: The walker lifts the target, which has the Grappled condition (escape DC 14) and is carried as the walker moves."
+    }
+   ],
+   "bonus": [],
+   "reactions": [
+    {
+     "name": "Brace",
+     "text": "Trigger: An ally within 5 feet is hit by an attack. Response: The walker interposes a leg; the ally takes half damage from that attack."
+    }
+   ],
+   "legendary": [],
+   "imm": "Poison, Psychic",
+   "cimm": "Charmed, Exhaustion, Frightened, Paralyzed, Petrified, Poisoned",
+   "senses": "Darkvision 60 ft., Passive Perception 10",
+   "languages": "Understands Kaelith work-commands but can't speak",
+   "hpAvg": 68,
+   "init": 0,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-306": {
+   "id": "CRE-306",
+   "name": "Half-made",
+   "meta": "Medium Construct, Neutral",
+   "ac": 11,
+   "hp": "45 (6d8 + 18)",
+   "speed": "25 ft.",
+   "ab": [
+    16,
+    8,
+    17,
+    6,
+    6,
+    5
+   ],
+   "cr": "2",
+   "traits": [
+    {
+     "name": "Lockstep",
+     "text": "Half-made move together. While two or more are within 10 feet of each other, each has Advantage on attack rolls."
+    },
+    {
+     "name": "Want to Be Finished",
+     "text": "A Half-made that is spoken to kindly, and told its name if anyone knows it, must make a DC 12 Wisdom save or stop fighting for 1 minute."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Half-made makes two Scrap Fist attacks."
+    },
+    {
+     "name": "Scrap Fist",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Bludgeoning damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [
+    {
+     "name": "Not Yet",
+     "text": "Trigger: The Half-made drops to 0 Hit Points. Response: It makes a DC 10 Constitution save; on a success, it drops to 1 Hit Point instead, and keeps walking toward whoever might finish it."
+    }
+   ],
+   "legendary": [],
+   "imm": "Poison",
+   "cimm": "Charmed, Exhaustion, Poisoned",
+   "senses": "Darkvision 60 ft., Passive Perception 8",
+   "languages": "Understands Kaelith but speaks only in pieces",
+   "hpAvg": 45,
+   "init": -1,
+   "xp": 450,
+   "pb": 2
+  },
+  "CRE-307": {
+   "id": "CRE-307",
+   "name": "Hunter",
+   "meta": "Large Construct, Lawful Neutral",
+   "ac": 15,
+   "hp": "105 (14d10 + 28)",
+   "speed": "40 ft., climb 40 ft.",
+   "ab": [
+    18,
+    16,
+    14,
+    7,
+    14,
+    3
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Built to Capture",
+     "text": "The hunter deals no damage when it reduces a creature to 0 Hit Points; the creature is Stable and Unconscious instead."
+    },
+    {
+     "name": "Root and Wire",
+     "text": "In forest or the Bloom, the hunter has the Invisible condition while it doesn't move."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The hunter makes two Wire Lash attacks."
+    },
+    {
+     "name": "Wire Lash",
+     "text": "Melee Attack Roll: +7, reach 15 ft. Hit: 13 (2d8 + 4) Slashing damage, and the target has the Grappled condition (escape DC 15). The hunter can grapple two creatures at once."
+    },
+    {
+     "name": "Bind",
+     "text": "Each creature Grappled by the hunter makes a DC 15 Strength save. Failure: It has the Restrained condition until the grapple ends, and is pulled up to 15 feet toward the hunter."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Perception +8, Stealth +9, Survival +8",
+   "res": "Bludgeoning, Piercing, Slashing from nonmagical attacks",
+   "imm": "Poison",
+   "cimm": "Charmed, Exhaustion, Frightened, Poisoned",
+   "senses": "Darkvision 120 ft., Tremorsense 30 ft., Passive Perception 18",
+   "languages": "Understands Kaelith but can't speak",
+   "hpAvg": 105,
+   "init": 3,
+   "xp": 2300,
+   "pb": 3
+  },
+  "CRE-308": {
+   "id": "CRE-308",
+   "name": "War-vessel",
+   "meta": "Gargantuan Construct, Neutral",
+   "ac": 18,
+   "hp": "231 (14d20 + 84)",
+   "speed": "40 ft., burrow 20 ft.",
+   "ab": [
+    26,
+    8,
+    22,
+    14,
+    12,
+    14
+   ],
+   "cr": "14",
+   "traits": [
+    {
+     "name": "Many Minds",
+     "text": "The vessel takes two turns each round, at Initiative counts 20 and 10 (losing ties), as its minds take turns. It has Advantage on saving throws against being Charmed, Frightened or Stunned."
+    },
+    {
+     "name": "Siege Monster",
+     "text": "The vessel deals double damage to objects and structures."
+    },
+    {
+     "name": "Minds Inside",
+     "text": "A creature that understands Kaelith can try to talk to the minds inside (DC 18 Charisma (Persuasion) as an action). On a success, the vessel loses its next turn as the minds argue."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The vessel makes two Hull Slam attacks, or one Hull Slam and one Swallow."
+    },
+    {
+     "name": "Hull Slam",
+     "text": "Melee Attack Roll: +12, reach 15 ft. Hit: 30 (4d10 + 8) Bludgeoning damage, and the target has the Prone condition if it's Huge or smaller."
+    },
+    {
+     "name": "Swallow",
+     "text": "Dexterity Saving Throw: DC 19, one Large or smaller creature within 10 feet. Failure: The target is swallowed. A swallowed creature has the Blinded and Restrained conditions, takes 21 (6d6) Acid damage at the start of each of the vessel's turns, and is among the minds inside, which beg it for a body. If the vessel takes 35 damage or more on a single turn from a creature inside it, it regurgitates everyone swallowed."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Con +11, Wis +6",
+   "imm": "Poison, Psychic",
+   "cimm": "Charmed, Exhaustion, Frightened, Paralyzed, Poisoned",
+   "senses": "Darkvision 120 ft., Tremorsense 60 ft., Passive Perception 16",
+   "languages": "Kaelith, in many voices at once",
+   "hpAvg": 231,
+   "init": -1,
+   "xp": 11500,
+   "pb": 5
+  },
+  "CRE-309": {
+   "id": "CRE-309",
+   "name": "The Scattered",
+   "meta": "Medium Undead (Spirit), Neutral",
+   "ac": 12,
+   "hp": "45 (10d8)",
+   "speed": "0 ft., fly 40 ft. (hover)",
+   "ab": [
+    7,
+    14,
+    10,
+    12,
+    12,
+    15
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Incorporeal Movement",
+     "text": "The Scattered can move through creatures and objects as if they were Difficult Terrain. It takes 5 (1d10) Force damage if it ends its turn inside an object."
+    },
+    {
+     "name": "Looking for a Body",
+     "text": "The Scattered prefers to possess rather than kill. A creature that agrees to carry it for a day can end its haunting for good."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Withering Touch",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 12 (3d6 + 2) Necrotic damage."
+    },
+    {
+     "name": "Possession (Recharge 6)",
+     "text": "Charisma Saving Throw: DC 12, one Humanoid within 5 feet. Failure: The Scattered enters the target, which has the Incapacitated condition and loses control of its body. The possession ends if the body drops to 0 Hit Points, the Scattered is turned or forced out, or it leaves as a Bonus Action. Success: The target is immune to this Scattered's Possession for 24 hours."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "res": "Acid, Fire, Lightning, Thunder; Bludgeoning, Piercing, Slashing",
+   "imm": "Cold, Necrotic, Poison",
+   "cimm": "Charmed, Exhaustion, Grappled, Paralyzed, Petrified, Poisoned, Prone, Restrained",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Kaelith, and the languages it knew in life",
+   "hpAvg": 45,
+   "init": 2,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-310": {
+   "id": "CRE-310",
+   "name": "Guardian",
+   "meta": "Large Construct, Lawful Neutral",
+   "ac": 20,
+   "hp": "210 (20d10 + 100)",
+   "speed": "30 ft.",
+   "ab": [
+    24,
+    9,
+    20,
+    3,
+    11,
+    1
+   ],
+   "cr": "16",
+   "traits": [
+    {
+     "name": "Rebirth Core",
+     "text": "When the Guardian drops to 0 Hit Points, its rebirth core flares: unless the core is broken (AC 20, 30 Hit Points, reachable only while the Guardian is Bloodied) or doused in the keeping song, it rises at the start of its next turn with 60 Hit Points. It can rise once per day."
+    },
+    {
+     "name": "Fire Absorption",
+     "text": "Whenever the Guardian takes Fire damage, it regains Hit Points equal to the Fire damage dealt."
+    },
+    {
+     "name": "Magic Resistance",
+     "text": "The Guardian has Advantage on saving throws against spells and other magical effects."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Guardian makes two Slam attacks, or uses Core Flare and makes one Slam attack."
+    },
+    {
+     "name": "Slam",
+     "text": "Melee Attack Roll: +12, reach 10 ft. Hit: 25 (4d8 + 7) Bludgeoning damage."
+    },
+    {
+     "name": "Core Flare (Recharge 5-6)",
+     "text": "Constitution Saving Throw: DC 18, each creature in a 15-foot Cone. Failure: 45 (10d8) Fire damage. Success: Half damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "imm": "Fire, Poison, Psychic",
+   "cimm": "Charmed, Exhaustion, Frightened, Paralyzed, Petrified, Poisoned",
+   "senses": "Darkvision 120 ft., Passive Perception 10",
+   "languages": "Understands Kaelith but can't speak",
+   "hpAvg": 210,
+   "init": -1,
+   "xp": 15000,
+   "pb": 5
+  },
+  "CRE-311": {
+   "id": "CRE-311",
+   "name": "Vessel",
+   "meta": "Large Construct, Unaligned",
+   "ac": 12,
+   "hp": "93 (11d10 + 33)",
+   "speed": "30 ft.",
+   "ab": [
+    19,
+    9,
+    17,
+    3,
+    10,
+    1
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Waiting for a Mind",
+     "text": "A vessel is empty until something enters it. A mind of the Scattered, or a creature that dies within 30 feet, can enter a dormant vessel; it wakes with that mind's Intelligence, Wisdom and Charisma, and whatever that mind wants."
+    },
+    {
+     "name": "Lightning Absorption",
+     "text": "Whenever the vessel is subjected to Lightning damage, it regains Hit Points equal to the Lightning damage dealt."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The vessel makes two Iron Hand attacks."
+    },
+    {
+     "name": "Iron Hand",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Bludgeoning damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "imm": "Lightning, Poison",
+   "cimm": "Charmed, Exhaustion, Frightened, Paralyzed, Petrified, Poisoned",
+   "senses": "Darkvision 60 ft., Passive Perception 10",
+   "languages": "None",
+   "hpAvg": 93,
+   "init": -1,
+   "xp": 1800,
+   "pb": 3
+  },
+  "CRE-312": {
+   "id": "CRE-312",
+   "name": "Vault Ward",
+   "meta": "Large Construct, Lawful Neutral",
+   "ac": 17,
+   "hp": "105 (10d10 + 50)",
+   "speed": "30 ft.",
+   "ab": [
+    20,
+    10,
+    20,
+    7,
+    14,
+    5
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "The Asking",
+     "text": "A Vault Ward doesn't attack a creature that offers what its vault asks for (see the vault's page). It steps aside, and won't move again until the creature leaves."
+    },
+    {
+     "name": "Bound to the Door",
+     "text": "The ward can't go more than 300 feet from its vault's door."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The ward makes two Ward-blade attacks."
+    },
+    {
+     "name": "Ward-blade",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 14 (2d8 + 5) Slashing damage plus 7 (2d6) Force damage."
+    },
+    {
+     "name": "Seal (Recharge 5-6)",
+     "text": "Strength Saving Throw: DC 16, each creature in a 10-foot Emanation. Failure: The target is pushed 20 feet away from the vault door and has the Prone condition. Success: The target is pushed 10 feet."
+    }
+   ],
+   "bonus": [],
+   "reactions": [
+    {
+     "name": "Shield Another",
+     "text": "Trigger: A creature within 5 feet of the ward is hit by an attack. Response: The ward takes the damage instead."
+    }
+   ],
+   "legendary": [],
+   "imm": "Force, Poison, Psychic",
+   "cimm": "Charmed, Exhaustion, Frightened, Paralyzed, Petrified, Poisoned",
+   "senses": "Blindsight 60 ft., Passive Perception 15",
+   "languages": "Understands Kaelith but can't speak",
+   "hpAvg": 105,
+   "init": 0,
+   "xp": 2300,
+   "pb": 3
+  },
+  "CRE-313": {
+   "id": "CRE-313",
+   "name": "Thing from the Between",
+   "meta": "Medium Aberration, Chaotic Neutral",
+   "ac": 12,
+   "hp": "78 (12d8 + 24)",
+   "speed": "20 ft., swim 20 ft.",
+   "ab": [
+    16,
+    12,
+    14,
+    4,
+    12,
+    6
+   ],
+   "cr": "4",
+   "traits": [
+    {
+     "name": "Wrong Here",
+     "text": "The ground within 10 feet of the Thing is Difficult Terrain. A creature that starts its turn there makes a DC 12 Wisdom save or forgets which way it was going until the end of its next turn."
+    },
+    {
+     "name": "Thinning Touch",
+     "text": "A creature reduced to 0 Hit Points by the Thing makes the Thinning save at the end of the fight."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Thing makes two Many-Mouth attacks."
+    },
+    {
+     "name": "Many-Mouth",
+     "text": "Melee Attack Roll: +5, reach 10 ft. Hit: 10 (2d6 + 3) Piercing damage plus 5 (2d4) Psychic damage."
+    },
+    {
+     "name": "Babble (Recharge 5-6)",
+     "text": "Wisdom Saving Throw: DC 12, each creature in a 20-foot Emanation that can hear it. Failure: The target can take only one action, Bonus Action or movement on its next turn, chosen by rolling a d3. Success: No effect."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "senses": "Darkvision 120 ft., Passive Perception 11",
+   "languages": "None",
+   "hpAvg": 78,
+   "init": 1,
+   "xp": 1100,
+   "pb": 2
+  },
+  "CRE-350": {
+   "id": "CRE-350",
+   "name": "Thinking Rot",
+   "meta": "Hazard, the Bloom",
+   "kind": "hazard",
+   "trigger": "A creature walks onto soft, pear-sweet ground where the Bloom's mind runs close (DC 13 Wisdom (Survival) to notice it first).",
+   "effect": "The rot is Difficult Terrain. If the Bloom is hostile, at the start of each turn one creature on it makes a DC 13 Strength save or has the Grappled condition (escape DC 13) as roots close over its feet. A creature grappled for 3 turns in a row is pulled under and has the Restrained condition until freed.",
+   "counter": "Speaking with the Bloom (a Bloom-Speaker, or Communion) calms it for an hour. Fire burns a 5-foot square clear for 1 minute, and makes the Bloom remember who did it."
+  },
+  "CRE-351": {
+   "id": "CRE-351",
+   "name": "Spore-storm",
+   "meta": "Hazard, the Bloom",
+   "kind": "hazard",
+   "trigger": "A fruiting of the Bloom: a cloud of spores rolls in, about once a month in the Bloom country (local signs give a day's warning).",
+   "effect": "Each creature in the open makes a DC 14 Constitution save at the end of each hour. Failure: Poisoned for the hour. On a second failure in the same storm, the GM chooses a lasting change: a new colour of eyes, bark on the hands, a voice that carries, an ear for the circuit-roots. These are the spore-storms that rewrote the Bloom-shaped peoples.",
+   "counter": "Shelter indoors, a spore-mask (Advantage on the save), or Lesser Restoration ends the Poisoned condition but not a change. A Bloom-Speaker can ask the storm to pass by a village, once."
+  },
+  "CRE-352": {
+   "id": "CRE-352",
+   "name": "Bloom-shift",
+   "meta": "Hazard, the Bloom",
+   "kind": "hazard",
+   "trigger": "Crossing a visible line where the Bloom changes character, into a dead zone.",
+   "effect": "In a dead zone, the Bloom treats anyone it doesn't know as a stranger. At the start of each hour, each stranger makes a DC 14 Charisma save. Failure: Roots and vines grapple them (escape DC 14), and the Bloom tries to learn them by reading their memories: 7 (2d6) Psychic damage each round while grappled.",
+   "counter": "Travelling with someone the Bloom knows, or carrying Bloom-bread (ITM-312), makes you a guest, not a stranger. The Spore Circle can mark you."
+  },
+  "CRE-353": {
+   "id": "CRE-353",
+   "name": "Circuit-root",
+   "meta": "Feature, the Bloom",
+   "kind": "hazard",
+   "trigger": "A creature presses an ear, or a hand, to the glassy glowing roots.",
+   "effect": "A DC 14 Wisdom (Perception) check lets the listener overhear one conversation or memory carried along the roots within a mile. On a 20 or higher, they also learn where it came from. On a 9 or lower, the roots notice the listener, and the Bloom remembers them.",
+   "counter": "Bloom-Speakers can ask the roots for something specific (Advantage). Cutting a circuit-root silences it for a day and angers the nearest Spore Circle."
+  },
+  "CRE-354": {
+   "id": "CRE-354",
+   "name": "The Glass",
+   "meta": "Hazard, Kaelith work",
+   "kind": "hazard",
+   "trigger": "Someone tries to open a glass door of the old vaults or the under-roads.",
+   "effect": "The glass swallows a fist and answers an open hand. Forcing it: the door holds, and the forcer takes 10 (3d6) Force damage. Opening it with an open hand and the right asking: the door opens, and each creature that passes through makes the Thinning save (see Thinning and Unmaking).",
+   "counter": "Each vault's door asks for something different (see its page). Someone who knows your true name, holding it for you as you pass, gives Advantage on the Thinning save."
+  },
+  "CRE-501": {
+   "id": "CRE-501",
+   "name": "Greyling",
+   "meta": "Medium Undead (Spirit), Neutral",
+   "ac": 12,
+   "hp": "22 (5d8)",
+   "speed": "40 ft.",
+   "ab": [
+    6,
+    14,
+    10,
+    6,
+    10,
+    8
+   ],
+   "cr": "1/2",
+   "traits": [
+    {
+     "name": "Incorporeal Movement",
+     "text": "It can move through other creatures and objects as if they were Difficult Terrain. It takes 5 (1d10) Force damage if it ends its turn inside an object."
+    },
+    {
+     "name": "Turns at Any Name",
+     "text": "When a creature within 30 feet speaks any name aloud, the greyling turns toward it and must move toward it on its next turn."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Whisper of a Forgotten Name",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 9 (2d6 + 2) Necrotic damage, and the target makes a DC 10 Wisdom save. Failure: It forgets one name it knows (its choice) until it finishes a Long Rest."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Fade",
+     "text": "While in dim light or darkness, the greyling takes the Hide action."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Stealth +4 (+6 in dim light or darkness)",
+   "vuln": "Radiant",
+   "res": "Acid, Cold, Fire, Lightning, Thunder; Bludgeoning, Piercing, Slashing",
+   "imm": "Necrotic, Poison",
+   "cimm": "Exhaustion, Frightened, Grappled, Paralyzed, Petrified, Poisoned, Prone, Restrained",
+   "senses": "Darkvision 60 ft., Passive Perception 10",
+   "languages": "None; it whispers names",
+   "hpAvg": 22,
+   "init": 2,
+   "xp": 100,
+   "pb": 2
+  },
+  "CRE-502": {
+   "id": "CRE-502",
+   "name": "Name-Eater",
+   "meta": "Large Ooze, Lawful Evil",
+   "ac": 14,
+   "hp": "75 (10d10 + 20)",
+   "speed": "20 ft.",
+   "ab": [
+    8,
+    16,
+    15,
+    19,
+    12,
+    10
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Faces of the Eaten",
+     "text": "The Name-Eater can extrude a sulfur-grey copy of anyone whose memory it has eaten; a creature that knew them must succeed on a DC 13 Wisdom (Insight) check to tell it isn't them."
+    },
+    {
+     "name": "Small Ones",
+     "text": "For a Name-Eater spawn, use these statistics with 18 (4d8) Hit Points, Small size, CR 1/4 (50 XP), and only the Pseudopod attack."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Name-Eater makes one Pseudopod attack and uses Eat Memory."
+    },
+    {
+     "name": "Pseudopod",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Bludgeoning damage plus 5 (2d4) Psychic damage."
+    },
+    {
+     "name": "Eat Memory",
+     "text": "Intelligence Saving Throw: DC 14, one creature within 5 feet. Failure: 10 (3d6) Psychic damage, and the Name-Eater learns the target's name and one memory; the target loses both until the Name-Eater dies. Success: Half damage only."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Int +6, Cha +2",
+   "skills": "Deception +2, Perception +3 (+5 against names)",
+   "cimm": "Blinded, Charmed, Deafened, Exhaustion, Prone",
+   "senses": "Blindsight 60 ft., Passive Perception 13",
+   "languages": "Common, and the languages of anyone it has eaten",
+   "hpAvg": 75,
+   "init": 3,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-503": {
+   "id": "CRE-503",
+   "name": "Lamp-moth Swarm",
+   "meta": "Medium Swarm of Tiny Beasts, Unaligned",
+   "ac": 12,
+   "hp": "22 (5d8)",
+   "speed": "5 ft., fly 30 ft.",
+   "ab": [
+    3,
+    14,
+    10,
+    1,
+    7,
+    1
+   ],
+   "cr": "1/2",
+   "traits": [
+    {
+     "name": "Light-Eater",
+     "text": "Nonmagical light within 20 feet of the swarm goes out. Magical light it touches flickers to dim light."
+    },
+    {
+     "name": "Swarm",
+     "text": "The swarm can occupy another creature's space and vice versa, and it can move through any opening large enough for a Tiny moth. It can't regain Hit Points or gain Temporary Hit Points."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Pale Bites",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 7 (2d4 + 2) Radiant damage, or 4 (1d4 + 2) Radiant damage if the swarm is Bloodied."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "res": "Bludgeoning, Piercing, Slashing",
+   "cimm": "Charmed, Frightened, Grappled, Paralyzed, Petrified, Prone, Restrained, Stunned",
+   "senses": "Blindsight 10 ft., Passive Perception 8",
+   "languages": "None",
+   "hpAvg": 22,
+   "init": 2,
+   "xp": 100,
+   "pb": 2
+  },
+  "CRE-504": {
+   "id": "CRE-504",
+   "name": "Threshold Hound",
+   "meta": "Medium Monstrosity, Neutral",
+   "ac": 13,
+   "hp": "33 (6d8 + 6)",
+   "speed": "40 ft.",
+   "ab": [
+    16,
+    14,
+    13,
+    5,
+    12,
+    5
+   ],
+   "cr": "2",
+   "traits": [
+    {
+     "name": "Keeper of the Paths",
+     "text": "The hound knows every path of the Hollow Verge. It won't let a creature pass the last threshold unless that creature carries an invitation from the deep realm."
+    },
+    {
+     "name": "Shadow Blend",
+     "text": "In dim light or darkness, the hound can take the Hide action as a Bonus Action."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Piercing damage, and if the target is a creature, it makes a DC 13 Strength save or has the Prone condition."
+    },
+    {
+     "name": "Turning Howl (Recharge 6)",
+     "text": "Wisdom Saving Throw: DC 11, each creature within 60 feet that can hear it. Failure: The target must spend its next turn moving back the way it came."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Perception +5, Stealth +6",
+   "res": "Bludgeoning, Piercing, Slashing while in dim light or darkness",
+   "senses": "Darkvision 60 ft., Passive Perception 15",
+   "languages": "None",
+   "hpAvg": 33,
+   "init": 2,
+   "xp": 450,
+   "pb": 2
+  },
+  "CRE-505": {
+   "id": "CRE-505",
+   "name": "Echo",
+   "meta": "Medium Monstrosity, Neutral",
+   "ac": 14,
+   "hp": "52 (8d8 + 16)",
+   "speed": "30 ft.",
+   "ab": [
+    11,
+    18,
+    14,
+    11,
+    12,
+    14
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Left Behind",
+     "text": "The Echo is a copy of someone who passed through the Verge. It knows everything they knew up to that day. If it meets the original, it has Advantage on attack rolls against them."
+    },
+    {
+     "name": "Finish My Life",
+     "text": "An Echo that is promised its unfinished business will be done for it stops fighting, and fades within a day."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Echo makes two Grey Hand attacks."
+    },
+    {
+     "name": "Grey Hand",
+     "text": "Melee Attack Roll: +6, reach 5 ft. Hit: 11 (2d6 + 4) Bludgeoning damage."
+    },
+    {
+     "name": "Wear Your Face",
+     "text": "Charisma Saving Throw: DC 13, one creature within 30 feet. Failure: The Echo becomes a perfect copy of the target until the end of its next turn, and the target has Disadvantage on attack rolls against it."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Deception +6, Insight +3",
+   "cimm": "Charmed",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "The languages of the person it copies",
+   "hpAvg": 52,
+   "init": 4,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-506": {
+   "id": "CRE-506",
+   "name": "Driftwhale",
+   "meta": "Gargantuan Beast, Neutral",
+   "ac": 15,
+   "hp": "187 (15d20 + 30)",
+   "speed": "5 ft., fly 60 ft. (hover)",
+   "ab": [
+    23,
+    8,
+    15,
+    5,
+    12,
+    6
+   ],
+   "cr": "7",
+   "traits": [
+    {
+     "name": "Gentle",
+     "text": "A driftwhale fights only if attacked or its young are threatened. Calves (use these statistics as a Huge Beast with 60 Hit Points, CR 2) travel beside it."
+    },
+    {
+     "name": "Silver Sail",
+     "text": "A driftwhale can carry a driftship's worth of passengers on its back, and salvagers of the Fields follow them to find safe currents."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The driftwhale makes two Tail attacks."
+    },
+    {
+     "name": "Tail",
+     "text": "Melee Attack Roll: +9, reach 15 ft. Hit: 19 (3d8 + 6) Bludgeoning damage, and the target is pushed up to 20 feet away."
+    },
+    {
+     "name": "Song (Recharge 5-6)",
+     "text": "Wisdom Saving Throw: DC 15, each creature of the whale's choice within 120 feet. Failure: The target has the Incapacitated condition until the end of its next turn, lost in the song. Success: The target is immune to this song for 24 hours."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Perception +4",
+   "senses": "Blindsight 120 ft., Passive Perception 14",
+   "languages": "None; sings",
+   "hpAvg": 187,
+   "init": -1,
+   "xp": 2900,
+   "pb": 3
+  },
+  "CRE-507": {
+   "id": "CRE-507",
+   "name": "Wreck-eel",
+   "meta": "Huge Monstrosity, Unaligned",
+   "ac": 14,
+   "hp": "110 (13d12 + 26)",
+   "speed": "0 ft., fly 60 ft. (hover)",
+   "ab": [
+    19,
+    16,
+    15,
+    2,
+    12,
+    4
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Wreck Lurker",
+     "text": "The eel has Advantage on Dexterity (Stealth) checks made among drifting wreckage."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The eel makes one Bite and one Tail attack."
+    },
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +7, reach 10 ft. Hit: 17 (2d12 + 4) Piercing damage, and the target has the Grappled condition (escape DC 15). Until the grapple ends, the eel can bite only the grappled target."
+    },
+    {
+     "name": "Tail",
+     "text": "Melee Attack Roll: +7, reach 15 ft. Hit: 11 (2d6 + 4) Bludgeoning damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Slip Into the Wreck",
+     "text": "The eel moves up to half its Fly Speed through wreckage without provoking Opportunity Attacks, and can take the Hide action."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Perception +4, Stealth +6",
+   "senses": "Darkvision 120 ft., Passive Perception 14",
+   "languages": "None",
+   "hpAvg": 110,
+   "init": 3,
+   "xp": 1800,
+   "pb": 3
+  },
+  "CRE-508": {
+   "id": "CRE-508",
+   "name": "Spindleclaw",
+   "meta": "Small Aberration, Lawful Evil",
+   "ac": 15,
+   "hp": "45 (10d6 + 10)",
+   "speed": "30 ft., climb 30 ft.",
+   "ab": [
+    6,
+    16,
+    13,
+    13,
+    12,
+    15
+   ],
+   "cr": "4",
+   "traits": [
+    {
+     "name": "Slaver",
+     "text": "A Spindleclaw keeps slaves from many worlds: 1d4 thralls (use Thug or Bandit Captain) travel with it."
+    },
+    {
+     "name": "Masters and Hatchlings",
+     "text": "For a hatchling use CR 1/2, 9 Hit Points and only Bite. For a master use CR 7, 98 Hit Points, and Enslave twice per turn."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Spindleclaw makes two Bite attacks and uses Enslave if it can."
+    },
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Piercing damage plus 7 (2d6) Poison damage."
+    },
+    {
+     "name": "Enslave (Recharge 5-6)",
+     "text": "Wisdom Saving Throw: DC 12, one creature within 30 feet. Failure: The target has the Charmed condition for 1 day, or until the Spindleclaw dies or is more than 1 mile away. The charmed target obeys its commands. It repeats the save each time it takes damage. Success: Immune for 24 hours."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Wis +3",
+   "skills": "Intimidation +4, Perception +3",
+   "senses": "Darkvision 60 ft., Passive Perception 13",
+   "languages": "Common, Deep Speech, telepathy 30 ft.",
+   "hpAvg": 45,
+   "init": 3,
+   "xp": 1100,
+   "pb": 2
+  },
+  "CRE-509": {
+   "id": "CRE-509",
+   "name": "Monument",
+   "meta": "Large Construct, Lawful Neutral",
+   "ac": 17,
+   "hp": "178 (17d10 + 85)",
+   "speed": "30 ft.",
+   "ab": [
+    22,
+    9,
+    20,
+    10,
+    11,
+    16
+   ],
+   "cr": "10",
+   "traits": [
+    {
+     "name": "Your Statue",
+     "text": "The Monument is a statue of one creature in the party, celebrating something they never did. It has Advantage on attack rolls against anyone else, and Disadvantage against them."
+    },
+    {
+     "name": "Stay",
+     "text": "A creature that reads the plaque on its plinth makes a DC 15 Wisdom save or wants to stay; it won't leave the Monument's island willingly until it finishes a Long Rest elsewhere."
+    },
+    {
+     "name": "Magic Resistance",
+     "text": "The Monument has Advantage on saving throws against spells and other magical effects."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Monument makes two Stone Hand attacks."
+    },
+    {
+     "name": "Stone Hand",
+     "text": "Melee Attack Roll: +10, reach 5 ft. Hit: 24 (4d8 + 6) Bludgeoning damage."
+    },
+    {
+     "name": "Unveiling (Recharge 5-6)",
+     "text": "Wisdom Saving Throw: DC 15, each creature within 30 feet that can see it. Failure: The target has the Slowed condition (half Speed, and an action or a Bonus Action, not both) for 1 minute, filled with the memory of a triumph that never happened (it repeats the save at the end of each turn)."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "imm": "Poison, Psychic",
+   "cimm": "Charmed, Exhaustion, Frightened, Paralyzed, Petrified, Poisoned",
+   "senses": "Darkvision 120 ft., Passive Perception 10",
+   "languages": "Speaks with your voice",
+   "hpAvg": 178,
+   "init": -1,
+   "xp": 5900,
+   "pb": 4
+  },
+  "CRE-510": {
+   "id": "CRE-510",
+   "name": "Ruin Mimic",
+   "meta": "Medium Monstrosity (Shapechanger), Neutral",
+   "ac": 12,
+   "hp": "67 (9d8 + 27)",
+   "speed": "15 ft.",
+   "ab": [
+    17,
+    12,
+    16,
+    5,
+    13,
+    8
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Adhesive",
+     "text": "The mimic adheres to anything that touches it. A Huge or smaller creature adhered to it has the Grappled condition (escape DC 13)."
+    },
+    {
+     "name": "False Wreckage",
+     "text": "The mimic looks like a piece of a lost world: a door, a chest of strange coins, a statue's head. It is indistinguishable from the real thing until it moves."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The mimic makes one Pseudopod and one Bite attack."
+    },
+    {
+     "name": "Pseudopod",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Bludgeoning damage, and the target is adhered."
+    },
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Piercing damage plus 9 (2d8) Acid damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Stealth +5",
+   "imm": "Acid",
+   "cimm": "Prone",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "None",
+   "hpAvg": 67,
+   "init": 1,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-512": {
+   "id": "CRE-512",
+   "name": "Bone Herald",
+   "meta": "Large Undead, Lawful Evil",
+   "ac": 16,
+   "hp": "150 (20d10 + 40)",
+   "speed": "40 ft.",
+   "ab": [
+    19,
+    16,
+    15,
+    13,
+    15,
+    9
+   ],
+   "cr": "12",
+   "traits": [
+    {
+     "name": "Courtesy",
+     "text": "The herald first delivers its summons, politely. It attacks only those who refuse, and only after they've refused twice."
+    },
+    {
+     "name": "Rejuvenation",
+     "text": "While its crowned master stands, a destroyed herald re-forms 1d10 days later beside its master."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The herald makes two Claw attacks."
+    },
+    {
+     "name": "Claw",
+     "text": "Melee Attack Roll: +8, reach 15 ft. Hit: 22 (4d8 + 4) Piercing damage plus 13 (3d8) Necrotic damage. If the target is Large or smaller, it has the Grappled condition (escape DC 15) and is pulled up to 10 feet toward the herald."
+    },
+    {
+     "name": "Fetch",
+     "text": "The herald drags one creature it is grappling up to 30 feet with it, and both are in the Ossuary's court at the start of the herald's next turn if it doesn't take damage before then."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Shadow Step",
+     "text": "In dim light or darkness, the herald teleports up to 60 feet to an unoccupied space in dim light or darkness."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Dex +7, Con +6, Wis +6",
+   "skills": "Perception +6, Stealth +7",
+   "res": "Cold, Necrotic; Bludgeoning, Piercing, Slashing",
+   "imm": "Poison",
+   "cimm": "Charmed, Exhaustion, Frightened, Poisoned",
+   "senses": "Darkvision 60 ft., Passive Perception 16",
+   "languages": "Common, and the court speech of a dead kingdom",
+   "hpAvg": 150,
+   "init": 3,
+   "xp": 8400,
+   "pb": 4
+  },
+  "CRE-513": {
+   "id": "CRE-513",
+   "name": "Crowned Dead",
+   "meta": "Medium Undead, Lawful Evil",
+   "ac": 18,
+   "hp": "136 (16d8 + 64)",
+   "speed": "30 ft.",
+   "ab": [
+    16,
+    12,
+    18,
+    17,
+    13,
+    21
+   ],
+   "cr": "15",
+   "traits": [
+    {
+     "name": "Legendary Resistance (3/Day)",
+     "text": "If the Crowned Dead fails a saving throw, it can choose to succeed instead."
+    },
+    {
+     "name": "Terrified of Ending",
+     "text": "The Crowned Dead fears a true death above all. A creature that credibly promises it a way to keep existing can bargain with it (Advantage on Charisma checks)."
+    },
+    {
+     "name": "Court of the Dead",
+     "text": "The Crowned Dead holds court with 2d6 courtiers (use Wight) and its Bone Herald."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Crowned Dead makes three Sceptre attacks, or uses Decree and makes one Sceptre attack."
+    },
+    {
+     "name": "Sceptre",
+     "text": "Melee Attack Roll: +10, reach 5 ft. Hit: 12 (2d8 + 3) Bludgeoning damage plus 16 (3d10) Necrotic damage."
+    },
+    {
+     "name": "Decree",
+     "text": "Wisdom Saving Throw: DC 18, one creature it can see within 60 feet. Failure: The target must kneel (Prone, and it can't stand up) until the end of its next turn, and takes 27 (6d8) Psychic damage. Success: Half damage only."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "The Crowned Dead casts one of the following spells, using Charisma (spell save DC 18): At will: Chill Touch (16 (3d10)), Command. 2/day each: Blight, Fear. 1/day: Finger of Death."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [
+    {
+     "name": "Uses",
+     "text": "3, regained at the start of its turn. Immediately after another creature's turn, it can expend a use to take one of the following actions."
+    },
+    {
+     "name": "Courtier",
+     "text": "One courtier within 60 feet makes one attack."
+    },
+    {
+     "name": "Sceptre",
+     "text": "It makes one Sceptre attack."
+    },
+    {
+     "name": "Royal Displeasure",
+     "text": "Each creature of its choice within 30 feet makes a DC 18 Wisdom save or has the Frightened condition until the end of its next turn."
+    }
+   ],
+   "saves": "Con +9, Wis +6, Cha +10",
+   "skills": "History +8, Intimidation +10, Persuasion +10",
+   "res": "Cold, Necrotic",
+   "imm": "Poison",
+   "cimm": "Charmed, Exhaustion, Frightened, Poisoned, Stunned",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "All the languages of its erased kingdom",
+   "hpAvg": 136,
+   "init": 1,
+   "xp": 13000,
+   "pb": 5
+  },
+  "CRE-514": {
+   "id": "CRE-514",
+   "name": "Oathless Blade",
+   "meta": "Medium Undead, Lawful Neutral",
+   "ac": 16,
+   "hp": "97 (13d8 + 39)",
+   "speed": "30 ft.",
+   "ab": [
+    18,
+    14,
+    16,
+    10,
+    12,
+    14
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "For a Kingdom That Never Was",
+     "text": "The Oathless Blade fights to defend a kingdom that never existed. Naming that kingdom truly (DC 15 History or Insight to guess from its banners) makes it lay down its sword for 1 minute."
+    },
+    {
+     "name": "Soldier and Commander",
+     "text": "For a common Oathless Blade use CR 3, 45 Hit Points and one Sword attack per turn. For a commander use these statistics and add Rally: as a Bonus Action, each Oathless Blade within 30 feet gains 10 Temporary Hit Points."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Oathless Blade makes two Spectral Sword attacks."
+    },
+    {
+     "name": "Spectral Sword",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Slashing damage plus 4 (1d8) Necrotic damage."
+    },
+    {
+     "name": "Spectral Bow",
+     "text": "Ranged Attack Roll: +5, range 150/600 ft. Hit: 11 (2d8 + 2) Piercing damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "res": "Necrotic",
+   "imm": "Poison",
+   "cimm": "Exhaustion, Frightened, Poisoned, Unconscious",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "The language of a kingdom that never happened",
+   "hpAvg": 97,
+   "init": 2,
+   "xp": 1800,
+   "pb": 3
+  },
+  "CRE-515": {
+   "id": "CRE-515",
+   "name": "Reader",
+   "meta": "Medium Aberration, Neutral Evil",
+   "ac": 15,
+   "hp": "45 (6d8 + 18)",
+   "speed": "30 ft.",
+   "ab": [
+    14,
+    16,
+    16,
+    13,
+    10,
+    8
+   ],
+   "cr": "2",
+   "traits": [
+    {
+     "name": "Reads Your Face",
+     "text": "The Reader learns one secret of any creature it can see within 30 feet that it hasn't read today: the GM tells the player which one, and the Reader may say it aloud."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Reader makes two Claw attacks."
+    },
+    {
+     "name": "Claw",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Slashing damage."
+    },
+    {
+     "name": "Rotting Gaze",
+     "text": "Constitution Saving Throw: DC 12, one creature it can see within 30 feet. Failure: 10 (3d6) Necrotic damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Arcana +3, Insight +4, Perception +2, Stealth +5",
+   "senses": "Truesight 120 ft., Passive Perception 12",
+   "languages": "Understands any language a book in the Archive is written in, but speaks only in whispers",
+   "hpAvg": 45,
+   "init": 3,
+   "xp": 450,
+   "pb": 2
+  },
+  "CRE-516": {
+   "id": "CRE-516",
+   "name": "Hollow Scholar",
+   "meta": "Medium Monstrosity, Lawful Evil",
+   "ac": 19,
+   "hp": "187 (22d8 + 88)",
+   "speed": "30 ft.",
+   "ab": [
+    12,
+    15,
+    18,
+    23,
+    18,
+    21
+   ],
+   "cr": "17",
+   "traits": [
+    {
+     "name": "Legendary Resistance (3/Day)",
+     "text": "If the Scholar fails a saving throw, it can choose to succeed instead."
+    },
+    {
+     "name": "Corruption of Knowledge",
+     "text": "The Scholar knows anything written in the Silent Archive. It traded everything else for that knowledge, and will trade again: a party can buy an answer with a memory, a name or a year of life."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Scholar makes two Ink Claw attacks and uses Spellcasting."
+    },
+    {
+     "name": "Ink Claw",
+     "text": "Melee Attack Roll: +12, reach 5 ft. Hit: 11 (2d6 + 4) Slashing damage plus 22 (4d10) Psychic damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "The Scholar casts one of the following spells, using Intelligence (spell save DC 20): At will: Detect Thoughts, Mage Hand, Message. 2/day each: Counterspell, Feeblemind, Hold Monster. 1/day each: Dominate Person, Power Word Stun, Wall of Force."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [
+    {
+     "name": "Uses",
+     "text": "3, regained at the start of its turn. Immediately after another creature's turn, it can expend a use to take one of the following actions."
+    },
+    {
+     "name": "Annotate",
+     "text": "It casts Detect Thoughts or Counterspell (expending a use of the spell)."
+    },
+    {
+     "name": "Erase a Line",
+     "text": "One creature it can see within 60 feet makes a DC 20 Intelligence save or forgets one spell slot's worth of magic: it loses its highest-level unexpended spell slot."
+    }
+   ],
+   "saves": "Int +12, Wis +10, Cha +11",
+   "skills": "Arcana +18, Deception +11, History +18, Insight +10, Perception +10",
+   "res": "Psychic",
+   "senses": "Truesight 60 ft., Passive Perception 20",
+   "languages": "All",
+   "hpAvg": 187,
+   "init": 2,
+   "xp": 18000,
+   "pb": 6
+  },
+  "CRE-517": {
+   "id": "CRE-517",
+   "name": "Hungry Lens",
+   "meta": "Medium Aberration, Lawful Evil",
+   "ac": 15,
+   "hp": "67 (9d8 + 27)",
+   "speed": "0 ft., fly 20 ft. (hover)",
+   "ab": [
+    10,
+    14,
+    16,
+    15,
+    15,
+    13
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Drink the Magic",
+     "text": "At the start of each of the Lens's turns, one creature within 120 feet that it can see must succeed on a DC 14 Constitution save or lose its lowest-level unexpended spell slot; the Lens regains 3 Hit Points per level of that slot. A magic book within 120 feet loses one spell instead."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 9 (2d6 + 2) Piercing damage."
+    },
+    {
+     "name": "Eye Rays",
+     "text": "The Lens shoots three of the following rays at random (reroll duplicates), choosing targets it can see within 120 feet. 1. Devour Magic: DC 14 Dex save or one magic item the target wears or carries loses its magic for 1 minute. 2. Enervation: DC 14 Con save, 18 (4d8) Necrotic damage, half on a success. 3. Pushing: DC 14 Str save or pushed 30 feet. 4. Fire: DC 14 Dex save, 22 (4d10) Fire damage, half on a success. 5. Paralysis: DC 14 Con save or Paralyzed for 1 minute (save ends). 6. Sleep: DC 14 Wis save or Unconscious for 1 minute, until it takes damage or someone wakes it."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Int +5, Wis +5, Cha +4",
+   "skills": "Perception +5",
+   "cimm": "Prone",
+   "senses": "Darkvision 120 ft., Passive Perception 15",
+   "languages": "Deep Speech, Undercommon",
+   "hpAvg": 67,
+   "init": 2,
+   "xp": 2300,
+   "pb": 3
+  },
+  "CRE-518": {
+   "id": "CRE-518",
+   "name": "Gibbering Margin",
+   "meta": "Medium Aberration, Neutral",
+   "ac": 9,
+   "hp": "67 (9d8 + 27)",
+   "speed": "10 ft., swim 10 ft.",
+   "ab": [
+    10,
+    8,
+    16,
+    3,
+    10,
+    6
+   ],
+   "cr": "2",
+   "traits": [
+    {
+     "name": "Gibbering",
+     "text": "While the Margin isn't Incapacitated, a creature that starts its turn within 20 feet and can hear it makes a DC 10 Wisdom save. Failure: On this turn it can't take Reactions, and it rolls a d8: 1-4, it does nothing; 5-6, it takes no action or Bonus Action and moves in a random direction; 7-8, it makes a melee attack against a random creature within reach, or does nothing."
+    },
+    {
+     "name": "Ink Ground",
+     "text": "The ground within 10 feet of the Margin is Difficult Terrain, slick with ink."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Bites",
+     "text": "Melee Attack Roll: +2, reach 5 ft. Hit: 17 (5d6) Piercing damage, and if the target is Medium or smaller, it makes a DC 10 Strength save or has the Prone condition."
+    },
+    {
+     "name": "Blinding Ink (Recharge 5-6)",
+     "text": "Dexterity Saving Throw: DC 13, each creature within 15 feet. Failure: The target has the Blinded condition until the end of its next turn."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "cimm": "Prone",
+   "senses": "Darkvision 60 ft., Passive Perception 10",
+   "languages": "Every unfinished sentence in the Archive, all at once",
+   "hpAvg": 67,
+   "init": -1,
+   "xp": 450,
+   "pb": 2
+  },
+  "CRE-519": {
+   "id": "CRE-519",
+   "name": "Thread-grue",
+   "meta": "Small Aberration, Neutral Evil",
+   "ac": 11,
+   "hp": "17 (5d6)",
+   "speed": "30 ft.",
+   "ab": [
+    6,
+    13,
+    10,
+    9,
+    11,
+    6
+   ],
+   "cr": "1/4",
+   "traits": [
+    {
+     "name": "Tangling Aura",
+     "text": "A creature that starts its turn within 20 feet of one or more grues makes a DC 9 Wisdom save. Failure: Until the start of its next turn, it has Disadvantage on attack rolls, and its own threads of fate tangle (it can't benefit from Bardic Inspiration or Guidance)."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Confounding Bite",
+     "text": "Melee Attack Roll: +3, reach 5 ft. Hit: 6 (2d4 + 1) Piercing damage, and if the target is a creature, it makes a DC 10 Wisdom save or has Disadvantage on attack rolls until the end of its next turn."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "senses": "Darkvision 60 ft., Passive Perception 10",
+   "languages": "Understands Deep Speech but can't speak",
+   "hpAvg": 17,
+   "init": 1,
+   "xp": 50,
+   "pb": 2
+  },
+  "CRE-520": {
+   "id": "CRE-520",
+   "name": "Weft-mangler",
+   "meta": "Medium Aberration, Chaotic Evil",
+   "ac": 14,
+   "hp": "71 (13d8 + 13)",
+   "speed": "40 ft., climb 40 ft.",
+   "ab": [
+    8,
+    18,
+    12,
+    11,
+    12,
+    7
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Out of Nowhere",
+     "text": "The mangler has Advantage on attack rolls against any creature that hasn't seen it this combat."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The mangler makes six Claw attacks."
+    },
+    {
+     "name": "Claw",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 7 (1d8 + 3) Slashing damage. On a critical hit, the target cuts a thread of its own: it has Disadvantage on death saving throws until it finishes a Long Rest."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Fold Away",
+     "text": "The mangler takes the Hide action, even if it is in plain sight. It must be within 5 feet of a corner or a fold in the air to do so."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Dex +7, Con +4",
+   "cimm": "Charmed, Frightened, Prone",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Understands Deep Speech but can't speak",
+   "hpAvg": 71,
+   "init": 4,
+   "xp": 1800,
+   "pb": 3
+  },
+  "CRE-521": {
+   "id": "CRE-521",
+   "name": "Fate-seer",
+   "meta": "Medium Aberration, Neutral Evil",
+   "ac": 17,
+   "hp": "153 (18d8 + 72)",
+   "speed": "30 ft.",
+   "ab": [
+    14,
+    12,
+    18,
+    22,
+    19,
+    16
+   ],
+   "cr": "13",
+   "traits": [
+    {
+     "name": "Reads the Threads",
+     "text": "The Fate-seer can't be Surprised, and has Advantage on Initiative rolls."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Fate-seer makes two Comet Staff attacks or uses Bend the Thread twice."
+    },
+    {
+     "name": "Comet Staff",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 9 (1d6 + 6) Bludgeoning damage plus 18 (4d8) Psychic damage, and the target makes a DC 19 Constitution save or has the Incapacitated condition until the end of its next turn."
+    },
+    {
+     "name": "Bend the Thread",
+     "text": "Charisma Saving Throw: DC 19, one creature it can see within 120 feet. Failure: 27 (5d10) Psychic damage, and the target is moved up to 30 feet in a direction the Fate-seer chooses. Success: Half damage only."
+    }
+   ],
+   "bonus": [],
+   "reactions": [
+    {
+     "name": "Already Seen",
+     "text": "Trigger: A creature the Fate-seer can see hits it with an attack. Response: The attacker rerolls the attack and must use the new roll."
+    }
+   ],
+   "legendary": [],
+   "saves": "Dex +6, Int +11, Wis +9, Cha +8",
+   "skills": "Insight +9, Perception +9",
+   "res": "Cold, Psychic",
+   "cimm": "Charmed, Frightened",
+   "senses": "Darkvision 60 ft., Passive Perception 19",
+   "languages": "Common, Deep Speech, Undercommon",
+   "hpAvg": 153,
+   "init": 1,
+   "xp": 10000,
+   "pb": 5
+  },
+  "CRE-522": {
+   "id": "CRE-522",
+   "name": "Thread Ghost",
+   "meta": "Huge Celestial, Neutral",
+   "ac": 15,
+   "hp": "180 (19d12 + 57)",
+   "speed": "0 ft., fly 60 ft. (hover)",
+   "ab": [
+    10,
+    20,
+    16,
+    14,
+    18,
+    20
+   ],
+   "cr": "12",
+   "traits": [
+    {
+     "name": "Incorporeal Movement",
+     "text": "It can move through other creatures and objects as if they were Difficult Terrain. It takes 5 (1d10) Force damage if it ends its turn inside an object."
+    },
+    {
+     "name": "Looking for Its Person",
+     "text": "The Thread Ghost is a life's thread cut loose. If the person it belonged to is anywhere in the realm, it can find them; if they're dead, it can lead the party to where they died. It stops fighting if shown the person or their grave."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Thread Ghost makes three Shining Thread attacks."
+    },
+    {
+     "name": "Shining Thread",
+     "text": "Melee Attack Roll: +9, reach 10 ft. Hit: 21 (4d8 + 3) Radiant damage."
+    },
+    {
+     "name": "Starlit Unravel (Recharge 5-6)",
+     "text": "Constitution Saving Throw: DC 17, each creature in a 30-foot Emanation. Failure: 45 (10d8) Radiant damage, and the target has the Blinded condition until the end of its next turn. Success: Half damage only."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Dex +9, Wis +8, Cha +9",
+   "res": "Cold, Fire, Lightning, Necrotic; Bludgeoning, Piercing, Slashing",
+   "imm": "Radiant, Poison",
+   "cimm": "Charmed, Exhaustion, Grappled, Paralyzed, Petrified, Poisoned, Prone, Restrained",
+   "senses": "Truesight 120 ft., Passive Perception 14",
+   "languages": "Understands all languages but can't speak",
+   "hpAvg": 180,
+   "init": 5,
+   "xp": 8400,
+   "pb": 4
+  },
+  "CRE-523": {
+   "id": "CRE-523",
+   "name": "Corridor Cloak",
+   "meta": "Large Aberration, Chaotic Neutral",
+   "ac": 14,
+   "hp": "136 (16d10 + 48)",
+   "speed": "10 ft., fly 40 ft.",
+   "ab": [
+    18,
+    15,
+    17,
+    13,
+    12,
+    14
+   ],
+   "cr": "8",
+   "traits": [
+    {
+     "name": "Light Sensitivity",
+     "text": "While in bright light, the cloak has Disadvantage on attack rolls."
+    },
+    {
+     "name": "False Wall",
+     "text": "While it stays still against a wall of the Citadel's corridors, it is indistinguishable from the wall."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The cloak makes one Wrap and one Tail attack."
+    },
+    {
+     "name": "Wrap",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Bludgeoning damage, and if the target is Large or smaller, the cloak attaches to it: the target has the Blinded and Restrained conditions and takes 13 (2d8 + 4) Psychic damage at the start of each of its turns. Damage to the cloak is shared half and half with the wrapped creature."
+    },
+    {
+     "name": "Tail",
+     "text": "Melee Attack Roll: +7, reach 10 ft. Hit: 11 (1d10 + 6) Slashing damage."
+    },
+    {
+     "name": "Moan",
+     "text": "Wisdom Saving Throw: DC 13, each creature within 60 feet that can hear it. Failure: Frightened until the end of the cloak's next turn."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Phantasms (Recharge on a Short or Long Rest)",
+     "text": "The cloak creates three illusory copies of itself. When a creature attacks it, roll a d4: on a 1 to 3, the attack hits a copy instead, which vanishes."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Stealth +8",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Deep Speech, Undercommon",
+   "hpAvg": 136,
+   "init": 2,
+   "xp": 3900,
+   "pb": 3
+  },
+  "CRE-524": {
+   "id": "CRE-524",
+   "name": "Abandoned Future",
+   "meta": "Huge Ooze, Lawful Evil",
+   "ac": 16,
+   "hp": "138 (12d12 + 60)",
+   "speed": "20 ft.",
+   "ab": [
+    18,
+    14,
+    21,
+    22,
+    13,
+    18
+   ],
+   "cr": "9",
+   "traits": [
+    {
+     "name": "A Person Who Never Existed",
+     "text": "It can take the shape of the person it would have been, and speaks as them. A creature that sees that shape and talks with it for a minute makes a DC 16 Wisdom save or believes it has known them all its life."
+    },
+    {
+     "name": "Angry",
+     "text": "The Abandoned Future wants the life the Hidden Ones discarded. It will trade anything for a way to exist."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Future makes two Pseudopod attacks and uses Eat Memory."
+    },
+    {
+     "name": "Pseudopod",
+     "text": "Melee Attack Roll: +8, reach 10 ft. Hit: 14 (3d6 + 4) Bludgeoning damage plus 7 (2d6) Psychic damage."
+    },
+    {
+     "name": "Eat Memory",
+     "text": "Intelligence Saving Throw: DC 18, one creature within 5 feet. Failure: 21 (6d6) Psychic damage, and the target forgets one person it loves until the Future dies. Success: Half damage only."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Int +10, Cha +8",
+   "skills": "Arcana +10, Deception +8, Insight +5, Perception +5",
+   "cimm": "Blinded, Charmed, Deafened, Exhaustion, Prone",
+   "senses": "Blindsight 60 ft., Passive Perception 15",
+   "languages": "Every language of a world that never happened",
+   "hpAvg": 138,
+   "init": 2,
+   "xp": 5000,
+   "pb": 4
+  },
+  "CRE-525": {
+   "id": "CRE-525",
+   "name": "Horizon Hulk",
+   "meta": "Large Aberration, Neutral Evil",
+   "ac": 16,
+   "hp": "147 (14d10 + 70)",
+   "speed": "30 ft.",
+   "ab": [
+    20,
+    8,
+    21,
+    7,
+    12,
+    9
+   ],
+   "cr": "10",
+   "traits": [
+    {
+     "name": "Psychic Mirror",
+     "text": "If the hulk takes Psychic damage, each creature within 10 feet of it takes that damage instead; the hulk takes none."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The hulk makes two Slam attacks. If both hit one target, the target makes a DC 17 Wisdom save or has the Stunned condition until the end of the hulk's next turn."
+    },
+    {
+     "name": "Slam",
+     "text": "Melee Attack Roll: +9, reach 5 ft. Hit: 14 (2d8 + 5) Bludgeoning damage plus 7 (2d6) Psychic damage."
+    },
+    {
+     "name": "Reaping Arms (Recharge 5-6)",
+     "text": "Dexterity Saving Throw: DC 17, each creature within 10 feet. Failure: 31 (5d8 + 9) Bludgeoning damage, and the target is knocked Prone. Success: Half damage only."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Dex +3, Wis +5",
+   "res": "Psychic",
+   "cimm": "Charmed, Frightened",
+   "senses": "Darkvision 60 ft., Passive Perception 15",
+   "languages": "Understands Deep Speech but can't speak",
+   "hpAvg": 147,
+   "init": -1,
+   "xp": 5900,
+   "pb": 4
+  },
+  "CRE-526": {
+   "id": "CRE-526",
+   "name": "Larva Prophet",
+   "meta": "Medium Aberration, Chaotic Evil",
+   "ac": 16,
+   "hp": "168 (16d8 + 96)",
+   "speed": "30 ft.",
+   "ab": [
+    16,
+    12,
+    23,
+    18,
+    12,
+    16
+   ],
+   "cr": "16",
+   "traits": [
+    {
+     "name": "Legendary Resistance (3/Day)",
+     "text": "If the prophet fails a saving throw, it can choose to succeed instead."
+    },
+    {
+     "name": "Return to Worms",
+     "text": "When the prophet dies, its body bursts into a Swarm of worms (use Swarm of Insects with 31 Hit Points and Psychic damage), and it remembers this death."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The prophet makes three Worm-Touch attacks, or uses Plague of Worms and makes one Worm-Touch."
+    },
+    {
+     "name": "Worm-Touch",
+     "text": "Melee Attack Roll: +11, reach 5 ft. Hit: 13 (3d8) Necrotic damage, and the target makes a DC 19 Constitution save or its Hit Point maximum decreases by the same amount."
+    },
+    {
+     "name": "Plague of Worms (Recharge 6)",
+     "text": "Dexterity Saving Throw: DC 19, each creature of its choice within 15 feet. Failure: 33 (6d10) Necrotic damage, and the target has the Blinded and Restrained conditions until the end of its next turn. Success: Half damage only."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "The prophet casts one of the following spells, using Intelligence (spell save DC 19): At will: Mage Hand, Message. 3/day each: Dominate Monster, Fly. 1/day: Circle of Death."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [
+    {
+     "name": "Uses",
+     "text": "3, regained at the start of its turn. Immediately after another creature's turn, it can expend a use to take one of the following actions."
+    },
+    {
+     "name": "Writhe",
+     "text": "It moves up to half its Speed, and a creature within 5 feet takes 7 (2d6) Necrotic damage."
+    },
+    {
+     "name": "Seen Too Far",
+     "text": "One creature within 60 feet makes a DC 19 Wisdom save or takes 16 (3d10) Psychic damage and has Disadvantage on attack rolls until the end of its next turn."
+    }
+   ],
+   "saves": "Dex +6, Wis +6, Cha +8",
+   "skills": "Perception +6",
+   "res": "Cold",
+   "imm": "Psychic",
+   "cimm": "Charmed, Frightened, Paralyzed",
+   "senses": "Darkvision 60 ft., Passive Perception 16",
+   "languages": "Understands Deep Speech, telepathy 120 ft.",
+   "hpAvg": 168,
+   "init": 1,
+   "xp": 15000,
+   "pb": 5
+  },
+  "CRE-527": {
+   "id": "CRE-527",
+   "name": "Worm-speaker",
+   "meta": "Medium Aberration, Lawful Evil",
+   "ac": 15,
+   "hp": "97 (13d8 + 39)",
+   "speed": "30 ft.",
+   "ab": [
+    14,
+    16,
+    16,
+    15,
+    13,
+    16
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Ringer",
+     "text": "A Worm-speaker can wear a borrowed human shape (a Ringer). In it, it uses these statistics but has Disadvantage on Wisdom (Perception) checks that rely on sight. The shape tears away when it uses Worm-Lash."
+    },
+    {
+     "name": "Take Them Back",
+     "text": "Worm-speakers want to take people back beyond the Horizon with them. A creature that dies to them is gone, not Unmade."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Worm-speaker makes two Worm-Lash attacks."
+    },
+    {
+     "name": "Worm-Lash",
+     "text": "Melee Attack Roll: +6, reach 10 ft. Hit: 12 (2d8 + 3) Bludgeoning damage plus 9 (2d8) Psychic damage."
+    },
+    {
+     "name": "Mind Squall (Recharge 5-6)",
+     "text": "Intelligence Saving Throw: DC 14, each creature in a 30-foot Cone. Failure: 22 (4d10) Psychic damage, and the target has the Incapacitated condition until the end of its next turn. Success: Half damage only."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Deception +6, Insight +4, Perception +4",
+   "res": "Psychic",
+   "senses": "Blindsight 60 ft. (blind beyond), Passive Perception 14",
+   "languages": "Deep Speech, telepathy 60 ft.",
+   "hpAvg": 97,
+   "init": 3,
+   "xp": 1800,
+   "pb": 3
+  },
+  "CRE-528": {
+   "id": "CRE-528",
+   "name": "Dread-feyr",
+   "meta": "Large Aberration, Chaotic Evil",
+   "ac": 15,
+   "hp": "119 (14d10 + 42)",
+   "speed": "30 ft., fly 40 ft. (hover)",
+   "ab": [
+    18,
+    16,
+    17,
+    8,
+    14,
+    19
+   ],
+   "cr": "7",
+   "traits": [
+    {
+     "name": "What You Dread Most",
+     "text": "Each creature that sees the Dread-feyr sees the shape of what it fears most. It has Advantage on attack rolls against any creature with the Frightened condition."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Dread-feyr makes two Dread Touch attacks and uses Terror."
+    },
+    {
+     "name": "Dread Touch",
+     "text": "Melee Attack Roll: +7, reach 10 ft. Hit: 13 (2d8 + 4) Psychic damage."
+    },
+    {
+     "name": "Terror",
+     "text": "Wisdom Saving Throw: DC 15, each creature within 30 feet that can see it. Failure: The target has the Frightened condition until the end of its next turn, and takes 9 (2d8) Psychic damage at the start of each turn it's frightened. Success: The target is immune to this Terror for 1 hour."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Intimidation +7, Perception +5",
+   "res": "Psychic",
+   "cimm": "Charmed, Frightened",
+   "senses": "Darkvision 120 ft., Passive Perception 15",
+   "languages": "Understands the language of any creature that fears it",
+   "hpAvg": 119,
+   "init": 3,
+   "xp": 2900,
+   "pb": 3
+  },
+  "CRE-529": {
+   "id": "CRE-529",
+   "name": "Falling Star",
+   "meta": "Huge Elemental, Chaotic Neutral",
+   "ac": 17,
+   "hp": "230 (20d12 + 100)",
+   "speed": "0 ft., fly 80 ft. (hover)",
+   "ab": [
+    22,
+    18,
+    20,
+    10,
+    14,
+    12
+   ],
+   "cr": "15",
+   "traits": [
+    {
+     "name": "Burning Body",
+     "text": "A creature that touches the star or hits it with a melee attack while within 5 feet takes 11 (2d10) Fire damage."
+    },
+    {
+     "name": "Legendary Resistance (3/Day)",
+     "text": "If the star fails a saving throw, it can choose to succeed instead."
+    },
+    {
+     "name": "Chooses Where It Lands",
+     "text": "A Falling Star that lands in the world leaves a crater and a shard of itself (a rare treasure); it chooses where, and nobody knows how."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The star makes two Comet Tail attacks."
+    },
+    {
+     "name": "Comet Tail",
+     "text": "Melee Attack Roll: +11, reach 15 ft. Hit: 24 (4d8 + 6) Bludgeoning damage plus 16 (3d10) Fire damage."
+    },
+    {
+     "name": "Impact (Recharge 5-6)",
+     "text": "The star flies up to its Fly Speed and crashes down. Dexterity Saving Throw: DC 18, each creature within 20 feet of where it lands. Failure: 55 (10d10) Fire damage, and the target has the Prone condition. Success: Half damage only."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [
+    {
+     "name": "Uses",
+     "text": "3, regained at the start of its turn. Immediately after another creature's turn, it can expend a use to take one of the following actions."
+    },
+    {
+     "name": "Streak",
+     "text": "It flies up to half its Fly Speed without provoking Opportunity Attacks."
+    },
+    {
+     "name": "Flare",
+     "text": "Each creature within 30 feet makes a DC 18 Constitution save or has the Blinded condition until the end of its next turn."
+    }
+   ],
+   "saves": "Dex +9, Con +10",
+   "imm": "Fire, Radiant, Poison",
+   "cimm": "Charmed, Exhaustion, Frightened, Grappled, Paralyzed, Petrified, Poisoned, Prone, Restrained",
+   "senses": "Blindsight 120 ft., Passive Perception 12",
+   "languages": "None",
+   "hpAvg": 230,
+   "init": 4,
+   "xp": 13000,
+   "pb": 5
+  },
+  "CRE-530": {
+   "id": "CRE-530",
+   "name": "The Horizon Leviathan",
+   "meta": "Gargantuan Monstrosity (Titan), Unaligned",
+   "ac": 20,
+   "hp": "350 (20d20 + 140)",
+   "speed": "0 ft., fly 80 ft. (hover)",
+   "ab": [
+    28,
+    7,
+    25,
+    5,
+    14,
+    18
+   ],
+   "cr": "21",
+   "traits": [
+    {
+     "name": "Legendary Resistance (3/Day)",
+     "text": "If the Leviathan fails a saving throw, it can choose to succeed instead."
+    },
+    {
+     "name": "Swallows the Drifting",
+     "text": "Anything drifting past the Black Horizon's edge within a mile of the Leviathan is drawn toward its mouth at 60 feet a round. Inside it is a whole lost world, still lit."
+    },
+    {
+     "name": "Siege Monster",
+     "text": "It deals double damage to objects and structures."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Leviathan makes one Bite and two Claw attacks."
+    },
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +16, reach 20 ft. Hit: 36 (5d10 + 9) Piercing damage. If the target is Huge or smaller, it makes a DC 23 Dexterity save or is swallowed: it is inside the lost world in the Leviathan's belly, and can only leave by finding the way out from inside, or if the Leviathan dies."
+    },
+    {
+     "name": "Claw",
+     "text": "Melee Attack Roll: +16, reach 20 ft. Hit: 31 (4d10 + 9) Slashing damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [
+    {
+     "name": "Uses",
+     "text": "3, regained at the start of its turn. Immediately after another creature's turn, it can expend a use to take one of the following actions."
+    },
+    {
+     "name": "Claw",
+     "text": "It makes one Claw attack."
+    },
+    {
+     "name": "Drift",
+     "text": "It moves up to half its Fly Speed, and each creature it passes within 10 feet makes a DC 23 Strength save or is pulled 30 feet toward its mouth."
+    },
+    {
+     "name": "Psychic Wake (Costs 2 Uses)",
+     "text": "Each creature within 120 feet makes a DC 19 Intelligence save, taking 36 (8d8) Psychic damage on a failure or half on a success."
+    }
+   ],
+   "saves": "Dex +5, Wis +9, Cha +11",
+   "imm": "Psychic",
+   "cimm": "Charmed, Exhaustion, Frightened, Paralyzed, Petrified, Poisoned, Prone, Stunned",
+   "senses": "Truesight 120 ft., Passive Perception 19",
+   "languages": "None",
+   "hpAvg": 350,
+   "init": -2,
+   "xp": 33000,
+   "pb": 7
+  },
+  "CRE-533": {
+   "id": "CRE-533",
+   "name": "Loom Sentinel",
+   "meta": "Huge Construct (Inevitable), Lawful Neutral",
+   "ac": 22,
+   "hp": "432 (32d12 + 224)",
+   "speed": "40 ft., fly 60 ft. (hover)",
+   "ab": [
+    28,
+    12,
+    24,
+    12,
+    22,
+    20
+   ],
+   "cr": "25",
+   "traits": [
+    {
+     "name": "Legendary Resistance (4/Day)",
+     "text": "If the Sentinel fails a saving throw, it can choose to succeed instead."
+    },
+    {
+     "name": "Guardian of the Threads",
+     "text": "The Sentinel knows when any thread of the Loom is touched, and can teleport to it as an action. It never stops hunting a creature that cut one."
+    },
+    {
+     "name": "Magic Resistance",
+     "text": "The Sentinel has Advantage on saving throws against spells and other magical effects."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Sentinel makes two Unweaving Fist attacks."
+    },
+    {
+     "name": "Unweaving Fist",
+     "text": "Melee Attack Roll: +17, reach 10 ft. Hit: 54 (7d12 + 9) Force damage. The target can't teleport or change planes until the end of the Sentinel's next turn."
+    },
+    {
+     "name": "Judgement (Recharge 5-6)",
+     "text": "Wisdom Saving Throw: DC 22, one creature it can see within 120 feet that has touched the Loom. Failure: 90 (20d8) Thunder damage, and the target is pushed 60 feet away and has the Deafened condition for 1 minute. Success: Half damage only."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [
+    {
+     "name": "Uses",
+     "text": "3, regained at the start of its turn. Immediately after another creature's turn, it can expend a use to take one of the following actions."
+    },
+    {
+     "name": "Fist",
+     "text": "It makes one Unweaving Fist attack."
+    },
+    {
+     "name": "Mend",
+     "text": "It mends one thread a creature has touched, undoing one magical effect on that creature."
+    },
+    {
+     "name": "Pursue",
+     "text": "It teleports up to 120 feet to an unoccupied space it can see."
+    }
+   ],
+   "saves": "Int +9, Wis +14, Cha +13",
+   "imm": "Necrotic, Poison, Psychic, Thunder",
+   "cimm": "Charmed, Exhaustion, Frightened, Paralyzed, Petrified, Poisoned, Stunned, Unconscious",
+   "senses": "Truesight 120 ft., Passive Perception 24",
+   "languages": "All, but it speaks only to pronounce judgement",
+   "hpAvg": 432,
+   "init": 1,
+   "xp": 75000,
+   "pb": 8
+  },
+  "CRE-540": {
+   "id": "CRE-540",
+   "name": "Eclipse-Touched",
+   "meta": "Medium Humanoid (Any), Neutral Evil",
+   "ac": 13,
+   "hp": "84 (13d8 + 26)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    14,
+    14,
+    12,
+    16,
+    17
+   ],
+   "cr": "4",
+   "traits": [
+    {
+     "name": "Shadow Falls Wrong",
+     "text": "The Eclipse-Touched's shadow falls toward the Black Horizon, whatever the light. Anyone who notices can tell what it is."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Eclipse-Touched makes two Eclipse Ray attacks."
+    },
+    {
+     "name": "Eclipse Ray",
+     "text": "Ranged Attack Roll: +5, range 120 ft. Hit: 16 (3d8 + 3) Necrotic damage."
+    },
+    {
+     "name": "A Teacher's Name (1/Day)",
+     "text": "Wisdom Saving Throw: DC 13, each creature within 30 feet. Failure: The target has the Frightened condition for 1 minute (it repeats the save at the end of each of its turns)."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "It casts one of the following spells, using Wisdom (spell save DC 13): At will: Thaumaturgy. 2/day each: Darkness, Bane. 1/day: Spirit Guardians (necrotic)."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Wis +5",
+   "skills": "Deception +5, Religion +3",
+   "res": "Necrotic",
+   "senses": "Darkvision 60 ft., Passive Perception 13",
+   "languages": "Common, and a teacher's name it shouldn't know",
+   "hpAvg": 84,
+   "init": 2,
+   "xp": 1100,
+   "pb": 2
+  },
+  "CRE-541": {
+   "id": "CRE-541",
+   "name": "Memory-Drinker",
+   "meta": "Large Aberration, Lawful Evil",
+   "ac": 17,
+   "hp": "150 (20d10 + 40)",
+   "speed": "10 ft., swim 40 ft.",
+   "ab": [
+    21,
+    9,
+    15,
+    18,
+    15,
+    18
+   ],
+   "cr": "10",
+   "traits": [
+    {
+     "name": "Amphibious",
+     "text": "It can breathe air and water."
+    },
+    {
+     "name": "Herald of the Hunger in the Weave",
+     "text": "The Memory-Drinker drinks the knot of death out of a creature, and the memory of dying with it."
+    },
+    {
+     "name": "Legendary Resistance (3/Day)",
+     "text": "If it fails a saving throw, it can choose to succeed instead."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Memory-Drinker makes three Tentacle attacks."
+    },
+    {
+     "name": "Tentacle",
+     "text": "Melee Attack Roll: +9, reach 15 ft. Hit: 12 (2d6 + 5) Bludgeoning damage, and the target makes a DC 16 Wisdom save. Failure: The target can't die until the Memory-Drinker is destroyed: if it drops to 0 Hit Points, it stays conscious, Incapacitated and in pain, and makes no death saving throws."
+    },
+    {
+     "name": "Drink the Memory (Recharge 5-6)",
+     "text": "Intelligence Saving Throw: DC 16, each creature within 30 feet. Failure: 27 (6d8) Psychic damage, and the target forgets the last time it was close to death. Success: Half damage only."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [
+    {
+     "name": "Uses",
+     "text": "3, regained at the start of its turn. Immediately after another creature's turn, it can expend a use to take one of the following actions."
+    },
+    {
+     "name": "Lash",
+     "text": "It makes one Tentacle attack."
+    },
+    {
+     "name": "Sip",
+     "text": "One creature it can see within 60 feet that is at 0 Hit Points takes 10 (3d6) Psychic damage, and the Memory-Drinker regains that many Hit Points."
+    }
+   ],
+   "saves": "Con +6, Int +8, Wis +6",
+   "skills": "History +12, Perception +10",
+   "senses": "Darkvision 120 ft., Passive Perception 20",
+   "languages": "Deep Speech, telepathy 120 ft.",
+   "hpAvg": 150,
+   "init": -1,
+   "xp": 5900,
+   "pb": 4
+  },
+  "CRE-542": {
+   "id": "CRE-542",
+   "name": "Angle-Walker",
+   "meta": "Medium Aberration, Chaotic Evil",
+   "ac": 15,
+   "hp": "90 (12d8 + 36)",
+   "speed": "30 ft.",
+   "ab": [
+    14,
+    18,
+    16,
+    13,
+    12,
+    8
+   ],
+   "cr": "7",
+   "traits": [
+    {
+     "name": "Herald of the Choir Between Angles",
+     "text": "The Angle-Walker steps out of the corner of a room, and folds it shut behind it. A room it has entered has one more corner than it should."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Angle-Walker makes two Folding Claw attacks."
+    },
+    {
+     "name": "Folding Claw",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Slashing damage, and the target makes a DC 15 Constitution save or is pushed into the nearest corner and has the Restrained condition until the end of its next turn."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Corner Step",
+     "text": "The Angle-Walker teleports between any two corners it can see."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Perception +4, Stealth +10",
+   "senses": "Truesight 120 ft., Passive Perception 14",
+   "languages": "Understands Deep Speech but can't speak",
+   "hpAvg": 90,
+   "init": 4,
+   "xp": 2900,
+   "pb": 3
+  },
+  "CRE-543": {
+   "id": "CRE-543",
+   "name": "Voice from Beyond",
+   "meta": "Large Aberration, Chaotic Evil",
+   "ac": 15,
+   "hp": "114 (12d10 + 48)",
+   "speed": "40 ft., climb 40 ft.",
+   "ab": [
+    17,
+    8,
+    18,
+    6,
+    15,
+    8
+   ],
+   "cr": "11",
+   "traits": [
+    {
+     "name": "Herald of the Shepherd of Quiet Stars",
+     "text": "It is a gentle voice in the dark that calls you home, and the thing that comes when you go."
+    },
+    {
+     "name": "Unseen in Silence",
+     "text": "The Voice has the Invisible condition while it isn't calling."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Voice makes one Bite and two Tentacle attacks, and uses Call."
+    },
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +7, reach 10 ft. Hit: 25 (3d12 + 6) Piercing damage."
+    },
+    {
+     "name": "Tentacle",
+     "text": "Melee Attack Roll: +7, reach 10 ft. Hit: 10 (2d6 + 3) Bludgeoning damage, and the target has the Grappled condition (escape DC 15). A grappled creature that the Voice carries off falls asleep, and dreams of a warm field."
+    },
+    {
+     "name": "Call",
+     "text": "Wisdom Saving Throw: DC 16, each creature that can hear it, at the start of that creature's next turn. Failure: The target must use its movement to move toward the Voice by the safest route."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Perception +6",
+   "senses": "Blindsight 250 ft., Passive Perception 16",
+   "languages": "Speaks in the voice of whoever you miss most",
+   "hpAvg": 114,
+   "init": -1,
+   "xp": 7200,
+   "pb": 4
+  },
+  "CRE-544": {
+   "id": "CRE-544",
+   "name": "Dreamspawn",
+   "meta": "Medium Aberration, Chaotic Neutral",
+   "ac": 13,
+   "hp": "67 (9d8 + 27)",
+   "speed": "30 ft.",
+   "ab": [
+    14,
+    14,
+    16,
+    6,
+    12,
+    10
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Something Dreamed",
+     "text": "A Dreamspawn is something a sleeping elder god dreamed, that walked out of the dream. Each of the four sleepers' depths has its own kind; the GM picks one twist for its depth."
+    },
+    {
+     "name": "Strange Dreams",
+     "text": "A creature that kills a Dreamspawn has strange dreams that night: the GM shows it one true glimpse of the elder gods."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "The Dreamspawn makes two Dream-Limb attacks."
+    },
+    {
+     "name": "Dream-Limb",
+     "text": "Melee Attack Roll: +4, reach 10 ft. Hit: 9 (2d6 + 2) Bludgeoning damage plus 5 (2d4) Psychic damage."
+    },
+    {
+     "name": "Lull (Recharge 5-6)",
+     "text": "Wisdom Saving Throw: DC 13, each creature within 15 feet. Failure: The target has the Incapacitated condition until the end of its next turn, half-asleep."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "cimm": "Prone",
+   "senses": "Darkvision 120 ft., Passive Perception 11",
+   "languages": "None; it murmurs in a sleeper's voice",
+   "hpAvg": 67,
+   "init": 2,
+   "xp": 700,
+   "pb": 2
+  },
+  "CRE-511": {
+   "id": "CRE-511",
+   "name": "Silver Drift",
+   "meta": "Hazard, the Fields of Lost Realities",
+   "kind": "hazard",
+   "trigger": "A creature or driftship crosses a current in the silver void between the wreck-islands (DC 13 Wisdom (Survival) to spot one a round ahead).",
+   "effect": "A creature caught in the drift is carried 1d4 miles a round in the current's direction unless it succeeds on a DC 13 Strength (Athletics) check. A driftship is carried unless its pilot succeeds on a DC 15 check with the ship's navigation.",
+   "counter": "A hadozee crew, a driftwhale to follow, or a line to a wreck-island gives Advantage. The current always ends somewhere: the GM chooses, or rolls on the Fields encounter table."
+  },
+  "CRE-531": {
+   "id": "CRE-531",
+   "name": "Starlight Madness",
+   "meta": "Hazard, the Black Horizon",
+   "kind": "hazard",
+   "trigger": "Each hour a creature spends under the stars past the Black Horizon.",
+   "effect": "Wisdom save, DC 13 at the edge and DC 18 deep in. Failure: a short-term madness (Dungeon Master's Guide). On a third failure, a long-term madness instead, and the creature can name one of the wrong stars.",
+   "counter": "Blindfolds give Advantage, and Disadvantage on everything that needs sight. An Echoborn guide can lead a party along the paths that keep the worst stars below the horizon."
+  },
+  "CRE-532": {
+   "id": "CRE-532",
+   "name": "Wrong Distance",
+   "meta": "Hazard, the Black Horizon",
+   "kind": "hazard",
+   "trigger": "Each hour of travel past the edge of the realm.",
+   "effect": "Roll a d6. 1: a day passes. 2 to 5: an hour. 6: no time at all. Navigation checks have Disadvantage, and a party that splits up may not be in the same hour when it meets again.",
+   "counter": "A thread from the Loom, a working Hollow Verge Compass, or Gauge's chart (where it reaches) removes the Disadvantage. Nothing fixes the time."
+  }
+ }
+}

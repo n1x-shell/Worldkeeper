@@ -44,6 +44,22 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
   const [newInit, setNewInit] = useState('');
   const [newHp, setNewHp] = useState('');
   const [newAc, setNewAc] = useState('');
+  const [newBonus, setNewBonus] = useState(0);
+  // Picking a creature or person with a stat block fills in its HP, AC and initiative bonus.
+  useEffect(() => {
+    setNewBonus(0);
+    if (!newEntity) return;
+    let on = true;
+    void api.get<{ ac?: number; hpAvg?: number; init?: number; kind?: string } | null>(`/api/statblocks/${encodeURIComponent(newEntity)}`).then((sb) => {
+      if (!on || !sb || sb.kind === 'hazard') return;
+      if (sb.hpAvg) setNewHp((v) => v || String(sb.hpAvg));
+      if (sb.ac) setNewAc((v) => v || String(sb.ac));
+      setNewBonus(sb.init ?? 0);
+    });
+    return () => {
+      on = false;
+    };
+  }, [newEntity]);
   const [newCount, setNewCount] = useState('1');
   const { index } = useAppState();
   useEffect(() => {
@@ -74,7 +90,7 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
     if (!name) return;
     const n = Math.max(1, Math.min(20, Number(newCount) || 1));
     const extra = Array.from({ length: n }, (_, i) =>
-      newCombatant({ name: n > 1 ? `${name} ${i + 1}` : name, entityId: newEntity, initiative: newInit ? Number(newInit) : null, hp: Number(newHp) || 0, maxHp: Number(newHp) || 0, ac: newAc ? Number(newAc) : null }),
+      newCombatant({ name: n > 1 ? `${name} ${i + 1}` : name, entityId: newEntity, initiative: newInit ? Number(newInit) : null, initiativeBonus: newBonus, hp: Number(newHp) || 0, maxHp: Number(newHp) || 0, ac: newAc ? Number(newAc) : null }),
     );
     save({ combatants: [...list, ...extra] });
     setNewName('');
