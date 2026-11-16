@@ -8,6 +8,17 @@ Everything a table needs for its first evening together, before anyone rolls a d
 
 *The evening before the first adventure: make characters, agree on the game, and meet each other.*
 
+**What this world asks of you**
+
+This world works best when the table agrees to four things before anyone makes a character.
+
+1. **Losing memories and names is part of play.** Some places and powers wear away at who you are (see House Rules). Write down a few named memories and the people who know your true name, and when you lose one, play it as part of your character's story, not as a punishment.
+2. **Not every fight should be fought, and not every question gets answered.** Nothing resets, and some deaths are final. Running, surrendering and talking are real choices. Some of the world's mysteries stay mysteries, and what people say is what they believe, not always the truth.
+3. **The party sticks together and knows each other's names.** In this world, friends who call you by your name can pull you back. Characters who keep secrets from the party, or go off alone, lose the best protection there is.
+4. **The tone is dark and sad, and the table's lines and veils are respected.** The stories here are about forgetting, grief and being forgotten. Agree on what's off-limits before you start (see Safety Tools), and use the pause whenever you need it.
+
+If that sounds like your kind of game, you'll get the most out of this world. If any of it doesn't, say so now, so the GM can adjust.
+
 **What happens at session zero**
 
 1. The GM says which starting place the campaign begins in, and everyone reads its primer.
