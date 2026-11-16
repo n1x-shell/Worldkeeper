@@ -40,6 +40,7 @@ const sortName = (n: string) => n.replace(/^["'“‘\s]+/, '');
 const where = (e: PEntity) => CONTINENTS.filter((c) => e.realm === c.key || e.realms?.includes(c.key));
 
 export function SpeciesBuilder({ entities }: { entities: PEntity[] }) {
+  const { base } = usePlayer();
   const [params, setParams] = useSearchParams();
   // ?tab=callings is the older link to the same tab.
   const tabKey = params.get('tab') === 'callings' ? 'classes' : params.get('tab');
@@ -72,7 +73,13 @@ export function SpeciesBuilder({ entities }: { entities: PEntity[] }) {
     <div>
       <div className="mb-4">
         <h1 className="text-2xl text-gold">Species and Classes</h1>
-        <div className="text-sm text-dim mt-1">Who your character is, and what they do. Pick one to read about it.</div>
+        <div className="text-sm text-dim mt-1">
+          Who your character is, and what they do. Pick one to read about it, or{' '}
+          <Link to={`${base}/builder`} className="text-arcane">
+            make a character
+          </Link>{' '}
+          step by step.
+        </div>
       </div>
       <div className="flex gap-1 border-b border-line mb-4" role="tablist">
         {TABS.map((t, i) => (

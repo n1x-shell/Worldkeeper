@@ -57,3 +57,6 @@ Every landmark, vault and building now has someone there: 62 new people (NPC-405
 
 ## The Stormborn are air genasi (November 2026)
 The Stormborn [PPL-013] are this world's air genasi, and use the air genasi rules from Monsters of the Multiverse. The goliath option is dropped, and with it the storm giant in the family: some Stormborn are tall and broad, others slight, but all are air genasi at the table. There is no separate Air Genasi people.
+
+## The Return's omens and the faction web (November 2026)
+The Return [COS-032] is tracked in the app as a seven-stage clock that only the GM sees; forming any Orb jumps it to stage 6. Players never see the clock: each stage it reaches shows them an omen and two rumours (assets/return/omens.json), which never name the elder gods. The faction web draws its ties from the library's own links between factions and cults. A tie is public when a faction's handbook page names the other in its "Who opposes them" line; every other tie, alliances and cult ties included, players see only once the GM reveals it, and nothing about a faction they can't read about is ever shown.

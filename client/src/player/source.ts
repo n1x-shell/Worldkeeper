@@ -60,8 +60,20 @@ export interface PCampaign {
     fades: boolean;
     anchored: boolean;
   }[];
+  /** Omens of something coming: one for each stage the GM has reached. */
+  omens?: { omen: string; rumours: string[] }[];
   /** The party's standing with factions (only ones the GM shares), and what its ranks bring. */
   standing?: { faction_id: string; name: string; renown: number; rank: string; next: { name: string; at: number } | null; earned: { rank: string; text: string }[] }[];
+}
+/** A tie in the faction web: allied or opposed. */
+export interface PTie {
+  a: string;
+  b: string;
+  aName: string;
+  bName: string;
+  kind: 'allied' | 'opposed';
+  aRealm: string;
+  bRealm: string;
 }
 export interface PlayerSnapshot {
   app: string;
@@ -70,6 +82,7 @@ export interface PlayerSnapshot {
   entities: PEntity[];
   maps: PMap[];
   campaigns: PCampaign[];
+  factionWeb?: PTie[];
 }
 
 /** During a live session: the running fight's turn order (no monster numbers) and the newest handout. */
@@ -86,6 +99,7 @@ export interface PlayerSource {
   search(q: string): Promise<PEntity[]>;
   maps(): Promise<PMap[]>;
   campaigns(): Promise<PCampaign[]>;
+  factionWeb(): Promise<PTie[]>;
   imageUrl(file: string): string;
   /** Only in the app (not the published handbook): the live session feed. */
   live?(): Promise<PLive>;
@@ -107,6 +121,7 @@ export const apiSource: PlayerSource = {
   search: (q) => getJson(`/api/player/search?q=${encodeURIComponent(q)}`),
   maps: () => getJson('/api/player/maps'),
   campaigns: () => getJson('/api/player/campaigns'),
+  factionWeb: () => getJson('/api/player/faction-web'),
   imageUrl: (file) => `/api/player/uploads/${encodeURIComponent(file)}`,
   live: () => getJson('/api/player/live'),
 };
@@ -128,6 +143,7 @@ export function staticSource(snapshotUrl: string, uploadsBase: string): PlayerSo
     },
     maps: async () => (await snap()).maps,
     campaigns: async () => (await snap()).campaigns,
+    factionWeb: async () => (await snap()).factionWeb ?? [],
     imageUrl: (file) => `${uploadsBase}${encodeURIComponent(file)}`,
   };
 }

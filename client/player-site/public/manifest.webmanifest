@@ -1,0 +1,11 @@
+{
+  "name": "Player Handbook",
+  "short_name": "Handbook",
+  "description": "The player handbook for the campaign: the world, its peoples and classes, maps and what the party knows.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#141417",
+  "theme_color": "#141417",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

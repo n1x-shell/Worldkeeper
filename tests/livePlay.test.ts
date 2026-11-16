@@ -6,7 +6,8 @@ import { tempContext } from './helpers';
 import { buildPlan, commitPlan } from '../server/src/import/importer';
 import type { SourceFile } from '../server/src/import/scan';
 import { campaigns, encounters, sessions, setActiveCampaign } from '../server/src/repo/campaigns';
-import { sessionBriefing } from '../server/src/repo/briefing';
+import { nearbyPeople, sessionBriefing } from '../server/src/repo/briefing';
+import { updateEntity } from '../server/src/repo/entities';
 import { handouts, playerLive, pushHandout } from '../server/src/repo/handouts';
 import { playerCampaign } from '../server/src/player/projection';
 
@@ -34,6 +35,23 @@ describe('live play', () => {
     expect(b.region).toMatchObject({ id: 'REG-801' });
     expect(b.nearby.map((n) => n.id)).toContain('LOC-801');
     expect(b.level).toBe(1);
+  });
+
+  it('finds who is nearby, with their looks, manner and what they say', () => {
+    const { ctx, sessionId } = setup();
+    const files = [rec('NPC-801', 'Mara Quill', 'NPC'), rec('NPC-802', 'Far Away', 'NPC')];
+    commitPlan(ctx.db, files, buildPlan(ctx.db, files, 'test'));
+    updateEntity(ctx.db, 'NPC-801', {
+      player_summary: '*The town baker.*\n\n| People | Class | Known as | Pronouns | From |\n| --- | --- | --- | --- | --- |\n| Halfling | Rogue | Rogue | She/her | Test Town |\n\n**Looks.** Floury to the elbows.\n\n**Manner.** Brisk and kind.\n',
+      revealed: true,
+    });
+    ctx.db.prepare(`INSERT INTO relationships (source_id, target_id, type, origin) VALUES ('NPC-801', 'SET-801', 'lives_in', 'user')`).run();
+    ctx.db.prepare(`INSERT INTO rumours (key, text, source_id) VALUES ('t1', 'Mara bakes before dawn.', 'NPC-801')`).run();
+    const n = nearbyPeople(ctx.db, sessionId);
+    expect(n.place).toBe('Test Town');
+    expect(n.people).toEqual([
+      expect.objectContaining({ id: 'NPC-801', species: 'Halfling', looks: 'Floury to the elbows.', manner: 'Brisk and kind.', rumours: ['Mara bakes before dawn.'], gmOnly: false }),
+    ]);
   });
 
   it('shows players handouts only once given, and logs the giving', () => {

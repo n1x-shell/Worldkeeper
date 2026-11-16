@@ -45,7 +45,7 @@ import {
 } from '../repo/mysteries.js';
 import { TRUTHS, createRumour, deleteRumour, listRumours, readPlayerText, setHeard, syncRumours, updateRumour, type Truth } from '../repo/rumours.js';
 import { rollDice } from '../../../shared/play.js';
-import { sessionBriefing } from '../repo/briefing.js';
+import { nearbyPeople, sessionBriefing } from '../repo/briefing.js';
 import { partyExport } from '../player/partyExport.js';
 import { allRegionStates } from '../repo/regionState.js';
 import { calendarEvents, campaignDate, comingUp, setCampaignDate } from '../repo/calendar.js';
@@ -55,6 +55,8 @@ import { adjustRenown, setStandingOptions, standingFor, undoRenown } from '../re
 import { addRollToParty, catalogueFor, partyTreasure, rollTreasure, treasureData } from '../repo/treasure.js';
 import { badRequest } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
+import { returnClock, setReturnStage } from '../repo/returnClock.js';
+import { factionWeb, revealTie } from '../repo/factionWeb.js';
 
 export function campaignRoutes(ctx: AppContext) {
   const r = Router();
@@ -94,6 +96,28 @@ export function campaignRoutes(ctx: AppContext) {
   r.get(
     '/sessions/:id/briefing',
     h((req) => sessionBriefing(ctx.db, intParam(req.params.id))),
+  );
+  // The Return: a clock only the GM sees; players get its omens.
+  r.get(
+    '/return',
+    h((req) => returnClock(ctx.db, intParam(req.query.campaign_id, 'campaign_id'))),
+  );
+  r.post(
+    '/return',
+    h((req) => setReturnStage(ctx.db, intParam(req.body?.campaign_id, 'campaign_id'), req.body ?? {})),
+  );
+  // The faction web: every tie, with what players know.
+  r.get(
+    '/faction-web',
+    h((req) => factionWeb(ctx.db, req.query.campaign_id ? intParam(req.query.campaign_id, 'campaign_id') : null)),
+  );
+  r.post(
+    '/faction-web/reveal',
+    h((req) => revealTie(ctx.db, intParam(req.body?.campaign_id, 'campaign_id'), String(req.body?.a ?? ''), String(req.body?.b ?? ''), !!req.body?.on)),
+  );
+  r.get(
+    '/sessions/:id/nearby',
+    h((req) => nearbyPeople(ctx.db, intParam(req.params.id))),
   );
   r.post(
     '/sessions/:id/recap-draft',
@@ -353,7 +377,10 @@ export function campaignRoutes(ctx: AppContext) {
   );
   mountCrud(r, ctx, '/party-treasure', partyTreasure, ['campaign_id', 'status']);
   // The state of the world, region by region.
-  r.get('/regions/state', h((req) => allRegionStates(ctx.db, standingCampaign(req.query.campaign_id))));
+  r.get(
+    '/regions/state',
+    h((req) => allRegionStates(ctx.db, standingCampaign(req.query.campaign_id))),
+  );
   // "What the party knows", for players: JSON for the page, or a Markdown file.
   r.get(
     '/campaigns/:id/party-export',

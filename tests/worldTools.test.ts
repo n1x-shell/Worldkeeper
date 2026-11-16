@@ -90,6 +90,31 @@ describe('the world as the campaign has left it', () => {
   });
 });
 
+describe('consistency: people and secrets', () => {
+  it('catches a class that isn’t a class, a page that disagrees with its record, shared surnames and a secret on a player page', () => {
+    const ctx = tempContext();
+    const files = [
+      {
+        path: 'Lib/NPC-951.md',
+        content:
+          'ID: NPC-951\nName: Ada Quillon\nAlternate names: None\nCategory: NPC\nParent: None\nContinent or realm: Aetheris\nCanon status: CANON\nSource: Test\nTags: realm/aetheris, vis/gm\nPronouns: she/her\nSpecies: Dwarf\n\n# Ada Quillon\n\n## Pressure and secrets\nAda poisoned the old baron and buried him under the mill pond.\n',
+      },
+      rec('NPC-952', 'Bram Quillon', 'NPC'),
+    ];
+    commitPlan(ctx.db, files, buildPlan(ctx.db, files, 'test'));
+    updateEntity(ctx.db, 'NPC-951', {
+      player_summary: '*A miller.*\n\n| People | Class | Known as | Pronouns | From |\n| --- | --- | --- | --- | --- |\n| Human | Wizardly | Mage | She/her | Mill Town |\n',
+      revealed: true,
+    });
+    updateEntity(ctx.db, 'NPC-952', { player_summary: 'People say Ada poisoned the old baron and buried him under the mill pond.', revealed: true });
+    const checks = new Map(consistencyReport(ctx.db).problems.map((p) => [p.check, p]));
+    expect(checks.get('People pages with a class that isn’t a class')?.ids).toEqual(['NPC-951']);
+    expect(checks.get('People pages that disagree with the record')?.message).toContain('Dwarf');
+    expect(checks.get('Shared surnames')?.ids.sort()).toEqual(['NPC-951', 'NPC-952']);
+    expect(checks.get('Secrets players can read')?.ids).toEqual(['NPC-951', 'NPC-952']);
+  });
+});
+
 describe('derived links', () => {
   it('reads a Family section place as where they come from, and never has anyone living in a vault', () => {
     const ctx = tempContext();

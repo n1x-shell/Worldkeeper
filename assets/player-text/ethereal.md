@@ -418,7 +418,7 @@ Each background gives two skills, one tool and an origin feat, plus the usual th
 | Colosseum Echo | You fought your copy at the Colosseum of Echoes. One of you walked out. | Athletics, Intimidation | One gaming set | Savage Attacker |
 | Root-road Stray | You rode a root-road from Kaelmar and didn't stop where you meant to. | Nature, Arcana | Cartographer's Tools | Alert |
 
-**Starting in the realm.** A group that starts here begins at the Nameless Asylum, in the Hollow Verge. The deep realm is closed to you until someone who lives there invites you in. Most people from the realm are from somewhere else first: choose a people, a calling and a hometown as usual, even if your hometown no longer exists.
+**Starting in the realm.** A group that starts here begins at the Nameless Asylum, in the Hollow Verge. The deep realm is closed to you until someone who lives there invites you in. Most people from the realm are from somewhere else first: choose a people, a class and a hometown as usual, even if your hometown no longer exists.
 
 ## Eryndor the First Shard
 

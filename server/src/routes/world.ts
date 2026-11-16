@@ -29,9 +29,20 @@ import { TYPE_GROUPS } from '../../../shared/domain.js';
 import { revealDuringPlay } from '../repo/reveal.js';
 import { createEra, listEras, setRowEra, updateEra } from '../repo/eras.js';
 import { getProfile, influenceMatrix, saveProfile } from '../repo/profiles.js';
+import { makeNames, namePeoples } from '../repo/names.js';
 
 export function worldRoutes(ctx: AppContext) {
   const r = Router();
+
+  // The name generator: peoples with common names, and new names in a people's style that nobody has yet.
+  r.get(
+    '/names/peoples',
+    h(() => namePeoples(ctx.db)),
+  );
+  r.get(
+    '/names',
+    h((req) => makeNames(ctx.db, String(req.query.people ?? ''), Math.min(40, Number(req.query.count) || 12), req.query.seed ? Number(req.query.seed) : undefined)),
+  );
 
   r.get(
     '/entities',

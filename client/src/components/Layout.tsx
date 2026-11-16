@@ -42,6 +42,8 @@ import {
   Table2,
   Users,
   UserSquare2,
+  Signature,
+  Eclipse,
   Archive,
   Upload,
   Drama,
@@ -100,6 +102,8 @@ const NAV: { title: string; items: Item[] }[] = [
       { to: '/campaign/arcs', label: 'Story Arcs', icon: <Waypoints size={I} /> },
       { to: '/campaign/quests', label: 'Quests', icon: <ListChecks size={I} /> },
       { to: '/campaign/standing', label: 'Faction Standing', icon: <Scale size={I} /> },
+      { to: '/campaign/faction-web', label: 'Faction Web', icon: <Network size={I} /> },
+      { to: '/campaign/return', label: 'The Return', icon: <Eclipse size={I} /> },
       { to: '/campaign/treasure', label: 'Treasure', icon: <Gem size={I} /> },
       { to: '/campaign/handouts', label: 'Handouts', icon: <Gift size={I} /> },
       { to: '/campaign/bastions', label: 'Bastions and Downtime', icon: <Castle size={I} /> },
@@ -120,6 +124,7 @@ const NAV: { title: string; items: Item[] }[] = [
       { to: '/tracker/quick', label: 'Initiative', icon: <HeartPulse size={I} /> },
       { to: '/conditions', label: 'Combat Conditions', icon: <Scale size={I} /> },
       { to: '/npc-ref', label: 'NPC Quick Reference', icon: <UserSquare2 size={I} /> },
+      { to: '/names', label: 'Name Generator', icon: <Signature size={I} /> },
       { to: '/agendas', label: 'Faction Agendas', icon: <Flag size={I} /> },
       { to: '/rumours', label: 'Rumours', icon: <MessageCircleQuestion size={I} /> },
       { to: '/world-events', label: 'World Events', icon: <Sparkles size={I} /> },
@@ -187,22 +192,24 @@ export function Layout() {
         {NAV.map((g) => (
           <div key={g.title} className="mb-2">
             {!collapsed && <div className="px-4 pt-2 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim/80">{g.title}</div>}
-            {g.items.filter((it) => debug || !DEBUG_ONLY.has(it.to)).map((it) => (
-              <NavLink
-                key={it.to}
-                to={it.to}
-                end={it.to === '/' || it.to === '/campaign' || it.to === '/tracker'}
-                title={collapsed ? it.label : undefined}
-                className={({ isActive }) =>
-                  `flex items-center gap-2.5 mx-2 px-2 py-1.5 rounded-md text-[13px] transition-colors ${collapsed ? 'justify-center' : ''} ${
-                    isActive ? 'bg-gold/10 text-gold' : 'text-ink/80 hover:bg-raised hover:text-ink'
-                  }`
-                }
-              >
-                <span className="shrink-0 opacity-90">{it.icon}</span>
-                {!collapsed && <span className="truncate">{it.label}</span>}
-              </NavLink>
-            ))}
+            {g.items
+              .filter((it) => debug || !DEBUG_ONLY.has(it.to))
+              .map((it) => (
+                <NavLink
+                  key={it.to}
+                  to={it.to}
+                  end={it.to === '/' || it.to === '/campaign' || it.to === '/tracker'}
+                  title={collapsed ? it.label : undefined}
+                  className={({ isActive }) =>
+                    `flex items-center gap-2.5 mx-2 px-2 py-1.5 rounded-md text-[13px] transition-colors ${collapsed ? 'justify-center' : ''} ${
+                      isActive ? 'bg-gold/10 text-gold' : 'text-ink/80 hover:bg-raised hover:text-ink'
+                    }`
+                  }
+                >
+                  <span className="shrink-0 opacity-90">{it.icon}</span>
+                  {!collapsed && <span className="truncate">{it.label}</span>}
+                </NavLink>
+              ))}
           </div>
         ))}
       </div>
