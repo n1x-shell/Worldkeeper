@@ -68,9 +68,7 @@ export function openQuestions(db: Database.Database, rules = readRules()) {
   const rows = db
     .prepare(`SELECT id, name, type, body, player_summary FROM entities WHERE archived = 0 AND type NOT IN ('register', 'redirect') AND body LIKE '%UNDEFINED%' ORDER BY id`)
     .all() as Row[];
-  const pinned = db.prepare(
-    `SELECT m.name FROM maps m WHERE m.id IN (SELECT map_id FROM map_markers WHERE entity_id = ? UNION SELECT map_id FROM map_shapes WHERE entity_id = ?) LIMIT 1`,
-  );
+  const pinned = db.prepare(`SELECT m.name FROM maps m WHERE m.id IN (SELECT map_id FROM map_markers WHERE entity_id = ? UNION SELECT map_id FROM map_shapes WHERE entity_id = ?) LIMIT 1`);
   const questions: OpenQuestion[] = [];
   for (const r of rows) {
     for (const s of splitSections(r.body)) {

@@ -23,7 +23,14 @@ describe('open questions', () => {
     const { db } = tempContext();
     createEntity(db, rec('SHD-012', 'shard', '## Established\nIts identity, location and powers are UNDEFINED.\n\n## Other\nNothing open here.') as never);
     createEntity(db, rec('LOC-902', 'landmark', '## Open questions [UNDEFINED]\n\n- Its width in kilometres.\n- Islands, if any.') as never);
-    createEntity(db, rec('NPC-777', 'npc', '## Attitude toward the party and current status\nTheir attitude is UNDEFINED until played.\n\n## Unspecified fields\nPronouns and combat statistics remain UNDEFINED.') as never);
+    createEntity(
+      db,
+      rec(
+        'NPC-777',
+        'npc',
+        '## Attitude toward the party and current status\nTheir attitude is UNDEFINED until played.\n\n## Unspecified fields\nPronouns and combat statistics remain UNDEFINED.',
+      ) as never,
+    );
     createEntity(db, rec('CLT-077', 'cult', '## Additional information\nPrecise headquarters: UNDEFINED.') as never);
     createEntity(db, rec('WLD-902', 'index', '## Rules\nA missing fact is marked UNDEFINED.') as never);
     const rules = [
