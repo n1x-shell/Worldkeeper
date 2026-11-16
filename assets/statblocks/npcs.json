@@ -1,0 +1,2166 @@
+{
+ "note": "Fight cards for the people the party is most likely to fight or fight beside (GM only): 2024-format stat blocks built from each person's species, class and subclass in the NPC builds, with how they fight. Owner decision, November 2026.",
+ "statblocks": {
+  "NPC-005": {
+   "id": "NPC-005",
+   "name": "Captain Marrek Vaal",
+   "meta": "Large Fey (Centaur), Lawful Neutral",
+   "ac": 18,
+   "hp": "97 (13d10 + 26)",
+   "speed": "50 ft.",
+   "ab": [
+    18,
+    13,
+    15,
+    11,
+    13,
+    14
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Charge",
+     "text": "If Marrek moves at least 30 feet straight toward a target and hits it with Lance on the same turn, it takes an extra 9 (2d8) Piercing damage."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Marrek makes two Lance attacks and one Hoof attack, or two Longbow attacks."
+    },
+    {
+     "name": "Lance",
+     "text": "Melee Attack Roll: +7, reach 10 ft. Hit: 10 (1d12 + 4) Piercing damage."
+    },
+    {
+     "name": "Hoof",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 9 (2d4 + 4) Bludgeoning damage."
+    },
+    {
+     "name": "Longbow",
+     "text": "Ranged Attack Roll: +4, range 150/600 ft. Hit: 5 (1d8 + 1) Piercing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Psionic Strike (2/Day)",
+     "text": "After hitting with a weapon, Marrek deals an extra 7 (2d6) Force damage to the target."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Protective Field",
+     "text": "Trigger: Marrek or an ally within 30 feet takes damage. Response: Reduce the damage by 7 (1d6 + 4)."
+    }
+   ],
+   "legendary": [],
+   "saves": "Str +7, Con +5",
+   "skills": "Athletics +7, Insight +4, Intimidation +5",
+   "senses": "Passive Perception 11",
+   "languages": "Common, Sylvan",
+   "gear": "Plate Armor, Lance, Longbow",
+   "hpAvg": 97,
+   "init": 1,
+   "xp": 1800,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Offers terms first, every time. Charges the strongest-looking foe, then pulls back to the bow. Accepts surrender at once, and keeps his word about it."
+  },
+  "NPC-008": {
+   "id": "NPC-008",
+   "name": "Vess the Grey",
+   "meta": "Medium Humanoid (Lizardfolk), Neutral",
+   "ac": 15,
+   "hp": "58 (9d8 + 18)",
+   "speed": "30 ft., swim 30 ft.",
+   "ab": [
+    11,
+    17,
+    14,
+    14,
+    13,
+    12
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Sneak Attack (1/Turn)",
+     "text": "It deals an extra 10 (3d6) damage when it hits with an attack roll and has Advantage, or when an ally is within 5 feet of the target."
+    },
+    {
+     "name": "Hungry Jaws",
+     "text": "Once per Short Rest, when Vess hits with Bite, it gains 5 Temporary Hit Points."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Vess makes two attacks: Shortsword and Bite, or two Hand Crossbow attacks."
+    },
+    {
+     "name": "Shortsword",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Piercing damage."
+    },
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3) Piercing damage."
+    },
+    {
+     "name": "Hand Crossbow",
+     "text": "Ranged Attack Roll: +5, range 30/120 ft. Hit: 6 (1d6 + 3) Piercing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Cunning Action",
+     "text": "Vess takes the Dash, Disengage or Hide action."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Deception +3, Insight +3, Perception +5, Sleight of Hand +7, Stealth +7",
+   "senses": "Passive Perception 15",
+   "languages": "Common, Draconic, Thieves' Cant",
+   "hpAvg": 58,
+   "init": 3,
+   "xp": 700,
+   "pb": 2,
+   "kind": "npc",
+   "tactics": "Never fights fair or long. Has an exit planned before the party arrives, and a second Vess (another member sharing the identity) watching from somewhere."
+  },
+  "NPC-009": {
+   "id": "NPC-009",
+   "name": "Mother Thorn",
+   "meta": "Medium Humanoid (Firbolg), Neutral Good",
+   "ac": 14,
+   "hp": "66 (12d8 + 12)",
+   "speed": "30 ft.",
+   "ab": [
+    12,
+    10,
+    13,
+    13,
+    17,
+    14
+   ],
+   "cr": "4",
+   "traits": [],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Mother Thorn makes two Thorn Staff attacks, or uses Starry Arrow twice."
+    },
+    {
+     "name": "Thorn Staff",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 6 (1d6 + 3) Bludgeoning damage plus 4 (1d8) Piercing damage."
+    },
+    {
+     "name": "Starry Arrow",
+     "text": "Ranged Attack Roll: +5, range 60 ft. Hit: 12 (2d8 + 3) Radiant damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "She casts one of the following spells, using Wisdom (spell save DC 13): At will: Druidcraft, Guidance. 2/day each: Entangle, Healing Word (2d4 + 3), Moonbeam. 1/day: Plant Growth."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Hidden Step (Recharges on a Short or Long Rest)",
+     "text": "She has the Invisible condition until the start of her next turn, or until she attacks or casts a spell."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Nature +3, Medicine +5, Survival +5",
+   "senses": "Passive Perception 13",
+   "languages": "Common, Elvish, Giant, Sylvan",
+   "hpAvg": 66,
+   "init": 0,
+   "xp": 1100,
+   "pb": 2,
+   "kind": "npc",
+   "tactics": "Would rather end a fight than win it. Turns invisible and leads attackers astray in Wither's Hollow, then sends the wolves."
+  },
+  "NPC-011": {
+   "id": "NPC-011",
+   "name": "Torren Kell",
+   "meta": "Medium Humanoid (Earth Genasi), Chaotic Neutral",
+   "ac": 14,
+   "hp": "45 (7d8 + 14)",
+   "speed": "30 ft.",
+   "ab": [
+    12,
+    15,
+    14,
+    12,
+    11,
+    13
+   ],
+   "cr": "2",
+   "traits": [
+    {
+     "name": "Sneak Attack (1/Turn)",
+     "text": "It deals an extra 7 (2d6) damage when it hits with an attack roll and has Advantage, or when an ally is within 5 feet of the target."
+    },
+    {
+     "name": "Earth Walk",
+     "text": "Torren ignores Difficult Terrain made of earth or stone."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Torren makes two Crowbar attacks."
+    },
+    {
+     "name": "Crowbar",
+     "text": "Melee Attack Roll: +4, reach 5 ft. Hit: 6 (1d8 + 2) Bludgeoning damage."
+    },
+    {
+     "name": "Sling",
+     "text": "Ranged Attack Roll: +4, range 30/120 ft. Hit: 4 (1d4 + 2) Bludgeoning damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Cunning Action",
+     "text": "Torren takes the Dash, Disengage or Hide action."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Investigation +3, Perception +2, Sleight of Hand +4, Stealth +4",
+   "senses": "Darkvision 60 ft., Passive Perception 12",
+   "languages": "Common, Primordial",
+   "hpAvg": 45,
+   "init": 2,
+   "xp": 450,
+   "pb": 2,
+   "kind": "npc",
+   "tactics": "Fights only for salvage or to get his crew out. Will sell anyone out for a better offer, except his crew."
+  },
+  "NPC-012": {
+   "id": "NPC-012",
+   "name": "Sera Noll",
+   "meta": "Small Humanoid (Harengon), Neutral",
+   "ac": 13,
+   "hp": "49 (11d6 + 11)",
+   "speed": "35 ft.",
+   "ab": [
+    9,
+    16,
+    12,
+    15,
+    14,
+    14
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "Sneak Attack (1/Turn)",
+     "text": "It deals an extra 7 (2d6) damage when it hits with an attack roll and has Advantage, or when an ally is within 5 feet of the target."
+    },
+    {
+     "name": "Rabbit Hop",
+     "text": "Sera can jump 15 feet as a Bonus Action without provoking Opportunity Attacks."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Sera makes two Dagger attacks."
+    },
+    {
+     "name": "Dagger",
+     "text": "Melee or Ranged Attack Roll: +5, reach 5 ft. or range 20/60 ft. Hit: 5 (1d4 + 3) Piercing damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Sera casts one of the following spells, using Intelligence (spell save DC 12): At will: Mage Hand (invisible), Minor Illusion. 2/day each: Disguise Self, Sleep. 1/day: Invisibility."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Deception +4, Insight +6, Investigation +4, Stealth +5",
+   "senses": "Passive Perception 14",
+   "languages": "Common, three others",
+   "hpAvg": 49,
+   "init": 3,
+   "xp": 700,
+   "pb": 2,
+   "kind": "npc",
+   "tactics": "Watches, never strikes first. Uses illusions to get away and Mage Hand to take one thing on the way out: usually a letter or a journal."
+  },
+  "NPC-017": {
+   "id": "NPC-017",
+   "name": "Inquisitor Malrik Vael",
+   "meta": "Medium Humanoid (Tiefling), Lawful Neutral",
+   "ac": 16,
+   "hp": "110 (17d8 + 34)",
+   "speed": "30 ft.",
+   "ab": [
+    12,
+    18,
+    14,
+    13,
+    16,
+    12
+   ],
+   "cr": "8",
+   "traits": [
+    {
+     "name": "Umbral Sight",
+     "text": "While in darkness, Malrik has the Invisible condition to creatures that rely on Darkvision to see him."
+    },
+    {
+     "name": "Dread Ambush",
+     "text": "On his first turn of a combat, Malrik's Speed increases by 10 feet and he can make one extra Crossbow or Rapier attack that deals an extra 9 (2d8) Psychic damage on a hit."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Malrik makes two Rapier or Hand Crossbow attacks, and can replace one with Brand of Silence (see Celestial Inquisitor [CRE-003], DC 14)."
+    },
+    {
+     "name": "Rapier",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 8 (1d8 + 4) Piercing damage plus 7 (2d6) Fire damage."
+    },
+    {
+     "name": "Hand Crossbow",
+     "text": "Ranged Attack Roll: +7, range 30/120 ft. Hit: 7 (1d6 + 4) Piercing damage plus 7 (2d6) Fire damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Dex +7, Wis +6",
+   "skills": "Insight +6, Investigation +4, Perception +9, Stealth +10",
+   "res": "Fire",
+   "senses": "Darkvision 120 ft., Passive Perception 19",
+   "languages": "Common, Infernal",
+   "hpAvg": 110,
+   "init": 4,
+   "xp": 3900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Arrives already knowing who's guilty. Strikes from darkness at the first round, brands spellcasters, and walks away if outmatched: he always comes back better prepared."
+  },
+  "NPC-018": {
+   "id": "NPC-018",
+   "name": "Knight-Commander Edric Thalmos",
+   "meta": "Medium Humanoid (Minotaur), Lawful Good",
+   "ac": 18,
+   "hp": "136 (16d8 + 64)",
+   "speed": "30 ft.",
+   "ab": [
+    19,
+    10,
+    18,
+    11,
+    14,
+    13
+   ],
+   "cr": "9",
+   "traits": [
+    {
+     "name": "Goring Rush",
+     "text": "If Edric moves at least 20 feet straight toward a target and hits it with Horns on the same turn, the target takes an extra 9 (2d8) Piercing damage and has the Prone condition if Large or smaller."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Edric makes three Greataxe attacks, or two Greataxe and one Horns."
+    },
+    {
+     "name": "Greataxe",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 17 (2d12 + 4) Slashing damage."
+    },
+    {
+     "name": "Horns",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 13 (2d8 + 4) Piercing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Battle Command (3/Day)",
+     "text": "One ally within 30 feet makes one weapon attack as a Reaction, adding 1d8 to the damage."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Str +8, Con +8",
+   "skills": "Athletics +8, Intimidation +5",
+   "senses": "Passive Perception 12",
+   "languages": "Common, the Legion's battle-tongue",
+   "gear": "Plate Armor, Greataxe",
+   "hpAvg": 136,
+   "init": 0,
+   "xp": 5000,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Leads from the front. Fights the Legion harder than anyone, and hesitates, just once, before striking an old comrade."
+  },
+  "NPC-021": {
+   "id": "NPC-021",
+   "name": "Seraphis the Ascended",
+   "meta": "Medium Humanoid (Warforged), Lawful Neutral",
+   "ac": 20,
+   "hp": "127 (15d8 + 60)",
+   "speed": "30 ft.",
+   "ab": [
+    20,
+    10,
+    18,
+    10,
+    14,
+    16
+   ],
+   "cr": "10",
+   "traits": [
+    {
+     "name": "Vow of Enmity",
+     "text": "At the start of combat, Seraphis chooses one creature. It has Advantage on attack rolls against that creature for 1 minute."
+    },
+    {
+     "name": "Constructed Resilience",
+     "text": "Seraphis doesn't need to eat, drink, breathe or sleep."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Seraphis makes three Greatsword attacks."
+    },
+    {
+     "name": "Greatsword",
+     "text": "Melee Attack Roll: +9, reach 5 ft. Hit: 12 (2d6 + 5) Slashing damage plus 9 (2d8) Radiant damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Relentless Avenger",
+     "text": "After hitting with an Opportunity Attack, Seraphis moves up to half its Speed without provoking Opportunity Attacks."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Con +8, Wis +6",
+   "skills": "Athletics +9, Intimidation +7",
+   "res": "Poison",
+   "cimm": "Exhaustion, Poisoned",
+   "senses": "Passive Perception 12",
+   "languages": "Common, Celestial; it rarely speaks",
+   "gear": "White plate that never ages, Greatsword",
+   "hpAvg": 127,
+   "init": 0,
+   "xp": 5900,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Silent. Chooses one target, the condemned, and pursues it through everything else. Doesn't stop until the sentence is carried out, or it is destroyed."
+  },
+  "NPC-024": {
+   "id": "NPC-024",
+   "name": "Warlord Garron Kael",
+   "meta": "Medium Humanoid (Hobgoblin), Lawful Evil",
+   "ac": 18,
+   "hp": "210 (20d8 + 120)",
+   "speed": "40 ft.",
+   "ab": [
+    22,
+    14,
+    22,
+    14,
+    13,
+    18
+   ],
+   "cr": "14",
+   "traits": [
+    {
+     "name": "Rage (3/Day)",
+     "text": "As a Bonus Action, Garron rages for 1 minute: Resistance to Bludgeoning, Piercing and Slashing damage, and +3 damage on Strength-based attacks (included)."
+    },
+    {
+     "name": "Legendary Resistance (2/Day)",
+     "text": "If Garron fails a saving throw, he can choose to succeed instead."
+    },
+    {
+     "name": "Fortune of the Many",
+     "text": "Once per turn, when Garron misses, he gains +1 to the roll for each ally he can see within 30 feet (max +5)."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Garron makes three Greatsword attacks."
+    },
+    {
+     "name": "Greatsword",
+     "text": "Melee Attack Roll: +11, reach 5 ft. Hit: 23 (4d6 + 9) Slashing damage while raging, or 20 (4d6 + 6) otherwise."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Frenzy",
+     "text": "While raging, Garron makes one extra Greatsword attack."
+    }
+   ],
+   "reactions": [],
+   "legendary": [
+    {
+     "name": "Uses",
+     "text": "2, regained at the start of his turn. Immediately after another creature's turn, he can expend a use to take one of the following actions."
+    },
+    {
+     "name": "Strike",
+     "text": "He makes one Greatsword attack."
+    },
+    {
+     "name": "Warlord's Bellow",
+     "text": "Each ally within 60 feet that can hear him gains 10 Temporary Hit Points."
+    }
+   ],
+   "saves": "Str +11, Con +11, Wis +6",
+   "skills": "Athletics +11, Intimidation +9",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Goblin",
+   "gear": "Plate Armor, Greatsword",
+   "hpAvg": 210,
+   "init": 2,
+   "xp": 11500,
+   "pb": 5,
+   "kind": "npc",
+   "tactics": "Fights in the open, where his Legion can see him win. Rages, then Frenzies. He never retreats, but his centurions will drag him out if he falls."
+  },
+  "NPC-026": {
+   "id": "NPC-026",
+   "name": "Champion Valrik the Undying",
+   "meta": "Medium Humanoid (Earth Genasi), Lawful Neutral",
+   "ac": 17,
+   "hp": "190 (20d8 + 100)",
+   "speed": "30 ft.",
+   "ab": [
+    21,
+    12,
+    20,
+    9,
+    14,
+    15
+   ],
+   "cr": "12",
+   "traits": [
+    {
+     "name": "Stone Skin",
+     "text": "Valrik's AC includes his skin of stone. He can't be knocked Prone while standing on earth or stone."
+    },
+    {
+     "name": "Rage of the Zealot (3/Day)",
+     "text": "As a Bonus Action, Valrik rages for 1 minute; while raging, the first creature he hits each turn takes an extra 5 (1d6 + 2) Radiant damage."
+    },
+    {
+     "name": "Undying (1/Day)",
+     "text": "When Valrik drops to 0 Hit Points while raging, he drops to 1 instead and his rage continues."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Valrik makes three Maul attacks."
+    },
+    {
+     "name": "Maul",
+     "text": "Melee Attack Roll: +9, reach 5 ft. Hit: 19 (4d6 + 5) Bludgeoning damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Str +9, Con +9",
+   "skills": "Athletics +9, Intimidation +6, Performance +6",
+   "res": "Bludgeoning, Piercing, Slashing while raging",
+   "senses": "Darkvision 60 ft., Passive Perception 12",
+   "languages": "Common, Primordial",
+   "hpAvg": 190,
+   "init": 1,
+   "xp": 8400,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Plays to the crowd. Takes the first hit on purpose so they see it bounce off. Has never been seen to fall, and has a plan in place to make sure nobody sees it."
+  },
+  "NPC-027": {
+   "id": "NPC-027",
+   "name": "Korga Bloodfang",
+   "meta": "Medium Humanoid (Orc), Chaotic Evil",
+   "ac": 16,
+   "hp": "150 (20d8 + 60)",
+   "speed": "30 ft.",
+   "ab": [
+    20,
+    14,
+    17,
+    10,
+    12,
+    14
+   ],
+   "cr": "9",
+   "traits": [
+    {
+     "name": "Relentless Endurance (1/Long Rest)",
+     "text": "When reduced to 0 Hit Points but not killed outright, Korga drops to 1 instead."
+    },
+    {
+     "name": "Improved Critical",
+     "text": "Korga's weapon attacks score a critical hit on a roll of 19 or 20."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Korga makes three Greataxe attacks."
+    },
+    {
+     "name": "Greataxe",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 18 (2d12 + 5) Slashing damage."
+    },
+    {
+     "name": "Handaxe",
+     "text": "Ranged Attack Roll: +8, range 20/60 ft. Hit: 8 (1d6 + 5) Slashing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Adrenaline Rush",
+     "text": "Korga moves up to her Speed toward an enemy and gains 10 Temporary Hit Points."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Str +8, Con +7",
+   "skills": "Athletics +8, Intimidation +6",
+   "senses": "Darkvision 120 ft., Passive Perception 11",
+   "languages": "Common, Orc",
+   "hpAvg": 150,
+   "init": 2,
+   "xp": 5000,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "A pit-fighter still. Feints, laughs, and goes for the throat of whoever looks most like a champion. Doesn't stop at 0 Hit Points the first time."
+  },
+  "NPC-028": {
+   "id": "NPC-028",
+   "name": "Lyris Darkbane",
+   "meta": "Medium Humanoid (Bloomborn), Neutral",
+   "ac": 14,
+   "hp": "99 (18d8 + 18)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    14,
+    13,
+    14,
+    17,
+    12
+   ],
+   "cr": "7",
+   "traits": [
+    {
+     "name": "Halo of Spores",
+     "text": "Each creature that starts its turn within 10 feet of Lyris takes 7 (2d6) Necrotic damage."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Lyris makes two Rot Touch attacks, or uses Raise the Fallen and makes one Rot Touch."
+    },
+    {
+     "name": "Rot Touch",
+     "text": "Melee Attack Roll: +6, reach 5 ft. Hit: 12 (2d8 + 3) Necrotic damage."
+    },
+    {
+     "name": "Raise the Fallen (Recharge 5-6)",
+     "text": "Up to four corpses of Medium or Small creatures within 30 feet rise as spore servants (use Zombie) under Lyris's command until it dies."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Lyris casts one of the following spells, using Wisdom (spell save DC 14): At will: Chill Touch (2d10). 2/day each: Blight, Cloudkill."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Con +4, Wis +6",
+   "skills": "Medicine +6, Nature +5",
+   "res": "Necrotic, Poison",
+   "senses": "Darkvision 60 ft., Passive Perception 13",
+   "languages": "Common, the Bloom's Communion",
+   "hpAvg": 99,
+   "init": 2,
+   "xp": 2900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Raises the dead before anything else, then fights from behind them. Treats the battle as a garden. Its dead fall apart into spores when it leaves."
+  },
+  "NPC-029": {
+   "id": "NPC-029",
+   "name": "Tormek Ironheart",
+   "meta": "Medium Humanoid (Dwarf), Lawful Neutral",
+   "ac": 20,
+   "hp": "147 (14d8 + 84)",
+   "speed": "25 ft.",
+   "ab": [
+    18,
+    10,
+    22,
+    16,
+    12,
+    10
+   ],
+   "cr": "10",
+   "traits": [
+    {
+     "name": "Impenetrable",
+     "text": "Critical hits against Tormek are normal hits. He has Resistance to Slashing and Piercing damage."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Tormek makes two Thunder Gauntlet attacks."
+    },
+    {
+     "name": "Thunder Gauntlet",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 13 (2d8 + 4) Thunder damage, and the target has Disadvantage on attack rolls against anyone but Tormek until the start of his next turn."
+    },
+    {
+     "name": "Lightning Launcher",
+     "text": "Ranged Attack Roll: +8, range 90/300 ft. Hit: 15 (2d10 + 4) Lightning damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [
+    {
+     "name": "Defensive Field",
+     "text": "Trigger: Tormek is Bloodied at the start of his turn. Response: He gains 10 Temporary Hit Points."
+    }
+   ],
+   "legendary": [],
+   "saves": "Con +10, Int +7",
+   "skills": "Athletics +8, Arcana +7",
+   "res": "Poison",
+   "senses": "Darkvision 120 ft., Passive Perception 11",
+   "languages": "Common, Dwarvish",
+   "gear": "Armour he built himself (no blade has pierced it)",
+   "hpAvg": 147,
+   "init": 0,
+   "xp": 5900,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Steps in front of his allies and dares anyone to hit him. Pulls the most dangerous enemy to him with Thunder Gauntlets, then holds the line."
+  },
+  "NPC-030": {
+   "id": "NPC-030",
+   "name": "Riven the Red",
+   "meta": "Medium Humanoid (Yuan-ti), Neutral Evil",
+   "ac": 16,
+   "hp": "117 (18d8 + 36)",
+   "speed": "30 ft.",
+   "ab": [
+    12,
+    20,
+    15,
+    14,
+    13,
+    16
+   ],
+   "cr": "9",
+   "traits": [
+    {
+     "name": "Assassinate",
+     "text": "Riven has Advantage on attack rolls against any creature that hasn't taken a turn yet in the combat, and any hit against a Surprised creature is a critical hit."
+    },
+    {
+     "name": "Sneak Attack (1/Turn)",
+     "text": "It deals an extra 21 (6d6) damage when it hits with an attack roll and has Advantage, or when an ally is within 5 feet of the target."
+    },
+    {
+     "name": "Magic Resistance",
+     "text": "Riven has Advantage on saving throws against spells."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Riven makes two Headsman's Blade attacks."
+    },
+    {
+     "name": "Headsman's Blade",
+     "text": "Melee Attack Roll: +9, reach 5 ft. Hit: 9 (1d8 + 5) Slashing damage plus 7 (2d6) Poison damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Cunning Action",
+     "text": "Riven takes the Dash, Disengage or Hide action."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Dex +9, Int +6",
+   "skills": "Deception +7, Perception +5, Stealth +13",
+   "res": "Poison",
+   "cimm": "Poisoned",
+   "senses": "Darkvision 60 ft., Passive Perception 15",
+   "languages": "Common, Draconic, Abyssal",
+   "hpAvg": 117,
+   "init": 5,
+   "xp": 5000,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Smiles all the way in. Strikes before anyone has acted, at whoever is wearing a crown or giving orders. Leaves if the first blow doesn't kill."
+  },
+  "NPC-032": {
+   "id": "NPC-032",
+   "name": "Balar the Unchained",
+   "meta": "Medium Humanoid (Goliath), Chaotic Neutral",
+   "ac": 14,
+   "hp": "136 (13d10 + 65)",
+   "speed": "40 ft.",
+   "ab": [
+    21,
+    14,
+    20,
+    8,
+    12,
+    10
+   ],
+   "cr": "8",
+   "traits": [
+    {
+     "name": "Unarmoured",
+     "text": "Balar's AC includes his Constitution."
+    },
+    {
+     "name": "Rage of the Beast (3/Day)",
+     "text": "As a Bonus Action, Balar rages for 1 minute: Resistance to Bludgeoning, Piercing and Slashing damage, and he grows claws and a bite."
+    },
+    {
+     "name": "Stone's Endurance (1/Short Rest)",
+     "text": "When Balar takes damage, he reduces it by 1d12 + 5."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Balar makes two Chain attacks, or while raging, two Claw attacks and one Bite."
+    },
+    {
+     "name": "Chain",
+     "text": "Melee Attack Roll: +8, reach 10 ft. Hit: 14 (2d8 + 5) Bludgeoning damage, and the target has the Grappled condition (escape DC 16)."
+    },
+    {
+     "name": "Claw",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 11 (1d12 + 5) Slashing damage."
+    },
+    {
+     "name": "Bite",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 9 (1d8 + 5) Piercing damage, and Balar gains 5 Temporary Hit Points."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Str +8, Con +8",
+   "skills": "Athletics +8, Survival +4",
+   "senses": "Passive Perception 11",
+   "languages": "Common, Giant",
+   "gear": "Broken chains, still on his wrists",
+   "hpAvg": 136,
+   "init": 2,
+   "xp": 3900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Charges whoever looks like an owner of slaves. Can be talked out of a fight by anyone who frees someone in front of him."
+  },
+  "NPC-045": {
+   "id": "NPC-045",
+   "name": "Selene Duskveil",
+   "meta": "Medium Humanoid (Tabaxi), Neutral Evil",
+   "ac": 16,
+   "hp": "105 (14d8 + 42)",
+   "speed": "40 ft., climb 20 ft.",
+   "ab": [
+    11,
+    20,
+    16,
+    13,
+    14,
+    12
+   ],
+   "cr": "11",
+   "traits": [
+    {
+     "name": "Assassinate",
+     "text": "Selene has Advantage on attack rolls against any creature that hasn't taken a turn yet in the combat, and any hit against a Surprised creature is a critical hit."
+    },
+    {
+     "name": "Sneak Attack (1/Turn)",
+     "text": "It deals an extra 28 (8d6) damage when it hits with an attack roll and has Advantage, or when an ally is within 5 feet of the target."
+    },
+    {
+     "name": "Feline Agility (Recharges when she ends a turn without moving)",
+     "text": "Selene doubles her Speed until the end of the turn."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Selene makes three Claw-blade attacks."
+    },
+    {
+     "name": "Claw-blade",
+     "text": "Melee Attack Roll: +9, reach 5 ft. Hit: 10 (1d10 + 5) Slashing damage plus 7 (2d6) Poison damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Cunning Action",
+     "text": "Selene takes the Dash, Disengage or Hide action."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Dex +9, Int +5",
+   "skills": "Acrobatics +9, Perception +6, Stealth +13",
+   "senses": "Darkvision 60 ft., Passive Perception 16",
+   "languages": "Common, Elvish",
+   "hpAvg": 105,
+   "init": 5,
+   "xp": 7200,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "No target has ever survived her because she never fights a fair round: she waits for the perfect moment, takes it, and is gone before the second."
+  },
+  "NPC-048": {
+   "id": "NPC-048",
+   "name": "Cazrin \"the Hollow Blade\"",
+   "meta": "Medium Humanoid (Half-elf), Neutral",
+   "ac": 15,
+   "hp": "84 (13d8 + 26)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    18,
+    14,
+    12,
+    14,
+    8
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Sneak Attack (1/Turn)",
+     "text": "It deals an extra 17 (5d6) damage when it hits with an attack roll and has Advantage, or when an ally is within 5 feet of the target."
+    },
+    {
+     "name": "Psychic Blades",
+     "text": "Cazrin's blades are made of his own mind. He is never disarmed."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Cazrin makes two Psychic Blade attacks."
+    },
+    {
+     "name": "Psychic Blade",
+     "text": "Melee or Ranged Attack Roll: +7, reach 5 ft. or range 60 ft. Hit: 13 (2d8 + 4) Psychic damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Hollow Step",
+     "text": "Cazrin teleports up to 30 feet to an unoccupied space he can see."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Dex +7, Wis +5",
+   "skills": "Perception +5, Stealth +7",
+   "res": "Psychic",
+   "senses": "Darkvision 60 ft., Passive Perception 15",
+   "languages": "Common; he remembers no other",
+   "hpAvg": 84,
+   "init": 4,
+   "xp": 2300,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Fights without anger, because the Pact took that too. Asks each opponent if they knew him before. If one says yes, he stops."
+  },
+  "NPC-052": {
+   "id": "NPC-052",
+   "name": "Elira Nightshade",
+   "meta": "Small Humanoid (Kobold), Neutral Evil",
+   "ac": 16,
+   "hp": "77 (14d6 + 28)",
+   "speed": "45 ft.",
+   "ab": [
+    8,
+    20,
+    14,
+    10,
+    16,
+    8
+   ],
+   "cr": "7",
+   "traits": [
+    {
+     "name": "Silent Daggers",
+     "text": "A creature hit by Elira's daggers can't speak until the start of her next turn, so it can't cast spells with a Verbal component."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Elira makes three attacks: Dagger or Unarmed Strike in any combination."
+    },
+    {
+     "name": "Dagger",
+     "text": "Melee or Ranged Attack Roll: +8, reach 5 ft. or range 20/60 ft. Hit: 10 (2d4 + 5) Piercing damage."
+    },
+    {
+     "name": "Unarmed Strike",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 8 (1d6 + 5) Bludgeoning damage."
+    },
+    {
+     "name": "Shadow Arts",
+     "text": "Elira casts Darkness or Silence, using Wisdom (spell save DC 14), without spending components."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Shadow Step",
+     "text": "While in dim light or darkness, Elira teleports up to 60 feet to another space in dim light or darkness, and has Advantage on her next attack this turn."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Dex +8, Wis +6",
+   "skills": "Acrobatics +8, Stealth +11",
+   "senses": "Darkvision 60 ft., Passive Perception 13",
+   "languages": "Common, Draconic",
+   "hpAvg": 77,
+   "init": 5,
+   "xp": 2900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Kills sound first: the room goes silent, and then she moves. Hunts other assassins for the joy of it."
+  },
+  "NPC-055": {
+   "id": "NPC-055",
+   "name": "Korrak Grimtusk",
+   "meta": "Medium Humanoid (Orc), Chaotic Neutral",
+   "ac": 15,
+   "hp": "95 (10d10 + 40)",
+   "speed": "35 ft.",
+   "ab": [
+    17,
+    18,
+    18,
+    10,
+    15,
+    9
+   ],
+   "cr": "7",
+   "traits": [
+    {
+     "name": "Colossus Slayer",
+     "text": "Once per turn, when Korrak hits a creature that is missing any Hit Points, it takes an extra 4 (1d8) damage."
+    },
+    {
+     "name": "Relentless Endurance (1/Long Rest)",
+     "text": "When reduced to 0 Hit Points but not killed outright, Korrak drops to 1 instead."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Korrak makes three attacks, using Greatsword or Longbow in any combination."
+    },
+    {
+     "name": "Greatsword",
+     "text": "Melee Attack Roll: +6, reach 5 ft. Hit: 10 (2d6 + 3) Slashing damage."
+    },
+    {
+     "name": "Longbow",
+     "text": "Ranged Attack Roll: +7, range 150/600 ft. Hit: 8 (1d8 + 4) Piercing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Hunter's Mark",
+     "text": "Korrak marks a creature she can see; her attacks against it deal an extra 3 (1d6) Force damage for 1 hour."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "skills": "Athletics +6, Perception +5, Stealth +7, Survival +8",
+   "senses": "Darkvision 120 ft., Passive Perception 15",
+   "languages": "Common, Orc",
+   "hpAvg": 95,
+   "init": 4,
+   "xp": 2900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Hunts alone, so she never fights where she can be surrounded. Kills the leader of a warband, then lets the rest run home and tell it."
+  },
+  "NPC-058": {
+   "id": "NPC-058",
+   "name": "Sareth \"the Serpent\"",
+   "meta": "Medium Humanoid (Shadowkin), Neutral Evil",
+   "ac": 15,
+   "hp": "78 (12d8 + 24)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    20,
+    14,
+    11,
+    15,
+    10
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Umbral Sight",
+     "text": "In darkness Sareth has the Invisible condition to creatures that rely on Darkvision to see him."
+    },
+    {
+     "name": "Dread Ambush",
+     "text": "On his first turn of a combat, Sareth's Speed increases by 10 feet and he makes one extra attack dealing an extra 9 (2d8) Psychic damage on a hit."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Sareth makes two attacks, using Serpent Blade or Blowgun in any combination."
+    },
+    {
+     "name": "Serpent Blade",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 9 (1d8 + 5) Piercing damage plus 7 (2d6) Poison damage."
+    },
+    {
+     "name": "Blowgun",
+     "text": "Ranged Attack Roll: +8, range 25/100 ft. Hit: 6 (1d2 + 5) Piercing damage, and the target makes a DC 14 Constitution save or has the Poisoned condition for 1 minute."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Shadow Step",
+     "text": "Sareth teleports up to 30 feet to an unoccupied space in dim light or darkness."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Dex +8, Wis +5",
+   "skills": "Perception +8, Stealth +11, Survival +5",
+   "res": "Necrotic",
+   "senses": "Darkvision 120 ft., Passive Perception 18",
+   "languages": "Common, Elvish",
+   "hpAvg": 78,
+   "init": 5,
+   "xp": 2300,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "You will not see him coming: he strikes from the canopy on the first round, then is somewhere else entirely."
+  },
+  "NPC-061": {
+   "id": "NPC-061",
+   "name": "Jorik Fangtorn",
+   "meta": "Medium Humanoid (Bloomborn), Chaotic Good",
+   "ac": 15,
+   "hp": "84 (13d8 + 26)",
+   "speed": "40 ft.",
+   "ab": [
+    14,
+    19,
+    14,
+    11,
+    17,
+    13
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Dreadful Strikes",
+     "text": "Once per turn, Jorik's weapon hit deals an extra 4 (1d8) Psychic damage."
+    },
+    {
+     "name": "Otherworldly Glamour",
+     "text": "Jorik adds his Wisdom to Charisma checks (included in his manner, if not his statistics)."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Jorik makes two Longbow or Shortsword attacks."
+    },
+    {
+     "name": "Shortsword",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 7 (1d6 + 4) Piercing damage."
+    },
+    {
+     "name": "Longbow",
+     "text": "Ranged Attack Roll: +7, range 150/600 ft. Hit: 8 (1d8 + 4) Piercing damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [
+    {
+     "name": "Beguiling Twist",
+     "text": "Trigger: Jorik or a creature within 120 feet succeeds on a save against being Charmed or Frightened. Response: A different creature within 120 feet makes a DC 14 Wisdom save or has that condition for 1 minute."
+    }
+   ],
+   "legendary": [],
+   "skills": "Nature +3, Perception +6, Stealth +7, Survival +9",
+   "senses": "Darkvision 60 ft., Passive Perception 16",
+   "languages": "Common, Sylvan",
+   "hpAvg": 84,
+   "init": 4,
+   "xp": 2300,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Leaves no tracks, and fights the same way: never seen where he was a moment ago. Spares anyone who shows respect to the forest."
+  },
+  "NPC-069": {
+   "id": "NPC-069",
+   "name": "Titan-King Varuun",
+   "meta": "Huge Humanoid (Goliath), Chaotic Neutral",
+   "ac": 17,
+   "hp": "253 (22d12 + 110)",
+   "speed": "40 ft.",
+   "ab": [
+    25,
+    12,
+    20,
+    10,
+    13,
+    16
+   ],
+   "cr": "15",
+   "traits": [
+    {
+     "name": "Rage of the Zealot",
+     "text": "Varuun is always raging: Resistance to Bludgeoning, Piercing and Slashing damage, and the first creature he hits each turn takes an extra 7 (2d6) Radiant damage."
+    },
+    {
+     "name": "Legendary Resistance (3/Day)",
+     "text": "If Varuun fails a saving throw, he can choose to succeed instead."
+    },
+    {
+     "name": "Rift-Grown",
+     "text": "Varuun is far bigger than any living goliath. He can grapple Huge creatures."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Varuun makes three Titan Hammer attacks."
+    },
+    {
+     "name": "Titan Hammer",
+     "text": "Melee Attack Roll: +12, reach 10 ft. Hit: 24 (3d10 + 8) Bludgeoning damage, and the target has the Prone condition if it's Large or smaller."
+    },
+    {
+     "name": "Hurl Boulder",
+     "text": "Ranged Attack Roll: +12, range 60/240 ft. Hit: 30 (4d10 + 8) Bludgeoning damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [
+    {
+     "name": "Uses",
+     "text": "2, regained at the start of his turn. Immediately after another creature's turn, he can expend a use to take one of the following actions."
+    },
+    {
+     "name": "Hammer",
+     "text": "He makes one Titan Hammer attack."
+    },
+    {
+     "name": "Stomp",
+     "text": "Each creature within 10 feet makes a DC 20 Dexterity save or has the Prone condition."
+    }
+   ],
+   "saves": "Str +12, Con +10",
+   "skills": "Athletics +12, Intimidation +8",
+   "senses": "Passive Perception 11",
+   "languages": "Common, Giant",
+   "hpAvg": 253,
+   "init": 1,
+   "xp": 13000,
+   "pb": 5,
+   "kind": "npc",
+   "tactics": "Rules by being the strongest, so he fights in the open and alone. Respects anyone who lands a real blow, and offers a place among the Titans to whoever survives."
+  },
+  "NPC-071": {
+   "id": "NPC-071",
+   "name": "Magistrate Althros",
+   "meta": "Medium Humanoid (Githzerai), Lawful Neutral",
+   "ac": 18,
+   "hp": "143 (22d8 + 44)",
+   "speed": "50 ft.",
+   "ab": [
+    12,
+    20,
+    14,
+    18,
+    20,
+    12
+   ],
+   "cr": "12",
+   "traits": [
+    {
+     "name": "Psychic Defense",
+     "text": "Althros's AC includes his Wisdom."
+    },
+    {
+     "name": "Mental Fortress",
+     "text": "Althros has Advantage on saving throws against being Charmed or Frightened, and can't have his thoughts read."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Althros makes four Unarmed Strike attacks."
+    },
+    {
+     "name": "Unarmed Strike",
+     "text": "Melee Attack Roll: +9, reach 5 ft. Hit: 10 (1d10 + 5) Bludgeoning damage plus 5 (1d10) Psychic damage. Open Hand: the target makes a DC 17 Strength save or is pushed 15 feet or knocked Prone (Althros's choice)."
+    },
+    {
+     "name": "Judgement (Recharge 5-6)",
+     "text": "Wisdom Saving Throw: DC 17, one creature that has broken the realm's law within 60 feet. Failure: The target has the Stunned condition until the end of its next turn."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Dex +9, Int +8, Wis +9",
+   "skills": "Insight +13, Investigation +8, Perception +9",
+   "res": "Psychic",
+   "senses": "Passive Perception 19",
+   "languages": "Common, Gith, telepathy 60 ft.",
+   "hpAvg": 143,
+   "init": 5,
+   "xp": 8400,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Fights only to restrain, and only after stating the law that was broken. Ends a fight the moment the lawbreaker submits."
+  },
+  "NPC-073": {
+   "id": "NPC-073",
+   "name": "Selka \"the Pactmother\"",
+   "meta": "Medium Humanoid (Yuan-ti), Lawful Evil",
+   "ac": 15,
+   "hp": "142 (19d8 + 57)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    14,
+    16,
+    18,
+    15,
+    22
+   ],
+   "cr": "12",
+   "traits": [
+    {
+     "name": "Magic Resistance",
+     "text": "Selka has Advantage on saving throws against spells."
+    },
+    {
+     "name": "Knows Every Betrayal",
+     "text": "Selka can't be Surprised, and has Advantage on Initiative."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Selka uses Mind Lash twice."
+    },
+    {
+     "name": "Mind Lash",
+     "text": "Ranged Attack Roll: +10, range 120 ft. Hit: 22 (4d8 + 4) Psychic damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Selka casts one of the following spells, using Charisma (spell save DC 18): At will: Detect Thoughts, Suggestion. 2/day each: Dominate Person, Hypnotic Pattern. 1/day: Mass Suggestion."
+    }
+   ],
+   "bonus": [],
+   "reactions": [
+    {
+     "name": "Call in a Debt",
+     "text": "Trigger: A creature that owes the Company anything attacks Selka. Response: It makes a DC 18 Wisdom save or the attack misses and it can't attack her until the end of its next turn."
+    }
+   ],
+   "legendary": [],
+   "saves": "Wis +6, Cha +10",
+   "skills": "Deception +14, Insight +10, Persuasion +10",
+   "res": "Psychic",
+   "imm": "Poison",
+   "cimm": "Poisoned",
+   "senses": "Darkvision 60 ft., Passive Perception 12",
+   "languages": "Common, Abyssal, Deep Speech, telepathy 60 ft.",
+   "hpAvg": 142,
+   "init": 2,
+   "xp": 8400,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Never in the room where the fighting is, if she can help it. If cornered, she reminds each enemy of their debts to the Bloodbound Company, by name."
+  },
+  "NPC-080": {
+   "id": "NPC-080",
+   "name": "Aedrin \"the Cinderfather\"",
+   "meta": "Medium Humanoid (Tiefling), Chaotic Evil",
+   "ac": 15,
+   "hp": "161 (19d8 + 76)",
+   "speed": "30 ft., fly 30 ft.",
+   "ab": [
+    12,
+    14,
+    18,
+    14,
+    13,
+    20
+   ],
+   "cr": "13",
+   "traits": [
+    {
+     "name": "Burning Forever",
+     "text": "Aedrin is always on fire. A creature that touches him or hits him with a melee attack within 5 feet takes 7 (2d6) Fire damage."
+    },
+    {
+     "name": "Cursed to Live",
+     "text": "When Aedrin drops to 0 Hit Points, he is reduced to ash and reforms 1d10 days later in the ruin of his capital, unless the curse is broken."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Aedrin uses Searing Ray three times."
+    },
+    {
+     "name": "Searing Ray",
+     "text": "Ranged Attack Roll: +10, range 120 ft. Hit: 18 (3d8 + 5) Fire damage."
+    },
+    {
+     "name": "Pyre (Recharge 5-6)",
+     "text": "Dexterity Saving Throw: DC 18, each creature in a 20-foot-radius Sphere within 120 feet. Failure: 45 (10d8) Fire damage, and its flammable gear catches fire. Success: Half damage only."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Celestial Flame (1/Day)",
+     "text": "Aedrin regains 25 (5d8 + 3) Hit Points, and each creature of his choice within 10 feet takes 9 (2d8) Radiant damage."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Con +9, Cha +10",
+   "imm": "Fire",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Infernal",
+   "hpAvg": 161,
+   "init": 2,
+   "xp": 10000,
+   "pb": 5,
+   "kind": "npc",
+   "tactics": "Burns everything, including his own followers, and weeps while he does it. Can't die by fire. Begs any who reach him to end the curse, then fights them anyway."
+  },
+  "NPC-083": {
+   "id": "NPC-083",
+   "name": "Seraine \"the Eclipse Blade\"",
+   "meta": "Medium Humanoid (Githyanki), Neutral Evil",
+   "ac": 18,
+   "hp": "153 (18d8 + 72)",
+   "speed": "30 ft.",
+   "ab": [
+    20,
+    14,
+    18,
+    13,
+    14,
+    17
+   ],
+   "cr": "12",
+   "traits": [
+    {
+     "name": "Eclipse Blade",
+     "text": "Seraine's sword sheds magical darkness in a 15-foot radius when she chooses. She can see through it; nobody else can."
+    },
+    {
+     "name": "Vow of Enmity",
+     "text": "At the start of combat, Seraine chooses one creature; she has Advantage on attack rolls against it."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Seraine makes three Eclipse Blade attacks."
+    },
+    {
+     "name": "Eclipse Blade",
+     "text": "Melee Attack Roll: +9, reach 5 ft. Hit: 14 (2d8 + 5) Slashing damage plus 13 (3d8) Necrotic damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Githyanki Step",
+     "text": "Seraine teleports up to 30 feet to an unoccupied space she can see."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Con +8, Wis +6, Cha +7",
+   "skills": "Athletics +9, Intimidation +7",
+   "res": "Necrotic",
+   "senses": "Darkvision 60 ft. (sees through magical darkness), Passive Perception 12",
+   "languages": "Common, Gith",
+   "gear": "Plate Armor, a sword of darkness",
+   "hpAvg": 153,
+   "init": 2,
+   "xp": 8400,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Wears the eclipse. Brings darkness down in the first round, fights inside it where she alone can see, and chooses the brightest-armoured foe."
+  },
+  "NPC-085": {
+   "id": "NPC-085",
+   "name": "Cassiel \"the False Dawn\"",
+   "meta": "Medium Humanoid (Aasimar), Chaotic Evil",
+   "ac": 17,
+   "hp": "144 (17d8 + 68)",
+   "speed": "30 ft., fly 30 ft.",
+   "ab": [
+    16,
+    14,
+    18,
+    14,
+    13,
+    20
+   ],
+   "cr": "11",
+   "traits": [
+    {
+     "name": "Fallen Wings",
+     "text": "While Bloodied, Cassiel gains a Fly Speed of 30 feet and her Dark Ray deals an extra 7 (2d6) Necrotic damage."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Cassiel makes two Mace attacks and uses Dark Ray, or uses Dark Ray three times."
+    },
+    {
+     "name": "Mace",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 7 (1d6 + 4) Bludgeoning damage plus 9 (2d8) Necrotic damage."
+    },
+    {
+     "name": "Dark Ray",
+     "text": "Ranged Attack Roll: +9, range 120 ft. Hit: 16 (2d10 + 5) Necrotic damage."
+    },
+    {
+     "name": "Whispers of the False Dawn (Recharge 5-6)",
+     "text": "Wisdom Saving Throw: DC 17, each creature of her choice within 30 feet. Failure: 27 (6d8) Psychic damage, and the target has the Frightened condition until the end of its next turn. Success: Half damage only."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Wis +5, Cha +9",
+   "skills": "Persuasion +9, Religion +6",
+   "res": "Necrotic, Radiant",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Celestial, Deep Speech",
+   "hpAvg": 144,
+   "init": 2,
+   "xp": 7200,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Preaches through the whole fight. Targets Order knights and clerics first, to prove the gods don't answer. Unfolds wings of black light when Bloodied."
+  },
+  "NPC-087": {
+   "id": "NPC-087",
+   "name": "Father Iskar \"the Tidecaller\"",
+   "meta": "Medium Humanoid (Triton), Chaotic Evil",
+   "ac": 15,
+   "hp": "120 (16d8 + 48)",
+   "speed": "30 ft., swim 30 ft.",
+   "ab": [
+    14,
+    14,
+    16,
+    12,
+    14,
+    18
+   ],
+   "cr": "9",
+   "traits": [
+    {
+     "name": "Amphibious",
+     "text": "Iskar can breathe air and water."
+    },
+    {
+     "name": "Drowned Once",
+     "text": "Iskar can't drown, and has Advantage on saves against being Grappled or Restrained."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Iskar makes two Tentacle Lash attacks, or uses Call the Drowned and makes one Tentacle Lash."
+    },
+    {
+     "name": "Tentacle Lash",
+     "text": "Melee Attack Roll: +8, reach 15 ft. Hit: 13 (2d8 + 4) Bludgeoning damage plus 7 (2d6) Cold damage, and the target is pulled up to 10 feet toward Iskar."
+    },
+    {
+     "name": "Call the Drowned (Recharge 5-6)",
+     "text": "Two Drowned Saints [CRE-032] rise from water within 60 feet and act on Iskar's turn. They sink back into the water after 1 minute."
+    },
+    {
+     "name": "Tidal Wave (1/Day)",
+     "text": "Strength Saving Throw: DC 16, each creature in a 30-foot line. Failure: 33 (6d10) Bludgeoning damage, and the target is pushed 20 feet and knocked Prone. Success: Half damage only."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Con +7, Cha +8",
+   "res": "Cold",
+   "senses": "Darkvision 60 ft., Passive Perception 12",
+   "languages": "Common, Aquan, Primordial",
+   "hpAvg": 120,
+   "init": 2,
+   "xp": 5000,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "Fights with the sea at his back, or brings it with him. Calls up the drowned and lets them do the work while he preaches."
+  },
+  "NPC-095": {
+   "id": "NPC-095",
+   "name": "Justicar Quell",
+   "meta": "Small Fey (Fairy), Lawful Neutral",
+   "ac": 18,
+   "hp": "110 (20d6 + 40)",
+   "speed": "30 ft., fly 30 ft.",
+   "ab": [
+    10,
+    16,
+    14,
+    14,
+    16,
+    18
+   ],
+   "cr": "10",
+   "traits": [
+    {
+     "name": "Watcher's Will",
+     "text": "Quell and allies within 30 feet have Advantage on saves against being Charmed or Frightened."
+    },
+    {
+     "name": "Verdict",
+     "text": "Before combat Quell names one creature as guilty. Quell's attacks against it deal an extra 9 (2d8) Radiant damage."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Quell makes three Silver Sword attacks."
+    },
+    {
+     "name": "Silver Sword",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 10 (2d6 + 3) Slashing damage."
+    },
+    {
+     "name": "Abjure the Extraplanar (1/Day)",
+     "text": "Wisdom Saving Throw: DC 16, each Aberration, Celestial, Elemental, Fey or Fiend within 30 feet. Failure: The target has the Frightened condition for 1 minute and must move away from Quell."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Wis +7, Cha +8",
+   "skills": "Insight +7, Intimidation +8",
+   "res": "Psychic",
+   "cimm": "Charmed",
+   "senses": "Truesight 30 ft., Passive Perception 13",
+   "languages": "Common, Sylvan, and the hidden laws",
+   "hpAvg": 110,
+   "init": 3,
+   "xp": 5900,
+   "pb": 4,
+   "kind": "npc",
+   "tactics": "The verdict comes before the words: Quell strikes the condemned first, then explains why. Leaves the innocent alone, even if they attack."
+  },
+  "NPC-310": {
+   "id": "NPC-310",
+   "name": "Maro Grane",
+   "meta": "Medium Humanoid (Orc), Chaotic Neutral",
+   "ac": 18,
+   "hp": "119 (14d8 + 56)",
+   "speed": "30 ft.",
+   "ab": [
+    20,
+    12,
+    18,
+    10,
+    14,
+    12
+   ],
+   "cr": "8",
+   "traits": [
+    {
+     "name": "Glyph-Cut",
+     "text": "Maro's runes are cut from shoulder to wrist. He has Advantage on saving throws against being moved or knocked Prone."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Maro makes three Greatsword attacks."
+    },
+    {
+     "name": "Greatsword",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 12 (2d6 + 5) Slashing damage plus 3 (1d6) Force damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Giant's Might (2/Day)",
+     "text": "For 1 minute, Maro becomes Large, his reach becomes 10 feet, and his Greatsword deals an extra 3 (1d6) damage."
+    },
+    {
+     "name": "Storm Rune (1/Day)",
+     "text": "For 1 minute, Maro can use his Reaction to give a creature within 60 feet Advantage or Disadvantage on one roll."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Str +8, Con +7",
+   "skills": "Athletics +8, Survival +5",
+   "senses": "Darkvision 120 ft., Passive Perception 12",
+   "languages": "Common, Orc, Kaelith (in glyphs)",
+   "gear": "Glyph-cut armour, Greatsword, the Riftwalker's rope",
+   "hpAvg": 119,
+   "init": 1,
+   "xp": 3900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Fights for the Collective's cycles, never for himself. Uses his runes to grow and shove enemies off ledges. Stops if anyone mentions what the Rift took from him."
+  },
+  "NPC-338": {
+   "id": "NPC-338",
+   "name": "Scout-Captain Teague Dunmarsh",
+   "meta": "Medium Humanoid (Goliath), Lawful Neutral",
+   "ac": 15,
+   "hp": "93 (11d10 + 33)",
+   "speed": "35 ft.",
+   "ab": [
+    17,
+    16,
+    16,
+    11,
+    15,
+    9
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Mountain Born",
+     "text": "Teague ignores Difficult Terrain in the mountains and is unaffected by cold and high altitude."
+    },
+    {
+     "name": "Colossus Slayer",
+     "text": "Once per turn, when Teague hits a creature missing any Hit Points, it takes an extra 4 (1d8) damage."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Teague makes two attacks, using Surveyor's Spear or Longbow."
+    },
+    {
+     "name": "Surveyor's Spear",
+     "text": "Melee Attack Roll: +6, reach 10 ft. Hit: 10 (2d6 + 3) Piercing damage."
+    },
+    {
+     "name": "Longbow",
+     "text": "Ranged Attack Roll: +6, range 150/600 ft. Hit: 7 (1d8 + 3) Piercing damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [
+    {
+     "name": "Stone's Endurance (1/Short Rest)",
+     "text": "Trigger: Teague takes damage. Response: He reduces it by 9 (1d12 + 3)."
+    }
+   ],
+   "legendary": [],
+   "skills": "Athletics +6, Perception +5, Survival +8",
+   "senses": "Passive Perception 15",
+   "languages": "Common, Giant",
+   "hpAvg": 93,
+   "init": 3,
+   "xp": 1800,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Counts his paces, even in a fight. Fights from high ground with a bow, and falls back to the mountain paths he has mapped and his enemies haven't."
+  },
+  "NPC-372": {
+   "id": "NPC-372",
+   "name": "Tessk the Wayfinder",
+   "meta": "Medium Humanoid (Githyanki), Neutral",
+   "ac": 16,
+   "hp": "71 (11d8 + 22)",
+   "speed": "45 ft.",
+   "ab": [
+    12,
+    18,
+    14,
+    13,
+    16,
+    10
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Knows the Paths",
+     "text": "In the Hollow Verge, Tessk and anyone she guides can't become lost, and ignore Difficult Terrain."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Tessk makes three Unarmed Strike attacks, or two Silver Blade attacks."
+    },
+    {
+     "name": "Silver Blade",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 9 (1d10 + 4) Slashing damage plus 4 (1d8) Psychic damage."
+    },
+    {
+     "name": "Unarmed Strike",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 7 (1d6 + 4) Bludgeoning damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Shadow Step",
+     "text": "In dim light or darkness, Tessk teleports up to 60 feet to another space in dim light or darkness."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Dex +7, Wis +6",
+   "skills": "Acrobatics +7, Perception +6, Survival +9",
+   "senses": "Passive Perception 16",
+   "languages": "Common, Gith",
+   "hpAvg": 71,
+   "init": 4,
+   "xp": 1800,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Guides first, fights second. In a fight she uses the Verge itself, stepping through shadow to lead attackers onto paths that go nowhere."
+  },
+  "NPC-380": {
+   "id": "NPC-380",
+   "name": "Magister Ilse Varnholt",
+   "meta": "Small Humanoid (Gnome), Neutral Evil",
+   "ac": 13,
+   "hp": "78 (12d6 + 36)",
+   "speed": "25 ft.",
+   "ab": [
+    8,
+    14,
+    16,
+    18,
+    14,
+    16
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Prosecutor",
+     "text": "Ilse has Advantage on Charisma checks against anyone who fears Kaelholm's tribunals."
+    },
+    {
+     "name": "Unmasked",
+     "text": "Once her secret is out, Ilse can use A Teacher's Name, as an Eclipse-Touched."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Ilse uses Eclipse Ray twice."
+    },
+    {
+     "name": "Eclipse Ray",
+     "text": "Ranged Attack Roll: +7, range 120 ft. Hit: 13 (2d8 + 4) Necrotic damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Ilse casts one of the following spells, using Intelligence (spell save DC 15): At will: Message, Minor Illusion. 2/day each: Hold Person, Suggestion. 1/day: Darkness, Fear."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Int +7, Wis +5",
+   "skills": "Deception +9, Insight +5, Investigation +7, Persuasion +6",
+   "res": "Necrotic",
+   "senses": "Darkvision 60 ft., Passive Perception 12",
+   "languages": "Common, Gnomish, Kaelith",
+   "hpAvg": 78,
+   "init": 2,
+   "xp": 2300,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "In public, she has the party arrested rather than fight. Unmasked, she drops the powder: her eyes show the eclipse-ring, and she becomes Eclipse-Touched [CRE-540] in all but name."
+  },
+  "NPC-395": {
+   "id": "NPC-395",
+   "name": "Brakka Twice-Born",
+   "meta": "Medium Humanoid (Giff), Chaotic Good",
+   "ac": 15,
+   "hp": "126 (12d10 + 60)",
+   "speed": "30 ft.",
+   "ab": [
+    20,
+    12,
+    20,
+    9,
+    12,
+    14
+   ],
+   "cr": "8",
+   "traits": [
+    {
+     "name": "Headfirst Charge",
+     "text": "If Brakka moves at least 20 feet straight toward a target and hits it, the target takes an extra 9 (2d8) Bludgeoning damage and has the Prone condition if Large or smaller."
+    },
+    {
+     "name": "Second Shadow",
+     "text": "Once per combat, Brakka's mismatched shadow acts on its own: it makes one Axe attack against a random creature within 5 feet of her, friend or foe."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Brakka makes two Axe attacks, or one Axe attack and one Axe-gun shot."
+    },
+    {
+     "name": "Axe",
+     "text": "Melee Attack Roll: +8, reach 5 ft. Hit: 18 (2d12 + 5) Slashing damage."
+    },
+    {
+     "name": "Axe-gun Shot",
+     "text": "Ranged Attack Roll: +5, range 40/120 ft. Hit: 12 (2d10 + 1) Piercing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Rage (3/Day)",
+     "text": "Brakka rages for 1 minute: Resistance to Bludgeoning, Piercing and Slashing damage, and +2 damage with her Axe."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Str +8, Con +8",
+   "skills": "Athletics +8, Intimidation +5",
+   "senses": "Passive Perception 11",
+   "languages": "Common",
+   "gear": "Black-stone axe-gun",
+   "hpAvg": 126,
+   "init": 1,
+   "xp": 3900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Loud and generous until the bout starts, then frighteningly calm. Fights her own shadow as much as the enemy: sometimes it fights back."
+  },
+  "NPC-401": {
+   "id": "NPC-401",
+   "name": "Major Halloway Stroud",
+   "meta": "Large Humanoid (Giff), Lawful Neutral",
+   "ac": 17,
+   "hp": "105 (14d10 + 28)",
+   "speed": "30 ft.",
+   "ab": [
+    18,
+    12,
+    15,
+    11,
+    13,
+    14
+   ],
+   "cr": "6",
+   "traits": [
+    {
+     "name": "Firearms Expert",
+     "text": "Stroud ignores the Loading property of firearms, and his firearm attacks don't have Disadvantage within 5 feet of an enemy."
+    },
+    {
+     "name": "Regiment",
+     "text": "Stroud travels with 2d4 giff of the Twelfth Regiment (use Giff Shock Trooper from Spelljammer, or Veteran)."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Stroud makes three attacks, using Pistol, Musket or Sabre in any combination."
+    },
+    {
+     "name": "Pistol",
+     "text": "Ranged Attack Roll: +7, range 30/90 ft. Hit: 14 (2d10 + 3) Piercing damage."
+    },
+    {
+     "name": "Musket",
+     "text": "Ranged Attack Roll: +7, range 40/120 ft. Hit: 15 (2d12 + 2) Piercing damage."
+    },
+    {
+     "name": "Sabre",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 13 (2d8 + 4) Slashing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Volley!",
+     "text": "Each member of the Regiment within 60 feet that can hear Stroud makes one ranged attack as a Reaction."
+    }
+   ],
+   "reactions": [],
+   "legendary": [],
+   "saves": "Str +7, Con +5",
+   "skills": "Athletics +7, Intimidation +5",
+   "senses": "Passive Perception 11",
+   "languages": "Common",
+   "gear": "Red coat, two pistols, a musket, a regiment",
+   "hpAvg": 105,
+   "init": 1,
+   "xp": 2300,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Forms a line, fires by volley, and never retreats without orders, which he gives himself. Accepts honourable surrender, and expects the same."
+  },
+  "NPC-407": {
+   "id": "NPC-407",
+   "name": "Duel-Marshal Durro Oruun",
+   "meta": "Medium Humanoid (Hobgoblin), Lawful Neutral",
+   "ac": 18,
+   "hp": "65 (10d8 + 20)",
+   "speed": "30 ft.",
+   "ab": [
+    17,
+    12,
+    15,
+    12,
+    13,
+    11
+   ],
+   "cr": "4",
+   "traits": [
+    {
+     "name": "Fortune of the Many",
+     "text": "Once per turn, when Durro misses, he gains +1 to the roll for each ally he can see within 30 feet (max +5)."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Durro makes two Longsword attacks."
+    },
+    {
+     "name": "Longsword",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 7 (1d8 + 3) Slashing damage."
+    },
+    {
+     "name": "Shield Bash",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 5 (1d4 + 3) Bludgeoning damage, and the target has the Prone condition if it's Medium or smaller."
+    }
+   ],
+   "bonus": [],
+   "reactions": [
+    {
+     "name": "Parry",
+     "text": "Trigger: Durro is hit by a melee attack. Response: He adds 3 to his AC against that attack, possibly causing it to miss."
+    }
+   ],
+   "legendary": [],
+   "saves": "Str +5, Con +4",
+   "skills": "Athletics +5, Insight +3",
+   "senses": "Darkvision 60 ft., Passive Perception 11",
+   "languages": "Common, Goblin",
+   "gear": "Splint armour, longsword, shield, the ledger",
+   "hpAvg": 65,
+   "init": 1,
+   "xp": 1100,
+   "pb": 2,
+   "kind": "npc",
+   "tactics": "Fights by the rules of the ring, and stops the moment a challenger yields. Fights dirty only against the dead."
+  },
+  "NPC-425": {
+   "id": "NPC-425",
+   "name": "Iron Wim",
+   "meta": "Medium Humanoid (Warforged), Lawful Neutral",
+   "ac": 16,
+   "hp": "60 (8d8 + 24)",
+   "speed": "30 ft.",
+   "ab": [
+    17,
+    10,
+    16,
+    9,
+    13,
+    8
+   ],
+   "cr": "3",
+   "traits": [
+    {
+     "name": "One of the Dead",
+     "text": "Wim counts as Undead as well as a Humanoid for spells and effects that target either. Turn Undead affects him."
+    },
+    {
+     "name": "The Dead Stay Down for Him",
+     "text": "A Forgotten Legionnaire Wim hits doesn't use Won't Stay Down."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Wim makes two Shovel attacks."
+    },
+    {
+     "name": "Shovel",
+     "text": "Melee Attack Roll: +5, reach 5 ft. Hit: 10 (2d6 + 3) Bludgeoning damage."
+    }
+   ],
+   "bonus": [],
+   "reactions": [],
+   "legendary": [],
+   "res": "Necrotic, Poison",
+   "cimm": "Exhaustion, Poisoned",
+   "senses": "Passive Perception 11",
+   "languages": "Common",
+   "gear": "A shovel, a regiment's badge",
+   "hpAvg": 60,
+   "init": 0,
+   "xp": 700,
+   "pb": 2,
+   "kind": "npc",
+   "tactics": "Fights to protect the living from the Scar's dead, and won't strike a dead soldier who has stopped moving. If someone says what he is, he stops for a whole round, confused."
+  }
+ }
+}

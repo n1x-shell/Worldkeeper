@@ -57,6 +57,7 @@ import { badRequest } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
 import { returnClock, setReturnStage } from '../repo/returnClock.js';
 import { factionWeb, revealTie } from '../repo/factionWeb.js';
+import { statblockFor, statblockIndex } from '../repo/statblocks.js';
 
 export function campaignRoutes(ctx: AppContext) {
   const r = Router();
@@ -96,6 +97,15 @@ export function campaignRoutes(ctx: AppContext) {
   r.get(
     '/sessions/:id/briefing',
     h((req) => sessionBriefing(ctx.db, intParam(req.params.id))),
+  );
+  // Stat blocks for creatures, hazards and fight-ready people.
+  r.get(
+    '/statblocks',
+    h(() => statblockIndex()),
+  );
+  r.get(
+    '/statblocks/:id',
+    h((req) => statblockFor(String(req.params.id))),
   );
   // The Return: a clock only the GM sees; players get its omens.
   r.get(
