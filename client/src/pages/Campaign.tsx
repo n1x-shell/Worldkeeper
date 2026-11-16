@@ -527,7 +527,118 @@ function CharacterSheet({ ch: initial, onDeleted }: { ch: Character; onDeleted: 
       <Field label="Notes">
         <AutoTextarea minRows={3} value={ch.notes} onChange={(e) => set({ notes: e.target.value })} />
       </Field>
+      <CharacterPagePanel characterId={ch.id} />
     </div>
+  );
+}
+
+interface CharacterPageData {
+  code: string;
+  true_name: string;
+  memories: { id?: number; text: string; struck: boolean }[];
+  known_by: string[];
+  thinning: number;
+  shardscarred: boolean;
+  notes: string;
+  updated_at: string;
+}
+
+/**
+ * The character's page: memories, true name, who knows it, and Thinning. The player keeps it on the table server with
+ * their private code; the GM sets Thinning here, and can restore a struck memory if the table agrees.
+ */
+function CharacterPagePanel({ characterId }: { characterId: number }) {
+  const { data, reload } = useApi<CharacterPageData>(`/api/characters/${characterId}/page`);
+  const [page, setPage] = useState<CharacterPageData | null>(null);
+  useEffect(() => setPage(data ?? null), [data]);
+  const auto = useAutosave((p: CharacterPageData) =>
+    api.patch(`/api/characters/${characterId}/page`, { true_name: p.true_name, memories: p.memories, known_by: p.known_by, thinning: p.thinning, shardscarred: p.shardscarred, notes: p.notes }),
+  );
+  if (!page) return null;
+  const set = (p: Partial<CharacterPageData>) => {
+    const n = { ...page, ...p };
+    setPage(n);
+    auto.schedule(n);
+  };
+  const link = `/player/me/${page.code}`;
+  return (
+    <section className="rounded border border-line p-3 space-y-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="section-title">Character page</div>
+        <SaveStatus state={auto.state} error={auto.error} />
+        <span className="ml-auto text-xs text-dim">Updated {new Date(page.updated_at).toLocaleString()}</span>
+      </div>
+      <p className="text-xs text-dim">
+        The player keeps this page on the table server: code <b className="text-gold tracking-widest">{page.code}</b>, or the link {link} on the table server&apos;s address. Only they and you can see it.
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <button className="btn text-xs" onClick={() => void navigator.clipboard?.writeText(link)}>
+          <Copy size={12} /> Copy link
+        </button>
+        <button
+          className="btn text-xs"
+          onClick={async () => {
+            if (!confirm('Give this page a new code? The old link stops working.')) return;
+            await api.post(`/api/characters/${characterId}/page/new-code`, {});
+            await reload();
+          }}
+        >
+          New code
+        </button>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Field label={`Thinning: ${page.thinning} of 6 (save DC ${12 + page.thinning})`}>
+          <div className="flex gap-1">
+            {[0, 1, 2, 3, 4, 5, 6].map((n) => (
+              <button key={n} className={`w-8 h-8 rounded border text-sm ${n === page.thinning ? 'bg-gold/30 border-gold text-gold' : 'border-line text-dim'}`} onClick={() => set({ thinning: n })} aria-label={`Thinning ${n}`}>
+                {n}
+              </button>
+            ))}
+          </div>
+        </Field>
+        <Field label="Shardscarred">
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={page.shardscarred} onChange={(e) => set({ shardscarred: e.target.checked })} /> Advantage on saves against memory changes and rewriting
+          </label>
+        </Field>
+        <Field label="True name">
+          <input className="input" value={page.true_name} onChange={(e) => set({ true_name: e.target.value })} />
+        </Field>
+        <Field label="Who knows it (comma-separated)">
+          <input
+            className="input"
+            value={page.known_by.join(', ')}
+            onChange={(e) =>
+              set({
+                known_by: e.target.value
+                  .split(',')
+                  .map((s) => s.trim())
+                  .filter(Boolean),
+              })
+            }
+          />
+        </Field>
+      </div>
+      <div className="space-y-1">
+        <div className="text-sm text-dim">Named memories</div>
+        {!page.memories.length && <p className="text-xs text-dim">None written yet.</p>}
+        <ul className="space-y-1 text-sm">
+          {page.memories.map((m, i) => (
+            <li key={m.id ?? i} className="flex items-center gap-2">
+              <span className={m.struck ? 'line-through text-dim flex-1' : 'flex-1'}>{m.text}</span>
+              {m.struck && (
+                <button className="btn-ghost text-xs" title="Only if the table agrees: lost memories don't normally come back" onClick={() => set({ memories: page.memories.map((x) => (x === m ? { ...x, struck: false } : x)) })}>
+                  Restore
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <Field label="The player's notes">
+        <AutoTextarea minRows={2} value={page.notes} onChange={(e) => set({ notes: e.target.value })} />
+      </Field>
+    </section>
   );
 }
 

@@ -658,6 +658,23 @@ CREATE TABLE faction_ties_revealed (
 );
 `,
   },
+  {
+    version: 14,
+    name: "character pages: each character's memories, true name and Thinning, kept by its player",
+    sql: `
+CREATE TABLE character_pages (
+  character_id INTEGER PRIMARY KEY REFERENCES characters(id) ON DELETE CASCADE,
+  code TEXT NOT NULL UNIQUE,
+  true_name TEXT NOT NULL DEFAULT '',
+  memories TEXT NOT NULL DEFAULT '[]',
+  known_by TEXT NOT NULL DEFAULT '[]',
+  thinning INTEGER NOT NULL DEFAULT 0 CHECK (thinning BETWEEN 0 AND 6),
+  shardscarred INTEGER NOT NULL DEFAULT 0,
+  notes TEXT NOT NULL DEFAULT '',
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

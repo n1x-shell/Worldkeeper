@@ -58,6 +58,7 @@ import { parseJson } from '../lib/json.js';
 import { returnClock, setReturnStage } from '../repo/returnClock.js';
 import { factionWeb, revealTie } from '../repo/factionWeb.js';
 import { statblockFor, statblockIndex } from '../repo/statblocks.js';
+import { characterPage, renewCharacterCode, updateCharacterPage } from '../repo/characterPages.js';
 
 export function campaignRoutes(ctx: AppContext) {
   const r = Router();
@@ -77,6 +78,20 @@ export function campaignRoutes(ctx: AppContext) {
     h((req) => campaignOverview(ctx.db, intParam(req.params.id))),
   );
   mountCrud(r, ctx, '/campaigns', campaigns);
+  // Character pages: memories, true name and Thinning. The GM sees and edits all of it, and can renew the private code.
+  // (Registered before the characters CRUD, so /characters/:id/page isn't taken for a character id.)
+  r.get(
+    '/characters/:id/page',
+    h((req) => characterPage(ctx.db, intParam(req.params.id))),
+  );
+  r.patch(
+    '/characters/:id/page',
+    h((req) => updateCharacterPage(ctx.db, intParam(req.params.id), req.body)),
+  );
+  r.post(
+    '/characters/:id/page/new-code',
+    h((req) => renewCharacterCode(ctx.db, intParam(req.params.id))),
+  );
   mountCrud(r, ctx, '/characters', characters, ['campaign_id']);
   mountCrud(r, ctx, '/quests', quests, ['campaign_id', 'status']);
   r.post(

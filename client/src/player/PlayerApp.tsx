@@ -12,6 +12,7 @@ const CharacterBuilder = lazy(() => import('./CharacterBuilder').then((m) => ({ 
 const PlayerFactionWeb = lazy(() => import('./WebAndOmens').then((m) => ({ default: m.PlayerFactionWeb })));
 const PlayerOmens = lazy(() => import('./WebAndOmens').then((m) => ({ default: m.PlayerOmens })));
 const PlayerPrint = lazy(() => import('./PlayerPrint').then((m) => ({ default: m.PlayerPrint })));
+const PlayerMe = lazy(() => import('./PlayerMe').then((m) => ({ default: m.PlayerMe })));
 const Later = ({ children }: { children: ReactNode }) => <Suspense fallback={<p className="text-dim text-sm">Loading…</p>}>{children}</Suspense>;
 
 /**
@@ -65,6 +66,22 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
             element={
               <Later>
                 <PlayerFactionWeb />
+              </Later>
+            }
+          />
+          <Route
+            path="me"
+            element={
+              <Later>
+                <PlayerMe />
+              </Later>
+            }
+          />
+          <Route
+            path="me/:code"
+            element={
+              <Later>
+                <PlayerMe />
               </Later>
             }
           />

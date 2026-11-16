@@ -5,6 +5,7 @@ import { activeCampaignId, playerCampaign, playerCampaigns, playerEntities, play
 import { playerFactionWeb } from '../repo/factionWeb.js';
 import { notFound } from '../lib/errors.js';
 import { playerLive } from '../repo/handouts.js';
+import { playerCharacterPage, updatePlayerCharacterPage } from '../repo/characterPages.js';
 
 /**
  * Player API. Every response is built by player/projection.ts. These routes are the ONLY routes
@@ -49,6 +50,16 @@ export function playerRoutes(ctx: AppContext) {
   r.get(
     '/live',
     h(() => playerLive(ctx.db)),
+  );
+  // A character's own page, reached by its private code. The only thing a player can change: their own memories,
+  // true name and notes (never Thinning, never another character's page).
+  r.get(
+    '/me/:code',
+    h((req) => playerCharacterPage(ctx.db, String(req.params.code))),
+  );
+  r.patch(
+    '/me/:code',
+    h((req) => updatePlayerCharacterPage(ctx.db, String(req.params.code), req.body)),
   );
   r.get(
     '/campaigns/:id',

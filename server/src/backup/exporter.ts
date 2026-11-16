@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { renewCharacterCode } from '../repo/characterPages.js';
 import AdmZip from 'adm-zip';
 import type { DB } from '../db/connection.js';
 import type { Paths } from '../config.js';
@@ -24,6 +25,7 @@ const TABLES = [
   'recent_views',
   'campaigns',
   'characters',
+  'character_pages',
   'quests',
   'adventures',
   'scenes',
@@ -152,6 +154,7 @@ export function exportCampaign(db: DB, campaignId: number) {
     exported_at: new Date().toISOString(),
     campaign: c,
     characters: db.prepare('SELECT * FROM characters WHERE campaign_id = ?').all(campaignId),
+    character_pages: db.prepare('SELECT p.* FROM character_pages p JOIN characters c ON c.id = p.character_id WHERE c.campaign_id = ?').all(campaignId),
     quests: db.prepare('SELECT * FROM quests WHERE campaign_id = ?').all(campaignId),
     adventures: db.prepare('SELECT * FROM adventures WHERE campaign_id = ?').all(campaignId),
     scenes: db.prepare(`SELECT * FROM scenes WHERE adventure_id IN (${inList(advIds)})`).all(),
@@ -184,7 +187,15 @@ export function importCampaign(db: DB, data: ReturnType<typeof exportCampaign>):
     const advMap = new Map<number, number>();
     const sesMap = new Map<number, number>();
     const sceneMap = new Map<number, number>();
-    for (const r of data.characters as Record<string, unknown>[]) insert('characters', r, { campaign_id: cid });
+    const charMap = new Map<number, number>();
+    for (const r of data.characters as Record<string, unknown>[]) charMap.set(r.id as number, insert('characters', r, { campaign_id: cid }));
+    // Each page comes with its character; the private code is renewed, so the original campaign's links don't open the copy.
+    for (const r of (data.character_pages ?? []) as Record<string, unknown>[])
+      if (charMap.has(r.character_id as number)) {
+        const id = charMap.get(r.character_id as number)!;
+        insert('character_pages', r, { character_id: id, code: `IMPORT-${id}` });
+        renewCharacterCode(db, id);
+      }
     for (const r of data.quests as Record<string, unknown>[]) insert('quests', r, { campaign_id: cid });
     for (const r of data.adventures as Record<string, unknown>[]) advMap.set(r.id as number, insert('adventures', r, { campaign_id: cid }));
     for (const r of data.scenes as Record<string, unknown>[]) sceneMap.set(r.id as number, insert('scenes', r, { adventure_id: advMap.get(r.adventure_id as number) }));

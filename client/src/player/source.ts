@@ -103,6 +103,24 @@ export interface PlayerSource {
   imageUrl(file: string): string;
   /** Only in the app (not the published handbook): the live session feed. */
   live?(): Promise<PLive>;
+  /** Only on the table server: a character's own page, by its private code. */
+  myPage?(code: string): Promise<PCharacterPage | null>;
+  saveMyPage?(code: string, patch: Partial<Pick<PCharacterPage, 'true_name' | 'memories' | 'known_by' | 'notes'>>): Promise<PCharacterPage>;
+}
+
+/** A character's own page: memories, true name, who knows it, and Thinning (set by the GM). */
+export interface PCharacterPage {
+  name: string;
+  species: string;
+  class_name: string;
+  level: number;
+  true_name: string;
+  memories: { id?: number; text: string; struck: boolean }[];
+  known_by: string[];
+  thinning: number;
+  shardscarred: boolean;
+  notes: string;
+  updated_at: string;
 }
 
 async function getJson<T>(url: string): Promise<T> {
@@ -124,6 +142,16 @@ export const apiSource: PlayerSource = {
   factionWeb: () => getJson('/api/player/faction-web'),
   imageUrl: (file) => `/api/player/uploads/${encodeURIComponent(file)}`,
   live: () => getJson('/api/player/live'),
+  myPage: async (code) => {
+    const r = await fetch(`/api/player/me/${encodeURIComponent(code)}`);
+    return r.ok ? ((await r.json()) as PCharacterPage) : null;
+  },
+  saveMyPage: async (code, patch) => {
+    const r = await fetch(`/api/player/me/${encodeURIComponent(code)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patch) });
+    const body = (await r.json().catch(() => ({}))) as PCharacterPage & { error?: string };
+    if (!r.ok) throw new Error(body.error ?? `Couldn't save (${r.status})`);
+    return body;
+  },
 };
 
 export function staticSource(snapshotUrl: string, uploadsBase: string): PlayerSource {
