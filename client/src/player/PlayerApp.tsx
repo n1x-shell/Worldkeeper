@@ -11,6 +11,7 @@ const MapExplorer = lazy(() => import('./MapExplorer').then((m) => ({ default: m
 const CharacterBuilder = lazy(() => import('./CharacterBuilder').then((m) => ({ default: m.CharacterBuilder })));
 const PlayerFactionWeb = lazy(() => import('./WebAndOmens').then((m) => ({ default: m.PlayerFactionWeb })));
 const PlayerOmens = lazy(() => import('./WebAndOmens').then((m) => ({ default: m.PlayerOmens })));
+const PlayerPrint = lazy(() => import('./PlayerPrint').then((m) => ({ default: m.PlayerPrint })));
 const Later = ({ children }: { children: ReactNode }) => <Suspense fallback={<p className="text-dim text-sm">Loading…</p>}>{children}</Suspense>;
 
 /**
@@ -64,6 +65,14 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
             element={
               <Later>
                 <PlayerFactionWeb />
+              </Later>
+            }
+          />
+          <Route
+            path="print"
+            element={
+              <Later>
+                <PlayerPrint />
               </Later>
             }
           />

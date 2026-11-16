@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import {
+import { Printer,
   BookOpen,
   ChevronsLeft,
   ChevronsRight,
@@ -116,6 +116,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
         ...groups.map((g) => ({ to: `${base}/browse/${g.key}`, label: g.label, icon: GROUP_ICONS[g.key] })),
         ...(factionWeb?.length ? [{ to: `${base}/factions-web`, label: 'Faction Web', icon: <Network size={I} /> }] : []),
         { to: `${base}/builder`, label: 'Make a Character', icon: <UserPlus size={I} /> },
+        { to: `${base}/print`, label: 'Print', icon: <Printer size={I} /> },
       ],
     },
     {

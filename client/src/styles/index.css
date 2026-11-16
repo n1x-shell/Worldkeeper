@@ -334,4 +334,36 @@ h3 {
   .wk-print * {
     color: #111 !important;
   }
+  @page {
+    margin: 16mm 18mm;
+  }
+  /* The GM Quick Reference: flowing columns, so the sheet packs tight. */
+  .wk-quickref {
+    display: block;
+    columns: 2;
+    column-gap: 8mm;
+    font-size: 11px;
+  }
+  .wk-quickref > section {
+    break-inside: avoid;
+    margin-bottom: 5mm;
+    padding: 3mm;
+    border: 1px solid #999;
+  }
+  /* The handbook's Print view: one entry to a sheet, and none of the page around it. */
+  .wk-print-controls {
+    display: none;
+  }
+  .wk-print-pages {
+    padding: 0;
+  }
+  .wk-print-page {
+    break-before: page;
+    border: 0;
+    padding: 0;
+    background: none;
+  }
+  .wk-print-page:first-child {
+    break-before: auto;
+  }
 }
