@@ -135,6 +135,7 @@ These are the rules this world adds to the books. Your GM has the full text; thi
 - At Thinning 3, you stop answering to your name without effort.
 - At Thinning 6, you're gone: your character joins the harmony, and becomes the GM's.
 - Your friends can pull you back. If someone who knows your true name says it to you, you get Advantage on the save. A month among people who call you by your name takes Thinning down by one. Lost memories don't come back.
+- **Anchors.** A friend who knows your true name can take a Thinning save for you, at the same number. If they succeed, you're both safe. If they fail, the Thinning is theirs: their Thinning goes up, and they cross out one of their own memories. Each person can be anchored once a day.
 - Keep a list of the people who know your true name. It's the most useful thing on your sheet.
 
 **Shardscarred.** If your character has touched a shard, they're marked for life, and they're Shardscarred: you have Advantage on saving throws against anything that changes your memory or rewrites reality. Ask your GM before choosing it, because every faction wants people like you, for its own reasons.

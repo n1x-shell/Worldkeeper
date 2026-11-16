@@ -42,6 +42,8 @@ Three gods are dead, and the places they died are still there: @[Maruun, the Sun
 
 **Holy days.** **First Light**, on the Spring Equinox: every household puts out its lamps the night before and relights them at dawn from a neighbour's. Feuds are supposed to end that morning. Some do.
 
+**Domains for clerics.** Light or Life.
+
 **What people say**
 
 - Her healers will treat anyone. Her knights won't.
@@ -60,6 +62,8 @@ Three gods are dead, and the places they died are still there: @[Maruun, the Sun
 **His sign.** A red hand, open, palm out. It means "I've sworn".
 
 **Holy days.** **The Red Games**, at Midsummer: a tournament in Varkhaal's Great Arena that draws fighters from every dominion and both continents. Smaller games are held in every Legion town the same week.
+
+**Domains for clerics.** War.
 
 **What people say**
 
@@ -80,6 +84,8 @@ Three gods are dead, and the places they died are still there: @[Maruun, the Sun
 
 **Holy days.** **The Long Watch**, on Dry Wind 20, when the summer sky is clearest: nobody sleeps, and everyone counts stars until dawn. Children get their first lesson in steering by the stars that night.
 
+**Domains for clerics.** Knowledge.
+
 **What people say**
 
 - Ithiel answers a question with a better question.
@@ -98,6 +104,8 @@ Three gods are dead, and the places they died are still there: @[Maruun, the Sun
 **Their sign.** A plain mask with no mouth.
 
 **Holy days.** **Masking Night**, on Old Winds 30: everyone in the street wears a mask, and nothing done behind one counts in the morning. In Noctis it lasts a week.
+
+**Domains for clerics.** Trickery.
 
 **What people say**
 
@@ -118,6 +126,8 @@ Three gods are dead, and the places they died are still there: @[Maruun, the Sun
 
 **Holy days.** **Seedwake**, on First Seed 1, when the first seed goes into the ground with a song. **Harvest Home**, on Harvest 30, when the last sheaf is left standing in the field for him.
 
+**Domains for clerics.** Nature.
+
 **What people say**
 
 - Orrowen doesn't punish. He just lets the winter in.
@@ -137,6 +147,8 @@ Three gods are dead, and the places they died are still there: @[Maruun, the Sun
 
 **Holy days.** **Naming Day**, on the Autumn Equinox: the names of everyone who died that year are read aloud and carved. In Hollow Refuge, the reading goes on all day, and every year someone hears a name nobody can place.
 
+**Domains for clerics.** Grave or Life.
+
 **What people say**
 
 - If nobody says your name, Sephane loses you.
@@ -152,6 +164,8 @@ Maruun was the sea's god, and she's dead. She fell at @[The Titan's Fall], and t
 
 **Holy days.** The Drowned Saints keep **the Sundering**, on Monsoon 1, when the rains come in off the sea. Sensible people stay away from the docks that day.
 
+**Domains for clerics.** Tempest, or Grave for the Drowned Saints. Her symbol is a wave breaking upward, or a closed eye under water.
+
 **What people say**
 
 - A fisherman's prayer still ends with her name. Nobody remembers why.
@@ -161,7 +175,9 @@ Maruun was the sea's god, and she's dead. She fell at @[The Titan's Fall], and t
 
 *The god who tried to sit the Shattered Throne, and failed.*
 
-Nobody knows what Aurex was god of. What everyone knows is how he died: he tried to sit @[The Shattered Throne], and the throne broke him instead. Nobody prays to him. Soldiers passing the Throne spit, for luck.
+Nobody knows what Aurex was god of. What everyone knows is how he died: he tried to sit @[The Shattered Throne], and the throne broke him instead. Nobody prays to him openly. Soldiers passing the Throne spit, for luck.
+
+**Domains for clerics.** War or Order, for the few who take him up: usurpers, pretenders and ambitious officers, who pray to him in private. His symbol is a crown split down the middle, and a would-be ruler leaves a coin at the foot of the Throne before making a move.
 
 **What people say**
 
@@ -173,6 +189,8 @@ Nobody knows what Aurex was god of. What everyone knows is how he died: he tried
 *Maker of the gods' weapons. Its name was the first thing ever erased.*
 
 The Smith forged the gods' weapons at @[The Nameless Forge], and then its name was taken, the first name ever lost. Smiths everywhere still honour it without knowing what to call it: the first blow on every new blade is struck in silence, for the Smith.
+
+**Domains for clerics.** Forge or Knowledge. Every forge is its shrine, and its symbol is a blank smith's mark. Some smiths leave their forge burning one night a year, unfed, for the Smith.
 
 **What people say**
 

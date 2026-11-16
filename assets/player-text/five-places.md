@@ -54,6 +54,7 @@ Past those three, the roads get worse. The routes out to the Rift are openly hos
 
 - A few hundred people live here, maybe 250 to 400.
 - Every faction needs a place to talk, trade and patch up its wounded, so every faction leaves the Refuge alone.
+- The Lantern Truce is the only law. **The Lantern Council** keeps it: the five factions' envoys and a **Warden of the Lamp**, chosen by the Refuge's own people. They meet at the Lantern House on the first day of each month, and the Warden can put out anyone who draws a weapon inside the walls. The Warden just now is @[Mara Venn], who says she didn't want it.
 
 **Places in town**
 
