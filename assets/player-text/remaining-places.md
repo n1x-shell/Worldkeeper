@@ -440,6 +440,7 @@ Three gods are dead: Maruun the Sundered Tide, Aurex the Throne-Breaker and the 
 **What you know**
 
 - Thornhaven is the seat of the Spore Circle's Eastern Tendril, in the Eastern Deepwood.
+- About 150 people of the Tendril live here with their families, in a ring of great trees joined by rope bridges.
 - The Eastern Tendril burns Kaelith work and carries lamps grown in gourds.
 - Elder Sorrel leads it, an elf of about 320 who saw the Shrouding as a child.
 - The Tendril opposes Kaelholm's expeditions into the old vaults.

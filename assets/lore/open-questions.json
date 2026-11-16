@@ -39,7 +39,7 @@
     { "ids": ["REG-306"], "section": "Sites and inhabitants", "status": "filled", "by": ["SET-333", "SET-334"] },
     { "ids": ["SET-301"], "status": "filled", "by": ["SET-320", "SET-321", "SET-322", "SET-323", "SET-324", "SET-325", "SET-326", "SET-327", "SET-328"], "note": "Each village's page gives where it lies and how far it is from Ashvale." },
     { "ids": ["WLD-906"], "status": "filled", "by": ["SET-022"], "note": "Mothhaven is an Eternal Veil port." },
-    { "ids": ["HIS-912"], "status": "todo", "by": ["SET-022"], "note": "A port is named (Mothhaven). Ship names and the departure date are still to do." },
+    { "ids": ["HIS-912"], "status": "filled", "by": ["RUL-664", "SET-022"], "note": "The first regular ship, the Long Dark, sailed from Mothhaven on Spring Dawn 1, 298 AB." },
     { "ids": ["LOC-301"], "status": "filled", "by": ["RUL-650"], "note": "The keeping song's four lines." },
     { "ids": ["NPC-304"], "section": "Known relationships", "status": "filled", "by": ["FAM-004"] },
     { "ids": ["NPC-305"], "section": "Known relationships", "status": "filled", "by": ["FAM-005"] },
@@ -51,7 +51,12 @@
     { "ids": ["FAC-505"], "status": "filled", "by": ["RUL-661", "RUL-615"], "note": "Size, ranks and resources are set; its starting attitude is on its standing track." },
     { "ids": ["CLT-001", "CLT-002", "CLT-003", "CLT-004", "CLT-005", "CLT-006", "CLT-007", "CLT-008"], "section": "Additional information", "status": "filled", "by": ["RUL-660"], "note": "Headquarters, resources, strength and progress are set." },
     { "ids": ["SET-302"], "section": "Current conditions", "status": "filled", "by": ["SET-302"], "note": "The port is the Tollmouth; population and wards are on its handbook page." },
-    { "ids": ["HOOK-003"], "status": "todo", "note": "Room contents come from the original book or your prep." },
-    { "ids": ["SYS-907"], "status": "todo", "note": "What an anchor pays for taking someone's Thinning save." }
+    { "ids": ["DEI-907", "DEI-908", "DEI-909"], "status": "filled", "by": ["RUL-663"], "note": "Portfolio, domains, worshippers, symbols and rites are set; the domains are on the handbook pages. Divine statistics: none, the gods are dead." },
+    { "ids": ["HIS-903"], "status": "filled", "by": ["RUL-664"], "note": "Its rulers were the Chancellery. When Kaelith began stays unknown, as the World Timeline keeps it." },
+    { "ids": ["HIS-904", "HIS-906", "HIS-909"], "status": "filled", "by": ["RUL-664"], "note": "Dated." },
+    { "ids": ["LOC-004", "LOC-005", "LOC-006", "LOC-010", "LOC-011", "LOC-012", "LOC-013", "LOC-014", "LOC-016", "LOC-017"], "section": "Position and map use", "status": "filled", "by": ["RUL-666"], "note": "The GM knows where it is. It has no map pin on purpose: the handbook says nobody agrees." },
+    { "ids": ["LOC-308", "SET-001"], "status": "filled", "by": ["RUL-667"], "note": "Size, layout and (for Hollow Refuge) government are set." },
+    { "ids": ["HOOK-003"], "status": "filled", "by": ["RUL-665"], "note": "The five rooms are written." },
+    { "ids": ["SYS-907"], "section": "Canon boundaries", "status": "filled", "by": ["RUL-668"], "note": "The anchor makes the save; on a failure, the Thinning is theirs." }
   ]
 }

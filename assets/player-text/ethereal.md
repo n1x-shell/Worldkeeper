@@ -402,6 +402,7 @@ Opening a glass door, riding a root-road, communing too deeply with the Bloom or
 - At 6, you join the harmony, and your character becomes the GM's.
 - Hearing your true name from someone who knows you gives Advantage on the save.
 - A month among people who use your name takes away one level. Lost memories don't come back.
+- An anchor who knows your true name can make the save for you, once a day. If they fail, they take the Thinning instead: their level rises and they lose a memory.
 - Dying in the deep Ethereal Realm sets Thinning to 6 at once. Aetheris calls this Unmaking.
 
 ## Ethereal Backgrounds
