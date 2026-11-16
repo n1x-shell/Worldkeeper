@@ -64,6 +64,8 @@ Create multiple campaigns within the same world, each with a premise, dates, sta
 
 Party sheets provide 2024-oriented D&D basics: ability scores and modifiers, level-based proficiency, saving throws, skills, AC, HP, initiative, conditions, exhaustion, concentration, spell slots, rest tracking, equipment and custom setting mechanics.
 
+Each character also has a **character page** for the world's own rules: their named memories, their true name and who knows it, and their Thinning track. Players keep their page up to date on the player server with a private code; the GM sees it on the party screen, is the only one who changes Thinning, and can give a page a new code. A struck memory stays struck. Character pages travel with campaign exports and backups, and never appear in the published handbook.
+
 Quests support a **players see** flag. Adventures include premise, hook, stakes, opposition, clues, obstacles, rewards, approaches, consequences and an **if ignored** outcome. Story arcs connect related adventures. Scenes can be reordered, reused across adventures, and arranged in a branching visual flow editor.
 
 ## Session preparation and play
@@ -100,7 +102,7 @@ For the detailed import/export and restore workflow, see [Data, Imports, Backups
 
 ## Player view and distribution
 
-The local `/player` interface provides a preview of material that has been explicitly revealed. A separate player-only server on port 4320 mounts no DM routes and is intended for trusted LAN use. A static handbook can be exported as a ZIP or published to a GitHub Pages branch. The handbook updates when republished, not whenever the local campaign changes.
+The local `/player` interface provides a preview of material that has been explicitly revealed. A separate player-only server on port 4320 mounts no DM routes and is intended for trusted LAN use. Its one write route is a character's own page, opened with that character's private code. A static handbook can be exported as a ZIP or published to a GitHub Pages branch. The handbook updates when republished, not whenever the local campaign changes.
 
 **Important:** Publication filtering should be tested and manually reviewed, especially for labels and other indirect disclosure paths. Content placed in Git history may remain accessible after it is removed from a newer snapshot. See [Player View & Publishing](PLAYER_VIEW.md).
 

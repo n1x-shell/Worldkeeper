@@ -20,6 +20,16 @@ The separate process listens by default on port `4320` on all interfaces (`0.0.0
 
 **Network precautions:** LAN exposure is not authentication. Use a trusted network and firewall restrictions; do not forward the port to the public internet. The DM server should remain bound to `127.0.0.1`. Do not set its `HOST` to `0.0.0.0` on a shared or untrusted network.
 
+
+### Character pages
+
+Each character in a campaign has a page with their named memories, their true name and who knows it, and their Thinning track. On the GM's party screen, each character's **Character page** panel shows a private code and a link, `http://<your-computer>:4320/player/me/<code>`. A player opens that link (or **My Character** in the player menu, then types the code) to keep their own page up to date.
+
+- Players can add memories, reword the ones they still have, and strike one when their Thinning goes up. A struck memory stays struck.
+- Only the GM changes Thinning, and the GM can restore a struck memory if the table agrees.
+- A character's page is visible only to whoever has its code, and to the GM. **New code** in the GM panel stops an old link working.
+- The code is the only protection, so the same network precautions apply.
+- Character pages are never part of the published handbook, which can't save anything, so it has no **My Character** item.
 ## What players can see
 
 On a record's **Player view** tab, enable **Players know this record exists** before allowing the record to appear. Then select which material is allowed:
