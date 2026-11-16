@@ -42,6 +42,10 @@ export interface StatBlockData {
   changes?: string;
   /** False for someone who won't fight: the card says what they do instead. */
   fights?: boolean;
+  /** GM-only looks, for someone the handbook doesn't describe. */
+  looks?: string;
+  /** True when how they fight is deliberately left open: looks only, no numbers yet. */
+  open?: boolean;
 }
 
 const sg = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
@@ -72,6 +76,24 @@ export function StatBlock({ s }: { s: StatBlockData }) {
         )}
       </div>
     );
+  const looks = s.looks && (
+    <p>
+      <b>Looks (GM only).</b> {s.looks}
+    </p>
+  );
+  if (s.open)
+    return (
+      <div className="space-y-2 text-sm">
+        <div>
+          <div className="font-display text-lg text-gold">{s.name}</div>
+          <div className="italic text-dim text-xs">{s.meta}</div>
+        </div>
+        {looks}
+        <p className="rounded border border-line p-2">
+          <b>Left open.</b> {s.tactics}
+        </p>
+      </div>
+    );
   if (s.base)
     return (
       <div className="space-y-2 text-sm">
@@ -79,6 +101,7 @@ export function StatBlock({ s }: { s: StatBlockData }) {
           <div className="font-display text-lg text-gold">{s.name}</div>
           <div className="italic text-dim text-xs">{s.meta}</div>
         </div>
+        {looks}
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           <span>
             <b>AC</b> {s.ac}
@@ -144,6 +167,7 @@ export function StatBlock({ s }: { s: StatBlockData }) {
         <div className="font-display text-lg text-gold">{s.name}</div>
         <div className="italic text-dim text-xs">{s.meta}</div>
       </div>
+      {looks}
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         <span>
           <b>AC</b> {s.ac}

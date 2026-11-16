@@ -5,6 +5,7 @@
 
     { "ids": ["SHD-012"], "status": "kept", "note": "The twelfth shard is forgotten, not described." },
     { "ids": ["NPC-901"], "status": "kept", "note": "The Forgotten One was erased from history." },
+    { "ids": ["NPC-002", "NPC-003"], "section": "Unspecified fields", "status": "kept", "note": "The Hidden Ones are met as presences, like the elder gods: no looks and no stat block." },
     { "ids": ["COS-904", "ETH-590"], "status": "kept", "note": "What the Watchers want." },
     { "ids": ["ETH-507"], "section": "Access", "status": "kept", "note": "What the Watchers want, and whether anything lies beyond the Black Horizon." },
     { "ids": ["COS-303", "WLD-901"], "status": "kept", "note": "How the glass relates to the thirteenth shard." },
@@ -19,6 +20,7 @@
     { "ids": ["COS-902"], "status": "kept", "note": "Whether its seat is the Fractured Throne." },
     { "ids": ["LOC-503"], "section": "Established description", "status": "kept", "note": "Whether the Shattering happened here." },
     { "ids": ["COS-901", "HIS-901"], "status": "kept", "note": "The first civilisation's name, dates and ruins." },
+    { "ids": ["NPC-303"], "section": "Unspecified fields|Appearance", "status": "kept", "note": "The founder died about 250 years ago: no fight card. Her looks are on her handbook page." },
     { "ids": ["HIS-902"], "status": "kept", "note": "The year, and whose earlier life it was." },
     { "ids": ["HIS-905"], "status": "kept", "note": "When in the Cycle the last kingdom fell." },
     { "ids": ["HIS-908"], "status": "kept", "note": "What happened to the lost repair crew." },

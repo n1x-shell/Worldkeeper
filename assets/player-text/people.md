@@ -1734,3 +1734,25 @@ Each person has:
 
 - He hears all the rumours from the coast.
 - He will guide you anywhere, for the right price.
+
+## Nib
+
+*The kobold root-tender of the Memory-House, who always names the price first.*
+
+| People | Class | Known as | Pronouns | From |
+| --- | --- | --- | --- | --- |
+| Kobold | Druid | Shaman | They/them | @[The Memory-House] |
+
+**Looks.** A tiny rust-brown kobold with fine root-threads braided through their frills, carrying a lantern of glowing fungus and a long-handled ladle.
+
+**Manner.** Polite, careful and scrupulously honest. Tells you what something will cost before you've finished asking for it.
+
+**Who they are**
+
+- Tends the roots of @[The Memory-House], and guides visitors to it.
+- Names the price before anyone agrees to pay it.
+
+**What people say**
+
+- Nib has never let anyone pay without knowing what they were giving.
+- Nobody has ever seen Nib eat. Some say the house feeds them.

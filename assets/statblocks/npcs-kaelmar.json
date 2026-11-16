@@ -1,0 +1,316 @@
+{
+ "note": "Fight cards for the archive's people in Kaelmar (GM only), in the same three tiers as Aetheris, plus GM-only looks for Warden Ilsabet Crane and for the two sleeping minds, whose way of fighting is left open. Owner decision, November 2026.",
+ "statblocks": {
+  "NPC-301": {
+   "id": "NPC-301",
+   "name": "The Seventh Ward",
+   "meta": "Large Construct (Kaelith guardian), Unaligned",
+   "kind": "npc",
+   "open": true,
+   "looks": "A guardian of grey-green alloy, taller than a goliath, curled in its cradle in Arborhold as if asleep. Fine roots have grown over it. Its face is a smooth plate crossed by seven hair-fine lines, which glow faintly when it dreams. It believes it is whole. Pronouns: it/its, until it chooses for itself.",
+   "tactics": "How it fights, if it ever does, is left open until the campaign reaches Arborhold. It is a person as much as a prize."
+  },
+  "NPC-302": {
+   "id": "NPC-302",
+   "name": "The Root Core",
+   "meta": "Gargantuan Aberration (Kaelith mind), Unaligned",
+   "kind": "npc",
+   "open": true,
+   "looks": "A vast knot of pale roots and glass around a hollow the size of a cathedral, deep in the Seed Vault beneath the Rift. Slow light pulses through them like breathing. When they speak, they speak in many voices at once, each one whole. Pronouns: they/them.",
+   "tactics": "The campaign's final meeting, not a fight. Whether they can be fought at all is left open."
+  },
+  "NPC-304": {
+   "id": "NPC-304",
+   "name": "Ritekeeper Orla Hesk",
+   "meta": "Medium Humanoid (Human), Lawful Good",
+   "kind": "npc",
+   "base": "Priest",
+   "changes": "Her spells include Calm Emotions and Sanctuary. The Song: as an action, she starts the keeping song at the stones; anyone within 30 feet who has slept in Ashvale has Advantage on saving throws against the Charmed and Frightened conditions while she keeps singing (as if Concentrating on a spell).",
+   "tactics": "Ends fights the way she ends arguments: by starting the song. Fights only if the stones themselves are threatened, and then without mercy.",
+   "fights": true,
+   "ac": 13,
+   "hp": "38 (7d8 + 7)",
+   "hpAvg": 38,
+   "init": 0,
+   "cr": "2",
+   "xp": 450,
+   "pb": 2
+  },
+  "NPC-305": {
+   "id": "NPC-305",
+   "name": "Master Speaker Tevan Lin",
+   "meta": "Medium Humanoid (Human), Neutral Good",
+   "kind": "npc",
+   "base": "Druid",
+   "changes": "Spore-bound: he has Resistance to Poison damage, and once a day he can ask the Bloom one question (as Commune with Nature). His spells include Spike Growth.",
+   "tactics": "Protects his students first. Grows a wall of roots between the fight and anyone learning from him, and tries to talk from behind it.",
+   "fights": true,
+   "ac": 13,
+   "hp": "44 (8d8 + 8)",
+   "hpAvg": 44,
+   "init": 1,
+   "cr": "2",
+   "xp": 450,
+   "pb": 2
+  },
+  "NPC-306": {
+   "id": "NPC-306",
+   "name": "Chief Wright Brenna Halvor",
+   "meta": "Medium Humanoid (Human), Neutral Good",
+   "kind": "npc",
+   "base": "Warrior Veteran",
+   "changes": "She fights with a grafting knife and a heavy mallet instead of the Veteran's weapons, and her clockwork dog fights beside her (use the Mastiff from the Monster Manual, as a Construct with Immunity to Poison damage).",
+   "tactics": "Fights only to protect her workers and the orchard. Throws whatever's on the bench, then offers the attacker a job.",
+   "fights": true,
+   "ac": 17,
+   "hp": "65 (10d8 + 20)",
+   "hpAvg": 65,
+   "init": 1,
+   "cr": "3",
+   "xp": 700,
+   "pb": 2
+  },
+  "NPC-307": {
+   "id": "NPC-307",
+   "name": "Elder Sorrel",
+   "meta": "Medium Humanoid (Elf), Neutral",
+   "ac": 16,
+   "hp": "97 (15d8 + 30)",
+   "speed": "30 ft.",
+   "ab": [
+    10,
+    14,
+    14,
+    14,
+    18,
+    12
+   ],
+   "cr": "8",
+   "traits": [
+    {
+     "name": "Fey Ancestry",
+     "text": "Sorrel has Advantage on saving throws she makes to avoid or end the Charmed condition."
+    },
+    {
+     "name": "Burn the Work",
+     "text": "Sorrel deals an extra 7 (2d6) Fire damage when she hits a Construct or an object made by Kaelith."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Sorrel makes two Thornstaff attacks, or uses Spore-Fire twice."
+    },
+    {
+     "name": "Thornstaff",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 8 (1d8 + 4) Bludgeoning damage."
+    },
+    {
+     "name": "Spore-Fire",
+     "text": "Ranged Attack Roll: +7, range 60 ft. Hit: 13 (2d8 + 4) Fire damage."
+    },
+    {
+     "name": "Spellcasting",
+     "text": "Sorrel casts one of the following spells, using Wisdom (spell save DC 15): At will: Druidcraft, Produce Flame. 2/day each: Flaming Sphere, Spike Growth. 1/day: Wall of Fire."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Tendril's Grasp",
+     "text": "Strength Saving Throw: DC 15, one creature Sorrel can see within 30 feet that is standing on earth. Failure: The target has the Restrained condition until the end of its next turn."
+    }
+   ],
+   "saves": "Int +5, Wis +7",
+   "skills": "Nature +5, Perception +7, Stealth +5, Survival +7",
+   "res": "Fire",
+   "senses": "Darkvision 60 ft., Passive Perception 17",
+   "languages": "Common, Druidic, Elvish",
+   "gear": "Shield, Thornstaff, a gourd-lamp glowing green",
+   "hpAvg": 97,
+   "init": 2,
+   "xp": 3900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Burns the machine first and the people second. Won't talk to anyone carrying Kaelith work: drop it in the fire, and she'll listen."
+  },
+  "NPC-308": {
+   "id": "NPC-308",
+   "name": "Archivist-Elder Venn Tull",
+   "meta": "Small Humanoid (Gnome), Lawful Neutral",
+   "kind": "npc",
+   "base": "Commoner",
+   "changes": "Gnomish Cunning: Advantage on Intelligence, Wisdom and Charisma saving throws. Her brass construct steps in to protect her (use the Animated Armor from the Monster Manual, Small).",
+   "tactics": "Has a tribunal for that. She burns names, not bodies: anyone who harms her finds their name scraped from every roll in Kaelholm.",
+   "fights": false,
+   "ac": 10,
+   "hp": "4 (1d8)",
+   "hpAvg": 4,
+   "init": 0,
+   "cr": "0",
+   "xp": 10,
+   "pb": 2
+  },
+  "NPC-309": {
+   "id": "NPC-309",
+   "name": "Warden Ilsabet Crane",
+   "meta": "Medium Humanoid (Shadar-kai), Lawful Neutral",
+   "ac": 18,
+   "hp": "91 (14d8 + 28)",
+   "speed": "30 ft.",
+   "ab": [
+    16,
+    16,
+    14,
+    14,
+    14,
+    12
+   ],
+   "cr": "5",
+   "traits": [
+    {
+     "name": "Fey Ancestry",
+     "text": "Ilsabet has Advantage on saving throws she makes to avoid or end the Charmed condition."
+    },
+    {
+     "name": "Web-Sense",
+     "text": "Ilsabet knows when any Kaelith work within 1 mile of her wakes or is used."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Ilsabet makes two Glaive attacks."
+    },
+    {
+     "name": "Glaive",
+     "text": "Melee Attack Roll: +6, reach 10 ft. Hit: 8 (1d10 + 3) Slashing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Blessing of the Raven Queen (2/Day)",
+     "text": "Ilsabet teleports up to 30 feet to an unoccupied space she can see, and has Resistance to all damage until the start of her next turn."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Warden's Strike",
+     "text": "Trigger: A creature within 10 feet of Ilsabet attacks someone other than her. Response: She makes one Glaive attack against it."
+    }
+   ],
+   "saves": "Str +6, Con +5",
+   "skills": "Arcana +5, Athletics +6, Insight +5, Perception +5",
+   "res": "Necrotic",
+   "senses": "Darkvision 60 ft., Passive Perception 15",
+   "languages": "Common, Elvish",
+   "gear": "Splint armour etched with Kaelith circuit-lines, Glaive",
+   "looks": "A tall, ash-pale shadar-kai with black hair bound in a warden's knot, in grey splint armour etched with Kaelith circuit-lines. She rarely blinks, and never seems to hurry. Pronouns: she/her.",
+   "hpAvg": 91,
+   "init": 3,
+   "xp": 1800,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Weighs whether the party is useful before she weighs whether they're dangerous. Fights to protect the old works, not the people around them, and offers work to anyone who beats her guards."
+  },
+  "NPC-311": {
+   "id": "NPC-311",
+   "name": "Marshal Dace Corvane",
+   "meta": "Medium Humanoid (Hobgoblin), Lawful Evil",
+   "ac": 20,
+   "hp": "112 (15d8 + 45)",
+   "speed": "30 ft.",
+   "ab": [
+    18,
+    12,
+    16,
+    14,
+    14,
+    14
+   ],
+   "cr": "8",
+   "traits": [
+    {
+     "name": "Fortune of the Many",
+     "text": "Once per turn, when Corvane misses with an attack roll or fails a saving throw, he gains a bonus to the roll equal to the number of allies he can see within 30 feet (maximum +3)."
+    },
+    {
+     "name": "Remade",
+     "text": "Corvane's iron jaw is the first of his remakings. He has Immunity to Poison damage and the Charmed condition."
+    }
+   ],
+   "actions": [
+    {
+     "name": "Multiattack",
+     "text": "Corvane makes three Longsword attacks."
+    },
+    {
+     "name": "Longsword",
+     "text": "Melee Attack Roll: +7, reach 5 ft. Hit: 8 (1d8 + 4) Slashing damage."
+    }
+   ],
+   "bonus": [
+    {
+     "name": "Battle Command (3/Day)",
+     "text": "One ally Corvane can see within 30 feet makes one weapon attack as a Reaction."
+    },
+    {
+     "name": "Second Wind (1/Day)",
+     "text": "Corvane regains 15 (2d10 + 4) Hit Points."
+    }
+   ],
+   "reactions": [
+    {
+     "name": "Parry",
+     "text": "Trigger: Corvane is hit by a melee attack roll. Response: He adds 3 to his AC against that attack, possibly causing it to miss."
+    }
+   ],
+   "saves": "Str +7, Con +6",
+   "skills": "Athletics +7, Insight +5, Persuasion +5",
+   "imm": "Poison",
+   "cimm": "Charmed",
+   "senses": "Darkvision 60 ft., Passive Perception 12",
+   "languages": "Common, Goblin",
+   "gear": "Plate Armor, Shield, Longsword, a tally-board",
+   "hpAvg": 112,
+   "init": 1,
+   "xp": 3900,
+   "pb": 3,
+   "kind": "npc",
+   "tactics": "Opens every fight with an offer, and means it. Counts his losses out loud, and pulls his soldiers out the moment the count goes wrong. He remembers the cost, and who caused it."
+  },
+  "NPC-312": {
+   "id": "NPC-312",
+   "name": "Odran Reeve",
+   "meta": "Medium Humanoid (Tortle), Neutral",
+   "kind": "npc",
+   "base": "Commoner",
+   "changes": "AC 17 (his shell). Hold Breath: 1 hour. Shell Defense: as an action, he withdraws into his shell; until he emerges, he has +4 AC, but his Speed is 0.",
+   "tactics": "Withdraws into his shell, then poles away when it's quiet. Charges extra for the trouble.",
+   "fights": false,
+   "ac": 17,
+   "hp": "4 (1d8)",
+   "hpAvg": 4,
+   "init": 0,
+   "cr": "0",
+   "xp": 10,
+   "pb": 2
+  },
+  "NPC-313": {
+   "id": "NPC-313",
+   "name": "Nib",
+   "meta": "Small Humanoid (Kobold), Neutral",
+   "kind": "npc",
+   "base": "Commoner",
+   "changes": "Darkvision 60 feet. The memory-house looks after its tender: anyone who harms Nib inside it makes a DC 13 Wisdom saving throw or forgets the last hour.",
+   "tactics": "Never fights. Steps behind the roots and names the price of what you're doing.",
+   "fights": false,
+   "ac": 10,
+   "hp": "4 (1d8)",
+   "hpAvg": 4,
+   "init": 0,
+   "cr": "0",
+   "xp": 10,
+   "pb": 2
+  }
+ }
+}
