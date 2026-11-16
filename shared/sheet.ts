@@ -43,6 +43,26 @@ export interface Spell {
   name: string;
   level: number;
   prepared: boolean;
+  /** As on the official sheet: casting time, range, Concentration, Ritual, Material, and notes. */
+  time?: string;
+  range?: string;
+  concentration?: boolean;
+  ritual?: boolean;
+  material?: boolean;
+  notes?: string;
+}
+/** A class feature, species trait or feat, with its rules text. */
+export interface Feature {
+  name: string;
+  source: string;
+  text: string;
+}
+/** A use that comes back on a rest (Rage, Channel Divinity, Focus Points...). */
+export interface SheetResource {
+  name: string;
+  max: number;
+  used: number;
+  reset: 'short' | 'short-one' | 'long';
 }
 export interface Coins {
   cp?: number;
@@ -91,6 +111,17 @@ export interface Sheet {
   features?: string;
   traits?: string;
   feats?: string;
+  classFeatures?: Feature[];
+  speciesTraits?: Feature[];
+  featList?: Feature[];
+  armorTraining?: { light?: boolean; medium?: boolean; heavy?: boolean; shields?: boolean };
+  armorWorn?: string;
+  shield?: boolean;
+  attunement?: string[];
+  resources?: SheetResource[];
+  pronouns?: string;
+  /** The portrait: an uploaded picture's file name on the server, or a small data URL in the handbook's builder. */
+  portrait?: string;
   appearance?: string;
   personality?: string;
   backstory?: string;
@@ -98,6 +129,15 @@ export interface Sheet {
   shardscarred?: string;
   hometown?: string | null;
   ties?: { entity_id: string; kind: string; note: string }[];
+}
+
+/** A character as a sheet shows it: who they are, their level, and the sheet itself. */
+export interface SheetChar {
+  name: string;
+  species: string;
+  class_name: string;
+  level: number;
+  sheet: Sheet;
 }
 
 /** The parts of a sheet only the GM sees. */
@@ -127,6 +167,16 @@ export function spellAttack(s: Sheet, level: number) {
   return a && ABILITIES.includes(a) ? proficiencyBonus(level) + mod(s, a) : null;
 }
 
+/** A short rest: uses that come back on a short rest, and a Warlock's Pact Magic slots. Spending Hit Dice is up to the player. */
+export function shortRest(s: Sheet, pactSlots = false, when = new Date().toLocaleDateString()): Sheet {
+  return {
+    ...s,
+    resources: (s.resources ?? []).map((r) => (r.reset === 'short' ? { ...r, used: 0 } : r.reset === 'short-one' ? { ...r, used: Math.max(0, r.used - 1) } : r)),
+    ...(pactSlots ? { spellSlots: Object.fromEntries(Object.entries(s.spellSlots ?? {}).map(([k, v]) => [k, { ...v, used: 0 }])) } : {}),
+    lastRest: `Short rest (${when})`,
+  };
+}
+
 /** A long rest (2024): all Hit Points and Hit Dice back, spell slots restored, Exhaustion down by one, no Temporary Hit Points. */
 export function longRest(s: Sheet, when = new Date().toLocaleDateString()): Sheet {
   return {
@@ -137,6 +187,7 @@ export function longRest(s: Sheet, when = new Date().toLocaleDateString()): Shee
     deathSaves: { successes: 0, failures: 0 },
     exhaustion: Math.max(0, (s.exhaustion ?? 0) - 1),
     spellSlots: Object.fromEntries(Object.entries(s.spellSlots ?? {}).map(([k, v]) => [k, { ...v, used: 0 }])),
+    resources: (s.resources ?? []).map((r) => ({ ...r, used: 0 })),
     lastRest: `Long rest (${when})`,
   };
 }

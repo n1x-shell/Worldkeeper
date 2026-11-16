@@ -149,6 +149,8 @@ An optional, provider-independent AI assistant is planned for a later phase. Any
 
 Licensed under the **BSD 2-Clause License**. See [LICENSE](LICENSE) for the full text.
 
-Worldkeeper is an independent tabletop campaign tool. It is **not affiliated with or endorsed by Wizards of the Coast**. It does not bundle official D&D rulebook text or monster stat blocks; users provide their own appropriately licensed or owned material.
+Worldkeeper is an independent tabletop campaign tool, compatible with fifth edition. It is **not affiliated with or endorsed by Wizards of the Coast**. Apart from the System Reference Document 5.2.1 rules used by the character sheet and builder (spells, class tables and features, species traits, feats, backgrounds, weapons and armor), it does not bundle official D&D rulebook text or monster stat blocks; users provide their own appropriately licensed or owned material.
+
+This work includes material from the System Reference Document 5.2.1 (“SRD 5.2.1”) by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.
 
 > “The Worldkeeper” is a working title. You can rename your installation under **Settings**.

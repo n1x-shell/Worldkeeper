@@ -107,7 +107,7 @@ export function libraryRoutes(ctx: AppContext) {
   );
   r.get(
     '/export/campaign/:id',
-    h((req, res) => sendFile(res, `worldkeeper-campaign-${req.params.id}-${day()}.json`, 'application/json', JSON.stringify(exportCampaign(ctx.db, intParam(req.params.id))))),
+    h((req, res) => sendFile(res, `worldkeeper-campaign-${req.params.id}-${day()}.json`, 'application/json', JSON.stringify(exportCampaign(ctx.db, intParam(req.params.id), ctx.paths.uploadsDir)))),
   );
   r.post(
     '/import/json',
@@ -115,7 +115,7 @@ export function libraryRoutes(ctx: AppContext) {
     h((req) => {
       if (!req.file) throw badRequest('Choose a JSON export');
       const data = JSON.parse(req.file.buffer.toString('utf8'));
-      if (data?.app === 'worldkeeper-campaign') return { campaignId: importCampaign(ctx.db, data) };
+      if (data?.app === 'worldkeeper-campaign') return { campaignId: importCampaign(ctx.db, data, ctx.paths.uploadsDir) };
       importJson(ctx.db, data);
       return { ok: true };
     }),

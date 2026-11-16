@@ -158,6 +158,9 @@ function byCode(db: DB, code: string) {
   return fromRow(row);
 }
 
+/** The character behind a private code. */
+export const characterIdByCode = (db: DB, code: string) => byCode(db, code).character_id;
+
 const withoutGmNotes = (sheet: Record<string, unknown>) => Object.fromEntries(Object.entries(sheet).filter(([k]) => !(GM_ONLY_SHEET_KEYS as readonly string[]).includes(k)));
 
 function forPlayer(db: DB, page: CharacterPage): PlayerCharacterPage {
@@ -205,8 +208,11 @@ export function updatePlayerCharacterPage(db: DB, code: string, body: unknown): 
     // The sheet the player sends replaces theirs, but the GM's own notes are kept as they were.
     const row = db.prepare('SELECT name, species, class_name, sheet FROM characters WHERE id = ?').get(page.character_id) as { name: string; species: string; class_name: string; sheet: string };
     const old = JSON.parse(row.sheet || '{}') as Record<string, unknown>;
-    const kept = Object.fromEntries((GM_ONLY_SHEET_KEYS as readonly string[]).filter((k) => k in old).map((k) => [k, old[k]]));
-    const sheet = patch.character.sheet ? { ...withoutGmNotes(patch.character.sheet as Record<string, unknown>), ...kept } : old;
+    // The portrait changes only through its own route, too.
+    const kept = Object.fromEntries([...(GM_ONLY_SHEET_KEYS as readonly string[]), 'portrait'].filter((k) => k in old).map((k) => [k, old[k]]));
+    const sent = patch.character.sheet ? withoutGmNotes(patch.character.sheet as Record<string, unknown>) : null;
+    if (sent) delete sent.portrait;
+    const sheet = sent ? { ...sent, ...kept } : old;
     db.prepare('UPDATE characters SET name = ?, species = ?, class_name = ?, sheet = ?, updated_at = ? WHERE id = ?').run(
       patch.character.name ?? row.name,
       patch.character.species ?? row.species,

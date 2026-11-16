@@ -367,3 +367,123 @@ h3 {
     break-before: auto;
   }
 }
+
+/* Character sheet: a ledger, inked on dark vellum (or parchment in the light theme), with a framed portrait. */
+.ledger {
+  --ledger: rgb(var(--panel));
+  background: radial-gradient(ellipse at 20% 0%, rgb(var(--gold) / 0.07), transparent 55%), radial-gradient(ellipse at 100% 100%, rgb(var(--gold) / 0.05), transparent 50%), var(--ledger);
+  @apply border border-gold/30 rounded-lg shadow-lg;
+}
+.ledger-rule {
+  @apply flex items-center gap-2 font-display text-[11px] uppercase tracking-[0.22em] text-gold/90;
+}
+.ledger-rule::before,
+.ledger-rule::after {
+  content: '';
+  @apply h-px flex-1 bg-gradient-to-r from-transparent via-gold/40 to-transparent;
+}
+.ledger-rule::before {
+  @apply max-w-4;
+}
+.ledger-card {
+  @apply rounded-md border border-line/80 bg-bg/40 p-3;
+}
+.ledger-frame {
+  position: relative;
+  padding: 6px;
+  border: 1px solid rgb(var(--gold) / 0.55);
+  outline: 1px solid rgb(var(--gold) / 0.25);
+  outline-offset: 3px;
+  border-radius: 999px 999px 10px 10px;
+  background: rgb(var(--bg) / 0.6);
+}
+.ledger-frame > .ledger-frame-inner {
+  border-radius: 999px 999px 6px 6px;
+  overflow: hidden;
+  aspect-ratio: 4 / 5;
+  background: linear-gradient(180deg, rgb(var(--raised)), rgb(var(--bg)));
+}
+.ledger-tabs {
+  @apply flex flex-nowrap overflow-x-auto border-b border-gold/25;
+  scrollbar-width: thin;
+}
+.ledger-tab {
+  @apply relative shrink-0 whitespace-nowrap px-2.5 py-2 font-display text-[12px] uppercase tracking-[0.1em] text-dim hover:text-gold transition-colors;
+}
+.ledger-tab[aria-selected='true'] {
+  @apply text-gold;
+}
+.ledger-tab[aria-selected='true']::after {
+  content: '';
+  @apply absolute inset-x-2 -bottom-px h-0.5 bg-gold;
+}
+/* A diamond toggle, like the official sheet's. */
+.diamond {
+  @apply inline-flex h-4 w-4 shrink-0 items-center justify-center;
+}
+.diamond::before {
+  content: '';
+  @apply block h-2.5 w-2.5 rotate-45 border border-gold/70 bg-transparent transition-colors;
+}
+.diamond[aria-pressed='true']::before,
+.diamond[aria-checked='true']::before {
+  @apply bg-gold;
+}
+.diamond.diamond-double[aria-checked='true']::before {
+  box-shadow:
+    0 0 0 2px rgb(var(--panel)),
+    0 0 0 3px rgb(var(--gold));
+}
+.diamond:disabled {
+  @apply opacity-60;
+}
+.medallion {
+  @apply relative flex flex-col items-center rounded-t-[40%] rounded-b-md border border-gold/40 bg-bg/50 px-2 pt-2 pb-1.5;
+}
+.stat-box {
+  @apply flex flex-col items-center justify-center rounded-md border border-line bg-bg/50 px-2 py-1.5 text-center;
+}
+.stat-box > .stat-label {
+  @apply text-[10px] uppercase tracking-[0.16em] text-dim;
+}
+.stat-box > .stat-value {
+  @apply font-display text-xl text-ink leading-tight;
+}
+.input-bare {
+  @apply w-full bg-transparent border-0 border-b border-dashed border-line/80 px-0.5 py-0.5 text-ink focus:border-gold focus:outline-none;
+}
+@media print {
+  html,
+  body {
+    background: white !important;
+  }
+  .ledger {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+}
+/* The paper character sheet: US Letter pages, ink on white. */
+.print-page {
+  width: 8.5in;
+  min-height: 11in;
+  color: #111;
+}
+@media print {
+  .print-page {
+    width: auto;
+    min-height: 0;
+    padding: 0 !important;
+    page-break-after: always;
+    break-after: page;
+  }
+  .print-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+}
+@media screen and (max-width: 900px) {
+  .print-sheet {
+    zoom: 0.45;
+  }
+}

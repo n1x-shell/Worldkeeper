@@ -10,6 +10,7 @@ import { parseJson } from '../lib/json.js';
 import { playerSnapshot } from '../player/projection.js';
 import { reindexAll } from '../repo/search.js';
 import { badRequest } from '../lib/errors.js';
+import { portraitDataUrl, savePortrait } from '../repo/portraits.js';
 import type { Entity } from '../../../shared/domain.js';
 
 /** Tables included in a full JSON export, in dependency order. */
@@ -26,6 +27,7 @@ const TABLES = [
   'campaigns',
   'characters',
   'character_pages',
+  'character_changes',
   'quests',
   'adventures',
   'scenes',
@@ -142,7 +144,7 @@ export function exportFullWorldZip(db: DB, paths: Paths): Buffer {
   return zip.toBuffer();
 }
 
-export function exportCampaign(db: DB, campaignId: number) {
+export function exportCampaign(db: DB, campaignId: number, uploadsDir?: string) {
   const c = db.prepare('SELECT * FROM campaigns WHERE id = ?').get(campaignId);
   if (!c) throw badRequest('Unknown campaign');
   const advIds = (db.prepare('SELECT id FROM adventures WHERE campaign_id = ?').all(campaignId) as { id: number }[]).map((a) => a.id);
@@ -155,6 +157,15 @@ export function exportCampaign(db: DB, campaignId: number) {
     campaign: c,
     characters: db.prepare('SELECT * FROM characters WHERE campaign_id = ?').all(campaignId),
     character_pages: db.prepare('SELECT p.* FROM character_pages p JOIN characters c ON c.id = p.character_id WHERE c.campaign_id = ?').all(campaignId),
+    character_changes: db.prepare('SELECT x.* FROM character_changes x JOIN characters c ON c.id = x.character_id WHERE c.campaign_id = ?').all(campaignId),
+    // Portraits travel inside the export, as pictures.
+    portraits: uploadsDir
+      ? Object.fromEntries(
+          (db.prepare('SELECT id, sheet FROM characters WHERE campaign_id = ?').all(campaignId) as { id: number; sheet: string }[])
+            .map((c) => [c.id, portraitDataUrl(uploadsDir, (JSON.parse(c.sheet || '{}') as { portrait?: string }).portrait)])
+            .filter(([, v]) => v),
+        )
+      : {},
     quests: db.prepare('SELECT * FROM quests WHERE campaign_id = ?').all(campaignId),
     adventures: db.prepare('SELECT * FROM adventures WHERE campaign_id = ?').all(campaignId),
     scenes: db.prepare(`SELECT * FROM scenes WHERE adventure_id IN (${inList(advIds)})`).all(),
@@ -169,7 +180,7 @@ export function exportCampaign(db: DB, campaignId: number) {
 }
 
 /** Import a campaign export as a NEW campaign (all ids remapped). World records are referenced, never copied. */
-export function importCampaign(db: DB, data: ReturnType<typeof exportCampaign>): number {
+export function importCampaign(db: DB, data: ReturnType<typeof exportCampaign>, uploadsDir?: string): number {
   if (data?.app !== 'worldkeeper-campaign') throw badRequest('Not a Worldkeeper campaign export');
   const tx = db.transaction(() => {
     const insert = (table: string, row: Record<string, unknown>, overrides: Record<string, unknown>) => {
@@ -196,6 +207,18 @@ export function importCampaign(db: DB, data: ReturnType<typeof exportCampaign>):
         insert('character_pages', r, { character_id: id, code: `IMPORT-${id}` });
         renewCharacterCode(db, id);
       }
+    for (const r of (data.character_changes ?? []) as Record<string, unknown>[])
+      if (charMap.has(r.character_id as number)) insert('character_changes', r, { character_id: charMap.get(r.character_id as number) });
+    // A portrait becomes a new file for the copy; without the picture, the copy has none.
+    for (const [oldId, id] of charMap) {
+      const pic = (data.portraits ?? {})[oldId];
+      const row = db.prepare('SELECT sheet FROM characters WHERE id = ?').get(id) as { sheet: string };
+      const sheet = JSON.parse(row.sheet || '{}') as Record<string, unknown>;
+      if (!sheet.portrait) continue;
+      delete sheet.portrait;
+      db.prepare('UPDATE characters SET sheet = ? WHERE id = ?').run(JSON.stringify(sheet), id);
+      if (pic && uploadsDir) savePortrait(db, uploadsDir, id, pic);
+    }
     for (const r of data.quests as Record<string, unknown>[]) insert('quests', r, { campaign_id: cid });
     for (const r of data.adventures as Record<string, unknown>[]) advMap.set(r.id as number, insert('adventures', r, { campaign_id: cid }));
     for (const r of data.scenes as Record<string, unknown>[]) sceneMap.set(r.id as number, insert('scenes', r, { adventure_id: advMap.get(r.adventure_id as number) }));

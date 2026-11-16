@@ -5,7 +5,9 @@ import { activeCampaignId, playerCampaign, playerCampaigns, playerEntities, play
 import { playerFactionWeb } from '../repo/factionWeb.js';
 import { notFound } from '../lib/errors.js';
 import { playerLive } from '../repo/handouts.js';
-import { playerCharacterPage, updatePlayerCharacterPage } from '../repo/characterPages.js';
+import { characterIdByCode, playerCharacterPage, updatePlayerCharacterPage } from '../repo/characterPages.js';
+import { characterLog, logged } from '../repo/characterLog.js';
+import { removePortrait, savePortrait } from '../repo/portraits.js';
 
 /**
  * Player API. Every response is built by player/projection.ts. These routes are the ONLY routes
@@ -59,7 +61,31 @@ export function playerRoutes(ctx: AppContext) {
   );
   r.patch(
     '/me/:code',
-    h((req) => updatePlayerCharacterPage(ctx.db, String(req.params.code), req.body)),
+    h((req) => {
+      const id = characterIdByCode(ctx.db, String(req.params.code));
+      return logged(ctx.db, id, 'player', () => updatePlayerCharacterPage(ctx.db, String(req.params.code), req.body));
+    }),
+  );
+  // The character's change log (without the GM's own notes), and their portrait.
+  r.get(
+    '/me/:code/log',
+    h((req) => characterLog(ctx.db, characterIdByCode(ctx.db, String(req.params.code)), true)),
+  );
+  r.post(
+    '/me/:code/portrait',
+    h((req) => {
+      const id = characterIdByCode(ctx.db, String(req.params.code));
+      logged(ctx.db, id, 'player', () => savePortrait(ctx.db, ctx.paths.uploadsDir, id, req.body?.image));
+      return playerCharacterPage(ctx.db, String(req.params.code));
+    }),
+  );
+  r.delete(
+    '/me/:code/portrait',
+    h((req) => {
+      const id = characterIdByCode(ctx.db, String(req.params.code));
+      logged(ctx.db, id, 'player', () => removePortrait(ctx.db, ctx.paths.uploadsDir, id));
+      return playerCharacterPage(ctx.db, String(req.params.code));
+    }),
   );
   r.get(
     '/campaigns/:id',

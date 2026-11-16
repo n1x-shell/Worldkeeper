@@ -110,6 +110,10 @@ export interface PlayerSource {
     code: string,
     patch: Partial<Pick<PCharacterPage, 'true_name' | 'memories' | 'known_by' | 'notes'>> & { character?: Partial<Pick<PCharacterPage, 'name' | 'species' | 'class_name' | 'sheet'>> },
   ): Promise<PCharacterPage>;
+  /** The character's change log, without the GM's own notes. */
+  myLog?(code: string): Promise<import('./sheet/LogTab').LogEntry[]>;
+  /** Save a new portrait (a small data URL), or remove it (null). */
+  myPortrait?(code: string, image: string | null): Promise<PCharacterPage>;
 }
 
 /** A character's own page: memories, true name, who knows it, and Thinning (set by the GM). */
@@ -156,6 +160,16 @@ export const apiSource: PlayerSource = {
     const r = await fetch(`/api/player/me/${encodeURIComponent(code)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patch) });
     const body = (await r.json().catch(() => ({}))) as PCharacterPage & { error?: string };
     if (!r.ok) throw new Error(body.error ?? `Couldn't save (${r.status})`);
+    return body;
+  },
+  myLog: (code) => getJson(`/api/player/me/${encodeURIComponent(code)}/log`),
+  myPortrait: async (code, image) => {
+    const r = await fetch(
+      `/api/player/me/${encodeURIComponent(code)}/portrait`,
+      image ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image }) } : { method: 'DELETE' },
+    );
+    const body = (await r.json().catch(() => ({}))) as PCharacterPage & { error?: string };
+    if (!r.ok) throw new Error(body.error ?? `Couldn't save the portrait (${r.status})`);
     return body;
   },
 };

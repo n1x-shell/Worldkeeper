@@ -10,6 +10,8 @@ import { AutoTextarea, Empty, EntityLink, ErrorBox, Field, Loading, Modal, PageH
 import { EntityMultiPicker, EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
 import { FullSheet } from '../player/sheet/FullSheet';
+import { ThinningTab } from '../player/sheet/ThinningTab';
+import type { LogEntry } from '../player/sheet/LogTab';
 import type { Sheet } from '@shared/sheet';
 
 // ------------------------------------------------------------------ shared helpers
@@ -397,8 +399,11 @@ function CharacterSheet({ ch: initial, onDeleted }: { ch: Character; onDeleted: 
   };
   const sh = ch.sheet;
   const setSheet = (p: Partial<Character['sheet']>) => set({ sheet: { ...sh, ...p } });
+  const page = useCharacterPage(ch.id);
+  const loadLog = useCallback(() => api.get<LogEntry[]>(`/api/characters/${ch.id}/log`), [ch.id]);
+  const portrait = (sh as Sheet).portrait;
   return (
-    <div className="panel-pad space-y-4">
+    <div className="space-y-3">
       <div className="flex flex-wrap items-end gap-3">
         <Field label="Player">
           <input className="input" value={ch.player} onChange={(e) => set({ player: e.target.value })} />
@@ -410,7 +415,7 @@ function CharacterSheet({ ch: initial, onDeleted }: { ch: Character; onDeleted: 
             ))}
           </select>
         </Field>
-        <SaveStatus state={auto.state} error={auto.error} />
+        <SaveStatus state={auto.state === 'idle' ? page.state : auto.state} error={auto.error ?? page.error} />
         <button
           className="btn-danger ml-auto"
           onClick={async () => {
@@ -425,15 +430,40 @@ function CharacterSheet({ ch: initial, onDeleted }: { ch: Character; onDeleted: 
       <FullSheet
         value={{ name: ch.name, species: ch.species, class_name: ch.class_name, level: ch.level, sheet: sh as Sheet }}
         onChange={(next) => set({ name: next.name, species: next.species, class_name: next.class_name, level: next.level, sheet: next.sheet as Character['sheet'] })}
+        storeKey="wk.gm.sheet.tab"
+        portraitUrl={portrait ? `/api/uploads/${encodeURIComponent(portrait)}` : null}
+        onPortrait={async (image) => {
+          const saved = image ? await api.post<Character>(`/api/characters/${ch.id}/portrait`, { image }) : await api.del<Character>(`/api/characters/${ch.id}/portrait`);
+          setCh((cur) => {
+            const sheet = { ...cur.sheet } as Sheet;
+            const p = (saved.sheet as Sheet).portrait;
+            if (p) sheet.portrait = p;
+            else delete sheet.portrait;
+            return { ...cur, sheet: sheet as Character['sheet'] };
+          });
+        }}
+        loadLog={loadLog}
+        extraTabs={[
+          ...(page.data ? [{ id: 'thinning', label: 'Thinning', content: <ThinningTab gm page={page.data} onChange={(t, now) => page.set(t, now)} /> }] : []),
+          {
+            id: 'gm',
+            label: 'GM only',
+            content: (
+              <div className="space-y-6">
+                {page.data && <PlayerLink characterId={ch.id} code={page.data.code} updatedAt={page.data.updated_at} onNewCode={page.reload} />}
+                <Field label="Setting mechanics (GM only, HOMEBREW)">
+                  <AutoTextarea minRows={2} value={sh.shardscarred ?? ''} onChange={(e) => setSheet({ shardscarred: e.target.value })} />
+                </Field>
+                <WorldTies hometown={sh.hometown ?? null} ties={sh.ties ?? []} onChange={(p) => setSheet(p)} />
+                <Field label="Notes (GM only)">
+                  <AutoTextarea minRows={3} value={ch.notes} onChange={(e) => set({ notes: e.target.value })} />
+                </Field>
+                <p className="text-xs text-dim">Nothing on this tab is shown to the player, on their sheet or in its log.</p>
+              </div>
+            ),
+          },
+        ]}
       />
-      <Field label="Setting mechanics (GM only, HOMEBREW)">
-        <AutoTextarea minRows={2} value={sh.shardscarred ?? ''} onChange={(e) => setSheet({ shardscarred: e.target.value })} />
-      </Field>
-      <WorldTies hometown={sh.hometown ?? null} ties={sh.ties ?? []} onChange={(p) => setSheet(p)} />
-      <Field label="Notes (GM only)">
-        <AutoTextarea minRows={3} value={ch.notes} onChange={(e) => set({ notes: e.target.value })} />
-      </Field>
-      <CharacterPagePanel characterId={ch.id} />
     </div>
   );
 }
@@ -449,33 +479,38 @@ interface CharacterPageData {
   updated_at: string;
 }
 
-/**
- * The character's page: memories, true name, who knows it, and Thinning. The player keeps it on the table server with
- * their private code; the GM sets Thinning here, and can restore a struck memory if the table agrees.
- */
-function CharacterPagePanel({ characterId }: { characterId: number }) {
+/** The character's page (memories, true name, Thinning), saved as the GM edits it. */
+function useCharacterPage(characterId: number) {
   const { data, reload } = useApi<CharacterPageData>(`/api/characters/${characterId}/page`);
   const [page, setPage] = useState<CharacterPageData | null>(null);
   useEffect(() => setPage(data ?? null), [data]);
   const auto = useAutosave((p: CharacterPageData) =>
     api.patch(`/api/characters/${characterId}/page`, { true_name: p.true_name, memories: p.memories, known_by: p.known_by, thinning: p.thinning, shardscarred: p.shardscarred, notes: p.notes }),
   );
-  if (!page) return null;
-  const set = (p: Partial<CharacterPageData>) => {
-    const n = { ...page, ...p };
-    setPage(n);
-    auto.schedule(n);
+  return {
+    data: page,
+    reload,
+    state: auto.state,
+    error: auto.error,
+    set: (p: Partial<CharacterPageData>, now = false) => {
+      if (!page) return;
+      const n = { ...page, ...p };
+      setPage(n);
+      auto.schedule(n);
+      if (now) void auto.flush?.();
+    },
   };
-  const link = `/player/me/${page.code}`;
+}
+
+/** The player's private code and link to their sheet on the table server. */
+function PlayerLink({ characterId, code, updatedAt, onNewCode }: { characterId: number; code: string; updatedAt: string; onNewCode: () => void }) {
+  const link = `/player/me/${code}`;
   return (
-    <section className="rounded border border-line p-3 space-y-3">
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="section-title">Character page</div>
-        <SaveStatus state={auto.state} error={auto.error} />
-        <span className="ml-auto text-xs text-dim">Updated {new Date(page.updated_at).toLocaleString()}</span>
-      </div>
-      <p className="text-xs text-dim">
-        The player keeps this page on the table server: code <b className="text-gold tracking-widest">{page.code}</b>, or the link {link} on the table server&apos;s address. Only they and you can see it.
+    <section className="space-y-2">
+      <div className="section-title">The player&apos;s link</div>
+      <p className="text-sm text-dim">
+        The player keeps this sheet on the table server: code <b className="text-gold tracking-widest">{code}</b>, or the link {link} on the table server&apos;s address. Only they and you can see it.
+        Updated {new Date(updatedAt).toLocaleString()}.
       </p>
       <div className="flex flex-wrap gap-2">
         <button className="btn text-xs" onClick={() => void navigator.clipboard?.writeText(link)}>
@@ -484,66 +519,14 @@ function CharacterPagePanel({ characterId }: { characterId: number }) {
         <button
           className="btn text-xs"
           onClick={async () => {
-            if (!confirm('Give this page a new code? The old link stops working.')) return;
+            if (!confirm('Give this sheet a new code? The old link stops working.')) return;
             await api.post(`/api/characters/${characterId}/page/new-code`, {});
-            await reload();
+            onNewCode();
           }}
         >
           New code
         </button>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Field label={`Thinning: ${page.thinning} of 6 (save DC ${12 + page.thinning})`}>
-          <div className="flex gap-1">
-            {[0, 1, 2, 3, 4, 5, 6].map((n) => (
-              <button key={n} className={`w-8 h-8 rounded border text-sm ${n === page.thinning ? 'bg-gold/30 border-gold text-gold' : 'border-line text-dim'}`} onClick={() => set({ thinning: n })} aria-label={`Thinning ${n}`}>
-                {n}
-              </button>
-            ))}
-          </div>
-        </Field>
-        <Field label="Shardscarred">
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={page.shardscarred} onChange={(e) => set({ shardscarred: e.target.checked })} /> Advantage on saves against memory changes and rewriting
-          </label>
-        </Field>
-        <Field label="True name">
-          <input className="input" value={page.true_name} onChange={(e) => set({ true_name: e.target.value })} />
-        </Field>
-        <Field label="Who knows it (comma-separated)">
-          <input
-            className="input"
-            value={page.known_by.join(', ')}
-            onChange={(e) =>
-              set({
-                known_by: e.target.value
-                  .split(',')
-                  .map((s) => s.trim())
-                  .filter(Boolean),
-              })
-            }
-          />
-        </Field>
-      </div>
-      <div className="space-y-1">
-        <div className="text-sm text-dim">Named memories</div>
-        {!page.memories.length && <p className="text-xs text-dim">None written yet.</p>}
-        <ul className="space-y-1 text-sm">
-          {page.memories.map((m, i) => (
-            <li key={m.id ?? i} className="flex items-center gap-2">
-              <span className={m.struck ? 'line-through text-dim flex-1' : 'flex-1'}>{m.text}</span>
-              {m.struck && (
-                <button className="btn-ghost text-xs" title="Only if the table agrees: lost memories don't normally come back" onClick={() => set({ memories: page.memories.map((x) => (x === m ? { ...x, struck: false } : x)) })}>
-                  Restore
-                </button>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <Field label="The player's notes">
-        <AutoTextarea minRows={2} value={page.notes} onChange={(e) => set({ notes: e.target.value })} />
-      </Field>
     </section>
   );
 }

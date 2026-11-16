@@ -675,6 +675,22 @@ CREATE TABLE character_pages (
 );
 `,
   },
+  {
+    version: 15,
+    name: 'character change log: who changed what on a sheet or character page, the player or the GM',
+    sql: `
+CREATE TABLE character_changes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+  at TEXT NOT NULL,
+  by TEXT NOT NULL CHECK (by IN ('player', 'gm')),
+  field TEXT NOT NULL,
+  before TEXT NOT NULL DEFAULT 'null',
+  after TEXT NOT NULL DEFAULT 'null'
+);
+CREATE INDEX character_changes_by_character ON character_changes (character_id, id);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

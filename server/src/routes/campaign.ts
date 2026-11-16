@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import type { AppContext } from '../context.js';
+import { characterLog, logged } from '../repo/characterLog.js';
+import { keepPortrait, removePortrait, savePortrait } from '../repo/portraits.js';
 import { h, intParam, mountCrud } from './util.js';
 import {
   adventureFromHook,
@@ -84,13 +86,41 @@ export function campaignRoutes(ctx: AppContext) {
     '/characters/:id/page',
     h((req) => characterPage(ctx.db, intParam(req.params.id))),
   );
-  r.patch(
-    '/characters/:id/page',
-    h((req) => updateCharacterPage(ctx.db, intParam(req.params.id), req.body)),
-  );
   r.post(
     '/characters/:id/page/new-code',
     h((req) => renewCharacterCode(ctx.db, intParam(req.params.id))),
+  );
+  // Everything the GM changes on a character or its page goes in the change log, marked as the GM's.
+  r.patch(
+    '/characters/:id/page',
+    h((req) => logged(ctx.db, intParam(req.params.id), 'gm', () => updateCharacterPage(ctx.db, intParam(req.params.id), req.body))),
+  );
+  r.patch(
+    '/characters/:id',
+    h((req) => {
+      const id = intParam(req.params.id);
+      return logged(ctx.db, id, 'gm', () => characters.update(ctx.db, id, keepPortrait(ctx.db, id, req.body)));
+    }),
+  );
+  r.get(
+    '/characters/:id/log',
+    h((req) => characterLog(ctx.db, intParam(req.params.id))),
+  );
+  r.post(
+    '/characters/:id/portrait',
+    h((req) => {
+      const id = intParam(req.params.id);
+      logged(ctx.db, id, 'gm', () => savePortrait(ctx.db, ctx.paths.uploadsDir, id, req.body?.image));
+      return characters.get(ctx.db, id);
+    }),
+  );
+  r.delete(
+    '/characters/:id/portrait',
+    h((req) => {
+      const id = intParam(req.params.id);
+      logged(ctx.db, id, 'gm', () => removePortrait(ctx.db, ctx.paths.uploadsDir, id));
+      return characters.get(ctx.db, id);
+    }),
   );
   mountCrud(r, ctx, '/characters', characters, ['campaign_id']);
   mountCrud(r, ctx, '/quests', quests, ['campaign_id', 'status']);

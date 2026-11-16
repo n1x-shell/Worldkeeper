@@ -26,6 +26,8 @@ export const campaigns = makeCrud({
 });
 
 /** A character's 2024 sheet. Also checks what a player saves on the table server (see characterPages.ts). */
+const featureList = z.array(z.object({ name: z.string().max(200), source: z.string().max(200), text: z.string().max(10000) })).max(150);
+
 export const characterSheetSchema = z
   .object({
     abilities: z.record(z.string(), z.number().int().min(1).max(30)).optional(),
@@ -62,7 +64,36 @@ export const characterSheetSchema = z
     masteries: z.array(z.string().max(200)).max(20).optional(),
     attacks: z.array(z.object({ name: z.string().max(200), bonus: z.string().max(40), damage: z.string().max(200), notes: z.string().max(500) })).max(30).optional(),
     spellAbility: z.string().max(10).optional(),
-    spells: z.array(z.object({ name: z.string().max(200), level: z.number().int().min(0).max(9), prepared: z.boolean() })).max(200).optional(),
+    spells: z
+      .array(
+        z.object({
+          name: z.string().max(200),
+          level: z.number().int().min(0).max(9),
+          prepared: z.boolean(),
+          time: z.string().max(200).optional(),
+          range: z.string().max(100).optional(),
+          concentration: z.boolean().optional(),
+          ritual: z.boolean().optional(),
+          material: z.boolean().optional(),
+          notes: z.string().max(1000).optional(),
+        }),
+      )
+      .max(200)
+      .optional(),
+    classFeatures: featureList.optional(),
+    speciesTraits: featureList.optional(),
+    featList: featureList.optional(),
+    armorTraining: z.object({ light: z.boolean().optional(), medium: z.boolean().optional(), heavy: z.boolean().optional(), shields: z.boolean().optional() }).optional(),
+    armorWorn: z.string().max(100).optional(),
+    shield: z.boolean().optional(),
+    attunement: z.array(z.string().max(200)).max(3).optional(),
+    resources: z
+      .array(z.object({ name: z.string().max(100), max: z.number().int().min(0).max(999), used: z.number().int().min(0).max(999), reset: z.enum(['short', 'short-one', 'long']) }))
+      .max(20)
+      .optional(),
+    pronouns: z.string().max(60).optional(),
+    // An uploaded portrait's file name (see the portrait routes); never a link to anywhere else.
+    portrait: z.string().regex(/^portrait-[a-z0-9-]+\.(webp|jpg|png)$/).optional(),
     features: z.string().max(20000).optional(),
     traits: z.string().max(20000).optional(),
     feats: z.string().max(20000).optional(),

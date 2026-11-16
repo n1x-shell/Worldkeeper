@@ -21,17 +21,18 @@ The separate process listens by default on port `4320` on all interfaces (`0.0.0
 **Network precautions:** LAN exposure is not authentication. Use a trusted network and firewall restrictions; do not forward the port to the public internet. The DM server should remain bound to `127.0.0.1`. Do not set its `HOST` to `0.0.0.0` on a shared or untrusted network.
 
 
-### Character pages
+### Character sheets
 
-Each character in a campaign has a page with their named memories, their true name and who knows it, their Thinning track, and their full D&D 2024 character sheet. On the GM's party screen, each character's **Character page** panel shows a private code and a link, `http://<your-computer>:4320/player/me/<code>`. A player opens that link (or **My Character** in the player menu, then types the code) to keep their own page up to date.
+Each character in a campaign has a full D&D 2024 character sheet with a portrait, and a page for the world's own rules: their named memories, their true name and who knows it, and their Thinning track. On the GM's party screen, the sheet's **GM only** tab shows the player's private code and a link, `http://<your-computer>:4320/player/me/<code>`. A player opens that link (or **My Character** in the player menu, then types the code) to keep their sheet up to date.
 
-- Players can add memories, reword the ones they still have, and strike one when their Thinning goes up. A struck memory stays struck.
-- Players keep their whole character sheet up to date, except their level, which the GM changes. The GM's setting mechanics, world ties and notes on the character are never shown to players, and a player's save never changes them.
-- On the table server, the guided **Make a Character** builder has a **Send to my sheet** button that fills in the sheet from the build.
-- Only the GM changes Thinning, and the GM can restore a struck memory if the table agrees.
-- A character's page is visible only to whoever has its code, and to the GM. **New code** in the GM panel stops an old link working.
+- Players keep their whole sheet up to date, portrait included, except their level and Thinning, which the GM sets. The GM can edit everything, for a player who would rather not.
+- The sheet's **Log** tab lists every change, who made it (the player or the GM) and when. Changes to the GM's setting mechanics, world ties and notes are never shown to players, and a player's save never changes them.
+- Players can add memories, reword the ones they still have, and strike one when their Thinning goes up. A struck memory stays struck. The GM can restore one if the table agrees.
+- On the table server, the **Make a Character** builder's **Send to my sheet** button fills in the sheet from a finished build. **Print** on My Character prints the sheet on two pages, laid out like the official one.
+- A character's sheet is visible only to whoever has its code, and to the GM. **New code** stops an old link working.
 - The code is the only protection, so the same network precautions apply.
-- Character pages are never part of the published handbook, which can't save anything, so it has no **My Character** item.
+- Character sheets are never part of the published handbook, which can't save anything, so it has no **My Character** item. Its builder still makes and prints a complete character.
+
 ## What players can see
 
 On a record's **Player view** tab, enable **Players know this record exists** before allowing the record to appear. Then select which material is allowed:
