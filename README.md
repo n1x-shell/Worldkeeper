@@ -4,11 +4,11 @@
 
 The Worldkeeper is a **free, open-source, local-first worldbuilding encyclopedia and D&D 5e (2024) campaign manager**. Import existing Markdown lore, connect characters, factions and locations, explore maps, run sessions, and share only the knowledge your players have discovered.
 
-Originally designed for a world with three branches, **Aetheris**, **Kaelmar**, and the **Ethereal Realm**, it preserves stable IDs, source references, canon labels and GM secrets while providing tools to manage independent campaigns.
+Originally designed for a world with three branches, **Aetheris**, **Kaelmar**, and the **Ethereal Realm**, it preserves stable IDs, source references, canon labels and GM secrets while providing tools to manage independent campaigns. It runs just as well as a **standard D&D 2024 campaign** in a world of your own: switch the setting's mechanics off, import the books you own, and play.
 
 **No account, required cloud service, paid API or AI dependency.** World data lives on your computer in SQLite and an uploads directory, with backups and portable exports.
 
-> **Status:** v0.2, early functional release. Some features and desktop platform builds are still undergoing validation. Read [Development Status](DEVELOPMENT_STATUS.md) before relying on the application for important campaign data.
+> **Status:** v0.3, early functional release. Some features and desktop platform builds are still undergoing validation. Read [Development Status](DEVELOPMENT_STATUS.md) before relying on the application for important campaign data.
 
 ## Screenshots
 
@@ -52,6 +52,9 @@ The region border editor lets the GM draw and adjust regional boundaries directl
 | **World exploration** | Maps, hierarchical locations, timelines, relationship graphs, cosmology and realm tools |
 | **Campaign management** | Multiple campaigns, party sheets, quests, adventures, scene flows and campaign state overlays |
 | **Session tools** | Preparation, live session dashboard, initiative, dice, event log, recaps and player reveals |
+| **Character sheets and builder** | A full D&D 2024 sheet for players and the GM, with a change log, and a builder for any level from 1 to 20 |
+| **Your own books** | Rules packs from the books you own: spells, species, classes, feats, backgrounds, creatures and magic items, kept private to your library |
+| **Standard D&D or the setting** | Switch the Worldkeeper setting's own mechanics on or off; treasure and encounters can come from your books |
 | **Player publishing** | Player-only server, static player handbook, optional GitHub Pages publishing |
 | **Library operations** | Previewed imports, protective merging, exports, backups and restoration |
 
@@ -80,6 +83,20 @@ Open <http://127.0.0.1:4310>.
 For development, run `npm run dev` (API on port 4310, Vite client on port 5173).
 
 For a first-world walkthrough, see [Quick Start](docs/QUICKSTART.md). For the full command list and environment variables, see [Development](docs/DEVELOPMENT.md).
+
+## Using your own books
+
+Worldkeeper ships with the **SRD 5.2.1** (free, under CC-BY-4.0). For everything else (the Player's Handbook, the Dungeon Master's Guide, the Monster Manual, supplements and adventures), it reads rules from **your own copy** and keeps them in your library, never in the app or anything you publish.
+
+The quickest way is a copy of the **5etools** data:
+
+1. Find the 5etools project's source repository yourself (it isn't linked here).
+2. Download an archive of the repository as a zip (the whole repository, or just its `data` folder).
+3. In Worldkeeper, open **Settings → Rules packs → Import your books from 5etools**, upload the zip, tick the books you own, and choose **Import**.
+
+Spells, species, classes and subclasses, backgrounds and feats then reach the character sheets and the builder. Creatures become stat blocks for the GM, and magic items show their rules in treasure and on sheets. Only use material from books you own. What you import stays in your library: it is never part of the published handbook, a player export, a campaign export or this repository. You can also write your own packs in Markdown. See [Rules packs](docs/RULES_PACKS.md).
+
+To run a campaign in your own world rather than the Worldkeeper setting, choose **Settings → Campaign mechanics → Standard D&D**. See [Features](docs/FEATURES.md#a-standard-dd-campaign-or-the-worldkeeper-setting).
 
 ## How it works
 
@@ -124,6 +141,7 @@ Backups are generated on a schedule while the server is running and before sensi
 | --- | --- |
 | [Quick Start](docs/QUICKSTART.md) | Import a world and prepare the first session |
 | [Features](docs/FEATURES.md) | Full encyclopedia, atlas, campaign and table-side feature reference |
+| [Rules packs](docs/RULES_PACKS.md) | The SRD, importing your own books from 5etools, and writing packs by hand |
 | [Player View & Publishing](docs/PLAYER_VIEW.md) | Reveals, player-only LAN server, static handbook, publishing precautions |
 | [Data, Backups & Exports](docs/DATA.md) | Import safety, data paths, backup/restore, export formats |
 | [Development](docs/DEVELOPMENT.md) | Commands, configuration, keyboard shortcuts and testing |
@@ -149,7 +167,7 @@ An optional, provider-independent AI assistant is planned for a later phase. Any
 
 Licensed under the **BSD 2-Clause License**. See [LICENSE](LICENSE) for the full text.
 
-Worldkeeper is an independent tabletop campaign tool, compatible with fifth edition. It is **not affiliated with or endorsed by Wizards of the Coast**. Apart from the System Reference Document 5.2.1 rules used by the character sheet and builder (spells, class tables and features, species traits, feats, backgrounds, weapons and armor), it does not bundle official D&D rulebook text or monster stat blocks; users provide their own appropriately licensed or owned material.
+Worldkeeper is an independent tabletop campaign tool, compatible with fifth edition. It is **not affiliated with or endorsed by Wizards of the Coast**. Apart from the System Reference Document 5.2.1 rules used by the character sheet and builder (spells, class tables and features, species traits, feats, backgrounds, weapons and armor), it does not bundle official D&D rulebook text, monster stat blocks or magic items. The 5etools importer reads a copy that you supply and stores what it converts only in your own library; users provide their own appropriately licensed or owned material. Worldkeeper is not affiliated with 5etools.
 
 This work includes material from the System Reference Document 5.2.1 (“SRD 5.2.1”) by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.
 

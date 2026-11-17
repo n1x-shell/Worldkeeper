@@ -38,6 +38,11 @@ npm run import -- path/to/folder
 
 Re-imports preserve unchanged records and do not delete records merely because they are absent from a newer archive. When source material and local edits diverge, review the preserved alternatives and revision history. See [Data & Backups](DATA.md) for important limitations and recovery guidance.
 
+### Your rules and your kind of campaign
+
+- **Your books.** The SRD 5.2.1 is built in. To use the books you own, find the 5etools project's source repository yourself, download an archive of it as a zip, and import it in **Settings → Rules packs → Import your books from 5etools**. Tick the books you own. See [Rules packs](RULES_PACKS.md).
+- **Standard D&D or the setting.** A library without the Worldkeeper setting starts as standard D&D 2024. If you imported the setting but want a plain campaign, choose **Settings → Campaign mechanics → Standard D&D**.
+
 ## 3. Explore the encyclopedia
 
 Open **Dashboard**, then browse records or use `Ctrl+K` to search. Records retain their canonical stable IDs, source references and provenance, even when the interface hides editorial details. Enable **Settings → Technical details** to inspect those fields.
@@ -77,6 +82,7 @@ Use **Backups → Back up now** and make an independent copy of the resulting ba
 ## Next reads
 
 - [Complete feature reference](FEATURES.md)
+- [Rules packs and your own books](RULES_PACKS.md)
 - [Player access and publication](PLAYER_VIEW.md)
 - [Data, backup, restore and exports](DATA.md)
 - [Commands, configuration and testing](DEVELOPMENT.md)

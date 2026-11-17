@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-11 · v0.2.0 "At the table"_
+_Last updated: 2026-11-17 · v0.3.0 "Your books, your table"_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,16 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3 "Your books, your table" (working and tested)
+
+- **Character sheet (D&D 2024):** everything on the official sheet, laid out as a ledger with a portrait and tabs; species, class, subclass and background dropdowns; the GM can edit everything, and every change is logged with who made it; portraits; character pages (true names, memories, Thinning) on the table server.
+- **Builder:** a full character at any level from 1 to 20, with a live preview and a printable two-page sheet; on the table server it sends the build to the player's sheet.
+- **Rules packs** (`server/src/repo/rulesPacks.ts`, `shared/rulesView.ts`): the SRD 5.2.1 built in and removable; Markdown packs; packs stay in the library's database and are never published or exported.
+- **5etools import** (`server/src/repo/fivetools.ts`): the GM uploads a zip of their own 5etools copy and chooses books; spells, species, classes, subclasses, backgrounds, feats, creatures (as GM-only stat blocks) and items. Any combination of books works. Nothing from it is in the repository.
+- **Your books in play** (`server/src/repo/bookData.ts`, `encounters.ts`): Your Books page; the encounter tracker adds book creatures; NPC cards carry the book stat block they name; item rules in treasure and on sheets; treasure and encounters generated from the books; the setting's regions mapped to terrain.
+- **Campaign mechanics** (`shared/mechanics.ts`): switches for the setting's pages, Thinning, the Return, fading salvage and the setting's treasure, with Standard D&D and Worldkeeper presets. A library without the setting starts as standard D&D.
+- **Tests:** 148 passing (1 skipped). The 5etools tests use a made-up stand-in in its shape.
 
 ## v0.2 "At the table" (working and tested)
 
@@ -196,7 +206,7 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
 - Browser (Playwright/Chromium) `scripts/e2e-smoke.mjs`: import through UI, dashboard, search → record, edit persists across reload, relationships, graph, vaults, Ethereal explorer, campaign → live session → log + encounter → end → recap draft, player view empty until reveal, atlas. Additional sweep of 61 routes with zero console/page errors; atlas upload + marker placement; mobile width (390px) without horizontal overflow.
 - `npm run typecheck` clean (client and server); production build succeeds.
 
-## Next development steps (suggested milestone: v0.3)
+## Next development steps (suggested milestone: v0.4)
 
 1. Run the `desktop.yml` workflow and fix any macOS or Windows issues. Add code signing. Add a single-instance lock and an in-app "share with players on my network" toggle.
 2. Player view: per-campaign publication, handout records, a player-facing timeline filtered by revealed eras and events.

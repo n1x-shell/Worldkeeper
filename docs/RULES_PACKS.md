@@ -15,7 +15,13 @@ Keep pack files in a `rules-packs/` folder, or name them `…-rules-pack.zip`. T
 
 ## Importing your books from 5etools
 
-If you have a copy of the 5etools data, **Settings → Rules packs → Import your books from 5etools** reads it directly: upload the zip of the 5etools repository (or of just its `data` folder). The app lists every book in it that has rules for character sheets, newest first, with how many spells, species, classes, subclasses, backgrounds, feats, creatures and items each holds. Tick the books you want and choose **Import**. Playtest (Unearthed Arcana) and unlisted sources are hidden unless you ask to see them.
+### Getting a copy
+
+5etools is a community project that keeps the published books' data as JSON files in a public source repository. Worldkeeper doesn't link to it or include any of it: find the project's source repository yourself, and download an archive of it as a zip (your code host's "Download ZIP" option for the repository works). The whole repository is large; a zip of just its `data` folder is enough. Only import books you own.
+
+### Importing
+
+**Settings → Rules packs → Import your books from 5etools** reads the zip directly: upload the zip of the 5etools repository (or of just its `data` folder). The app lists every book in it that has rules for character sheets, newest first, with how many spells, species, classes, subclasses, backgrounds, feats, creatures and items each holds. Tick the books you want and choose **Import**. Playtest (Unearthed Arcana) and unlisted sources are hidden unless you ask to see them.
 
 The first time, these books are ticked:
 
