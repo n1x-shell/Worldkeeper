@@ -6,8 +6,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { DB } from '../db/connection.js';
 import { badRequest } from '../lib/errors.js';
+import { assetsPath } from '../assetsDir.js';
 
-const OMENS = path.resolve(import.meta.dirname, '../../../assets/return/omens.json');
+const OMENS = assetsPath('return', 'omens.json');
 
 export interface ReturnStage {
   stage: number;

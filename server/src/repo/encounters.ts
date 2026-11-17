@@ -8,6 +8,7 @@ import path from 'node:path';
 import type Database from 'better-sqlite3';
 import { badRequest } from '../lib/errors.js';
 import { bookCreatureData } from './bookData.js';
+import { assetsPath } from '../assetsDir.js';
 
 type DB = Database.Database;
 
@@ -43,7 +44,7 @@ export function xpBudget(level: number, size: number, difficulty: Difficulty) {
   return row[DIFFICULTIES.indexOf(difficulty)] * Math.max(1, Math.min(10, Math.round(size)));
 }
 
-const TERRAIN_FILE = path.resolve(import.meta.dirname, '../../../assets/encounters/terrain.json');
+const TERRAIN_FILE = assetsPath('encounters', 'terrain.json');
 let terrainCache: Record<string, { label: string; terrain: string[] }> | null = null;
 /** The world's regions as terrain (empty for a world that has none mapped). */
 export function regionTerrains(): Record<string, { label: string; terrain: string[] }> {

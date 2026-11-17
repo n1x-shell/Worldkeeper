@@ -45,8 +45,24 @@ fn wait_for_port(port: u16, timeout: Duration) -> bool {
     false
 }
 
+/// Windows gives app folders in extended-length form (`\\?\C:\Program Files\...`). Node can't run a script from such a
+/// path (it fails with "EISDIR: illegal operation on a directory, lstat 'C:'"), so pass the ordinary form instead.
+/// `\\?\UNC\server\share\...` becomes `\\server\share\...`; any other path is returned as it is.
+fn plain_path(p: &Path) -> PathBuf {
+    let s = p.to_string_lossy();
+    if let Some(rest) = s.strip_prefix(r"\\?\UNC\") {
+        PathBuf::from(format!(r"\\{rest}"))
+    } else if let Some(rest) = s.strip_prefix(r"\\?\") {
+        PathBuf::from(rest)
+    } else {
+        p.to_path_buf()
+    }
+}
+
 fn start_server(resources: &Path, data_dir: &Path, port: u16) -> Result<Child, String> {
-    let node = sidecar_path()?;
+    let resources = &plain_path(resources);
+    let data_dir = &plain_path(data_dir);
+    let node = plain_path(&sidecar_path()?);
     let server_dir = resources.join("server");
     let entry = server_dir.join("index.mjs");
     if !entry.exists() {
@@ -157,4 +173,17 @@ pub fn run() {
             }
         }
     });
+}
+
+#[cfg(test)]
+mod tests {
+    use super::plain_path;
+    use std::path::{Path, PathBuf};
+
+    #[test]
+    fn strips_the_extended_length_prefix() {
+        assert_eq!(plain_path(Path::new(r"\\?\C:\Program Files\The Worldkeeper\server\index.mjs")), PathBuf::from(r"C:\Program Files\The Worldkeeper\server\index.mjs"));
+        assert_eq!(plain_path(Path::new(r"\\?\UNC\nas\games\worldkeeper")), PathBuf::from(r"\\nas\games\worldkeeper"));
+        assert_eq!(plain_path(Path::new("/usr/lib/worldkeeper")), PathBuf::from("/usr/lib/worldkeeper"));
+    }
 }

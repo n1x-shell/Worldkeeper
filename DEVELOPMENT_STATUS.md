@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-17 · v0.3.1_
+_Last updated: 2026-11-17 · v0.3.2_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,11 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.2
+
+- **Windows desktop fix:** the app failed to start its server on Windows ("EISDIR: illegal operation on a directory, lstat 'C:'"), because Windows gives the install folder as an extended-length path (`\\?\C:\...`) that Node can't run a script from. The desktop shell now passes ordinary paths (`plain_path` in `src-tauri/src/lib.rs`, with a test).
+- **Desktop data files:** stat blocks, the Return's omens, encounter terrains and the setting pack are now bundled with the desktop app and found through one helper (`server/src/assetsDir.ts`); before, the installed app couldn't find them. Checked by running the bundled server as the app does.
 
 ## v0.3.1 (working and tested)
 

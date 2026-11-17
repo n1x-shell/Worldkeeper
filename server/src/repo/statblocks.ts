@@ -5,6 +5,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { assetsPath } from '../assetsDir.js';
 
 export interface StatEntry {
   name: string;
@@ -54,7 +55,7 @@ export interface StatBlock {
   open?: boolean;
 }
 
-const DIR = path.resolve(import.meta.dirname, '../../../assets/statblocks');
+const DIR = assetsPath('statblocks');
 let cache: { stamp: string; data: Record<string, StatBlock> } | null = null;
 
 /** Every stat block, re-read when the files change. */
