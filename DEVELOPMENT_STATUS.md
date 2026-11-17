@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-17 · v0.3.0 "Your books, your table"_
+_Last updated: 2026-11-17 · v0.3.1_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,15 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.1 (working and tested)
+
+- **The complete SRD 5.2.1** is built in: besides the character rules, its 330 creatures, magic items, gear, poisons, traps and magical contagions, read from the SRD itself (`scripts/srd/`). A campaign runs with no books imported.
+- **The Worldkeeper setting pack** (`server/src/repo/settingPack.ts`, `assets/setting-pack/`): the setting's creatures, hazards and items as a built-in pack, off until turned on, CC BY 4.0; standard-rules versions when Thinning is off.
+- **Open content from Open5e** (`server/src/repo/open5e.ts`): openly licensed sources, each as its own pack with its licence.
+- **Desktop releases** attach their installers to the release automatically.
+- **Tests:** 153 passing (1 skipped).
+- **Next (tabled):** Knave (1e built in, 2e importer) and OSE as full rulesets.
 
 ## v0.3 "Your books, your table" (working and tested)
 
