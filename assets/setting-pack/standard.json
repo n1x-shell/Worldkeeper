@@ -1,0 +1,32 @@
+{
+ "note": "Standard-rules versions of the setting pack's entries that use Thinning, true names or Shardscarred, used when the Thinning mechanic is switched off (approved by the owner, DEC-910).",
+ "creatures": {
+  "CRE-034": {
+   "traits": {
+    "Repairs Reality": {
+     "text": "At the start of each of the echo's turns, one illusion or teleportation effect within 30 feet of it ends, if any are there."
+    }
+   }
+  },
+  "CRE-313": {
+   "traits": {
+    "Thinning Touch": {
+     "name": "Fraying Touch",
+     "text": "A creature reduced to 0 Hit Points by the Thing makes a DC 13 Charisma saving throw when the fight ends. Failure: it gains 1 Exhaustion level that only Greater Restoration or similar magic removes, and it forgets one memory of the GM's choice for good."
+    }
+   }
+  },
+  "CRE-354": {
+   "effect": "The glass swallows a fist and answers an open hand. Forcing it: the door holds, and the forcer takes 10 (3d6) Force damage. Opening it with an open hand and the right asking: the door opens, and each creature that passes through makes a DC 15 Charisma saving throw. Failure: it gains 1 Exhaustion level and forgets one memory of the GM's choice for good.",
+   "counter": "Each vault's door asks for something different. Someone holding your hand and saying your full name as you pass gives Advantage on the save."
+  }
+ },
+ "items": {
+  "ITM-304": "Held, it replays its afternoon, sound and all, for 1 minute. Once ever, when you would lose a memory or gain an Exhaustion level from magic, the crystal takes it instead; it goes clear and dark for good.",
+  "ITM-309": "Single use. When you fail a Charisma saving throw, you succeed instead, and the thread snaps.",
+  "ITM-310": "Single use. It opens one glass door without its saving throw, then shatters.",
+  "ITM-017": "A creature that sees itself in the mirror learns its true name, and has Advantage on saving throws against effects that would take its memories while it remembers. You can learn the true name of any creature it reflects (Wisdom save DC 17 to resist).",
+  "ITM-020": "Opens any lock or seal, including two-key locks, bloodlocks and the seals of the Hidden Ones. Each use costs a DC 15 Charisma saving throw. Failure: you gain 1 Exhaustion level and forget one memory of the GM's choice for good.",
+  "ITM-008": "Single use. Whoever touches it is marked by the shard: a crystal scar that sheds Dim Light in a 5-foot radius, Resistance to Force damage, and Disadvantage on Dexterity (Stealth) checks. Only a Wish, or Remove Curse cast with a level 5 or higher spell slot, takes it away. The crystal dissolves."
+ }
+}

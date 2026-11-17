@@ -157,7 +157,7 @@ export function campaignRoutes(ctx: AppContext) {
     '/statblocks/:id',
     h((req) => {
       const id = String(req.params.id);
-      if (id.startsWith('book:') || id.startsWith('srd:')) return bookCreature(ctx.db, id);
+      if (/^(book|srd|wk|open5e):/.test(id)) return bookCreature(ctx.db, id);
       const s = statblockFor(id);
       return s?.base ? { ...s, baseBlock: creatureByName(ctx.db, s.base) } : s;
     }),

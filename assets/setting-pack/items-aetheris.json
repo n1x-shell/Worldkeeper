@@ -1,0 +1,181 @@
+{
+ "note": "The Worldkeeper setting's Aetheris items: their rarity and rules only, published by the owner's decision (DEC-910) under CC BY 4.0. Their lore stays in the world's records.",
+ "items": [
+  {
+   "id": "ITM-001",
+   "name": "Widow's Ring",
+   "type": "Wondrous Item",
+   "rarity": "uncommon",
+   "attunement": "requires attunement",
+   "text": "Holds one dead person's name. Nothing can make you forget them. Once per Long Rest, cast Speak with Dead on their remains with no components."
+  },
+  {
+   "id": "ITM-002",
+   "name": "Glass Eye of Yesterday",
+   "type": "Wondrous Item",
+   "rarity": "uncommon",
+   "attunement": "requires attunement",
+   "text": "Once per dawn, as a Magic action, see everything within 60 feet as it was exactly one day ago, for 1 minute."
+  },
+  {
+   "id": "ITM-003",
+   "name": "Mourning Knife",
+   "type": "Weapon (dagger)",
+   "rarity": "uncommon",
+   "attunement": "",
+   "text": "+1 dagger. When it hits a creature, you learn the creature's name. Undead take an extra 1d6 radiant damage from it."
+  },
+  {
+   "id": "ITM-004",
+   "name": "Threadstone",
+   "type": "Wondrous Item",
+   "rarity": "uncommon",
+   "attunement": "",
+   "text": "Two creatures who hold it through a Long Rest are bound. Each always knows the other's direction and whether they live, until one lets go."
+  },
+  {
+   "id": "ITM-005",
+   "name": "Page That Will Not Burn",
+   "type": "Wondrous Item",
+   "rarity": "uncommon",
+   "attunement": "",
+   "text": "Up to 300 words written on it cannot be erased or changed by any means, including Wish and the rewriting of reality."
+  },
+  {
+   "id": "ITM-006",
+   "name": "Shardscar Lens",
+   "type": "Wondrous Item",
+   "rarity": "uncommon",
+   "attunement": "",
+   "text": "While you look through it, you see shards, Shardscarred creatures and Aether Scars within 120 feet."
+  },
+  {
+   "id": "ITM-007",
+   "name": "Crystal Echo",
+   "type": "Wondrous Item",
+   "rarity": "uncommon",
+   "attunement": "",
+   "text": "Single use. Points toward a chosen shard, then shatters. Aimed at the twelfth, it spins."
+  },
+  {
+   "id": "ITM-008",
+   "name": "Shardscar Crystal",
+   "type": "Wondrous Item",
+   "rarity": "uncommon",
+   "attunement": "",
+   "text": "Single use. Whoever touches it becomes Shardscarred, and it dissolves."
+  },
+  {
+   "id": "ITM-009",
+   "name": "Bell of Names",
+   "type": "Wondrous Item",
+   "rarity": "rare",
+   "attunement": "",
+   "text": "3 charges, regains 1d3 at dawn. Ring it and speak a name to learn the direction and distance to that creature, if it is on the same plane. It stays silent for anyone who has been erased."
+  },
+  {
+   "id": "ITM-010",
+   "name": "Bloodline Needle",
+   "type": "Wondrous Item",
+   "rarity": "rare",
+   "attunement": "requires attunement",
+   "text": "Once per dawn, with a drop of a creature's blood, learn its ancestry three generations back and whether any of them were erased. It also counts as that creature's blood for a bloodlock."
+  },
+  {
+   "id": "ITM-011",
+   "name": "Time-Split Coin",
+   "type": "Wondrous Item",
+   "rarity": "rare",
+   "attunement": "requires attunement",
+   "text": "Once per dawn, after you roll a d20 Test, flip the coin: roll again and choose which roll counts."
+  },
+  {
+   "id": "ITM-012",
+   "name": "Unstable Shard Fragment",
+   "type": "Wondrous Item",
+   "rarity": "rare",
+   "attunement": "",
+   "text": "Single use. As a Magic action, throw it up to 60 feet: 6d6 force damage in a 15-foot radius, Dexterity save DC 15 for half. Roll a d20 first. On a 1 it explodes in your hand."
+  },
+  {
+   "id": "ITM-013",
+   "name": "Living Map",
+   "type": "Wondrous Item",
+   "rarity": "rare",
+   "attunement": "",
+   "text": "Redraws itself to show the land within 5 miles as it is now, including every creature larger than Medium."
+  },
+  {
+   "id": "ITM-014",
+   "name": "Lantern of Yesterday",
+   "type": "Wondrous Item",
+   "rarity": "rare",
+   "attunement": "",
+   "text": "In its 30-foot light, hidden doors, erased writing and faded traces of the last Reality appear. Creatures in the light have Advantage on checks to find what was erased or hidden by memory magic."
+  },
+  {
+   "id": "ITM-015",
+   "name": "Hollow Verge Compass",
+   "type": "Wondrous Item",
+   "rarity": "rare",
+   "attunement": "",
+   "text": "Points to the nearest entrance to the Hollow Verge, and trembles a day before the entrance moves."
+  },
+  {
+   "id": "ITM-016",
+   "name": "Impossible Door",
+   "type": "Wondrous Item",
+   "rarity": "very rare",
+   "attunement": "",
+   "text": "Draw it on any surface. Once per dawn it works as Passwall. Once per week it opens into the Border Ethereal for up to 8 creatures for 1 hour."
+  },
+  {
+   "id": "ITM-017",
+   "name": "True-Name Mirror",
+   "type": "Wondrous Item",
+   "rarity": "very rare",
+   "attunement": "",
+   "text": "A creature that sees itself in the mirror learns its true name, and has Advantage on saves against Thinning while it remembers. You can learn the true name of any creature it reflects (Wisdom save DC 17 to resist)."
+  },
+  {
+   "id": "ITM-018",
+   "name": "Concept Chain",
+   "type": "Wondrous Item",
+   "rarity": "very rare",
+   "attunement": "requires attunement",
+   "text": "Once per dawn, as a Magic action, choose a creature within 30 feet and a concept: one damage type, one sense, one language, or movement. On a failed DC 17 Wisdom save, it loses that concept for 1 hour."
+  },
+  {
+   "id": "ITM-019",
+   "name": "Mask of Borrowed Memory",
+   "type": "Wondrous Item",
+   "rarity": "very rare",
+   "attunement": "requires attunement",
+   "text": "Touch the face of a willing or Incapacitated creature to take one memory and its appearance. While you wear the mask you have both, and the creature lacks the memory until you take the mask off."
+  },
+  {
+   "id": "ITM-020",
+   "name": "Worldscar Key",
+   "type": "Wondrous Item",
+   "rarity": "legendary",
+   "attunement": "requires attunement",
+   "text": "Opens any lock or seal, including two-key locks, bloodlocks and the seals of the Hidden Ones. Each use costs a Thinning save."
+  },
+  {
+   "id": "ITM-021",
+   "name": "Thread Cutter",
+   "type": "Weapon (dagger)",
+   "rarity": "legendary",
+   "attunement": "requires attunement",
+   "text": "+2 dagger. On a critical hit, the target makes a DC 18 Charisma save. On a failure, everyone except you and your companions forgets it existed for one day. A creature erased three times is erased for good."
+  },
+  {
+   "id": "ITM-022",
+   "name": "Loom Needle",
+   "type": "Wondrous Item",
+   "rarity": "legendary",
+   "attunement": "",
+   "text": "Single use. Sews one erased creature or memory back into the world and into everyone's memory. The Hidden Ones feel it happen."
+  }
+ ]
+}

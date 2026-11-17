@@ -8,6 +8,8 @@ import { notFound } from '../lib/errors.js';
 import SRD_CREATURES from '../../../shared/srd/creatures.json' with { type: 'json' };
 import SRD_HAZARDS from '../../../shared/srd/hazards.json' with { type: 'json' };
 import SRD_ITEMS from '../../../shared/srd/items.json' with { type: 'json' };
+import { settingPack, settingPackOn } from './settingPack.js';
+import { getMechanics } from './mechanics.js';
 
 type DB = Database.Database;
 type J = Record<string, unknown>;
@@ -45,6 +47,10 @@ function entries(db: DB, kind: 'creature' | 'item'): J[] {
     .all(kind) as { name: string; data: string }[];
   const m = new Map<string, J>();
   if (srdOn(db)) for (const e of SRD[kind]) m.set(String(e.name).toLowerCase(), e);
+  if (settingPackOn(db)) {
+    const sp = settingPack(db);
+    for (const e of kind === 'creature' ? sp.creatures : sp.items) m.set(String(e.name).toLowerCase(), e);
+  }
   for (const r of rows) m.set(r.name.toLowerCase(), JSON.parse(r.data) as J);
   return [...m.values()];
 }
@@ -53,7 +59,7 @@ function entries(db: DB, kind: 'creature' | 'item'): J[] {
 let cache: { stamp: string; creatures: J[]; items: BookItem[] } | null = null;
 function data(db: DB) {
   const s = db.prepare(`SELECT group_concat(id || ':' || enabled || ':' || imported_at) s FROM rules_packs`).get() as { s: string | null };
-  const stamp = `${db.name}|${s.s ?? ''}|${srdOn(db)}`;
+  const stamp = `${db.name}|${s.s ?? ''}|${srdOn(db)}|${settingPackOn(db)}|${getMechanics(db).thinning}`;
   if (cache?.stamp !== stamp) cache = { stamp, creatures: entries(db, 'creature'), items: entries(db, 'item') as unknown as BookItem[] };
   return cache;
 }
