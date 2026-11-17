@@ -1,10 +1,15 @@
 /**
- * Creatures and items from the GM's imported books (rules packs, see docs/RULES_PACKS.md), for stat blocks, the
+ * Creatures and items from the built-in SRD 5.2.1 and the GM's imported books (rules packs, see docs/RULES_PACKS.md), for stat blocks, the
  * encounter tracker, treasure and the character sheets. Creatures are GM only; an item's rules may reach a player who
  * has that item. Like every pack, none of this is published, exported or part of the app.
  */
 import type Database from 'better-sqlite3';
 import { notFound } from '../lib/errors.js';
+import SRD_CREATURES from '../../../shared/srd/creatures.json' with { type: 'json' };
+import SRD_HAZARDS from '../../../shared/srd/hazards.json' with { type: 'json' };
+import SRD_ITEMS from '../../../shared/srd/items.json' with { type: 'json' };
+import { settingPack, settingPackOn } from './settingPack.js';
+import { getMechanics } from './mechanics.js';
 
 type DB = Database.Database;
 type J = Record<string, unknown>;
@@ -24,7 +29,15 @@ export interface BookItem {
   suffix?: string;
 }
 
-/** Every entry of a kind in the enabled packs; where packs share a name, the most recently imported wins. */
+const srdOn = (db: DB) => (db.prepare(`SELECT value FROM settings WHERE key = 'rules_srd'`).get() as { value: string } | undefined)?.value !== 'off';
+/** The SRD 5.2.1's own creatures (and traps and contagions, as hazard cards) and items, built in like its rules. */
+const SRD: Record<'creature' | 'item', J[]> = {
+  creature: [...(SRD_CREATURES as unknown as { creatures: J[] }).creatures, ...(SRD_HAZARDS as unknown as { hazards: J[] }).hazards],
+  item: (SRD_ITEMS as unknown as { items: J[] }).items,
+};
+export const srdCounts = () => ({ creature: SRD.creature.length, item: SRD.item.length });
+
+/** Every entry of a kind: the SRD (unless switched off), then the enabled packs; the most recently imported wins. */
 function entries(db: DB, kind: 'creature' | 'item'): J[] {
   const rows = db
     .prepare(
@@ -33,6 +46,11 @@ function entries(db: DB, kind: 'creature' | 'item'): J[] {
     )
     .all(kind) as { name: string; data: string }[];
   const m = new Map<string, J>();
+  if (srdOn(db)) for (const e of SRD[kind]) m.set(String(e.name).toLowerCase(), e);
+  if (settingPackOn(db)) {
+    const sp = settingPack(db);
+    for (const e of kind === 'creature' ? sp.creatures : sp.items) m.set(String(e.name).toLowerCase(), e);
+  }
   for (const r of rows) m.set(r.name.toLowerCase(), JSON.parse(r.data) as J);
   return [...m.values()];
 }
@@ -41,7 +59,7 @@ function entries(db: DB, kind: 'creature' | 'item'): J[] {
 let cache: { stamp: string; creatures: J[]; items: BookItem[] } | null = null;
 function data(db: DB) {
   const s = db.prepare(`SELECT group_concat(id || ':' || enabled || ':' || imported_at) s FROM rules_packs`).get() as { s: string | null };
-  const stamp = `${db.name}|${s.s ?? ''}`;
+  const stamp = `${db.name}|${s.s ?? ''}|${srdOn(db)}|${settingPackOn(db)}|${getMechanics(db).thinning}`;
   if (cache?.stamp !== stamp) cache = { stamp, creatures: entries(db, 'creature'), items: entries(db, 'item') as unknown as BookItem[] };
   return cache;
 }

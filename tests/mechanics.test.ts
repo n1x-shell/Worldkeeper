@@ -10,9 +10,10 @@ import { playerSnapshot } from '../server/src/player/projection.js';
 import { creatureMentions, suggestEncounters, xpBudget } from '../server/src/repo/encounters.js';
 import { itemNameCandidates } from '../server/src/repo/bookData.js';
 
-async function withBooks() {
+async function withBooks(srd = false) {
   const ctx = tempContext();
   const gm = createApp(ctx);
+  if (!srd) await request(gm).patch('/api/rules/packs/srd').send({ enabled: false });
   const scan = (await request(gm).post('/api/rules/5etools/scan').attach('data', fakeFivetools(), 'f.zip')).body;
   await request(gm)
     .post('/api/rules/5etools/import')
@@ -37,7 +38,7 @@ describe('campaign mechanics', () => {
   it('rolls treasure from the books when the setting’s treasure is off', async () => {
     const { gm } = await withBooks();
     const opts = (await request(gm).get('/api/treasure/options')).body;
-    expect(opts.regions).toEqual([{ key: 'books', label: 'From your books', ids: [] }]);
+    expect(opts.regions).toEqual([{ key: 'books', label: 'From the SRD and your books', ids: [] }]);
     expect((await request(gm).post('/api/treasure/roll').send({ tier: '1-4', region: 'marches', kind: 'hoard' })).status).toBe(400);
     const names = new Set<string>();
     for (let i = 0; i < 40; i++) {
@@ -62,6 +63,43 @@ describe('campaign mechanics', () => {
     expect((await request(gm).get('/api/books/encounters').query({ level: 4, region: 'SET-001' })).body.terrain).toEqual(['urban', 'grassland']);
     expect(creatureMentions(ctx.db, '**Fight.** 3 priests and a Legion Scout [CRE-006] at the gate.')).toEqual([{ id: 'book:xmm:priest', name: 'Priest' }]);
     expect(creatureMentions(ctx.db, '**Sign.** A priest left a candle.')).toEqual([]);
+  });
+
+  it('has the SRD 5.2.1’s creatures, items and hazards built in, with books winning where they overlap', async () => {
+    const ctx = tempContext();
+    const gm = createApp(ctx);
+    const counts = (await request(gm).get('/api/books')).body;
+    expect(counts.creatures).toBeGreaterThan(330);
+    expect(counts.items).toBeGreaterThan(600);
+    const priest = (await request(gm).get('/api/statblocks/srd:priest')).body;
+    expect(priest).toMatchObject({ name: 'Priest', ac: 13, hpAvg: 38, cr: '2', xp: 450, source: 'SRD 5.2.1' });
+    expect(priest.actions.map((a: { name: string }) => a.name)).toEqual(['Multiattack', 'Mace', 'Radiant Flame', 'Spellcasting']);
+    expect((await request(gm).get('/api/statblocks/srd:collapsing-roof')).body).toMatchObject({ kind: 'hazard', trigger: 'A creature crosses a trip wire (duration: Instantaneous)' });
+    // Every SRD stat block's modifiers fit its scores.
+    const all = (await request(gm).get('/api/statblocks')).body as { id: string }[];
+    expect(all.filter((s) => s.id.startsWith('srd:')).length).toBeGreaterThan(330);
+    // An NPC card built on the Priest carries it, with no books imported.
+    expect((await request(gm).get('/api/statblocks/NPC-304')).body.baseBlock).toMatchObject({ name: 'Priest', source: 'SRD 5.2.1' });
+    const items = (
+      await request(createApp(new AppContext(ctx.paths, 'player')))
+        .get('/api/player/items')
+        .query({ names: 'Potion of Healing\nBag of Holding\nWeapon, +1\nIoun Stone (Mastery)' })
+    ).body;
+    expect(items['Potion of Healing'].text).toContain('2d4 + 2 Hit Points');
+    expect(items['Bag of Holding']).toMatchObject({ rarity: 'uncommon', source: 'SRD 5.2.1' });
+    expect(items['Weapon, +1'].rarity).toBe('uncommon');
+    expect(items['Ioun Stone (Mastery)'].rarity).toBe('legendary');
+    // Treasure and encounters work with no books.
+    expect((await request(gm).get('/api/treasure/options')).body.regions).toContainEqual({ key: 'books', label: 'From the SRD and your books', ids: [] });
+    expect(suggestEncounters(ctx.db, { level: 3, terrain: ['forest'] }).ideas.length).toBeGreaterThan(0);
+    // Imported books win over the SRD by name; switching the SRD off removes its entries.
+    const scan = (await request(gm).post('/api/rules/5etools/scan').attach('data', fakeFivetools(), 'f.zip')).body;
+    await request(gm)
+      .post('/api/rules/5etools/import')
+      .send({ token: scan.token, books: ['XMM'] });
+    expect((await request(gm).get('/api/statblocks/NPC-304')).body.baseBlock.source).toBe('Monster Manual (2025) p. 7');
+    await request(gm).patch('/api/rules/packs/srd').send({ enabled: false });
+    expect((await request(gm).get('/api/books')).body).toEqual({ creatures: 1, items: 0 });
   });
 
   it('reads item names the way the world writes them', () => {

@@ -17,6 +17,7 @@ import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, expo
 import { badRequest, notFound } from '../lib/errors.js';
 import { schemaVersion } from '../db/migrations.js';
 import { getMechanics, setMechanics } from '../repo/mechanics.js';
+import { importOpen5e, open5eDocuments } from '../repo/open5e.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 300 * 1024 * 1024, files: 1 } });
 
@@ -160,6 +161,18 @@ export function libraryRoutes(ctx: AppContext) {
         if (f.startsWith('5etools-') && Date.now() - fs.statSync(path.join(ctx.paths.stagingDir, f)).mtimeMs > 3600_000) fs.rmSync(path.join(ctx.paths.stagingDir, f), { force: true });
       fs.writeFileSync(path.join(ctx.paths.stagingDir, `5etools-${token}.zip`), req.file.buffer);
       return { token, books, chosen: chosenBooks(ctx.db) };
+    }),
+  );
+  // Open content from Open5e: the sources it offers, with their licences; then import the chosen ones.
+  r.get(
+    '/rules/open5e/documents',
+    h(() => open5eDocuments()),
+  );
+  r.post(
+    '/rules/open5e/import',
+    h((req) => {
+      const keys = Array.isArray(req.body?.documents) ? (req.body.documents as unknown[]).map(String).filter((k) => /^[\w-]{1,60}$/.test(k)) : [];
+      return importOpen5e(ctx.db, keys);
     }),
   );
   r.post(

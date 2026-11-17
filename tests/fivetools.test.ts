@@ -87,6 +87,8 @@ describe('importing from 5etools', () => {
   it('brings in creatures as stat blocks and items with their rules, for the GM, the tracker, treasure and sheets', async () => {
     const ctx = tempContext();
     const gm = createApp(ctx);
+    // The books alone (the built-in SRD's creatures and items are tested in mechanics.test.ts).
+    await request(gm).patch('/api/rules/packs/srd').send({ enabled: false });
     const scan = (await request(gm).post('/api/rules/5etools/scan').attach('data', fakeFivetools(), 'f.zip')).body;
     const r = await request(gm)
       .post('/api/rules/5etools/import')

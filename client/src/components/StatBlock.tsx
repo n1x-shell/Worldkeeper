@@ -166,10 +166,14 @@ export function StatBlock({ s }: { s: StatBlockData }) {
       <div className="space-y-1">
         <div className="font-display text-gold/90 border-b border-gold/30">{title}</div>
         {list.map((e) => (
-          <p key={e.name} className="whitespace-pre-line">
-            <b>
-              <i>{e.name}.</i>
-            </b>{' '}
+          <p key={e.name || e.text.slice(0, 40)} className="whitespace-pre-line">
+            {e.name && (
+              <>
+                <b>
+                  <i>{e.name}.</i>
+                </b>{' '}
+              </>
+            )}
             {e.text}
           </p>
         ))}

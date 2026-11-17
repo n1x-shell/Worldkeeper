@@ -13,6 +13,8 @@ import type Database from 'better-sqlite3';
 import { badRequest, notFound } from '../lib/errors.js';
 import SRD_SPELLS from '../../../shared/srd/spells.json' with { type: 'json' };
 import SRD_TEXT from '../../../shared/srd/text.json' with { type: 'json' };
+import { srdCounts } from './bookData.js';
+import { SETTING_PACK, setSettingPack, settingPackCounts, settingPackOn } from './settingPack.js';
 import { addRule, emptyRulesView, srdRulesView, type RulesView } from '../../../shared/rulesView.js';
 
 type DB = Database.Database;
@@ -196,12 +198,15 @@ export function listPacks(db: DB): PackSummary[] {
       subclass: Object.keys(t.classes).length,
       background: Object.keys(t.backgrounds).length,
       feat: Object.keys(t.feats).length,
+      ...srdCounts(),
     },
   };
+  const wk: PackSummary = { ...SETTING_PACK, enabled: settingPackOn(db), builtin: true, imported_at: null, counts: settingPackCounts() };
   const rows = db.prepare('SELECT * FROM rules_packs ORDER BY imported_at').all() as { id: string; name: string; source: string; enabled: number; imported_at: string }[];
   const counts = db.prepare('SELECT kind, COUNT(*) n FROM rules_entries WHERE pack_id = ? GROUP BY kind');
   return [
     srd,
+    wk,
     ...rows.map((r) => ({
       id: r.id,
       name: r.name,
@@ -216,12 +221,13 @@ export function listPacks(db: DB): PackSummary[] {
 
 export function setPackEnabled(db: DB, id: string, enabled: boolean) {
   if (id === 'srd') db.prepare(`INSERT INTO settings (key, value) VALUES ('rules_srd', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`).run(enabled ? 'on' : 'off');
+  else if (id === SETTING_PACK.id) setSettingPack(db, enabled);
   else if (!db.prepare('UPDATE rules_packs SET enabled = ? WHERE id = ?').run(enabled ? 1 : 0, id).changes) throw notFound('Rules pack');
   return listPacks(db);
 }
 
 export function deletePack(db: DB, id: string) {
-  if (id === 'srd') throw badRequest('The SRD is built in: turn it off instead.');
+  if (id === 'srd' || id === SETTING_PACK.id) throw badRequest('This pack is built in: turn it off instead.');
   if (!db.prepare('DELETE FROM rules_packs WHERE id = ?').run(id).changes) throw notFound('Rules pack');
   db.prepare('DELETE FROM rules_entries WHERE pack_id = ?').run(id);
   return listPacks(db);

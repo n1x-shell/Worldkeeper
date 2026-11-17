@@ -59,7 +59,10 @@ export function plainTags(s: string): string {
         case 'chance':
           return `${text} percent`;
         case 'actSave':
-          return `${text.toUpperCase()} Saving Throw:`;
+          return `${text
+            .split(/\s*\/\s*|,\s*/)
+            .map((a) => ({ str: 'Strength', dex: 'Dexterity', con: 'Constitution', int: 'Intelligence', wis: 'Wisdom', cha: 'Charisma' })[a.trim().toLowerCase()] ?? a.toUpperCase())
+            .join(' or ')} Saving Throw:`;
         case 'actSaveFail':
           return 'Failure:';
         case 'actSaveSuccess':
@@ -491,6 +494,7 @@ export function importFivetools(db: DB, buf: Buffer, books: string[] = DEFAULT_B
     });
   }
 
+  setItemTemplates(read('items-base.json').itemEntry as J[]);
   // Creatures, as the app's own stat blocks (GM only), and magic items and gear.
   const monsters = best(
     all('bestiary', 'bestiary-', 'monster').filter((m) => inBooks(m) && !m._copy),
@@ -711,10 +715,14 @@ export function creatureBlock(m: J): J {
   const castAs = (where: string) => casting.filter((c) => ((c.sc.displayAs as string) ?? 'trait') === where).map((c) => c.entry);
   const legendary = named(m.legendary);
   if (legendary.length) {
+    // As the 2024 books print it: "Legendary Action Uses: 3 (4 in Lair). Immediately after another creature's turn, …"
+    const n = (m.legendaryActions as number) ?? 3;
+    const lair = m.legendaryActionsLair as number | undefined;
+    const short = shortName(m);
     const head = m.legendaryHeader
       ? text(m.legendaryHeader)
-      : `Immediately after another creature's turn, it can expend a use to take one of these actions, regaining all uses at the start of its turn.`;
-    legendary.unshift({ name: m.legendaryHeader ? 'Uses' : `Uses: ${m.legendaryActions ?? 3}`, text: head });
+      : `Legendary Action Uses: ${n}${lair ? ` (${lair} in Lair)` : ''}. Immediately after another creature's turn, ${short} can expend a use to take one of the following actions. ${short[0].toUpperCase()}${short.slice(1)} regains all expended uses at the start of each of its turns.`;
+    legendary.unshift({ name: '', text: head });
   }
   return {
     id: `book:${String(m.source).toLowerCase()}:${String(m.name)
@@ -782,6 +790,26 @@ const ITEM_TYPE: Record<string, string> = {
   $G: 'Gemstone',
   $C: 'Coinage',
 };
+// Text several items share ("{#itemEntry Ioun Stone|XDMG}"), with each item's own values filled in.
+let ITEM_TEMPLATES: Record<string, unknown[]> = {};
+export function setItemTemplates(list: J[] | undefined) {
+  ITEM_TEMPLATES = Object.fromEntries((list ?? []).map((t) => [`${String(t.name).toLowerCase()}|${String(t.source).toLowerCase()}`, (t.entriesTemplate as unknown[]) ?? []]));
+}
+function expandShared(entries: unknown, i: J): unknown {
+  if (!Array.isArray(entries)) return entries;
+  return entries.flatMap((e) => {
+    const m = typeof e === 'string' ? /^\{#itemEntry ([^|}]+)\|?([^}]*)\}$/.exec(e) : null;
+    if (!m) return [e];
+    const tpl = ITEM_TEMPLATES[`${m[1].toLowerCase()}|${(m[2] || 'dmg').toLowerCase()}`] ?? Object.entries(ITEM_TEMPLATES).find(([k]) => k.startsWith(`${m[1].toLowerCase()}|`))?.[1];
+    if (!tpl) return [];
+    const val = (k: string) => {
+      const v = i[k];
+      return Array.isArray(v) ? v.map((x) => title(String(x))).join(', ') : String(v ?? '');
+    };
+    return JSON.parse(JSON.stringify(tpl).replace(/\{\{(?:getFullImmRes )?item\.(\w+)\}\}/g, (_, k: string) => val(k).replace(/"/g, '\\"'))) as unknown[];
+  });
+}
+
 /** A 5etools item: what it is, its rarity and attunement, and its rules. */
 export function itemEntry(i: J): J {
   const code = String(i.type ?? '').split('|')[0];
@@ -832,7 +860,7 @@ export function itemEntry(i: J): J {
       `${code === 'S' ? `+${i.ac} AC` : `AC ${i.ac}${code === 'LA' ? ' + Dex modifier' : code === 'MA' ? ' + Dex modifier (max 2)' : ''}`}.${i.strength ? ` Strength ${i.strength} needed.` : ''}${i.stealth ? ' Disadvantage on Stealth.' : ''}`,
     );
   const fill = (e: unknown) => JSON.parse(JSON.stringify(e ?? []).replace(/\{=(\w+)(?:\/\w+)?\}/g, (_, k: string) => String(i[k] ?? ''))) as unknown;
-  const body = [stats.join(' '), text(fill(i.entries))].filter(Boolean).join('\n\n');
+  const body = [stats.join(' '), text(fill(expandShared(i.entries, i)))].filter(Boolean).join('\n\n');
   return {
     name: i.name,
     type: i.namePrefix || i.nameSuffix ? 'Magic item (applies to a fitting weapon or armor)' : kind,
@@ -847,4 +875,12 @@ export function itemEntry(i: J): J {
     tables: ((i.lootTables as string[]) ?? []).map((t) => t.split('|')[0]),
     source: cite(i),
   };
+}
+
+/** How a stat block names its creature in running text: "the dragon", "the lich" (5etools' shortName, else its name). */
+function shortName(m: J): string {
+  const s = m.shortName;
+  if (s === true) return `the ${String(m.name).toLowerCase()}`;
+  if (typeof s === 'string') return m.isNamedCreature ? s : `the ${s.toLowerCase()}`;
+  return m.isNamedCreature ? String(m.name) : `the ${String(m.name).toLowerCase()}`;
 }

@@ -141,7 +141,7 @@ export function rollTreasure(opts: { tier: string; region: string; kind: 'indivi
   const rng = opts.rng ?? Math.random;
   const tier = data.tiers.find((t) => t.key === opts.tier);
   const fromBooks = opts.region === BOOKS_REGION;
-  const region: TreasureData['regions'][string] | undefined = fromBooks ? { label: 'From your books', ids: [], pools: [], coins: '', barter: 0 } : data.regions[opts.region];
+  const region: TreasureData['regions'][string] | undefined = fromBooks ? { label: 'From the SRD and your books', ids: [], pools: [], coins: '', barter: 0 } : data.regions[opts.region];
   if (!tier) throw badRequest('Unknown tier');
   if (!region) throw badRequest('Unknown region');
   const tierNo = data.tiers.indexOf(tier) + 1;

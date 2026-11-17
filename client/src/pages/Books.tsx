@@ -27,7 +27,7 @@ export function BooksPage() {
   const { data: counts } = useApi<{ creatures: number; items: number }>('/api/books');
   return (
     <div className="space-y-4">
-      <PageHeader title="Your Books" subtitle="Creatures and items from the books you imported. Only you see these." />
+      <PageHeader title="Your Books" subtitle="Creatures, items and hazards from the SRD 5.2.1 and the books you imported. Only you see these." />
       {counts && !counts.creatures && !counts.items ? (
         <p className="text-dim">
           Nothing imported yet. Bring in your books in{' '}

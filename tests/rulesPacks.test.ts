@@ -68,7 +68,7 @@ describe('rules packs', () => {
     expect(rules.spells).toEqual([]);
     expect((await request(gm).delete('/api/rules/packs/srd')).status).toBe(400);
     const left = (await request(gm).delete('/api/rules/packs/test-books')).body as { id: string }[];
-    expect(left.map((p) => p.id)).toEqual(['srd']);
+    expect(left.map((p) => p.id)).toEqual(['srd', 'worldkeeper']);
   });
 
   it('never reach the published handbook or an export', async () => {

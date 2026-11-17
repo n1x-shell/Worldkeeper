@@ -2,7 +2,11 @@
 
 The character sheet and the character builder draw on **rules packs**: spells, species, classes, subclasses, backgrounds and feats. Packs imported from 5etools also hold creatures and items (see below).
 
-- The **SRD 5.2.1** is built in, under CC-BY-4.0. You can turn it off in **Settings → Rules packs**.
+- The **SRD 5.2.1** is built in, under CC-BY-4.0. You can turn it off in **Settings → Rules packs**. It holds everything the SRD has:
+  - for players: 12 classes (each with its SRD subclass), 9 species, 4 backgrounds, 17 feats, 339 spells, weapons and armor;
+  - for the GM: 330 creatures (stat blocks for the GM, the encounter tracker and NPC cards), 395 magic items, adventuring gear, poisons, 8 traps and 3 magical contagions (as hazard cards).
+
+  So treasure, encounters, stat blocks and item rules work with no books imported. The SRD's text and numbers are read from the SRD itself (`scripts/srd/`).
 - Anything else, such as material from your own books or your homebrew, comes in as a pack you import. Import it in **Settings → Rules packs**.
 
 Packs are for your own table. They are stored in your library's database, and so are in your backups, but nowhere else:
@@ -46,6 +50,28 @@ Any combination of books works, from one book to every book in the copy, adventu
 - **Items** are the magic items, gear, weapons and armor of the chosen books, plus the generic magic items that fit many base items ("+1 Weapon", "Flame Tongue"). Their rules show in **Your Books**, in treasure (the GM's and the players' Party Treasure page), on character sheets (equipment and attuned items) and in the builder's starting kit. A player's server looks items up only by the names on their sheet or in the party's treasure; it has no way to list the books.
 
 Items are found by the names people write: "Weapon, +1" finds "+1 Weapon", "Moon-Touched Sword (XGE)" drops the book code, "2 Daggers" finds the Dagger, and "Flame Tongue Longsword" finds Flame Tongue, with the Longsword's own rules.
+
+## The Worldkeeper setting pack
+
+A second built-in pack, **The Worldkeeper setting**, holds the setting's own creatures and items for use in any campaign: 84 creatures and 8 hazards, and 34 items (the Aetheris and Kaelmar treasures, with their rules). It's off until you turn it on in **Settings → Rules packs**.
+
+When the **Thinning** mechanic is switched off, the few entries that use Thinning, true names or Shardscarred use standard-rules versions instead (for example, the Glass's Thinning save becomes a DC 15 Charisma save that costs a level of Exhaustion and a memory). The pack is licensed CC BY 4.0, credited "The Worldkeeper setting pack, by the Worldkeeper contributors"; see `assets/setting-pack/README.md`.
+
+## Open content from Open5e
+
+**Settings → Rules packs → Add open content from Open5e** lists the openly licensed fifth-edition sources that [Open5e](https://open5e.com) publishes, each with its publisher and licence. Tick the ones you want and choose **Import**. Each source becomes its own pack, named after it, with its publisher and licence as the pack's source, so you can turn one off or remove it on its own. Importing a source again replaces its pack.
+
+What comes in: creatures (as stat blocks for the GM), magic items and gear, spells, feats and backgrounds. Species and classes from these sources aren't imported yet.
+
+The licences, as Open5e lists them (November 2026):
+
+| Licence | Sources |
+| --- | --- |
+| CC BY 4.0 | Black Flag SRD (Kobold Press); Spells That Don't Suck |
+| CC BY 4.0 or OGL 1.0a | Level Up A5E Adventurer's Guide, Dungeon Delver's Guide and Gate Pass Gazette (EN Publishing); SRD 5.1 |
+| OGL 1.0a | Level Up A5E Monstrous Menagerie; Kobold Press's Tome of Beasts 1–3, Creature Codex, Deep Magic, Vault of Magic and Tome of Heroes; Tal'Dorei Campaign Setting |
+
+The SRD 5.2 is already built in, so it's shown but can't be ticked. Many of these sources were written for the 2014 rules: check them before your players use them. Like every pack, what you import stays in your library.
 
 ## How packs combine
 

@@ -157,7 +157,7 @@ export function campaignRoutes(ctx: AppContext) {
     '/statblocks/:id',
     h((req) => {
       const id = String(req.params.id);
-      if (id.startsWith('book:')) return bookCreature(ctx.db, id);
+      if (/^(book|srd|wk|open5e):/.test(id)) return bookCreature(ctx.db, id);
       const s = statblockFor(id);
       return s?.base ? { ...s, baseBlock: creatureByName(ctx.db, s.base) } : s;
     }),
@@ -483,7 +483,7 @@ export function campaignRoutes(ctx: AppContext) {
         tiers: d.tiers.map((t) => ({ key: t.key, label: t.label })),
         regions: [
           ...(m.worldTreasure ? Object.entries(d.regions).map(([key, v]) => ({ key, label: v.label, ids: v.ids })) : []),
-          ...(books.magic.length ? [{ key: BOOKS_REGION, label: 'From your books', ids: [] }] : []),
+          ...(books.magic.length ? [{ key: BOOKS_REGION, label: 'From the SRD and your books', ids: [] }] : []),
         ],
       };
     }),

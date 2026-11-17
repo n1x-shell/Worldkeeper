@@ -86,7 +86,7 @@ For a first-world walkthrough, see [Quick Start](docs/QUICKSTART.md). For the fu
 
 ## Using your own books
 
-Worldkeeper ships with the **SRD 5.2.1** (free, under CC-BY-4.0). For everything else (the Player's Handbook, the Dungeon Master's Guide, the Monster Manual, supplements and adventures), it reads rules from **your own copy** and keeps them in your library, never in the app or anything you publish.
+Worldkeeper ships with the whole **SRD 5.2.1** (free, under CC-BY-4.0): the classes, species, backgrounds, feats and spells for character sheets, and its 330 creatures, magic items, gear, traps and poisons for the GM, so a standard campaign works with no books at all. For everything else (the Player's Handbook, the Dungeon Master's Guide, the Monster Manual, supplements and adventures), it reads rules from **your own copy** and keeps them in your library, never in the app or anything you publish.
 
 The quickest way is a copy of the **5etools** data:
 
@@ -167,7 +167,9 @@ An optional, provider-independent AI assistant is planned for a later phase. Any
 
 Licensed under the **BSD 2-Clause License**. See [LICENSE](LICENSE) for the full text.
 
-Worldkeeper is an independent tabletop campaign tool, compatible with fifth edition. It is **not affiliated with or endorsed by Wizards of the Coast**. Apart from the System Reference Document 5.2.1 rules used by the character sheet and builder (spells, class tables and features, species traits, feats, backgrounds, weapons and armor), it does not bundle official D&D rulebook text, monster stat blocks or magic items. The 5etools importer reads a copy that you supply and stores what it converts only in your own library; users provide their own appropriately licensed or owned material. Worldkeeper is not affiliated with 5etools.
+Worldkeeper is an independent tabletop campaign tool, compatible with fifth edition. It is **not affiliated with or endorsed by Wizards of the Coast**. Apart from the System Reference Document 5.2.1 (its character rules, spells, creatures, magic items, equipment and hazards), it does not bundle official D&D rulebook text. A creature's environments in the encounter generator are facts recorded alongside the SRD's stat blocks, not text. The 5etools importer reads a copy that you supply and stores what it converts only in your own library; users provide their own appropriately licensed or owned material. Worldkeeper is not affiliated with 5etools.
+
+The Worldkeeper setting pack (the setting's creatures, hazards and items, in `assets/setting-pack/`, `assets/statblocks/statblocks.json` and `assets/treasure/catalogue.json`) is licensed under CC BY 4.0: "The Worldkeeper setting pack, by the Worldkeeper contributors, CC BY 4.0."
 
 This work includes material from the System Reference Document 5.2.1 (“SRD 5.2.1”) by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.
 
