@@ -2,7 +2,11 @@
 
 The character sheet and the character builder draw on **rules packs**: spells, species, classes, subclasses, backgrounds and feats. Packs imported from 5etools also hold creatures and items (see below).
 
-- The **SRD 5.2.1** is built in, under CC-BY-4.0. You can turn it off in **Settings → Rules packs**.
+- The **SRD 5.2.1** is built in, under CC-BY-4.0. You can turn it off in **Settings → Rules packs**. It holds everything the SRD has:
+  - for players: 12 classes (each with its SRD subclass), 9 species, 4 backgrounds, 17 feats, 339 spells, weapons and armor;
+  - for the GM: 330 creatures (stat blocks for the GM, the encounter tracker and NPC cards), 395 magic items, adventuring gear, poisons, 8 traps and 3 magical contagions (as hazard cards).
+
+  So treasure, encounters, stat blocks and item rules work with no books imported. The SRD's text and numbers are read from the SRD itself (`scripts/srd/`).
 - Anything else, such as material from your own books or your homebrew, comes in as a pack you import. Import it in **Settings → Rules packs**.
 
 Packs are for your own table. They are stored in your library's database, and so are in your backups, but nowhere else:

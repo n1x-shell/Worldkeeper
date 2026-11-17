@@ -172,7 +172,7 @@ export function sessionBriefing(db: DB, sessionId: number) {
     coming: comingUp(db, c.id, 14).map((x) => ({ kind: x.kind, title: x.title, inDays: x.inDays })),
     // The terrain here, for encounters from the GM's books (the nearest place with one: the place, then its region).
     terrain: terrainFor(chain.map((e) => e.id)),
-    treasure: treasureRegion ? { region: treasureRegion, tier: tierKey, label: worldRegion ? tData.regions[worldRegion].label : 'From your books' } : null,
+    treasure: treasureRegion ? { region: treasureRegion, tier: tierKey, label: worldRegion ? tData.regions[worldRegion].label : 'From the SRD and your books' } : null,
   };
 }
 

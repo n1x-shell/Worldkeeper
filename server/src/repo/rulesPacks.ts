@@ -13,6 +13,7 @@ import type Database from 'better-sqlite3';
 import { badRequest, notFound } from '../lib/errors.js';
 import SRD_SPELLS from '../../../shared/srd/spells.json' with { type: 'json' };
 import SRD_TEXT from '../../../shared/srd/text.json' with { type: 'json' };
+import { srdCounts } from './bookData.js';
 import { addRule, emptyRulesView, srdRulesView, type RulesView } from '../../../shared/rulesView.js';
 
 type DB = Database.Database;
@@ -196,6 +197,7 @@ export function listPacks(db: DB): PackSummary[] {
       subclass: Object.keys(t.classes).length,
       background: Object.keys(t.backgrounds).length,
       feat: Object.keys(t.feats).length,
+      ...srdCounts(),
     },
   };
   const rows = db.prepare('SELECT * FROM rules_packs ORDER BY imported_at').all() as { id: string; name: string; source: string; enabled: number; imported_at: string }[];
