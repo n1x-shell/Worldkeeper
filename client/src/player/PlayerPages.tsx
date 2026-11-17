@@ -1,3 +1,5 @@
+import { useMechanics } from '../lib/mechanics';
+import { ItemRulesList } from '../components/ItemRules';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import ReactMarkdown, { defaultUrlTransform } from 'react-markdown';
@@ -447,6 +449,7 @@ export function PlayerStanding() {
 export function PlayerTreasure() {
   const { campaigns } = usePlayerIndex();
   const { base } = usePlayer();
+  const mech = useMechanics();
   if (!campaigns) return null;
   const all = campaigns.flatMap((c) => (c.treasure ?? []).map((t) => ({ ...t, campaign: c.title })));
   const groups = new Map<string, typeof all>();
@@ -473,11 +476,12 @@ export function PlayerTreasure() {
                 )}
                 {t.rarity && <Chip>{t.rarity}</Chip>}
                 {t.status === 'stored' && <span className="text-xs text-dim">stored</span>}
-                {t.fades && <span className="text-xs text-danger">fading: learn its story to anchor it</span>}
+                {t.fades && mech?.fading !== false && <span className="text-xs text-danger">fading: learn its story to anchor it</span>}
                 {t.found_at && <span className="text-xs text-dim ml-auto">{t.found_at}</span>}
               </li>
             ))}
           </ul>
+          <ItemRulesList names={list.filter((t) => t.kind !== 'coins' && !t.entity_id).map((t) => t.name)} title="What they do" />
         </section>
       ))}
     </div>

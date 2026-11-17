@@ -2,6 +2,7 @@ import { FactionWebPage, ReturnPage } from './pages/ReturnAndWeb';
 import { NamesPage } from './pages/Names';
 import { StandingPage } from './pages/Standing';
 import { TreasurePage } from './pages/Treasure';
+import { BooksPage } from './pages/Books';
 import { HandoutsPage } from './pages/Handouts';
 import { BastionsPage } from './pages/Bastions';
 import { CalendarPage } from './pages/CalendarPage';
@@ -348,6 +349,14 @@ export function App() {
             element={
               <Page>
                 <SessionPage />
+              </Page>
+            }
+          />
+          <Route
+            path="books"
+            element={
+              <Page>
+                <BooksPage />
               </Page>
             }
           />

@@ -46,6 +46,10 @@ export interface StatBlockData {
   looks?: string;
   /** True when how they fight is deliberately left open: looks only, no numbers yet. */
   open?: boolean;
+  /** The book stat block a card's base names, when the GM's books have it. */
+  baseBlock?: StatBlockData | null;
+  /** The book and page, for a creature from the GM's books. */
+  source?: string;
 }
 
 const sg = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
@@ -127,6 +131,16 @@ export function StatBlock({ s }: { s: StatBlockData }) {
           {s.fights === false ? 'If it comes to it, use' : 'Use'} the <b>{s.base}</b> stat block from the Monster Manual{s.changes ? ', with these changes:' : '.'}
         </p>
         {s.changes && <p>{s.changes}</p>}
+        {s.baseBlock && (
+          <details className="rounded border border-line p-2">
+            <summary className="cursor-pointer">
+              The <b>{s.baseBlock.name}</b> stat block, from your books
+            </summary>
+            <div className="mt-2">
+              <StatBlock s={s.baseBlock} />
+            </div>
+          </details>
+        )}
         {s.fights !== false && s.tactics && (
           <p className="rounded border border-line p-2">
             <b>In a fight.</b> {s.tactics}
@@ -152,7 +166,7 @@ export function StatBlock({ s }: { s: StatBlockData }) {
       <div className="space-y-1">
         <div className="font-display text-gold/90 border-b border-gold/30">{title}</div>
         {list.map((e) => (
-          <p key={e.name}>
+          <p key={e.name} className="whitespace-pre-line">
             <b>
               <i>{e.name}.</i>
             </b>{' '}
@@ -216,8 +230,17 @@ export function StatBlock({ s }: { s: StatBlockData }) {
       {section('Bonus Actions', s.bonus)}
       {section('Reactions', s.reactions)}
       {section('Legendary Actions', s.legendary)}
+      {s.source && <p className="text-xs text-dim">{s.source}</p>}
     </div>
   );
+}
+
+/** A stat block by id: a world record's, or a creature from the GM's books ("book:…"). */
+export function StatBlockById({ id }: { id: string }) {
+  const { data } = useApi<StatBlockData | null>(`/api/statblocks/${encodeURIComponent(id)}`);
+  if (data === undefined) return null;
+  if (!data) return <p className="text-xs text-dim">No stat block for this one.</p>;
+  return <StatBlock s={data} />;
 }
 
 /** On a record's page (GM): its stat block, if it has one. */

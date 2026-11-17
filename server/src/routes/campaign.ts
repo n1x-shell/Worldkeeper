@@ -1,6 +1,9 @@
+import { creatureMentions, regionTerrains, suggestEncounters, terrainFor, TERRAINS, type Difficulty } from '../repo/encounters.js';
 import { Router } from 'express';
 import type { AppContext } from '../context.js';
-import { h, intParam, mountCrud } from './util.js';
+import { characterLog, logged } from '../repo/characterLog.js';
+import { keepPortrait, removePortrait, savePortrait } from '../repo/portraits.js';
+import { h, intParam, listParam, mountCrud } from './util.js';
 import {
   adventureFromHook,
   adventures,
@@ -52,12 +55,15 @@ import { calendarEvents, campaignDate, comingUp, setCampaignDate } from '../repo
 import { handouts, pushHandout } from '../repo/handouts.js';
 import { bastionTurns, bastions, downtime, hostStanding, takeBastionTurn } from '../repo/bastions.js';
 import { adjustRenown, setStandingOptions, standingFor, undoRenown } from '../repo/standing.js';
-import { addRollToParty, catalogueFor, partyTreasure, rollTreasure, treasureData } from '../repo/treasure.js';
+import { BOOKS_REGION, addRollToParty, catalogueFor, partyTreasure, rollTreasure, treasureData } from '../repo/treasure.js';
+import { getMechanics } from '../repo/mechanics.js';
 import { badRequest } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
 import { returnClock, setReturnStage } from '../repo/returnClock.js';
 import { factionWeb, revealTie } from '../repo/factionWeb.js';
 import { statblockFor, statblockIndex } from '../repo/statblocks.js';
+import { bookCounts, bookCreature, bookTreasure, bookCreatureIndex, bookCreatures, bookItems, creatureByName, itemByName, requireBookCreature } from '../repo/bookData.js';
+import { characterPage, renewCharacterCode, updateCharacterPage } from '../repo/characterPages.js';
 
 export function campaignRoutes(ctx: AppContext) {
   const r = Router();
@@ -77,6 +83,48 @@ export function campaignRoutes(ctx: AppContext) {
     h((req) => campaignOverview(ctx.db, intParam(req.params.id))),
   );
   mountCrud(r, ctx, '/campaigns', campaigns);
+  // Character pages: memories, true name and Thinning. The GM sees and edits all of it, and can renew the private code.
+  // (Registered before the characters CRUD, so /characters/:id/page isn't taken for a character id.)
+  r.get(
+    '/characters/:id/page',
+    h((req) => characterPage(ctx.db, intParam(req.params.id))),
+  );
+  r.post(
+    '/characters/:id/page/new-code',
+    h((req) => renewCharacterCode(ctx.db, intParam(req.params.id))),
+  );
+  // Everything the GM changes on a character or its page goes in the change log, marked as the GM's.
+  r.patch(
+    '/characters/:id/page',
+    h((req) => logged(ctx.db, intParam(req.params.id), 'gm', () => updateCharacterPage(ctx.db, intParam(req.params.id), req.body))),
+  );
+  r.patch(
+    '/characters/:id',
+    h((req) => {
+      const id = intParam(req.params.id);
+      return logged(ctx.db, id, 'gm', () => characters.update(ctx.db, id, keepPortrait(ctx.db, id, req.body)));
+    }),
+  );
+  r.get(
+    '/characters/:id/log',
+    h((req) => characterLog(ctx.db, intParam(req.params.id))),
+  );
+  r.post(
+    '/characters/:id/portrait',
+    h((req) => {
+      const id = intParam(req.params.id);
+      logged(ctx.db, id, 'gm', () => savePortrait(ctx.db, ctx.paths.uploadsDir, id, req.body?.image));
+      return characters.get(ctx.db, id);
+    }),
+  );
+  r.delete(
+    '/characters/:id/portrait',
+    h((req) => {
+      const id = intParam(req.params.id);
+      logged(ctx.db, id, 'gm', () => removePortrait(ctx.db, ctx.paths.uploadsDir, id));
+      return characters.get(ctx.db, id);
+    }),
+  );
   mountCrud(r, ctx, '/characters', characters, ['campaign_id']);
   mountCrud(r, ctx, '/quests', quests, ['campaign_id', 'status']);
   r.post(
@@ -99,13 +147,67 @@ export function campaignRoutes(ctx: AppContext) {
     h((req) => sessionBriefing(ctx.db, intParam(req.params.id))),
   );
   // Stat blocks for creatures, hazards and fight-ready people.
+  // The world's own, then the creatures from the GM's books. An NPC card that names a Monster Manual stat block
+  // ("base") carries that block too, when the GM's books have it.
   r.get(
     '/statblocks',
-    h(() => statblockIndex()),
+    h(() => [...statblockIndex(), ...bookCreatureIndex(ctx.db)]),
   );
   r.get(
     '/statblocks/:id',
-    h((req) => statblockFor(String(req.params.id))),
+    h((req) => {
+      const id = String(req.params.id);
+      if (id.startsWith('book:')) return bookCreature(ctx.db, id);
+      const s = statblockFor(id);
+      return s?.base ? { ...s, baseBlock: creatureByName(ctx.db, s.base) } : s;
+    }),
+  );
+  // The GM's books: creatures and items to browse, and an item's rules by the name it goes by.
+  r.get(
+    '/books',
+    h(() => bookCounts(ctx.db)),
+  );
+  r.get(
+    '/books/creatures',
+    h((req) => bookCreatures(ctx.db, String(req.query.q ?? ''), Number(req.query.limit ?? 2000))),
+  );
+  r.get(
+    '/books/creatures/:id',
+    h((req) => requireBookCreature(ctx.db, String(req.params.id))),
+  );
+  r.get(
+    '/books/items',
+    h((req) => bookItems(ctx.db, String(req.query.q ?? ''), Number(req.query.limit ?? 2000))),
+  );
+  // Encounters from the books: groups for the party's level, in a terrain or one of the world's regions.
+  r.get(
+    '/books/encounters',
+    h((req) => {
+      const region = String(req.query.region ?? '');
+      const terrain = region ? terrainFor([region]) : (listParam(req.query.terrain) ?? []);
+      return {
+        terrain,
+        ...suggestEncounters(ctx.db, {
+          level: Number(req.query.level ?? 1),
+          size: Number(req.query.size ?? 4),
+          difficulty: String(req.query.difficulty ?? 'moderate') as Difficulty,
+          terrain,
+        }),
+      };
+    }),
+  );
+  r.get(
+    '/books/terrains',
+    h(() => ({
+      terrains: TERRAINS,
+      regions: Object.entries(regionTerrains())
+        .filter(([id]) => ctx.db.prepare('SELECT 1 FROM entities WHERE id = ?').get(id))
+        .map(([id, v]) => ({ id, ...v })),
+    })),
+  );
+  r.get(
+    '/books/item',
+    h((req) => itemByName(ctx.db, String(req.query.name ?? ''))),
   );
   // The Return: a clock only the GM sees; players get its omens.
   r.get(
@@ -275,7 +377,11 @@ export function campaignRoutes(ctx: AppContext) {
   mountCrud(r, ctx, '/notes', notes, ['campaign_id']);
   r.post(
     '/random-tables/:id/roll',
-    h((req) => rollTable(ctx.db, intParam(req.params.id))),
+    h((req) => {
+      // The book creatures a row names, for their stat blocks.
+      const r = rollTable(ctx.db, intParam(req.params.id)) as { result: string };
+      return { ...r, creatures: creatureMentions(ctx.db, r.result ?? '') };
+    }),
   );
   mountCrud(r, ctx, '/random-tables', randomTables);
 
@@ -370,7 +476,16 @@ export function campaignRoutes(ctx: AppContext) {
     '/treasure/options',
     h(() => {
       const d = treasureData();
-      return { tiers: d.tiers.map((t) => ({ key: t.key, label: t.label })), regions: Object.entries(d.regions).map(([key, v]) => ({ key, label: v.label, ids: v.ids })) };
+      const m = getMechanics(ctx.db);
+      const books = bookTreasure(ctx.db);
+      // The setting's regions when its treasure is on; and the books, whenever they hold magic items.
+      return {
+        tiers: d.tiers.map((t) => ({ key: t.key, label: t.label })),
+        regions: [
+          ...(m.worldTreasure ? Object.entries(d.regions).map(([key, v]) => ({ key, label: v.label, ids: v.ids })) : []),
+          ...(books.magic.length ? [{ key: BOOKS_REGION, label: 'From your books', ids: [] }] : []),
+        ],
+      };
     }),
   );
   r.get(
@@ -379,7 +494,18 @@ export function campaignRoutes(ctx: AppContext) {
   );
   r.post(
     '/treasure/roll',
-    h((req) => rollTreasure({ tier: String(req.body?.tier ?? ''), region: String(req.body?.region ?? ''), kind: req.body?.kind === 'individual' ? 'individual' : 'hoard' })),
+    h((req) => {
+      const m = getMechanics(ctx.db);
+      const region = String(req.body?.region ?? '');
+      if (!m.worldTreasure && region !== BOOKS_REGION) throw badRequest('The setting’s treasure is switched off: roll from your books.');
+      return rollTreasure({
+        tier: String(req.body?.tier ?? ''),
+        region,
+        kind: req.body?.kind === 'individual' ? 'individual' : 'hoard',
+        books: region === BOOKS_REGION ? bookTreasure(ctx.db) : undefined,
+        fading: m.fading,
+      });
+    }),
   );
   r.post(
     '/party-treasure/from-roll',

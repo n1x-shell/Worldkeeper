@@ -7,9 +7,13 @@ import { createRoot } from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import { PlayerApp } from './PlayerApp';
 import { staticSource } from './source';
+import { setRulesFallback } from './sheet/options';
 import '../styles/index.css';
 
 const source = staticSource('data/player.json', 'uploads/');
+// The builder uses the SRD rules bundled with the handbook, unless the GM turned them off. The GM's own rules packs
+// are never published.
+setRulesFallback(async () => (await source.info()).rulesSrd !== false);
 
 // Keep the handbook on the device for use with no signal (see public/sw.js). Each visit tops up the saved copy.
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {

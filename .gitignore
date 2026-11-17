@@ -12,3 +12,6 @@ src-tauri/binaries/
 src-tauri/gen/
 desktop/build/
 dist-player/
+# Rules packs made from your own books: for your table only, never committed (see docs/RULES_PACKS.md)
+rules-packs/
+*rules-pack*.zip

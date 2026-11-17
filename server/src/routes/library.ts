@@ -11,9 +11,12 @@ import { readZip, type SourceFile } from '../import/scan.js';
 import { buildPlan, commitPlan, listImportRuns, summarisePlan, type ImportPlan } from '../import/importer.js';
 import { backupPath, createBackup, listBackups, stageRestore } from '../backup/backup.js';
 import { DEFAULT_ADDITIONS_DIR, applyAdditions, loreFiles } from '../additions.js';
+import { chosenBooks, importFivetools, scanFivetools } from '../repo/fivetools.js';
+import { deletePack, importPack, listPacks, setPackEnabled } from '../repo/rulesPacks.js';
 import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, exportPlayerZip, importCampaign, importJson } from '../backup/exporter.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { schemaVersion } from '../db/migrations.js';
+import { getMechanics, setMechanics } from '../repo/mechanics.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 300 * 1024 * 1024, files: 1 } });
 
@@ -107,7 +110,7 @@ export function libraryRoutes(ctx: AppContext) {
   );
   r.get(
     '/export/campaign/:id',
-    h((req, res) => sendFile(res, `worldkeeper-campaign-${req.params.id}-${day()}.json`, 'application/json', JSON.stringify(exportCampaign(ctx.db, intParam(req.params.id))))),
+    h((req, res) => sendFile(res, `worldkeeper-campaign-${req.params.id}-${day()}.json`, 'application/json', JSON.stringify(exportCampaign(ctx.db, intParam(req.params.id), ctx.paths.uploadsDir)))),
   );
   r.post(
     '/import/json',
@@ -115,10 +118,72 @@ export function libraryRoutes(ctx: AppContext) {
     h((req) => {
       if (!req.file) throw badRequest('Choose a JSON export');
       const data = JSON.parse(req.file.buffer.toString('utf8'));
-      if (data?.app === 'worldkeeper-campaign') return { campaignId: importCampaign(ctx.db, data) };
+      if (data?.app === 'worldkeeper-campaign') return { campaignId: importCampaign(ctx.db, data, ctx.paths.uploadsDir) };
       importJson(ctx.db, data);
       return { ok: true };
     }),
+  );
+
+  // ---- Campaign mechanics: which of the setting's own mechanics this library uses ----
+  r.get(
+    '/mechanics',
+    h(() => getMechanics(ctx.db)),
+  );
+  r.put(
+    '/mechanics',
+    h((req) => setMechanics(ctx.db, (req.body ?? {}) as Record<string, unknown>)),
+  );
+
+  // ---- Rules packs (the GM's own books or homebrew, for the character sheet; never published or exported) ----
+  r.get(
+    '/rules/packs',
+    h(() => listPacks(ctx.db)),
+  );
+  r.post(
+    '/rules/packs',
+    upload.single('pack'),
+    h((req) => {
+      if (!req.file) throw badRequest('Choose a rules pack (.zip)');
+      return importPack(ctx.db, req.file.buffer);
+    }),
+  );
+  // The GM's own copy of the 5etools data. First the upload is read and kept for a short while, and the books in it
+  // listed; then the GM chooses which books to import. The copy is deleted after the import (or after an hour).
+  r.post(
+    '/rules/5etools/scan',
+    upload.single('data'),
+    h((req) => {
+      if (!req.file) throw badRequest('Choose your 5etools zip');
+      const books = scanFivetools(req.file.buffer);
+      const token = randomBytes(12).toString('hex');
+      for (const f of fs.readdirSync(ctx.paths.stagingDir))
+        if (f.startsWith('5etools-') && Date.now() - fs.statSync(path.join(ctx.paths.stagingDir, f)).mtimeMs > 3600_000) fs.rmSync(path.join(ctx.paths.stagingDir, f), { force: true });
+      fs.writeFileSync(path.join(ctx.paths.stagingDir, `5etools-${token}.zip`), req.file.buffer);
+      return { token, books, chosen: chosenBooks(ctx.db) };
+    }),
+  );
+  r.post(
+    '/rules/5etools/import',
+    h((req) => {
+      const token = String(req.body?.token ?? '');
+      if (!/^[a-f0-9]{24}$/.test(token)) throw badRequest('Upload your 5etools zip again.');
+      const file = path.join(ctx.paths.stagingDir, `5etools-${token}.zip`);
+      if (!fs.existsSync(file)) throw badRequest('That upload has expired: upload your 5etools zip again.');
+      const books = Array.isArray(req.body?.books) ? (req.body.books as unknown[]).map(String).filter((b) => /^[\w-]{1,40}$/.test(b)) : [];
+      try {
+        return importFivetools(ctx.db, fs.readFileSync(file), books);
+      } finally {
+        fs.rmSync(file, { force: true });
+      }
+    }),
+  );
+  r.patch(
+    '/rules/packs/:id',
+    h((req) => setPackEnabled(ctx.db, String(req.params.id), !!req.body?.enabled)),
+  );
+  r.delete(
+    '/rules/packs/:id',
+    h((req) => deletePack(ctx.db, String(req.params.id))),
   );
 
   // ---- Backups ----

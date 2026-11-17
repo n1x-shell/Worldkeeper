@@ -1,6 +1,8 @@
+import { Link } from 'react-router-dom';
+import { useMechanics } from '../lib/mechanics';
 import type { ReactNode } from 'react';
 import { Printer } from 'lucide-react';
-import { PageHeader } from '../components/ui';
+import { Empty, PageHeader } from '../components/ui';
 
 /**
  * GM QUICK REFERENCE: the world's own rules on one printable sheet. Everything here restates approved records
@@ -38,6 +40,13 @@ const Table = ({ head, rows }: { head: string[]; rows: string[][] }) => (
 );
 
 export function QuickReferencePage() {
+  const mech = useMechanics();
+  if (mech && !mech.setting)
+    return (
+      <Empty title="The setting's pages are switched off">
+        This quick reference is for the Worldkeeper setting. Switch its pages on in <Link to="/settings">Settings, Campaign mechanics</Link>.
+      </Empty>
+    );
   return (
     <div className="space-y-4">
       <PageHeader

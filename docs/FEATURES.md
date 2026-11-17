@@ -64,6 +64,32 @@ Create multiple campaigns within the same world, each with a premise, dates, sta
 
 Party sheets provide 2024-oriented D&D basics: ability scores and modifiers, level-based proficiency, saving throws, skills, AC, HP, initiative, conditions, exhaustion, concentration, spell slots, rest tracking, equipment and custom setting mechanics.
 
+Each character has a full **D&D 2024 character sheet** that holds everything on the official sheet, laid out like a ledger. A framed portrait, identity and the numbers needed every turn sit down the side: Armor Class with Shield, initiative, speed, Proficiency Bonus, passive Perception, size, Hit Points with a damage and healing box, Hit Dice, death saves, Heroic Inspiration, and short and long rest buttons. Everything else is in tabs:
+
+- **Abilities**: ability scores with their saving throws and skills grouped under them, proficiency and Expertise shown as diamonds, passive scores, armor training, weapon, tool and language proficiencies, and Weapon Mastery.
+- **Combat**: weapons and damaging cantrips (pick a weapon and its bonus and damage are worked out), class resources such as Rage or Focus Points, conditions, Exhaustion and concentration.
+- **Spells**: spellcasting ability, modifier, save DC and attack bonus, spell slots with totals from the class table, and cantrips and prepared spells with casting time, range, Concentration, Ritual, Material and notes. Spells are picked from the SRD 5.2.1's 339 spells, with their full text.
+- **Inventory**: armor worn (which sets AC), equipment, three magic item attunement slots and coins.
+- **Features**: class features, species traits and feats as cards with their rules text, filled in from the SRD for its classes, subclasses, species and feats.
+- **Story**: appearance, personality and backstory.
+- **Thinning**: the world's own page (below).
+- **Log**: every change, who made it (the player or the GM) and when. A burst of typing makes one entry.
+
+The rules come from **rules packs**: the built-in SRD 5.2.1, which you can turn off, and packs you import from your own books or homebrew as a zip of Markdown files (see [Rules packs](RULES_PACKS.md)). Packs stay in your library: the GM app and table server use them, but they never reach the published handbook or an export. Each people page names the species rules it uses, and the sheet uses exactly those, so a Sea Elf never picks up the SRD's Elf traits.
+
+Packs imported from your books also bring **creatures and items**:
+
+- **Your Books** (DM Tools) lists every creature and item, with search and filters by challenge rating and rarity. Only the GM sees it.
+- The **encounter tracker** has a "From your books" field: pick a creature and its name, HP, AC and initiative fill in, and its stat block opens from its row.
+- An **NPC card** that says "Use the Priest stat block" carries the full Priest block from your books, folded under the card.
+- **Treasure** shows what rolled items and the party's items do, and so do the players' Party Treasure page, a sheet's equipment and attuned items, and the builder's starting kit. Generic magic items work on any base item, so "Flame Tongue Longsword" or "Weapon, +1" find their rules.
+
+Species, class, subclass and background are dropdowns: the world's peoples (each noting which species rules it uses), the classes, the subclasses each class page lists, and the world's and the Player's Handbook's backgrounds, with **Other…** for anything else. **Fill in basics** sets a class's saving throws, Hit Die, training and resources. The GM edits everything on the sheet, the level and Thinning included; the GM's setting mechanics, world ties and notes are on a **GM only** tab that players never see, in the sheet or its log.
+
+Each character also has a **character page** for the world's own rules: their named memories, their true name and who knows it, and their Thinning track. Players keep their sheet and page up to date on the player server with a private code (they can change everything but level and Thinning); the GM is the only one who changes Thinning, and can give a sheet a new code. A struck memory stays struck. Portraits, sheets, pages and their change logs travel with campaign exports and backups, and never appear in the published handbook.
+
+The handbook's **Make a Character** builder makes a complete character at any level from 1 to 20, step by step, with the sheet building itself alongside: people, class and subclass, background, ability scores (standard array, point buy, rolled or entered, then the background's increases and each Ability Score Improvement or feat), skills, Expertise, languages and weapon masteries, starting equipment or gold, spells, portrait, looks and personality, and ties to the world. It ends with the sheet on two printable pages laid out like the official one, and on the table server **Send to my sheet** fills in the player's sheet (at the level the GM set).
+
 Quests support a **players see** flag. Adventures include premise, hook, stakes, opposition, clues, obstacles, rewards, approaches, consequences and an **if ignored** outcome. Story arcs connect related adventures. Scenes can be reordered, reused across adventures, and arranged in a branching visual flow editor.
 
 ## Session preparation and play
@@ -88,6 +114,31 @@ Other table tools include a DM screen, NPC quick-reference cards, faction agenda
 
 Rules reference entries use labels: `OFFICIAL`, `HOMEBREW`, `OUTSIDE 2024 CORE` or `UNVERIFIED`. Worldkeeper does not bundle purchased rulebooks or licensed monster stat blocks.
 
+## A standard D&D campaign, or the Worldkeeper setting
+
+The app ships with the Worldkeeper setting's mechanics, and runs just as well as a plain D&D 2024 campaign tool with whatever books you import.
+
+**Settings → Campaign mechanics** has a switch for each of the setting's own mechanics, and two presets: **Standard D&D** (all off) and **The Worldkeeper setting** (all on).
+
+| Switch | What it covers |
+| --- | --- |
+| The setting's pages | Aetheris, Kaelmar and the Ethereal Realm in the menu, and the setting's quick reference |
+| Thinning, true names and memories | The Thinning tab on sheets and character pages, with true names, named memories and Shardscarred |
+| The Return | The Return's clock for the GM, and its signs and omens for players |
+| Fading salvage | Treasure from the Ethereal Realm fades unless it's anchored |
+| The setting's treasure | The Treasure tool's regional tables and the world's own items. Off: it rolls from your books |
+
+A switched-off mechanic leaves the menus, the sheets, the player view and the published handbook. Nothing is deleted. A library that holds the Worldkeeper setting starts with everything on; any other library starts as standard D&D.
+
+**From your books** (see [Rules packs](RULES_PACKS.md)):
+
+- **Character options.** The sheet and the builder list the world's peoples, classes and backgrounds first, then every other species, class, subclass and background in your rules packs. With no world pages, the books' options are the whole list.
+- **Treasure.** "From your books" rolls magic items by tier and rarity from your imported Dungeon Master's Guide, with gems and art objects for goods. When the setting's treasure is on, its regional tables come first, and their items show the rules from your books.
+- **Encounters.** Your Books → Encounters, and "Suggest from your books" in a live session, offer groups of creatures for the party's level within the Dungeon Master's Guide (2024) XP budget, in a terrain. The setting's regions have terrains (`assets/encounters/terrain.json`), so a live session suggests creatures that belong where the party is. "Put in the tracker" makes it an encounter, with HP, AC, initiative and stat blocks filled in.
+- **Encounter tables.** When a table row names creatures in plain words ("4 bandits and a bandit captain"), their stat blocks from your books are a click away. The setting's own creatures keep their own stat blocks.
+
+**The rules are D&D 2024.** The sheet and builder do their arithmetic by the 2024 rules: backgrounds raise ability scores, the 2024 class tables, weapon mastery. Books written for the 2014 rules import fine, and their species, subclasses, spells, feats, items and creatures can be used, but characters are built and calculated the 2024 way.
+
 ## Library management
 
 Library Management contains import preview, confirmation and history, exports, Canon Review, broken-reference reporting, change history, backup and restore, and app settings.
@@ -100,7 +151,7 @@ For the detailed import/export and restore workflow, see [Data, Imports, Backups
 
 ## Player view and distribution
 
-The local `/player` interface provides a preview of material that has been explicitly revealed. A separate player-only server on port 4320 mounts no DM routes and is intended for trusted LAN use. A static handbook can be exported as a ZIP or published to a GitHub Pages branch. The handbook updates when republished, not whenever the local campaign changes.
+The local `/player` interface provides a preview of material that has been explicitly revealed. A separate player-only server on port 4320 mounts no DM routes and is intended for trusted LAN use. Its one write route is a character's own page, opened with that character's private code. A static handbook can be exported as a ZIP or published to a GitHub Pages branch. The handbook updates when republished, not whenever the local campaign changes.
 
 **Important:** Publication filtering should be tested and manually reviewed, especially for labels and other indirect disclosure paths. Content placed in Git history may remain accessible after it is removed from a newer snapshot. See [Player View & Publishing](PLAYER_VIEW.md).
 

@@ -1,9 +1,11 @@
+import { useMechanics } from '../lib/mechanics';
 import { useState } from 'react';
 import { Coins, Dices, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { EntityLink, ErrorBox, Field, Loading, PageHeader } from '../components/ui';
 import { NeedCampaign } from './Campaign';
+import { ItemRulesList } from '../components/ItemRules';
 
 /**
  * Treasure for the active campaign: roll individual treasure or a hoard by tier and region (Treasure [RUL-620]), add it
@@ -50,7 +52,11 @@ export function TreasurePage() {
   const { data: rows, error, reload } = useApi<Row[]>(activeCampaignId ? `/api/party-treasure?campaign_id=${activeCampaignId}` : null);
   const { data: chars } = useApi<{ id: number; name: string }[]>(activeCampaignId ? `/api/characters?campaign_id=${activeCampaignId}` : null);
   const [tier, setTier] = useState('1-4');
-  const [region, setRegion] = useState('marches');
+  const [regionPick, setRegion] = useState('marches');
+  const mech = useMechanics();
+  // The region chosen, or the first one offered (the books, when the setting's treasure is off).
+  const region = opts?.regions.some((r) => r.key === regionPick) ? regionPick : (opts?.regions[0]?.key ?? regionPick);
+  const fading = mech?.fading !== false;
   const [kind, setKind] = useState<'individual' | 'hoard'>('hoard');
   const [roll, setRoll] = useState<Roll | null>(null);
   const [foundAt, setFoundAt] = useState('');
@@ -116,10 +122,15 @@ export function TreasurePage() {
               </button>
             ))}
           </div>
-          <button className="btn-primary h-[38px]" onClick={doRoll}>
+          <button className="btn-primary h-[38px]" onClick={doRoll} disabled={!opts.regions.length}>
             <Dices size={15} /> Roll
           </button>
         </div>
+        {!opts.regions.length && (
+          <p className="text-sm text-dim">
+            Nothing to roll from yet: import your books (with a Dungeon Master&apos;s Guide) in Settings, Rules packs, or switch the setting&apos;s treasure on in Settings, Campaign mechanics.
+          </p>
+        )}
         {err && <p className="text-danger text-sm">{err}</p>}
         {roll && (
           <div className="rounded-md border border-gold/40 p-3 space-y-2">
@@ -153,9 +164,10 @@ export function TreasurePage() {
                 ))}
               </ul>
             )}
+            <ItemRulesList names={roll.items.filter((it) => !it.entity_id).map((it) => it.name)} title="What they do (from your books)" />
             {roll.kind === 'hoard' && !roll.items.length && <p className="text-sm text-dim">No magic this time.</p>}
             {roll.hook && <p className="text-sm italic">{roll.hook}</p>}
-            {roll.fades && <p className="text-xs text-dim">Salvage from lost worlds: it fades once taken out of the Ethereal Realm unless it's anchored.</p>}
+            {roll.fades && fading && <p className="text-xs text-dim">Salvage from lost worlds: it fades once taken out of the Ethereal Realm unless it's anchored.</p>}
             <div className="text-sm text-dim">Worth about {gp(roll.total_gp)}, before magic.</div>
             <div className="flex flex-wrap gap-2 items-end pt-1">
               <input className="input max-w-xs" placeholder="Found at (optional)" value={foundAt} onChange={(e) => setFoundAt(e.target.value)} />
@@ -203,12 +215,12 @@ export function TreasurePage() {
                       {r.quantity > 1 && r.kind !== 'coins' && <span className="text-dim">{r.quantity} ×</span>}
                       {r.entity_id ? <EntityLink id={r.entity_id} /> : <span>{r.name}</span>}
                       {r.rarity && <span className="text-[11px] px-1.5 rounded bg-arcane/20 capitalize">{r.rarity}</span>}
-                      {r.fades && !r.anchored && (
+                      {fading && r.fades && !r.anchored && (
                         <button className="text-[11px] px-1.5 rounded bg-danger/30" title="Mark it anchored once its story has been told" onClick={() => patch(r, { anchored: true })}>
                           fading
                         </button>
                       )}
-                      {r.fades && r.anchored && <span className="text-[11px] px-1.5 rounded bg-gold/20">anchored</span>}
+                      {fading && r.fades && r.anchored && <span className="text-[11px] px-1.5 rounded bg-gold/20">anchored</span>}
                     </div>
                   </td>
                   <td className="pr-2 whitespace-nowrap">{r.value_gp ? gp(r.value_gp) : <span className="text-dim">—</span>}</td>
@@ -243,6 +255,9 @@ export function TreasurePage() {
               ))}
             </tbody>
           </table>
+          <div className="pt-3">
+            <ItemRulesList names={list.filter((r) => r.kind !== 'coins' && !r.entity_id).map((r) => r.name)} title="What the party's items do (from your books)" />
+          </div>
         </div>
       )}
     </div>

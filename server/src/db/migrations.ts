@@ -658,6 +658,60 @@ CREATE TABLE faction_ties_revealed (
 );
 `,
   },
+  {
+    version: 14,
+    name: "character pages: each character's memories, true name and Thinning, kept by its player",
+    sql: `
+CREATE TABLE character_pages (
+  character_id INTEGER PRIMARY KEY REFERENCES characters(id) ON DELETE CASCADE,
+  code TEXT NOT NULL UNIQUE,
+  true_name TEXT NOT NULL DEFAULT '',
+  memories TEXT NOT NULL DEFAULT '[]',
+  known_by TEXT NOT NULL DEFAULT '[]',
+  thinning INTEGER NOT NULL DEFAULT 0 CHECK (thinning BETWEEN 0 AND 6),
+  shardscarred INTEGER NOT NULL DEFAULT 0,
+  notes TEXT NOT NULL DEFAULT '',
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+`,
+  },
+  {
+    version: 15,
+    name: 'character change log: who changed what on a sheet or character page, the player or the GM',
+    sql: `
+CREATE TABLE character_changes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+  at TEXT NOT NULL,
+  by TEXT NOT NULL CHECK (by IN ('player', 'gm')),
+  field TEXT NOT NULL,
+  before TEXT NOT NULL DEFAULT 'null',
+  after TEXT NOT NULL DEFAULT 'null'
+);
+CREATE INDEX character_changes_by_character ON character_changes (character_id, id);
+`,
+  },
+  {
+    version: 16,
+    name: "rules packs: game rules from the GM's own books or homebrew, for the character sheet and builder",
+    sql: `
+CREATE TABLE rules_packs (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  source TEXT NOT NULL DEFAULT '',
+  enabled INTEGER NOT NULL DEFAULT 1,
+  imported_at TEXT NOT NULL
+);
+CREATE TABLE rules_entries (
+  pack_id TEXT NOT NULL REFERENCES rules_packs(id) ON DELETE CASCADE,
+  kind TEXT NOT NULL,
+  name TEXT NOT NULL,
+  cls TEXT NOT NULL DEFAULT '',
+  data TEXT NOT NULL,
+  PRIMARY KEY (pack_id, kind, cls, name)
+);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

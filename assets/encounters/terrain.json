@@ -1,0 +1,26 @@
+{
+  "note": "The terrain of each of the world's regions, in the terms creatures' environments use in the GM's books (5etools), so the encounter generator suggests creatures that belong there. Read from each region's own page; places inside a region use the region's terrain unless listed. Not canon: a GM aid, and safe to change.",
+  "regions": {
+    "REG-001": { "label": "The Hollow Marches", "terrain": ["grassland", "hill", "forest"] },
+    "SET-001": { "label": "Hollow Refuge", "terrain": ["urban", "grassland"] },
+    "REG-002": { "label": "The Radiant Ascendancy", "terrain": ["grassland", "urban"] },
+    "REG-003": { "label": "The Tyrant's Dominion", "terrain": ["mountain", "hill", "urban"] },
+    "REG-004": { "label": "The Fractured Nexus", "terrain": ["mountain", "urban", "planar, air"] },
+    "REG-005": { "label": "The Eternal Veil", "terrain": ["urban", "coastal", "planar, shadowfell"] },
+    "REG-006": { "label": "The Verdant Rebirth", "terrain": ["forest", "swamp"] },
+    "SET-301": { "label": "Ashvale and the Western Hills", "terrain": ["hill", "urban"] },
+    "REG-301": { "label": "The Eastern Deepwood", "terrain": ["forest"] },
+    "REG-302": { "label": "The Eastern Mountains", "terrain": ["mountain", "hill"] },
+    "REG-303": { "label": "The Central Bloom Country", "terrain": ["hill", "grassland", "forest"] },
+    "REG-304": { "label": "The Northern Highlands and Ice", "terrain": ["arctic", "mountain"] },
+    "REG-305": { "label": "The Southern Fens, Lakes and River Country", "terrain": ["swamp", "coastal"] },
+    "REG-306": { "label": "The Ash Barrens", "terrain": ["desert", "grassland"] },
+    "ETH-501": { "label": "The Hollow Verge", "terrain": ["planar, ethereal", "planar, shadowfell"] },
+    "ETH-502": { "label": "The Fields of Lost Realities", "terrain": ["planar, ethereal", "planar, shadowfell"] },
+    "ETH-503": { "label": "The Ossuary of Kings", "terrain": ["planar, ethereal", "planar, shadowfell"] },
+    "ETH-504": { "label": "The Silent Archive", "terrain": ["planar, ethereal", "planar, astral"] },
+    "ETH-505": { "label": "The Loom of Eternity", "terrain": ["planar, ethereal", "planar, astral"] },
+    "ETH-506": { "label": "The Citadel of the Hidden", "terrain": ["planar, ethereal", "planar, astral"] },
+    "ETH-507": { "label": "The Black Horizon", "terrain": ["planar, ethereal", "planar, astral"] }
+  }
+}

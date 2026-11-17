@@ -9,6 +9,7 @@ import { worldRoutes } from './routes/world.js';
 import { campaignRoutes } from './routes/campaign.js';
 import { libraryRoutes } from './routes/library.js';
 import { atlasRoutes, uploadsHandler } from './routes/atlas.js';
+import { isCharacterPortrait } from './repo/portraits.js';
 import { playerRoutes } from './routes/player.js';
 import { publishRoutes } from './routes/publish.js';
 
@@ -36,7 +37,9 @@ export function createApp(ctx: AppContext, opts: { staticDir?: string } = {}) {
     const ok =
       ctx.db.prepare('SELECT 1 FROM maps WHERE image_file = ? AND player_visible = 1').get(f) ||
       // Handout pictures, once given to the players.
-      ctx.db.prepare('SELECT 1 FROM handouts WHERE image_file = ? AND pushed_at IS NOT NULL').get(f);
+      ctx.db.prepare('SELECT 1 FROM handouts WHERE image_file = ? AND pushed_at IS NOT NULL').get(f) ||
+      // Character portraits (their file names are random, and only given out with the character).
+      isCharacterPortrait(ctx.db, f);
     if (!ok) return next(new HttpError(404, 'File not found'));
     return uploadsHandler(ctx)(req, res, next);
   });

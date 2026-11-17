@@ -1,3 +1,5 @@
+import type { Mechanics } from '../../../shared/mechanics';
+import type { Sheet } from '@shared/sheet';
 import { useEffect, useState } from 'react';
 
 /**
@@ -83,6 +85,9 @@ export interface PlayerSnapshot {
   maps: PMap[];
   campaigns: PCampaign[];
   factionWeb?: PTie[];
+  /** False when the GM turned the built-in SRD rules off. */
+  rulesSrd?: boolean;
+  mechanics?: Partial<Mechanics>;
 }
 
 /** During a live session: the running fight's turn order (no monster numbers) and the newest handout. */
@@ -93,7 +98,7 @@ export interface PLive {
 }
 
 export interface PlayerSource {
-  info(): Promise<{ appName: string; publishedAt?: string }>;
+  info(): Promise<{ appName: string; publishedAt?: string; rulesSrd?: boolean; mechanics?: Partial<Mechanics> }>;
   entities(): Promise<PEntity[]>;
   entity(id: string): Promise<PEntity | null>;
   search(q: string): Promise<PEntity[]>;
@@ -103,6 +108,33 @@ export interface PlayerSource {
   imageUrl(file: string): string;
   /** Only in the app (not the published handbook): the live session feed. */
   live?(): Promise<PLive>;
+  /** Only on the table server: a character's own page, by its private code. */
+  myPage?(code: string): Promise<PCharacterPage | null>;
+  saveMyPage?(
+    code: string,
+    patch: Partial<Pick<PCharacterPage, 'true_name' | 'memories' | 'known_by' | 'notes'>> & { character?: Partial<Pick<PCharacterPage, 'name' | 'species' | 'class_name' | 'sheet'>> },
+  ): Promise<PCharacterPage>;
+  /** The character's change log, without the GM's own notes. */
+  myLog?(code: string): Promise<import('./sheet/LogTab').LogEntry[]>;
+  /** Save a new portrait (a small data URL), or remove it (null). */
+  myPortrait?(code: string, image: string | null): Promise<PCharacterPage>;
+}
+
+/** A character's own page: memories, true name, who knows it, and Thinning (set by the GM). */
+export interface PCharacterPage {
+  name: string;
+  species: string;
+  class_name: string;
+  level: number;
+  true_name: string;
+  memories: { id?: number; text: string; struck: boolean }[];
+  known_by: string[];
+  thinning: number;
+  shardscarred: boolean;
+  notes: string;
+  updated_at: string;
+  /** The character's D&D 2024 sheet (without the GM's own notes). */
+  sheet: Sheet;
 }
 
 async function getJson<T>(url: string): Promise<T> {
@@ -124,6 +156,26 @@ export const apiSource: PlayerSource = {
   factionWeb: () => getJson('/api/player/faction-web'),
   imageUrl: (file) => `/api/player/uploads/${encodeURIComponent(file)}`,
   live: () => getJson('/api/player/live'),
+  myPage: async (code) => {
+    const r = await fetch(`/api/player/me/${encodeURIComponent(code)}`);
+    return r.ok ? ((await r.json()) as PCharacterPage) : null;
+  },
+  saveMyPage: async (code, patch) => {
+    const r = await fetch(`/api/player/me/${encodeURIComponent(code)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patch) });
+    const body = (await r.json().catch(() => ({}))) as PCharacterPage & { error?: string };
+    if (!r.ok) throw new Error(body.error ?? `Couldn't save (${r.status})`);
+    return body;
+  },
+  myLog: (code) => getJson(`/api/player/me/${encodeURIComponent(code)}/log`),
+  myPortrait: async (code, image) => {
+    const r = await fetch(
+      `/api/player/me/${encodeURIComponent(code)}/portrait`,
+      image ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image }) } : { method: 'DELETE' },
+    );
+    const body = (await r.json().catch(() => ({}))) as PCharacterPage & { error?: string };
+    if (!r.ok) throw new Error(body.error ?? `Couldn't save the portrait (${r.status})`);
+    return body;
+  },
 };
 
 export function staticSource(snapshotUrl: string, uploadsBase: string): PlayerSource {
@@ -132,7 +184,7 @@ export function staticSource(snapshotUrl: string, uploadsBase: string): PlayerSo
   return {
     info: async () => {
       const s = await snap();
-      return { appName: s.appName ?? 'The Worldkeeper', publishedAt: s.generated_at };
+      return { appName: s.appName ?? 'The Worldkeeper', publishedAt: s.generated_at, rulesSrd: s.rulesSrd !== false, mechanics: s.mechanics };
     },
     entities: async () => (await snap()).entities,
     entity: async (id) => (await snap()).entities.find((e) => e.id === id) ?? null,

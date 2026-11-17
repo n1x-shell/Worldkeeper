@@ -88,6 +88,8 @@ export interface Combatant {
   isPC: boolean;
   hidden: boolean;
   entityId: string | null;
+  /** A creature from the GM's books, for its stat block (GM only). */
+  statblockId?: string | null;
   /** What players call it on their phones; blank shows its name. */
   playerName?: string;
   notes: string;

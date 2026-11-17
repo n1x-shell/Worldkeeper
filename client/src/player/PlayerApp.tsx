@@ -1,3 +1,4 @@
+import { setMechanicsLoader } from '../lib/mechanics';
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { apiSource, type PlayerSource } from './source';
@@ -12,6 +13,7 @@ const CharacterBuilder = lazy(() => import('./CharacterBuilder').then((m) => ({ 
 const PlayerFactionWeb = lazy(() => import('./WebAndOmens').then((m) => ({ default: m.PlayerFactionWeb })));
 const PlayerOmens = lazy(() => import('./WebAndOmens').then((m) => ({ default: m.PlayerOmens })));
 const PlayerPrint = lazy(() => import('./PlayerPrint').then((m) => ({ default: m.PlayerPrint })));
+const PlayerMe = lazy(() => import('./PlayerMe').then((m) => ({ default: m.PlayerMe })));
 const Later = ({ children }: { children: ReactNode }) => <Suspense fallback={<p className="text-dim text-sm">Loading…</p>}>{children}</Suspense>;
 
 /**
@@ -20,7 +22,13 @@ const Later = ({ children }: { children: ReactNode }) => <Suspense fallback={<p 
  *
  * `base` is the route prefix: '/player' inside the app, '' in the static handbook.
  */
+let mechanicsFrom: PlayerSource | null = null;
 export function PlayerApp({ source = apiSource, base = '/player' }: { source?: PlayerSource; base?: string }) {
+  // The setting's mechanics (Thinning, the Return's omens, fading salvage) as this handbook's source has them.
+  if (mechanicsFrom !== source) {
+    mechanicsFrom = source;
+    setMechanicsLoader(() => source.info().then((i) => i.mechanics));
+  }
   const [info, setInfo] = useState<{ appName: string; publishedAt?: string }>({ appName: 'The Worldkeeper' });
   useEffect(() => {
     void source.info().then((i) => {
@@ -65,6 +73,22 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
             element={
               <Later>
                 <PlayerFactionWeb />
+              </Later>
+            }
+          />
+          <Route
+            path="me"
+            element={
+              <Later>
+                <PlayerMe />
+              </Later>
+            }
+          />
+          <Route
+            path="me/:code"
+            element={
+              <Later>
+                <PlayerMe />
               </Later>
             }
           />

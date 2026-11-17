@@ -25,6 +25,89 @@ export const campaigns = makeCrud({
   orderBy: 'updated_at DESC',
 });
 
+/** A character's 2024 sheet. Also checks what a player saves on the table server (see characterPages.ts). */
+const featureList = z.array(z.object({ name: z.string().max(200), source: z.string().max(200), text: z.string().max(10000) })).max(150);
+
+export const characterSheetSchema = z
+  .object({
+    abilities: z.record(z.string(), z.number().int().min(1).max(30)).optional(),
+    saves: z.array(z.string()).optional(),
+    skills: z.array(z.string()).optional(),
+    ac: z.number().int().min(0).max(50).optional(),
+    maxHp: z.number().int().min(0).max(2000).optional(),
+    hp: z.number().int().min(-2000).max(2000).optional(),
+    initiativeBonus: z.number().int().min(-10).max(30).optional(),
+    speed: z.string().max(100).optional(),
+    spellSlots: z.record(z.string(), z.object({ max: z.number().int(), used: z.number().int() })).optional(),
+    concentration: z.string().max(200).nullable().optional(),
+    conditions: z.array(z.string()).optional(),
+    exhaustion: z.number().int().min(0).max(6).optional(),
+    equipment: z.string().max(20000).optional(),
+    lastRest: z.string().max(200).optional(),
+    shardscarred: z.string().max(5000).optional(),
+    expertise: z.array(z.string().max(60)).max(18).optional(),
+    tempHp: z.number().int().min(0).max(2000).optional(),
+    hitDie: z.string().max(10).optional(),
+    hitDiceSpent: z.number().int().min(0).max(20).optional(),
+    deathSaves: z.object({ successes: z.number().int().min(0).max(3), failures: z.number().int().min(0).max(3) }).optional(),
+    inspiration: z.boolean().optional(),
+    coins: z.object({ cp: z.number().int().min(0).optional(), sp: z.number().int().min(0).optional(), ep: z.number().int().min(0).optional(), gp: z.number().int().min(0).optional(), pp: z.number().int().min(0).optional() }).optional(),
+    subclass: z.string().max(200).optional(),
+    background: z.string().max(200).optional(),
+    alignment: z.string().max(60).optional(),
+    size: z.string().max(20).optional(),
+    xp: z.number().int().min(0).max(1000000).optional(),
+    armorProf: z.string().max(2000).optional(),
+    weaponProf: z.string().max(2000).optional(),
+    toolProf: z.string().max(2000).optional(),
+    languages: z.string().max(2000).optional(),
+    masteries: z.array(z.string().max(200)).max(20).optional(),
+    attacks: z.array(z.object({ name: z.string().max(200), bonus: z.string().max(40), damage: z.string().max(200), notes: z.string().max(500) })).max(30).optional(),
+    spellAbility: z.string().max(10).optional(),
+    spells: z
+      .array(
+        z.object({
+          name: z.string().max(200),
+          level: z.number().int().min(0).max(9),
+          prepared: z.boolean(),
+          time: z.string().max(200).optional(),
+          range: z.string().max(100).optional(),
+          concentration: z.boolean().optional(),
+          ritual: z.boolean().optional(),
+          material: z.boolean().optional(),
+          notes: z.string().max(1000).optional(),
+        }),
+      )
+      .max(200)
+      .optional(),
+    classFeatures: featureList.optional(),
+    speciesTraits: featureList.optional(),
+    featList: featureList.optional(),
+    armorTraining: z.object({ light: z.boolean().optional(), medium: z.boolean().optional(), heavy: z.boolean().optional(), shields: z.boolean().optional() }).optional(),
+    armorWorn: z.string().max(100).optional(),
+    shield: z.boolean().optional(),
+    attunement: z.array(z.string().max(200)).max(3).optional(),
+    resources: z
+      .array(z.object({ name: z.string().max(100), max: z.number().int().min(0).max(999), used: z.number().int().min(0).max(999), reset: z.enum(['short', 'short-one', 'long']) }))
+      .max(20)
+      .optional(),
+    pronouns: z.string().max(60).optional(),
+    // An uploaded portrait's file name (see the portrait routes); never a link to anywhere else.
+    portrait: z.string().regex(/^portrait-[a-z0-9-]+\.(webp|jpg|png)$/).optional(),
+    features: z.string().max(20000).optional(),
+    traits: z.string().max(20000).optional(),
+    feats: z.string().max(20000).optional(),
+    appearance: z.string().max(5000).optional(),
+    personality: z.string().max(5000).optional(),
+    backstory: z.string().max(20000).optional(),
+    hometown: z.string().max(40).nullable().optional(),
+    ties: z
+      .array(z.object({ entity_id: z.string().max(40), kind: z.string().max(40), note: z.string().max(2000).default('') }))
+      .max(60)
+      .optional(),
+  })
+  .passthrough();
+
 export const characters = makeCrud({
   table: 'characters',
   schema: z.object({
@@ -35,31 +118,7 @@ export const characters = makeCrud({
     species: z.string().max(200).default(''),
     class_name: z.string().max(200).default(''),
     level: z.number().int().min(1).max(20).default(1),
-    sheet: z
-      .object({
-        abilities: z.record(z.string(), z.number().int().min(1).max(30)).optional(),
-        saves: z.array(z.string()).optional(),
-        skills: z.array(z.string()).optional(),
-        ac: z.number().int().min(0).max(50).optional(),
-        maxHp: z.number().int().min(0).max(2000).optional(),
-        hp: z.number().int().min(-2000).max(2000).optional(),
-        initiativeBonus: z.number().int().min(-10).max(30).optional(),
-        speed: z.string().max(100).optional(),
-        spellSlots: z.record(z.string(), z.object({ max: z.number().int(), used: z.number().int() })).optional(),
-        concentration: z.string().max(200).nullable().optional(),
-        conditions: z.array(z.string()).optional(),
-        exhaustion: z.number().int().min(0).max(6).optional(),
-        equipment: z.string().max(20000).optional(),
-        lastRest: z.string().max(200).optional(),
-        shardscarred: z.string().max(5000).optional(),
-        hometown: z.string().max(40).nullable().optional(),
-        ties: z
-          .array(z.object({ entity_id: z.string().max(40), kind: z.string().max(40), note: z.string().max(2000).default('') }))
-          .max(60)
-          .optional(),
-      })
-      .passthrough()
-      .default({}),
+    sheet: characterSheetSchema.default({}),
     notes: zText().default(''),
   }),
   jsonColumns: ['sheet'],
@@ -401,6 +460,8 @@ export const encounters = makeCrud({
           isPC: z.boolean().default(false),
           hidden: z.boolean().default(false),
           entityId: z.string().max(40).nullable().default(null),
+          /** A creature from the GM's books ("book:xmm:goblin-warrior"), for its stat block. GM only. */
+          statblockId: z.string().max(120).nullable().default(null),
           /** What players call it, on their phones (a monster's real name stays with the GM). */
           playerName: z.string().max(200).default(''),
           notes: z.string().max(5000).default(''),

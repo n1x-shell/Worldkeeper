@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Printer,
+import { UserRound, Printer,
   BookOpen,
   ChevronsLeft,
   ChevronsRight,
@@ -74,7 +74,7 @@ const write = (k: string, v: string) => {
 
 /** Same shell as the DM app (sidebar, top search, phone drawer), built only from what players may see. */
 export function PlayerLayout({ appName, publishedAt }: { appName: string; publishedAt?: string }) {
-  const { base } = usePlayer();
+  const { base, source } = usePlayer();
   const { entities, campaigns, maps, factionWeb } = usePlayerIndex();
   const [collapsed, setCollapsed] = useState(read('wk.player.sidebar', '0') === '1');
   const [theme, setTheme] = useState<'dark' | 'light'>(read('wk.player.theme', 'dark') === 'light' ? 'light' : 'dark');
@@ -116,6 +116,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
         ...groups.map((g) => ({ to: `${base}/browse/${g.key}`, label: g.label, icon: GROUP_ICONS[g.key] })),
         ...(factionWeb?.length ? [{ to: `${base}/factions-web`, label: 'Faction Web', icon: <Network size={I} /> }] : []),
         { to: `${base}/builder`, label: 'Make a Character', icon: <UserPlus size={I} /> },
+        ...(source.myPage ? [{ to: `${base}/me`, label: 'My Character', icon: <UserRound size={I} /> }] : []),
         { to: `${base}/print`, label: 'Print', icon: <Printer size={I} /> },
       ],
     },
