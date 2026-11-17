@@ -2,7 +2,7 @@
  * Import rules from a copy of the 5etools data (the GM's own, never part of this repository): spells, species,
  * classes and subclasses, backgrounds and feats from the books the GM owns, turned into one private rules pack.
  *
- * Only the books in BOOKS come in. A species from another book comes in only when a people page in the world names
+ * Only the books the GM chooses come in (DEFAULT_BOOKS if they don't). A species from another book comes in only when a people page in the world names
  * it ("Use the half-orc rules"), and is marked as an older printing. 5etools' own formatting tags are turned into
  * plain text. Like every rules pack, the result stays in the GM's library and is never published or exported.
  */
@@ -15,25 +15,23 @@ import { listPacks } from './rulesPacks.js';
 type DB = Database.Database;
 type J = Record<string, unknown>;
 
-/** The books to take, newest printings first (an earlier book here wins a clash of names). */
-export const BOOKS: Record<string, string> = {
-  XPHB: "Player's Handbook (2024)",
-  XDMG: "Dungeon Master's Guide (2024)",
-  XMM: 'Monster Manual (2025)',
-  EFA: 'Eberron: Forge of the Artificer',
-  MPMM: 'Monsters of the Multiverse',
-  AAG: "Spelljammer: Astral Adventurer's Guide",
-  TCE: "Tasha's Cauldron of Everything",
-  XGE: "Xanathar's Guide to Everything",
-};
-const ORDER = Object.keys(BOOKS);
+/** The books imported when the GM hasn't chosen: the eight they own. */
+export const DEFAULT_BOOKS = ['XPHB', 'XDMG', 'XMM', 'EFA', 'MPMM', 'AAG', 'TCE', 'XGE'];
+
+/**
+ * The books chosen for this import, newest printing first (an earlier book wins a clash of names), with their titles.
+ * Set at the start of each import; the import runs start to finish without yielding, so one import never sees another's.
+ */
+let BOOKS: Record<string, string> = {};
+let ORDER: string[] = [];
 const rank = (src: string) => (ORDER.includes(src) ? ORDER.indexOf(src) : 100);
-/** For species the world asks for that none of the books have: older printings, best first. */
-const LEGACY_ORDER = ['PHB', 'VGM', 'ERLW', 'MTF', 'EGW', 'MOT', 'GGR', 'VRGR', 'FTD', 'SCAG', 'EEPC', 'DMG'];
+/** For species the world asks for that none of the chosen books have: older printings, best first. */
+const LEGACY_ORDER = ['XPHB', 'MPMM', 'EFA', 'AAG', 'PHB', 'VGM', 'ERLW', 'MTF', 'EGW', 'MOT', 'GGR', 'VRGR', 'FTD', 'SCAG', 'EEPC', 'DMG'];
 const legacyRank = (src: string) => (LEGACY_ORDER.includes(src) ? LEGACY_ORDER.indexOf(src) : 50);
-/** Your books first, then older printings. */
+/** The chosen books first, then other printings. */
 const score = (src: string) => (src in BOOKS ? rank(src) : 100 + legacyRank(src));
-const cite = (o: J) => `${BOOKS[o.source as string] ?? (o.source as string)}${o.page ? ` p. ${o.page}` : ''}`;
+let TITLES: Record<string, string> = {};
+const cite = (o: J) => `${TITLES[o.source as string] ?? (o.source as string)}${o.page ? ` p. ${o.page}` : ''}`;
 
 // ---------------------------------------------------------------- text
 const TAG = /\{@(\w+)\s*([^{}]*?)\}/g;
@@ -174,6 +172,60 @@ function openData(buf: Buffer) {
   return { read, all };
 }
 
+interface BookInfo {
+  id: string;
+  name: string;
+  published: string;
+  group: string;
+}
+/** Every book and source in the copy, from its books list (and adventures, for the few rules they hold). */
+function bookInfo(read: (p: string) => J): Record<string, BookInfo> {
+  const out: Record<string, BookInfo> = {};
+  for (const file of ['adventures.json', 'books.json'])
+    for (const b of ((read(file).book ?? read(file).adventure) as J[]) ?? [])
+      out[b.id as string] = { id: b.id as string, name: b.name as string, published: (b.published as string) ?? '', group: (b.group as string) ?? '' };
+  return out;
+}
+
+export interface ScannedBook {
+  id: string;
+  name: string;
+  published: string;
+  group: string;
+  /** How many of each kind of rule the book has. */
+  counts: Record<string, number>;
+  /** Unearthed Arcana playtest material, or a book 5etools doesn't list (usually homebrew). */
+  unofficial: boolean;
+}
+/** What's in a 5etools copy: each book with rules for the sheet, and how many of each. */
+export function scanFivetools(buf: Buffer): ScannedBook[] {
+  const { read, all } = openData(buf);
+  const info = bookInfo(read);
+  const counts: Record<string, Record<string, number>> = {};
+  const count = (kind: string, items: J[]) => {
+    for (const o of items) {
+      const src = o.source as string;
+      if (!src) continue;
+      (counts[src] ??= {})[kind] = (counts[src][kind] ?? 0) + 1;
+    }
+  };
+  count('spell', all('spells', 'spells-', 'spell'));
+  count('species', (read('races.json').race as J[]) ?? []);
+  count('class', all('class', 'class-', 'class'));
+  count(
+    'subclass',
+    all('class', 'class-', 'subclass').filter((s) => !s._copy),
+  );
+  count('feat', (read('feats.json').feat as J[]) ?? []);
+  count('background', (read('backgrounds.json').background as J[]) ?? []);
+  return Object.entries(counts)
+    .map(([id, c]) => {
+      const b = info[id];
+      return { id, name: b?.name ?? id, published: b?.published ?? '', group: b?.group ?? '', counts: c, unofficial: !b || /^UA/.test(id) || b.group === 'homebrew' };
+    })
+    .sort((a, b) => Number(a.unofficial) - Number(b.unofficial) || b.published.localeCompare(a.published) || a.name.localeCompare(b.name));
+}
+
 /** Keep one of each name: the best-ranked book. */
 function best<T extends J>(items: T[], key: (o: T) => string, score: (o: T) => number) {
   const m = new Map<string, T>();
@@ -244,8 +296,14 @@ export interface FivetoolsResult {
   missingSpecies: string[];
 }
 
-export function importFivetools(db: DB, buf: Buffer): { pack: ReturnType<typeof listPacks>[number]; result: FivetoolsResult } {
+export function importFivetools(db: DB, buf: Buffer, books: string[] = DEFAULT_BOOKS): { pack: ReturnType<typeof listPacks>[number]; result: FivetoolsResult } {
   const { read, all } = openData(buf);
+  const info = bookInfo(read);
+  TITLES = Object.fromEntries(Object.values(info).map((b) => [b.id, b.name]));
+  if (!books.length) throw badRequest('Choose at least one book.');
+  // Newest printing first, so a reprint wins over the book it reprints.
+  ORDER = [...new Set(books)].sort((a, b) => (info[b]?.published ?? '').localeCompare(info[a]?.published ?? ''));
+  BOOKS = Object.fromEntries(ORDER.map((id) => [id, TITLES[id] ?? id]));
   const entries: { kind: string; name: string; cls: string; data: J }[] = [];
   const add = (kind: string, name: string, cls: string, data: J) => entries.push({ kind, name, cls, data });
 
@@ -259,7 +317,7 @@ export function importFivetools(db: DB, buf: Buffer): { pack: ReturnType<typeof 
   for (const s of spells) {
     const cl = lookup[(s.source as string).toLowerCase()]?.[(s.name as string).toLowerCase()]?.class ?? {};
     const classes = new Set<string>();
-    for (const [src, names] of Object.entries(cl)) if (src in BOOKS || src === 'PHB') for (const n of Object.keys(names)) classes.add(n);
+    for (const [src, names] of Object.entries(cl)) if (src in BOOKS || src === 'PHB' || src === 'XPHB') for (const n of Object.keys(names)) classes.add(n);
     const higher = renderEntries(s.entriesHigherLevel ?? []);
     add('spell', s.name as string, '', {
       name: s.name,
@@ -346,7 +404,7 @@ export function importFivetools(db: DB, buf: Buffer): { pack: ReturnType<typeof 
       .map((o) => `${o.name}${o.prerequisite ? ` (${prereq(o.prerequisite as J[])})` : ''}: ${text(o.entries)}`)
       .join('\n\n');
   const classes = best(
-    classFiles.filter((c) => c.source === 'XPHB' || c.source === 'EFA'),
+    classFiles.filter((c) => (c.source as string) in BOOKS && !/sidekick/i.test(c.name as string)),
     (c) => c.name as string,
     (c) => rank(c.source as string),
   );
@@ -362,7 +420,8 @@ export function importFivetools(db: DB, buf: Buffer): { pack: ReturnType<typeof 
   const subs = best(
     subclassList.filter(inBooks).filter((s) => classes.some((c) => c.name === s.className)),
     (s) => `${s.className}|${s.name}`,
-    (s) => rank(s.source as string) * 10 + (s.classSource === 'XPHB' || s.classSource === 'EFA' ? 0 : 1),
+    // Prefer the version written for the class being imported (5etools fits older subclasses to the 2024 classes).
+    (s) => rank(s.source as string) * 10 + (classes.some((c) => c.name === s.className && c.source === s.classSource) ? 0 : 1),
   );
   for (const s of subs) {
     const feats = subFeatures.filter((f) => f.className === s.className && f.subclassShortName === s.shortName && f.subclassSource === s.source);
@@ -421,7 +480,8 @@ export function importFivetools(db: DB, buf: Buffer): { pack: ReturnType<typeof 
     });
   }
 
-  if (!entries.length) throw badRequest('Nothing from your books was found in that 5etools copy.');
+  if (!entries.length) throw badRequest('Nothing from the chosen books was found in that 5etools copy.');
+  db.prepare(`INSERT INTO settings (key, value) VALUES ('fivetools_books', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`).run(JSON.stringify(ORDER));
   const id = '5etools';
   db.transaction(() => {
     db.prepare('DELETE FROM rules_entries WHERE pack_id = ?').run(id);
@@ -491,4 +551,14 @@ function kitText(list: J[] | undefined): string {
       .join(', ');
   if (kit.A && kit.B) return `Choose A or B: (A) ${side(kit.A as unknown[])}; or (B) ${side(kit.B as unknown[])}`;
   return side((kit._ ?? kit.A ?? []) as unknown[]);
+}
+
+/** The books chosen last time, or the defaults. */
+export function chosenBooks(db: DB): string[] {
+  const v = (db.prepare(`SELECT value FROM settings WHERE key = 'fivetools_books'`).get() as { value: string } | undefined)?.value;
+  try {
+    return v ? (JSON.parse(v) as string[]) : DEFAULT_BOOKS;
+  } catch {
+    return DEFAULT_BOOKS;
+  }
 }

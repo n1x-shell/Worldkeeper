@@ -33,6 +33,8 @@ export function RulesPacksPanel() {
   const ft = useRef<HTMLInputElement>(null);
   const [msg, setMsg] = useState('');
   const [problems, setProblems] = useState<string[]>([]);
+  const [scan, setScan] = useState<{ token: string; books: ScannedBook[]; chosen: string[] } | null>(null);
+  const [picked, setPicked] = useState<Set<string>>(new Set());
   const changed = (packs: Pack[]) => {
     setData(packs);
     reloadRules();
@@ -110,19 +112,42 @@ export function RulesPacksPanel() {
           setMsg('Reading your 5etools copy… (a large file takes a moment to upload)');
           setProblems([]);
           try {
-            const r = await api.upload<{ pack: Pack; result: { counts: Record<string, number>; legacySpecies: string[]; missingSpecies: string[] } }>('/api/rules/5etools', 'data', f);
-            const c = r.result.counts;
-            setMsg(
-              `Imported from your books: ${c.spell ?? 0} spells, ${c.species ?? 0} species, ${c.class ?? 0} classes, ${c.subclass ?? 0} subclasses, ${c.background ?? 0} backgrounds, ${c.feat ?? 0} feats.` +
-                (r.result.legacySpecies.length ? ` Older printings, because your peoples name them: ${r.result.legacySpecies.join(', ')}.` : '') +
-                (r.result.missingSpecies.length ? ` Not found: ${r.result.missingSpecies.join(', ')}.` : ''),
-            );
-            changed(await api.get<Pack[]>('/api/rules/packs'));
+            const r = await api.upload<{ token: string; books: ScannedBook[]; chosen: string[] }>('/api/rules/5etools/scan', 'data', f);
+            setScan(r);
+            setPicked(new Set(r.chosen.filter((id) => r.books.some((b) => b.id === id))));
+            setMsg('');
           } catch (x) {
             setMsg((x as Error).message);
           }
         }}
       />
+      {scan && (
+        <BookPicker
+          scan={scan}
+          picked={picked}
+          setPicked={setPicked}
+          onCancel={() => setScan(null)}
+          onImport={async () => {
+            setMsg('Importing your books…');
+            try {
+              const r = await api.post<{ pack: Pack; result: { counts: Record<string, number>; legacySpecies: string[]; missingSpecies: string[] } }>('/api/rules/5etools/import', {
+                token: scan.token,
+                books: [...picked],
+              });
+              const c = r.result.counts;
+              setMsg(
+                `Imported from ${picked.size} book${picked.size === 1 ? '' : 's'}: ${c.spell ?? 0} spells, ${c.species ?? 0} species, ${c.class ?? 0} classes, ${c.subclass ?? 0} subclasses, ${c.background ?? 0} backgrounds, ${c.feat ?? 0} feats.` +
+                  (r.result.legacySpecies.length ? ` From other books, because your peoples name them: ${r.result.legacySpecies.join(', ')}.` : '') +
+                  (r.result.missingSpecies.length ? ` Not found: ${r.result.missingSpecies.join(', ')}.` : ''),
+              );
+              setScan(null);
+              changed(await api.get<Pack[]>('/api/rules/packs'));
+            } catch (x) {
+              setMsg((x as Error).message);
+            }
+          }}
+        />
+      )}
       <input
         ref={input}
         type="file"
@@ -163,6 +188,89 @@ export function RulesPacksPanel() {
           </ul>
         </details>
       )}
+    </div>
+  );
+}
+
+interface ScannedBook {
+  id: string;
+  name: string;
+  published: string;
+  group: string;
+  counts: Record<string, number>;
+  unofficial: boolean;
+}
+
+/** Choose which books in the 5etools copy to import. */
+function BookPicker({
+  scan,
+  picked,
+  setPicked,
+  onImport,
+  onCancel,
+}: {
+  scan: { books: ScannedBook[]; chosen: string[] };
+  picked: Set<string>;
+  setPicked: (s: Set<string>) => void;
+  onImport: () => void;
+  onCancel: () => void;
+}) {
+  const [q, setQ] = useState('');
+  const [showAll, setShowAll] = useState(false);
+  const toggle = (id: string) => {
+    const n = new Set(picked);
+    if (n.has(id)) n.delete(id);
+    else n.add(id);
+    setPicked(n);
+  };
+  // The books chosen last time (or by default) first, then the rest, newest first.
+  const chosenFirst = [...scan.books].sort((a, b) => Number(scan.chosen.includes(b.id)) - Number(scan.chosen.includes(a.id)));
+  const shown = chosenFirst.filter((b) => (showAll || !b.unofficial || picked.has(b.id)) && (!q || `${b.name} ${b.id}`.toLowerCase().includes(q.toLowerCase())));
+  const unofficial = scan.books.filter((b) => b.unofficial).length;
+  const summary = (c: Record<string, number>) =>
+    KINDS.filter(([k]) => c[k])
+      .map(([k, label]) => `${c[k]} ${label}`)
+      .join(', ');
+  return (
+    <div className="rounded border border-gold/40 p-3 space-y-2">
+      <div className="text-sm font-medium">Choose the books to import</div>
+      <p className="text-xs text-dim">
+        Only books with rules for character sheets are listed: your last choice first, then the rest, newest first. Where two chosen books have the same rule, the newer printing wins. Your choice is
+        remembered for next time.
+      </p>
+      <div className="flex flex-wrap gap-2 items-center">
+        <input className="input max-w-xs" placeholder="Find a book" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Find a book" />
+        <button className="btn-ghost text-xs" onClick={() => setPicked(new Set())}>
+          Clear
+        </button>
+        {unofficial > 0 && (
+          <label className="text-xs flex items-center gap-1.5">
+            <input type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.target.checked)} /> Show {unofficial} playtest or unlisted sources
+          </label>
+        )}
+      </div>
+      <ul className="max-h-80 overflow-auto divide-y divide-line/50">
+        {shown.map((b) => (
+          <li key={b.id}>
+            <label className="flex items-start gap-2 py-1.5 text-sm">
+              <input type="checkbox" className="mt-1" checked={picked.has(b.id)} onChange={() => toggle(b.id)} aria-label={b.name} />
+              <span>
+                {b.name}
+                {b.unofficial && <span className="chip border-line text-dim ml-2">playtest or unlisted</span>}
+                <span className="block text-xs text-dim">{[b.published.slice(0, 4), summary(b.counts)].filter(Boolean).join(' · ')}</span>
+              </span>
+            </label>
+          </li>
+        ))}
+      </ul>
+      <div className="flex gap-2">
+        <button className="btn-primary" disabled={!picked.size} onClick={onImport}>
+          Import {picked.size} book{picked.size === 1 ? '' : 's'}
+        </button>
+        <button className="btn-ghost" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
     </div>
   );
 }

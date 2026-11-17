@@ -14,6 +14,17 @@ function fakeFivetools() {
   const z = new AdmZip();
   const d = 'fake-main/data/';
   z.addFile(
+    `${d}books.json`,
+    json({
+      book: [
+        { id: 'XPHB', name: "Player's Handbook (2024)", published: '2024-09-17', group: 'core' },
+        { id: 'PHB', name: "Player's Handbook (2014)", published: '2014-08-19', group: 'core' },
+        { id: 'TCE', name: "Tasha's Cauldron of Everything", published: '2020-11-17', group: 'supplement' },
+        { id: 'VGM', name: "Volo's Guide to Monsters", published: '2016-11-15', group: 'supplement' },
+      ],
+    }),
+  );
+  z.addFile(
     `${d}races.json`,
     json({
       race: [
@@ -156,8 +167,24 @@ describe('importing from 5etools', () => {
       notes: '',
     });
     const gm = createApp(ctx);
-    const r = await request(gm).post('/api/rules/5etools').attach('data', fakeFivetools(), 'fivetools.zip');
+    const scan = await request(gm).post('/api/rules/5etools/scan').attach('data', fakeFivetools(), 'fivetools.zip');
+    expect(scan.status).toBe(200);
+    expect(scan.body.books.map((b: { id: string }) => b.id).sort()).toEqual(['PHB', 'TCE', 'VGM', 'WoW', 'XPHB']);
+    expect(scan.body.books.find((b: { id: string }) => b.id === 'XPHB').counts).toMatchObject({ spell: 1, species: 1, class: 1, feat: 2, background: 1 });
+    expect(scan.body.chosen).toContain('XPHB');
+    const r = await request(gm)
+      .post('/api/rules/5etools/import')
+      .send({ token: scan.body.token, books: ['XPHB', 'TCE'] });
     expect(r.status).toBe(200);
+    // The uploaded copy is gone, and the choice is remembered.
+    expect(
+      (
+        await request(gm)
+          .post('/api/rules/5etools/import')
+          .send({ token: scan.body.token, books: ['XPHB'] })
+      ).status,
+    ).toBe(400);
+    expect((await request(gm).post('/api/rules/5etools/scan').attach('data', fakeFivetools(), 'f.zip')).body.chosen.sort()).toEqual(['TCE', 'XPHB']);
     expect(r.body.result.counts).toMatchObject({ spell: 1, species: 2, class: 1, subclass: 1, feat: 2, background: 1 });
     expect(r.body.result.legacySpecies).toEqual(['Oldling (VGM)']);
     const rules = (await request(createApp(new AppContext(ctx.paths, 'player'))).get('/api/player/rules')).body;
@@ -192,9 +219,30 @@ describe('importing from 5etools', () => {
     expect(JSON.stringify(playerSnapshot(ctx.db))).not.toContain('Zap');
   });
 
+  it('takes only the books you choose', async () => {
+    const ctx = tempContext();
+    const gm = createApp(ctx);
+    const scan = (await request(gm).post('/api/rules/5etools/scan').attach('data', fakeFivetools(), 'f.zip')).body;
+    // Only the 2014 book: its Testling, not the 2024 one, and no 2024 spells.
+    const r = await request(gm)
+      .post('/api/rules/5etools/import')
+      .send({ token: scan.token, books: ['PHB'] });
+    expect(r.body.result.counts).toMatchObject({ species: 1 });
+    expect(r.body.result.counts.spell).toBeUndefined();
+    const rules = (await request(gm).get('/api/player/rules')).body;
+    expect(rules.species.Testling.source).toBe("Player's Handbook (2014) p. 1");
+    expect(
+      (
+        await request(gm)
+          .post('/api/rules/5etools/import')
+          .send({ token: 'nope', books: ['PHB'] })
+      ).status,
+    ).toBe(400);
+  });
+
   it('refuses a zip that isn’t 5etools', async () => {
     const z = new AdmZip();
     z.addFile('readme.txt', Buffer.from('hi'));
-    expect((await request(createApp(tempContext())).post('/api/rules/5etools').attach('data', z.toBuffer(), 'x.zip')).status).toBe(400);
+    expect((await request(createApp(tempContext())).post('/api/rules/5etools/scan').attach('data', z.toBuffer(), 'x.zip')).status).toBe(400);
   });
 });

@@ -15,7 +15,9 @@ Keep pack files in a `rules-packs/` folder, or name them `…-rules-pack.zip`. T
 
 ## Importing your books from 5etools
 
-If you have a copy of the 5etools data, **Settings → Rules packs → Import your books from 5etools** reads it directly: upload the zip of the 5etools repository (or of just its `data` folder). It makes one pack, **Your books (from 5etools)**, holding spells, species, classes and subclasses with their features, backgrounds and feats from these books:
+If you have a copy of the 5etools data, **Settings → Rules packs → Import your books from 5etools** reads it directly: upload the zip of the 5etools repository (or of just its `data` folder). The app lists every book in it that has rules for character sheets, newest first, with how many spells, species, classes, subclasses, backgrounds and feats each holds. Tick the books you want and choose **Import**. Playtest (Unearthed Arcana) and unlisted sources are hidden unless you ask to see them.
+
+The first time, these books are ticked:
 
 - Player's Handbook (2024)
 - Dungeon Master's Guide (2024)
@@ -26,7 +28,9 @@ If you have a copy of the 5etools data, **Settings → Rules packs → Import yo
 - Mordenkainen Presents: Monsters of the Multiverse
 - Spelljammer: Astral Adventurer's Guide
 
-Where books overlap, the newest printing wins. A species from another book comes in only when a people page in your world names it (for example "Use the half-orc rules"), and is marked as an older printing. Every entry names its book and page. Importing again replaces the pack. The 5etools data itself is never stored, only the rules taken from it, and like every pack they never leave your library.
+After that, your last choice is remembered. The import makes one pack, **Your books (from 5etools)**, holding spells, species, classes and subclasses with their features, backgrounds and feats from the chosen books.
+
+Where books overlap, the newest printing wins. A species from a book you didn't choose comes in only when a people page in your world names it (for example "Use the half-orc rules"), and is marked as an older printing. Every entry names its book and page. Importing again replaces the pack. The uploaded copy is kept only until you import (an hour at most) and then deleted; only the rules taken from it are stored, and like every pack they never leave your library.
 
 ## How packs combine
 

@@ -11,7 +11,7 @@ import { readZip, type SourceFile } from '../import/scan.js';
 import { buildPlan, commitPlan, listImportRuns, summarisePlan, type ImportPlan } from '../import/importer.js';
 import { backupPath, createBackup, listBackups, stageRestore } from '../backup/backup.js';
 import { DEFAULT_ADDITIONS_DIR, applyAdditions, loreFiles } from '../additions.js';
-import { importFivetools } from '../repo/fivetools.js';
+import { chosenBooks, importFivetools, scanFivetools } from '../repo/fivetools.js';
 import { deletePack, importPack, listPacks, setPackEnabled } from '../repo/rulesPacks.js';
 import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, exportPlayerZip, importCampaign, importJson } from '../backup/exporter.js';
 import { badRequest, notFound } from '../lib/errors.js';
@@ -136,13 +136,34 @@ export function libraryRoutes(ctx: AppContext) {
       return importPack(ctx.db, req.file.buffer);
     }),
   );
-  // The GM's own copy of the 5etools data: rules from their books become one private pack.
+  // The GM's own copy of the 5etools data. First the upload is read and kept for a short while, and the books in it
+  // listed; then the GM chooses which books to import. The copy is deleted after the import (or after an hour).
   r.post(
-    '/rules/5etools',
+    '/rules/5etools/scan',
     upload.single('data'),
     h((req) => {
       if (!req.file) throw badRequest('Choose your 5etools zip');
-      return importFivetools(ctx.db, req.file.buffer);
+      const books = scanFivetools(req.file.buffer);
+      const token = randomBytes(12).toString('hex');
+      for (const f of fs.readdirSync(ctx.paths.stagingDir))
+        if (f.startsWith('5etools-') && Date.now() - fs.statSync(path.join(ctx.paths.stagingDir, f)).mtimeMs > 3600_000) fs.rmSync(path.join(ctx.paths.stagingDir, f), { force: true });
+      fs.writeFileSync(path.join(ctx.paths.stagingDir, `5etools-${token}.zip`), req.file.buffer);
+      return { token, books, chosen: chosenBooks(ctx.db) };
+    }),
+  );
+  r.post(
+    '/rules/5etools/import',
+    h((req) => {
+      const token = String(req.body?.token ?? '');
+      if (!/^[a-f0-9]{24}$/.test(token)) throw badRequest('Upload your 5etools zip again.');
+      const file = path.join(ctx.paths.stagingDir, `5etools-${token}.zip`);
+      if (!fs.existsSync(file)) throw badRequest('That upload has expired: upload your 5etools zip again.');
+      const books = Array.isArray(req.body?.books) ? (req.body.books as unknown[]).map(String).filter((b) => /^[\w-]{1,40}$/.test(b)) : [];
+      try {
+        return importFivetools(ctx.db, fs.readFileSync(file), books);
+      } finally {
+        fs.rmSync(file, { force: true });
+      }
     }),
   );
   r.patch(
