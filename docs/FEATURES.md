@@ -75,6 +75,8 @@ Each character has a full **D&D 2024 character sheet** that holds everything on 
 - **Thinning**: the world's own page (below).
 - **Log**: every change, who made it (the player or the GM) and when. A burst of typing makes one entry.
 
+The rules come from **rules packs**: the built-in SRD 5.2.1, which you can turn off, and packs you import from your own books or homebrew as a zip of Markdown files (see [Rules packs](RULES_PACKS.md)). Packs stay in your library: the GM app and table server use them, but they never reach the published handbook or an export. Each people page names the species rules it uses, and the sheet uses exactly those, so a Sea Elf never picks up the SRD's Elf traits.
+
 Species, class, subclass and background are dropdowns: the world's peoples (each noting which species rules it uses), the classes, the subclasses each class page lists, and the world's and the Player's Handbook's backgrounds, with **Other…** for anything else. **Fill in basics** sets a class's saving throws, Hit Die, training and resources. The GM edits everything on the sheet, the level and Thinning included; the GM's setting mechanics, world ties and notes are on a **GM only** tab that players never see, in the sheet or its log.
 
 Each character also has a **character page** for the world's own rules: their named memories, their true name and who knows it, and their Thinning track. Players keep their sheet and page up to date on the player server with a private code (they can change everything but level and Thinning); the GM is the only one who changes Thinning, and can give a sheet a new code. A struck memory stays struck. Portraits, sheets, pages and their change logs travel with campaign exports and backups, and never appear in the published handbook.

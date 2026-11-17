@@ -21,12 +21,12 @@ import {
   type Sheet,
   type SheetChar,
 } from '@shared/sheet';
-import { ABILITY_NAMES, ARMOR, BACKGROUNDS, CLASSES, SRD_SPECIES, WEAPONS, armorClass, attackFor, backgroundInfo, classInfo, masteryCount, resourcesFor, weaponInfo } from '@shared/rules2024';
+import { ABILITY_NAMES, ARMOR, BACKGROUNDS, CLASSES, WEAPONS, armorClass, attackFor, backgroundInfo, classInfo, masteryCount, resourcesFor, weaponInfo } from '@shared/rules2024';
 import { ChoiceSelect, Diamond, Field, Pips, Rule, Tabs, num, type Tab } from './parts';
 import { SpellsTab } from './SpellsTab';
 import { FeaturesTab } from './FeaturesTab';
 import { LogTab, type LogEntry } from './LogTab';
-import { portraitFromFile, useSheetOptions } from './options';
+import { loadRulesText, portraitFromFile, subclassChoices, useLoaded, useSheetOptions } from './options';
 
 export type { SheetChar };
 
@@ -70,7 +70,7 @@ export function FullSheet(props: FullSheetProps) {
   const put = (p: Partial<Sheet>) => onChange({ ...value, sheet: { ...s, ...p } });
   const options = useSheetOptions();
   const people = options?.peoples.find((p) => p.name === value.species || p.plural === value.species);
-  const speciesRules = people?.rules ?? (SRD_SPECIES.includes(value.species) ? value.species : null);
+  const speciesRules = people?.rules ?? (value.species || null);
   const [logTick, setLogTick] = useState(0);
   useEffect(() => {
     const t = window.setTimeout(() => setLogTick((n) => n + 1), 1500);
@@ -189,8 +189,10 @@ function Identity({
 }) {
   const s = value.sheet;
   const info = classInfo(value.class_name);
+  const rules = useLoaded(loadRulesText);
   const clsOpt = options?.classes.find((c) => c.name === info?.name);
-  const sub = clsOpt?.subclasses.find((x) => x.name === s.subclass);
+  const subs = info ? subclassChoices(clsOpt, rules, info.name) : [];
+  const sub = subs.find((x) => x.name === s.subclass);
   const worldBgs = options?.backgrounds ?? [];
   const needsBasics = !!info && !readOnly && (!(s.saves ?? []).length || s.hitDie !== `d${info.hitDie}`);
   const applyBasics = () => {
@@ -216,7 +218,13 @@ function Identity({
           onChange={(v) => set({ species: v })}
           groups={[
             { label: 'Peoples of the world', options: (options?.peoples ?? []).map((p) => ({ value: p.name })) },
-            { label: 'SRD species', options: SRD_SPECIES.filter((x) => !options?.peoples.some((p) => p.name === x)).map((x) => ({ value: x })) },
+            {
+              label: 'Other species in your rules',
+              options: Object.keys(rules?.species ?? {})
+                .filter((x) => !options?.peoples.some((p) => p.name.toLowerCase() === x.toLowerCase()))
+                .sort()
+                .map((x) => ({ value: x })),
+            },
           ]}
         />
       </Field>
@@ -252,7 +260,7 @@ function Identity({
           value={s.subclass ?? ''}
           disabled={readOnly}
           onChange={(v) => put({ subclass: v })}
-          groups={clsOpt ? [{ label: `${clsOpt.name} subclasses`, options: clsOpt.subclasses.map((x) => ({ value: x.name, label: `${x.name} (${x.book})` })) }] : []}
+          groups={info ? [{ label: `${info.name} subclasses`, options: subs.map((x) => ({ value: x.name, label: `${x.name} (${x.book})` })) }] : []}
         />
       </Field>
       <Field label="Background">

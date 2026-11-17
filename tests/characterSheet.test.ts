@@ -11,7 +11,7 @@ import { armorClass, attackFor, hitPointsFor, spellSlotsFor, weaponInfo, resourc
 import { buildSheet, EMPTY_BUILD, finalScores } from '../client/src/player/builder/compute.js';
 import spells from '../shared/srd/spells.json';
 import text from '../shared/srd/text.json';
-import type { SrdSpell, SrdText } from '../client/src/player/sheet/srd.js';
+import { srdRulesView } from '../shared/rulesView.js';
 
 // A 1×1 PNG.
 const PNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
@@ -137,7 +137,7 @@ describe('the 2024 rules', () => {
       name: 'Brannoc',
     };
     expect(finalScores({ ...b, bgAbilities: [...b.bgAbilities] })).toMatchObject({ STR: 18, CON: 16 });
-    const out = buildSheet({ ...b, bgAbilities: [...b.bgAbilities] }, { world: [], speciesRules: 'Dwarf', text: text as unknown as SrdText, spells: spells as SrdSpell[] });
+    const out = buildSheet({ ...b, bgAbilities: [...b.bgAbilities] }, { world: [], speciesRules: 'Dwarf', text: srdRulesView(text, spells), spells: srdRulesView(text, spells).spells });
     const s = out.sheet;
     expect(out).toMatchObject({ name: 'Brannoc', class_name: 'Fighter', level: 4 });
     expect(s.saves).toEqual(['STR', 'CON']);

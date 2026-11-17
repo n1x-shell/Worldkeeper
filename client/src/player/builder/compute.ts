@@ -21,6 +21,7 @@ import {
   abilityFromName,
 } from '../../../../shared/rules2024';
 import type { SrdSpell, SrdText, WorldBackground } from '../sheet/srd';
+import { byName } from '../../../../shared/rulesView';
 import { classFeaturesFor, featFor, speciesTraitsFor } from '../sheet/srd';
 
 export type Method = 'standard' | 'pointbuy' | 'roll' | 'manual';
@@ -115,17 +116,30 @@ export const pointsSpent = (base: Record<Ability, number>) => ABILITIES.reduce((
 /** The scores the chosen method can hand out (for the array and rolls). */
 export const methodPool = (b: Build) => (b.method === 'standard' ? STANDARD_ARRAY : b.method === 'roll' ? b.rolls : []);
 
-/** The background as the builder knows it: the Player's Handbook's, or one of the world's. */
-export function backgroundFor(b: Build, world: WorldBackground[]) {
+/** A background's kit A from its rules text: "Choose A or B: (A) Item, Item, 8 GP; or (B) 50 GP". */
+export function parseKit(equipment: string | undefined): { items: string[]; gp: number } | null {
+  const m = /\(A\)\s*(.*?);?\s*or\s*\(B\)/i.exec(equipment ?? '');
+  if (!m) return null;
+  const parts = m[1]
+    .split(/,\s*(?![^()]*\))/)
+    .map((x) => x.replace(/^and\s+/i, '').trim())
+    .filter(Boolean);
+  const gold = parts.find((x) => /^\d[\d,]*\s*GP$/i.test(x));
+  return { items: parts.filter((x) => x !== gold), gp: gold ? Number(gold.replace(/[^\d]/g, '')) : 0 };
+}
+
+/** The background as the builder knows it: the Player's Handbook's, or one of the world's. A rules pack's kit wins. */
+export function backgroundFor(b: Build, world: WorldBackground[], rules?: SrdText | null) {
   const phb = backgroundInfo(b.background);
-  if (phb) return { name: phb.name, abilities: phb.abilities, skills: phb.skills, tool: phb.tool, feat: phb.feat, kit: phb.equipment ?? null, who: '', fixed: true };
+  const packKit = parseKit(byName(rules?.backgrounds ?? {}, b.background)?.equipment);
+  if (phb) return { name: phb.name, abilities: phb.abilities, skills: phb.skills, tool: phb.tool, feat: phb.feat, kit: packKit ?? phb.equipment ?? null, who: '', fixed: true };
   const w = world.find((x) => x.name === b.background);
   if (!w) return null;
   const skills = w.skills
     .split(/,| and /)
     .map((x) => x.trim())
     .filter(Boolean);
-  return { name: w.name, abilities: b.bgAbilities, skills, tool: w.tool, feat: w.feat, kit: null, who: w.who, fixed: false };
+  return { name: w.name, abilities: b.bgAbilities, skills, tool: w.tool, feat: w.feat, kit: packKit, who: w.who, fixed: false };
 }
 
 /** Final ability scores: base, the background's increases, then each Ability Score Improvement (to 20 at most). */
@@ -168,10 +182,10 @@ const itemWeapon = (item: string) =>
   );
 
 /** The equipment the kits give, as lines, and the gold. */
-export function kitFor(b: Build, world: WorldBackground[]) {
+export function kitFor(b: Build, world: WorldBackground[], rules?: SrdText | null) {
   const c = classInfo(b.cls);
   const ck = c?.equipment[Math.min(b.classKit, (c?.equipment.length ?? 1) - 1)];
-  const bg = backgroundFor(b, world);
+  const bg = backgroundFor(b, world, rules);
   const bk = bg?.kit && b.bgKit === 0 ? bg.kit : { items: [], gp: 50 };
   return { items: [...(ck?.items ?? []), ...bk.items], gp: (ck?.gp ?? 0) + bk.gp, bgKitUnknown: !!bg && !bg.kit && b.bgKit === 0 };
 }
@@ -182,15 +196,15 @@ export function buildSheet(b: Build, opts: { world: WorldBackground[]; speciesRu
   const level = b.level;
   const scores = finalScores(b);
   const draft: Sheet = { abilities: scores };
-  const bg = backgroundFor(b, opts.world);
-  const sp = opts.speciesRules && opts.text ? opts.text.species[opts.speciesRules] : null;
+  const bg = backgroundFor(b, opts.world, opts.text);
+  const sp = opts.speciesRules && opts.text ? (byName(opts.text.species, opts.speciesRules) ?? null) : null;
   const imps = improvementSlots(b);
   const featNames = [bg?.feat, ...imps.filter((i) => i.kind === 'feat' && i.feat).map((i) => i.feat)].filter((x): x is string => !!x);
   const hasFeat = (n: string) => featNames.some((f) => f.toLowerCase().startsWith(n.toLowerCase()));
   const hitDie = info?.hitDie ?? 8;
   const extra = (opts.speciesRules === 'Dwarf' ? 1 : 0) + (hasFeat('Tough') ? 2 : 0);
   const maxHp = hitPointsFor(hitDie, level, mod(draft, 'CON'), extra);
-  const kit = kitFor(b, opts.world);
+  const kit = kitFor(b, opts.world, opts.text);
   const armorItem = kit.items.map((i) => ARMOR.find((a) => a.name.toLowerCase() === i.toLowerCase())).find(Boolean);
   const shield = kit.items.includes('Shield') && !!info?.armor.shields;
   const skills = [...new Set([...(bg?.skills ?? []), ...b.classSkills])];

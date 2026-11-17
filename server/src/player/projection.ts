@@ -351,5 +351,8 @@ export function playerSnapshot(db: DB) {
     maps: playerMaps(db),
     campaigns: playerCampaigns(db),
     factionWeb: playerFactionWeb(db, activeCampaignId(db)),
+    // Whether the published handbook's builder may use the SRD rules it ships with (the GM can turn the SRD off).
+    // The GM's own rules packs are never published.
+    rulesSrd: (db.prepare(`SELECT value FROM settings WHERE key = 'rules_srd'`).get() as { value: string } | undefined)?.value !== 'off',
   };
 }

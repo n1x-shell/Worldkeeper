@@ -7,6 +7,7 @@ import { notFound } from '../lib/errors.js';
 import { playerLive } from '../repo/handouts.js';
 import { characterIdByCode, playerCharacterPage, updatePlayerCharacterPage } from '../repo/characterPages.js';
 import { characterLog, logged } from '../repo/characterLog.js';
+import { rulesView } from '../repo/rulesPacks.js';
 import { removePortrait, savePortrait } from '../repo/portraits.js';
 
 /**
@@ -55,6 +56,12 @@ export function playerRoutes(ctx: AppContext) {
   );
   // A character's own page, reached by its private code. The only thing a player can change: their own memories,
   // true name and notes (never Thinning, never another character's page).
+  // The rules for character sheets: the SRD (unless the GM turned it off) and the GM's imported rules packs. Only on
+  // the GM's own servers: never in the published handbook.
+  r.get(
+    '/rules',
+    h(() => rulesView(ctx.db)),
+  );
   r.get(
     '/me/:code',
     h((req) => playerCharacterPage(ctx.db, String(req.params.code))),

@@ -31,6 +31,7 @@ Each character in a campaign has a full D&D 2024 character sheet with a portrait
 - On the table server, the **Make a Character** builder's **Send to my sheet** button fills in the sheet from a finished build. **Print** on My Character prints the sheet on two pages, laid out like the official one.
 - A character's sheet is visible only to whoever has its code, and to the GM. **New code** stops an old link working.
 - The code is the only protection, so the same network precautions apply.
+- Rules from the GM's imported rules packs (see [Rules packs](RULES_PACKS.md)) appear in sheets and the builder on the table server. The published handbook's builder has only the SRD, and nothing if the GM turned the SRD off.
 - Character sheets are never part of the published handbook, which can't save anything, so it has no **My Character** item. Its builder still makes and prints a complete character.
 
 ## What players can see

@@ -4,7 +4,7 @@ import { ChevronDown, ChevronRight, Plus, Wand2, X } from 'lucide-react';
 import type { Feature, Sheet } from '@shared/sheet';
 import { classInfo, ORIGIN_FEATS } from '@shared/rules2024';
 import { Rule } from './parts';
-import { classFeaturesFor, featFor, loadRulesText, speciesTraitsFor, useLoaded } from './options';
+import { classFeaturesFor, featFor, hasClassRules, loadRulesText, speciesTraitsFor, useLoaded } from './options';
 
 /** Add features that aren't there yet (by name and source), keeping the ones the player wrote or changed. */
 const merge = (have: Feature[], add: Feature[]) => [...have, ...add.filter((a) => !have.some((h) => h.name === a.name && h.source === a.source))];
@@ -146,7 +146,7 @@ export function FeaturesTab({
 }) {
   const text = useLoaded(loadRulesText);
   const info = classInfo(cls);
-  const srdClass = !!(text && info && text.classes[info.name]);
+  const srdClass = !!(text && info && hasClassRules(text, info.name));
   const feats = text ? [...new Set([...ORIGIN_FEATS, ...Object.keys(text.feats)])].sort() : ORIGIN_FEATS;
   return (
     <div className="space-y-6">
@@ -163,7 +163,7 @@ export function FeaturesTab({
         list={s.speciesTraits ?? []}
         onChange={(l) => put({ speciesTraits: l })}
         readOnly={readOnly}
-        fill={text && speciesRules && text.species[speciesRules] ? () => put({ speciesTraits: merge(s.speciesTraits ?? [], speciesTraitsFor(text, speciesRules)) }) : undefined}
+        fill={text && speciesRules && speciesTraitsFor(text, speciesRules).length ? () => put({ speciesTraits: merge(s.speciesTraits ?? [], speciesTraitsFor(text, speciesRules)) }) : undefined}
         fillLabel={speciesRules ? `${speciesRules} traits` : undefined}
       />
       <FeatureList title="Feats" list={s.featList ?? []} onChange={(l) => put({ featList: l })} readOnly={readOnly} addOptions={feats} />

@@ -11,6 +11,7 @@ import { readZip, type SourceFile } from '../import/scan.js';
 import { buildPlan, commitPlan, listImportRuns, summarisePlan, type ImportPlan } from '../import/importer.js';
 import { backupPath, createBackup, listBackups, stageRestore } from '../backup/backup.js';
 import { DEFAULT_ADDITIONS_DIR, applyAdditions, loreFiles } from '../additions.js';
+import { deletePack, importPack, listPacks, setPackEnabled } from '../repo/rulesPacks.js';
 import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, exportPlayerZip, importCampaign, importJson } from '../backup/exporter.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { schemaVersion } from '../db/migrations.js';
@@ -119,6 +120,28 @@ export function libraryRoutes(ctx: AppContext) {
       importJson(ctx.db, data);
       return { ok: true };
     }),
+  );
+
+  // ---- Rules packs (the GM's own books or homebrew, for the character sheet; never published or exported) ----
+  r.get(
+    '/rules/packs',
+    h(() => listPacks(ctx.db)),
+  );
+  r.post(
+    '/rules/packs',
+    upload.single('pack'),
+    h((req) => {
+      if (!req.file) throw badRequest('Choose a rules pack (.zip)');
+      return importPack(ctx.db, req.file.buffer);
+    }),
+  );
+  r.patch(
+    '/rules/packs/:id',
+    h((req) => setPackEnabled(ctx.db, String(req.params.id), !!req.body?.enabled)),
+  );
+  r.delete(
+    '/rules/packs/:id',
+    h((req) => deletePack(ctx.db, String(req.params.id))),
   );
 
   // ---- Backups ----

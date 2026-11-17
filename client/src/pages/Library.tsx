@@ -7,6 +7,7 @@ import { Confirm, EntityLink, ErrorBox, Field, Loading, PageHeader, Tabs, TypeBa
 import { DiffView } from './EntityPage';
 import { Dev, useDebug } from '../components/Dev';
 import type { Entity } from '../lib/types';
+import { RulesPacksPanel } from './RulesPacks';
 
 // ------------------------------------------------------------------ Import & export
 interface PreviewResp {
@@ -926,6 +927,7 @@ export function SettingsPage() {
           Save settings
         </button>
       </div>
+      <RulesPacksPanel />
       <DebugToggle />
       <Dev>
         <div className="panel-pad text-sm space-y-1">

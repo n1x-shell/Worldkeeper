@@ -21,7 +21,7 @@ import {
   spellCounts,
   spellSlotsFor,
 } from '../../../shared/rules2024';
-import { backgroundsFrom, classesFrom, isBackgroundTable, loadRulesText, loadSpells, peoplesFrom, portraitFromFile, useLoaded, type SrdSpell } from './sheet/options';
+import { backgroundsFrom, classesFrom, isBackgroundTable, loadRulesText, loadSpells, peoplesFrom, portraitFromFile, subclassChoices, useLoaded, type SrdSpell, type SrdText } from './sheet/options';
 import { PrintSheet } from './sheet/PrintSheet';
 import { SRD_ATTRIBUTION } from './sheet/FullSheet';
 import {
@@ -129,7 +129,7 @@ export function CharacterBuilder() {
   const people = peoples.find((p) => p.name === b.people);
   const cls = classes.find((x) => x.name === b.cls);
   const info = classInfo(b.cls);
-  const bg = backgroundFor(b, world);
+  const bg = backgroundFor(b, world, text);
   const sheet = useMemo(() => buildSheet(b, { world, speciesRules: people?.rules ?? null, text, spells }), [b, world, people, text, spells]);
 
   const suggestName = () => {
@@ -252,7 +252,7 @@ export function CharacterBuilder() {
                 <div className="space-y-2">
                   <H note={b.level < 3 ? `You choose a subclass at level 3. You can pick one now to plan ahead.` : undefined}>{cls.name} subclass</H>
                   <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                    {cls.subclasses.map((s) => (
+                    {subclassChoices(cls, text, cls.name).map((s) => (
                       <Card
                         key={s.name}
                         on={b.subclass === s.name}
@@ -275,7 +275,7 @@ export function CharacterBuilder() {
           {step === 2 && <BackgroundStep b={b} set={set} world={world} />}
           {step === 3 && <AbilitiesStep b={b} set={set} feats={text ? [...new Set([...ORIGIN_FEATS, ...Object.keys(text.feats)])].sort() : ORIGIN_FEATS} />}
           {step === 4 && <SkillsStep b={b} set={set} bgSkills={bg?.skills ?? []} />}
-          {step === 5 && <EquipmentStep b={b} set={set} world={world} />}
+          {step === 5 && <EquipmentStep b={b} set={set} world={world} rules={text} />}
           {step === 6 &&
             (canSpell ? (
               <SpellsStep b={b} set={set} srd={spells} />
@@ -792,10 +792,10 @@ function SkillsStep({ b, set, bgSkills }: { b: Build; set: (p: Partial<Build>) =
   );
 }
 
-function EquipmentStep({ b, set, world }: { b: Build; set: (p: Partial<Build>) => void; world: ReturnType<typeof backgroundsFrom> }) {
+function EquipmentStep({ b, set, world, rules }: { b: Build; set: (p: Partial<Build>) => void; world: ReturnType<typeof backgroundsFrom>; rules: SrdText | null }) {
   const info = classInfo(b.cls);
-  const bg = backgroundFor(b, world);
-  const kit = kitFor(b, world);
+  const bg = backgroundFor(b, world, rules);
+  const kit = kitFor(b, world, rules);
   return (
     <section className="space-y-5">
       <H note="Take each kit, or its gold to buy your own.">Starting equipment</H>

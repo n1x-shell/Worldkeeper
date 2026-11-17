@@ -691,6 +691,27 @@ CREATE TABLE character_changes (
 CREATE INDEX character_changes_by_character ON character_changes (character_id, id);
 `,
   },
+  {
+    version: 16,
+    name: "rules packs: game rules from the GM's own books or homebrew, for the character sheet and builder",
+    sql: `
+CREATE TABLE rules_packs (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  source TEXT NOT NULL DEFAULT '',
+  enabled INTEGER NOT NULL DEFAULT 1,
+  imported_at TEXT NOT NULL
+);
+CREATE TABLE rules_entries (
+  pack_id TEXT NOT NULL REFERENCES rules_packs(id) ON DELETE CASCADE,
+  kind TEXT NOT NULL,
+  name TEXT NOT NULL,
+  cls TEXT NOT NULL DEFAULT '',
+  data TEXT NOT NULL,
+  PRIMARY KEY (pack_id, kind, cls, name)
+);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

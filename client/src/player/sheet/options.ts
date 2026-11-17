@@ -5,8 +5,9 @@
  */
 import { useEffect, useState } from 'react';
 import type { PEntity } from '../source';
-import { CLASSES, SRD_SPECIES } from '../../../../shared/rules2024';
-import type { SrdSpell, SrdText, WorldBackground } from './srd';
+import { CLASSES } from '../../../../shared/rules2024';
+import { rulesSpeciesName, type SrdText, type WorldBackground } from './srd';
+import { byName, emptyRulesView, srdRulesView } from '../../../../shared/rulesView';
 
 export * from './srd';
 
@@ -40,7 +41,7 @@ export function peoplesFrom(entities: PEntity[]): PeopleOption[] {
     .filter((e) => ['people', 'species', 'culture'].includes(e.type))
     .map((e) => {
       const atTable = plain(/\*\*At the table\.\*\*\s*([^\n]+)/.exec(e.summary ?? '')?.[1] ?? '');
-      const rules = SRD_SPECIES.find((s) => new RegExp(`\\b${s}\\b`, 'i').test(atTable.replace(/dwarven|elven/gi, (m) => (m.toLowerCase().startsWith('dwarv') ? 'dwarf' : 'elf')))) ?? null;
+      const rules = rulesSpeciesName(atTable);
       return { id: e.id, name: singular(e.name), plural: e.name, tagline: /^\*([^*\n]+)\*/.exec(e.summary?.trim() ?? '')?.[1] ?? '', rules, atTable, summary: e.summary ?? '' };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -89,9 +90,17 @@ export function classesFrom(entities: PEntity[]): ClassOption[] {
   return CLASSES.map((c) => {
     const e = entities.find((x) => x.type === 'calling' && x.name === c.name);
     const subs = subclassesFrom(e?.summary ?? '');
-    if (c.srdSubclass && !subs.some((s) => s.name === c.srdSubclass)) subs.unshift({ name: c.srdSubclass, book: 'SRD 5.2.1', known: null });
     return { id: e?.id ?? null, name: c.name, tagline: /^\*([^*\n]+)\*/.exec(e?.summary?.trim() ?? '')?.[1] ?? '', summary: e?.summary ?? '', subclasses: subs };
   });
+}
+
+/** A class's subclasses: the ones its handbook page lists, then any the rules packs have that the page doesn't. */
+export function subclassChoices(opt: ClassOption | undefined, rules: SrdText | null, cls: string): SubclassOption[] {
+  const listed = opt?.subclasses ?? [];
+  const fromRules = Object.values(byName(rules?.classes ?? {}, cls)?.subclasses ?? {})
+    .filter((x) => !listed.some((l) => l.name.toLowerCase() === x.name.toLowerCase()))
+    .map((x) => ({ name: x.name, book: x.source ?? 'rules pack', known: null }));
+  return [...listed, ...fromRules];
 }
 
 /** Background rows from the handbook's background tables. */
@@ -143,10 +152,27 @@ export function useSheetOptions(): SheetOptions | null {
   return opts;
 }
 
-let spells: Promise<SrdSpell[]> | null = null;
-let text: Promise<SrdText> | null = null;
-export const loadSpells = () => (spells ??= import('../../../../shared/srd/spells.json').then((m) => m.default as SrdSpell[]));
-export const loadRulesText = () => (text ??= import('../../../../shared/srd/text.json').then((m) => m.default as unknown as SrdText));
+let rules: Promise<SrdText> | null = null;
+let fallback: () => Promise<SrdText> = bundledSrd;
+/** The SRD as the app ships it, for the published handbook (which has no server and never has the GM's packs). */
+async function bundledSrd(): Promise<SrdText> {
+  const [t, sp] = await Promise.all([import('../../../../shared/srd/text.json'), import('../../../../shared/srd/spells.json')]);
+  return srdRulesView(t.default, sp.default);
+}
+/** For the published handbook: what to use when there's no server (the bundled SRD, unless the GM turned it off). */
+export function setRulesFallback(srd: () => Promise<boolean>) {
+  fallback = async () => ((await srd()) ? bundledSrd() : emptyRulesView(false));
+}
+/** The rules in use: from the GM's server (the SRD and imported packs), or the bundled SRD in the published handbook. */
+export const loadRulesText = () =>
+  (rules ??= fetch('/api/player/rules')
+    .then((r) => (r.ok && (r.headers.get('content-type') ?? '').includes('json') ? (r.json() as Promise<SrdText>) : Promise.reject(new Error('no server'))))
+    .catch(() => fallback()));
+export const loadSpells = () => loadRulesText().then((v) => v.spells);
+/** Forget the loaded rules (after the GM imports or turns off a pack). */
+export const reloadRules = () => {
+  rules = null;
+};
 export function useLoaded<T>(load: () => Promise<T>): T | null {
   const [v, setV] = useState<T | null>(null);
   useEffect(() => {
