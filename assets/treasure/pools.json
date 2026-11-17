@@ -1,5 +1,5 @@
 {
-  "note": "What the Treasure tool rolls from. Amounts follow the Dungeon Master's Guide (2024) by tier, with about half its magic items (Treasure [RUL-620]). Item names are from the DMG 2024, Xanathar's Guide to Everything (XGE), Tasha's Cauldron of Everything (TCE) and Spelljammer: Adventures in Space (SJ); the world's own items come from the catalogue.",
+  "note": "What the Treasure tool rolls from. Amounts follow the Dungeon Master's Guide (2024) by tier, with about half its magic items (Treasure [RUL-620]). Item names are from the DMG 2024, Xanathar's Guide to Everything (XGE), Tasha's Cauldron of Everything (TCE) and Spelljammer: Adventures in Space (SJ), with a few from Waterdeep: Dungeon of the Mad Mage (WDMM), Ghosts of Saltmarsh (GoS), The Book of Many Things (BMT) and Acquisitions Incorporated (AI); Star Map has no rules in any of them. The world's own items come from the catalogue.",
   "tiers": [
     { "key": "1-4", "label": "Levels 1 to 4", "individual": { "dice": "3d6", "mult": 1, "coin": "gp" }, "hoard": { "dice": "2d4", "mult": 100, "coin": "gp" }, "items": { "dice": "1d3-1", "rarities": { "common": 3, "uncommon": 2 } } },
     { "key": "5-10", "label": "Levels 5 to 10", "individual": { "dice": "2d8", "mult": 10, "coin": "gp" }, "hoard": { "dice": "8d10", "mult": 100, "coin": "gp" }, "items": { "dice": "1d2", "rarities": { "uncommon": 3, "rare": 2 } } },
@@ -75,9 +75,9 @@
       "legendary": ["Apparatus of Kwalish (a Kaelith diving-walker)", "Plate Armor of Etherealness (a between-walker's shell)"]
     },
     "ethereal": {
-      "common": ["Orb of Gonging (SJ)", "Pipe of Remembrance (SJ)", "Candle of the Deep (XGE)", "Spell Scroll (cantrip), from a lost world"],
-      "uncommon": ["Star Map (SJ)", "Wildspace Orrery (SJ)", "Armor of Weightlessness (SJ)", "Astral Shard (TCE)", "Driftglobe", "Spelljamming Helm (SJ)"],
-      "rare": ["Spyglass of Clairvoyance (SJ)", "Shadowfell Shard (TCE)", "Weapon, +2, from a lost world", "Ring of Feather Falling", "Helm of Teleportation"],
+      "common": ["Orb of Gonging (WDMM)", "Pipe of Remembrance (GoS)", "Candle of the Deep (XGE)", "Spell Scroll (cantrip), from a lost world"],
+      "uncommon": ["Star Map (SJ)", "Wildspace Orrery (SJ)", "Armor of Weightlessness (BMT)", "Astral Shard (TCE)", "Driftglobe", "Spelljamming Helm (SJ)"],
+      "rare": ["Spyglass of Clairvoyance (AI)", "Shadowfell Shard (TCE)", "Weapon, +2, from a lost world", "Ring of Feather Falling", "Helm of Teleportation"],
       "very rare": ["Crystal Ball", "Mirror of Life Trapping", "Armor, +2, of a forgotten order"],
       "legendary": ["Plate Armor of Etherealness", "Sphere of Annihilation", "Cubic Gate", "Well of Many Worlds"]
     }

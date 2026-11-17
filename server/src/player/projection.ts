@@ -10,6 +10,7 @@
  *  - References inside revealed text to unrevealed records are reduced to plain names-free placeholders.
  */
 import { playerOmens } from '../repo/returnClock.js';
+import { getMechanics } from '../repo/mechanics.js';
 import { playerFactionWeb } from '../repo/factionWeb.js';
 import { playerStanding } from '../repo/standing.js';
 import { playerTreasure } from '../repo/treasure.js';
@@ -325,7 +326,7 @@ export function playerCampaign(db: DB, campaignId: number) {
     // What the party carries or has stored (the GM can hide any line).
     treasure: playerTreasure(db, c.id),
     // Omens of the Return, for each stage it has reached (never the clock itself).
-    omens: playerOmens(db, c.id),
+    omens: getMechanics(db).theReturn ? playerOmens(db, c.id) : [],
     // The faction web as the party knows it: public rivalries, and the ties the GM has revealed.
     factionWeb: playerFactionWeb(db, c.id),
     standing: playerStanding(db, c.id).map((f) => ({ ...f, earned: f.earned.map((e) => ({ rank: e.rank, text: scrubRefs(e.text, revealed, index) })) })),
@@ -354,5 +355,7 @@ export function playerSnapshot(db: DB) {
     // Whether the published handbook's builder may use the SRD rules it ships with (the GM can turn the SRD off).
     // The GM's own rules packs are never published.
     rulesSrd: (db.prepare(`SELECT value FROM settings WHERE key = 'rules_srd'`).get() as { value: string } | undefined)?.value !== 'off',
+    // Which of the setting's mechanics the handbook shows (Thinning, the Return's omens, fading salvage).
+    mechanics: getMechanics(db),
   };
 }

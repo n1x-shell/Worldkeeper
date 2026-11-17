@@ -1,3 +1,5 @@
+import { CreatureLinks } from '../components/CreatureLinks';
+import { useMechanics } from '../lib/mechanics';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Dice5, Heart, Plus, Shield, Skull, Trash2, Users, Sword, Eye, EyeOff, Brain, Pin } from 'lucide-react';
@@ -529,12 +531,13 @@ export function ConditionsPage() {
 export function RulesPage() {
   const { data } = useApi<EntitySummary[]>('/api/entities?type=rule,system,magic_system');
   const [mech, setMech] = useState('');
+  const mechanics = useMechanics();
   const rows = (data ?? []).filter((r) => !mech || r.canon_flags.includes(mech) || (mech === 'UNVERIFIED' && !r.canon_flags.some((f) => ['OFFICIAL', 'HOMEBREW'].includes(f))));
   return (
     <div className="space-y-4">
       <PageHeader
         title="Rules Reference"
-        subtitle="Setting rules: Shards, Thinning and Unmaking, glyph-work, vault keys and more." note="As imported. Official, homebrew and unverified mechanics are labelled. No rulebook is bundled."
+        subtitle={mechanics?.setting === false ? "Your world's own rules." : 'Setting rules: Shards, Thinning and Unmaking, glyph-work, vault keys and more.'} note="As imported. Official, homebrew and unverified mechanics are labelled. No rulebook is bundled."
         actions={
           <Link className="btn-primary" to="/new?type=rule">
             <Plus size={14} /> New rule entry
@@ -933,6 +936,7 @@ export function TablesPage() {
 function TableEditor({ t, result, setResult, onDelete }: { t: RTable; result: string | null; setResult: (r: string) => void; onDelete: () => void }) {
   const [name, setName] = useState(t.name);
   const [text, setText] = useState(t.entries.map((e) => (e.weight > 1 ? `${e.weight}: ${e.text}` : e.text)).join('\n'));
+  const [mentioned, setMentioned] = useState<{ id: string; name: string }[]>([]);
   const auto = useAutosave((v: { name: string; text: string }) =>
     api.patch(`/api/random-tables/${t.id}`, {
       name: v.name,
@@ -960,13 +964,15 @@ function TableEditor({ t, result, setResult, onDelete }: { t: RTable; result: st
         className="btn-primary"
         onClick={async () => {
           await auto.flush();
-          const r = await api.post<{ result: string }>(`/api/random-tables/${t.id}/roll`);
+          const r = await api.post<{ result: string; creatures?: { id: string; name: string }[] }>(`/api/random-tables/${t.id}/roll`);
           setResult(r.result);
+          setMentioned(r.creatures ?? []);
         }}
       >
         <Dice5 size={14} /> Roll on table
       </button>
       {result && <div className="parchment p-3 font-serif text-lg">{result}</div>}
+      {result && <CreatureLinks creatures={mentioned} label="From your books" />}
     </div>
   );
 }

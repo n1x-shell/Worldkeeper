@@ -1,3 +1,5 @@
+import { EncounterIdeas } from '../components/EncounterIdeas';
+import { CreatureLinks } from '../components/CreatureLinks';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Coins, Dices, Gift, Minus, Plus, ScrollText, Shuffle, UserRound } from 'lucide-react';
@@ -106,7 +108,7 @@ function WhosNearby({ sessionId, onLogged }: { sessionId: number; onLogged: () =
 
 function QuickTables({ sessionId, onLogged }: { sessionId: number; onLogged: () => void }) {
   const { data: b } = useApi<Briefing>(`/api/sessions/${sessionId}/briefing`);
-  const [result, setResult] = useState<{ table: string; text: string } | null>(null);
+  const [result, setResult] = useState<{ table: string; text: string; creatures: { id: string; name: string }[] } | null>(null);
   if (!b) return null;
   return (
     <div className="panel-pad space-y-2">
@@ -122,8 +124,8 @@ function QuickTables({ sessionId, onLogged }: { sessionId: number; onLogged: () 
               key={t.id}
               className="btn text-xs"
               onClick={async () => {
-                const r = await api.post<{ result: string }>(`/api/random-tables/${t.id}/roll`);
-                setResult({ table: t.name, text: r.result });
+                const r = await api.post<{ result: string; creatures?: { id: string; name: string }[] }>(`/api/random-tables/${t.id}/roll`);
+                setResult({ table: t.name, text: r.result, creatures: r.creatures ?? [] });
               }}
             >
               {t.name.replace(/^Encounters: /, '')}
@@ -139,6 +141,7 @@ function QuickTables({ sessionId, onLogged }: { sessionId: number; onLogged: () 
         <div className="rounded-md border border-gold/40 p-2 text-sm space-y-1">
           <div className="text-[11px] uppercase tracking-widest text-dim">{result.table}</div>
           <Markdown text={result.text} />
+          <CreatureLinks creatures={result.creatures} label="From your books" />
           <button
             className="btn-ghost text-xs"
             onClick={async () => {
@@ -151,6 +154,9 @@ function QuickTables({ sessionId, onLogged }: { sessionId: number; onLogged: () 
           </button>
         </div>
       )}
+      <div className="pt-1 border-t border-line/60">
+        <EncounterIdeas level={b.level} terrain={b.terrain} campaignId={b.campaign?.id} compact />
+      </div>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { useMechanics } from '../lib/mechanics';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, Minus, Plus } from 'lucide-react';
@@ -23,6 +24,13 @@ export function ReturnPage() {
   const { data, error, setData } = useApi<ReturnData>(activeCampaignId ? `/api/return?campaign_id=${activeCampaignId}` : null);
   const [reason, setReason] = useState('');
   const [held, setHeld] = useState('');
+  const mech = useMechanics();
+  if (mech && !mech.theReturn)
+    return (
+      <Empty title="The Return is switched off">
+        This library doesn&apos;t use the Return. Switch it on in <Link to="/settings">Settings, Campaign mechanics</Link>.
+      </Empty>
+    );
   if (!activeCampaignId) return <Empty title="No active campaign">Choose a campaign first.</Empty>;
   if (error) return <ErrorBox error={error} />;
   if (!data) return <Loading />;

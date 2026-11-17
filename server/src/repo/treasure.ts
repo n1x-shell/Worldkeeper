@@ -122,16 +122,30 @@ function weighted<K extends string>(w: Partial<Record<K, number>>, rng: () => nu
 }
 const TO_GP: Record<string, number> = { cp: 0.01, sp: 0.1, ep: 0.5, gp: 1, pp: 10 };
 
-/** Roll individual treasure or a hoard for a tier and region. */
-export function rollTreasure(opts: { tier: string; region: string; kind: 'individual' | 'hoard'; rng?: () => number; data?: TreasureData }): TreasureRoll {
+/** What the GM's books offer the Treasure tool when it rolls from them (bookData.ts). */
+export interface BookTreasure {
+  /** Magic items, by name and rarity. */
+  magic: { name: string; rarity: string }[];
+  /** Gemstones and art objects, by name and worth in gp. */
+  goods: [string, number][];
+}
+/** The region the Treasure tool uses when it rolls from the GM's books instead of the setting. */
+export const BOOKS_REGION = 'books';
+
+/**
+ * Roll individual treasure or a hoard for a tier and region. With `books` and the region BOOKS_REGION, the magic items,
+ * gems and art come from the GM's books instead of the setting's tables. `fading` false means nothing fades.
+ */
+export function rollTreasure(opts: { tier: string; region: string; kind: 'individual' | 'hoard'; rng?: () => number; data?: TreasureData; books?: BookTreasure; fading?: boolean }): TreasureRoll {
   const data = opts.data ?? treasureData();
   const rng = opts.rng ?? Math.random;
   const tier = data.tiers.find((t) => t.key === opts.tier);
-  const region = data.regions[opts.region];
+  const fromBooks = opts.region === BOOKS_REGION;
+  const region: TreasureData['regions'][string] | undefined = fromBooks ? { label: 'From your books', ids: [], pools: [], coins: '', barter: 0 } : data.regions[opts.region];
   if (!tier) throw badRequest('Unknown tier');
   if (!region) throw badRequest('Unknown region');
   const tierNo = data.tiers.indexOf(tier) + 1;
-  const fades = !!region.fades;
+  const fades = opts.fading !== false && !!region.fades;
   const out: TreasureRoll = {
     tier: tier.key,
     tier_label: tier.label,
@@ -153,7 +167,7 @@ export function rollTreasure(opts: { tier: string; region: string; kind: 'indivi
   const coinValue = Math.round(value * (1 - goodsShare));
   out.coins = { amount: coinValue, coin: spec.coin, note: region.coins };
   // Goods: the most valuable that fit, until the goods' share is spent.
-  const goods = [...(data.goods[opts.region] ?? data.goods.marches ?? [])].sort((a, b) => b[1] - a[1]);
+  const goods = [...(fromBooks ? (opts.books?.goods ?? []) : (data.goods[opts.region] ?? data.goods.marches ?? []))].sort((a, b) => b[1] - a[1]);
   for (let guard = 0; guard < 16 && goodsValue > 0 && goods.length; guard++) {
     // Any good that fits, leaning toward the valuable ones, and no more than three of any one.
     const fits = goods.filter(([t, gp]) => gp <= goodsValue && (out.goods.find((g) => g.text === t)?.count ?? 0) < 3);
@@ -170,6 +184,17 @@ export function rollTreasure(opts: { tier: string; region: string; kind: 'indivi
     const taken = new Set<string>();
     for (let i = 0; i < n; i++) {
       const rarity = weighted(tier.items.rarities, rng);
+      if (fromBooks) {
+        // A magic item of that rarity from the books, stepping down a rarity if they have none.
+        let r = RARITIES.indexOf(rarity);
+        let list: string[] = [];
+        while (r >= 0 && !(list = (opts.books?.magic ?? []).filter((m) => m.rarity === RARITIES[r] && !taken.has(m.name)).map((m) => m.name)).length) r--;
+        if (!list.length) continue;
+        const name = pick(list, rng);
+        taken.add(name);
+        out.items.push({ name, rarity: RARITIES[r], entity_id: null, fades: false });
+        continue;
+      }
       const own = Object.entries(data.catalogue.items).filter(([id, it]) => it.rarity === rarity && it.tier <= tierNo && it.pools.some((p) => region.pools.includes(p)) && !taken.has(id));
       if (own.length && rng() < 0.5) {
         const [id] = pick(own, rng);
@@ -184,7 +209,7 @@ export function rollTreasure(opts: { tier: string; region: string; kind: 'indivi
       if (!list.length) continue;
       out.items.push({ name: pick(list, rng), rarity: RARITIES[r], entity_id: null, fades });
     }
-    out.hook = pick(data.hooks[opts.region] ?? data.hooks.marches ?? [null], rng) ?? null;
+    out.hook = fromBooks ? null : (pick(data.hooks[opts.region] ?? data.hooks.marches ?? [null], rng) ?? null);
   }
   out.total_gp = Math.round(out.coins.amount * TO_GP[out.coins.coin] + out.goods.reduce((n, g) => n + g.gp * g.count, 0));
   return out;

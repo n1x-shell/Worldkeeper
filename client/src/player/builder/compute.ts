@@ -129,12 +129,24 @@ export function parseKit(equipment: string | undefined): { items: string[]; gp: 
 }
 
 /** The background as the builder knows it: the Player's Handbook's, or one of the world's. A rules pack's kit wins. */
+/** A background from the rules packs (a book's, or homebrew), in the builder's terms. */
+export function packBackground(rules: SrdText | null | undefined, name: string | undefined) {
+  const r = byName(rules?.backgrounds ?? {}, name);
+  if (!r || !name) return null;
+  const abilities = (r.abilities ?? []).map((a) => ABILITIES.find((k) => ABILITY_NAME[k].toLowerCase() === a.toLowerCase() || k === a.toUpperCase())).filter((a): a is Ability => !!a);
+  return { name: name.trim(), abilities, skills: r.skills ?? [], tool: r.tool ?? '', feat: r.feat ?? '' };
+}
+const ABILITY_NAME: Record<Ability, string> = { STR: 'Strength', DEX: 'Dexterity', CON: 'Constitution', INT: 'Intelligence', WIS: 'Wisdom', CHA: 'Charisma' };
+
 export function backgroundFor(b: Build, world: WorldBackground[], rules?: SrdText | null) {
   const phb = backgroundInfo(b.background);
   const packKit = parseKit(byName(rules?.backgrounds ?? {}, b.background)?.equipment);
   if (phb) return { name: phb.name, abilities: phb.abilities, skills: phb.skills, tool: phb.tool, feat: phb.feat, kit: packKit ?? phb.equipment ?? null, who: '', fixed: true };
   const w = world.find((x) => x.name === b.background);
-  if (!w) return null;
+  if (!w) {
+    const pack = packBackground(rules, b.background);
+    return pack ? { ...pack, abilities: pack.abilities.length ? pack.abilities : b.bgAbilities, kit: packKit, who: '', fixed: pack.abilities.length === 3 } : null;
+  }
   const skills = w.skills
     .split(/,| and /)
     .map((x) => x.trim())

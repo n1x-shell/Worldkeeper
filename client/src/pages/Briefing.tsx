@@ -22,6 +22,8 @@ export interface Briefing {
   level: number;
   tables: { id: number; name: string }[];
   treasure: { region: string; tier: string; label: string } | null;
+  terrain?: string[];
+  campaign?: { id: number; title: string };
   coming: { kind: string; title: string; inDays: number }[];
 }
 

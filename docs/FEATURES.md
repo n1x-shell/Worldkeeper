@@ -114,6 +114,31 @@ Other table tools include a DM screen, NPC quick-reference cards, faction agenda
 
 Rules reference entries use labels: `OFFICIAL`, `HOMEBREW`, `OUTSIDE 2024 CORE` or `UNVERIFIED`. Worldkeeper does not bundle purchased rulebooks or licensed monster stat blocks.
 
+## A standard D&D campaign, or the Worldkeeper setting
+
+The app ships with the Worldkeeper setting's mechanics, and runs just as well as a plain D&D 2024 campaign tool with whatever books you import.
+
+**Settings → Campaign mechanics** has a switch for each of the setting's own mechanics, and two presets: **Standard D&D** (all off) and **The Worldkeeper setting** (all on).
+
+| Switch | What it covers |
+| --- | --- |
+| The setting's pages | Aetheris, Kaelmar and the Ethereal Realm in the menu, and the setting's quick reference |
+| Thinning, true names and memories | The Thinning tab on sheets and character pages, with true names, named memories and Shardscarred |
+| The Return | The Return's clock for the GM, and its signs and omens for players |
+| Fading salvage | Treasure from the Ethereal Realm fades unless it's anchored |
+| The setting's treasure | The Treasure tool's regional tables and the world's own items. Off: it rolls from your books |
+
+A switched-off mechanic leaves the menus, the sheets, the player view and the published handbook. Nothing is deleted. A library that holds the Worldkeeper setting starts with everything on; any other library starts as standard D&D.
+
+**From your books** (see [Rules packs](RULES_PACKS.md)):
+
+- **Character options.** The sheet and the builder list the world's peoples, classes and backgrounds first, then every other species, class, subclass and background in your rules packs. With no world pages, the books' options are the whole list.
+- **Treasure.** "From your books" rolls magic items by tier and rarity from your imported Dungeon Master's Guide, with gems and art objects for goods. When the setting's treasure is on, its regional tables come first, and their items show the rules from your books.
+- **Encounters.** Your Books → Encounters, and "Suggest from your books" in a live session, offer groups of creatures for the party's level within the Dungeon Master's Guide (2024) XP budget, in a terrain. The setting's regions have terrains (`assets/encounters/terrain.json`), so a live session suggests creatures that belong where the party is. "Put in the tracker" makes it an encounter, with HP, AC, initiative and stat blocks filled in.
+- **Encounter tables.** When a table row names creatures in plain words ("4 bandits and a bandit captain"), their stat blocks from your books are a click away. The setting's own creatures keep their own stat blocks.
+
+**The rules are D&D 2024.** The sheet and builder do their arithmetic by the 2024 rules: backgrounds raise ability scores, the 2024 class tables, weapon mastery. Books written for the 2014 rules import fine, and their species, subclasses, spells, feats, items and creatures can be used, but characters are built and calculated the 2024 way.
+
 ## Library management
 
 Library Management contains import preview, confirmation and history, exports, Canon Review, broken-reference reporting, change history, backup and restore, and app settings.

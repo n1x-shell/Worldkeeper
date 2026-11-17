@@ -1,3 +1,4 @@
+import { packBackground } from './builder/compute';
 import { ItemRulesList } from '../components/ItemRules';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -127,7 +128,17 @@ export function CharacterBuilder() {
   }, [fullTables]);
   const text = useLoaded(loadRulesText);
   const spells = useLoaded(loadSpells);
-  const people = peoples.find((p) => p.name === b.people);
+  // Species in the rules packs that no people of the world is named for, to play as themselves.
+  const otherSpecies = useMemo(
+    () =>
+      Object.keys(text?.species ?? {})
+        .filter((x) => !peoples.some((p) => p.name.toLowerCase() === x.toLowerCase()))
+        .sort(),
+    [text, peoples],
+  );
+  const people =
+    peoples.find((p) => p.name === b.people) ??
+    (otherSpecies.includes(b.people) ? { id: null as string | null, name: b.people, plural: b.people, tagline: '', rules: b.people, atTable: '', summary: '' } : undefined);
   const cls = classes.find((x) => x.name === b.cls);
   const info = classInfo(b.cls);
   const bg = backgroundFor(b, world, text);
@@ -215,12 +226,26 @@ export function CharacterBuilder() {
         <div className="min-w-0 space-y-4">
           {step === 0 && (
             <section className="space-y-3">
-              <H note="Each people of the world plays with one set of species rules; the card says which.">Choose a people</H>
-              <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                {peoples.map((p) => (
-                  <Card key={p.id} on={b.people === p.name} title={p.name} sub={p.tagline} badge={p.rules ?? undefined} onClick={() => set({ people: p.name })} />
-                ))}
-              </div>
+              <H note={peoples.length ? 'Each people of the world plays with one set of species rules; the card says which.' : 'The species in your rules.'}>
+                {peoples.length ? 'Choose a people' : 'Choose a species'}
+              </H>
+              {peoples.length > 0 && (
+                <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
+                  {peoples.map((p) => (
+                    <Card key={p.id} on={b.people === p.name} title={p.name} sub={p.tagline} badge={p.rules ?? undefined} onClick={() => set({ people: p.name })} />
+                  ))}
+                </div>
+              )}
+              {otherSpecies.length > 0 && (
+                <div className="space-y-2">
+                  {peoples.length > 0 && <h3 className="text-xs text-dim uppercase tracking-[0.18em]">Other species in your rules</h3>}
+                  <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+                    {otherSpecies.map((x) => (
+                      <Card key={x} on={b.people === x} title={x} sub={text?.species[x]?.source ?? ''} onClick={() => set({ people: x })} />
+                    ))}
+                  </div>
+                </div>
+              )}
             </section>
           )}
 
@@ -273,7 +298,7 @@ export function CharacterBuilder() {
             </section>
           )}
 
-          {step === 2 && <BackgroundStep b={b} set={set} world={world} />}
+          {step === 2 && <BackgroundStep b={b} set={set} world={world} rules={text} />}
           {step === 3 && <AbilitiesStep b={b} set={set} feats={text ? [...new Set([...ORIGIN_FEATS, ...Object.keys(text.feats)])].sort() : ORIGIN_FEATS} />}
           {step === 4 && <SkillsStep b={b} set={set} bgSkills={bg?.skills ?? []} />}
           {step === 5 && <EquipmentStep b={b} set={set} world={world} rules={text} />}
@@ -437,16 +462,22 @@ function Preview({ b, sheet }: { b: Build; sheet: ReturnType<typeof buildSheet> 
   );
 }
 
-function BackgroundStep({ b, set, world }: { b: Build; set: (p: Partial<Build>) => void; world: ReturnType<typeof backgroundsFrom> }) {
+function BackgroundStep({ b, set, world, rules }: { b: Build; set: (p: Partial<Build>) => void; world: ReturnType<typeof backgroundsFrom>; rules: SrdText | null }) {
   const choose = (name: string) => {
     const phb = BACKGROUNDS.find((x) => x.name === name);
-    set({ background: name, bgAbilities: phb ? phb.abilities : [], plusTwo: '', plusOne: '', bgKit: 0 });
+    const pack = phb ? null : packBackground(rules, name);
+    set({ background: name, bgAbilities: phb ? phb.abilities : pack?.abilities.length === 3 ? pack.abilities : [], plusTwo: '', plusOne: '', bgKit: 0 });
   };
-  const bg = backgroundFor(b, world);
+  const bg = backgroundFor(b, world, rules);
+  // The world's background tables, by where they're from; then any other backgrounds in the rules packs.
+  const froms = [...new Set(world.map((x) => x.from))];
+  const others = Object.entries(rules?.backgrounds ?? {})
+    .filter(([n]) => !BACKGROUNDS.some((x) => x.name.toLowerCase() === n.toLowerCase()) && !world.some((x) => x.name.toLowerCase() === n.toLowerCase()))
+    .sort(([a], [z]) => a.localeCompare(z));
   return (
     <section className="space-y-4">
       <H note="Your background gives two skills, a tool, an Origin feat, and raises three ability scores.">Choose a background</H>
-      {['Aetheris', 'Kaelmar', 'Ethereal'].map((from) => {
+      {froms.map((from) => {
         const list = world.filter((x) => x.from === from);
         if (!list.length) return null;
         return (
@@ -468,6 +499,22 @@ function BackgroundStep({ b, set, world }: { b: Build; set: (p: Partial<Build>) 
           ))}
         </div>
       </div>
+      {others.length > 0 && (
+        <div className="space-y-2">
+          <h3 className="text-xs text-dim uppercase tracking-[0.18em]">Other backgrounds in your rules</h3>
+          <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+            {others.map(([n, x]) => (
+              <Card
+                key={n}
+                on={b.background === n}
+                title={n}
+                sub={[[x.skills.join(', '), x.tool, x.feat].filter(Boolean).join('; '), x.abilities.length ? `Raises ${x.abilities.join(', ')}.` : '', x.source ?? ''].filter(Boolean).join('. ')}
+                onClick={() => choose(n)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
       {bg && !bg.fixed && (
         <div className="ledger-card space-y-2">
           <div className="text-sm">

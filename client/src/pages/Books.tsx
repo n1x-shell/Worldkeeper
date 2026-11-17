@@ -9,6 +9,8 @@ import { useApi } from '../lib/api';
 import { PageHeader } from '../components/ui';
 import { StatBlockById } from '../components/StatBlock';
 import { ItemCard, type BookItem } from '../components/ItemRules';
+import { EncounterIdeas } from '../components/EncounterIdeas';
+import { useAppState } from '../lib/store';
 
 interface Creature {
   id: string;
@@ -21,7 +23,7 @@ const crNum = (cr: string | null) => (!cr ? -1 : cr.includes('/') ? Number(cr.sp
 const RARITIES = ['common', 'uncommon', 'rare', 'very rare', 'legendary', 'artifact'];
 
 export function BooksPage() {
-  const [tab, setTab] = useState<'creatures' | 'items'>('creatures');
+  const [tab, setTab] = useState<'creatures' | 'items' | 'encounters'>('creatures');
   const { data: counts } = useApi<{ creatures: number; items: number }>('/api/books');
   return (
     <div className="space-y-4">
@@ -37,13 +39,13 @@ export function BooksPage() {
       ) : (
         <>
           <div className="flex rounded-md border border-line overflow-hidden w-fit">
-            {(['creatures', 'items'] as const).map((t) => (
+            {(['creatures', 'items', 'encounters'] as const).map((t) => (
               <button key={t} className={`px-4 py-1.5 text-sm capitalize ${tab === t ? 'bg-gold/20 text-gold' : 'text-dim'}`} onClick={() => setTab(t)}>
-                {t} {counts && <span className="text-xs">({t === 'creatures' ? counts.creatures : counts.items})</span>}
+                {t} {counts && t !== 'encounters' && <span className="text-xs">({t === 'creatures' ? counts.creatures : counts.items})</span>}
               </button>
             ))}
           </div>
-          {tab === 'creatures' ? <Creatures /> : <Items />}
+          {tab === 'creatures' ? <Creatures /> : tab === 'items' ? <Items /> : <Encounters />}
         </>
       )}
     </div>
@@ -111,6 +113,56 @@ function Items() {
         ))}
         {list.length > 300 && <p className="text-xs text-dim">{list.length - 300} more: narrow the search.</p>}
       </div>
+    </div>
+  );
+}
+
+/** Encounter ideas for a party: its level, and a terrain or one of the world's regions. */
+function Encounters() {
+  const { activeCampaignId } = useAppState();
+  const { data } = useApi<{ terrains: string[]; regions: { id: string; label: string; terrain: string[] }[] }>('/api/books/terrains');
+  const [level, setLevel] = useState(3);
+  const [terrain, setTerrain] = useState<string[]>([]);
+  const [region, setRegion] = useState('');
+  const toggle = (t: string) => {
+    setRegion('');
+    setTerrain(terrain.includes(t) ? terrain.filter((x) => x !== t) : [...terrain, t]);
+  };
+  return (
+    <div className="space-y-3 max-w-3xl">
+      <p className="text-sm text-dim">
+        Groups of creatures from your books for the party&apos;s level, within the Dungeon Master&apos;s Guide (2024) XP budget. Choose where: a terrain, or one of your world&apos;s regions.
+      </p>
+      <div className="flex flex-wrap items-center gap-2 text-sm">
+        <label className="flex items-center gap-1">
+          Level
+          <input type="number" min={1} max={20} className="input w-16 py-1" value={level} onChange={(e) => setLevel(Math.max(1, Math.min(20, Number(e.target.value) || 1)))} aria-label="Party level" />
+        </label>
+        {(data?.regions.length ?? 0) > 0 && (
+          <select className="input w-auto py-1" value={region} onChange={(e) => (setRegion(e.target.value), setTerrain([]))} aria-label="Region">
+            <option value="">Any region</option>
+            {data!.regions.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.label}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
+      <div className="flex flex-wrap gap-1.5">
+        {(data?.terrains ?? []).map((t) => (
+          <button
+            key={t}
+            className={`chip capitalize ${terrain.includes(t) ? 'border-gold text-gold bg-gold/10' : 'border-line text-dim'}`}
+            aria-pressed={terrain.includes(t)}
+            onClick={() => toggle(t)}
+          >
+            {t}
+          </button>
+        ))}
+      </div>
+      <EncounterIdeas level={level} terrain={terrain} region={region || undefined} campaignId={activeCampaignId} />
+      {!activeCampaignId && <p className="text-xs text-dim">Choose an active campaign to put an encounter in the tracker.</p>}
     </div>
   );
 }

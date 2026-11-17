@@ -9,7 +9,10 @@ import type { DB } from '../db/connection.js';
 import { notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
 import { standingFor } from './standing.js';
-import { treasureData } from './treasure.js';
+import { BOOKS_REGION, treasureData } from './treasure.js';
+import { bookTreasure } from './bookData.js';
+import { getMechanics } from './mechanics.js';
+import { terrainFor } from './encounters.js';
 import { comingUp } from './calendar.js';
 
 interface Ent {
@@ -145,7 +148,9 @@ export function sessionBriefing(db: DB, sessionId: number) {
     return m ? level >= Number(m[1]) && level <= Number(m[2]) : true;
   };
   const tData = treasureData();
-  const treasureRegion = Object.entries(tData.regions).find(([, r]) => r.ids.some((x) => chain.some((e) => e.id === x)))?.[0] ?? null;
+  // The setting's region for the place, when its treasure is on; otherwise (or anywhere it doesn't cover) the books.
+  const worldRegion = getMechanics(db).worldTreasure ? (Object.entries(tData.regions).find(([, r]) => r.ids.some((x) => chain.some((e) => e.id === x)))?.[0] ?? null) : null;
+  const treasureRegion = worldRegion ?? (bookTreasure(db).magic.length ? BOOKS_REGION : null);
 
   return {
     session: { id: s.id, number: s.number },
@@ -165,7 +170,9 @@ export function sessionBriefing(db: DB, sessionId: number) {
     tables: tables.filter((t) => tLevel(t.name)),
     // Festivals and the GM's events in the next two weeks.
     coming: comingUp(db, c.id, 14).map((x) => ({ kind: x.kind, title: x.title, inDays: x.inDays })),
-    treasure: treasureRegion ? { region: treasureRegion, tier: tierKey, label: tData.regions[treasureRegion].label } : null,
+    // The terrain here, for encounters from the GM's books (the nearest place with one: the place, then its region).
+    terrain: terrainFor(chain.map((e) => e.id)),
+    treasure: treasureRegion ? { region: treasureRegion, tier: tierKey, label: worldRegion ? tData.regions[worldRegion].label : 'From your books' } : null,
   };
 }
 

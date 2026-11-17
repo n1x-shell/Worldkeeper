@@ -1,3 +1,4 @@
+import { useMechanics } from '../lib/mechanics';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Printer } from 'lucide-react';
@@ -99,6 +100,7 @@ function MyPage({ code }: { code: string }) {
     else timer.current = window.setTimeout(go, 800);
   };
   const loadLog = useCallback(() => source.myLog!(code), [source, code]);
+  const mech = useMechanics();
 
   if (page === undefined) return <p className="text-dim text-sm">Loading…</p>;
   if (page === null)
@@ -159,7 +161,7 @@ function MyPage({ code }: { code: string }) {
               : undefined
           }
           loadLog={source.myLog ? loadLog : undefined}
-          extraTabs={[{ id: 'thinning', label: 'Thinning', content: <ThinningTab page={thinning} onChange={(t, now) => void save({ ...page, ...t }, now)} /> }]}
+          extraTabs={mech?.thinning === false ? [] : [{ id: 'thinning', label: 'Thinning', content: <ThinningTab page={thinning} onChange={(t, now) => void save({ ...page, ...t }, now)} /> }]}
         />
       </div>
     </div>

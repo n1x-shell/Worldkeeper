@@ -237,7 +237,16 @@ function Identity({
             value={value.class_name}
             disabled={readOnly}
             onChange={(v) => set({ class_name: v })}
-            groups={[{ label: 'Classes', options: CLASSES.map((c) => ({ value: c.name })) }]}
+            groups={[
+              { label: 'Classes', options: CLASSES.map((c) => ({ value: c.name })) },
+              {
+                label: 'Other classes in your rules',
+                options: Object.keys(rules?.classes ?? {})
+                  .filter((x) => !CLASSES.some((c) => c.name.toLowerCase() === x.toLowerCase()))
+                  .sort()
+                  .map((x) => ({ value: x })),
+              },
+            ]}
           />
         </Field>
         <Field label="Level">
@@ -271,11 +280,18 @@ function Identity({
           disabled={readOnly}
           onChange={(v) => put({ background: v })}
           groups={[
-            ...['Aetheris', 'Kaelmar', 'Ethereal'].map((from) => ({
+            ...[...new Set(worldBgs.map((b) => b.from))].map((from) => ({
               label: from === 'Ethereal' ? 'The Ethereal Realm' : from,
               options: worldBgs.filter((b) => b.from === from).map((b) => ({ value: b.name })),
             })),
             { label: "Player's Handbook", options: BACKGROUNDS.map((b) => ({ value: b.name })) },
+            {
+              label: 'Other backgrounds in your rules',
+              options: Object.keys(rules?.backgrounds ?? {})
+                .filter((n) => !BACKGROUNDS.some((x) => x.name.toLowerCase() === n.toLowerCase()) && !worldBgs.some((x) => x.name.toLowerCase() === n.toLowerCase()))
+                .sort()
+                .map((x) => ({ value: x })),
+            },
           ]}
         />
       </Field>

@@ -1,3 +1,4 @@
+import { useMechanics } from '../lib/mechanics';
 import { BriefingPanel, briefingFill } from './Briefing';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -390,6 +391,7 @@ export function PartyPage() {
 }
 
 function CharacterSheet({ ch: initial, onDeleted }: { ch: Character; onDeleted: () => void }) {
+  const mech = useMechanics();
   const [ch, setCh] = useState(initial);
   const auto = useAutosave((c: Character) => api.patch(`/api/characters/${c.id}`, { name: c.name, player: c.player, kind: c.kind, species: c.species, class_name: c.class_name, level: c.level, sheet: c.sheet, notes: c.notes }));
   const set = (p: Partial<Character>) => {
@@ -444,7 +446,7 @@ function CharacterSheet({ ch: initial, onDeleted }: { ch: Character; onDeleted: 
         }}
         loadLog={loadLog}
         extraTabs={[
-          ...(page.data ? [{ id: 'thinning', label: 'Thinning', content: <ThinningTab gm page={page.data} onChange={(t, now) => page.set(t, now)} /> }] : []),
+          ...(page.data && mech?.thinning !== false ? [{ id: 'thinning', label: 'Thinning', content: <ThinningTab gm page={page.data} onChange={(t, now) => page.set(t, now)} /> }] : []),
           {
             id: 'gm',
             label: 'GM only',

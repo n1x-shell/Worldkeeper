@@ -1,3 +1,5 @@
+import { useMechanics } from '../lib/mechanics';
+import type { Mechanics } from '../../../shared/mechanics';
 import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
@@ -158,9 +160,18 @@ const NAV: { title: string; items: Item[] }[] = [
 
 /** Maintenance pages about the source files themselves; available in debug mode. */
 const DEBUG_ONLY = new Set(['/documents', '/broken']);
+/** Menu items for the setting's own mechanics, shown only while they're switched on (Settings, Campaign mechanics). */
+const NEEDS: Record<string, keyof Mechanics> = {
+  '/realm/aetheris': 'setting',
+  '/realm/kaelmar': 'setting',
+  '/realm/ethereal': 'setting',
+  '/quick-reference': 'setting',
+  '/campaign/return': 'theReturn',
+};
 
 export function Layout() {
   const { sidebarCollapsed: collapsed, setSidebarCollapsed, theme, setTheme, appName, debug } = useAppState();
+  const mech = useMechanics();
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
   const loc = useLocation();
@@ -198,7 +209,7 @@ export function Layout() {
           <div key={g.title} className="mb-2">
             {!collapsed && <div className="px-4 pt-2 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim/80">{g.title}</div>}
             {g.items
-              .filter((it) => debug || !DEBUG_ONLY.has(it.to))
+              .filter((it) => (debug || !DEBUG_ONLY.has(it.to)) && (!NEEDS[it.to] || !mech || mech[NEEDS[it.to]]))
               .map((it) => (
                 <NavLink
                   key={it.to}

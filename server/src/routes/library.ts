@@ -16,6 +16,7 @@ import { deletePack, importPack, listPacks, setPackEnabled } from '../repo/rules
 import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, exportPlayerZip, importCampaign, importJson } from '../backup/exporter.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { schemaVersion } from '../db/migrations.js';
+import { getMechanics, setMechanics } from '../repo/mechanics.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 300 * 1024 * 1024, files: 1 } });
 
@@ -121,6 +122,16 @@ export function libraryRoutes(ctx: AppContext) {
       importJson(ctx.db, data);
       return { ok: true };
     }),
+  );
+
+  // ---- Campaign mechanics: which of the setting's own mechanics this library uses ----
+  r.get(
+    '/mechanics',
+    h(() => getMechanics(ctx.db)),
+  );
+  r.put(
+    '/mechanics',
+    h((req) => setMechanics(ctx.db, (req.body ?? {}) as Record<string, unknown>)),
   );
 
   // ---- Rules packs (the GM's own books or homebrew, for the character sheet; never published or exported) ----

@@ -1,3 +1,4 @@
+import type { Mechanics } from '../../../shared/mechanics';
 import type { Sheet } from '@shared/sheet';
 import { useEffect, useState } from 'react';
 
@@ -86,6 +87,7 @@ export interface PlayerSnapshot {
   factionWeb?: PTie[];
   /** False when the GM turned the built-in SRD rules off. */
   rulesSrd?: boolean;
+  mechanics?: Partial<Mechanics>;
 }
 
 /** During a live session: the running fight's turn order (no monster numbers) and the newest handout. */
@@ -96,7 +98,7 @@ export interface PLive {
 }
 
 export interface PlayerSource {
-  info(): Promise<{ appName: string; publishedAt?: string; rulesSrd?: boolean }>;
+  info(): Promise<{ appName: string; publishedAt?: string; rulesSrd?: boolean; mechanics?: Partial<Mechanics> }>;
   entities(): Promise<PEntity[]>;
   entity(id: string): Promise<PEntity | null>;
   search(q: string): Promise<PEntity[]>;
@@ -182,7 +184,7 @@ export function staticSource(snapshotUrl: string, uploadsBase: string): PlayerSo
   return {
     info: async () => {
       const s = await snap();
-      return { appName: s.appName ?? 'The Worldkeeper', publishedAt: s.generated_at, rulesSrd: s.rulesSrd !== false };
+      return { appName: s.appName ?? 'The Worldkeeper', publishedAt: s.generated_at, rulesSrd: s.rulesSrd !== false, mechanics: s.mechanics };
     },
     entities: async () => (await snap()).entities,
     entity: async (id) => (await snap()).entities.find((e) => e.id === id) ?? null,

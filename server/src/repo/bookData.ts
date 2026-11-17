@@ -73,34 +73,78 @@ export function creatureByName(db: DB, name: string | null | undefined) {
 
 const norm = (s: string) => s.toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, ' ').trim();
 
+const ORD: Record<string, string> = { '1st': '1', '2nd': '2', '3rd': '3', '4th': '4', '5th': '5', '6th': '6', '7th': '7', '8th': '8', '9th': '9' };
+/** The ways a written item name might appear in the books, best guess first. */
+export function itemNameCandidates(raw: string): string[] {
+  const n = norm(raw).replace(/\s*\(\*\)/g, '');
+  const out: string[] = [];
+  const add = (x: string) => {
+    const t = x.trim();
+    if (t && !out.includes(t)) out.push(t);
+  };
+  // "Orb of Direction (XGE), a needle in a glass bead": drop trailing descriptions one at a time.
+  const parts = n.split(/,\s*/);
+  for (let k = parts.length; k >= 1; k--)
+    add(
+      parts
+        .slice(0, k)
+        .join(', ')
+        .replace(/^(?:a|an|\d+)\s+/, ''),
+    );
+  // Each rewrite also applies to what the others make: "Weapon, +3 (blessed by the Order)" → "Weapon, +3" → "+3 Weapon".
+  for (let i = 0; i < out.length && out.length < 40; i++) {
+    const c = out[i];
+    add(c.replace(/\((\d)(?:st|nd|rd|th) level\)/, (_, d: string) => `(level ${d})`)); // "Spell Scroll (2nd level)" → "(Level 2)"
+    const paren = /^(.+?)\s*\(([^)]+)\)$/.exec(c);
+    if (paren) {
+      add(`${paren[1]}, ${paren[2]}`); // "Ioun Stone (Mastery)" → "Ioun Stone, Mastery"
+      const of = /^(.+? of) (.+)$/.exec(paren[1]);
+      if (of) add(`${of[1]} ${paren[2]} ${of[2]}`); // "Potion of Giant Strength (Hill)" → "Potion of Hill Giant Strength"
+      add(paren[1]); // "Moon-Touched Sword (XGE)"
+    }
+    const comma = /^([^,(]+?),\s*([^,]+)$/.exec(c);
+    if (comma) add(`${comma[2]} ${comma[1]}`); // "Weapon, +1" → "+1 Weapon"
+  }
+  for (const c of [...out]) if (c.endsWith('s')) (add(c.replace(/(?:es|s)$/, '')), add(c.slice(0, -1)));
+  return out;
+}
+
 /**
  * The rules for an item, by the name it goes by in treasure or on a sheet: "Potion of Healing", "Weapon, +1" (the
- * book's "+1 Weapon"), "Moon-Touched Sword (XGE)", "Flame Tongue Longsword" (a generic item on a base weapon), "2 Daggers".
+ * book's "+1 Weapon"), "Moon-Touched Sword (XGE)", "Flame Tongue Longsword" (a generic item on a base weapon), "2
+ * Daggers", "Spell Scroll (2nd level)", "Carpet of Flying" (one of the book's sizes).
  */
 export function itemByName(db: DB, raw: string | null | undefined): BookItem | null {
-  if (!raw) return null;
+  if (!raw?.trim()) return null;
   const items = data(db).items;
-  const by = new Map(items.map((i) => [norm(i.name), i]));
-  const tries = new Set<string>();
-  const base = norm(raw)
-    .replace(/\s*\([^)]*\)\s*$/, '') // "(XGE)", "(uncommon)", "(attuned)"
-    .replace(/^(?:a|an|\d+)\s+/, '') // "2 Daggers"
-    .replace(/^\+(\d)\s/, '+$1 ');
-  tries.add(base);
-  const comma = /^(.+?),\s*(.+)$/.exec(base); // "weapon, +1" → "+1 weapon"
-  if (comma) tries.add(`${comma[2]} ${comma[1]}`);
-  for (const t of [...tries]) if (t.endsWith('s')) tries.add(t.replace(/(e?s)$/, '')).add(t.slice(0, -1));
+  const key = (name: string) => norm(name).replace(/\s*\(\*\)/g, '');
+  const by = new Map(items.map((i) => [key(i.name), i]));
+  const tries = itemNameCandidates(raw);
   for (const t of tries) if (by.has(t)) return by.get(t)!;
   // "Arcane Focus (crystal)": the thing in brackets, when it is an item of its own.
   const inner = /\(([^)]+)\)\s*$/.exec(norm(raw))?.[1];
   if (inner && by.has(inner)) return by.get(inner)!;
   // A generic magic item on a base item: "Flame Tongue Longsword", "+2 Shield", "Longsword of Wounding".
+  const base = tries[0];
   for (const i of items)
     if ((i.prefix || i.suffix) && (!i.prefix || base.startsWith(norm(i.prefix))) && (!i.suffix || base.endsWith(norm(i.suffix)))) {
       const rest = base.slice(i.prefix ? norm(i.prefix).length : 0, i.suffix ? base.length - norm(i.suffix).length : undefined).trim();
       const under = by.get(rest);
       if (rest && (under || !i.prefix || !i.suffix)) return { ...i, name: raw.trim(), text: under ? `${i.text}\n\n${under.name}: ${under.text}` : i.text };
     }
+  // A family the books split up: "Carpet of Flying" (by size), "Manual of Golems" (by golem).
+  for (const t of tries) {
+    const words = t.split(' ').filter((w) => w.length > 2 && w !== 'of' && w !== 'the');
+    const family = items
+      .filter((i) => key(i.name).startsWith(`${t}, `) || key(i.name).startsWith(`${t} (`) || (words.length > 1 && words.every((w) => key(i.name).includes(w.replace(/s$/, '')))))
+      .sort((a, b) => a.name.localeCompare(b.name));
+    if (family.length)
+      return {
+        ...family[0],
+        name: raw.trim(),
+        text: family.length > 1 ? `The books have ${family.length} kinds: ${family.map((f) => f.name).join('; ')}. The first:\n\n${family[0].text}` : family[0].text,
+      };
+  }
   return null;
 }
 
@@ -127,3 +171,18 @@ export function requireBookCreature(db: DB, id: string) {
 
 /** How much of each the enabled packs hold. */
 export const bookCounts = (db: DB) => ({ creatures: data(db).creatures.length, items: data(db).items.length });
+
+/**
+ * What the Treasure tool can roll from the books: magic items with a set rarity (not artifacts or ones whose rarity
+ * varies, and not the generic "+1 Weapon" kind, which need a base item), and gemstones and art objects with a worth.
+ */
+export function bookTreasure(db: DB) {
+  const items = data(db).items;
+  return {
+    magic: items.filter((i) => i.magic && !i.prefix && !i.suffix && ['common', 'uncommon', 'rare', 'very rare', 'legendary'].includes(i.rarity)).map((i) => ({ name: i.name, rarity: i.rarity })),
+    goods: items.filter((i) => (i.type === 'Gemstone' || i.type === 'Art Object') && i.value).map((i) => [i.name, i.value!] as [string, number]),
+  };
+}
+
+/** Every book creature, in full (for the encounter generator). */
+export const bookCreatureData = (db: DB) => data(db).creatures;

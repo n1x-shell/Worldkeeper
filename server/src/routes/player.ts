@@ -9,6 +9,7 @@ import { characterIdByCode, playerCharacterPage, updatePlayerCharacterPage } fro
 import { characterLog, logged } from '../repo/characterLog.js';
 import { rulesView } from '../repo/rulesPacks.js';
 import { itemByName } from '../repo/bookData.js';
+import { getMechanics } from '../repo/mechanics.js';
 import { removePortrait, savePortrait } from '../repo/portraits.js';
 
 /**
@@ -19,7 +20,11 @@ export function playerRoutes(ctx: AppContext) {
   const r = Router();
   r.get(
     '/info',
-    h(() => ({ mode: ctx.mode, appName: (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper' })),
+    h(() => ({
+      mode: ctx.mode,
+      appName: (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper',
+      mechanics: getMechanics(ctx.db),
+    })),
   );
   r.get(
     '/entities',

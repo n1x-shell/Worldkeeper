@@ -32,6 +32,8 @@ After that, your last choice is remembered. The import makes one pack, **Your bo
 
 Where books overlap, the newest printing wins. A species from a book you didn't choose comes in only when a people page in your world names it (for example "Use the half-orc rules"), and is marked as an older printing. Every entry names its book and page. Importing again replaces the pack. The uploaded copy is kept only until you import (an hour at most) and then deleted; only the rules taken from it are stored, and like every pack they never leave your library.
 
+Any combination of books works, from one book to every book in the copy, adventures included. The import was checked against a full 5etools copy with single books, the 2014 core books, the 2014 core with supplements, a single adventure, every official book, and everything in the copy. When you import again, your last choice is ticked, so tick any newly listed books yourself (the Dungeon Master's Guide and Monster Manual, for instance, if you chose before they had anything to import). A book that has only empty placeholder classes never replaces the real ones.
+
 ### Creatures and items
 
 - **Creatures** become stat blocks in the app's own layout. They are for the GM only: they appear in **Your Books**, the encounter tracker's "From your books" field, and on NPC cards that name a book stat block (for example "Use the Priest stat block"). They are never sent to players: not in the rules the table server gives players, nor anywhere in the handbook.
