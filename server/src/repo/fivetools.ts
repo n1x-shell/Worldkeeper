@@ -37,6 +37,8 @@ const cite = (o: J) => `${TITLES[o.source as string] ?? (o.source as string)}${o
 const TAG = /\{@(\w+)\s*([^{}]*?)\}/g;
 /** 5etools inline tags to plain text: {@spell fireball|XPHB} → fireball; {@dc 15} → DC 15; {@hit 4} → +4. */
 export function plainTags(s: string): string {
+  // A few books put an entry object, a number or nothing where text usually goes.
+  if (typeof s !== 'string') return s == null ? '' : typeof s === 'object' ? renderEntries([s]).join(' ') : String(s);
   let out = s;
   for (let i = 0; i < 4 && out.includes('{@'); i++)
     out = out.replace(TAG, (_m, tag: string, body: string) => {
@@ -412,7 +414,8 @@ export function importFivetools(db: DB, buf: Buffer, books: string[] = DEFAULT_B
       .map((o) => `${o.name}${o.prerequisite ? ` (${prereq(o.prerequisite as J[])})` : ''}: ${text(o.entries)}`)
       .join('\n\n');
   const classes = best(
-    classFiles.filter((c) => (c.source as string) in BOOKS && !/sidekick/i.test(c.name as string)),
+    // A class with no features of its own (a setting book's placeholder) never replaces a real one.
+    classFiles.filter((c) => (c.source as string) in BOOKS && !/sidekick/i.test(c.name as string) && classFeatures.some((f) => f.className === c.name && f.classSource === c.source)),
     (c) => c.name as string,
     (c) => rank(c.source as string),
   );
@@ -702,7 +705,7 @@ export function creatureBlock(m: J): J {
   const kv = (o: unknown) =>
     Object.entries((o as J) ?? {})
       .filter(([, v]) => typeof v === 'string' || typeof v === 'number')
-      .map(([k, v]) => `${title(k)} ${v}`)
+      .map(([k, v]) => (k === 'special' ? plainTags(String(v)) : `${title(k)} ${v}`))
       .join(', ');
   const casting = ((m.spellcasting as J[]) ?? []).map((sc) => ({ sc, entry: spellcastingEntries(sc) }));
   const castAs = (where: string) => casting.filter((c) => ((c.sc.displayAs as string) ?? 'trait') === where).map((c) => c.entry);
@@ -721,7 +724,7 @@ export function creatureBlock(m: J): J {
     meta,
     kind: 'creature',
     ac: acNum,
-    hp: hp.special ? String(hp.special) : `${hp.average} (${hp.formula})`,
+    hp: hp.special ? plainTags(String(hp.special)) : hp.average != null ? `${hp.average} (${plainTags(String(hp.formula ?? ''))})` : '',
     hpAvg: hp.average,
     init: amod(ab[1]) + initProf * pb,
     speed,
@@ -735,7 +738,7 @@ export function creatureBlock(m: J): J {
     res: damageList(m.resist),
     imm: [damageList(m.immune), damageList(m.conditionImmune)].filter(Boolean).join('; '),
     gear: ((m.gear as unknown[]) ?? []).map((g) => title(String(typeof g === 'string' ? g : (g as J).item).split('|')[0])).join(', '),
-    senses: [...((m.senses as string[]) ?? []).map((x) => plainTags(x).replace(/^./, (c) => c.toUpperCase())), `Passive Perception ${m.passive}`].join(', '),
+    senses: [...((m.senses as string[]) ?? []).map((x) => plainTags(x).replace(/^./, (c) => c.toUpperCase())), ...(m.passive != null ? [`Passive Perception ${m.passive}`] : [])].join(', '),
     languages: ((m.languages as string[]) ?? []).map(plainTags).join(', ') || 'None',
     traits: [...named(m.trait), ...castAs('trait')],
     actions: [...named(m.action), ...castAs('action')],
