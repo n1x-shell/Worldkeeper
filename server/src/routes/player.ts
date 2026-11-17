@@ -8,6 +8,7 @@ import { playerLive } from '../repo/handouts.js';
 import { characterIdByCode, playerCharacterPage, updatePlayerCharacterPage } from '../repo/characterPages.js';
 import { characterLog, logged } from '../repo/characterLog.js';
 import { rulesView } from '../repo/rulesPacks.js';
+import { itemByName } from '../repo/bookData.js';
 import { removePortrait, savePortrait } from '../repo/portraits.js';
 
 /**
@@ -54,14 +55,27 @@ export function playerRoutes(ctx: AppContext) {
     '/live',
     h(() => playerLive(ctx.db)),
   );
-  // A character's own page, reached by its private code. The only thing a player can change: their own memories,
-  // true name and notes (never Thinning, never another character's page).
   // The rules for character sheets: the SRD (unless the GM turned it off) and the GM's imported rules packs. Only on
   // the GM's own servers: never in the published handbook.
   r.get(
     '/rules',
     h(() => rulesView(ctx.db)),
   );
+  // Items' rules from the GM's books, by the names on a sheet or in the party's treasure (one per line). Names only:
+  // a player can look up what they carry, not browse the books.
+  r.get(
+    '/items',
+    h((req) => {
+      const names = String(req.query.names ?? '')
+        .split('\n')
+        .map((n) => n.trim().slice(0, 120))
+        .filter(Boolean)
+        .slice(0, 80);
+      return Object.fromEntries(names.map((n) => [n, itemByName(ctx.db, n)]));
+    }),
+  );
+  // A character's own page, reached by its private code. The only thing a player can change: their own memories,
+  // true name and notes (never Thinning, never another character's page).
   r.get(
     '/me/:code',
     h((req) => playerCharacterPage(ctx.db, String(req.params.code))),

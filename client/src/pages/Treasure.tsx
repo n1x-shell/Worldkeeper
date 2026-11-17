@@ -4,6 +4,7 @@ import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { EntityLink, ErrorBox, Field, Loading, PageHeader } from '../components/ui';
 import { NeedCampaign } from './Campaign';
+import { ItemRulesList } from '../components/ItemRules';
 
 /**
  * Treasure for the active campaign: roll individual treasure or a hoard by tier and region (Treasure [RUL-620]), add it
@@ -153,6 +154,7 @@ export function TreasurePage() {
                 ))}
               </ul>
             )}
+            <ItemRulesList names={roll.items.filter((it) => !it.entity_id).map((it) => it.name)} title="What they do (from your books)" />
             {roll.kind === 'hoard' && !roll.items.length && <p className="text-sm text-dim">No magic this time.</p>}
             {roll.hook && <p className="text-sm italic">{roll.hook}</p>}
             {roll.fades && <p className="text-xs text-dim">Salvage from lost worlds: it fades once taken out of the Ethereal Realm unless it's anchored.</p>}
@@ -243,6 +245,9 @@ export function TreasurePage() {
               ))}
             </tbody>
           </table>
+          <div className="pt-3">
+            <ItemRulesList names={list.filter((r) => r.kind !== 'coins' && !r.entity_id).map((r) => r.name)} title="What the party's items do (from your books)" />
+          </div>
         </div>
       )}
     </div>

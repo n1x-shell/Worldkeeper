@@ -1,6 +1,6 @@
 # Rules packs
 
-The character sheet and the character builder draw on **rules packs**: spells, species, classes, subclasses, backgrounds and feats.
+The character sheet and the character builder draw on **rules packs**: spells, species, classes, subclasses, backgrounds and feats. Packs imported from 5etools also hold creatures and items (see below).
 
 - The **SRD 5.2.1** is built in, under CC-BY-4.0. You can turn it off in **Settings → Rules packs**.
 - Anything else, such as material from your own books or your homebrew, comes in as a pack you import. Import it in **Settings → Rules packs**.
@@ -15,7 +15,7 @@ Keep pack files in a `rules-packs/` folder, or name them `…-rules-pack.zip`. T
 
 ## Importing your books from 5etools
 
-If you have a copy of the 5etools data, **Settings → Rules packs → Import your books from 5etools** reads it directly: upload the zip of the 5etools repository (or of just its `data` folder). The app lists every book in it that has rules for character sheets, newest first, with how many spells, species, classes, subclasses, backgrounds and feats each holds. Tick the books you want and choose **Import**. Playtest (Unearthed Arcana) and unlisted sources are hidden unless you ask to see them.
+If you have a copy of the 5etools data, **Settings → Rules packs → Import your books from 5etools** reads it directly: upload the zip of the 5etools repository (or of just its `data` folder). The app lists every book in it that has rules for character sheets, newest first, with how many spells, species, classes, subclasses, backgrounds, feats, creatures and items each holds. Tick the books you want and choose **Import**. Playtest (Unearthed Arcana) and unlisted sources are hidden unless you ask to see them.
 
 The first time, these books are ticked:
 
@@ -28,9 +28,16 @@ The first time, these books are ticked:
 - Mordenkainen Presents: Monsters of the Multiverse
 - Spelljammer: Astral Adventurer's Guide
 
-After that, your last choice is remembered. The import makes one pack, **Your books (from 5etools)**, holding spells, species, classes and subclasses with their features, backgrounds and feats from the chosen books.
+After that, your last choice is remembered. The import makes one pack, **Your books (from 5etools)**, holding spells, species, classes and subclasses with their features, backgrounds, feats, creatures and items from the chosen books.
 
 Where books overlap, the newest printing wins. A species from a book you didn't choose comes in only when a people page in your world names it (for example "Use the half-orc rules"), and is marked as an older printing. Every entry names its book and page. Importing again replaces the pack. The uploaded copy is kept only until you import (an hour at most) and then deleted; only the rules taken from it are stored, and like every pack they never leave your library.
+
+### Creatures and items
+
+- **Creatures** become stat blocks in the app's own layout. They are for the GM only: they appear in **Your Books**, the encounter tracker's "From your books" field, and on NPC cards that name a book stat block (for example "Use the Priest stat block"). They are never sent to players: not in the rules the table server gives players, nor anywhere in the handbook.
+- **Items** are the magic items, gear, weapons and armor of the chosen books, plus the generic magic items that fit many base items ("+1 Weapon", "Flame Tongue"). Their rules show in **Your Books**, in treasure (the GM's and the players' Party Treasure page), on character sheets (equipment and attuned items) and in the builder's starting kit. A player's server looks items up only by the names on their sheet or in the party's treasure; it has no way to list the books.
+
+Items are found by the names people write: "Weapon, +1" finds "+1 Weapon", "Moon-Touched Sword (XGE)" drops the book code, "2 Daggers" finds the Dagger, and "Flame Tongue Longsword" finds Flame Tongue, with the Longsword's own rules.
 
 ## How packs combine
 

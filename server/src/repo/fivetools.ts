@@ -218,6 +218,14 @@ export function scanFivetools(buf: Buffer): ScannedBook[] {
   );
   count('feat', (read('feats.json').feat as J[]) ?? []);
   count('background', (read('backgrounds.json').background as J[]) ?? []);
+  count(
+    'creature',
+    all('bestiary', 'bestiary-', 'monster').filter((m) => !m._copy),
+  );
+  count(
+    'item',
+    ((read('items.json').item as J[]) ?? []).filter((i) => !i._copy),
+  );
   return Object.entries(counts)
     .map(([id, c]) => {
       const b = info[id];
@@ -480,6 +488,37 @@ export function importFivetools(db: DB, buf: Buffer, books: string[] = DEFAULT_B
     });
   }
 
+  // Creatures, as the app's own stat blocks (GM only), and magic items and gear.
+  const monsters = best(
+    all('bestiary', 'bestiary-', 'monster').filter((m) => inBooks(m) && !m._copy),
+    (m) => m.name as string,
+    (m) => rank(m.source as string),
+  );
+  for (const m of monsters) add('creature', m.name as string, '', creatureBlock(m));
+  const items = best(
+    ((read('items.json').item as J[]) ?? []).filter((i) => inBooks(i) && !i._copy),
+    (i) => i.name as string,
+    (i) => rank(i.source as string),
+  );
+  for (const i of items) add('item', i.name as string, '', itemEntry(i));
+  // Mundane weapons and armor, and the generic magic items ("+1 Weapon", "Flame Tongue") that fit many base items.
+  const have = new Set(items.map((i) => (i.name as string).toLowerCase()));
+  const base = best(
+    ((read('items-base.json').baseitem as J[]) ?? []).filter((i) => inBooks(i) && !have.has((i.name as string).toLowerCase())),
+    (i) => i.name as string,
+    (i) => rank(i.source as string),
+  );
+  for (const i of base) add('item', i.name as string, '', itemEntry(i));
+  const variants = best(
+    ((read('magicvariants.json').magicvariant as J[]) ?? [])
+      .filter((v) => v.inherits && !have.has((v.name as string).toLowerCase()))
+      .map((v) => ({ ...(v.inherits as J), ...v, source: (v.inherits as J).source, page: (v.inherits as J).page }) as J)
+      .filter(inBooks),
+    (v) => v.name as string,
+    (v) => rank(v.source as string),
+  );
+  for (const v of variants) add('item', v.name as string, '', itemEntry(v));
+
   if (!entries.length) throw badRequest('Nothing from the chosen books was found in that 5etools copy.');
   db.prepare(`INSERT INTO settings (key, value) VALUES ('fivetools_books', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`).run(JSON.stringify(ORDER));
   const id = '5etools';
@@ -561,4 +600,248 @@ export function chosenBooks(db: DB): string[] {
   } catch {
     return DEFAULT_BOOKS;
   }
+}
+
+// ---------------------------------------------------------------- creatures
+const SIZE: Record<string, string> = { T: 'Tiny', S: 'Small', M: 'Medium', L: 'Large', H: 'Huge', G: 'Gargantuan' };
+const ALIGN: Record<string, string> = { L: 'Lawful', N: 'Neutral', C: 'Chaotic', G: 'Good', E: 'Evil', U: 'Unaligned', A: 'Any alignment' };
+export const XP_BY_CR: Record<string, number> = {
+  '0': 10,
+  '1/8': 25,
+  '1/4': 50,
+  '1/2': 100,
+  '1': 200,
+  '2': 450,
+  '3': 700,
+  '4': 1100,
+  '5': 1800,
+  '6': 2300,
+  '7': 2900,
+  '8': 3900,
+  '9': 5000,
+  '10': 5900,
+  '11': 7200,
+  '12': 8400,
+  '13': 10000,
+  '14': 11500,
+  '15': 13000,
+  '16': 15000,
+  '17': 18000,
+  '18': 20000,
+  '19': 22000,
+  '20': 25000,
+  '21': 33000,
+  '22': 41000,
+  '23': 50000,
+  '24': 62000,
+  '25': 75000,
+  '26': 90000,
+  '27': 105000,
+  '28': 120000,
+  '29': 135000,
+  '30': 155000,
+};
+const crPb = (cr: string) => {
+  const n = cr.includes('/') ? 0 : Number(cr);
+  return n >= 29 ? 9 : n >= 25 ? 8 : n >= 21 ? 7 : n >= 17 ? 6 : n >= 13 ? 5 : n >= 9 ? 4 : n >= 5 ? 3 : 2;
+};
+const amod = (n: number) => Math.floor((n - 10) / 2);
+const sgn = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
+/** A list that may hold plain strings, or objects naming a group with a note ("resist" and "immune" lists). */
+function damageList(list: unknown): string {
+  if (!Array.isArray(list)) return '';
+  return list
+    .map((x) => {
+      if (typeof x === 'string') return title(x);
+      const o = x as J;
+      const inner = damageList(o.resist ?? o.immune ?? o.vulnerable ?? o.conditionImmune ?? []);
+      return o.special
+        ? plainTags(o.special as string)
+        : [o.preNote, inner, o.note]
+            .filter(Boolean)
+            .map((t) => plainTags(String(t)))
+            .join(' ');
+    })
+    .filter(Boolean)
+    .join(', ');
+}
+const named = (list: unknown) => ((list as J[]) ?? []).filter((e) => e && typeof e === 'object').map((e) => ({ name: plainTags((e.name as string) ?? ''), text: text(e.entries ?? []) }));
+function spellcastingEntries(sc: J): { name: string; text: string } {
+  const lines = [text(sc.headerEntries ?? [])];
+  if (!(sc.hidden as string[] | undefined)?.includes('will') && sc.will) lines.push(`At will: ${(sc.will as string[]).map(plainTags).join(', ')}`);
+  if (!(sc.hidden as string[] | undefined)?.includes('daily'))
+    for (const [k, v] of Object.entries((sc.daily as J) ?? {})) lines.push(`${k.replace('e', '')}/Day${k.endsWith('e') ? ' each' : ''}: ${(v as string[]).map(plainTags).join(', ')}`);
+  for (const [lvl, v] of Object.entries((sc.spells as J) ?? {})) {
+    const o = v as J;
+    lines.push(`${lvl === '0' ? 'Cantrips' : `Level ${lvl}${o.slots ? ` (${o.slots} slots)` : ''}`}: ${((o.spells as string[]) ?? []).map(plainTags).join(', ')}`);
+  }
+  lines.push(text(sc.footerEntries ?? []));
+  return { name: plainTags(sc.name as string), text: lines.filter(Boolean).join('\n') };
+}
+/** A 5etools creature as one of the app's stat blocks. */
+export function creatureBlock(m: J): J {
+  const type = typeof m.type === 'string' ? m.type : ((m.type as J)?.type as string | J);
+  const typeName = typeof type === 'string' ? type : (((type as J)?.choose as string[] | undefined)?.join(' or ') ?? '');
+  const tags = typeof m.type === 'object' ? ((m.type as J).tags as unknown[] | undefined)?.map((t) => (typeof t === 'string' ? t : (t as J).tag)) : undefined;
+  const align = ((m.alignment as unknown[]) ?? []).map((a) => (typeof a === 'string' ? ALIGN[a] : '')).filter(Boolean);
+  const meta = `${((m.size as string[]) ?? ['M']).map((x) => SIZE[x]).join(' or ')} ${title(String(typeName))}${tags?.length ? ` (${tags.map((t) => title(String(t))).join(', ')})` : ''}${align.length ? `, ${align.join(' ')}` : ''}`;
+  const ac = ((m.ac as unknown[]) ?? [])[0];
+  const acNum = typeof ac === 'number' ? ac : ((ac as J)?.ac as number);
+  const hp = (m.hp as J) ?? {};
+  const cr = typeof m.cr === 'string' ? m.cr : (((m.cr as J)?.cr as string) ?? '0');
+  const pb = crPb(cr);
+  const ab = ['str', 'dex', 'con', 'int', 'wis', 'cha'].map((k) => (m[k] as number) ?? 10);
+  const initProf = ((m.initiative as J)?.proficiency as number) ?? 0;
+  const speed = Object.entries((m.speed as J) ?? {})
+    .filter(([k, v]) => !['choose', 'alternate', 'canHover'].includes(k) && (typeof v === 'number' || (v && typeof v === 'object')))
+    .map(
+      ([k, v]) =>
+        `${k === 'walk' ? '' : `${title(k)} `}${typeof v === 'number' ? v : (v as J).number} ft.${typeof v === 'object' && (v as J).condition ? ` ${plainTags((v as J).condition as string)}` : ''}`,
+    )
+    .join(', ');
+  const kv = (o: unknown) =>
+    Object.entries((o as J) ?? {})
+      .filter(([, v]) => typeof v === 'string' || typeof v === 'number')
+      .map(([k, v]) => `${title(k)} ${v}`)
+      .join(', ');
+  const casting = ((m.spellcasting as J[]) ?? []).map((sc) => ({ sc, entry: spellcastingEntries(sc) }));
+  const castAs = (where: string) => casting.filter((c) => ((c.sc.displayAs as string) ?? 'trait') === where).map((c) => c.entry);
+  const legendary = named(m.legendary);
+  if (legendary.length) {
+    const head = m.legendaryHeader
+      ? text(m.legendaryHeader)
+      : `Immediately after another creature's turn, it can expend a use to take one of these actions, regaining all uses at the start of its turn.`;
+    legendary.unshift({ name: m.legendaryHeader ? 'Uses' : `Uses: ${m.legendaryActions ?? 3}`, text: head });
+  }
+  return {
+    id: `book:${String(m.source).toLowerCase()}:${String(m.name)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')}`,
+    name: m.name,
+    meta,
+    kind: 'creature',
+    ac: acNum,
+    hp: hp.special ? String(hp.special) : `${hp.average} (${hp.formula})`,
+    hpAvg: hp.average,
+    init: amod(ab[1]) + initProf * pb,
+    speed,
+    ab,
+    cr,
+    xp: XP_BY_CR[cr],
+    pb,
+    saves: kv(m.save),
+    skills: kv(m.skill),
+    vuln: damageList(m.vulnerable),
+    res: damageList(m.resist),
+    imm: [damageList(m.immune), damageList(m.conditionImmune)].filter(Boolean).join('; '),
+    gear: ((m.gear as unknown[]) ?? []).map((g) => title(String(typeof g === 'string' ? g : (g as J).item).split('|')[0])).join(', '),
+    senses: [...((m.senses as string[]) ?? []).map((x) => plainTags(x).replace(/^./, (c) => c.toUpperCase())), `Passive Perception ${m.passive}`].join(', '),
+    languages: ((m.languages as string[]) ?? []).map(plainTags).join(', ') || 'None',
+    traits: [...named(m.trait), ...castAs('trait')],
+    actions: [...named(m.action), ...castAs('action')],
+    bonus: [...named(m.bonus), ...castAs('bonus')],
+    reactions: [...named(m.reaction), ...castAs('reaction')],
+    legendary,
+    environment: (m.environment as string[]) ?? [],
+    source: cite(m),
+  };
+}
+
+// ---------------------------------------------------------------- items
+const ITEM_TYPE: Record<string, string> = {
+  A: 'Ammunition',
+  AF: 'Ammunition',
+  AT: "Artisan's Tools",
+  EM: 'Eldritch Machine',
+  EXP: 'Explosive',
+  FD: 'Food and Drink',
+  G: 'Adventuring Gear',
+  GS: 'Gaming Set',
+  HA: 'Heavy Armor',
+  INS: 'Musical Instrument',
+  LA: 'Light Armor',
+  M: 'Melee Weapon',
+  MA: 'Medium Armor',
+  MNT: 'Mount',
+  P: 'Potion',
+  R: 'Ranged Weapon',
+  RD: 'Rod',
+  RG: 'Ring',
+  S: 'Shield',
+  SC: 'Scroll',
+  SCF: 'Spellcasting Focus',
+  T: 'Tools',
+  TAH: 'Tack and Harness',
+  TG: 'Trade Good',
+  VEH: 'Vehicle',
+  WD: 'Wand',
+  $A: 'Art Object',
+  $G: 'Gemstone',
+  $C: 'Coinage',
+};
+/** A 5etools item: what it is, its rarity and attunement, and its rules. */
+export function itemEntry(i: J): J {
+  const code = String(i.type ?? '').split('|')[0];
+  const kind = i.wondrous ? 'Wondrous Item' : (ITEM_TYPE[code] ?? (i.staff ? 'Staff' : i.weapon ? 'Weapon' : i.armor ? 'Armor' : 'Item'));
+  const att = i.reqAttune === true ? 'requires attunement' : typeof i.reqAttune === 'string' ? `requires attunement ${plainTags(i.reqAttune)}` : '';
+  const rarity = i.rarity && i.rarity !== 'none' && i.rarity !== 'unknown' ? String(i.rarity) : '';
+  const DMG: Record<string, string> = {
+    A: 'Acid',
+    B: 'Bludgeoning',
+    C: 'Cold',
+    F: 'Fire',
+    O: 'Force',
+    L: 'Lightning',
+    N: 'Necrotic',
+    P: 'Piercing',
+    I: 'Poison',
+    Y: 'Psychic',
+    R: 'Radiant',
+    S: 'Slashing',
+    T: 'Thunder',
+  };
+  const PROP: Record<string, string> = {
+    A: 'Ammunition',
+    AF: 'Ammunition',
+    BF: 'Burst Fire',
+    F: 'Finesse',
+    H: 'Heavy',
+    L: 'Light',
+    LD: 'Loading',
+    R: 'Reach',
+    RLD: 'Reload',
+    S: 'Special',
+    T: 'Thrown',
+    '2H': 'Two-Handed',
+    V: 'Versatile',
+  };
+  const stats: string[] = [];
+  if (i.weaponCategory) {
+    const props = ((i.property as unknown[]) ?? [])
+      .map((x) => String(typeof x === 'string' ? x : (x as J).uid).split('|')[0])
+      .map((x) => (x === 'V' && i.dmg2 ? `Versatile (${i.dmg2})` : x === 'T' || x === 'A' ? `${PROP[x]}${i.range ? ` (${i.range} ft.)` : ''}` : (PROP[x] ?? x)));
+    stats.push(
+      `${title(String(i.weaponCategory))} weapon. ${i.dmg1 ? `${i.dmg1} ${DMG[i.dmgType as string] ?? ''} damage.` : ''}${props.length ? ` ${props.join(', ')}.` : ''}${(i.mastery as string[] | undefined)?.length ? ` Mastery: ${(i.mastery as unknown[]).map((m) => String(typeof m === 'string' ? m : (m as J).uid).split('|')[0]).join(', ')}.` : ''}`,
+    );
+  }
+  if (i.armor || code === 'S')
+    stats.push(
+      `${code === 'S' ? `+${i.ac} AC` : `AC ${i.ac}${code === 'LA' ? ' + Dex modifier' : code === 'MA' ? ' + Dex modifier (max 2)' : ''}`}.${i.strength ? ` Strength ${i.strength} needed.` : ''}${i.stealth ? ' Disadvantage on Stealth.' : ''}`,
+    );
+  const fill = (e: unknown) => JSON.parse(JSON.stringify(e ?? []).replace(/\{=(\w+)(?:\/\w+)?\}/g, (_, k: string) => String(i[k] ?? ''))) as unknown;
+  const body = [stats.join(' '), text(fill(i.entries))].filter(Boolean).join('\n\n');
+  return {
+    name: i.name,
+    type: i.namePrefix || i.nameSuffix ? 'Magic item (applies to a fitting weapon or armor)' : kind,
+    rarity,
+    attunement: att,
+    magic: !!rarity,
+    value: typeof i.value === 'number' ? (i.value as number) / 100 : null,
+    weight: i.weight ?? null,
+    text: body,
+    // A generic magic item names the items it makes: "Flame Tongue " + "Longsword".
+    ...(i.namePrefix || i.nameSuffix ? { prefix: (i.namePrefix as string) ?? '', suffix: (i.nameSuffix as string) ?? '' } : {}),
+    tables: ((i.lootTables as string[]) ?? []).map((t) => t.split('|')[0]),
+    source: cite(i),
+  };
 }

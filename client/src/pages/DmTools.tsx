@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Dice5, Heart, Plus, Shield, Skull, Trash2, Users, Sword, Eye, EyeOff, Brain, Pin } from 'lucide-react';
 import { CONDITIONS_2024 } from '@shared/domain';
@@ -8,6 +8,7 @@ import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary, StateRow } from '../lib/types';
 import { AutoTextarea, CanonFlags, Empty, EntityLink, ErrorBox, Field, Loading, PageHeader, SaveStatus } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
+import { StatBlockById } from '../components/StatBlock';
 import { Markdown } from '../components/Markdown';
 import { Dev } from '../components/Dev';
 import { REALM_LABELS, type Realm } from '@shared/domain';
@@ -31,6 +32,17 @@ interface Encounter {
   combatants: Combatant[];
 }
 
+interface BookCreature {
+  id: string;
+  name: string;
+  cr: string | null;
+  ac: number | null;
+  hp: number | null;
+  init: number | null;
+  source: string;
+}
+const bookLabel = (c: BookCreature) => `${c.name} (CR ${c.cr ?? '?'})`;
+
 export function EncounterTracker({ encounterId, compact = false, onLog }: { encounterId: number; compact?: boolean; onLog?: (text: string) => void }) {
   const { data, error } = useApi<Encounter>(`/api/encounters/${encounterId}`);
   const [enc, setEnc] = useState<Encounter | null>(null);
@@ -45,6 +57,21 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
   const [newHp, setNewHp] = useState('');
   const [newAc, setNewAc] = useState('');
   const [newBonus, setNewBonus] = useState(0);
+  const [newBook, setNewBook] = useState<string | null>(null);
+  const [bookQ, setBookQ] = useState('');
+  const { data: bookList } = useApi<BookCreature[]>('/api/books/creatures');
+  const [openBlock, setOpenBlock] = useState<string | null>(null);
+  // Picking a creature from the GM's books fills in its name, HP, AC and initiative bonus.
+  const pickBook = (label: string) => {
+    setBookQ(label);
+    const c = (bookList ?? []).find((x) => bookLabel(x) === label);
+    setNewBook(c?.id ?? null);
+    if (!c) return;
+    setNewName((v) => v || c.name);
+    if (c.hp) setNewHp(String(c.hp));
+    if (c.ac) setNewAc(String(c.ac));
+    setNewBonus(c.init ?? 0);
+  };
   // Picking a creature or person with a stat block fills in its HP, AC and initiative bonus.
   useEffect(() => {
     setNewBonus(0);
@@ -90,11 +117,13 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
     if (!name) return;
     const n = Math.max(1, Math.min(20, Number(newCount) || 1));
     const extra = Array.from({ length: n }, (_, i) =>
-      newCombatant({ name: n > 1 ? `${name} ${i + 1}` : name, entityId: newEntity, initiative: newInit ? Number(newInit) : null, initiativeBonus: newBonus, hp: Number(newHp) || 0, maxHp: Number(newHp) || 0, ac: newAc ? Number(newAc) : null }),
+      newCombatant({ name: n > 1 ? `${name} ${i + 1}` : name, entityId: newEntity, statblockId: newBook, initiative: newInit ? Number(newInit) : null, initiativeBonus: newBonus, hp: Number(newHp) || 0, maxHp: Number(newHp) || 0, ac: newAc ? Number(newAc) : null }),
     );
     save({ combatants: [...list, ...extra] });
     setNewName('');
     setNewEntity(null);
+    setNewBook(null);
+    setBookQ('');
     setNewInit('');
     setNewHp('');
     setNewAc('');
@@ -192,7 +221,8 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
               const isTurn = enc.round > 0 && i === enc.turn_index;
               const pct = c.maxHp ? c.hp / c.maxHp : 1;
               return (
-                <tr key={c.id} className={`${isTurn ? 'bg-gold/10' : ''} ${c.defeated ? 'opacity-40' : ''}`}>
+                <Fragment key={c.id}>
+                <tr className={`${isTurn ? 'bg-gold/10' : ''} ${c.defeated ? 'opacity-40' : ''}`}>
                   <td className="w-16">
                     <input
                       className="input w-14 py-0.5 text-center"
@@ -208,6 +238,11 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
                       <input className="bg-transparent outline-none font-medium min-w-0" value={c.name} onChange={(e) => setC(c.id, (x) => ({ ...x, name: e.target.value }))} />
                     </div>
                     {c.entityId && <EntityLink id={c.entityId} className="text-[11px]" />}
+                    {(c.statblockId || c.entityId) && (
+                      <button className="text-[11px] text-gold underline ml-2" onClick={() => setOpenBlock(openBlock === c.id ? null : c.id)}>
+                        {openBlock === c.id ? 'Hide stat block' : 'Stat block'}
+                      </button>
+                    )}
                     {!c.isPC && (
                       <input
                         className="block bg-transparent outline-none text-[11px] text-dim w-full"
@@ -275,6 +310,16 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
                     </button>
                   </td>
                 </tr>
+                {openBlock === c.id && (
+                  <tr>
+                    <td colSpan={99} className="px-3 pb-3">
+                      <div className="rounded border border-line p-3 max-w-3xl">
+                        <StatBlockById id={(c.statblockId || c.entityId)!} />
+                      </div>
+                    </td>
+                  </tr>
+                )}
+                </Fragment>
               );
             })}
           </tbody>
@@ -292,6 +337,18 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
             <EntityPicker value={newEntity} types={['npc', 'creature']} onChange={setNewEntity} />
           </Field>
         </div>
+        {(bookList?.length ?? 0) > 0 && (
+          <div className="w-56 grow">
+            <Field label="From your books">
+              <input className="input" list="wk-book-creatures" value={bookQ} onChange={(e) => pickBook(e.target.value)} placeholder="Goblin Warrior, Lich…" aria-label="Creature from your books" />
+              <datalist id="wk-book-creatures">
+                {(bookList ?? []).map((c) => (
+                  <option key={c.id} value={bookLabel(c)} />
+                ))}
+              </datalist>
+            </Field>
+          </div>
+        )}
         <div className="w-16">
           <Field label="Init">
             <input className="input" value={newInit} onChange={(e) => setNewInit(e.target.value)} />
@@ -317,7 +374,7 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
         </button>
       </div>
       <Dev>
-        <p className="text-xs text-dim">Statistics are whatever you enter. The tracker does not contain monster stat blocks; attach your own rules or creature records.</p>
+        <p className="text-xs text-dim">Statistics are whatever you enter. Picking a creature record, or a creature from your imported books, fills them in and links its stat block.</p>
       </Dev>
       {!compact && (
         <Field label="Encounter notes">

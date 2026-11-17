@@ -1,3 +1,4 @@
+import { ItemRulesList, equipmentNames } from '../../components/ItemRules';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Camera, Minus, Moon, Plus, Sun, Trash2, Wand2, X } from 'lucide-react';
 import { proficiencyBonus } from '@shared/play';
@@ -792,6 +793,7 @@ function InventoryTab({ s, put, cls, readOnly }: { s: Sheet; put: (p: Partial<Sh
           placeholder="One thing per line"
           aria-label="Equipment"
         />
+        <ItemRulesList names={equipmentNames(s.equipment ?? '')} title="What your equipment does (from the GM's books)" />
       </section>
 
       <section className="space-y-2">
@@ -811,6 +813,7 @@ function InventoryTab({ s, put, cls, readOnly }: { s: Sheet; put: (p: Partial<Sh
             </li>
           ))}
         </ul>
+        <ItemRulesList names={att} title="Attuned items" />
       </section>
 
       <section className="space-y-2">

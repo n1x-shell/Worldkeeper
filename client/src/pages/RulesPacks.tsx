@@ -25,6 +25,8 @@ const KINDS: [string, string][] = [
   ['subclass', 'subclasses'],
   ['background', 'backgrounds'],
   ['feat', 'feats'],
+  ['creature', 'creatures'],
+  ['item', 'items'],
 ];
 
 export function RulesPacksPanel() {
@@ -45,9 +47,10 @@ export function RulesPacksPanel() {
         <BookOpen size={14} /> Rules packs
       </div>
       <p className="text-sm text-dim">
-        The rules the character sheets and the builder use: spells, species, class and subclass features, backgrounds and feats. Import a pack made from your own books, or your homebrew, as a zip of
-        Markdown files. Packs stay in this library: they reach your sheets and your table server, never the published handbook, a player export or a campaign export. Where packs overlap, the newest
-        wins, and any pack wins over the SRD.
+        The rules the character sheets and the builder use: spells, species, class and subclass features, backgrounds and feats. Packs from your books also bring creatures (in Your Books, the
+        encounter tracker and NPC cards; only you see them) and items (their rules show in treasure and on sheets). Import a pack made from your own books, or your homebrew, as a zip of Markdown
+        files. Packs stay in this library: they reach your sheets and your table server, never the published handbook, a player export or a campaign export. Where packs overlap, the newest wins, and
+        any pack wins over the SRD.
       </p>
       <ul className="divide-y divide-line/60">
         {(data ?? []).map((p) => (
@@ -136,7 +139,7 @@ export function RulesPacksPanel() {
               });
               const c = r.result.counts;
               setMsg(
-                `Imported from ${picked.size} book${picked.size === 1 ? '' : 's'}: ${c.spell ?? 0} spells, ${c.species ?? 0} species, ${c.class ?? 0} classes, ${c.subclass ?? 0} subclasses, ${c.background ?? 0} backgrounds, ${c.feat ?? 0} feats.` +
+                `Imported from ${picked.size} book${picked.size === 1 ? '' : 's'}: ${c.spell ?? 0} spells, ${c.species ?? 0} species, ${c.class ?? 0} classes, ${c.subclass ?? 0} subclasses, ${c.background ?? 0} backgrounds, ${c.feat ?? 0} feats, ${c.creature ?? 0} creatures, ${c.item ?? 0} items.` +
                   (r.result.legacySpecies.length ? ` From other books, because your peoples name them: ${r.result.legacySpecies.join(', ')}.` : '') +
                   (r.result.missingSpecies.length ? ` Not found: ${r.result.missingSpecies.join(', ')}.` : ''),
               );
@@ -235,7 +238,7 @@ function BookPicker({
     <div className="rounded border border-gold/40 p-3 space-y-2">
       <div className="text-sm font-medium">Choose the books to import</div>
       <p className="text-xs text-dim">
-        Only books with rules for character sheets are listed: your last choice first, then the rest, newest first. Where two chosen books have the same rule, the newer printing wins. Your choice is
+        Only books with rules, creatures or items are listed: your last choice first, then the rest, newest first. Where two chosen books have the same rule, the newer printing wins. Your choice is
         remembered for next time.
       </p>
       <div className="flex flex-wrap gap-2 items-center">

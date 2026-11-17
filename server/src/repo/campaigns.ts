@@ -460,6 +460,8 @@ export const encounters = makeCrud({
           isPC: z.boolean().default(false),
           hidden: z.boolean().default(false),
           entityId: z.string().max(40).nullable().default(null),
+          /** A creature from the GM's books ("book:xmm:goblin-warrior"), for its stat block. GM only. */
+          statblockId: z.string().max(120).nullable().default(null),
           /** What players call it, on their phones (a monster's real name stays with the GM). */
           playerName: z.string().max(200).default(''),
           notes: z.string().max(5000).default(''),

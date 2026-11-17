@@ -1,3 +1,4 @@
+import { ItemRulesList } from '../components/ItemRules';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import ReactMarkdown, { defaultUrlTransform } from 'react-markdown';
@@ -478,6 +479,7 @@ export function PlayerTreasure() {
               </li>
             ))}
           </ul>
+          <ItemRulesList names={list.filter((t) => t.kind !== 'coins' && !t.entity_id).map((t) => t.name)} title="What they do" />
         </section>
       ))}
     </div>

@@ -1,3 +1,4 @@
+import { ItemRulesList } from '../components/ItemRules';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Camera, Check, Copy, Dices, Minus, Plus, Printer, RotateCcw, Send, Trash2, Wand2 } from 'lucide-react';
@@ -835,6 +836,7 @@ function EquipmentStep({ b, set, world, rules }: { b: Build; set: (p: Partial<Bu
         <p className="text-gold">{kit.gp} GP</p>
         {kit.bgKitUnknown && <p className="text-xs text-dim">Plus your background&apos;s kit from your book (or take B for 50 GP).</p>}
       </div>
+      <ItemRulesList names={kit.items} title="What your kit does" />
     </section>
   );
 }
