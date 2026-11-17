@@ -1,11 +1,21 @@
 name: Desktop installers
 
 # Builds the Tauri desktop app on each OS (Tauri does not cross-compile).
-# Run manually from the Actions tab, or push a tag such as v0.2.0.
+# Push a tag such as v0.3.0 (or publish a release that creates one) and the installers are attached to that tag's
+# release. Run manually from the Actions tab to build any branch, or give a tag to build it and attach the installers
+# to its release.
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to build and attach installers to (for example v0.3.0). Leave empty to build only.'
+        required: false
+        default: ''
   push:
     tags: ['v*']
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -19,6 +29,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -42,3 +54,23 @@ jobs:
             src-tauri/target/release/bundle/**/*.msi
             src-tauri/target/release/bundle/**/*.exe
           if-no-files-found: error
+
+  # One job attaches every platform's installers to the release, after all builds pass.
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v') || inputs.tag != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: installers
+          merge-multiple: true
+      - name: List installers
+        run: find installers -type f -exec ls -lh {} +
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          files: installers/**/*
+          fail_on_unmatched_files: true
