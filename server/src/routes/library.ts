@@ -11,6 +11,7 @@ import { readZip, type SourceFile } from '../import/scan.js';
 import { buildPlan, commitPlan, listImportRuns, summarisePlan, type ImportPlan } from '../import/importer.js';
 import { backupPath, createBackup, listBackups, stageRestore } from '../backup/backup.js';
 import { DEFAULT_ADDITIONS_DIR, applyAdditions, loreFiles } from '../additions.js';
+import { importFivetools } from '../repo/fivetools.js';
 import { deletePack, importPack, listPacks, setPackEnabled } from '../repo/rulesPacks.js';
 import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, exportPlayerZip, importCampaign, importJson } from '../backup/exporter.js';
 import { badRequest, notFound } from '../lib/errors.js';
@@ -133,6 +134,15 @@ export function libraryRoutes(ctx: AppContext) {
     h((req) => {
       if (!req.file) throw badRequest('Choose a rules pack (.zip)');
       return importPack(ctx.db, req.file.buffer);
+    }),
+  );
+  // The GM's own copy of the 5etools data: rules from their books become one private pack.
+  r.post(
+    '/rules/5etools',
+    upload.single('data'),
+    h((req) => {
+      if (!req.file) throw badRequest('Choose your 5etools zip');
+      return importFivetools(ctx.db, req.file.buffer);
     }),
   );
   r.patch(

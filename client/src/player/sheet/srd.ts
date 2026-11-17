@@ -38,16 +38,4 @@ export function featFor(t: RulesView, name: string): Feature {
   return { name, source: f ? `${f.category || 'Feat'}${f.category ? ' feat' : ''}` : 'Feat', text: f?.text ?? '' };
 }
 
-/**
- * The species rules a people page names, exactly: "Use the sea elf rules" is Sea Elf (never the SRD's Elf), "Play a
- * Moonborn as an elf with…" is Elf, "use the air genasi rules from…" is Air Genasi. The first one named, if several.
- */
-export function rulesSpeciesName(atTable: string): string | null {
-  const m = /use the ([a-z][a-z' -]*?) rules/i.exec(atTable) ?? /\bas an? ([a-z][a-z-]*) (?:with|using)\b/i.exec(atTable);
-  if (!m) return null;
-  return m[1]
-    .trim()
-    .split(/([ -])/)
-    .map((w) => (w === ' ' || w === '-' ? w : w[0].toUpperCase() + w.slice(1)))
-    .join('');
-}
+export { rulesSpeciesName } from '../../../../shared/rulesView';

@@ -87,13 +87,14 @@ export function srdRulesView(text: unknown, spells: unknown): RulesView {
 export type RuleKind = 'spell' | 'species' | 'class' | 'subclass' | 'background' | 'feat';
 /** Add one pack entry to a view, replacing anything of the same name. */
 export function addRule(view: RulesView, kind: RuleKind, name: string, cls: string, data: Record<string, unknown>, source: string) {
-  const d = { ...data, source } as never;
+  // An entry can name its own book (a pack built from several books); otherwise it takes the pack's.
+  const d = { source, ...data } as never;
   if (kind === 'spell') view.spells = [...view.spells.filter((s) => s.name.toLowerCase() !== name.toLowerCase()), d];
   else if (kind === 'species') view.species[name] = d;
   else if (kind === 'feat') view.feats[name] = d;
   else if (kind === 'background') view.backgrounds[name] = d;
   else if (kind === 'class') view.classes[name] = { features: (data as { features: RuleFeature[] }).features, subclasses: view.classes[name]?.subclasses ?? {} };
-  else {
+  else if (kind === 'subclass') {
     view.classes[cls] ??= { features: [], subclasses: {} };
     view.classes[cls].subclasses[name] = d;
   }
@@ -105,4 +106,18 @@ export function byName<T>(rec: Record<string, T>, name: string | null | undefine
   const n = name.trim().toLowerCase();
   const k = Object.keys(rec).find((x) => x.toLowerCase() === n);
   return k ? rec[k] : undefined;
+}
+
+/**
+ * The species rules a people page names, exactly: "Use the sea elf rules" is Sea Elf (never the SRD's Elf), "Play a
+ * Moonborn as an elf with…" is Elf, "use the air genasi rules from…" is Air Genasi. The first one named, if several.
+ */
+export function rulesSpeciesName(atTable: string): string | null {
+  const m = /use the ([a-z][a-z' -]*?) rules/i.exec(atTable) ?? /\bas an? ([a-z][a-z-]*) (?:with|using)\b/i.exec(atTable);
+  if (!m) return null;
+  return m[1]
+    .trim()
+    .split(/([ -])/)
+    .map((w) => (w === ' ' || w === '-' ? w : w[0].toUpperCase() + w.slice(1)))
+    .join('');
 }

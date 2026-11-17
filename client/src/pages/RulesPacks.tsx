@@ -30,6 +30,7 @@ const KINDS: [string, string][] = [
 export function RulesPacksPanel() {
   const { data, setData } = useApi<Pack[]>('/api/rules/packs');
   const input = useRef<HTMLInputElement>(null);
+  const ft = useRef<HTMLInputElement>(null);
   const [msg, setMsg] = useState('');
   const [problems, setProblems] = useState<string[]>([]);
   const changed = (packs: Pack[]) => {
@@ -90,8 +91,38 @@ export function RulesPacksPanel() {
         <button className="btn" onClick={() => input.current?.click()}>
           <Upload size={14} /> Import a rules pack
         </button>
+        <button className="btn" onClick={() => ft.current?.click()} title="Your own copy of the 5etools data, as a zip">
+          <Upload size={14} /> Import your books from 5etools
+        </button>
         <span className="text-xs text-dim">The format is in docs/RULES_PACKS.md. Importing a pack with the same name replaces it.</span>
       </div>
+      <input
+        ref={ft}
+        type="file"
+        accept=".zip,application/zip"
+        className="sr-only"
+        aria-label="5etools zip"
+        tabIndex={-1}
+        onChange={async (e) => {
+          const f = e.target.files?.[0];
+          e.target.value = '';
+          if (!f) return;
+          setMsg('Reading your 5etools copy… (a large file takes a moment to upload)');
+          setProblems([]);
+          try {
+            const r = await api.upload<{ pack: Pack; result: { counts: Record<string, number>; legacySpecies: string[]; missingSpecies: string[] } }>('/api/rules/5etools', 'data', f);
+            const c = r.result.counts;
+            setMsg(
+              `Imported from your books: ${c.spell ?? 0} spells, ${c.species ?? 0} species, ${c.class ?? 0} classes, ${c.subclass ?? 0} subclasses, ${c.background ?? 0} backgrounds, ${c.feat ?? 0} feats.` +
+                (r.result.legacySpecies.length ? ` Older printings, because your peoples name them: ${r.result.legacySpecies.join(', ')}.` : '') +
+                (r.result.missingSpecies.length ? ` Not found: ${r.result.missingSpecies.join(', ')}.` : ''),
+            );
+            changed(await api.get<Pack[]>('/api/rules/packs'));
+          } catch (x) {
+            setMsg((x as Error).message);
+          }
+        }}
+      />
       <input
         ref={input}
         type="file"

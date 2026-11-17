@@ -13,6 +13,21 @@ Packs are for your own table. They are stored in your library's database, and so
 
 Keep pack files in a `rules-packs/` folder, or name them `…-rules-pack.zip`. The repository's `.gitignore` keeps both out of git.
 
+## Importing your books from 5etools
+
+If you have a copy of the 5etools data, **Settings → Rules packs → Import your books from 5etools** reads it directly: upload the zip of the 5etools repository (or of just its `data` folder). It makes one pack, **Your books (from 5etools)**, holding spells, species, classes and subclasses with their features, backgrounds and feats from these books:
+
+- Player's Handbook (2024)
+- Dungeon Master's Guide (2024)
+- Monster Manual (2025)
+- Eberron: Forge of the Artificer
+- Tasha's Cauldron of Everything
+- Xanathar's Guide to Everything
+- Mordenkainen Presents: Monsters of the Multiverse
+- Spelljammer: Astral Adventurer's Guide
+
+Where books overlap, the newest printing wins. A species from another book comes in only when a people page in your world names it (for example "Use the half-orc rules"), and is marked as an older printing. Every entry names its book and page. Importing again replaces the pack. The 5etools data itself is never stored, only the rules taken from it, and like every pack they never leave your library.
+
 ## How packs combine
 
 - Where an imported pack and the SRD both have something, the pack wins.
