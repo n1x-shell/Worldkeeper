@@ -70,6 +70,15 @@ Installers produced by `desktop:build`:
 | macOS | `.app`, `.dmg` |
 | Windows | `.msi`, `.exe` (NSIS) |
 
+### Release builds
+
+The **Desktop installers** workflow (`.github/workflows/desktop.yml`) builds on Linux, macOS and Windows, because Tauri doesn't cross-compile:
+
+- **Pushing a version tag** (such as `v0.3.0`), or publishing a release that creates one, builds all three. When every build passes, their installers are attached to that tag's release.
+- **Running it by hand** from the Actions tab builds any branch. Give it a release tag to build that tag and attach the installers to its release (for example, to add installers to a release made before this step existed).
+
+Each run also keeps the installers as downloads on its Actions page for 90 days.
+
 `desktop:prepare` writes:
 - `desktop/build/server/` — `index.mjs` (one bundled file) plus the native `better-sqlite3` module
 - `desktop/build/client/` — the built client
