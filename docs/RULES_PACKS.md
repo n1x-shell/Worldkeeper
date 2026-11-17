@@ -51,6 +51,22 @@ Any combination of books works, from one book to every book in the copy, adventu
 
 Items are found by the names people write: "Weapon, +1" finds "+1 Weapon", "Moon-Touched Sword (XGE)" drops the book code, "2 Daggers" finds the Dagger, and "Flame Tongue Longsword" finds Flame Tongue, with the Longsword's own rules.
 
+## Open content from Open5e
+
+**Settings → Rules packs → Add open content from Open5e** lists the openly licensed fifth-edition sources that [Open5e](https://open5e.com) publishes, each with its publisher and licence. Tick the ones you want and choose **Import**. Each source becomes its own pack, named after it, with its publisher and licence as the pack's source, so you can turn one off or remove it on its own. Importing a source again replaces its pack.
+
+What comes in: creatures (as stat blocks for the GM), magic items and gear, spells, feats and backgrounds. Species and classes from these sources aren't imported yet.
+
+The licences, as Open5e lists them (November 2026):
+
+| Licence | Sources |
+| --- | --- |
+| CC BY 4.0 | Black Flag SRD (Kobold Press); Spells That Don't Suck |
+| CC BY 4.0 or OGL 1.0a | Level Up A5E Adventurer's Guide, Dungeon Delver's Guide and Gate Pass Gazette (EN Publishing); SRD 5.1 |
+| OGL 1.0a | Level Up A5E Monstrous Menagerie; Kobold Press's Tome of Beasts 1–3, Creature Codex, Deep Magic, Vault of Magic and Tome of Heroes; Tal'Dorei Campaign Setting |
+
+The SRD 5.2 is already built in, so it's shown but can't be ticked. Many of these sources were written for the 2014 rules: check them before your players use them. Like every pack, what you import stays in your library.
+
 ## How packs combine
 
 - Where an imported pack and the SRD both have something, the pack wins.

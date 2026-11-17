@@ -37,6 +37,7 @@ export function RulesPacksPanel() {
   const [problems, setProblems] = useState<string[]>([]);
   const [scan, setScan] = useState<{ token: string; books: ScannedBook[]; chosen: string[] } | null>(null);
   const [picked, setPicked] = useState<Set<string>>(new Set());
+  const [open5e, setOpen5e] = useState(false);
   const changed = (packs: Pack[]) => {
     setData(packs);
     reloadRules();
@@ -99,6 +100,9 @@ export function RulesPacksPanel() {
         <button className="btn" onClick={() => ft.current?.click()} title="Your own copy of the 5etools data, as a zip">
           <Upload size={14} /> Import your books from 5etools
         </button>
+        <button className="btn" onClick={() => setOpen5e(true)} title="Openly licensed fifth-edition content: Level Up A5E, Kobold Press and more">
+          <Upload size={14} /> Add open content from Open5e
+        </button>
         <span className="text-xs text-dim">The format is in docs/RULES_PACKS.md. Importing a pack with the same name replaces it.</span>
       </div>
       <input
@@ -124,6 +128,16 @@ export function RulesPacksPanel() {
           }
         }}
       />
+      {open5e && (
+        <Open5ePicker
+          onCancel={() => setOpen5e(false)}
+          onDone={(msg, packs) => {
+            setOpen5e(false);
+            setMsg(msg);
+            changed(packs);
+          }}
+        />
+      )}
       {scan && (
         <BookPicker
           scan={scan}
@@ -269,6 +283,89 @@ function BookPicker({
       <div className="flex gap-2">
         <button className="btn-primary" disabled={!picked.size} onClick={onImport}>
           Import {picked.size} book{picked.size === 1 ? '' : 's'}
+        </button>
+        <button className="btn-ghost" onClick={onCancel}>
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
+
+interface Open5eDoc {
+  key: string;
+  name: string;
+  publisher: string;
+  licences: string[];
+  system: string;
+  builtIn: boolean;
+}
+
+/** Choose openly licensed sources from Open5e; each comes in as its own pack, named with its publisher and licence. */
+function Open5ePicker({ onCancel, onDone }: { onCancel: () => void; onDone: (msg: string, packs: Pack[]) => void }) {
+  const { data, error } = useApi<Open5eDoc[]>('/api/rules/open5e/documents');
+  const [picked, setPicked] = useState<Set<string>>(new Set());
+  const [busy, setBusy] = useState('');
+  const toggle = (k: string) => {
+    const n = new Set(picked);
+    if (n.has(k)) n.delete(k);
+    else n.add(k);
+    setPicked(n);
+  };
+  const go = async () => {
+    setBusy(`Importing ${picked.size} source${picked.size === 1 ? '' : 's'} from Open5e… (a large one takes half a minute)`);
+    try {
+      const r = await api.post<{ packs: Pack[]; results: { name: string; counts: Record<string, number> }[] }>('/api/rules/open5e/import', { documents: [...picked] });
+      onDone(
+        r.results
+          .map(
+            (x) =>
+              `${x.name}: ${KINDS.filter(([k]) => x.counts[k])
+                .map(([k, label]) => `${x.counts[k]} ${label}`)
+                .join(', ')}`,
+          )
+          .join('. ') + '.',
+        r.packs,
+      );
+    } catch (x) {
+      setBusy((x as Error).message);
+    }
+  };
+  return (
+    <div className="rounded border border-gold/40 p-3 space-y-2">
+      <div className="text-sm font-medium">Open content from Open5e</div>
+      <p className="text-xs text-dim">
+        Openly licensed fifth-edition material, from api.open5e.com. Each source comes in as its own pack, named with its publisher and licence, and stays in this library like any other. Some were
+        written for the 2014 rules: check them before your players use them. Creatures and items come in with their rules; species and classes from these sources aren&apos;t imported yet.
+      </p>
+      {error && <p className="text-danger text-sm">Couldn&apos;t reach Open5e: {error.message}</p>}
+      {!data && !error && <p className="text-sm text-dim">Asking Open5e what it has…</p>}
+      <ul className="max-h-80 overflow-auto divide-y divide-line/50">
+        {(data ?? []).map((d) => (
+          <li key={d.key}>
+            <label className={`flex items-start gap-2 py-1.5 text-sm ${d.builtIn ? 'opacity-60' : ''}`}>
+              <input type="checkbox" className="mt-1" disabled={d.builtIn} checked={picked.has(d.key)} onChange={() => toggle(d.key)} aria-label={d.name} />
+              <span>
+                {d.name}
+                {d.licences.map((l) => (
+                  <span key={l} className="chip border-line text-dim ml-2">
+                    {l}
+                  </span>
+                ))}
+                <span className="block text-xs text-dim">{[d.publisher, d.system, d.builtIn && 'already built in'].filter(Boolean).join(' · ')}</span>
+              </span>
+            </label>
+          </li>
+        ))}
+      </ul>
+      {busy && (
+        <p className="text-sm" aria-live="polite">
+          {busy}
+        </p>
+      )}
+      <div className="flex gap-2">
+        <button className="btn-primary" disabled={!picked.size || !!busy} onClick={go}>
+          Import {picked.size} source{picked.size === 1 ? '' : 's'}
         </button>
         <button className="btn-ghost" onClick={onCancel}>
           Cancel
