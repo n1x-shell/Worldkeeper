@@ -7,11 +7,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type Database from 'better-sqlite3';
 import { getMechanics } from './mechanics.js';
+import { assetsPath } from '../assetsDir.js';
 
 type DB = Database.Database;
 type J = Record<string, any>;
 
-const ASSETS = path.resolve(import.meta.dirname, '../../../assets');
+const ASSETS = assetsPath();
 const read = (p: string): J => JSON.parse(fs.readFileSync(path.join(ASSETS, p), 'utf8')) as J;
 export const SETTING_PACK = { id: 'worldkeeper', name: 'The Worldkeeper setting', source: 'The Worldkeeper contributors, CC BY 4.0 (built in)' };
 const CREDIT = 'The Worldkeeper setting pack (CC BY 4.0)';
