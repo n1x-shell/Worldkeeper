@@ -1,0 +1,140 @@
+/**
+ * What the published Player Handbook reveals, as rules shared by its build (scripts/build-player-tagged-handbook.ts)
+ * and the app's "Match the published handbook" action:
+ *
+ *  - every record the archive tags for players (Tags: vis/player), with only its safe sections: never GM-only
+ *    sections, editorial notes about the source, DM-facing advice, bookkeeping, or anything secret elsewhere in the lore;
+ *  - the DM-written player text in assets/player-text/*.md: each "## Name" section is that record's player text.
+ *
+ * The build starts from a fresh library ("fresh"). In the GM's own library ("match") it only ever adds: a revealed
+ * section stays revealed, and existing player text is kept.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import type Database from 'better-sqlite3';
+import { getEntity, updateEntity } from '../repo/entities.js';
+import { splitSections } from '../import/parseMarkdown.js';
+import { isSecretHeading } from './projection.js';
+import { ENTITY_TYPE_LABELS, type EntityType } from '../../../shared/domain.js';
+import { assetsPath } from '../assetsDir.js';
+
+type DB = Database.Database;
+
+// Same rule as the app's display filter for editorial notes about the source.
+const EDITORIAL =
+  /^(sources?|references|unspecified fields|tome implementation|review notes|limits( of the source)?|record boundaries|source boundary|use and verification|missing facts|limitations|open questions|unknowns|amsel entry (rule|notes)|use in amsel|status)(\s*\[[^\]]*\])?$/i;
+// DM-facing sections (table advice, campaign bookkeeping, notes about the source).
+const DM_FACING =
+  /^(use in play|connections and use|verification boundary|cross-entry role link.*|mechanics note|provenance note|related documents|related|undefined|notes|campaign use|adventure material|attitude toward the party.*|established limits|other possibilities|boundaries)$/i;
+// Bookkeeping for the DM and editors: placeholders and instructions about the source, not lore.
+const BOOKKEEPING = (text: string) =>
+  text.trim() === 'UNDEFINED' || /do not (assign|place|create|turn|invent)|without (approval|an owner decision)|\bAmsel\b|belongs? in Tome|owner decision/i.test(text);
+// Each sealed vault's purpose is secret (vault records are SECRET): sections that name one stay out.
+const VAULTS = /\b(Seed Vault|Mirewell|Arborhold|Cradlehorn|Cinderlock|Anvilreach|Rimeholt|Deepcall|Saltgate|Greyhall|Watchbarrow|Glassmere|Hollowbell)\b/;
+/** Something secret elsewhere in the lore. The myths entry is exempt for the Hidden Ones (a myth players know). */
+export const isSpoiler = (id: string, text: string) =>
+  VAULTS.test(text) ||
+  BOOKKEEPING(text.split('\n').slice(1).join('\n')) ||
+  /Forgotten One|thirteenth (shard|crystal)|Root Core|Seventh Ward|\[SECRET|GM only/i.test(text) ||
+  (id !== 'COS-910' && /Hidden Ones/.test(text));
+
+/** The sections of a record the handbook shows. */
+export function safeSections(id: string, body: string): string[] {
+  return splitSections(body)
+    .filter(
+      (s) => s.heading && s.content.trim() && !isSecretHeading(s.heading) && !EDITORIAL.test(s.heading.trim()) && !DM_FACING.test(s.heading.trim()) && !isSpoiler(id, s.heading + '\n' + s.content),
+    )
+    .map((s) => s.heading);
+}
+
+export interface HandbookRevealChange {
+  id: string;
+  name: string;
+  /** Newly revealed record (it wasn't revealed before). */
+  newRecord: boolean;
+  /** Sections revealed by this change. */
+  sections: string[];
+  /** Player text set by this change. */
+  playerText: boolean;
+}
+
+/**
+ * Apply (or, with apply false, preview) the handbook's reveals. "fresh" reproduces the published build exactly;
+ * "match" only adds to what the library already reveals.
+ */
+export function handbookReveals(db: DB, opts: { mode: 'fresh' | 'match'; apply: boolean; textDir?: string; log?: (msg: string) => void }) {
+  const changes = new Map<string, HandbookRevealChange>();
+  const note = (id: string, name: string, f: (c: HandbookRevealChange) => void) => {
+    const c = changes.get(id) ?? { id, name, newRecord: false, sections: [], playerText: false };
+    f(c);
+    changes.set(id, c);
+  };
+  const ids = (
+    db.prepare(`SELECT id FROM entities WHERE tags LIKE '%"vis/player"%' AND type NOT IN ('index','register','redirect') AND canon_flags NOT LIKE '%SECRET%' AND archived = 0`).all() as {
+      id: string;
+    }[]
+  ).map((r) => r.id);
+  for (const id of ids) {
+    const e = getEntity(db, id);
+    const sections = safeSections(id, e.body);
+    if (!sections.length) continue; // nothing safe to show: leave the record unrevealed
+    const had = opts.mode === 'match' && e.revealed ? (e.revealed_sections ?? []) : [];
+    const added = sections.filter((s) => !had.includes(s));
+    if (opts.mode === 'match' && e.revealed && !added.length) continue;
+    note(id, e.name, (c) => {
+      c.newRecord = !e.revealed;
+      c.sections = added;
+    });
+    if (opts.apply) updateEntity(db, id, { revealed: true, revealed_sections: [...had, ...added], reason: 'Matches the published Player Handbook (player-tagged in the archive)' });
+  }
+
+  // DM-written player text. In a fresh build it is the record's only revealed text; when matching, it's set only
+  // where the record has none, and none of its revealed sections are taken away.
+  const textDir = opts.textDir ?? assetsPath('player-text');
+  const byName = db.prepare(`SELECT id, type FROM entities WHERE lower(name) = lower(?) AND type NOT IN ('index','register','redirect') AND archived = 0`);
+  // "## Name" or, when several records share the name, "## Name (Type)", e.g. "## Kaelholm (Settlement)".
+  const findRecords = (heading: string) => {
+    const exact = byName.all(heading) as { id: string; type: string }[];
+    const m = /^(.*?)\s*\(([^)]+)\)$/.exec(heading);
+    if (exact.length || !m) return exact;
+    const kind = m[2].trim().toLowerCase();
+    return (byName.all(m[1]) as { id: string; type: string }[]).filter((r) => r.type === kind || (ENTITY_TYPE_LABELS[r.type as EntityType] ?? '').toLowerCase() === kind);
+  };
+  for (const f of fs.existsSync(textDir)
+    ? fs
+        .readdirSync(textDir)
+        .filter((n) => n.endsWith('.md'))
+        .sort()
+    : []) {
+    const md = fs.readFileSync(path.join(textDir, f), 'utf8');
+    for (const part of md.split(/^## /m).slice(1)) {
+      const nl = part.indexOf('\n');
+      const name = part.slice(0, nl).trim();
+      const text = part.slice(nl + 1).trim();
+      const rows = findRecords(name);
+      if (rows.length !== 1) {
+        opts.log?.(`player text: "${name}" ${rows.length ? 'matches several records' : 'is not a record'}, skipped`);
+        continue;
+      }
+      const id = rows[0].id;
+      if (isSpoiler(id, text)) opts.log?.(`player text: check "${name}", it mentions something secret elsewhere in the lore`);
+      const e = getEntity(db, id);
+      if (opts.mode === 'match' && e.revealed && (e.player_summary ?? '').trim()) continue;
+      note(id, e.name, (c) => {
+        c.newRecord = c.newRecord || !e.revealed;
+        c.playerText = true;
+      });
+      if (!opts.apply) continue;
+      if (opts.mode === 'fresh') updateEntity(db, id, { revealed: true, player_summary: text, revealed_sections: [], reason: `Published to the Player Handbook from ${f}` });
+      else updateEntity(db, id, { revealed: true, player_summary: text, reason: `Matches the published Player Handbook (player text from ${f})` });
+      opts.log?.(`player text: ${name} -> ${id}`);
+    }
+  }
+  const list = [...changes.values()].sort((a, b) => a.name.localeCompare(b.name));
+  return {
+    records: list,
+    newRecords: list.filter((c) => c.newRecord).length,
+    sections: list.reduce((n, c) => n + c.sections.length, 0),
+    playerText: list.filter((c) => c.playerText).length,
+  };
+}

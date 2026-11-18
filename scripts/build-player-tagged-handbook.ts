@@ -24,12 +24,9 @@ import { resolvePaths } from '../server/src/config.js';
 import { AppContext } from '../server/src/context.js';
 import { readSource } from '../server/src/import/scan.js';
 import { buildPlan, commitPlan } from '../server/src/import/importer.js';
-import { getEntity, updateEntity } from '../server/src/repo/entities.js';
-import { splitSections } from '../server/src/import/parseMarkdown.js';
-import { isSecretHeading } from '../server/src/player/projection.js';
+import { handbookReveals } from '../server/src/player/handbookReveals.js';
 import { buildPlayerSite } from '../server/src/publish/site.js';
 import { applyMaps } from '../server/src/mapAdditions.js';
-import { ENTITY_TYPE_LABELS, type EntityType } from '../shared/domain.js';
 import { applyLinks, loreFiles } from '../server/src/additions.js';
 
 const [dataDir, archive, outDir] = process.argv.slice(2);
@@ -40,56 +37,10 @@ const files = [...readSource(archive), ...loreFiles()];
 commitPlan(ctx.db, files, buildPlan(ctx.db, files, path.basename(archive)));
 const linked = applyLinks(ctx.db);
 console.log(`links: ${linked.added} added${linked.skipped.length ? `, ${linked.skipped.length} skipped` : ''}`);
-// Same rule as the app's display filter for editorial notes about the source.
-const EDITORIAL = /^(sources?|references|unspecified fields|tome implementation|review notes|limits( of the source)?|record boundaries|source boundary|use and verification|missing facts|limitations|open questions|unknowns|amsel entry (rule|notes)|use in amsel|status)(\s*\[[^\]]*\])?$/i;
-// DM-facing sections (table advice, campaign bookkeeping, notes about the source).
-const DM_FACING = /^(use in play|connections and use|verification boundary|cross-entry role link.*|mechanics note|provenance note|related documents|related|undefined|notes|campaign use|adventure material|attitude toward the party.*|established limits|other possibilities|boundaries)$/i;
-// Spoilers: things that are secret elsewhere in the lore. The myths entry is exempt for the Hidden Ones (player-known myth).
-// Bookkeeping for the DM / editors: placeholders and instructions about the source, not lore.
-const BOOKKEEPING = (text: string) =>
-  text.trim() === 'UNDEFINED' || /do not (assign|place|create|turn|invent)|without (approval|an owner decision)|\bAmsel\b|belongs? in Tome|owner decision/i.test(text);
-// Each sealed vault's purpose is secret (vault records are SECRET); keep sections that name one out.
-const VAULTS = /\b(Seed Vault|Mirewell|Arborhold|Cradlehorn|Cinderlock|Anvilreach|Rimeholt|Deepcall|Saltgate|Greyhall|Watchbarrow|Glassmere|Hollowbell)\b/;
-const SPOILER = (id: string, text: string) => VAULTS.test(text) || BOOKKEEPING(text.split('\n').slice(1).join('\n')) || /Forgotten One|thirteenth (shard|crystal)|Root Core|Seventh Ward|\[SECRET|GM only/i.test(text) || (id !== 'COS-910' && /Hidden Ones/.test(text));
-const ids = (ctx.db.prepare(`SELECT id FROM entities WHERE tags LIKE '%"vis/player"%' AND type NOT IN ('index','register','redirect') AND canon_flags NOT LIKE '%SECRET%'`).all() as { id: string }[]).map((r) => r.id);
-const headingsUsed = new Map<string, number>();
-for (const id of ids) {
-  const e = getEntity(ctx.db, id);
-  const sections = splitSections(e.body).filter((s) => s.heading && s.content.trim() && !isSecretHeading(s.heading) && !EDITORIAL.test(s.heading.trim()) && !DM_FACING.test(s.heading.trim()) && !SPOILER(id, s.heading + '\n' + s.content));
-  for (const s of sections) headingsUsed.set(s.heading, (headingsUsed.get(s.heading) ?? 0) + 1);
-  if (!sections.length) continue; // nothing safe to show: leave the record unrevealed
-  updateEntity(ctx.db, id, { revealed: true, revealed_sections: sections.map((s) => s.heading), reason: 'Published to the Player Handbook (player-tagged in the archive)' });
-}
-// DM-written player text (assets/player-text/*.md). Each "## Name" section becomes the player summary of the record
-// with that exact name, and only that text is shown: none of the record's own sections are revealed.
-const textDir = path.resolve(import.meta.dirname, '../assets/player-text');
-const byName = ctx.db.prepare(`SELECT id, type FROM entities WHERE lower(name) = lower(?) AND type NOT IN ('index','register','redirect') AND archived = 0`);
-// "## Name" or, when several records share the name, "## Name (Type)", e.g. "## Kaelholm (Settlement)".
-const findRecords = (heading: string) => {
-  const exact = byName.all(heading) as { id: string; type: string }[];
-  const m = /^(.*?)\s*\(([^)]+)\)$/.exec(heading);
-  if (exact.length || !m) return exact;
-  const kind = m[2].trim().toLowerCase();
-  return (byName.all(m[1]) as { id: string; type: string }[]).filter(
-    (r) => r.type === kind || (ENTITY_TYPE_LABELS[r.type as EntityType] ?? '').toLowerCase() === kind,
-  );
-};
-for (const f of fs.existsSync(textDir) ? fs.readdirSync(textDir).filter((n) => n.endsWith('.md')).sort() : []) {
-  const md = fs.readFileSync(path.join(textDir, f), 'utf8');
-  for (const part of md.split(/^## /m).slice(1)) {
-    const nl = part.indexOf('\n');
-    const name = part.slice(0, nl).trim();
-    const text = part.slice(nl + 1).trim();
-    const rows = findRecords(name);
-    if (rows.length !== 1) {
-      console.log(`player text: "${name}" ${rows.length ? 'matches several records' : 'is not a record'}, skipped`);
-      continue;
-    }
-    if (SPOILER(rows[0].id, text)) console.warn(`player text: check "${name}", it mentions something secret elsewhere in the lore`);
-    updateEntity(ctx.db, rows[0].id, { revealed: true, player_summary: text, revealed_sections: [], reason: `Published to the Player Handbook from ${f}` });
-    console.log(`player text: ${name} -> ${rows[0].id}`);
-  }
-}
+// The handbook's reveals (player-tagged records' safe sections, and the DM-written player text), by the same rules
+// the app's "Match the published handbook" action uses (server/src/player/handbookReveals.ts).
+const reveals = handbookReveals(ctx.db, { mode: 'fresh', apply: true, log: (m) => console.log(m) });
+console.log(`revealed: ${reveals.newRecords} records, ${reveals.sections} sections, ${reveals.playerText} with player text`);
 // Maps: every map in assets/maps, with its pins, routes and region outlines (only revealed places).
 for (const r of applyMaps(ctx.db, ctx.paths.uploadsDir, path.resolve(import.meta.dirname, '../assets/maps'), { onlyRevealed: true }))
   console.log(`${r.name}: ${r.pins} pins, ${r.routes} routes, ${r.regions} regions`);
@@ -102,4 +53,3 @@ for (const f of site) {
   fs.writeFileSync(p, f.data);
 }
 console.log(JSON.stringify(summary));
-console.log('sections revealed by heading:', JSON.stringify([...headingsUsed.entries()].sort((a, b) => b[1] - a[1])));

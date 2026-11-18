@@ -18,6 +18,8 @@ import { badRequest, notFound } from '../lib/errors.js';
 import { schemaVersion } from '../db/migrations.js';
 import { getMechanics, setMechanics } from '../repo/mechanics.js';
 import { importOpen5e, open5eDocuments } from '../repo/open5e.js';
+import { isDesktop, openInBrowser } from '../lib/desktop.js';
+import { handbookReveals } from '../player/handbookReveals.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 300 * 1024 * 1024, files: 1 } });
 
@@ -293,7 +295,28 @@ export function libraryRoutes(ctx: AppContext) {
       /** Technical details (IDs, files, sources, how-it-works notes) are shown only in debug mode. */
       debug: debugEnabled(ctx),
       debugForced: process.env.WORLDKEEPER_DEBUG === '1' || process.env.WORLDKEEPER_DEBUG === 'true',
+      /** Running inside the desktop app: links meant for a new tab open in the system browser (see lib/desktop.ts). */
+      desktop: isDesktop(),
     })),
+  );
+  // Match the published Player Handbook: reveal what it shows (preview with GET, apply with POST). Only ever adds.
+  r.get(
+    '/handbook-reveals',
+    h(() => handbookReveals(ctx.db, { mode: 'match', apply: false })),
+  );
+  r.post(
+    '/handbook-reveals',
+    h(() => {
+      createBackup(ctx.db, ctx.paths, 'pre-handbook-match');
+      return handbookReveals(ctx.db, { mode: 'match', apply: true });
+    }),
+  );
+  r.post(
+    '/desktop/open',
+    h((req) => {
+      if (!isDesktop()) throw badRequest('Only the desktop app opens links this way');
+      return openInBrowser(String(req.body?.url ?? ''));
+    }),
   );
   r.get(
     '/history',

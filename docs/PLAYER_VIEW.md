@@ -54,6 +54,10 @@ References to unrevealed records are designed to be removed. Other player-visibl
 
 Do not copy secret text into an unrestricted player-summary field. A GM-only heading prevents that section from being selected, but it cannot judge the intent of newly written prose.
 
+## Matching the published handbook
+
+The handbook published on GitHub Pages shows the records the archive tags for players (with only their safe sections) and the setting's player text. A library you import yourself starts with nothing revealed. **Player View & Publishing → Match the published handbook** reveals the same in your library, so the table server and the in-app player view show players what the handbook does. It shows what will change first, makes a backup, and only adds: nothing you've revealed is hidden, and player text you've written is kept. The handbook's build uses the same rules (`server/src/player/handbookReveals.ts`).
+
 ## Static handbook on GitHub Pages
 
 The static handbook is a published **snapshot**, not a continuously synchronized live application.
