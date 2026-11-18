@@ -48,6 +48,20 @@ describe('matching the published handbook', () => {
     expect(handbookReveals(ctx.db, { mode: 'match', apply: false, textDir }).records).toEqual([]);
   });
 
+  it('shows players the map pins of the places it reveals, and leaves other pins alone', () => {
+    const { ctx, textDir } = library();
+    const map = ctx.db.prepare(`INSERT INTO maps (name, kind, image_file, width, height, player_visible) VALUES ('World', 'image', 'w.png', 100, 100, 1)`).run().lastInsertRowid;
+    const pin = ctx.db.prepare(`INSERT INTO map_markers (map_id, entity_id, label, x, y, hidden) VALUES (?, ?, ?, 1, 1, 1)`);
+    pin.run(map, 'SET-901', 'Tollbridge'); // a place the handbook reveals: shown
+    pin.run(map, 'SET-902', 'Gloam'); // revealed through its player text: shown
+    pin.run(map, null, 'A GM note'); // no record: left hidden
+    expect(handbookReveals(ctx.db, { mode: 'match', apply: false, textDir }).pins).toBe(2);
+    handbookReveals(ctx.db, { mode: 'match', apply: true, textDir });
+    const hidden = ctx.db.prepare('SELECT label FROM map_markers WHERE hidden = 1').all() as { label: string }[];
+    expect(hidden.map((h) => h.label)).toEqual(['A GM note']);
+    expect(handbookReveals(ctx.db, { mode: 'match', apply: false, textDir }).pins).toBe(0);
+  });
+
   it('reveals in a fresh library what the published build does', () => {
     const a = library();
     const b = library();
@@ -62,7 +76,7 @@ describe('matching the published handbook', () => {
   it('has a preview and an apply route', async () => {
     const ctx = tempContext();
     const gm = createApp(ctx);
-    expect((await request(gm).get('/api/handbook-reveals')).body).toEqual({ records: [], newRecords: 0, sections: 0, playerText: 0 });
+    expect((await request(gm).get('/api/handbook-reveals')).body).toEqual({ records: [], newRecords: 0, sections: 0, playerText: 0, pins: 0 });
     expect((await request(gm).post('/api/handbook-reveals')).status).toBe(200);
   });
 });

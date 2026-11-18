@@ -64,6 +64,8 @@ export interface HandbookRevealChange {
  */
 export function handbookReveals(db: DB, opts: { mode: 'fresh' | 'match'; apply: boolean; textDir?: string; log?: (msg: string) => void }) {
   const changes = new Map<string, HandbookRevealChange>();
+  // Every record the handbook shows, changed or not (for its map pins).
+  const shown = new Set<string>();
   const note = (id: string, name: string, f: (c: HandbookRevealChange) => void) => {
     const c = changes.get(id) ?? { id, name, newRecord: false, sections: [], playerText: false };
     f(c);
@@ -78,6 +80,7 @@ export function handbookReveals(db: DB, opts: { mode: 'fresh' | 'match'; apply: 
     const e = getEntity(db, id);
     const sections = safeSections(id, e.body);
     if (!sections.length) continue; // nothing safe to show: leave the record unrevealed
+    shown.add(id);
     const had = opts.mode === 'match' && e.revealed ? (e.revealed_sections ?? []) : [];
     const added = sections.filter((s) => !had.includes(s));
     if (opts.mode === 'match' && e.revealed && !added.length) continue;
@@ -117,6 +120,7 @@ export function handbookReveals(db: DB, opts: { mode: 'fresh' | 'match'; apply: 
         continue;
       }
       const id = rows[0].id;
+      shown.add(id);
       if (isSpoiler(id, text)) opts.log?.(`player text: check "${name}", it mentions something secret elsewhere in the lore`);
       const e = getEntity(db, id);
       if (opts.mode === 'match' && e.revealed && (e.player_summary ?? '').trim()) continue;
@@ -130,11 +134,22 @@ export function handbookReveals(db: DB, opts: { mode: 'fresh' | 'match'; apply: 
       opts.log?.(`player text: ${name} -> ${id}`);
     }
   }
+  // Map pins: the handbook shows the pin of every place it reveals. A pin added while its place was unrevealed was
+  // hidden from players; once the place is revealed here, its pin is shown too. Pins of other places are left alone.
+  const hiddenPins = (db.prepare('SELECT id, entity_id FROM map_markers WHERE hidden = 1 AND entity_id IS NOT NULL').all() as { id: number; entity_id: string }[]).filter((m) =>
+    shown.has(m.entity_id),
+  );
+  if (opts.apply && opts.mode === 'match') {
+    const show = db.prepare('UPDATE map_markers SET hidden = 0 WHERE id = ?');
+    db.transaction(() => hiddenPins.forEach((m) => show.run(m.id)))();
+  }
   const list = [...changes.values()].sort((a, b) => a.name.localeCompare(b.name));
   return {
     records: list,
     newRecords: list.filter((c) => c.newRecord).length,
     sections: list.reduce((n, c) => n + c.sections.length, 0),
     playerText: list.filter((c) => c.playerText).length,
+    /** Map pins of places the handbook shows that are hidden from players (shown when matching). */
+    pins: opts.mode === 'match' ? hiddenPins.length : 0,
   };
 }
