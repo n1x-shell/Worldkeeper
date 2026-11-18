@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-18 · v0.3.4_
+_Last updated: 2026-11-18 · v0.3.5_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,10 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.5
+
+- **Campaign import keeps sessions' adventures in play:** importing a campaign export copied each session's "Adventures in play" unchanged, so they still named the original campaign's adventures (unrelated adventures in another library). They now point at the imported copies; one that wasn't exported is dropped.
 
 ## v0.3.4
 

@@ -11,6 +11,7 @@ import { AppContext } from '../server/src/context.js';
 import { createApp } from '../server/src/app.js';
 import { playerEntities, playerEntity, playerSnapshot } from '../server/src/player/projection.js';
 import {
+  adventures,
   campaigns,
   campaignState,
   decideProposal,
@@ -234,5 +235,18 @@ describe('backup, restore and export round-trips', () => {
     const newId = importCampaign(ctx.db, JSON.parse(JSON.stringify(exportCampaign(ctx.db, c.id))));
     expect(newId).not.toBe(c.id);
     expect(sessions.list(ctx.db, { campaign_id: newId }).length).toBe(1);
+  });
+
+  it("points an imported session's adventures in play at the imported copies", () => {
+    const ctx = seeded();
+    const c = campaigns.create(ctx.db, { title: 'Exported' }) as { id: number };
+    const a = adventures.create(ctx.db, { title: 'Opening', campaign_id: c.id }) as { id: number };
+    adventures.create(ctx.db, { title: 'Elsewhere' });
+    sessions.create(ctx.db, { campaign_id: c.id, number: 1, title: 'One', prep: { adventureIds: [a.id, 9999] } });
+    const newId = importCampaign(ctx.db, JSON.parse(JSON.stringify(exportCampaign(ctx.db, c.id))));
+    const copy = (adventures.list(ctx.db, { campaign_id: newId }) as { id: number }[])[0];
+    const s = (sessions.list(ctx.db, { campaign_id: newId }) as { prep: { adventureIds: number[] } }[])[0];
+    expect(copy.id).not.toBe(a.id);
+    expect(s.prep.adventureIds).toEqual([copy.id]);
   });
 });

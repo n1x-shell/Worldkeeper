@@ -224,7 +224,15 @@ export function importCampaign(db: DB, data: ReturnType<typeof exportCampaign>, 
     for (const r of data.scenes as Record<string, unknown>[]) sceneMap.set(r.id as number, insert('scenes', r, { adventure_id: advMap.get(r.adventure_id as number) }));
     for (const r of data.scene_links as Record<string, unknown>[])
       insert('scene_links', r, { adventure_id: advMap.get(r.adventure_id as number), from_scene: sceneMap.get(r.from_scene as number), to_scene: sceneMap.get(r.to_scene as number) });
-    for (const r of data.sessions as Record<string, unknown>[]) sesMap.set(r.id as number, insert('sessions', r, { campaign_id: cid, current_scene_id: null }));
+    // A session's "adventures in play" point at the copies; one that wasn't exported is dropped.
+    const prepFor = (raw: unknown) => {
+      const prep = (typeof raw === 'string' ? parseJson<unknown>(raw, null) : raw) as { adventureIds?: unknown } | null;
+      if (!prep || typeof prep !== 'object') return raw;
+      const ids = Array.isArray(prep.adventureIds) ? prep.adventureIds : [];
+      return JSON.stringify({ ...prep, adventureIds: ids.map((a) => advMap.get(a as number)).filter((a) => a != null) });
+    };
+    for (const r of data.sessions as Record<string, unknown>[])
+      sesMap.set(r.id as number, insert('sessions', r, { campaign_id: cid, current_scene_id: null, prep: prepFor(r.prep) }));
     for (const r of data.session_log as Record<string, unknown>[]) insert('session_log', r, { session_id: sesMap.get(r.session_id as number) });
     for (const r of data.campaign_state as Record<string, unknown>[])
       insert('campaign_state', r, { campaign_id: cid, session_id: r.session_id ? (sesMap.get(r.session_id as number) ?? null) : null });
