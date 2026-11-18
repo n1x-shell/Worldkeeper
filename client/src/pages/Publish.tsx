@@ -100,8 +100,8 @@ export function PublishPage() {
         {p ? (
           <>
             <p className="text-sm">
-              {plural(p.entries, 'entry', 'entries')}, {plural(p.maps, 'map')}, {plural(p.quests, 'quest')} and {plural(p.recaps, 'session recap')}: only what you have revealed or published.
-              Secrets and GM-only sections are never included.
+              {plural(p.entries, 'entry', 'entries')}, {plural(p.maps, 'map')}, {plural(p.quests, 'quest')} and {plural(p.recaps, 'session recap')}: only what you have revealed or published. Secrets
+              and GM-only sections are never included.
             </p>
             <div className="flex flex-wrap gap-2">
               <a className="btn" href="/player" target="_blank" rel="noreferrer">
@@ -204,8 +204,8 @@ export function PublishPage() {
           body={
             <div className="space-y-2">
               <p>
-                This puts {plural(p.entries, 'entry', 'entries')}, {plural(p.maps, 'map')}, {plural(p.quests, 'quest')} and {plural(p.recaps, 'session recap')} on a public website at
-                GitHub ({data.config?.repo}).
+                This puts {plural(p.entries, 'entry', 'entries')}, {plural(p.maps, 'map')}, {plural(p.quests, 'quest')} and {plural(p.recaps, 'session recap')} on a public website at GitHub (
+                {data.config?.repo}).
               </p>
               <p className="text-dim">Only what you have revealed or published is included. Anyone with the link can read it.</p>
             </div>
@@ -228,6 +228,7 @@ interface RevealPlan {
   newRecords: number;
   sections: number;
   playerText: number;
+  pins: number;
 }
 
 /**
@@ -253,24 +254,26 @@ function MatchHandbook() {
     <section className="panel-pad space-y-2">
       <h2 className="section-title">Match the published handbook</h2>
       <p className="text-sm text-dim">
-        The Player Handbook on GitHub Pages shows the records your archive tags for players, with only their safe sections, and the setting&apos;s player text. This reveals the same in this
-        library, so the table server and the in-app player view show players what the handbook does. It only adds: nothing you&apos;ve revealed is hidden, and player text you&apos;ve written is
-        kept. A backup is made first, and each change is in the record&apos;s history.
+        The Player Handbook on GitHub Pages shows the records your archive tags for players, with only their safe sections, and the setting&apos;s player text. This reveals the same in this library,
+        so the table server and the in-app player view show players what the handbook does. It only adds: nothing you&apos;ve revealed is hidden, and player text you&apos;ve written is kept. A backup
+        is made first, and each change is in the record&apos;s history.
       </p>
       {error && <ErrorBox error={error} />}
       {done && (
         <p className="text-sm" aria-live="polite">
-          <Check size={14} className="inline text-gold" /> Revealed {plural(done.newRecords, 'record')}, {plural(done.sections, 'section')} and player text for {plural(done.playerText, 'record')}.
+          <Check size={14} className="inline text-gold" /> Revealed {plural(done.newRecords, 'record')}, {plural(done.sections, 'section')}, player text for {plural(done.playerText, 'record')}, and{' '}
+          {plural(done.pins, 'map pin')}.
         </p>
       )}
       {!data ? (
         !error && <Loading />
-      ) : !data.records.length ? (
+      ) : !data.records.length && !data.pins ? (
         <p className="text-sm">This library already shows players everything the handbook does.</p>
       ) : (
         <>
           <p className="text-sm">
-            To match: {plural(data.newRecords, 'record')} to reveal, {plural(data.sections, 'more section')}, and player text for {plural(data.playerText, 'record')}.
+            To match: {plural(data.newRecords, 'record')} to reveal, {plural(data.sections, 'more section')}, player text for {plural(data.playerText, 'record')}, and {plural(data.pins, 'map pin')} to
+            show players.
           </p>
           <details className="text-sm">
             <summary className="cursor-pointer text-dim">See what changes</summary>
