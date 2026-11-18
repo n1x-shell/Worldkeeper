@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-17 · v0.3.2_
+_Last updated: 2026-11-18 · v0.3.3_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,12 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.3
+
+- **Match the published handbook** (Player View & Publishing): reveals in the GM's library what the GitHub Pages handbook shows (player-tagged records' safe sections, and the setting's player text). Preview first, backup, only adds. The handbook build and the app share the rules (`server/src/player/handbookReveals.ts`); the build's output is unchanged.
+- **Desktop links:** the Player View button and other new-tab links open in the default browser (`server/src/lib/desktop.ts`).
+- **Tests:** 158 passing (1 skipped).
 
 ## v0.3.2
 

@@ -122,6 +122,8 @@ export function PublishPage() {
         )}
       </section>
 
+      <MatchHandbook />
+
       <section className="panel-pad space-y-3">
         <h2 className="section-title flex items-center gap-2">
           <KeyRound size={14} /> Connect GitHub
@@ -211,5 +213,92 @@ export function PublishPage() {
         />
       )}
     </div>
+  );
+}
+
+interface RevealChange {
+  id: string;
+  name: string;
+  newRecord: boolean;
+  sections: string[];
+  playerText: boolean;
+}
+interface RevealPlan {
+  records: RevealChange[];
+  newRecords: number;
+  sections: number;
+  playerText: number;
+}
+
+/**
+ * Reveal in this library what the published Player Handbook shows: the archive's player-tagged records (their safe
+ * sections) and the setting's player text. Only ever adds; a backup is made first.
+ */
+function MatchHandbook() {
+  const { data, error, reload } = useApi<RevealPlan>('/api/handbook-reveals');
+  const [done, setDone] = useState<RevealPlan | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  const apply = async () => {
+    setBusy(true);
+    try {
+      setDone(await api.post<RevealPlan>('/api/handbook-reveals'));
+      await reload();
+    } finally {
+      setBusy(false);
+      setConfirm(false);
+    }
+  };
+  return (
+    <section className="panel-pad space-y-2">
+      <h2 className="section-title">Match the published handbook</h2>
+      <p className="text-sm text-dim">
+        The Player Handbook on GitHub Pages shows the records your archive tags for players, with only their safe sections, and the setting&apos;s player text. This reveals the same in this
+        library, so the table server and the in-app player view show players what the handbook does. It only adds: nothing you&apos;ve revealed is hidden, and player text you&apos;ve written is
+        kept. A backup is made first, and each change is in the record&apos;s history.
+      </p>
+      {error && <ErrorBox error={error} />}
+      {done && (
+        <p className="text-sm" aria-live="polite">
+          <Check size={14} className="inline text-gold" /> Revealed {plural(done.newRecords, 'record')}, {plural(done.sections, 'section')} and player text for {plural(done.playerText, 'record')}.
+        </p>
+      )}
+      {!data ? (
+        !error && <Loading />
+      ) : !data.records.length ? (
+        <p className="text-sm">This library already shows players everything the handbook does.</p>
+      ) : (
+        <>
+          <p className="text-sm">
+            To match: {plural(data.newRecords, 'record')} to reveal, {plural(data.sections, 'more section')}, and player text for {plural(data.playerText, 'record')}.
+          </p>
+          <details className="text-sm">
+            <summary className="cursor-pointer text-dim">See what changes</summary>
+            <ul className="max-h-64 overflow-auto mt-1 space-y-0.5">
+              {data.records.map((r) => (
+                <li key={r.id}>
+                  <span className="font-medium">{r.name}</span>{' '}
+                  <span className="text-xs text-dim">
+                    {[r.newRecord && 'newly revealed', r.sections.length && `sections: ${r.sections.join(', ')}`, r.playerText && 'player text'].filter(Boolean).join(' · ')}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </details>
+          <button className="btn-primary" disabled={busy} onClick={() => setConfirm(true)}>
+            <Eye size={14} /> Match the published handbook
+          </button>
+          {confirm && (
+            <Confirm
+              title="Match the published handbook?"
+              body={`This reveals ${plural(data.newRecords, 'record')} and more sections to players in this library. Nothing is hidden, and a backup is made first.`}
+              confirmLabel="Reveal"
+              onConfirm={apply}
+              onCancel={() => setConfirm(false)}
+            />
+          )}
+        </>
+      )}
+    </section>
   );
 }

@@ -65,7 +65,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setIndexLoaded(true);
   }, []);
   const reloadMeta = useCallback(async () => {
-    const m = await api.get<{ appName: string; entities: number; debug: boolean; debugForced: boolean }>('/api/meta');
+    const m = await api.get<{ appName: string; entities: number; debug: boolean; debugForced: boolean; desktop?: boolean }>('/api/meta');
+    // In the desktop app, links meant for a new tab (Player View, GitHub) open in the system browser.
+    if (m.desktop) openNewTabsInBrowser();
     setAppName(m.appName);
     setDebugState(!!m.debug);
     setDebugForced(!!m.debugForced);
@@ -120,4 +122,21 @@ export function useAppState() {
   const v = useContext(Ctx);
   if (!v) throw new Error('useAppState outside provider');
   return v;
+}
+
+let browserLinks = false;
+/** The desktop app's window ignores links meant for a new tab: send them to the system browser instead. */
+function openNewTabsInBrowser() {
+  if (browserLinks) return;
+  browserLinks = true;
+  document.addEventListener(
+    'click',
+    (e) => {
+      const a = (e.target as HTMLElement | null)?.closest?.('a[target="_blank"]') as HTMLAnchorElement | null;
+      if (!a?.href || e.defaultPrevented) return;
+      e.preventDefault();
+      void api.post('/api/desktop/open', { url: a.href }).catch(() => undefined);
+    },
+    true,
+  );
 }

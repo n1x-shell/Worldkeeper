@@ -70,6 +70,10 @@ Installers produced by `desktop:build`:
 | macOS | `.app`, `.dmg` |
 | Windows | `.msi`, `.exe` (NSIS) |
 
+### Links
+
+The app's window can't open new tabs, so links meant for one (the **Player View** button, links to GitHub) open in your default web browser. The player view opens at the app's local address, for example `http://127.0.0.1:<port>/player`.
+
 ### Release builds
 
 The **Desktop installers** workflow (`.github/workflows/desktop.yml`) builds on Linux, macOS and Windows, because Tauri doesn't cross-compile:
