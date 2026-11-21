@@ -51,7 +51,7 @@ export function CalendarView({ date, events, onDay }: { date: WDate; events: Cal
         title={[label, ...items.map((i) => i.title)].join('\n')}
         className={`relative h-9 rounded text-[11px] text-left px-1 border ${today ? 'border-gold bg-gold/20 text-gold' : items.length ? 'border-arcane/50 bg-arcane/10' : 'border-transparent hover:border-line'} ${onDay ? 'cursor-pointer' : 'cursor-default'}`}
       >
-        <span>{label}</span>
+        <span className="num">{label}</span>
         {(lamp.full || lamp.dark) && <span className="absolute right-0.5 top-0 text-[9px] opacity-70">{lamp.full ? '○' : '●'}</span>}
         {items.length > 0 && <span className="absolute left-1 bottom-0.5 right-1 truncate text-[9px] leading-tight text-arcane">{items[0].title}</span>}
       </button>

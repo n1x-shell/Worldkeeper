@@ -1,10 +1,10 @@
 import { useMechanics } from '../lib/mechanics';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Eye, EyeOff, Minus, Plus } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
-import { Empty, EntityLink, ErrorBox, Loading, PageHeader } from '../components/ui';
+import { Badge, Card, Empty, EntityLink, ErrorBox, GmOnly, Loading, PageHeader, Segmented, Toggle } from '../components/ui';
 import { Markdown } from '../components/Markdown';
 import { WebDiagram } from '../player/WebAndOmens';
 
@@ -44,7 +44,7 @@ export function ReturnPage() {
       <p className="text-sm text-dim">
         What moves it, what holds it and what each stage means: <EntityLink id="COS-032" />.
       </p>
-      <div className="panel-pad space-y-3">
+      <Card featured className="space-y-3">
         <div className="flex items-center gap-1" aria-label={`Stage ${data.stage} of 7`}>
           {data.stages.map((s) => (
             <div key={s.stage} title={s.title} className={`flex-1 h-3 rounded ${s.stage <= data.stage ? 'bg-danger/80' : 'bg-raised border border-line'}`} />
@@ -68,36 +68,41 @@ export function ReturnPage() {
           <input className="input" placeholder="Why it moved (for the log)" value={reason} onChange={(e) => setReason(e.target.value)} />
           <input className="input" placeholder="Held until (a season, if something holds it)" defaultValue={data.heldUntil} onChange={(e) => setHeld(e.target.value)} />
         </div>
-      </div>
+      </Card>
       <ol className="space-y-2">
         {data.stages.map((s) => (
-          <li key={s.stage} className={`panel-pad space-y-1 ${s.stage <= data.stage ? 'border-danger/50' : 'opacity-80'}`}>
-            <div className="flex items-baseline gap-2">
-              <span className="font-display text-gold">
-                {s.stage}. {s.title}
-              </span>
-              {s.stage <= data.stage && <span className="text-[10px] uppercase tracking-wider text-danger">reached: players have seen this</span>}
-            </div>
-            {s.gm && <Markdown text={s.gm} />}
-            <p className="text-sm">
-              <span className="text-dim">Players see:</span> {s.omen}
-            </p>
-            <p className="text-xs text-dim">Rumours: {s.rumours.map((r) => `"${r}"`).join(' ')}</p>
+          <li key={s.stage}>
+            <Card className={`space-y-1 ${s.stage <= data.stage ? 'border-danger/50' : 'opacity-80'}`}>
+              <div className="flex items-baseline gap-2">
+                <span className="font-display text-gold">
+                  <span className="num">{s.stage}</span>. {s.title}
+                </span>
+                {s.stage <= data.stage && <Badge tone="danger">reached: players have seen this</Badge>}
+              </div>
+              {s.gm && (
+                <GmOnly inline>
+                  <Markdown text={s.gm} />
+                </GmOnly>
+              )}
+              <p className="text-sm">
+                <span className="text-dim">Players see:</span> {s.omen}
+              </p>
+              <p className="text-xs text-dim">Rumours: {s.rumours.map((r) => `"${r}"`).join(' ')}</p>
+            </Card>
           </li>
         ))}
       </ol>
       {data.log.length > 0 && (
-        <div className="panel-pad">
-          <div className="section-title mb-1">History</div>
+        <Card title="History">
           <ul className="text-sm space-y-1">
             {data.log.map((l, i) => (
               <li key={i}>
-                Stage {l.from_stage} → {l.to_stage}
+                Stage <span className="num">{l.from_stage}</span> → <span className="num">{l.to_stage}</span>
                 {l.reason && <span className="text-dim">: {l.reason}</span>} <span className="text-xs text-dim">{new Date(l.created_at).toLocaleDateString()}</span>
               </li>
             ))}
           </ul>
-        </div>
+        </Card>
       )}
     </div>
   );
@@ -142,44 +147,54 @@ export function FactionWebPage() {
       <p className="text-sm text-dim">
         Ties come from the factions' links (allied with, opposes): change them on each faction's page. Players see it under <Link to="/player/factions-web">Faction Web</Link>.
       </p>
-      <div className="flex flex-wrap gap-1">
-        {[
-          ['aetheris', 'Aetheris'],
-          ['kaelmar', 'Kaelmar'],
-          ['ethereal', 'The Ethereal Realm'],
-        ].map(([k, l]) => (
-          <button key={k} className={`chip ${realm === k ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => (setRealm(k), setFocus(null))}>
-            {l}
-          </button>
-        ))}
+      <div className="flex flex-wrap items-center gap-2">
+        <Segmented
+          size="sm"
+          label="Realm"
+          value={realm}
+          onChange={(k) => (setRealm(k), setFocus(null))}
+          options={[
+            { value: 'aetheris', label: 'Aetheris' },
+            { value: 'kaelmar', label: 'Kaelmar' },
+            { value: 'ethereal', label: 'The Ethereal Realm' },
+          ]}
+        />
         {focus && (
-          <button className="chip border-line text-dim" onClick={() => setFocus(null)}>
+          <button className="btn-ghost text-xs" onClick={() => setFocus(null)}>
             Show all
           </button>
         )}
       </div>
       <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
-        <div className="panel p-2">
+        <Card flush className="p-2">
           <WebDiagram ties={ties.map((t) => ({ ...t, dashed: !t.public && !t.revealed }))} onPick={setFocus} />
           <p className="text-xs text-dim px-2">Gold: allies. Red: enemies. Dashed: players don't know yet. Click a faction to see only its ties.</p>
-        </div>
+        </Card>
         <ul className="space-y-1 text-sm">
           {ties.map((t) => (
-            <li key={`${t.a}-${t.b}`} className="panel px-3 py-2 flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full shrink-0 ${t.kind === 'opposed' ? 'bg-danger' : 'bg-gold'}`} />
-              <span className="flex-1">
-                <EntityLink id={t.a} /> {t.kind === 'opposed' ? 'vs' : 'with'} <EntityLink id={t.b} />
-              </span>
-              {t.public ? (
-                <span className="text-[10px] uppercase tracking-wider text-dim">public</span>
-              ) : (
-                <button className="btn-ghost text-xs" disabled={!activeCampaignId} onClick={() => void reveal(t, !t.revealed)} title={activeCampaignId ? '' : 'Choose a campaign first'}>
-                  {t.revealed ? <Eye size={13} className="text-gold" /> : <EyeOff size={13} />} {t.revealed ? 'Revealed' : 'Reveal'}
-                </button>
-              )}
+            <li key={`${t.a}-${t.b}`}>
+              <Card flush className="px-3 py-2 flex items-center gap-2">
+                <span className={`w-2 h-2 rounded-full shrink-0 ${t.kind === 'opposed' ? 'bg-danger' : 'bg-gold'}`} />
+                <span className="flex-1">
+                  <EntityLink id={t.a} /> {t.kind === 'opposed' ? 'vs' : 'with'} <EntityLink id={t.b} />
+                </span>
+                {t.public ? (
+                  <Badge>public</Badge>
+                ) : (
+                  <span title={activeCampaignId ? '' : 'Choose a campaign first'}>
+                    <Toggle className="text-xs" checked={t.revealed} disabled={!activeCampaignId} onChange={(on) => void reveal(t, on)}>
+                      Revealed
+                    </Toggle>
+                  </span>
+                )}
+              </Card>
             </li>
           ))}
-          {!ties.length && <li className="text-dim">No ties here.</li>}
+          {!ties.length && (
+            <li>
+              <Empty compact title="No ties here." />
+            </li>
+          )}
         </ul>
       </div>
     </div>

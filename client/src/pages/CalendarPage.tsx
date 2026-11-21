@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { CalendarDays, Eye, EyeOff, Trash2 } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
-import { ErrorBox, Field, Loading, Modal, PageHeader } from '../components/ui';
+import { askText, Card, Check, Empty, ErrorBox, Field, Loading, Modal, PageHeader, Toggle } from '../components/ui';
 import { CalendarView, TodayCard } from '../components/CalendarView';
 import { NeedCampaign } from './Campaign';
 import { EXTRA_DAYS, MONTHS, dayOfYear, formatDate, monthDay, type WDate } from '../../../shared/calendar';
@@ -36,7 +36,7 @@ export function CalendarPage() {
   if (error) return <ErrorBox error={error} />;
   if (!data || !events) return <Loading />;
   const move = async (days: number) => {
-    const reason = days >= 7 ? window.prompt('Why does the time pass? (for the session log; optional)', '') : '';
+    const reason = days >= 7 ? await askText({ title: 'Why does the time pass? (for the session log; optional)', confirmLabel: 'Pass the time' }) : '';
     if (reason === null) return;
     await api.post('/api/calendar/date', { campaign_id: activeCampaignId, days, reason });
     reload();
@@ -45,7 +45,7 @@ export function CalendarPage() {
   return (
     <div className="space-y-4">
       <PageHeader title="Calendar" subtitle="The campaign's date, the festivals and your own events." note="One 363-day year on both continents (Calendar [SYS-901]). Click a day to add an event." />
-      <div className="panel-pad space-y-3">
+      <Card featured className="space-y-3">
         <TodayCard date={data.date} />
         <div className="flex flex-wrap gap-1.5">
           {[1, 7, 30].map((d) => (
@@ -60,12 +60,11 @@ export function CalendarPage() {
             <CalendarDays size={14} /> Set the date
           </button>
         </div>
-      </div>
+      </Card>
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <CalendarView date={data.date} events={events.map((e) => ({ day: e.day, year: e.yearly ? null : e.year, title: e.title, kind: 'event' }))} onDay={setAdding} />
         <div className="space-y-3">
-          <div className="panel-pad">
-            <div className="section-title mb-2">The next 30 days</div>
+          <Card title="The next 30 days">
             {data.coming.length ? (
               <ul className="text-sm space-y-2">
                 {data.coming.map((c, i) => (
@@ -83,11 +82,10 @@ export function CalendarPage() {
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-dim">Nothing in the next month.</p>
+              <Empty compact title="Nothing in the next month." />
             )}
-          </div>
-          <div className="panel-pad">
-            <div className="section-title mb-2">Your events</div>
+          </Card>
+          <Card title="Your events">
             {events.length ? (
               <ul className="text-sm space-y-1">
                 {events.map((e) => (
@@ -110,9 +108,11 @@ export function CalendarPage() {
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-dim">Click a day in the calendar to add one.</p>
+              <Empty compact title="No events yet.">
+                Click a day in the calendar to add one.
+              </Empty>
             )}
-          </div>
+          </Card>
         </div>
       </div>
       {adding != null && <AddEvent day={adding} year={data.date.year} campaignId={activeCampaignId} onClose={() => setAdding(null)} onAdded={refresh} />}
@@ -142,17 +142,17 @@ function AddEvent({ day, year, campaignId, onClose, onAdded }: { day: number; ye
           <textarea className="input" rows={3} value={f.notes} onChange={(e) => setF({ ...f, notes: e.target.value })} />
         </Field>
         <div className="flex flex-wrap gap-4 text-sm">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" checked={f.yearly} onChange={(e) => setF({ ...f, yearly: e.target.checked })} /> Every year
-          </label>
+          <Check checked={f.yearly} onChange={(v) => setF({ ...f, yearly: v })}>
+            Every year
+          </Check>
           {!f.yearly && (
             <label className="flex items-center gap-2">
               Year <input className="input w-24 py-0.5" type="number" value={f.year} onChange={(e) => setF({ ...f, year: Number(e.target.value) || year })} /> AB
             </label>
           )}
-          <label className="flex items-center gap-2">
-            <input type="checkbox" checked={f.player_visible} onChange={(e) => setF({ ...f, player_visible: e.target.checked })} /> Players see it
-          </label>
+          <Toggle checked={f.player_visible} onChange={(v) => setF({ ...f, player_visible: v })}>
+            Players see it
+          </Toggle>
         </div>
         <button className="btn-primary" type="submit" disabled={!f.title.trim()}>
           Add

@@ -263,6 +263,77 @@ h3 {
     background-repeat: no-repeat;
     background-position: 6px 0;
   }
+  .gm-only-label {
+    @apply mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-danger;
+  }
+  .gm-only-inline {
+    @apply py-1 pl-3.5 pr-2;
+  }
+  /* An on/off switch: a native checkbox (role="switch") drawn as a track and knob. */
+  .toggle {
+    @apply relative mt-0.5 h-5 w-9 shrink-0 cursor-pointer appearance-none rounded-full border border-edge/70 bg-raised transition-colors;
+  }
+  .toggle::after {
+    content: '';
+    @apply absolute left-0.5 top-0.5 h-3.5 w-3.5 rounded-full bg-dim transition-transform;
+  }
+  .toggle:checked {
+    @apply border-gold/80 bg-gold/30;
+  }
+  .toggle:checked::after {
+    @apply translate-x-4 bg-gold;
+  }
+  .toggle:disabled {
+    @apply cursor-default;
+  }
+  /* A checkbox in the theme's colours. */
+  .check {
+    @apply mt-0.5 h-4 w-4 shrink-0 cursor-pointer;
+    accent-color: rgb(var(--gold));
+  }
+  /* One choice from a few, side by side. */
+  .segmented {
+    @apply inline-flex overflow-hidden rounded-md border border-line text-sm;
+  }
+  .segmented button {
+    @apply px-3 py-1.5 text-dim transition-colors hover:text-ink;
+  }
+  .segmented button + button {
+    @apply border-l border-line;
+  }
+  .segmented button.on {
+    @apply bg-gold/15 text-gold;
+  }
+  .segmented-sm {
+    @apply text-xs;
+  }
+  .segmented-sm button {
+    @apply px-2 py-1;
+  }
+  /* Loading placeholders. */
+  .skeleton {
+    @apply rounded bg-raised;
+    background-image: linear-gradient(90deg, transparent, rgb(var(--line) / 0.5), transparent);
+    background-size: 200% 100%;
+    animation: wk-shimmer 1.4s ease-in-out infinite;
+  }
+  /* Tables: the header stays put while the rows scroll. */
+  .data-table thead th {
+    @apply sticky top-0 z-[1] bg-panel;
+  }
+}
+@keyframes wk-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
 }
 
 /* Lore prose */
@@ -312,7 +383,7 @@ h3 {
   @apply text-danger underline decoration-wavy;
 }
 .prose-lore .wk-secret {
-  @apply border border-danger/40 bg-danger/5 rounded-md px-3 py-1 my-3;
+  @apply gm-only my-3;
 }
 
 .leaflet-container {

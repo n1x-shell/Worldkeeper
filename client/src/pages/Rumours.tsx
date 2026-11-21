@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { api, qs, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
-import { EntityLink, ErrorBox, Field, Loading, PageHeader, useToast } from '../components/ui';
+import { Card, Check, Empty, EntityLink, ErrorBox, Field, Loading, PageHeader, Segmented, toast } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
 
@@ -23,30 +23,9 @@ export interface Rumour {
 }
 
 export const TRUTH_LABELS: Record<Truth, string> = { true: 'True', false: 'False', partly: 'Partly true', unknown: 'Not decided' };
-const TRUTH_STYLE: Record<Truth, string> = {
-  true: 'border-ok/50 text-ok',
-  false: 'border-danger/60 text-danger',
-  partly: 'border-gold/60 text-gold',
-  unknown: 'border-line text-dim',
-};
-
 /** Truth picker: four small buttons, so a GM can sweep through rumours quickly. */
 export function TruthPicker({ value, onChange }: { value: Truth; onChange: (t: Truth) => void }) {
-  return (
-    <div className="flex flex-wrap gap-1" role="radiogroup" aria-label="Is it true?">
-      {(['true', 'partly', 'false', 'unknown'] as Truth[]).map((t) => (
-        <button
-          key={t}
-          role="radio"
-          aria-checked={value === t}
-          className={`chip ${value === t ? TRUTH_STYLE[t] + ' bg-white/5' : 'border-line/50 text-dim/70'}`}
-          onClick={() => onChange(t)}
-        >
-          {TRUTH_LABELS[t]}
-        </button>
-      ))}
-    </div>
-  );
+  return <Segmented size="sm" label="Is it true?" value={value} onChange={onChange} options={(['true', 'partly', 'false', 'unknown'] as Truth[]).map((t) => ({ value: t, label: TRUTH_LABELS[t] }))} />;
 }
 
 export function RumourRow({ r, campaignId, onChange, showSource = true }: { r: Rumour; campaignId: number | null; onChange: () => void; showSource?: boolean }) {
@@ -58,18 +37,19 @@ export function RumourRow({ r, campaignId, onChange, showSource = true }: { r: R
   return (
     <div className={`border-b border-line/60 py-2.5 ${r.stale ? 'opacity-60' : ''}`}>
       <div className="flex flex-wrap items-start gap-3">
-        <label className="flex items-center gap-1.5 text-xs text-dim pt-0.5 shrink-0" title={campaignId ? 'Heard by the party in this campaign' : 'Choose a campaign to track what the party has heard'}>
-          <input
-            type="checkbox"
+        <span className="shrink-0 pt-0.5" title={campaignId ? 'Heard by the party in this campaign' : 'Choose a campaign to track what the party has heard'}>
+          <Check
+            className="text-xs text-dim"
             checked={r.heard}
             disabled={!campaignId}
-            onChange={async (e) => {
-              await api.post(`/api/rumours/${r.id}/heard`, { campaign_id: campaignId, heard: e.target.checked });
+            onChange={async (heard) => {
+              await api.post(`/api/rumours/${r.id}/heard`, { campaign_id: campaignId, heard });
               onChange();
             }}
-          />
-          Heard
-        </label>
+          >
+            Heard
+          </Check>
+        </span>
         <div className="flex-1 min-w-[16rem]">
           <Markdown text={r.text} className="prose-lore text-[15px] [&_p]:my-0" />
           <div className="text-xs text-dim mt-1 flex flex-wrap gap-x-3 gap-y-1">
@@ -128,7 +108,6 @@ export function RumoursPage() {
   const [q, setQ] = useState('');
   const [text, setText] = useState('');
   const [newAbout, setNewAbout] = useState<string | null>(null);
-  const { toast, node: toastNode } = useToast();
   const url = `/api/rumours${qs({ truth: truth || undefined, heard: heard || undefined, entity: about ?? undefined, q: q || undefined, campaign_id: activeCampaignId ?? undefined })}`;
   const { data, error, reload } = useApi<Rumour[]>(url);
   const counts = useMemo(() => {
@@ -138,7 +117,6 @@ export function RumoursPage() {
   }, [data]);
   return (
     <div className="space-y-4">
-      {toastNode}
       <PageHeader
         title="Rumours"
         subtitle="Everything people say, from the handbook and your own. Decide what's true, and track what the party has heard."
@@ -161,7 +139,7 @@ export function RumoursPage() {
           To track what the party has heard, <Link to="/campaigns" className="text-arcane">choose a campaign</Link>.
         </p>
       )}
-      <div className="panel-pad grid gap-2 md:grid-cols-[1fr_200px_180px_240px] items-end">
+      <Card className="grid gap-2 md:grid-cols-[1fr_200px_180px_240px] items-end">
         <Field label="Search">
           <input className="input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Words in the rumour or your note" />
         </Field>
@@ -184,8 +162,8 @@ export function RumoursPage() {
         <Field label="About">
           <EntityPicker value={about} onChange={setAbout} />
         </Field>
-      </div>
-      <div className="panel-pad grid gap-2 md:grid-cols-[1fr_240px_auto] items-end">
+      </Card>
+      <Card className="grid gap-2 md:grid-cols-[1fr_240px_auto] items-end">
         <Field label="New rumour">
           <input className="input" value={text} onChange={(e) => setText(e.target.value)} placeholder="What are people saying? Use @[Name] to link." />
         </Field>
@@ -203,17 +181,23 @@ export function RumoursPage() {
         >
           <Plus size={14} /> Add
         </button>
-      </div>
+      </Card>
       {error && <ErrorBox error={error} onRetry={reload} />}
       {!data && !error && <Loading />}
       {data && (
-        <div className="panel-pad">
-          <div className="text-xs text-dim mb-1">{data.length} rumours</div>
+        <Card>
+          <div className="text-xs text-dim mb-1">
+            <span className="num">{data.length}</span> rumours
+          </div>
           {data.map((r) => (
             <RumourRow key={`${r.id}-${r.truth}-${r.heard}`} r={r} campaignId={activeCampaignId} onChange={reload} />
           ))}
-          {!data.length && <p className="text-sm text-dim">No rumours match. Press "Update from handbook" to bring in the handbook's rumours.</p>}
-        </div>
+          {!data.length && (
+            <Empty compact title="No rumours match.">
+              Press "Update from handbook" to bring in the handbook's rumours.
+            </Empty>
+          )}
+        </Card>
       )}
     </div>
   );
@@ -225,15 +209,18 @@ export function RumoursPanel({ entityId }: { entityId: string }) {
   const { data, reload } = useApi<Rumour[]>(`/api/rumours${qs({ entity: entityId, campaign_id: activeCampaignId ?? undefined })}`);
   if (!data?.length) return null;
   return (
-    <div className="panel p-4">
-      <div className="section-title mb-1 flex items-center justify-between">
-        <span>Rumours</span>
-        <Link to="/rumours" className="text-xs text-arcane normal-case tracking-normal">All rumours</Link>
-      </div>
+    <Card
+      title="Rumours"
+      actions={
+        <Link to="/rumours" className="text-xs text-arcane">
+          All rumours
+        </Link>
+      }
+    >
       {data.map((r) => (
         <RumourRow key={`${r.id}-${r.truth}-${r.heard}`} r={r} campaignId={activeCampaignId} onChange={reload} showSource={r.source_id !== entityId} />
       ))}
-    </div>
+    </Card>
   );
 }
 
@@ -245,7 +232,7 @@ interface Stances {
 const STANCE_STYLE: Record<string, string> = {
   Allied: 'bg-ok/40',
   Friendly: 'bg-ok/20',
-  Uneasy: 'bg-white/5',
+  Uneasy: 'bg-raised',
   Rival: 'bg-gold/30',
   'At war': 'bg-danger/50',
 };
@@ -265,10 +252,9 @@ export function StanceMatrix() {
   const realms = [...new Set(data.groups.map((g) => g.realm))];
   const name = (id: string) => data.groups.find((g) => g.id === id)?.name ?? id;
   return (
-    <div className="panel-pad space-y-4">
+    <Card title="How factions feel about each other" className="space-y-4">
       <div>
-        <div className="section-title">How factions feel about each other</div>
-        <div className="flex flex-wrap gap-3 text-xs text-dim mt-1">
+        <div className="flex flex-wrap gap-3 text-xs text-dim">
           {Object.entries(STANCE_STYLE).map(([k, c]) => (
             <span key={k} className="flex items-center gap-1">
               <span className={`inline-block w-3 h-3 rounded-sm ${c}`} /> {k}
@@ -306,7 +292,7 @@ export function StanceMatrix() {
                             <span className="block w-5 h-5" />
                           ) : (
                             <button
-                              className={`block w-5 h-5 rounded-sm border border-line/40 ${s ? STANCE_STYLE[s.label] ?? 'bg-white/5' : ''}`}
+                              className={`block w-5 h-5 rounded-sm border border-line/40 ${s ? STANCE_STYLE[s.label] ?? 'bg-raised' : ''}`}
                               title={s ? `${a.name} and ${b.name}: ${s.label}. ${s.description}` : `${a.name} and ${b.name}: not set`}
                               aria-label={s ? `${a.name} and ${b.name}: ${s.label}` : `${a.name} and ${b.name}: not set`}
                               onClick={() => s && setPick({ a: a.id, b: b.id, ...s })}
@@ -328,6 +314,6 @@ export function StanceMatrix() {
           <span className="text-dim">(Changes here would go in {name(pick.a)}'s Relationships tab.)</span>
         </p>
       )}
-    </div>
+    </Card>
   );
 }

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Eye, EyeOff, Minus, Plus, Undo2 } from 'lucide-react';
+import { Minus, Plus, Undo2 } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { Markdown } from '../components/Markdown';
-import { EntityLink, ErrorBox, Loading, PageHeader } from '../components/ui';
+import { Badge, Card, Check, Empty, EntityLink, ErrorBox, Loading, PageHeader, Section, Toggle, type Tone } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { NeedCampaign } from './Campaign';
 import { RANKS, earnedRanks, type RankName } from '../../../shared/standing';
@@ -28,14 +28,24 @@ interface Row {
   log: { id: number; delta: number; reason: string; session_id: number | null; created_at: string }[];
 }
 
-const RANK_STYLE: Record<RankName, string> = {
-  Hostile: 'bg-danger text-white',
+const RANK_TONE: Record<RankName, Tone> = {
+  Hostile: 'danger',
+  Distrusted: 'danger',
+  Neutral: 'dim',
+  Initiate: 'gold',
+  Trusted: 'gold',
+  Exalted: 'gold',
+  Champion: 'gold',
+};
+/** The rank's mark on the ladder. */
+const RANK_BAR: Record<RankName, string> = {
+  Hostile: 'bg-danger',
   Distrusted: 'bg-danger/40',
   Neutral: 'bg-line',
   Initiate: 'bg-gold/30',
   Trusted: 'bg-gold/50',
-  Exalted: 'bg-gold/75 text-black',
-  Champion: 'bg-gold text-black',
+  Exalted: 'bg-gold/75',
+  Champion: 'bg-gold',
 };
 
 export function StandingPage() {
@@ -75,9 +85,9 @@ export function StandingPage() {
           </button>
         )}
         {known.length > 0 && rest.length > 0 && (
-          <label className="flex items-center gap-2 text-sm ml-auto">
-            <input type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.target.checked)} /> Show factions the party hasn't dealt with ({rest.length})
-          </label>
+          <Check checked={showAll} onChange={setShowAll} className="ml-auto">
+            Show factions the party hasn't dealt with ({rest.length})
+          </Check>
         )}
       </div>
       <ul className="space-y-2">
@@ -111,106 +121,113 @@ function StandingCard({ row: r, campaignId, open, onToggle, onChange }: { row: R
   };
   const earned = new Set(earnedRanks(r.renown));
   return (
-    <li className="panel">
-      <div className="flex flex-wrap items-center gap-3 p-3">
-        <button type="button" className="text-left flex-1 min-w-[12rem]" onClick={onToggle} aria-expanded={open}>
-          <div className="font-display text-gold text-lg leading-tight">{r.name}</div>
-          <div className="text-xs text-dim">
-            Renown {r.renown}
-            {r.next ? ` · ${r.next.name} at ${r.next.at}` : ''}
-            {!r.revealed ? ' · not yet known to players' : !r.player_visible ? ' · hidden from players' : ''}
+    <li>
+      <Card flush>
+        <div className="flex flex-wrap items-center gap-3 p-3">
+          <button type="button" className="text-left flex-1 min-w-[12rem]" onClick={onToggle} aria-expanded={open}>
+            <div className="font-display text-gold text-lg leading-tight">{r.name}</div>
+            <div className="text-xs text-dim">
+              Renown <span className="num">{r.renown}</span>
+              {r.next && (
+                <>
+                  {' '}
+                  · {r.next.name} at <span className="num">{r.next.at}</span>
+                </>
+              )}
+              {!r.revealed ? ' · not yet known to players' : !r.player_visible ? ' · hidden from players' : ''}
+            </div>
+          </button>
+          <Badge tone={RANK_TONE[r.rank]}>{r.rank}</Badge>
+          <div className="flex items-center gap-1">
+            {[-2, -1].map((d) => (
+              <button key={d} className="btn-ghost text-xs px-2" onClick={() => adjust(d)} title={`${d} Renown`}>
+                {d === -1 ? <Minus size={13} /> : d}
+              </button>
+            ))}
+            {[1, 2, 3].map((d) => (
+              <button key={d} className="btn-ghost text-xs px-2" onClick={() => adjust(d)} title={`+${d} Renown`}>
+                {d === 1 ? <Plus size={13} /> : `+${d}`}
+              </button>
+            ))}
           </div>
-        </button>
-        <span className={`text-xs px-2 py-0.5 rounded-full ${RANK_STYLE[r.rank]}`}>{r.rank}</span>
-        <div className="flex items-center gap-1">
-          {[-2, -1].map((d) => (
-            <button key={d} className="btn-ghost text-xs px-2" onClick={() => adjust(d)} title={`${d} Renown`}>
-              {d === -1 ? <Minus size={13} /> : d}
-            </button>
-          ))}
-          {[1, 2, 3].map((d) => (
-            <button key={d} className="btn-ghost text-xs px-2" onClick={() => adjust(d)} title={`+${d} Renown`}>
-              {d === 1 ? <Plus size={13} /> : `+${d}`}
-            </button>
+        </div>
+        {/* Where the party sits on the ladder. */}
+        <div className="flex gap-0.5 px-3 pb-2" aria-hidden>
+          {RANKS.map((k) => (
+            <span key={k.name} title={k.name} className={`h-1.5 flex-1 rounded-full ${k.name === r.rank ? RANK_BAR[k.name] : 'bg-line/60'}`} />
           ))}
         </div>
-      </div>
-      {/* Where the party sits on the ladder. */}
-      <div className="flex gap-0.5 px-3 pb-2" aria-hidden>
-        {RANKS.map((k) => (
-          <span key={k.name} title={k.name} className={`h-1.5 flex-1 rounded-full ${k.name === r.rank ? RANK_STYLE[k.name].split(' ')[0] : 'bg-line/60'}`} />
-        ))}
-      </div>
-      {open && (
-        <div className="border-t border-line p-3 grid gap-4 lg:grid-cols-[1fr_320px]">
-          <div className="space-y-3">
-            {r.values && (
-              <div>
-                <div className="section-title mb-1">What they value</div>
-                <Markdown text={r.values} />
-              </div>
-            )}
-            {RANKS.filter((k) => r.ranks[k.name]).map((k) => (
-              <div key={k.name} className={`rounded-md border px-3 py-2 ${k.name === r.rank ? 'border-gold/60' : earned.has(k.name) ? 'border-gold/25' : 'border-line opacity-70'}`}>
-                <div className="text-xs uppercase tracking-widest text-dim">
-                  {k.name} {Number.isFinite(k.from) ? `(${k.from}${Number.isFinite(k.to) ? ` to ${k.to}` : '+'})` : '(-10 or less)'}
-                  {k.name === r.rank ? ' · now' : ''}
+        {open && (
+          <div className="border-t border-line p-3 grid gap-4 lg:grid-cols-[1fr_320px]">
+            <div className="space-y-3">
+              {r.values && (
+                <Section title="What they value">
+                  <Markdown text={r.values} />
+                </Section>
+              )}
+              {RANKS.filter((k) => r.ranks[k.name]).map((k) => (
+                <div key={k.name} className={`rounded-md border px-3 py-2 ${k.name === r.rank ? 'border-gold/60' : earned.has(k.name) ? 'border-gold/25' : 'border-line opacity-70'}`}>
+                  <div className="text-xs uppercase tracking-widest text-dim">
+                    {k.name} {Number.isFinite(k.from) ? `(${k.from}${Number.isFinite(k.to) ? ` to ${k.to}` : '+'})` : '(-10 or less)'}
+                    {k.name === r.rank ? ' · now' : ''}
+                  </div>
+                  <Markdown text={r.ranks[k.name]!} />
                 </div>
-                <Markdown text={r.ranks[k.name]!} />
-              </div>
-            ))}
-            {!r.rule_id && (
-              <p className="text-sm text-dim">No Standing record for this faction yet, so its ranks bring nothing written down. Add a rule record with a Faction field to describe them.</p>
-            )}
-            {r.rule_id && (
-              <p className="text-xs text-dim">
-                Edit what each rank brings: <EntityLink id={r.rule_id} />
-              </p>
-            )}
-          </div>
-          <div className="space-y-3">
-            <div>
-              <label className="label" htmlFor={`why-${r.faction_id}`}>
-                Why (for the log)
-              </label>
-              <input id={`why-${r.faction_id}`} className="input" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Carried the Seer's letter…" />
-              <div className="flex flex-wrap gap-1 mt-2">
-                {[-5, -3, -2, -1, 1, 2, 3, 5].map((d) => (
-                  <button key={d} className="btn text-xs" onClick={() => adjust(d)}>
-                    {d > 0 ? `+${d}` : d}
-                  </button>
-                ))}
-              </div>
-              {err && <p className="text-danger text-xs mt-1">{err}</p>}
-            </div>
-            <button className="btn text-xs" onClick={async () => onChange(await api.patch<Row>(`/api/standing/${r.faction_id}`, { campaign_id: campaignId, player_visible: !r.player_visible }))}>
-              {r.player_visible ? <Eye size={13} /> : <EyeOff size={13} />} {r.player_visible ? 'Players see this standing' : 'Hidden from players'}
-            </button>
-            <div>
-              <div className="section-title mb-1">History</div>
-              {r.log.length ? (
-                <ul className="text-sm space-y-1">
-                  {r.log.map((l) => (
-                    <li key={l.id} className="flex items-start gap-2">
-                      <span className={`w-8 text-right tabular-nums ${l.delta > 0 ? 'text-gold' : 'text-danger'}`}>{l.delta > 0 ? `+${l.delta}` : l.delta}</span>
-                      <span className="flex-1">{l.reason || <span className="text-dim">No reason given</span>}</span>
-                      <button
-                        className="text-dim hover:text-danger p-0.5"
-                        title="Undo this change"
-                        onClick={async () => onChange(await api.del<Row>(`/api/standing/log/${l.id}?campaign_id=${campaignId}`))}
-                      >
-                        <Undo2 size={13} />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-dim">No changes yet.</p>
+              ))}
+              {!r.rule_id && (
+                <Empty compact title="No Standing record for this faction yet">
+                  Its ranks bring nothing written down. Add a rule record with a Faction field to describe them.
+                </Empty>
+              )}
+              {r.rule_id && (
+                <p className="text-xs text-dim">
+                  Edit what each rank brings: <EntityLink id={r.rule_id} />
+                </p>
               )}
             </div>
+            <div className="space-y-3">
+              <div>
+                <label className="label" htmlFor={`why-${r.faction_id}`}>
+                  Why (for the log)
+                </label>
+                <input id={`why-${r.faction_id}`} className="input" value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Carried the Seer's letter…" />
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {[-5, -3, -2, -1, 1, 2, 3, 5].map((d) => (
+                    <button key={d} className="btn text-xs" onClick={() => adjust(d)}>
+                      {d > 0 ? `+${d}` : d}
+                    </button>
+                  ))}
+                </div>
+                {err && <p className="text-danger text-xs mt-1">{err}</p>}
+              </div>
+              <Toggle checked={r.player_visible} onChange={async (v) => onChange(await api.patch<Row>(`/api/standing/${r.faction_id}`, { campaign_id: campaignId, player_visible: v }))}>
+                Players see this standing
+              </Toggle>
+              <Section title="History">
+                {r.log.length ? (
+                  <ul className="text-sm space-y-1">
+                    {r.log.map((l) => (
+                      <li key={l.id} className="flex items-start gap-2">
+                        <span className={`w-8 text-right num ${l.delta > 0 ? 'text-gold' : 'text-danger'}`}>{l.delta > 0 ? `+${l.delta}` : l.delta}</span>
+                        <span className="flex-1">{l.reason || <span className="text-dim">No reason given</span>}</span>
+                        <button
+                          className="text-dim hover:text-danger p-0.5"
+                          title="Undo this change"
+                          onClick={async () => onChange(await api.del<Row>(`/api/standing/log/${l.id}?campaign_id=${campaignId}`))}
+                        >
+                          <Undo2 size={13} />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <Empty compact title="No changes yet." />
+                )}
+              </Section>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </Card>
     </li>
   );
 }

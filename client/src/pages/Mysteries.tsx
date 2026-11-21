@@ -4,7 +4,7 @@ import { ChevronDown, ChevronRight, Plus, RefreshCw, Trash2 } from 'lucide-react
 import { api, qs, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { EntitySummary } from '../lib/types';
-import { AutoTextarea, EntityLink, ErrorBox, Field, Loading, PageHeader, useToast } from '../components/ui';
+import { AutoTextarea, Card, Check, Empty, EntityLink, ErrorBox, Field, GmOnly, Loading, PageHeader, Segmented, toast } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
 import { EntityTable } from './EntityList';
@@ -41,46 +41,28 @@ interface Mystery {
 }
 
 const STATE_LABEL: Record<SecretState, string> = { unknown: 'Unknown', suspected: 'Suspected', known: 'Known' };
-const STATE_STYLE: Record<SecretState, string> = { unknown: 'border-line text-dim', suspected: 'border-gold/60 text-gold', known: 'border-ok/50 text-ok' };
 const KIND_LABEL: Record<ClueKind, string> = { rumour: 'Rumour', npc: 'Who knows', place: 'Where', item: 'Item', text: 'Clue' };
 
 function StatePicker({ value, disabled, onChange }: { value: SecretState; disabled: boolean; onChange: (s: SecretState) => void }) {
-  return (
-    <div className="flex gap-1" role="radiogroup" aria-label="What the party knows">
-      {(['unknown', 'suspected', 'known'] as SecretState[]).map((s) => (
-        <button
-          key={s}
-          role="radio"
-          aria-checked={value === s}
-          disabled={disabled}
-          className={`chip ${value === s ? STATE_STYLE[s] + ' bg-white/5' : 'border-line/50 text-dim/70'} disabled:opacity-50`}
-          onClick={() => onChange(s)}
-        >
-          {STATE_LABEL[s]}
-        </button>
-      ))}
-    </div>
-  );
+  return <Segmented size="sm" label="What the party knows" value={value} disabled={disabled} onChange={onChange} options={(['unknown', 'suspected', 'known'] as SecretState[]).map((s) => ({ value: s, label: STATE_LABEL[s] }))} />;
 }
 
 function ClueRow({ c, campaignId, onChange }: { c: Clue; campaignId: number | null; onChange: () => void }) {
   const [found, setFound] = useState(c.found);
   return (
     <li className="flex items-start gap-2 py-1">
-      <input
-        type="checkbox"
-        className="mt-1"
-        checked={found}
-        disabled={!campaignId}
-        aria-label="The party has found this clue"
-        title={campaignId ? 'Found by the party' : 'Choose a campaign to track clues'}
-        onChange={async (e) => {
-          const next = e.target.checked;
-          setFound(next);
-          await api.post(`/api/clues/${c.id}/found`, { campaign_id: campaignId, found: next });
-          onChange();
-        }}
-      />
+      <span className="mt-1" title={campaignId ? 'Found by the party' : 'Choose a campaign to track clues'}>
+        <Check
+          checked={found}
+          disabled={!campaignId}
+          label="The party has found this clue"
+          onChange={async (next) => {
+            setFound(next);
+            await api.post(`/api/clues/${c.id}/found`, { campaign_id: campaignId, found: next });
+            onChange();
+          }}
+        />
+      </span>
       <span className="text-[11px] uppercase tracking-wider text-dim w-20 shrink-0 pt-1">{KIND_LABEL[c.kind]}</span>
       <div className="flex-1 text-sm">
         {c.rumours.map((r) => (
@@ -181,7 +163,10 @@ function SecretCard({ s, campaignId, onChange, compact }: { s: Secret; campaignI
         </button>
         {s.source_id && <EntityLink id={s.source_id} className="text-xs" />}
         <span className="text-xs text-dim">
-          {found}/{s.clues.length} clues found
+          <span className="num">
+            {found}/{s.clues.length}
+          </span>{' '}
+          clues found
         </span>
         <span className="flex-1" />
         <StatePicker
@@ -227,7 +212,7 @@ function MysteryCard({ m, campaignId, onChange }: { m: Mystery; campaignId: numb
   const known = m.secrets.filter((s) => s.state === 'known').length;
   const suspected = m.secrets.filter((s) => s.state === 'suspected').length;
   return (
-    <div className="panel-pad">
+    <Card>
       <button className="w-full text-left flex items-start gap-2" onClick={() => setOpen(!open)} aria-expanded={open}>
         <span className="pt-1">{open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}</span>
         <span className="flex-1">
@@ -268,7 +253,7 @@ function MysteryCard({ m, campaignId, onChange }: { m: Mystery; campaignId: numb
           )}
         </div>
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -278,10 +263,8 @@ export function MysteriesPage() {
   const { data: flagged } = useApi<EntitySummary[]>('/api/entities?canon=SECRET');
   const [title, setTitle] = useState('');
   const [question, setQuestion] = useState('');
-  const { toast, node } = useToast();
   return (
     <div className="space-y-4">
-      {node}
       <PageHeader
         title="Mysteries and Secrets"
         subtitle="The campaign's big questions, the secrets that answer them, and the clues that lead there."
@@ -307,8 +290,8 @@ export function MysteriesPage() {
       {error && <ErrorBox error={error} onRetry={reload} />}
       {!data && !error && <Loading />}
       {data?.map((m) => <MysteryCard key={m.id} m={m} campaignId={activeCampaignId} onChange={reload} />)}
-      {data && !data.length && <p className="text-sm text-dim">No mysteries yet. Press "Update from drafts", or add your own below.</p>}
-      <div className="panel-pad grid gap-2 md:grid-cols-[1fr_1fr_auto] items-end">
+      {data && !data.length && <Empty title="No mysteries yet">Press "Update from drafts", or add your own below.</Empty>}
+      <Card className="grid gap-2 md:grid-cols-[1fr_1fr_auto] items-end">
         <Field label="New mystery">
           <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
         </Field>
@@ -327,11 +310,8 @@ export function MysteriesPage() {
         >
           <Plus size={14} /> Add mystery
         </button>
-      </div>
-      <div className="panel-pad">
-        <div className="section-title mb-2">Records with secret material</div>
-        {flagged ? <EntityTable rows={flagged} /> : <Loading />}
-      </div>
+      </Card>
+      <Card title="Records with secret material">{flagged ? <EntityTable rows={flagged} /> : <Loading inline />}</Card>
     </div>
   );
 }
@@ -342,21 +322,24 @@ export function SecretsPanel({ entityId }: { entityId: string }) {
   const { data, reload } = useApi<Mystery[]>(`/api/mysteries${qs({ entity: entityId, campaign_id: activeCampaignId ?? undefined })}`);
   if (!data?.length) return null;
   return (
-    <div className="panel p-4 space-y-2">
-      <div className="section-title flex items-center justify-between">
-        <span>Secrets</span>
-        <Link to="/mysteries" className="text-xs text-arcane normal-case tracking-normal">
+    <Card
+      title="Secrets"
+      actions={
+        <Link to="/mysteries" className="text-xs text-arcane">
           All mysteries
         </Link>
-      </div>
-      {data.map((m) => (
-        <div key={m.id}>
-          <div className="text-xs text-dim">{m.title}</div>
-          {m.secrets.map((s) => (
-            <SecretCard key={s.id} s={s} campaignId={activeCampaignId} onChange={reload} compact />
-          ))}
-        </div>
-      ))}
-    </div>
+      }
+    >
+      <GmOnly className="space-y-2">
+        {data.map((m) => (
+          <div key={m.id}>
+            <div className="text-xs text-dim">{m.title}</div>
+            {m.secrets.map((s) => (
+              <SecretCard key={s.id} s={s} campaignId={activeCampaignId} onChange={reload} compact />
+            ))}
+          </div>
+        ))}
+      </GmOnly>
+    </Card>
   );
 }

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Archive, Check, Download, RotateCcw, Upload, AlertTriangle, X, Pencil } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
-import { Confirm, EntityLink, ErrorBox, Field, Loading, PageHeader, Tabs, TypeBadge, useToast } from '../components/ui';
+import { Badge, Card, Check as CheckBox, DataTable, Empty, EntityLink, ErrorBox, Field, KeyValue, Loading, PageHeader, Segmented, Tabs, Toggle, TypeBadge, ask, askText, useToast, type Tone } from '../components/ui';
 import { DiffView } from './EntityPage';
 import { Dev, useDebug } from '../components/Dev';
 import type { Entity } from '../lib/types';
@@ -57,11 +57,11 @@ export function ImportExportPage() {
         ]}
       />
       {err && <ErrorBox error={err} />}
-      {done && <div className="panel border-ok/50 bg-ok/10 p-3 text-sm text-ok">{done}</div>}
+      {done && <Card className="border-ok/50 bg-ok/10 text-sm text-ok">{done}</Card>}
       {tab === 'import' && (
         <div className="space-y-4">
           <AdditionsPanel onDone={(msg) => (setDone(msg), reloadIndex(), reloadMeta(), void reloadRuns())} />
-          <div className="panel-pad flex flex-wrap items-end gap-3">
+          <Card className="flex flex-wrap items-end gap-3">
             <Field label="World archive (.zip of Markdown files)">
               <input type="file" accept=".zip,application/zip" onChange={(e) => (setFile(e.target.files?.[0] ?? null), setPreview(null), setDone(null))} />
             </Field>
@@ -85,7 +85,7 @@ export function ImportExportPage() {
             <p className={`text-xs text-dim w-full ${debug ? '' : 'hidden'}`}>
               Also available from the command line: <code>npm run import -- path/to/archive.zip</code> (add <code>--dry-run</code> to preview only).
             </p>
-          </div>
+          </Card>
           {preview && <ImportPreview p={preview} resolutions={resolutions} setResolutions={setResolutions} />}
           {preview && (
             <div className="flex gap-2">
@@ -121,21 +121,28 @@ export function ImportExportPage() {
               </button>
             </div>
           )}
-          <div className="panel overflow-x-auto">
-            <div className="px-4 py-2 border-b border-line section-title">Import history</div>
-            <table className="table">
-              <tbody>
-                {runs?.map((r) => (
-                  <tr key={r.id}>
-                    <td className="text-xs">{new Date(r.started_at).toLocaleString()}</td>
-                    <td>{r.source_name}</td>
-                    <td className={r.status === 'failed' ? 'text-danger' : r.status === 'completed' ? 'text-ok' : ''}>{r.status}</td>
-                    <td className="text-xs text-dim">{r.backup_file ? `backup: ${r.backup_file}` : ''}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Card title="Import history" flush>
+            {!runs ? (
+              <Loading inline />
+            ) : (
+              <DataTable
+                rows={runs}
+                rowKey={(r) => r.id}
+                empty="No imports yet."
+                columns={[
+                  { key: 'started_at', label: 'When', sortable: true, className: 'text-xs whitespace-nowrap', render: (r) => new Date(r.started_at).toLocaleString() },
+                  { key: 'source_name', label: 'Source', sortable: true },
+                  {
+                    key: 'status',
+                    label: 'Status',
+                    sortable: true,
+                    render: (r) => <span className={r.status === 'failed' ? 'text-danger' : r.status === 'completed' ? 'text-ok' : ''}>{r.status}</span>,
+                  },
+                  { key: 'backup_file', label: 'Backup', className: 'text-xs text-dim', render: (r) => r.backup_file ?? '' },
+                ]}
+              />
+            )}
+          </Card>
         </div>
       )}
       {tab === 'export' && <ExportPanel />}
@@ -193,7 +200,7 @@ function ImportPreview({
       ))}
       {s.missingFromSource.length > 0 && <div className="text-sm text-dim">{s.missingFromSource.length} imported records are not in this archive. They are kept, never deleted.</div>}
       {s.conflicts.length > 0 && (
-        <div className="panel border-warn/50 p-3 space-y-1">
+        <Card className="border-warn/50 space-y-1">
           <div className="text-warn text-sm font-medium">Conflicts: you edited these records and the source also changed. Default keeps your version.</div>
           {s.conflicts.map((c) => (
             <div key={c.id} className="flex items-center gap-2 text-sm">
@@ -210,80 +217,88 @@ function ImportPreview({
               </select>
             </div>
           ))}
-        </div>
+        </Card>
       )}
-      <div className="flex gap-1.5">
-        {(debug ? (['actions', 'skipped', 'duplicates', 'broken', 'files'] as const) : (['actions'] as const)).map((k) => (
-          <button key={k} className={`chip ${show === k ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setShow(k)}>
-            {k}
-          </button>
-        ))}
-      </div>
-      <div className="panel overflow-auto max-h-[50vh]">
-        <table className="table">
-          <tbody>
-            {show === 'actions' &&
-              p.entities
-                .filter((e) => e.action !== 'unchanged')
-                .map((e) => (
-                  <tr key={e.id}>
-                    {debug && <td className="text-xs">{e.id}</td>}
-                    <td>{e.name}</td>
-                    <td>
-                      <TypeBadge type={e.type} />
-                    </td>
-                    <td className={e.action === 'conflict' ? 'text-warn' : e.action === 'create' ? 'text-ok' : ''}>{e.action}</td>
-                  </tr>
-                ))}
-            {show === 'skipped' &&
-              s.skipped.map((k, i) => (
-                <tr key={i}>
-                  <td className="text-xs">{k.id}</td>
-                  <td className="text-xs">
-                    {k.file}:{k.line}
-                  </td>
-                  <td className="text-sm">{k.reason}</td>
-                </tr>
-              ))}
-            {show === 'duplicates' &&
-              s.duplicates.map((d) => (
-                <tr key={d.id}>
-                  <td className="text-xs">{d.id}</td>
-                  <td className="text-xs">{d.candidates.join(', ')}</td>
-                  <td className="text-sm">
-                    kept {d.chosen} ({d.reason})
-                  </td>
-                </tr>
-              ))}
-            {show === 'broken' &&
-              s.brokenRefs.map((b, i) => (
-                <tr key={i}>
-                  <td>{b.from}</td>
-                  <td className="text-danger">→ {b.ref}</td>
-                </tr>
-              ))}
-            {show === 'files' &&
-              Object.entries(s.filesByKind).map(([k, v]) => (
-                <tr key={k}>
-                  <td>{k}</td>
-                  <td>{v}</td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-        {show === 'actions' && p.entities.every((e) => e.action === 'unchanged') && <p className="p-3 text-sm text-dim">Every record is unchanged. Importing again changes nothing.</p>}
-      </div>
+      <Segmented
+        size="sm"
+        label="Show"
+        value={show}
+        onChange={setShow}
+        options={(debug ? (['actions', 'skipped', 'duplicates', 'broken', 'files'] as const) : (['actions'] as const)).map((k) => ({ value: k, label: k }))}
+      />
+      <Card flush>
+        {show === 'actions' && (
+          <DataTable
+            maxHeight="50vh"
+            rows={p.entities.filter((e) => e.action !== 'unchanged')}
+            rowKey={(e) => e.id}
+            empty="Every record is unchanged. Importing again changes nothing."
+            columns={[
+              ...(debug ? [{ key: 'id', label: 'ID', sortable: true, className: 'text-xs' }] : []),
+              { key: 'name', label: 'Name', sortable: true },
+              { key: 'type', label: 'Type', sortable: true, render: (e) => <TypeBadge type={e.type} /> },
+              { key: 'action', label: 'Action', sortable: true, render: (e) => <span className={e.action === 'conflict' ? 'text-warn' : e.action === 'create' ? 'text-ok' : ''}>{e.action}</span> },
+            ]}
+          />
+        )}
+        {show === 'skipped' && (
+          <DataTable
+            maxHeight="50vh"
+            rows={s.skipped}
+            rowKey={(_, i) => i}
+            columns={[
+              { key: 'id', label: 'ID', sortable: true, className: 'text-xs' },
+              { key: 'file', label: 'Where', sortable: true, className: 'text-xs', render: (k) => `${k.file}:${k.line}` },
+              { key: 'reason', label: 'Reason', className: 'text-sm' },
+            ]}
+          />
+        )}
+        {show === 'duplicates' && (
+          <DataTable
+            maxHeight="50vh"
+            rows={s.duplicates}
+            rowKey={(d) => d.id}
+            columns={[
+              { key: 'id', label: 'ID', sortable: true, className: 'text-xs' },
+              { key: 'candidates', label: 'Candidates', className: 'text-xs', render: (d) => d.candidates.join(', ') },
+              { key: 'chosen', label: 'Kept', className: 'text-sm', render: (d) => `kept ${d.chosen} (${d.reason})` },
+            ]}
+          />
+        )}
+        {show === 'broken' && (
+          <DataTable
+            maxHeight="50vh"
+            rows={s.brokenRefs}
+            rowKey={(_, i) => i}
+            columns={[
+              { key: 'from', label: 'From', sortable: true },
+              { key: 'ref', label: 'Missing', sortable: true, className: 'text-danger', render: (b) => `→ ${b.ref}` },
+            ]}
+          />
+        )}
+        {show === 'files' && (
+          <DataTable
+            maxHeight="50vh"
+            rows={Object.entries(s.filesByKind).map(([kind, count]) => ({ kind, count }))}
+            rowKey={(f) => f.kind}
+            columns={[
+              { key: 'kind', label: 'Kind', sortable: true },
+              { key: 'count', label: 'Files', sortable: true, num: true },
+            ]}
+          />
+        )}
+      </Card>
     </div>
   );
 }
 
 function Stat({ label, value, sub }: { label: string; value: number | string; sub?: string }) {
   return (
-    <div className="panel p-3">
+    <Card>
       <div className="text-xs uppercase tracking-wider text-dim">{label}</div>
-      <div className="text-2xl font-display text-gold">{value}</div>
+      <div className="text-2xl font-display text-gold num">{value}</div>
       {sub && <div className="text-[11px] text-dim mt-1">{sub}</div>}
-    </div>
+    </Card>
   );
 }
 
@@ -308,19 +323,17 @@ function ExportPanel() {
           </a>
         ))}
       </div>
-      <div className="panel-pad">
-        <div className="section-title mb-2">Campaign-only export</div>
+      <Card title="Campaign-only export">
         <div className="flex flex-wrap gap-2">
           {campaigns?.map((c) => (
             <a key={c.id} className="btn" href={`/api/export/campaign/${c.id}`}>
               <Download size={13} /> {c.title}
             </a>
           ))}
-          {!campaigns?.length && <span className="text-sm text-dim">No campaigns.</span>}
+          {campaigns && !campaigns.length && <Empty compact title="No campaigns." />}
         </div>
-      </div>
-      <div className="panel-pad">
-        <div className="section-title mb-2">Load a JSON export</div>
+      </Card>
+      <Card title="Load a JSON export">
         <p className="text-xs text-dim mb-2">A full JSON export loads into an empty installation only. A campaign export is added as a new campaign.</p>
         {jsonErr && <ErrorBox error={jsonErr} />}
         <input
@@ -337,7 +350,7 @@ function ExportPanel() {
             }
           }}
         />
-      </div>
+      </Card>
     </div>
   );
 }
@@ -365,7 +378,7 @@ export function ReviewPage() {
   if (error) return <ErrorBox error={error} />;
   if (!data) return <Loading />;
   const decide = async (id: number, decision: string) => {
-    const note = decision === 'approved' ? '' : (prompt(decision === 'revise' ? 'What needs revising?' : 'Reason for rejecting (optional)') ?? '');
+    const note = decision === 'approved' ? '' : ((await askText({ title: decision === 'revise' ? 'What needs revising?' : 'Reason for rejecting (optional)', multiline: true })) ?? '');
     await api.post(`/api/proposals/${id}`, { decision, note });
     toast(`Proposal ${decision}`);
     void reload();
@@ -390,7 +403,7 @@ export function ReviewPage() {
       {tab === 'proposals' && (
         <div className="space-y-2">
           {data.proposals.map((p) => (
-            <div key={p.id} className="panel-pad flex flex-wrap gap-3 items-start">
+            <Card key={p.id} className="flex flex-wrap gap-3 items-start">
               <div className="flex-1 min-w-60">
                 <div className="text-xs text-dim">
                   {p.kind === 'new_entity' ? 'New record' : p.kind === 'campaign_promotion' ? 'From a campaign' : p.kind} · {new Date(p.created_at).toLocaleString()}{' '}
@@ -416,16 +429,16 @@ export function ReviewPage() {
                   <X size={14} /> Reject
                 </button>
               </div>
-            </div>
+            </Card>
           ))}
-          {!data.proposals.length && <p className="text-sm text-dim">Nothing awaiting approval.</p>}
+          {!data.proposals.length && <Empty title="Nothing awaiting approval." />}
         </div>
       )}
       {tab === 'modified' && (
         <div className="space-y-2">
           <p className="text-sm text-dim">Canon records that were edited. Approve the edit, or revert to the approved text.</p>
           {data.modified.map((m) => (
-            <div key={m.id} className="panel-pad">
+            <Card key={m.id}>
               <div className="flex flex-wrap items-center gap-2">
                 <EntityLink id={m.id}>{m.name}</EntityLink>
                 <span className="text-xs text-dim">
@@ -438,7 +451,7 @@ export function ReviewPage() {
                   <button
                     className="btn-primary"
                     onClick={async () => {
-                      await api.post(`/api/review/${m.id}`, { decision: 'approve', note: prompt('Approval note (optional)') ?? '' });
+                      await api.post(`/api/review/${m.id}`, { decision: 'approve', note: (await askText({ title: 'Approval note (optional)', multiline: true })) ?? '' });
                       void reload();
                     }}
                   >
@@ -447,7 +460,7 @@ export function ReviewPage() {
                   <button
                     className="btn-danger"
                     onClick={async () => {
-                      if (!confirm('Revert to the last reviewed text? The edited version stays in history.')) return;
+                      if (!(await ask({ body: 'Revert to the last reviewed text? The edited version stays in history.', danger: true, confirmLabel: 'Revert' }))) return;
                       await api.post(`/api/review/${m.id}`, { decision: 'revert' });
                       void reload();
                     }}
@@ -457,9 +470,9 @@ export function ReviewPage() {
                 </div>
               </div>
               {diffFor === m.id && <ModifiedDiff id={m.id} />}
-            </div>
+            </Card>
           ))}
-          {!data.modified.length && <p className="text-sm text-dim">No canon records have unreviewed edits.</p>}
+          {!data.modified.length && <Empty title="No canon records have unreviewed edits." />}
         </div>
       )}
       {tab === 'proposed' && <SimpleList rows={data.proposed.map((r) => ({ id: r.id, name: r.name, extra: r.origin }))} empty="No PROPOSED records." />}
@@ -467,14 +480,14 @@ export function ReviewPage() {
         <div className="space-y-2">
           <p className="text-sm text-dim">Records that share a name. Many are deliberate, such as a city and the faction of the same name; link them with “Same being as” instead of merging.</p>
           {data.duplicates.map((d, i) => (
-            <div key={i} className="panel-pad text-sm flex flex-wrap gap-3">
+            <Card key={i} className="text-sm flex flex-wrap gap-3">
               {d.records.map((r) => (
                 <span key={r.id}>
                   <EntityLink id={r.id}>{r.name}</EntityLink> {debug && <span className="text-xs text-dim">{r.id}</span>} <TypeBadge type={r.type} />
                 </span>
               ))}
-              {d.acknowledgedDualRole && <span className="chip border-ok/50 text-ok">linked dual role</span>}
-            </div>
+              {d.acknowledgedDualRole && <Badge tone="ok">linked dual role</Badge>}
+            </Card>
           ))}
           {debug && data.importDuplicates.length > 0 && (
             <details className="panel p-3 text-sm">
@@ -530,9 +543,9 @@ function ModifiedDiff({ id }: { id: string }) {
 
 function SimpleList({ rows, empty }: { rows: { id: string; name: string; extra?: string }[]; empty: string }) {
   const debug = useDebug();
-  if (!rows.length) return <p className="text-sm text-dim">{empty}</p>;
+  if (!rows.length) return <Empty title={empty} />;
   return (
-    <div className="panel p-3 grid sm:grid-cols-2 lg:grid-cols-3 gap-1 text-sm">
+    <Card className="grid sm:grid-cols-2 lg:grid-cols-3 gap-1 text-sm">
       {rows.map((r) => (
         <div key={r.id}>
           <EntityLink id={r.id}>{r.name}</EntityLink>{' '}
@@ -543,7 +556,7 @@ function SimpleList({ rows, empty }: { rows: { id: string; name: string; extra?:
           )}
         </div>
       ))}
-    </div>
+    </Card>
   );
 }
 
@@ -556,33 +569,22 @@ export function BrokenPage() {
       {!data ? (
         <Loading />
       ) : !data.references.length && !data.danglingRelationships.length ? (
-        <div className="panel p-6 text-ok flex items-center gap-2">
-          <Check size={16} /> No broken references. Every cross-reference resolves.
-        </div>
+        <Empty icon={<Check size={20} className="text-ok" />} title="No broken references.">
+          Every cross-reference resolves.
+        </Empty>
       ) : (
-        <div className="panel overflow-x-auto">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>From</th>
-                <th>Missing ID</th>
-                <th>Where</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.references.map((r, i) => (
-                <tr key={i}>
-                  <td>
-                    <EntityLink id={r.from}>{r.from_name}</EntityLink>
-                  </td>
-                  <td className="text-danger">{r.ref}</td>
-                  <td className="text-xs text-dim">{r.where}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <Card flush>
+          <DataTable
+            rows={data.references}
+            rowKey={(_, i) => i}
+            columns={[
+              { key: 'from', label: 'From', sortValue: (r) => r.from_name, render: (r) => <EntityLink id={r.from}>{r.from_name}</EntityLink> },
+              { key: 'ref', label: 'Missing ID', sortable: true, className: 'text-danger' },
+              { key: 'where', label: 'Where', sortable: true, className: 'text-xs text-dim' },
+            ]}
+          />
           {data.danglingRelationships.length > 0 && <p className="p-3 text-sm text-danger">{data.danglingRelationships.length} relationships point to deleted records.</p>}
-        </div>
+        </Card>
       )}
     </div>
   );
@@ -616,9 +618,7 @@ export function ConsistencyPage() {
       {!data ? (
         <Loading />
       ) : !data.problems.length ? (
-        <div className="panel p-6 text-ok flex items-center gap-2">
-          <Check size={16} /> All {data.checked} records agree with each other.
-        </div>
+        <Empty icon={<Check size={20} className="text-ok" />} title={`All ${data.checked} records agree with each other.`} />
       ) : (
         <>
           <p className="text-sm text-dim">
@@ -661,7 +661,7 @@ interface OpenQuestion {
   note?: string;
 }
 const QUESTION_LABEL: Record<QuestionStatus, string> = { todo: 'Still to do', filled: 'Filled by an addition', kept: 'Open on purpose' };
-const QUESTION_TONE: Record<QuestionStatus, string> = { todo: 'border-gold/50 text-gold', filled: 'border-ok/50 text-ok', kept: 'border-arcane/50 text-arcane' };
+const QUESTION_TONE: Record<QuestionStatus, Tone> = { todo: 'gold', filled: 'ok', kept: 'arcane' };
 
 export function OpenQuestionsPage() {
   const { data } = useApi<{ questions: OpenQuestion[]; counts: Record<QuestionStatus, number> }>('/api/library/open-questions');
@@ -700,7 +700,7 @@ export function OpenQuestionsPage() {
           />
           <input className="input w-full max-w-md" placeholder="Search the questions" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search the questions" />
           {!list.length ? (
-            <div className="panel p-6 text-dim">Nothing here.</div>
+            <Empty title="Nothing here." />
           ) : (
             [...groups.entries()].map(([type, items]) => (
               <details key={type} className="panel" open={items.length <= 12}>
@@ -714,7 +714,7 @@ export function OpenQuestionsPage() {
                       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                         <EntityLink id={x.id} className="font-medium" />
                         <span className="text-xs text-dim">{x.section}</span>
-                        <span className={`chip ${QUESTION_TONE[x.status]}`}>{QUESTION_LABEL[x.status]}</span>
+                        <Badge tone={QUESTION_TONE[x.status]}>{QUESTION_LABEL[x.status]}</Badge>
                       </div>
                       {x.text && <p className="text-dim">{x.text}</p>}
                       {(x.note || x.by.length > 0) && (
@@ -754,34 +754,35 @@ export function HistoryPage() {
   return (
     <div className="space-y-4">
       <PageHeader title="Change History" subtitle="Every change to every record: what, when and why." />
-      <label className="text-sm flex items-center gap-1">
-        <input type="checkbox" checked={all} onChange={(e) => setAll(e.target.checked)} /> Include import events
-      </label>
-      <div className="panel overflow-x-auto">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>When</th>
-              <th>Record</th>
-              <th>Change</th>
-              <th>Reason</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.map((r) => (
-              <tr key={r.id}>
-                <td className="text-xs whitespace-nowrap">{new Date(r.created_at).toLocaleString()}</td>
-                <td>
-                  <EntityLink id={r.entity_id}>{r.name ?? r.entity_id}</EntityLink> <span className="text-xs text-dim">v{r.version}</span>
-                </td>
-                <td>{r.change_type}</td>
-                <td className="text-sm">{r.reason}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {data && !data.length && <p className="p-4 text-sm text-dim">No edits yet.</p>}
-      </div>
+      <CheckBox checked={all} onChange={setAll}>
+        Include import events
+      </CheckBox>
+      <Card flush>
+        {!data ? (
+          <Loading />
+        ) : (
+          <DataTable
+            rows={data}
+            rowKey={(r) => r.id}
+            empty="No edits yet."
+            columns={[
+              { key: 'created_at', label: 'When', sortable: true, className: 'text-xs whitespace-nowrap', render: (r) => new Date(r.created_at).toLocaleString() },
+              {
+                key: 'name',
+                label: 'Record',
+                sortValue: (r) => r.name ?? r.entity_id,
+                render: (r) => (
+                  <>
+                    <EntityLink id={r.entity_id}>{r.name ?? r.entity_id}</EntityLink> <span className="text-xs text-dim num">v{r.version}</span>
+                  </>
+                ),
+              },
+              { key: 'change_type', label: 'Change', sortable: true },
+              { key: 'reason', label: 'Reason', className: 'text-sm' },
+            ]}
+          />
+        )}
+      </Card>
     </div>
   );
 }
@@ -790,7 +791,6 @@ export function HistoryPage() {
 export function BackupsPage() {
   const { data, reload } = useApi<{ file: string; size: number; created_at: string; reason: string }[]>('/api/backups');
   const [err, setErr] = useState<string | null>(null);
-  const [restoring, setRestoring] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
   const { reloadIndex, reloadMeta } = useAppState();
   const afterRestore = async (r: { safetyBackup: string }) => {
@@ -798,6 +798,22 @@ export function BackupsPage() {
     await reloadIndex();
     await reloadMeta();
     void reload();
+  };
+  const restore = async (f: string) => {
+    if (
+      !(await ask({
+        title: 'Restore backup?',
+        body: `All current data will be replaced by ${f}. A safety backup of the current state is made first, so this can be undone.`,
+        danger: true,
+        confirmLabel: 'Restore',
+      }))
+    )
+      return;
+    try {
+      await afterRestore(await api.post(`/api/backups/${encodeURIComponent(f)}/restore`));
+    } catch (x) {
+      setErr((x as Error).message);
+    }
   };
   return (
     <div className="space-y-4">
@@ -821,15 +837,15 @@ export function BackupsPage() {
         }
       />
       {err && <ErrorBox error={err} />}
-      {msg && <div className="panel border-ok/50 bg-ok/10 p-3 text-sm text-ok">{msg}</div>}
-      <div className="panel-pad">
+      {msg && <Card className="border-ok/50 bg-ok/10 text-sm text-ok">{msg}</Card>}
+      <Card>
         <Field label="Restore from a backup file (.wkbackup.zip)">
           <input
             type="file"
             accept=".zip"
             onChange={async (e) => {
               const f = e.target.files?.[0];
-              if (!f || !confirm('Replace ALL current data with this backup? A safety backup of the current state is made first.')) return;
+              if (!f || !(await ask({ title: 'Restore backup?', body: 'Replace ALL current data with this backup? A safety backup of the current state is made first.', danger: true, confirmLabel: 'Replace' }))) return;
               try {
                 await afterRestore(await api.upload('/api/backups/restore-upload', 'backup', f));
               } catch (x) {
@@ -838,56 +854,48 @@ export function BackupsPage() {
             }}
           />
         </Field>
-      </div>
-      <div className="panel overflow-x-auto">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Backup</th>
-              <th>Size</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.map((b) => (
-              <tr key={b.file}>
-                <td>
-                  <div className="text-sm">{b.file}</div>
-                  <div className="text-xs text-dim">{new Date(b.created_at).toLocaleString()}</div>
-                </td>
-                <td className="text-xs">{(b.size / 1024 / 1024).toFixed(2)} MB</td>
-                <td className="text-right whitespace-nowrap">
-                  <a className="btn" href={`/api/backups/${encodeURIComponent(b.file)}`}>
-                    <Download size={13} />
-                  </a>{' '}
-                  <button className="btn" onClick={() => setRestoring(b.file)}>
-                    <RotateCcw size={13} /> Restore
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {data && !data.length && <p className="p-4 text-sm text-dim">No backups yet.</p>}
-      </div>
-      {restoring && (
-        <Confirm
-          title="Restore backup?"
-          danger
-          confirmLabel="Restore"
-          body={`All current data will be replaced by ${restoring}. A safety backup of the current state is made first, so this can be undone.`}
-          onCancel={() => setRestoring(null)}
-          onConfirm={async () => {
-            const f = restoring;
-            setRestoring(null);
-            try {
-              await afterRestore(await api.post(`/api/backups/${encodeURIComponent(f)}/restore`));
-            } catch (x) {
-              setErr((x as Error).message);
-            }
-          }}
-        />
-      )}
+      </Card>
+      <Card flush>
+        {!data ? (
+          <Loading />
+        ) : (
+          <DataTable
+            rows={data}
+            rowKey={(b) => b.file}
+            empty="No backups yet."
+            columns={[
+              {
+                key: 'file',
+                label: 'Backup',
+                sortValue: (b) => b.created_at,
+                render: (b) => (
+                  <>
+                    <div className="text-sm">{b.file}</div>
+                    <div className="text-xs text-dim">{new Date(b.created_at).toLocaleString()}</div>
+                  </>
+                ),
+              },
+              { key: 'size', label: 'Size', sortable: true, num: true, className: 'text-xs', render: (b) => `${(b.size / 1024 / 1024).toFixed(2)} MB` },
+              {
+                key: 'actions',
+                label: <span className="sr-only">Actions</span>,
+                align: 'right',
+                className: 'whitespace-nowrap',
+                render: (b) => (
+                  <>
+                    <a className="btn" href={`/api/backups/${encodeURIComponent(b.file)}`} aria-label={`Download ${b.file}`}>
+                      <Download size={13} />
+                    </a>{' '}
+                    <button className="btn" onClick={() => void restore(b.file)}>
+                      <RotateCcw size={13} /> Restore
+                    </button>
+                  </>
+                ),
+              },
+            ]}
+          />
+        )}
+      </Card>
     </div>
   );
 }
@@ -920,24 +928,31 @@ export function SettingsPage() {
   return (
     <div className="space-y-4 max-w-2xl">
       <PageHeader title="Settings" />
-      <div className="panel-pad space-y-3">
+      <Card className="space-y-3">
         <Field label="Application name (working title)">
           <input className="input" value={form.app_name ?? ''} onChange={(e) => setForm({ ...form, app_name: e.target.value })} />
         </Field>
         <Field label="Default world date" hint="Campaigns keep their own current date.">
           <input className="input" value={form.world_date ?? ''} onChange={(e) => setForm({ ...form, world_date: e.target.value })} />
         </Field>
-        <Field label="Theme">
-          <select className="input" value={theme} onChange={(e) => setTheme(e.target.value as 'dark' | 'light')}>
-            <option value="light">Warm Parchment (default)</option>
-            <option value="dark">Dark Codex</option>
-          </select>
-        </Field>
+        <div>
+          <span className="label">Theme</span>
+          <Segmented
+            label="Theme"
+            value={theme}
+            onChange={setTheme}
+            options={[
+              { value: 'light', label: 'Warm Parchment (default)' },
+              { value: 'dark', label: 'Dark Codex' },
+            ]}
+          />
+        </div>
         {theme === 'light' && (
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={!texture} onChange={(e) => toggleTexture(!e.target.checked)} /> Reduce texture
-            <span className="text-dim">(no paper grain on the background)</span>
-          </label>
+          <div>
+            <Toggle checked={!texture} onChange={(v) => toggleTexture(!v)}>
+              Reduce texture <span className="text-dim">(no paper grain on the background)</span>
+            </Toggle>
+          </div>
         )}
         <button
           className="btn-primary"
@@ -949,23 +964,24 @@ export function SettingsPage() {
         >
           Save settings
         </button>
-      </div>
+      </Card>
       <MechanicsPanel />
       <RulesPacksPanel />
       <DebugToggle />
       <Dev>
-        <div className="panel-pad text-sm space-y-1">
-          <div className="section-title mb-1">Installation</div>
-          <div>
-            Data folder: <code>{meta?.dataDir}</code>
-          </div>
-          <div>Database schema version: {meta?.schemaVersion}</div>
-          <div>Records: {meta?.entities}</div>
+        <Card title="Installation" className="text-sm space-y-1">
+          <KeyValue
+            items={[
+              ['Data folder', <code key="d">{meta?.dataDir}</code>],
+              ['Database schema version', meta?.schemaVersion],
+              ['Records', meta?.entities],
+            ]}
+          />
           <div className="text-dim text-xs pt-2">
             Keyboard: Ctrl+K or / search · Alt+D DM screen · Ctrl+\ collapse sidebar. Player view: open <code>/player</code>, or run <code>npm run start:player</code> for a separate player-only
             server.
           </div>
-        </div>
+        </Card>
       </Dev>
     </div>
   );
@@ -974,19 +990,22 @@ export function SettingsPage() {
 function DebugToggle() {
   const { debug, debugForced, setDebug } = useAppState();
   return (
-    <div className="panel-pad space-y-2">
-      <div className="section-title">Technical details</div>
-      <label className="flex items-start gap-2 text-sm">
-        <input type="checkbox" className="mt-1" checked={debug} disabled={debugForced} onChange={(e) => void setDebug(e.target.checked)} />
-        <span>
-          Show technical details
-          <span className="block text-xs text-dim">
+    <Card title="Technical details" className="space-y-2">
+      <Toggle
+        className="flex"
+        checked={debug}
+        disabled={debugForced}
+        onChange={(v) => void setDebug(v)}
+        hint={
+          <>
             Record IDs, source files and citations, tags, import reports and notes on how the app works. Leave off for normal play.
             {debugForced && ' Turned on by the WORLDKEEPER_DEBUG setting on this computer.'}
-          </span>
-        </span>
-      </label>
-    </div>
+          </>
+        }
+      >
+        Show technical details
+      </Toggle>
+    </Card>
   );
 }
 
@@ -996,7 +1015,7 @@ function AdditionsPanel({ onDone }: { onDone: (msg: string) => void }) {
   const [busy, setBusy] = useState(false);
   if (!data?.available) return null;
   return (
-    <div className="panel-pad flex flex-wrap items-center gap-3">
+    <Card className="flex flex-wrap items-center gap-3">
       <div className="flex-1 min-w-[16rem]">
         <div className="font-display text-gold">Worldkeeper additions</div>
         <p className="text-sm text-dim">
@@ -1027,6 +1046,6 @@ function AdditionsPanel({ onDone }: { onDone: (msg: string) => void }) {
       >
         {busy ? 'Applying…' : 'Apply additions'}
       </button>
-    </div>
+    </Card>
   );
 }

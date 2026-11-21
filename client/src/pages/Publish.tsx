@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Download, ExternalLink, Eye, Globe, KeyRound, Send, Check } from 'lucide-react';
 import { api, useApi } from '../lib/api';
-import { Confirm, ErrorBox, Field, Loading, PageHeader } from '../components/ui';
+import { Card, Confirm, ErrorBox, Field, Loading, PageHeader } from '../components/ui';
 import { Dev } from '../components/Dev';
 
 interface Summary {
@@ -95,8 +95,7 @@ export function PublishPage() {
       {!data.available && <ErrorBox error="The Player Handbook isn't built yet. Run “npm run build” and restart." />}
       {err && <ErrorBox error={err} />}
 
-      <section className="panel-pad space-y-2">
-        <h2 className="section-title">What players will see</h2>
+      <Card title="What players will see" className="space-y-2">
         {p ? (
           <>
             <p className="text-sm">
@@ -120,14 +119,11 @@ export function PublishPage() {
         ) : (
           <Loading />
         )}
-      </section>
+      </Card>
 
       <MatchHandbook />
 
-      <section className="panel-pad space-y-3">
-        <h2 className="section-title flex items-center gap-2">
-          <KeyRound size={14} /> Connect GitHub
-        </h2>
+      <Card title="Connect GitHub" icon={<KeyRound size={14} />} className="space-y-3">
         <ol className="text-sm list-decimal pl-5 space-y-1 text-dim">
           <li>
             Create a{' '}
@@ -169,16 +165,15 @@ export function PublishPage() {
             </span>
           )}
         </div>
-      </section>
+      </Card>
 
-      <section className="panel-pad space-y-3">
-        <h2 className="section-title">Publish</h2>
+      <Card title="Publish" className="space-y-3">
         <p className="text-sm text-dim">Publish again after a session to update what your players see. Anyone with the link can read the handbook.</p>
         <button className="btn-primary" disabled={!ready || !data.available || busy} onClick={() => setConfirming(true)}>
           <Send size={14} /> {busy ? 'Publishing…' : 'Publish to GitHub Pages'}
         </button>
         {last && (
-          <div className={`panel p-3 text-sm space-y-1 ${result ? 'border-ok/50' : ''}`}>
+          <Card className={`text-sm space-y-1 ${result ? 'border-ok/50' : ''}`}>
             <div>
               {result ? (result.changed ? 'Published.' : 'Already up to date: nothing had changed.') : 'Last published'} {new Date(last.at).toLocaleString()}
             </div>
@@ -191,9 +186,9 @@ export function PublishPage() {
                 Uploaded {last.uploaded} changed files, {last.unchanged} unchanged · Pages: {last.pages}
               </div>
             </Dev>
-          </div>
+          </Card>
         )}
-      </section>
+      </Card>
 
       {confirming && p && (
         <Confirm
@@ -251,8 +246,7 @@ function MatchHandbook() {
     }
   };
   return (
-    <section className="panel-pad space-y-2">
-      <h2 className="section-title">Match the published handbook</h2>
+    <Card title="Match the published handbook" className="space-y-2">
       <p className="text-sm text-dim">
         The Player Handbook on GitHub Pages shows the records your archive tags for players, with only their safe sections, and the setting&apos;s player text. This reveals the same in this library,
         so the table server and the in-app player view show players what the handbook does. It only adds: nothing you&apos;ve revealed is hidden, and player text you&apos;ve written is kept. A backup
@@ -302,6 +296,6 @@ function MatchHandbook() {
           )}
         </>
       )}
-    </section>
+    </Card>
   );
 }

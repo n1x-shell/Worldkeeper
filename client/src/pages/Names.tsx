@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Copy, RefreshCw } from 'lucide-react';
 import { useApi } from '../lib/api';
-import { Loading, PageHeader } from '../components/ui';
+import { Empty, Loading, PageHeader } from '../components/ui';
 
 /**
  * The name generator: new names in a people's style, made from the common names on its page. A first name or a
@@ -47,7 +47,7 @@ export function NamesPage() {
             ))}
           </ul>
         ) : (
-          <p className="text-dim text-sm">No new names left in this style. Try another people.</p>
+          <Empty title="No new names left in this style.">Try another people.</Empty>
         )
       ) : (
         <Loading />

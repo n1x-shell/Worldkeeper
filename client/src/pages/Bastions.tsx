@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Castle, Hourglass, Plus, Trash2 } from 'lucide-react';
 import { api, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
-import { AutoTextarea, EntityLink, ErrorBox, Field, Loading, PageHeader, SaveStatus } from '../components/ui';
+import { ask, AutoTextarea, Badge, Card, DataTable, Empty, EntityLink, ErrorBox, Field, Loading, PageHeader, SaveStatus, Section } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { NeedCampaign } from './Campaign';
 import { BASIC_FACILITIES, ORDERS, SPACES, SPECIAL_FACILITIES, specialSlots } from '../../../shared/bastions';
@@ -80,6 +80,7 @@ export function BastionsPage() {
         }
       />
       {level < 5 && <p className="text-sm text-dim">The party gains a Bastion at level 5. You can set one up ahead of time.</p>}
+      {!data.length && <Empty title="No Bastions yet.">Use New Bastion to set up the party's stronghold.</Empty>}
       {data.map((b) => (
         <BastionCard key={b.id} b={b} level={level} onDelete={reload} />
       ))}
@@ -117,7 +118,7 @@ function BastionCard({ b: init, level, onDelete }: { b: Bastion; level: number; 
   const addFacility = (name: string, kind: 'special' | 'basic') =>
     set({ facilities: [...b.facilities, { id: Math.random().toString(36).slice(2, 10), name, kind, space: 'Roomy', hirelings: kind === 'special' ? 1 : 0, order: '', notes: '' }] });
   return (
-    <section className="panel-pad space-y-3">
+    <Card className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
         <Castle size={18} className="text-gold" />
         <input className="input font-display text-lg text-gold flex-1 min-w-[12rem]" value={b.name} onChange={(e) => set({ name: e.target.value })} aria-label="Bastion name" />
@@ -125,7 +126,7 @@ function BastionCard({ b: init, level, onDelete }: { b: Bastion; level: number; 
         <button
           className="btn-ghost hover:text-danger"
           onClick={async () => {
-            if (!window.confirm(`Delete ${b.name} and its turns?`)) return;
+            if (!(await ask({ body: `Delete ${b.name} and its turns?`, danger: true, confirmLabel: 'Delete' }))) return;
             await api.del(`/api/bastions/${b.id}`);
             onDelete();
           }}
@@ -169,34 +170,34 @@ function BastionCard({ b: init, level, onDelete }: { b: Bastion; level: number; 
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="text-left text-xs uppercase tracking-wider text-dim">
+        <table className="table data-table">
+          <thead>
             <tr>
-              <th className="py-1 pr-2">Facility</th>
-              <th className="pr-2">Space</th>
-              <th className="pr-2">Hirelings</th>
-              <th className="pr-2">Order this turn</th>
-              <th className="pr-2">Notes</th>
+              <th scope="col">Facility</th>
+              <th scope="col">Space</th>
+              <th scope="col">Hirelings</th>
+              <th scope="col">Order this turn</th>
+              <th scope="col">Notes</th>
               <th />
             </tr>
           </thead>
           <tbody>
             {b.facilities.map((f) => (
-              <tr key={f.id} className="border-t border-line align-top">
-                <td className="py-1.5 pr-2 whitespace-nowrap">
-                  {f.name} <span className="text-[11px] text-dim">{f.kind}</span>
+              <tr key={f.id} className="align-top">
+                <td className="whitespace-nowrap">
+                  {f.name} <Badge tone={f.kind === 'special' ? 'gold' : 'dim'}>{f.kind}</Badge>
                 </td>
-                <td className="pr-2">
+                <td>
                   <select className="input py-0.5 text-sm" value={f.space} onChange={(e) => setF(f.id, { space: e.target.value })}>
                     {SPACES.map((s) => (
                       <option key={s}>{s}</option>
                     ))}
                   </select>
                 </td>
-                <td className="pr-2">
-                  <input className="input py-0.5 w-16" type="number" min={0} value={f.hirelings} onChange={(e) => setF(f.id, { hirelings: Math.max(0, Number(e.target.value) || 0) })} />
+                <td>
+                  <input className="input py-0.5 w-16 num" type="number" min={0} value={f.hirelings} onChange={(e) => setF(f.id, { hirelings: Math.max(0, Number(e.target.value) || 0) })} />
                 </td>
-                <td className="pr-2">
+                <td>
                   {f.kind === 'special' ? (
                     <select className="input py-0.5 text-sm" value={f.order} onChange={(e) => setF(f.id, { order: e.target.value })}>
                       <option value="">No order</option>
@@ -208,7 +209,7 @@ function BastionCard({ b: init, level, onDelete }: { b: Bastion; level: number; 
                     <span className="text-dim text-xs">—</span>
                   )}
                 </td>
-                <td className="pr-2 min-w-[12rem]">
+                <td className="min-w-[12rem]">
                   <input className="input py-0.5 text-sm" value={f.notes} onChange={(e) => setF(f.id, { notes: e.target.value })} placeholder="What it makes, who runs it…" />
                 </td>
                 <td>
@@ -223,7 +224,7 @@ function BastionCard({ b: init, level, onDelete }: { b: Bastion; level: number; 
       </div>
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <span className="text-dim">
-          Special facilities: {specials.length} of {slots} at level {level}.
+          Special facilities: <span className="num">{specials.length}</span> of <span className="num">{slots}</span> at level <span className="num">{level}</span>.
         </span>
         <select className="input w-auto py-1 text-sm" value="" disabled={specials.length >= slots || !available.length} onChange={(e) => e.target.value && addFacility(e.target.value, 'special')}>
           <option value="">Add a special facility…</option>
@@ -242,8 +243,7 @@ function BastionCard({ b: init, level, onDelete }: { b: Bastion; level: number; 
       </div>
 
       <div className="grid gap-3 lg:grid-cols-[1fr_1fr]">
-        <div className="space-y-2">
-          <div className="section-title">Take a Bastion turn</div>
+        <Section title="Take a Bastion turn" className="space-y-2">
           <p className="text-xs text-dim">Records each facility's order, then clears them for next time. During a live session it goes in the session log.</p>
           <AutoTextarea minRows={2} value={event} onChange={(e) => setEvent(e.target.value)} placeholder="Any Bastion event this turn (roll on the book's table)…" />
           <button
@@ -260,9 +260,8 @@ function BastionCard({ b: init, level, onDelete }: { b: Bastion; level: number; 
           <Field label="Notes">
             <AutoTextarea minRows={2} value={b.notes} onChange={(e) => set({ notes: e.target.value })} />
           </Field>
-        </div>
-        <div>
-          <div className="section-title mb-1">Turns</div>
+        </Section>
+        <Section title="Turns">
           {turns?.length ? (
             <ul className="text-sm space-y-2 max-h-72 overflow-y-auto">
               {turns.map((t) => (
@@ -276,16 +275,16 @@ function BastionCard({ b: init, level, onDelete }: { b: Bastion; level: number; 
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-dim">No turns yet.</p>
+            <Empty compact title="No turns yet." />
           )}
           {b.location_id && (
             <p className="text-xs text-dim mt-2">
               At <EntityLink id={b.location_id} />
             </p>
           )}
-        </div>
+        </Section>
       </div>
-    </section>
+    </Card>
   );
 }
 
@@ -308,12 +307,7 @@ function DowntimeLog({ campaignId, characters }: { campaignId: number; character
   const { data, reload } = useApi<Downtime[]>(`/api/downtime?campaign_id=${campaignId}`);
   const [draft, setDraft] = useState({ character: '', activity: '', days: 5, cost_gp: 0, result: '' });
   return (
-    <section className="panel-pad space-y-3">
-      <div className="flex items-center gap-2">
-        <Hourglass size={16} className="text-gold" />
-        <div className="section-title">Downtime</div>
-        <span className="text-xs text-dim">What each character does between adventures.</span>
-      </div>
+    <Card className="space-y-3" icon={<Hourglass size={16} className="text-gold" />} title="Downtime" aside="What each character does between adventures.">
       <form
         className="grid gap-2 md:grid-cols-[1fr_1fr_80px_100px_2fr_auto] items-end"
         onSubmit={async (e) => {
@@ -354,28 +348,29 @@ function DowntimeLog({ campaignId, characters }: { campaignId: number; character
         </button>
       </form>
       {data?.length ? (
-        <table className="w-full text-sm">
-          <tbody>
-            {data.map((d) => (
-              <tr key={d.id} className="border-t border-line">
-                <td className="py-1.5 pr-2 font-medium">{d.character}</td>
-                <td className="pr-2">{d.activity}</td>
-                <td className="pr-2 text-dim whitespace-nowrap">
-                  {d.days} days{d.cost_gp ? `, ${d.cost_gp} gp` : ''}
-                </td>
-                <td className="pr-2">{d.result}</td>
-                <td>
-                  <button className="btn-ghost p-1 hover:text-danger" onClick={async () => (await api.del(`/api/downtime/${d.id}`), reload())} aria-label="Delete">
-                    <Trash2 size={13} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DataTable
+          rows={data}
+          rowKey={(d) => d.id}
+          columns={[
+            { key: 'character', label: 'Who', sortable: true, className: 'font-medium' },
+            { key: 'activity', label: 'Doing', sortable: true },
+            { key: 'days', label: 'Days', num: true, sortable: true },
+            { key: 'cost_gp', label: 'Cost (gp)', num: true, sortable: true, render: (d) => (d.cost_gp ? d.cost_gp : '') },
+            { key: 'result', label: 'What came of it' },
+            {
+              key: 'del',
+              label: <span className="sr-only">Delete</span>,
+              render: (d) => (
+                <button className="btn-ghost p-1 hover:text-danger" onClick={async () => (await api.del(`/api/downtime/${d.id}`), reload())} aria-label="Delete">
+                  <Trash2 size={13} />
+                </button>
+              ),
+            },
+          ]}
+        />
       ) : (
-        <p className="text-sm text-dim">Nothing yet.</p>
+        <Empty compact title="Nothing yet." />
       )}
-    </section>
+    </Card>
   );
 }

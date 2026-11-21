@@ -2,41 +2,20 @@ import { Link } from 'react-router-dom';
 import { useMechanics } from '../lib/mechanics';
 import type { ReactNode } from 'react';
 import { Printer } from 'lucide-react';
-import { Empty, PageHeader } from '../components/ui';
+import { Card, DataTable, Empty, PageHeader } from '../components/ui';
 
 /**
  * GM QUICK REFERENCE: the world's own rules on one printable sheet. Everything here restates approved records
  * (Thinning and Unmaking, anchors, Shardscarred, Elder Gods at the Table, faction standing, travel and the crossing).
  */
 const Block = ({ title, children }: { title: string; children: ReactNode }) => (
-  <section className="panel p-4 space-y-2 break-inside-avoid">
-    <h2 className="font-display text-lg text-gold">{title}</h2>
+  <Card title={title} className="break-inside-avoid">
     <div className="text-sm space-y-1.5">{children}</div>
-  </section>
+  </Card>
 );
-const Table = ({ head, rows }: { head: string[]; rows: string[][] }) => (
-  <table className="w-full text-sm">
-    <thead>
-      <tr className="text-left text-dim">
-        {head.map((h) => (
-          <th key={h} className="py-1 pr-3 font-normal">
-            {h}
-          </th>
-        ))}
-      </tr>
-    </thead>
-    <tbody className="divide-y divide-line">
-      {rows.map((r) => (
-        <tr key={r[0]}>
-          {r.map((c, i) => (
-            <td key={i} className="py-1 pr-3 align-top">
-              {c}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </tbody>
-  </table>
+/** A small reference table. Columns of numbers (DCs) line up. */
+const Table = ({ head, rows, num = [] }: { head: string[]; rows: string[][]; num?: number[] }) => (
+  <DataTable rowKey={(r) => r[0]} rows={rows} columns={head.map((h, i) => ({ key: String(i), label: h, num: num.includes(i), render: (r: string[]) => r[i] }))} />
 );
 
 export function QuickReferencePage() {
@@ -90,6 +69,7 @@ export function QuickReferencePage() {
           <p>A god can&apos;t be harmed, only stopped. Its Laws of Existence work as far as its reach.</p>
           <Table
             head={['Reach', 'Return stage', 'Where its Laws work', 'Save DC']}
+            num={[3]}
             rows={[
               ['Dreaming', '1 to 2', 'Its own depth, faintly', '15'],
               ['Stirring', '3 to 5', 'Its depth, the Verge, the Rift, seeps of glass', '18'],
@@ -134,6 +114,7 @@ export function QuickReferencePage() {
         <Block title="Difficulty">
           <Table
             head={['Task', 'DC']}
+            num={[1]}
             rows={[
               ['Very easy', '5'],
               ['Easy', '10'],

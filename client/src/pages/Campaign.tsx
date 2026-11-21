@@ -7,7 +7,7 @@ import { Check, Copy, Download, Play, Plus, Trash2, Upload, Wand2, ArrowUp, Arro
 import { api, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Campaign, Session, StateRow } from '../lib/types';
-import { AutoTextarea, Empty, EntityLink, ErrorBox, Field, Loading, Modal, PageHeader, SaveStatus, Tabs, useToast } from '../components/ui';
+import { ask, askText, AutoTextarea, Badge, Card, Check as CheckBox, DataTable, Empty, EntityLink, ErrorBox, Field, GmOnly, KeyValue, Loading, Modal, PageHeader, SaveStatus, Section, Tabs, Toggle, useToast } from '../components/ui';
 import { EntityMultiPicker, EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
 import { FullSheet } from '../player/sheet/FullSheet';
@@ -129,7 +129,7 @@ export function CampaignsPage() {
         }
       />
       {(err || error) && <ErrorBox error={(err ?? error?.message)!} />}
-      <div className="panel-pad grid gap-2 md:grid-cols-[1fr_1fr_220px_180px_auto] items-end">
+      <Card className="grid gap-2 md:grid-cols-[1fr_1fr_220px_180px_auto] items-end">
         <Field label="Title">
           <input className="input" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
         </Field>
@@ -157,15 +157,15 @@ export function CampaignsPage() {
         >
           <Plus size={14} /> Create
         </button>
-      </div>
+      </Card>
       {!data ? (
         <Loading />
       ) : !data.length ? (
-        <Empty title="No campaigns yet" />
+        <Empty title="No campaigns yet">Give your first campaign a title above and press Create.</Empty>
       ) : (
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {data.map((c) => (
-            <div key={c.id} className={`panel p-4 ${c.id === activeCampaignId ? 'border-gold' : ''}`}>
+            <Card key={c.id} className={c.id === activeCampaignId ? 'border-gold' : ''}>
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <div className="font-display text-gold text-lg">{c.title}</div>
@@ -174,7 +174,7 @@ export function CampaignsPage() {
                   </div>
                 </div>
                 {c.id === activeCampaignId ? (
-                  <span className="chip border-gold text-gold">Active</span>
+                  <Badge tone="gold">Active</Badge>
                 ) : (
                   <button className="btn" onClick={() => setActiveCampaignId(c.id)}>
                     Make active
@@ -196,7 +196,7 @@ export function CampaignsPage() {
                   <Download size={14} /> Export
                 </a>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}
@@ -237,7 +237,7 @@ export function ActiveCampaign() {
         }
       />
       <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
-        <div className="panel-pad space-y-3">
+        <Card className="space-y-3">
           <div className="grid gap-3 md:grid-cols-2">
             <Field label="Title">
               <input className="input" value={c.title} onChange={(e) => set({ title: e.target.value })} />
@@ -281,16 +281,19 @@ export function ActiveCampaign() {
           <Field label="Campaign notes">
             <AutoTextarea minRows={4} value={c.notes} onChange={(e) => set({ notes: e.target.value })} />
           </Field>
-        </div>
+        </Card>
         <div className="space-y-3">
-          <div className="panel-pad text-sm space-y-1">
-            <div className="section-title mb-1">At a glance</div>
-            <Link to="/campaign/party" className="block hover:text-gold">Characters: {data.characters.length}</Link>
-            <Link to="/campaign/quests" className="block hover:text-gold">Open quests: {data.quests.filter((q) => ['open', 'active'].includes(q.status)).length}</Link>
-            <Link to="/campaign/adventures" className="block hover:text-gold">Adventures: {data.adventures.length}</Link>
-            <Link to="/campaign/encounters" className="block hover:text-gold">Encounters: {data.encounters.length}</Link>
-            <Link to="/agendas" className="block hover:text-gold">Faction plans: {data.plans.length}</Link>
-          </div>
+          <Card title="At a glance" featured>
+            <KeyValue
+              items={[
+                [<Link key="c" to="/campaign/party" className="hover:text-gold">Characters</Link>, data.characters.length],
+                [<Link key="q" to="/campaign/quests" className="hover:text-gold">Open quests</Link>, data.quests.filter((q) => ['open', 'active'].includes(q.status)).length],
+                [<Link key="a" to="/campaign/adventures" className="hover:text-gold">Adventures</Link>, data.adventures.length],
+                [<Link key="e" to="/campaign/encounters" className="hover:text-gold">Encounters</Link>, data.encounters.length],
+                [<Link key="p" to="/agendas" className="hover:text-gold">Faction plans</Link>, data.plans.length],
+              ]}
+            />
+          </Card>
           <StateTable rows={data.state} onChange={reload} />
         </div>
       </div>
@@ -301,8 +304,7 @@ export function ActiveCampaign() {
 export function StateTable({ rows, onChange, title = 'Campaign-specific world changes' }: { rows: StateRow[]; onChange: () => void; title?: string }) {
   const [msg, setMsg] = useState<string | null>(null);
   return (
-    <div className="panel-pad text-sm">
-      <div className="section-title mb-1">{title}</div>
+    <Card title={title} className="text-sm">
       <p className="text-xs text-dim mb-2">Only true in this campaign.</p>
       {msg && <div className="text-ok text-xs mb-1">{msg}</div>}
       <ul className="space-y-1.5 max-h-96 overflow-auto">
@@ -311,7 +313,8 @@ export function StateTable({ rows, onChange, title = 'Campaign-specific world ch
           .map((r) => (
             <li key={r.id} className="border-b border-line/40 pb-1">
               {r.entity_id ? <EntityLink id={r.entity_id}>{r.entity_name ?? r.entity_id}</EntityLink> : <span>World</span>}: {r.field} → <strong>{r.value}</strong>
-              <span className="text-xs text-dim"> ({r.status})</span>
+              {' '}
+              <Badge tone={r.status === 'proposed' ? 'arcane' : r.status === 'active' || r.status === 'promoted' ? 'ok' : 'dim'}>{r.status}</Badge>
               <div className="flex gap-1 mt-0.5">
                 {r.status === 'proposed' && (
                   <>
@@ -337,9 +340,9 @@ export function StateTable({ rows, onChange, title = 'Campaign-specific world ch
               </div>
             </li>
           ))}
-        {!rows.length && <li className="text-dim">Nothing recorded yet.</li>}
       </ul>
-    </div>
+      {!rows.length && <Empty compact title="Nothing recorded yet." />}
+    </Card>
   );
 }
 
@@ -372,19 +375,19 @@ export function PartyPage() {
         }
       />
       {!data.characters.length ? (
-        <Empty title="No characters yet" />
+        <Empty title="No characters yet">Use Add character to start the party.</Empty>
       ) : (
         <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
-          <div className="panel p-2">
+          <Card flush className="p-2">
             {data.characters.map((c) => (
               <button key={c.id} onClick={() => setSel(c.id)} className={`w-full text-left px-2 py-1.5 rounded text-sm ${ch?.id === c.id ? 'bg-gold/10 text-gold' : 'hover:bg-raised'}`}>
                 {c.name}
                 <div className="text-[11px] text-dim">
-                  {c.player || 'no player'} · L{c.level} {c.class_name}
+                  {c.player || 'no player'} · <span className="num">L{c.level}</span> {c.class_name}
                 </div>
               </button>
             ))}
-          </div>
+          </Card>
           {ch && <CharacterSheet key={ch.id} ch={ch} onDeleted={reload} />}
         </div>
       )}
@@ -423,7 +426,7 @@ function CharacterSheet({ ch: initial, onDeleted }: { ch: Character; onDeleted: 
         <button
           className="btn-danger ml-auto"
           onClick={async () => {
-            if (!confirm(`Delete ${ch.name}?`)) return;
+            if (!(await ask({ body: `Delete ${ch.name}?`, danger: true, confirmLabel: 'Delete' }))) return;
             await api.del(`/api/characters/${ch.id}`);
             onDeleted();
           }}
@@ -453,7 +456,7 @@ function CharacterSheet({ ch: initial, onDeleted }: { ch: Character; onDeleted: 
             id: 'gm',
             label: 'GM only',
             content: (
-              <div className="space-y-6">
+              <GmOnly className="space-y-6">
                 {page.data && <PlayerLink characterId={ch.id} code={page.data.code} updatedAt={page.data.updated_at} onNewCode={page.reload} />}
                 <Field label="Setting mechanics (GM only, HOMEBREW)">
                   <AutoTextarea minRows={2} value={sh.shardscarred ?? ''} onChange={(e) => setSheet({ shardscarred: e.target.value })} />
@@ -463,7 +466,7 @@ function CharacterSheet({ ch: initial, onDeleted }: { ch: Character; onDeleted: 
                   <AutoTextarea minRows={3} value={ch.notes} onChange={(e) => set({ notes: e.target.value })} />
                 </Field>
                 <p className="text-xs text-dim">Nothing on this tab is shown to the player, on their sheet or in its log.</p>
-              </div>
+              </GmOnly>
             ),
           },
         ]}
@@ -510,8 +513,7 @@ function useCharacterPage(characterId: number) {
 function PlayerLink({ characterId, code, updatedAt, onNewCode }: { characterId: number; code: string; updatedAt: string; onNewCode: () => void }) {
   const link = `/player/me/${code}`;
   return (
-    <section className="space-y-2">
-      <div className="section-title">The player&apos;s link</div>
+    <Section title="The player's link" className="space-y-2">
       <p className="text-sm text-dim">
         The player keeps this sheet on the table server: code <b className="text-gold tracking-widest">{code}</b>, or the link {link} on the table server&apos;s address. Only they and you can see it.
         Updated {new Date(updatedAt).toLocaleString()}.
@@ -523,7 +525,7 @@ function PlayerLink({ characterId, code, updatedAt, onNewCode }: { characterId: 
         <button
           className="btn text-xs"
           onClick={async () => {
-            if (!confirm('Give this sheet a new code? The old link stops working.')) return;
+            if (!(await ask({ body: 'Give this sheet a new code? The old link stops working.', danger: true, confirmLabel: 'New code' }))) return;
             await api.post(`/api/characters/${characterId}/page/new-code`, {});
             onNewCode();
           }}
@@ -531,7 +533,7 @@ function PlayerLink({ characterId, code, updatedAt, onNewCode }: { characterId: 
           New code
         </button>
       </div>
-    </section>
+    </Section>
   );
 }
 
@@ -551,8 +553,7 @@ function WorldTies({
   const [kind, setKind] = useState('Friend');
   const [note, setNote] = useState('');
   return (
-    <div className="space-y-2">
-      <div className="section-title">Ties to the world</div>
+    <Section title="Ties to the world" className="space-y-2">
       <div className="grid gap-2 md:grid-cols-[1fr_2fr] items-end">
         <Field label="Hometown">
           <EntityPicker value={hometown} onChange={(v) => onChange({ hometown: v })} types={['settlement', 'region', 'landmark', 'building', 'continent']} />
@@ -562,7 +563,7 @@ function WorldTies({
         <ul className="divide-y divide-line/50">
           {ties.map((t, i) => (
             <li key={`${t.entity_id}-${i}`} className="flex flex-wrap items-center gap-2 py-1.5 text-sm">
-              <span className="chip">{t.kind}</span>
+              <Badge>{t.kind}</Badge>
               <EntityLink id={t.entity_id} />
               <input
                 className="input flex-1 min-w-[12rem] text-sm"
@@ -604,7 +605,7 @@ function WorldTies({
           <Plus size={14} /> Add tie
         </button>
       </div>
-    </div>
+    </Section>
   );
 }
 
@@ -616,8 +617,7 @@ export function PartyTiesPanel({ entityId }: { entityId: string }) {
   );
   if (!data?.length) return null;
   return (
-    <div className="panel p-4">
-      <div className="section-title mb-1">The party</div>
+    <Card title="The party">
       <ul className="text-sm space-y-1">
         {data.map((t, i) => (
           <li key={i}>
@@ -629,7 +629,7 @@ export function PartyTiesPanel({ entityId }: { entityId: string }) {
           </li>
         ))}
       </ul>
-    </div>
+    </Card>
   );
 }
 
@@ -661,7 +661,7 @@ export function QuestsPage() {
         {data.quests.map((q) => (
           <QuestCard key={q.id} q={q} highlight={sp.get('quest') === String(q.id)} onChange={reload} />
         ))}
-        {!data.quests.length && <Empty title="No quests yet" />}
+        {!data.quests.length && <Empty title="No quests yet">Type a title above and press Add quest.</Empty>}
       </div>
     </div>
   );
@@ -676,7 +676,7 @@ function QuestCard({ q: initial, onChange, highlight }: { q: Quest; onChange: ()
     auto.schedule(n);
   };
   return (
-    <div className={`panel-pad space-y-2 ${highlight ? 'border-gold' : ''}`}>
+    <Card className={`space-y-2 ${highlight ? 'border-gold' : ''}`}>
       <div className="flex flex-wrap gap-2 items-center">
         <input className="input flex-1 font-display" value={q.title} onChange={(e) => set({ title: e.target.value })} />
         <select className="input w-auto" value={q.status} onChange={(e) => set({ status: e.target.value })}>
@@ -684,14 +684,14 @@ function QuestCard({ q: initial, onChange, highlight }: { q: Quest; onChange: ()
             <option key={s}>{s}</option>
           ))}
         </select>
-        <label className="text-sm flex items-center gap-1">
-          <input type="checkbox" checked={q.player_visible} onChange={(e) => set({ player_visible: e.target.checked })} /> Players see
-        </label>
+        <Toggle checked={q.player_visible} onChange={(v) => set({ player_visible: v })}>
+          Players see
+        </Toggle>
         <SaveStatus state={auto.state} />
         <button
           className="btn-ghost"
           onClick={async () => {
-            if (!confirm('Delete this quest?')) return;
+            if (!(await ask({ body: 'Delete this quest?', danger: true, confirmLabel: 'Delete' }))) return;
             await api.del(`/api/quests/${q.id}`);
             onChange();
           }}
@@ -711,10 +711,12 @@ function QuestCard({ q: initial, onChange, highlight }: { q: Quest; onChange: ()
       <Field label="Description (players may see this)">
         <AutoTextarea minRows={2} value={q.description} onChange={(e) => set({ description: e.target.value })} />
       </Field>
-      <Field label="DM notes">
-        <AutoTextarea minRows={2} value={q.notes} onChange={(e) => set({ notes: e.target.value })} />
-      </Field>
-    </div>
+      <GmOnly inline>
+        <Field label="DM notes">
+          <AutoTextarea minRows={2} value={q.notes} onChange={(e) => set({ notes: e.target.value })} />
+        </Field>
+      </GmOnly>
+    </Card>
   );
 }
 
@@ -740,31 +742,21 @@ export function SessionsPage() {
           </button>
         }
       />
-      <div className="panel overflow-x-auto">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Title</th>
-              <th>Status</th>
-              <th>Played</th>
-              <th>In-world</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.sessions.map((s) => (
-              <tr key={s.id} className="cursor-pointer" onClick={() => nav(`/session/${s.id}`)}>
-                <td>{s.number}</td>
-                <td>{s.title || <span className="text-dim">Untitled</span>}</td>
-                <td>{s.status}</td>
-                <td>{s.played_on}</td>
-                <td>{s.in_world_date}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {!data.sessions.length && <p className="p-4 text-dim text-sm">No sessions yet.</p>}
-      </div>
+      <Card flush>
+        <DataTable
+          rows={data.sessions}
+          rowKey={(s) => s.id}
+          onRowClick={(s) => nav(`/session/${s.id}`)}
+          empty={<Empty compact title="No sessions yet." />}
+          columns={[
+            { key: 'number', label: '#', num: true, align: 'left', sortable: true },
+            { key: 'title', label: 'Title', sortable: true, render: (s) => s.title || <span className="text-dim">Untitled</span> },
+            { key: 'status', label: 'Status', sortable: true },
+            { key: 'played_on', label: 'Played', sortable: true },
+            { key: 'in_world_date', label: 'In-world' },
+          ]}
+        />
+      </Card>
     </div>
   );
 }
@@ -884,54 +876,67 @@ export function SessionPage() {
               <AutoTextarea minRows={3} value={(s.prep[k] as string) ?? ''} onChange={(e) => setPrep(k, e.target.value)} />
             </Field>
           ))}
-          <div className="panel-pad">
+          <Card>
             <EntityMultiPicker label="Relevant NPCs and locations (shown in live mode)" value={s.prep.relevantIds ?? []} onChange={(ids) => setPrep('relevantIds', ids)} />
-          </div>
-          <div className="panel-pad">
+          </Card>
+          <Card>
             <span className="label">Adventures in play</span>
-            {advs?.map((a) => (
-              <label key={a.id} className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
+            <div className="flex flex-col gap-1">
+              {advs?.map((a) => (
+                <CheckBox
+                  key={a.id}
                   checked={(s.prep.adventureIds ?? []).includes(a.id)}
-                  onChange={(e) => setPrep('adventureIds', e.target.checked ? [...(s.prep.adventureIds ?? []), a.id] : (s.prep.adventureIds ?? []).filter((x) => x !== a.id))}
-                />
-                {a.title}
-              </label>
-            ))}
-            {!advs?.length && <p className="text-xs text-dim">No adventures in this campaign yet.</p>}
-          </div>
+                  onChange={(on) => setPrep('adventureIds', on ? [...(s.prep.adventureIds ?? []), a.id] : (s.prep.adventureIds ?? []).filter((x) => x !== a.id))}
+                >
+                  {a.title}
+                </CheckBox>
+              ))}
+            </div>
+            {!advs?.length && <Empty compact title="No adventures in this campaign yet." />}
+          </Card>
         </div>
       )}
       {tab === 'log' && (
-        <div className="panel overflow-x-auto">
-          <table className="table">
-            <tbody>
-              {log?.map((l) => (
-                <tr key={l.id}>
-                  <td className="text-xs text-dim whitespace-nowrap">{new Date(l.created_at).toLocaleTimeString()}</td>
-                  <td className="text-xs">{l.kind}</td>
-                  <td>
+        <Card flush>
+          <DataTable
+            rows={log ?? []}
+            rowKey={(l) => l.id}
+            empty={
+              <Empty compact title="Nothing recorded.">
+                Use live mode to log events as they happen.
+              </Empty>
+            }
+            columns={[
+              { key: 'created_at', label: 'Time', sortable: true, className: 'text-xs text-dim whitespace-nowrap', render: (l) => new Date(l.created_at).toLocaleTimeString() },
+              { key: 'kind', label: 'Kind', sortable: true, className: 'text-xs' },
+              {
+                key: 'text',
+                label: 'Entry',
+                render: (l) => (
+                  <>
                     {l.text} {l.entity_id && <EntityLink id={l.entity_id} className="text-xs" />}
-                  </td>
-                  <td>
-                    <button
-                      className="btn-ghost"
-                      onClick={async () => {
-                        await api.del(`/api/session-log/${l.id}`);
-                        void reloadLog();
-                      }}
-                      aria-label="Delete entry"
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {!log?.length && <p className="p-4 text-sm text-dim">Nothing recorded. Use live mode to log events as they happen.</p>}
-        </div>
+                  </>
+                ),
+              },
+              {
+                key: 'del',
+                label: <span className="sr-only">Delete</span>,
+                render: (l) => (
+                  <button
+                    className="btn-ghost"
+                    onClick={async () => {
+                      await api.del(`/api/session-log/${l.id}`);
+                      void reloadLog();
+                    }}
+                    aria-label="Delete entry"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                ),
+              },
+            ]}
+          />
+        </Card>
       )}
       {tab === 'recap' && (
         <div className="space-y-3">
@@ -940,16 +945,16 @@ export function SessionPage() {
               className="btn"
               onClick={async () => {
                 const { draft } = await api.post<{ draft: string }>(`/api/sessions/${s.id}/recap-draft`);
-                if (s.recap.trim() && !confirm('Replace the current recap with a new draft generated from the log?')) return;
+                if (s.recap.trim() && !(await ask({ body: 'Replace the current recap with a new draft generated from the log?', confirmLabel: 'Replace' }))) return;
                 set({ recap: draft });
                 toast('Draft generated from recorded entries only. Edit freely.');
               }}
             >
               <Wand2 size={14} /> Generate draft from recorded log
             </button>
-            <label className="text-sm flex items-center gap-1">
-              <input type="checkbox" checked={s.recap_player_visible} onChange={(e) => set({ recap_player_visible: e.target.checked })} /> Publish recap to player view
-            </label>
+            <Toggle checked={s.recap_player_visible} onChange={(v) => set({ recap_player_visible: v })}>
+              Publish recap to player view
+            </Toggle>
             {s.status === 'live' && (
               <button
                 className="btn-primary"
@@ -965,9 +970,9 @@ export function SessionPage() {
           </div>
           <div className="grid gap-3 lg:grid-cols-2">
             <AutoTextarea minRows={16} value={s.recap} onChange={(e) => set({ recap: e.target.value })} />
-            <div className="panel p-4">
+            <Card>
               <Markdown text={s.recap || '_No recap yet._'} />
-            </div>
+            </Card>
           </div>
         </div>
       )}
@@ -996,7 +1001,7 @@ export function JournalPage() {
     <div className="space-y-4 max-w-4xl">
       <PageHeader title="Session Journal" subtitle={data.campaign.title} />
       {done.map((s) => (
-        <article key={s.id} className="panel p-5">
+        <Card key={s.id} className="p-5">
           <div className="flex justify-between items-baseline">
             <Link to={`/session/${s.id}`} className="font-display text-gold text-lg">
               Session {s.number}
@@ -1007,9 +1012,9 @@ export function JournalPage() {
             </span>
           </div>
           <Markdown text={s.recap || '_No recap written._'} />
-        </article>
+        </Card>
       ))}
-      {!done.length && <Empty title="No recaps yet" />}
+      {!done.length && <Empty title="No recaps yet">Recaps appear here once a session has one, or is completed.</Empty>}
     </div>
   );
 }
@@ -1037,38 +1042,46 @@ export function EncountersPage() {
           <Plus size={14} /> Prepare encounter
         </button>
       </div>
-      <div className="panel overflow-x-auto">
-        <table className="table">
-          <tbody>
-            {data.encounters.map((e) => (
-              <tr key={e.id}>
-                <td>
-                  <Link className="hover:text-gold" to={`/tracker/${e.id}`}>
-                    <Swords size={13} className="inline mr-1" />
-                    {e.title}
-                  </Link>
-                </td>
-                <td>{e.status}</td>
-                <td>round {e.round}</td>
-                <td className="text-right">
-                  <button
-                    className="btn-ghost"
-                    onClick={async () => {
-                      if (!confirm('Delete this encounter?')) return;
-                      await api.del(`/api/encounters/${e.id}`);
-                      void reload();
-                    }}
-                    aria-label="Delete"
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {!data.encounters.length && <p className="p-4 text-sm text-dim">No encounters prepared.</p>}
-      </div>
+      <Card flush>
+        <DataTable
+          rows={data.encounters}
+          rowKey={(e) => e.id}
+          empty={<Empty compact title="No encounters prepared." />}
+          columns={[
+            {
+              key: 'title',
+              label: 'Encounter',
+              sortable: true,
+              render: (e) => (
+                <Link className="hover:text-gold" to={`/tracker/${e.id}`}>
+                  <Swords size={13} className="inline mr-1" />
+                  {e.title}
+                </Link>
+              ),
+            },
+            { key: 'status', label: 'Status', sortable: true },
+            { key: 'round', label: 'Round', num: true, sortable: true, render: (e) => `round ${e.round}` },
+            {
+              key: 'del',
+              label: <span className="sr-only">Delete</span>,
+              align: 'right',
+              render: (e) => (
+                <button
+                  className="btn-ghost"
+                  onClick={async () => {
+                    if (!(await ask({ body: 'Delete this encounter?', danger: true, confirmLabel: 'Delete' }))) return;
+                    await api.del(`/api/encounters/${e.id}`);
+                    void reload();
+                  }}
+                  aria-label="Delete"
+                >
+                  <Trash2 size={13} />
+                </button>
+              ),
+            },
+          ]}
+        />
+      </Card>
     </div>
   );
 }
@@ -1088,7 +1101,7 @@ export function AdventuresPage({ byArc = false }: { byArc?: boolean }) {
   return (
     <div className="space-y-4">
       <PageHeader title={byArc ? 'Story Arcs' : 'Adventures'} subtitle={byArc ? 'Adventures grouped by story arc.' : undefined} note={byArc ? undefined : 'Starting from a source hook links it; no content is invented.'} />
-      <div className="panel-pad grid gap-2 md:grid-cols-[1fr_auto_1fr_auto] items-end">
+      <Card className="grid gap-2 md:grid-cols-[1fr_auto_1fr_auto] items-end">
         <Field label="Blank adventure">
           <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title" />
         </Field>
@@ -1115,28 +1128,36 @@ export function AdventuresPage({ byArc = false }: { byArc?: boolean }) {
         >
           From hook
         </button>
-      </div>
+      </Card>
       {!data ? (
         <Loading />
       ) : (
-        groups.map(([arc, list]) => (
-          <div key={arc}>
-            {byArc && <div className="section-title mb-2">{arc}</div>}
+        groups.map(([arc, list]) => {
+          const grid = (
             <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3 mb-4">
               {list.map((a) => (
-                <Link key={a.id} to={`/adventure/${a.id}`} className="panel p-4 hover:border-gold/60">
-                  <div className="font-display text-gold">{a.title}</div>
-                  <div className="text-xs text-dim">
-                    {a.status} {a.arc && `· ${a.arc}`}
-                  </div>
-                  <p className="text-sm line-clamp-2 mt-1">{a.data.premise}</p>
+                <Link key={a.id} to={`/adventure/${a.id}`} className="block">
+                  <Card className="h-full hover:border-gold/60">
+                    <div className="font-display text-gold">{a.title}</div>
+                    <div className="text-xs text-dim">
+                      {a.status} {a.arc && `· ${a.arc}`}
+                    </div>
+                    <p className="text-sm line-clamp-2 mt-1">{a.data.premise}</p>
+                  </Card>
                 </Link>
               ))}
             </div>
-          </div>
-        ))
+          );
+          return byArc ? (
+            <Section key={arc} title={arc}>
+              {grid}
+            </Section>
+          ) : (
+            <div key={arc}>{grid}</div>
+          );
+        })
       )}
-      {data && !data.length && <Empty title="No adventures yet" />}
+      {data && !data.length && <Empty title="No adventures yet">Give a blank adventure a title above, or start from a source hook.</Empty>}
     </div>
   );
 }
@@ -1228,11 +1249,11 @@ export function AdventurePage() {
               <AutoTextarea minRows={3} value={a.data[k] ?? ''} onChange={(e) => setData(k, e.target.value)} />
             </Field>
           ))}
-          <div className="panel-pad">
+          <Card>
             <span className="label">Clues</span>
             {(a.data.clues ?? []).map((c, i) => (
               <div key={i} className="flex gap-2 items-center mb-1">
-                <input type="checkbox" checked={c.found} onChange={(e) => setData('clues', a.data.clues.map((x, j) => (j === i ? { ...x, found: e.target.checked } : x)))} aria-label="Found" />
+                <CheckBox checked={c.found} onChange={(v) => setData('clues', a.data.clues.map((x, j) => (j === i ? { ...x, found: v } : x)))} label="Found" />
                 <input className="input" value={c.text} onChange={(e) => setData('clues', a.data.clues.map((x, j) => (j === i ? { ...x, text: e.target.value } : x)))} />
                 <button className="btn-ghost" onClick={() => setData('clues', a.data.clues.filter((_, j) => j !== i))} aria-label="Remove clue">
                   <Trash2 size={13} />
@@ -1242,10 +1263,10 @@ export function AdventurePage() {
             <button className="btn-ghost" onClick={() => setData('clues', [...(a.data.clues ?? []), { text: '', found: false }])}>
               <Plus size={13} /> Add clue
             </button>
-          </div>
-          <div className="panel-pad">
+          </Card>
+          <Card>
             <EntityMultiPicker label="Linked world records (locations, NPCs, factions…)" value={a.linked_ids} onChange={(ids) => set({ linked_ids: ids })} />
-          </div>
+          </Card>
         </div>
       )}
       {tab === 'scenes' && <ScenesEditor adventureId={advId} />}
@@ -1280,7 +1301,11 @@ function ScenesEditor({ adventureId }: { adventureId: number }) {
         <Plus size={14} /> Add scene
       </button>
       {data?.map((s) => (
-        <SceneCard key={s.id} s={s} onMove={(d) => move(s, d)} onCopy={() => setCopying(s)} onDelete={async () => (confirm('Delete scene?') && (await api.del(`/api/scenes/${s.id}`)), reload())} />
+        <SceneCard key={s.id} s={s} onMove={(d) => move(s, d)} onCopy={() => setCopying(s)} onDelete={async () => {
+            if (await ask({ body: 'Delete scene?', danger: true, confirmLabel: 'Delete' })) await api.del(`/api/scenes/${s.id}`);
+            void reload();
+          }}
+        />
       ))}
       {copying && (
         <Modal title={`Copy “${copying.title}” to…`} onClose={() => setCopying(null)}>
@@ -1315,7 +1340,7 @@ function SceneCard({ s: init, onMove, onCopy, onDelete }: { s: Scene; onMove: (d
     auto.schedule(n);
   };
   return (
-    <div className="panel-pad space-y-2">
+    <Card className="space-y-2">
       <div className="flex gap-2 items-center flex-wrap">
         <input className="input flex-1 font-display" value={s.title} onChange={(e) => set({ title: e.target.value })} />
         <select className="input w-auto" value={s.kind} onChange={(e) => set({ kind: e.target.value })}>
@@ -1341,12 +1366,14 @@ function SceneCard({ s: init, onMove, onCopy, onDelete }: { s: Scene; onMove: (d
         <Field label="Read-aloud">
           <AutoTextarea minRows={2} value={s.read_aloud} onChange={(e) => set({ read_aloud: e.target.value })} />
         </Field>
-        <Field label="DM notes">
-          <AutoTextarea minRows={2} value={s.body} onChange={(e) => set({ body: e.target.value })} />
-        </Field>
+        <GmOnly inline>
+          <Field label="DM notes">
+            <AutoTextarea minRows={2} value={s.body} onChange={(e) => set({ body: e.target.value })} />
+          </Field>
+        </GmOnly>
       </div>
       <EntityMultiPicker value={s.linked_ids} onChange={(ids) => set({ linked_ids: ids })} />
-    </div>
+    </Card>
   );
 }
 
@@ -1361,38 +1388,38 @@ function SceneFlow({ adventureId }: { adventureId: number }) {
           id: String(s.id),
           position: { x: s.x, y: s.y },
           data: { label: `${s.title} (${s.kind})` },
-          style: { background: '#1d1f25', color: '#e4dfd2', border: '1.5px solid #c9a24a', borderRadius: 8, width: 180 },
+          style: { background: 'rgb(var(--raised))', color: 'rgb(var(--ink))', border: '1.5px solid rgb(var(--gold))', borderRadius: 6, width: 180 },
         })),
       );
   }, [scenes]);
-  const edges: Edge[] = (links ?? []).map((l) => ({ id: String(l.id), source: String(l.from_scene), target: String(l.to_scene), label: l.label, markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: '#c9a24a' }, labelStyle: { fill: '#e4dfd2' }, labelBgStyle: { fill: '#18191f' } }));
+  const edges: Edge[] = (links ?? []).map((l) => ({ id: String(l.id), source: String(l.from_scene), target: String(l.to_scene), label: l.label, markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: 'rgb(var(--gold))' }, labelStyle: { fill: 'rgb(var(--ink))' }, labelBgStyle: { fill: 'rgb(var(--panel))' } }));
   const onNodesChange = useCallback((ch: NodeChange[]) => setNodes((n) => applyNodeChanges(ch, n)), []);
   return (
     <div className="space-y-2">
       <p className="text-sm text-dim">Drag scenes to arrange them. Drag from one scene's edge to another to connect them; click a connection to remove it.</p>
-      <div className="panel h-[65vh]">
+      <Card flush className="h-[65vh]">
         <ReactFlow
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
           onNodeDragStop={(_, n) => void api.patch(`/api/scenes/${n.id}`, { x: Math.round(n.position.x), y: Math.round(n.position.y) })}
           onConnect={async (c: Connection) => {
-            const label = prompt('Label for this branch (optional)') ?? '';
+            const label = (await askText({ title: 'Label for this branch (optional)', confirmLabel: 'Connect' })) ?? '';
             await api.post('/api/scene-links', { adventure_id: adventureId, from_scene: Number(c.source), to_scene: Number(c.target), label });
             void reloadLinks();
           }}
           onEdgeClick={async (_, e) => {
-            if (!confirm('Delete this connection?')) return;
+            if (!(await ask({ body: 'Delete this connection?', danger: true, confirmLabel: 'Delete' }))) return;
             await api.del(`/api/scene-links/${e.id}`);
             void reloadLinks();
           }}
           fitView
           colorMode="dark"
         >
-          <Background gap={20} color="#333" />
+          <Background gap={20} color="rgb(var(--line))" />
           <Controls />
         </ReactFlow>
-      </div>
+      </Card>
       <button className="btn" onClick={() => (void reload(), void reloadLinks())}>
         Refresh
       </button>

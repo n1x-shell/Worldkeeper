@@ -13,6 +13,7 @@ import { api } from '../lib/api';
 import { SearchPalette } from './SearchPalette';
 import { SidebarSlotContext } from './sidebarSlot';
 import { DEBUG_ONLY, FULL_BLEED, LIBRARY, NEEDS, WORKSPACES, matches, workspaceFor, type Group, type Item } from './navigation';
+import { ConfirmHost, ToastHost } from './ui';
 
 const I = 16;
 
@@ -373,6 +374,8 @@ export function Layout() {
         )}
       </div>
       {searchOpen && <SearchPalette onClose={() => setSearchOpen(false)} />}
+      <ConfirmHost />
+      <ToastHost />
     </div>
   );
 }

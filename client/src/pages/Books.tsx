@@ -6,7 +6,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useApi } from '../lib/api';
-import { PageHeader } from '../components/ui';
+import { Card, Empty, PageHeader, Segmented } from '../components/ui';
 import { StatBlockById } from '../components/StatBlock';
 import { ItemCard, type BookItem } from '../components/ItemRules';
 import { EncounterIdeas } from '../components/EncounterIdeas';
@@ -29,22 +29,31 @@ export function BooksPage() {
     <div className="space-y-4">
       <PageHeader title="Your Books" subtitle="Creatures, items and hazards from the SRD 5.2.1 and the books you imported. Only you see these." />
       {counts && !counts.creatures && !counts.items ? (
-        <p className="text-dim">
-          Nothing imported yet. Bring in your books in{' '}
-          <Link to="/settings" className="text-gold underline">
-            Settings → Rules packs
-          </Link>
-          .
-        </p>
+        <Empty
+          title="Nothing imported yet"
+          action={
+            <Link to="/settings" className="btn-primary">
+              Settings → Rules packs
+            </Link>
+          }
+        >
+          Bring in your books in Settings → Rules packs.
+        </Empty>
       ) : (
         <>
-          <div className="flex rounded-md border border-line overflow-hidden w-fit">
-            {(['creatures', 'items', 'encounters'] as const).map((t) => (
-              <button key={t} className={`px-4 py-1.5 text-sm capitalize ${tab === t ? 'bg-gold/20 text-gold' : 'text-dim'}`} onClick={() => setTab(t)}>
-                {t} {counts && t !== 'encounters' && <span className="text-xs">({t === 'creatures' ? counts.creatures : counts.items})</span>}
-              </button>
-            ))}
-          </div>
+          <Segmented
+            label="Book section"
+            value={tab}
+            onChange={setTab}
+            options={(['creatures', 'items', 'encounters'] as const).map((t) => ({
+              value: t,
+              label: (
+                <span className="capitalize">
+                  {t} {counts && t !== 'encounters' && <span className="text-xs num">({t === 'creatures' ? counts.creatures : counts.items})</span>}
+                </span>
+              ),
+            }))}
+          />
           {tab === 'creatures' ? <Creatures /> : tab === 'items' ? <Items /> : <Encounters />}
         </>
       )}
@@ -71,19 +80,21 @@ function Creatures() {
             ))}
           </select>
         </div>
-        <ul className="panel max-h-[70vh] overflow-auto divide-y divide-line/60">
-          {list.slice(0, 400).map((c) => (
-            <li key={c.id}>
-              <button className={`w-full text-left px-3 py-1.5 text-sm ${open === c.id ? 'bg-gold/10' : ''}`} onClick={() => setOpen(c.id)}>
-                <span className="font-medium">{c.name}</span> <span className="text-xs text-dim">CR {c.cr}</span>
-                <span className="block text-xs text-dim truncate">{c.meta}</span>
-              </button>
-            </li>
-          ))}
-          {list.length > 400 && <li className="px-3 py-1.5 text-xs text-dim">{list.length - 400} more: narrow the search.</li>}
-        </ul>
+        <Card flush className="max-h-[70vh] overflow-auto">
+          <ul className="divide-y divide-line/60">
+            {list.slice(0, 400).map((c) => (
+              <li key={c.id}>
+                <button className={`w-full text-left px-3 py-1.5 text-sm ${open === c.id ? 'bg-gold/10' : ''}`} onClick={() => setOpen(c.id)}>
+                  <span className="font-medium">{c.name}</span> <span className="text-xs text-dim num">CR {c.cr}</span>
+                  <span className="block text-xs text-dim truncate">{c.meta}</span>
+                </button>
+              </li>
+            ))}
+            {list.length > 400 && <li className="px-3 py-1.5 text-xs text-dim">{list.length - 400} more: narrow the search.</li>}
+          </ul>
+        </Card>
       </div>
-      <div className="panel-pad">{open ? <StatBlockById id={open} /> : <p className="text-sm text-dim">Choose a creature to see its stat block.</p>}</div>
+      <Card>{open ? <StatBlockById id={open} /> : <Empty compact title="Choose a creature to see its stat block." />}</Card>
     </div>
   );
 }

@@ -47,7 +47,7 @@ export function ItemCard({ item, label }: { item: BookItem; label?: string }) {
         <span className="font-medium">{label ?? item.name}</span> <span className="text-xs text-dim">{itemLine(item)}</span>
       </summary>
       <p className="whitespace-pre-line mt-1">{item.text}</p>
-      <p className="text-xs text-dim mt-1">{[item.weight != null && `${item.weight} lb.`, item.value != null && `${item.value} GP`, item.source].filter(Boolean).join(' · ')}</p>
+      <p className="text-xs text-dim mt-1 num">{[item.weight != null && `${item.weight} lb.`, item.value != null && `${item.value} GP`, item.source].filter(Boolean).join(' · ')}</p>
     </details>
   );
 }

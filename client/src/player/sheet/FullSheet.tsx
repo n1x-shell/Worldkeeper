@@ -28,6 +28,7 @@ import { SpellsTab } from './SpellsTab';
 import { FeaturesTab } from './FeaturesTab';
 import { LogTab, type LogEntry } from './LogTab';
 import { loadRulesText, portraitFromFile, subclassChoices, useLoaded, useSheetOptions } from './options';
+import { ask } from '../../components/ui/overlays';
 
 export type { SheetChar };
 
@@ -470,8 +471,8 @@ function Vitals({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Partial<S
           </button>
           <button
             className="btn justify-center"
-            onClick={() => {
-              if (confirm('Take a long rest? All hit points, Hit Dice and spell slots come back, and Exhaustion goes down by one.')) put(longRest(s));
+            onClick={async () => {
+              if (await ask({ title: 'Take a long rest?', body: 'All hit points, Hit Dice and spell slots come back, and Exhaustion goes down by one.', confirmLabel: 'Long rest' })) put(longRest(s));
             }}
           >
             <Moon size={14} /> Long rest

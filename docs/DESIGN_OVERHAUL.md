@@ -1,6 +1,6 @@
 # Design Overhaul: Product Requirements
 
-**Status:** Approved direction (owner answers recorded in section 3). Step 1 (tokens and themes) done in v0.3.7, step 2 (the shell) in v0.3.8; step 3 next
+**Status:** Approved direction (owner answers recorded in section 3). Step 1 (tokens and themes) done in v0.3.7, step 2 (the shell) in v0.3.8, step 3 (the shared components) in v0.3.14; step 4 next
 **Scope:** The look and layout of the GM app, the in-app Player View, the table server and the published Player Handbook. No changes to data, rules or what players can see.
 
 ## 1. Why
@@ -161,6 +161,8 @@ Shared components replace per-page styling. Each has default, hover, active, foc
 - **Input:** Field, Input, Select, Textarea, MarkdownEditor (with `@` linking as today), Toggle, Segmented control and EntityPicker.
 - **Overlay:** HoverCard (Quick-Peek), Drawer (the inspector content), Dialog, Confirm, Toast and SearchPalette (restyled).
 - **Feedback:** loading skeletons, empty states with one clear next action, error states with retry, and SaveStatus.
+
+**As built (v0.3.14):** `client/src/components/ui/`, by kind: `badges` (Badge with tones, CanonBadge, RealmBadge, TypeBadge, VisibilityBadge, RarityTag), `surfaces` (PageHeader, Card, Section, GmOnly, KeyValue), `data` (DataTable, HpBar, HpStepper, ConditionChips), `inputs` (Field, Input, Select, Toggle, Check, Segmented, Tabs, AutoTextarea), `overlays` (Modal/Dialog, Drawer, Confirm, `ask()`, `askText()`, `toast()` and their hosts in both layouts) and `feedback` (Loading with skeleton lines, Skeleton, Empty, ErrorBox, SaveStatus, ErrorBoundary). The app asks in its own dialogs, never the browser's (which some desktop webviews don't show). A switch (Toggle) is for a setting that takes effect at once, a checkbox (Check) for a filter or a choice in a list. The style guide shows every one. HoverCard and the inspector come in step 4.
 
 ## 8. Quick-Peek and Dedicated View
 

@@ -1,5 +1,6 @@
 import { Swords } from 'lucide-react';
 import { useApi } from '../lib/api';
+import { Card, Empty, GmOnly } from './ui';
 
 interface Entry {
   name: string;
@@ -81,9 +82,9 @@ export function StatBlock({ s }: { s: StatBlockData }) {
       </div>
     );
   const looks = s.looks && (
-    <p>
-      <b>Looks (GM only).</b> {s.looks}
-    </p>
+    <GmOnly inline label="Looks (GM only)">
+      <p>{s.looks}</p>
+    </GmOnly>
   );
   if (s.open)
     return (
@@ -108,17 +109,20 @@ export function StatBlock({ s }: { s: StatBlockData }) {
         {looks}
         <div className="flex flex-wrap gap-x-4 gap-y-1">
           <span>
-            <b>AC</b> {s.ac}
+            <b>AC</b> <span className="num">{s.ac}</span>
           </span>
           <span>
-            <b>Initiative</b> {sg(s.init ?? 0)} ({10 + (s.init ?? 0)})
+            <b>Initiative</b>{' '}
+            <span className="num">
+              {sg(s.init ?? 0)} ({10 + (s.init ?? 0)})
+            </span>
           </span>
           <span>
-            <b>HP</b> {s.hp}
+            <b>HP</b> <span className="num">{s.hp}</span>
           </span>
           {s.cr && (
             <span>
-              <b>CR</b> {s.cr}
+              <b>CR</b> <span className="num">{s.cr}</span>
             </span>
           )}
         </div>
@@ -163,8 +167,8 @@ export function StatBlock({ s }: { s: StatBlockData }) {
   ).filter(([, v]) => v);
   const section = (title: string, list?: Entry[]) =>
     list?.length ? (
-      <div className="space-y-1">
-        <div className="font-display text-gold/90 border-b border-gold/30">{title}</div>
+      <details open className="space-y-1">
+        <summary className="cursor-pointer select-none font-display text-gold/90 border-b border-gold/30 hover:text-gold">{title}</summary>
         {list.map((e) => (
           <p key={e.name || e.text.slice(0, 40)} className="whitespace-pre-line">
             {e.name && (
@@ -177,7 +181,7 @@ export function StatBlock({ s }: { s: StatBlockData }) {
             {e.text}
           </p>
         ))}
-      </div>
+      </details>
     ) : null;
   return (
     <div className="space-y-2 text-sm">
@@ -188,13 +192,16 @@ export function StatBlock({ s }: { s: StatBlockData }) {
       {looks}
       <div className="flex flex-wrap gap-x-4 gap-y-1">
         <span>
-          <b>AC</b> {s.ac}
+          <b>AC</b> <span className="num">{s.ac}</span>
         </span>
         <span>
-          <b>Initiative</b> {sg(s.init ?? 0)} ({10 + (s.init ?? 0)})
+          <b>Initiative</b>{' '}
+          <span className="num">
+            {sg(s.init ?? 0)} ({10 + (s.init ?? 0)})
+          </span>
         </span>
         <span>
-          <b>HP</b> {s.hp}
+          <b>HP</b> <span className="num">{s.hp}</span>
         </span>
         <span>
           <b>Speed</b> {s.speed}
@@ -205,7 +212,7 @@ export function StatBlock({ s }: { s: StatBlockData }) {
           {['Str', 'Dex', 'Con', 'Int', 'Wis', 'Cha'].map((k, i) => (
             <div key={k} className="py-1">
               <div className="text-[10px] uppercase tracking-wider text-dim">{k}</div>
-              <div>
+              <div className="num">
                 {s.ab![i]} ({sg(mod(s.ab![i]))})
               </div>
             </div>
@@ -220,7 +227,10 @@ export function StatBlock({ s }: { s: StatBlockData }) {
         ))}
         {s.cr && (
           <div>
-            <b>CR</b> {s.cr} (XP {s.xp?.toLocaleString()}; PB +{s.pb})
+            <b>CR</b>{' '}
+            <span className="num">
+              {s.cr} (XP {s.xp?.toLocaleString()}; PB +{s.pb})
+            </span>
           </div>
         )}
       </div>
@@ -243,7 +253,7 @@ export function StatBlock({ s }: { s: StatBlockData }) {
 export function StatBlockById({ id }: { id: string }) {
   const { data } = useApi<StatBlockData | null>(`/api/statblocks/${encodeURIComponent(id)}`);
   if (data === undefined) return null;
-  if (!data) return <p className="text-xs text-dim">No stat block for this one.</p>;
+  if (!data) return <Empty compact title="No stat block for this one." />;
   return <StatBlock s={data} />;
 }
 
@@ -252,13 +262,8 @@ export function StatBlockPanel({ entityId }: { entityId: string }) {
   const { data } = useApi<StatBlockData | null>(`/api/statblocks/${encodeURIComponent(entityId)}`);
   if (!data) return null;
   return (
-    <div className="panel-pad space-y-2">
-      <div className="flex items-center gap-2">
-        <Swords size={15} className="text-gold" />
-        <div className="section-title">{data.kind === 'hazard' ? 'Hazard' : 'Stat block'}</div>
-        <span className="text-xs text-dim ml-auto">GM only</span>
-      </div>
+    <Card title={data.kind === 'hazard' ? 'Hazard' : 'Stat block'} icon={<Swords size={15} className="text-gold" />} actions={<span className="text-xs text-dim">GM only</span>}>
       <StatBlock s={data} />
-    </div>
+    </Card>
   );
 }

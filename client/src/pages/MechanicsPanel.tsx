@@ -5,6 +5,7 @@
 import { Cog } from 'lucide-react';
 import { api } from '../lib/api';
 import { mechanicsChanged, useMechanics } from '../lib/mechanics';
+import { Card, Toggle } from '../components/ui';
 import { MECHANICS, SETTING_PRESET, STANDARD_PRESET, type Mechanics } from '../../../shared/mechanics';
 
 export function MechanicsPanel() {
@@ -14,10 +15,7 @@ export function MechanicsPanel() {
   const all = MECHANICS.every(({ key }) => m[key]);
   const none = MECHANICS.every(({ key }) => !m[key]);
   return (
-    <div className="panel-pad space-y-3">
-      <div className="section-title flex items-center gap-2">
-        <Cog size={14} /> Campaign mechanics
-      </div>
+    <Card title="Campaign mechanics" icon={<Cog size={14} />} className="space-y-3">
       <p className="text-sm text-dim">
         The Worldkeeper setting has mechanics of its own. Switch off any you don&apos;t use; to run a standard D&amp;D campaign with your own books, switch them all off. A switched-off mechanic leaves
         the menus, sheets, the player view and the handbook. Nothing is deleted: switch it back on and it&apos;s all still there. Characters are always built by the 2024 rules.
@@ -33,16 +31,12 @@ export function MechanicsPanel() {
       <ul className="space-y-2">
         {MECHANICS.map(({ key, label, about }) => (
           <li key={key}>
-            <label className="flex items-start gap-2 text-sm">
-              <input type="checkbox" className="mt-1" checked={m[key]} onChange={(e) => save({ [key]: e.target.checked })} aria-label={label} />
-              <span>
-                <span className="font-medium">{label}</span>
-                <span className="block text-xs text-dim">{about}</span>
-              </span>
-            </label>
+            <Toggle checked={m[key]} onChange={(v) => save({ [key]: v })} hint={about}>
+              <span className="font-medium">{label}</span>
+            </Toggle>
           </li>
         ))}
       </ul>
-    </div>
+    </Card>
   );
 }

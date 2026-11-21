@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Plus, Star } from 'lucide-react';
 import { CANON_STATUSES, REALMS, REALM_LABELS, ENTITY_TYPE_LABELS, TYPE_GROUPS, type EntityType } from '@shared/domain';
 import { useApi, qs } from '../lib/api';
-import { CanonFlags, Empty, ErrorBox, Loading, PageHeader, RealmBadge, TypeBadge, VisibilityBadge } from '../components/ui';
+import { Card, CanonFlags, Check, DataTable, Empty, ErrorBox, Loading, PageHeader, RealmBadge, TypeBadge, VisibilityBadge, type Column } from '../components/ui';
 import type { EntitySummary } from '../lib/types';
 import { useDebug } from '../components/Dev';
 
@@ -33,49 +33,56 @@ export const BROWSE_GROUPS: Record<string, { title: string; types?: EntityType[]
 export function EntityTable({ rows, showRealm = true }: { rows: EntitySummary[]; showRealm?: boolean }) {
   const nav = useNavigate();
   const debug = useDebug();
+  const columns: Column<EntitySummary>[] = [
+    {
+      key: 'name',
+      label: 'Name',
+      sortValue: (e) => e.name,
+      render: (e) => (
+        <>
+          <Link to={`/e/${encodeURIComponent(e.id)}`} className="text-ink hover:text-gold" onClick={(ev) => ev.stopPropagation()}>
+            {e.favorite && <Star size={12} className="inline text-gold mr-1 -mt-0.5" fill="currentColor" />}
+            {e.name}
+          </Link>
+          {e.archived && <span className="text-xs text-dim ml-2">(archived)</span>}
+        </>
+      ),
+    },
+    ...(debug ? [{ key: 'id', label: 'ID', sortable: true, headClassName: 'hidden sm:table-cell', className: 'hidden sm:table-cell text-dim text-xs whitespace-nowrap' }] : []),
+    { key: 'type', label: 'Type', sortValue: (e) => ENTITY_TYPE_LABELS[e.type as EntityType] ?? e.type, render: (e) => <TypeBadge type={e.type} /> },
+    ...(showRealm
+      ? [
+          {
+            key: 'realm',
+            label: 'Realm',
+            sortValue: (e: EntitySummary) => e.realm,
+            headClassName: 'hidden md:table-cell',
+            className: 'hidden md:table-cell',
+            render: (e: EntitySummary) => <RealmBadge realm={e.realm} />,
+          },
+        ]
+      : []),
+    {
+      key: 'canon',
+      label: 'Canon',
+      sortValue: (e) => e.canon_status,
+      headClassName: 'hidden lg:table-cell',
+      className: 'hidden lg:table-cell',
+      render: (e) => <CanonFlags status={e.canon_status} flags={e.canon_flags} />,
+    },
+    {
+      key: 'players',
+      label: 'Players',
+      sortValue: (e) => (e.revealed ? 1 : 0),
+      headClassName: 'hidden lg:table-cell',
+      className: 'hidden lg:table-cell',
+      render: (e) => <VisibilityBadge revealed={e.revealed} />,
+    },
+  ];
   return (
-    <div className="panel overflow-x-auto">
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            {debug && <th className="hidden sm:table-cell">ID</th>}
-            <th>Type</th>
-            {showRealm && <th className="hidden md:table-cell">Realm</th>}
-            <th className="hidden lg:table-cell">Canon</th>
-            <th className="hidden lg:table-cell">Players</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((e) => (
-            <tr key={e.id} className="cursor-pointer" onClick={() => nav(`/e/${encodeURIComponent(e.id)}`)}>
-              <td>
-                <Link to={`/e/${encodeURIComponent(e.id)}`} className="text-ink hover:text-gold" onClick={(ev) => ev.stopPropagation()}>
-                  {e.favorite && <Star size={12} className="inline text-gold mr-1 -mt-0.5" fill="currentColor" />}
-                  {e.name}
-                </Link>
-                {e.archived && <span className="text-xs text-dim ml-2">(archived)</span>}
-              </td>
-              {debug && <td className="hidden sm:table-cell text-dim text-xs whitespace-nowrap">{e.id}</td>}
-              <td>
-                <TypeBadge type={e.type} />
-              </td>
-              {showRealm && (
-                <td className="hidden md:table-cell">
-                  <RealmBadge realm={e.realm} />
-                </td>
-              )}
-              <td className="hidden lg:table-cell">
-                <CanonFlags status={e.canon_status} flags={e.canon_flags} />
-              </td>
-              <td className="hidden lg:table-cell">
-                <VisibilityBadge revealed={e.revealed} />
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Card flush>
+      <DataTable columns={columns} rows={rows} rowKey={(e) => e.id} onRowClick={(e) => nav(`/e/${encodeURIComponent(e.id)}`)} />
+    </Card>
   );
 }
 
@@ -137,9 +144,9 @@ export function EntityList({ group: groupProp, realm: fixedRealm }: { group?: st
             <option key={c}>{c}</option>
           ))}
         </select>
-        <label className="flex items-center gap-1 text-sm text-dim">
-          <input type="checkbox" checked={archived} onChange={(e) => setArchived(e.target.checked)} /> Include archived
-        </label>
+        <Check checked={archived} onChange={setArchived} className="self-center text-dim">
+          Include archived
+        </Check>
       </div>
       {error && <ErrorBox error={error} onRetry={reload} />}
       {loading && !data ? <Loading /> : rows.length ? <EntityTable rows={rows} showRealm={!fixedRealm} /> : <Empty title="No records match">Adjust the filters, or import your library.</Empty>}

@@ -2,13 +2,13 @@ import { CreatureLinks } from '../components/CreatureLinks';
 import { useMechanics } from '../lib/mechanics';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Dice5, Heart, Plus, Shield, Skull, Trash2, Users, Sword, Eye, EyeOff, Brain, Pin } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Dice5, Plus, Shield, Skull, Trash2, Users, Sword, Eye, EyeOff, Brain, Pin } from 'lucide-react';
 import { CONDITIONS_2024 } from '@shared/domain';
 import { applyDamage, applyHealing, newCombatant, nextTurn, previousTurn, rollDice, sortByInitiative, type Combatant, type DiceResult } from '@shared/play';
 import { api, qs, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary, StateRow } from '../lib/types';
-import { AutoTextarea, CanonFlags, Empty, EntityLink, ErrorBox, Field, Loading, PageHeader, SaveStatus } from '../components/ui';
+import { ask, askText, AutoTextarea, Badge, CanonFlags, Card, ConditionChips, DataTable, Empty, EntityLink, ErrorBox, Field, HpBar, HpStepper, Loading, PageHeader, SaveStatus, Section, Segmented, Toggle } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { StatBlockById } from '../components/StatBlock';
 import { Markdown } from '../components/Markdown';
@@ -52,7 +52,6 @@ const bookLabel = (c: BookCreature) => `${c.name} (CR ${c.cr ?? '?'})`;
 export function EncounterTracker({ encounterId, compact = false, onLog }: { encounterId: number; compact?: boolean; onLog?: (text: string) => void }) {
   const { data, error } = useApi<Encounter>(`/api/encounters/${encounterId}`);
   const [enc, setEnc] = useState<Encounter | null>(null);
-  const [dmg, setDmg] = useState<Record<string, string>>({});
   const [alert, setAlert] = useState<string | null>(null);
   const { activeCampaignId } = useAppState();
   const { data: party } = useApi<Character[]>(activeCampaignId ? `/api/characters?campaign_id=${activeCampaignId}` : null);
@@ -154,15 +153,13 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
     const s = previousTurn(list, { round: enc.round, turnIndex: enc.turn_index });
     save({ round: s.round, turn_index: s.turnIndex });
   };
-  const hit = (c: Combatant, sign: 1 | -1) => {
-    const amt = Number(dmg[c.id]);
+  const hit = (c: Combatant, sign: 1 | -1, amt: number) => {
     if (!amt) return;
     if (sign === 1) {
       const out = applyDamage(c, amt);
       setC(c.id, () => out.combatant);
       if (out.concentrationDC) setAlert(`${c.name} takes ${amt} damage while concentrating on ${c.concentration}: Constitution save DC ${out.concentrationDC}.`);
     } else setC(c.id, (x) => applyHealing(x, amt));
-    setDmg({ ...dmg, [c.id]: '' });
   };
 
   return (
@@ -174,7 +171,7 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
             <EntityPicker value={enc.location_id ?? null} types={PLACE_TYPES} placeholder="Where? (shows on the map)" onChange={(id) => save({ location_id: id })} />
           </div>
         )}
-        <span className="chip border-gold/60 text-gold">Round {enc.round || '—'}</span>
+        <Badge tone="gold">Round {enc.round || '—'}</Badge>
         <button className="btn" onClick={prev} disabled={enc.round === 0} aria-label="Previous turn">
           <ChevronLeft size={14} />
         </button>
@@ -213,8 +210,8 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
           </button>
         </div>
       )}
-      <div className="panel overflow-x-auto">
-        <table className="table">
+      <Card flush className="overflow-x-auto">
+        <table className="table data-table">
           <thead>
             <tr>
               <th>Init</th>
@@ -230,13 +227,12 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
           <tbody>
             {list.map((c, i) => {
               const isTurn = enc.round > 0 && i === enc.turn_index;
-              const pct = c.maxHp ? c.hp / c.maxHp : 1;
               return (
                 <Fragment key={c.id}>
                 <tr className={`${isTurn ? 'bg-gold/10' : ''} ${c.defeated ? 'opacity-40' : ''}`}>
                   <td className="w-16">
                     <input
-                      className="input w-14 py-0.5 text-center"
+                      className="input num w-14 py-0.5 text-center"
                       value={c.initiative ?? ''}
                       onChange={(e) => setC(c.id, (x) => ({ ...x, initiative: e.target.value === '' ? null : Number(e.target.value) }))}
                       aria-label={`${c.name} initiative`}
@@ -265,46 +261,20 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
                     )}
                   </td>
                   <td className="w-14">
-                    <input className="input w-12 py-0.5 text-center" value={c.ac ?? ''} onChange={(e) => setC(c.id, (x) => ({ ...x, ac: e.target.value === '' ? null : Number(e.target.value) }))} aria-label="AC" />
+                    <input className="input num w-12 py-0.5 text-center" value={c.ac ?? ''} onChange={(e) => setC(c.id, (x) => ({ ...x, ac: e.target.value === '' ? null : Number(e.target.value) }))} aria-label="AC" />
                   </td>
                   <td className="w-36">
                     <div className="flex items-center gap-1">
-                      <input className="input w-12 py-0.5 text-center" value={c.hp} onChange={(e) => setC(c.id, (x) => ({ ...x, hp: Number(e.target.value) || 0 }))} aria-label="HP" />/
-                      <input className="input w-12 py-0.5 text-center" value={c.maxHp} onChange={(e) => setC(c.id, (x) => ({ ...x, maxHp: Number(e.target.value) || 0 }))} aria-label="Max HP" />
+                      <input className="input num w-12 py-0.5 text-center" value={c.hp} onChange={(e) => setC(c.id, (x) => ({ ...x, hp: Number(e.target.value) || 0 }))} aria-label="HP" />/
+                      <input className="input num w-12 py-0.5 text-center" value={c.maxHp} onChange={(e) => setC(c.id, (x) => ({ ...x, maxHp: Number(e.target.value) || 0 }))} aria-label="Max HP" />
                     </div>
-                    <div className="h-1 bg-raised rounded mt-1">
-                      <div className={`h-full rounded ${pct > 0.5 ? 'bg-ok' : pct > 0.25 ? 'bg-warn' : 'bg-danger'}`} style={{ width: `${Math.max(0, Math.min(1, pct)) * 100}%` }} />
-                    </div>
-                    {c.tempHp > 0 && <div className="text-[10px] text-arcane">+{c.tempHp} temp</div>}
+                    <HpBar hp={c.hp} max={c.maxHp} temp={c.tempHp} className="mt-1" />
                   </td>
                   <td className="w-44">
-                    <div className="flex gap-1">
-                      <input className="input w-14 py-0.5" value={dmg[c.id] ?? ''} onChange={(e) => setDmg({ ...dmg, [c.id]: e.target.value })} onKeyDown={(e) => e.key === 'Enter' && hit(c, 1)} aria-label="Amount" />
-                      <button className="btn px-1.5 text-danger" onClick={() => hit(c, 1)} title="Damage">
-                        <Sword size={12} />
-                      </button>
-                      <button className="btn px-1.5 text-ok" onClick={() => hit(c, -1)} title="Heal">
-                        <Heart size={12} />
-                      </button>
-                      <button className="btn px-1.5" title="Set temp HP" onClick={() => setC(c.id, (x) => ({ ...x, tempHp: Number(dmg[c.id]) || 0 }))}>
-                        T
-                      </button>
-                    </div>
+                    <HpStepper onDamage={(n) => hit(c, 1, n)} onHeal={(n) => hit(c, -1, n)} onTemp={(n) => setC(c.id, (x) => ({ ...x, tempHp: n }))} />
                   </td>
                   <td>
-                    <div className="flex flex-wrap gap-0.5">
-                      {c.conditions.map((k) => (
-                        <button key={k} className="chip border-danger/60 text-danger" onClick={() => setC(c.id, (x) => ({ ...x, conditions: x.conditions.filter((y) => y !== k) }))} title="Remove">
-                          {k} ×
-                        </button>
-                      ))}
-                      <select className="input w-24 py-0 text-xs" value="" onChange={(e) => e.target.value && setC(c.id, (x) => ({ ...x, conditions: [...x.conditions, e.target.value] }))} aria-label="Add condition">
-                        <option value="">+ cond.</option>
-                        {CONDITIONS_2024.filter((k) => !c.conditions.includes(k)).map((k) => (
-                          <option key={k}>{k}</option>
-                        ))}
-                      </select>
-                    </div>
+                    <ConditionChips value={c.conditions} options={CONDITIONS_2024} onChange={(next) => setC(c.id, (x) => ({ ...x, conditions: next }))} />
                   </td>
                   <td className="w-32">
                     <input className="input py-0.5 text-xs" placeholder="spell" value={c.concentration ?? ''} onChange={(e) => setC(c.id, (x) => ({ ...x, concentration: e.target.value || null }))} aria-label="Concentration" />
@@ -335,9 +305,9 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
             })}
           </tbody>
         </table>
-        {!list.length && <p className="p-3 text-sm text-dim">Add combatants below.</p>}
-      </div>
-      <div className="panel-pad flex flex-wrap gap-2 items-end">
+        {!list.length && <Empty compact title="Add combatants below." />}
+      </Card>
+      <Card className="flex flex-wrap gap-2 items-end">
         <div className="w-40 grow">
           <Field label="Name">
             <input className="input" value={newName} onChange={(e) => setNewName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()} placeholder="Bandit, wolf…" />
@@ -383,7 +353,7 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
         <button className="btn-primary" onClick={add}>
           <Plus size={14} /> Add
         </button>
-      </div>
+      </Card>
       <Dev>
         <p className="text-xs text-dim">Statistics are whatever you enter. Picking a creature record, or a creature from your imported books, fills them in and links its stat block.</p>
       </Dev>
@@ -502,9 +472,9 @@ export function DicePage() {
   return (
     <div className="max-w-xl">
       <PageHeader title="Dice Roller" subtitle="Supports NdM±K, adv/dis on d20, keep/drop (kh, kl, dh, dl) and d%." />
-      <div className="panel-pad">
+      <Card>
         <DiceRoller />
-      </div>
+      </Card>
     </div>
   );
 }
@@ -517,13 +487,12 @@ export function ConditionsPage() {
       <PageHeader title="Combat Conditions" note="The 2024 condition names used by the tracker. Rules text is not reproduced here; add your own summaries as Rule records with a source reference." />
       <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-5">
         {CONDITIONS_2024.map((c) => (
-          <div key={c} className="panel p-3 text-center font-display text-gold">
+          <Card key={c} className="text-center font-display text-gold">
             {c}
-          </div>
+          </Card>
         ))}
       </div>
-      <div className="panel-pad">
-        <div className="section-title mb-2">Setting conditions and mechanics in your library</div>
+      <Card title="Setting conditions and mechanics in your library">
         <ul className="text-sm grid sm:grid-cols-2 gap-1">
           {data?.map((r) => (
             <li key={r.id}>
@@ -531,7 +500,7 @@ export function ConditionsPage() {
             </li>
           ))}
         </ul>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -553,13 +522,7 @@ export function RulesPage() {
           </Link>
         }
       />
-      <div className="flex gap-1.5">
-        {['', 'OFFICIAL', 'HOMEBREW', 'OUTSIDE 2024 CORE', 'UNVERIFIED'].map((m) => (
-          <button key={m} className={`chip ${mech === m ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setMech(m)}>
-            {m || 'All'}
-          </button>
-        ))}
-      </div>
+      <Segmented size="sm" label="Mechanics" value={mech} onChange={setMech} options={['', 'OFFICIAL', 'HOMEBREW', 'OUTSIDE 2024 CORE', 'UNVERIFIED'].map((m) => ({ value: m, label: m || 'All' }))} />
       <div className="grid gap-2 md:grid-cols-2">
         {rows.map((r) => (
           <Link key={r.id} to={`/e/${r.id}`} className="panel p-3 hover:border-gold/60">
@@ -583,7 +546,12 @@ export function NpcCard({ id }: { id: string }) {
   const { data } = useApi<{ entity: Entity }>(`/api/entities/${encodeURIComponent(id)}`);
   const isProfiled = data ? profileKindFor(data.entity.type) !== null : false;
   const { data: profile } = useApi<ProfileResponse>(isProfiled ? `/api/profiles/${encodeURIComponent(id)}${activeCampaignId ? `?campaign=${activeCampaignId}` : ''}` : null);
-  if (!data) return <div className="panel p-3"><Loading /></div>;
+  if (!data)
+    return (
+      <Card>
+        <Loading inline />
+      </Card>
+    );
   const e = data.entity;
   const portrait = profile?.world.portrait as string | undefined;
   const keys =
@@ -591,7 +559,7 @@ export function NpcCard({ id }: { id: string }) {
       ? ['attitude', 'goals', 'currentPlans', 'leaders', 'headquarters', 'secrets']
       : ['pronouns', 'role', 'voice', 'attitude', 'status', 'goals', 'pressures', 'promises', 'debts', 'lastEncountered', 'secrets'];
   return (
-    <div className="panel p-3 text-sm space-y-1.5">
+    <Card className="text-sm space-y-1.5">
       <div className="flex gap-3 items-start">
         {portrait && <img src={`/api/uploads/${portrait}`} alt="" className="w-14 h-14 rounded object-cover border border-line" />}
         <div>
@@ -617,7 +585,7 @@ export function NpcCard({ id }: { id: string }) {
         <Markdown text={displaySections(e.body, false).find((s) => s.content && !s.secret)?.content.slice(0, 300) ?? ''} className="prose-lore text-[14px]" />
       )}
       {e.notes && <div className="text-xs text-dim italic line-clamp-3">{e.notes}</div>}
-    </div>
+    </Card>
   );
 }
 
@@ -645,9 +613,9 @@ export function NpcRefPage() {
           ))}
         </div>
       ) : (
-        <p className="text-sm text-dim">Pin NPCs above, or star NPCs to show them by default.</p>
+        <Empty compact title="Pin NPCs above, or star NPCs to show them by default." />
       )}
-      <div className="panel-pad">
+      <Card>
         <input className="input mb-2 max-w-xs" placeholder="Filter all NPCs…" value={q} onChange={(e) => setQ(e.target.value)} />
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-1 text-sm">
           {data
@@ -658,7 +626,7 @@ export function NpcRefPage() {
               </button>
             ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -700,7 +668,7 @@ export function AgendasPage() {
   return (
     <div className="space-y-4">
       <PageHeader title="Faction Agendas" subtitle="Progress tracks for what each faction is pursuing in this campaign." note="They advance only when you advance them; nothing runs automatically and no world reset exists." />
-      <div className="panel-pad grid gap-2 md:grid-cols-[260px_1fr_auto] items-end">
+      <Card className="grid gap-2 md:grid-cols-[260px_1fr_auto] items-end">
         <Field label="Faction">
           <EntityPicker value={faction} types={['faction', 'cult', 'family']} onChange={setFaction} />
         </Field>
@@ -718,18 +686,22 @@ export function AgendasPage() {
         >
           <Plus size={14} /> Add plan
         </button>
-      </div>
+      </Card>
       {byFaction.map(([fid, plans]) => (
-        <div key={fid} className="panel-pad">
+        <Card key={fid}>
           <EntityLink id={fid} className="font-display text-lg" />
           <div className="grid gap-3 md:grid-cols-2 mt-2">
             {plans.map((p) => (
               <PlanCard key={p.id} p={p} onChange={reload} />
             ))}
           </div>
-        </div>
+        </Card>
       ))}
-      {data && !data.length && <p className="text-sm text-dim">No plans yet. Factions in the library: {factions?.length ?? 0}.</p>}
+      {data && !data.length && (
+        <Empty compact title="No plans yet">
+          Factions in the library: <span className="num">{factions?.length ?? 0}</span>.
+        </Empty>
+      )}
       <StanceMatrix />
       <InfluenceMatrix campaignId={activeCampaignId} />
     </div>
@@ -744,14 +716,13 @@ function InfluenceMatrix({ campaignId }: { campaignId: number }) {
   const factions = [...new Map(data.map((d) => [d.faction_id, d.faction_name])).entries()];
   const strength = (l: string) => Math.max(0, INFLUENCE_LEVELS.indexOf(l as (typeof INFLUENCE_LEVELS)[number]));
   return (
-    <div className="panel-pad">
-      <div className="section-title mb-1">Influence by region</div>
+    <Card title="Influence by region">
       <p className="text-xs text-dim mb-2">Set on each faction's profile. Regions where several factions are strong are marked as conflicts.</p>
       {!regions.length ? (
-        <p className="text-sm text-dim">No influence recorded yet.</p>
+        <Empty compact title="No influence recorded yet." />
       ) : (
         <div className="overflow-x-auto">
-          <table className="table">
+          <table className="table data-table">
             <thead>
               <tr>
                 <th>Region</th>
@@ -769,7 +740,11 @@ function InfluenceMatrix({ campaignId }: { campaignId: number }) {
                 return (
                   <tr key={r} className={contested ? 'bg-danger/10' : ''}>
                     <td>
-                      <EntityLink id={r} /> {contested && <span className="chip border-danger/60 text-danger ml-1">conflict</span>}
+                      <EntityLink id={r} /> {contested && (
+                        <Badge tone="danger" className="ml-1">
+                          conflict
+                        </Badge>
+                      )}
                     </td>
                     {cells.map((c, i) => (
                       <td key={i} title={c?.note}>
@@ -783,7 +758,7 @@ function InfluenceMatrix({ campaignId }: { campaignId: number }) {
           </table>
         </div>
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -796,7 +771,7 @@ function PlanCard({ p: init, onChange }: { p: Plan; onChange: () => void }) {
     auto.schedule(n);
   };
   const advance = async (delta: number) => {
-    const reason = prompt(delta > 0 ? 'Why does this plan advance? (recorded in campaign state)' : 'Why does it set back?');
+    const reason = await askText({ title: delta > 0 ? 'Why does this plan advance? (recorded in campaign state)' : 'Why does it set back?' });
     if (reason === null) return;
     const r = await api.post<Plan>(`/api/faction-plans/${p.id}/advance`, { delta, reason });
     setP(r);
@@ -812,7 +787,7 @@ function PlanCard({ p: init, onChange }: { p: Plan; onChange: () => void }) {
         {Array.from({ length: p.segments }, (_, i) => (
           <div key={i} className={`h-3 flex-1 rounded-sm ${i < p.progress ? 'bg-gold/80' : 'bg-raised border border-line'}`} />
         ))}
-        <span className="text-xs text-dim ml-2">
+        <span className="text-xs text-dim ml-2 num">
           {p.progress}/{p.segments}
         </span>
       </div>
@@ -856,36 +831,40 @@ export function WorldEventsPage() {
   return (
     <div className="space-y-4">
       <PageHeader title="World Events" subtitle="What has happened in play, and events you added to the timeline." />
-      <div className="panel overflow-x-auto">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>When recorded</th>
-              <th>Record</th>
-              <th>Change</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.map((r) => (
-              <tr key={r.id}>
-                <td className="text-xs">{new Date(r.created_at).toLocaleString()}</td>
-                <td>{r.entity_id ? <EntityLink id={r.entity_id} /> : 'World'}</td>
-                <td>
+      <Card flush>
+        <DataTable
+          rows={data ?? []}
+          rowKey={(r) => r.id}
+          initialSort={{ key: 'created_at', dir: 'desc' }}
+          empty={activeCampaignId ? 'No changes recorded in this campaign.' : 'No active campaign.'}
+          columns={[
+            { key: 'created_at', label: 'When recorded', className: 'text-xs num', sortValue: (r) => r.created_at, render: (r) => new Date(r.created_at).toLocaleString() },
+            { key: 'entity_id', label: 'Record', render: (r) => (r.entity_id ? <EntityLink id={r.entity_id} /> : 'World') },
+            {
+              key: 'change',
+              label: 'Change',
+              render: (r) => (
+                <>
                   {r.field} → {r.value}
                   {r.note && <div className="text-xs text-dim">{r.note}</div>}
-                </td>
-                <td>{r.status}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        {!data?.length && <p className="p-4 text-sm text-dim">{activeCampaignId ? 'No changes recorded in this campaign.' : 'No active campaign.'}</p>}
-      </div>
-      <div className="panel-pad">
-        <div className="section-title mb-2">DM-added timeline events</div>
-        {userRows.length ? userRows.map((r) => <div key={r.id} className="text-sm">{r.time_label}: <Markdown text={r.event} className="inline [&_p]:inline" /></div>) : <p className="text-sm text-dim">None. Add events on the World Timeline page.</p>}
-      </div>
+                </>
+              ),
+            },
+            { key: 'status', label: 'Status', sortable: true },
+          ]}
+        />
+      </Card>
+      <Card title="DM-added timeline events">
+        {userRows.length ? (
+          userRows.map((r) => (
+            <div key={r.id} className="text-sm">
+              {r.time_label}: <Markdown text={r.event} className="inline [&_p]:inline" />
+            </div>
+          ))
+        ) : (
+          <Empty compact title="None. Add events on the World Timeline page." />
+        )}
+      </Card>
     </div>
   );
 }
@@ -928,13 +907,13 @@ export function TablesPage() {
         <Empty title="No tables yet" />
       ) : (
         <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
-          <div className="panel p-2">
+          <Card flush className="p-2">
             {data.map((x) => (
               <button key={x.id} onClick={() => (setSel(x.id), setResult(null))} className={`w-full text-left px-2 py-1 rounded text-sm ${t?.id === x.id ? 'bg-gold/10 text-gold' : 'hover:bg-raised'}`}>
                 {x.name}
               </button>
             ))}
-          </div>
+          </Card>
           {t && <TableEditor key={t.id} t={t} result={result} setResult={setResult} onDelete={async () => (await api.del(`/api/random-tables/${t.id}`), setSel(null), reload())} />}
         </div>
       )}
@@ -960,7 +939,7 @@ function TableEditor({ t, result, setResult, onDelete }: { t: RTable; result: st
     }),
   );
   return (
-    <div className="panel-pad space-y-3">
+    <Card className="space-y-3">
       <div className="flex gap-2 items-center">
         <input className="input font-display" value={name} onChange={(e) => (setName(e.target.value), auto.schedule({ name: e.target.value, text }))} />
         <SaveStatus state={auto.state} />
@@ -982,7 +961,7 @@ function TableEditor({ t, result, setResult, onDelete }: { t: RTable; result: st
       </button>
       {result && <div className="parchment p-3 font-serif text-lg">{result}</div>}
       {result && <CreatureLinks creatures={mentioned} label="From your books" />}
-    </div>
+    </Card>
   );
 }
 
@@ -1023,14 +1002,14 @@ export function NotesPage() {
         <Empty title="No notes yet" />
       ) : (
         <div className="grid gap-4 lg:grid-cols-[240px_1fr]">
-          <div className="panel p-2">
+          <Card flush className="p-2">
             {data.map((x) => (
               <button key={x.id} onClick={() => setSp({ note: String(x.id) })} className={`w-full text-left px-2 py-1 rounded text-sm ${x.id === sel ? 'bg-gold/10 text-gold' : 'hover:bg-raised'}`}>
                 {x.pinned && <Pin size={11} className="inline mr-1" />}
                 {x.title}
               </button>
             ))}
-          </div>
+          </Card>
           {n && <NoteEditor key={n.id} n={n} onDelete={async () => (await api.del(`/api/notes/${n.id}`), setSp({}), reload())} onSaved={reload} />}
         </div>
       )}
@@ -1053,19 +1032,21 @@ function NoteEditor({ n, onDelete, onSaved }: { n: Note; onDelete: () => void; o
     <div className="space-y-2">
       <div className="flex gap-2 items-center">
         <input className="input font-display" value={x.title} onChange={(e) => set({ title: e.target.value })} />
-        <label className="text-sm flex items-center gap-1">
-          <input type="checkbox" checked={x.pinned} onChange={(e) => set({ pinned: e.target.checked })} /> Pin
-        </label>
+        <Toggle checked={x.pinned} onChange={(v) => set({ pinned: v })}>
+          Pin
+        </Toggle>
         <SaveStatus state={auto.state} />
-        <button className="btn-danger" onClick={() => confirm('Delete note?') && onDelete()} aria-label="Delete note">
+        <button className="btn-danger" onClick={async () => {
+            if (await ask({ body: 'Delete note?', danger: true, confirmLabel: 'Delete' })) onDelete();
+          }} aria-label="Delete note">
           <Trash2 size={14} />
         </button>
       </div>
       <div className="grid gap-3 lg:grid-cols-2">
         <AutoTextarea minRows={18} value={x.body} onChange={(e) => set({ body: e.target.value })} />
-        <div className="panel p-4">
+        <Card>
           <Markdown text={x.body || '_Empty_'} />
-        </div>
+        </Card>
       </div>
     </div>
   );
@@ -1083,12 +1064,10 @@ export function DmScreen() {
     <div className="space-y-4">
       <PageHeader title="DM Screen" subtitle="Everything at hand during play. Alt+D opens this screen from anywhere." actions={<Link to="/campaign/live" className="btn-primary">Live session mode</Link>} />
       <div className="grid gap-4 lg:grid-cols-3">
-        <div className="panel-pad">
-          <div className="section-title mb-2">Dice</div>
+        <Card title="Dice">
           <DiceRoller compact />
-        </div>
-        <div className="panel-pad">
-          <div className="section-title mb-2">Quick lookup</div>
+        </Card>
+        <Card title="Quick lookup">
           <input className="input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name or ID…" />
           <ul className="mt-2 text-sm space-y-1">
             {hits?.map((h) => (
@@ -1097,27 +1076,39 @@ export function DmScreen() {
               </li>
             ))}
           </ul>
-          <div className="section-title mt-4 mb-2">Conditions</div>
-          <div className="flex flex-wrap gap-1">
-            {CONDITIONS_2024.map((c) => (
-              <span key={c} className="chip border-line text-dim">
-                {c}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div className="panel-pad">
-          <div className="section-title mb-2">Running encounters</div>
-          {encs?.length ? encs.map((e) => <Link key={e.id} className="block text-arcane" to={`/tracker/${e.id}`}>{e.title} (round {e.round})</Link>) : <p className="text-sm text-dim">None running.</p>}
+          <Section title="Conditions" className="mt-4">
+            <div className="flex flex-wrap gap-1">
+              {CONDITIONS_2024.map((c) => (
+                <Badge key={c}>{c}</Badge>
+              ))}
+            </div>
+          </Section>
+        </Card>
+        <Card title="Running encounters">
+          {encs?.length ? (
+            encs.map((e) => (
+              <Link key={e.id} className="block text-arcane" to={`/tracker/${e.id}`}>
+                {e.title} (round <span className="num">{e.round}</span>)
+              </Link>
+            ))
+          ) : (
+            <Empty compact title="None running." />
+          )}
           <Link to="/tracker/quick" className="btn mt-2">
             Quick initiative
           </Link>
-          <div className="section-title mt-4 mb-2">Pinned notes</div>
-          {notes?.filter((n) => n.pinned).map((n) => <Link key={n.id} className="block text-sm hover:text-gold" to={`/notes?note=${n.id}`}>{n.title}</Link>)}
-        </div>
+          <Section title="Pinned notes" className="mt-4">
+            {notes
+              ?.filter((n) => n.pinned)
+              .map((n) => (
+                <Link key={n.id} className="block text-sm hover:text-gold" to={`/notes?note=${n.id}`}>
+                  {n.title}
+                </Link>
+              ))}
+          </Section>
+        </Card>
       </div>
-      <div>
-        <div className="section-title mb-2">Favorite NPCs</div>
+      <Section title="Favorite NPCs">
         {favNpcs?.length ? (
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             {favNpcs.slice(0, 8).map((n) => (
@@ -1125,9 +1116,9 @@ export function DmScreen() {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-dim">Star NPCs to keep them on the DM screen.</p>
+          <Empty compact title="Star NPCs to keep them on the DM screen." />
         )}
-      </div>
+      </Section>
     </div>
   );
 }

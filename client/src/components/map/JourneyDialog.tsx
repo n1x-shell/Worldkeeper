@@ -6,7 +6,7 @@
 import { useMemo, useState } from 'react';
 import { Flag } from 'lucide-react';
 import { api } from '../../lib/api';
-import { Modal } from '../ui';
+import { Check, Modal, Section } from '../ui';
 import { Markdown } from '../Markdown';
 import { CreatureLinks } from '../CreatureLinks';
 import { PACES, formatMiles, milesBetween, travelDays, type Pace } from '../../../../shared/travel';
@@ -89,8 +89,7 @@ export function JourneyDialog({
             {result.miles != null ? ` (${formatMiles(result.miles)})` : ''}.{result.date ? ` It is now ${result.date}.` : ''}
           </p>
           {result.table && result.rolls.length > 0 && (
-            <div>
-              <div className="section-title mb-1">{result.table.name}</div>
+            <Section title={result.table.name}>
               <ol className="space-y-2">
                 {result.rolls.map((r) => (
                   <li key={r.day} className="rounded border border-line px-2 py-1">
@@ -101,7 +100,7 @@ export function JourneyDialog({
                 ))}
               </ol>
               {result.days > result.rolls.length && <p className="text-xs text-dim mt-1">Only the first {result.rolls.length} days were rolled.</p>}
-            </div>
+            </Section>
           )}
           <div className="flex justify-end">
             <button className="btn-primary" onClick={onClose}>
@@ -143,12 +142,12 @@ export function JourneyDialog({
           </label>
         </div>
         {PACES[pace].note && <p className="text-xs text-dim">{PACES[pace].note}.</p>}
-        <label className="flex items-center gap-2">
-          <input type="checkbox" checked={advance} onChange={(e) => setAdvance(e.target.checked)} disabled={!n} /> Move the calendar on {n} {n === 1 ? 'day' : 'days'}
-        </label>
-        <label className="flex items-center gap-2">
-          <input type="checkbox" checked={roll} onChange={(e) => setRoll(e.target.checked)} disabled={!n} /> Roll the region&apos;s encounter table for each day
-        </label>
+        <Check className="flex" checked={advance} onChange={setAdvance} disabled={!n}>
+          Move the calendar on {n} {n === 1 ? 'day' : 'days'}
+        </Check>
+        <Check className="flex" checked={roll} onChange={setRoll} disabled={!n}>
+          Roll the region&apos;s encounter table for each day
+        </Check>
         {err && <p className="text-danger text-xs">{err}</p>}
         <div className="flex justify-end gap-2">
           <button className="btn" onClick={onClose}>

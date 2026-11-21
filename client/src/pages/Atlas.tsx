@@ -5,7 +5,7 @@ import { ImageOverlay, MapContainer, Marker, Polygon, Polyline, Rectangle, Toolt
 import { Eye, EyeOff, Layers, Plus, Trash2, Upload, MapPin, Spline, Hexagon, X, ArrowUpLeft, Maximize2 } from 'lucide-react';
 import { api, qs, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
-import { Empty, EntityLink, ErrorBox, Field, Loading, Modal, PageHeader, TypeBadge } from '../components/ui';
+import { Card, Check, Empty, EntityLink, ErrorBox, Field, Loading, Modal, PageHeader, Toggle, TypeBadge, ask } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
 import { displaySections } from '../lib/sections';
@@ -158,11 +158,20 @@ export function AtlasPage() {
       />
       {(err || error) && <ErrorBox error={(err ?? error?.message)!} />}
       {!mapList.length ? (
-        <Empty title="No maps yet">Create a world map (upload an image) or an abstract diagram, then place locations from the unplaced list. Maps can nest: World → Continent → Region → Settlement → Building.</Empty>
+        <Empty
+          title="No maps yet"
+          action={
+            <button className="btn-primary" onClick={() => setCreating(true)}>
+              <Plus size={14} /> New map
+            </button>
+          }
+        >
+          Create a world map (upload an image) or an abstract diagram, then place locations from the unplaced list. Maps can nest: World → Continent → Region → Settlement → Building.
+        </Empty>
       ) : (
         <div className="grid gap-3 lg:grid-cols-[240px_1fr_300px]">
           <MapTree maps={mapList} current={current} onPick={(id) => nav(`/atlas/${id}`)} />
-          <div className="panel overflow-hidden min-h-[60vh] relative">
+          <Card flush className="overflow-hidden min-h-[60vh] relative">
             {!data ? (
               <Loading />
             ) : (
@@ -188,7 +197,7 @@ export function AtlasPage() {
                   </span>
                 </div>
                 {mode.kind !== 'view' && (
-                  <div className="absolute z-[1000] top-14 left-1/2 -translate-x-1/2 panel px-3 py-2 text-sm shadow-xl flex items-center gap-2">
+                  <div className="absolute z-[1000] top-14 left-1/2 -translate-x-1/2 panel elev-2 px-3 py-2 text-sm flex items-center gap-2">
                     {mode.kind === 'place' ? `Click the map to place ${mode.label}` : `Click to add points (${mode.points.length})`}
                     {mode.kind === 'draw' && mode.points.length >= 2 && (
                       <ShapeSave
@@ -219,7 +228,7 @@ export function AtlasPage() {
                 />
               </>
             )}
-          </div>
+          </Card>
           <div className="space-y-3">
             {data && (
               <MapSettings
@@ -377,10 +386,9 @@ function MapTree({ maps, current, onPick }: { maps: MapRow[]; current?: number; 
         </div>
       ));
   return (
-    <div className="panel p-2">
-      <div className="section-title px-2 py-1">Maps</div>
-      {render(null, 0)}
-    </div>
+    <Card title="Maps" flush className="pb-2">
+      <div className="px-2">{render(null, 0)}</div>
+    </Card>
   );
 }
 
@@ -403,7 +411,7 @@ function MapSettings({
   const layers = [...new Set([...m.layers, ...detail.markers.map((x) => x.layer), ...detail.shapes.map((s) => s.layer)])];
   const [err, setErr] = useState<string | null>(null);
   return (
-    <div className="panel-pad space-y-3 text-sm">
+    <Card className="space-y-3 text-sm">
       {err && <ErrorBox error={err} />}
       <label className="btn w-full justify-center cursor-pointer">
         <Upload size={14} /> {m.image_file ? 'Replace image' : 'Upload map image'}
@@ -423,26 +431,23 @@ function MapSettings({
           }}
         />
       </label>
-      <label className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          checked={m.player_visible}
-          onChange={async (e) => {
-            await api.patch(`/api/maps/${m.id}`, { player_visible: e.target.checked });
-            onChange();
-          }}
-        />
+      <Toggle
+        checked={m.player_visible}
+        onChange={async (v) => {
+          await api.patch(`/api/maps/${m.id}`, { player_visible: v });
+          onChange();
+        }}
+      >
         Visible in player view
-      </label>
+      </Toggle>
       <div>
         <div className="label flex items-center gap-1">
           <Layers size={12} /> Layers
         </div>
         {layers.map((l) => (
-          <label key={l} className="flex items-center gap-2">
-            <input type="checkbox" checked={!hiddenLayers.includes(l)} onChange={(e) => setHiddenLayers(e.target.checked ? hiddenLayers.filter((x) => x !== l) : [...hiddenLayers, l])} />
+          <Check key={l} className="flex" checked={!hiddenLayers.includes(l)} onChange={(v) => setHiddenLayers(v ? hiddenLayers.filter((x) => x !== l) : [...hiddenLayers, l])}>
             {l}
-          </label>
+          </Check>
         ))}
       </div>
       {detail.children.length > 0 && (
@@ -484,14 +489,14 @@ function MapSettings({
       <button
         className="btn-danger w-full justify-center"
         onClick={async () => {
-          if (!confirm(`Delete map "${m.name}" and its markers? Encyclopedia records are not affected.`)) return;
+          if (!(await ask({ body: `Delete map "${m.name}" and its markers? Encyclopedia records are not affected.`, danger: true, confirmLabel: 'Delete' }))) return;
           await api.del(`/api/maps/${m.id}`);
           onDeleted();
         }}
       >
         <Trash2 size={14} /> Delete map
       </button>
-    </div>
+    </Card>
   );
 }
 
@@ -503,13 +508,15 @@ function MarkerPanel({ marker, maps, onClose, onChange }: { marker: MarkerRow; m
   const debug = useDebug();
   const overview = data ? displaySections(data.entity.body, debug).find((s) => s.content && !s.secret) : null;
   return (
-    <div className="panel-pad space-y-2 text-sm">
-      <div className="flex items-center justify-between">
-        <div className="section-title">Marker</div>
+    <Card
+      title="Marker"
+      className="space-y-2 text-sm"
+      actions={
         <button className="btn-ghost" onClick={onClose} aria-label="Close">
           <X size={14} />
         </button>
-      </div>
+      }
+    >
       {data && (
         <div>
           <Link to={`/e/${data.entity.id}`} className="text-lg font-display text-gold">
@@ -578,7 +585,7 @@ function MarkerPanel({ marker, maps, onClose, onChange }: { marker: MarkerRow; m
           <Trash2 size={14} /> Remove
         </button>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -588,13 +595,12 @@ function Unplaced({ scope, onPlace }: { scope: string | null; onPlace: (id: stri
   const [q, setQ] = useState('');
   const rows = useMemo(() => (data ?? []).filter((r) => !q || r.name.toLowerCase().includes(q.toLowerCase())), [data, q]);
   return (
-    <div className="panel-pad text-sm">
-      <div className="section-title mb-1">Unplaced locations ({data?.length ?? '…'})</div>
+    <Card title={`Unplaced locations (${data?.length ?? '…'})`} className="text-sm">
       <p className="text-xs text-dim mb-2">Where each place is described to be, to help you place it.</p>
       {scope && (
-        <label className="flex items-center gap-1 text-xs mb-1">
-          <input type="checkbox" checked={all} onChange={(e) => setAll(e.target.checked)} /> Show all realms
-        </label>
+        <Check className="flex mb-1" checked={all} onChange={setAll}>
+          Show all realms
+        </Check>
       )}
       <input className="input mb-2" placeholder="Filter…" value={q} onChange={(e) => setQ(e.target.value)} />
       <ul className="max-h-[45vh] overflow-auto space-y-1.5">
@@ -614,7 +620,7 @@ function Unplaced({ scope, onPlace }: { scope: string | null; onPlace: (id: stri
           </li>
         ))}
       </ul>
-    </div>
+    </Card>
   );
 }
 
