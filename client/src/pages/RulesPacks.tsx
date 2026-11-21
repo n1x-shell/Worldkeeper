@@ -7,6 +7,7 @@ import { useRef, useState } from 'react';
 import { BookOpen, Trash2, Upload } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { reloadRules } from '../player/sheet/options';
+import { Badge, Card, Check, Loading, ask } from '../components/ui';
 
 interface Pack {
   id: string;
@@ -43,10 +44,7 @@ export function RulesPacksPanel() {
     reloadRules();
   };
   return (
-    <div className="panel-pad space-y-3">
-      <div className="section-title flex items-center gap-2">
-        <BookOpen size={14} /> Rules packs
-      </div>
+    <Card title="Rules packs" icon={<BookOpen size={14} />} className="space-y-3">
       <p className="text-sm text-dim">
         The rules the character sheets and the builder use: spells, species, class and subclass features, backgrounds and feats. Packs from your books also bring creatures (in Your Books, the
         encounter tracker and NPC cards; only you see them) and items (their rules show in treasure and on sheets). Import a pack made from your own books, or your homebrew, as a zip of Markdown
@@ -56,16 +54,15 @@ export function RulesPacksPanel() {
       <ul className="divide-y divide-line/60">
         {(data ?? []).map((p) => (
           <li key={p.id} className="flex flex-wrap items-center gap-3 py-2">
-            <label className="flex items-center gap-2 flex-1 min-w-[14rem]">
-              <input
-                type="checkbox"
-                checked={p.enabled}
-                aria-label={`Use ${p.name}`}
-                onChange={async (e) => changed(await api.patch<Pack[]>(`/api/rules/packs/${encodeURIComponent(p.id)}`, { enabled: e.target.checked }))}
-              />
+            <Check
+              className="flex flex-1 min-w-[14rem]"
+              checked={p.enabled}
+              label={`Use ${p.name}`}
+              onChange={async (v) => changed(await api.patch<Pack[]>(`/api/rules/packs/${encodeURIComponent(p.id)}`, { enabled: v }))}
+            >
               <span>
                 <span className="font-medium">{p.name}</span>
-                {p.builtin && <span className="chip border-line text-dim ml-2">built in</span>}
+                {p.builtin && <Badge className="ml-2">built in</Badge>}
                 <span className="block text-xs text-dim">
                   {[
                     p.source,
@@ -78,13 +75,14 @@ export function RulesPacksPanel() {
                     .join(' · ')}
                 </span>
               </span>
-            </label>
+            </Check>
             {!p.builtin && (
               <button
                 className="btn-ghost"
                 aria-label={`Remove ${p.name}`}
                 onClick={async () => {
-                  if (confirm(`Remove ${p.name}? Sheets keep what was already filled in from it.`)) changed(await api.del<Pack[]>(`/api/rules/packs/${encodeURIComponent(p.id)}`));
+                  if (await ask({ body: `Remove ${p.name}? Sheets keep what was already filled in from it.`, danger: true, confirmLabel: 'Remove' }))
+                    changed(await api.del<Pack[]>(`/api/rules/packs/${encodeURIComponent(p.id)}`));
                 }}
               >
                 <Trash2 size={14} />
@@ -205,7 +203,7 @@ export function RulesPacksPanel() {
           </ul>
         </details>
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -261,22 +259,19 @@ function BookPicker({
           Clear
         </button>
         {unofficial > 0 && (
-          <label className="text-xs flex items-center gap-1.5">
-            <input type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.target.checked)} /> Show {unofficial} playtest or unlisted sources
-          </label>
+          <Check checked={showAll} onChange={setShowAll}>
+            Show {unofficial} playtest or unlisted sources
+          </Check>
         )}
       </div>
       <ul className="max-h-80 overflow-auto divide-y divide-line/50">
         {shown.map((b) => (
           <li key={b.id}>
-            <label className="flex items-start gap-2 py-1.5 text-sm">
-              <input type="checkbox" className="mt-1" checked={picked.has(b.id)} onChange={() => toggle(b.id)} aria-label={b.name} />
-              <span>
-                {b.name}
-                {b.unofficial && <span className="chip border-line text-dim ml-2">playtest or unlisted</span>}
-                <span className="block text-xs text-dim">{[b.published.slice(0, 4), summary(b.counts)].filter(Boolean).join(' · ')}</span>
-              </span>
-            </label>
+            <Check className="flex py-1.5" checked={picked.has(b.id)} onChange={() => toggle(b.id)} label={b.name}>
+              {b.name}
+              {b.unofficial && <Badge className="ml-2">playtest or unlisted</Badge>}
+              <span className="block text-xs text-dim">{[b.published.slice(0, 4), summary(b.counts)].filter(Boolean).join(' · ')}</span>
+            </Check>
           </li>
         ))}
       </ul>
@@ -339,22 +334,19 @@ function Open5ePicker({ onCancel, onDone }: { onCancel: () => void; onDone: (msg
         written for the 2014 rules: check them before your players use them. Creatures and items come in with their rules; species and classes from these sources aren&apos;t imported yet.
       </p>
       {error && <p className="text-danger text-sm">Couldn&apos;t reach Open5e: {error.message}</p>}
-      {!data && !error && <p className="text-sm text-dim">Asking Open5e what it has…</p>}
+      {!data && !error && <Loading inline label="Asking Open5e what it has…" />}
       <ul className="max-h-80 overflow-auto divide-y divide-line/50">
         {(data ?? []).map((d) => (
           <li key={d.key}>
-            <label className={`flex items-start gap-2 py-1.5 text-sm ${d.builtIn ? 'opacity-60' : ''}`}>
-              <input type="checkbox" className="mt-1" disabled={d.builtIn} checked={picked.has(d.key)} onChange={() => toggle(d.key)} aria-label={d.name} />
-              <span>
-                {d.name}
-                {d.licences.map((l) => (
-                  <span key={l} className="chip border-line text-dim ml-2">
-                    {l}
-                  </span>
-                ))}
-                <span className="block text-xs text-dim">{[d.publisher, d.system, d.builtIn && 'already built in'].filter(Boolean).join(' · ')}</span>
-              </span>
-            </label>
+            <Check className="flex py-1.5" disabled={d.builtIn} checked={picked.has(d.key)} onChange={() => toggle(d.key)} label={d.name}>
+              {d.name}
+              {d.licences.map((l) => (
+                <Badge key={l} className="ml-2">
+                  {l}
+                </Badge>
+              ))}
+              <span className="block text-xs text-dim">{[d.publisher, d.system, d.builtIn && 'already built in'].filter(Boolean).join(' · ')}</span>
+            </Check>
           </li>
         ))}
       </ul>

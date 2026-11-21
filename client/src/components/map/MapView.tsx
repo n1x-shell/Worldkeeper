@@ -6,6 +6,7 @@ import { CircleMarker, ImageOverlay, MapContainer, Marker, Polygon, Polyline, Po
 import { PACES, formatMiles, niceMiles, pathMiles, travelDays, type Pace } from '../../../../shared/travel';
 import { ArrowLeft, Eye, EyeOff, Layers, NotebookPen, Plus, Ruler, Trash2, Undo2, X } from 'lucide-react';
 import { groupByDistance } from './grouping';
+import { Check, Segmented } from '../ui';
 
 /**
  * The full-screen map view shared by the players' handbook and the GM's Atlas. The map fills the window; a legend
@@ -688,29 +689,20 @@ export function MapView(p: MapViewProps) {
       <div className="border-t border-line px-4 py-2 space-y-1.5 text-sm">
         <div className="flex items-center gap-2">
           <span className="flex-1">Panels</span>
-          <span className="inline-flex rounded-md border border-line overflow-hidden text-xs" role="radiogroup" aria-label="Map panels">
-            {(
-              [
-                ['dark', 'Dark'],
-                ['theme', 'App theme'],
-              ] as const
-            ).map(([k, label]) => (
-              <button
-                key={k}
-                type="button"
-                role="radio"
-                aria-checked={panels === k}
-                className={`px-2 py-0.5 ${panels === k ? 'bg-gold/15 text-gold' : 'text-dim hover:text-ink'}`}
-                onClick={() => (setPanels(k), writePref('wk.map.panels', k))}
-              >
-                {label}
-              </button>
-            ))}
-          </span>
+          <Segmented
+            size="sm"
+            label="Map panels"
+            options={[
+              { value: 'dark', label: 'Dark' },
+              { value: 'theme', label: 'App theme' },
+            ]}
+            value={panels}
+            onChange={(k) => (setPanels(k), writePref('wk.map.panels', k))}
+          />
         </div>
-        <label className="flex items-center gap-2 text-xs text-dim">
-          <input type="checkbox" checked={overview} onChange={(e) => (setOverview(e.target.checked), writePref('wk.map.overview', e.target.checked ? '1' : '0'))} /> Overview when zoomed in
-        </label>
+        <Check className="flex text-dim" checked={overview} onChange={(v) => (setOverview(v), writePref('wk.map.overview', v ? '1' : '0'))}>
+          Overview when zoomed in
+        </Check>
       </div>
       {p.legendExtra}
     </>

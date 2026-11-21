@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { api, qs } from '../lib/api';
-import { RealmBadge, TypeBadge, CanonBadge } from './ui';
+import { Badge, RealmBadge, TypeBadge, CanonBadge } from './ui';
 import { useAppState } from '../lib/store';
 
 export interface Hit {
@@ -82,7 +82,7 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
   };
   return (
     <div className="fixed inset-0 z-[2500] bg-black/60 flex justify-center pt-[10vh] px-3" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="panel w-full max-w-2xl shadow-2xl h-fit max-h-[75vh] flex flex-col" role="dialog" aria-label="Search">
+      <div className="panel elev-3 w-full max-w-2xl h-fit max-h-[75vh] flex flex-col" role="dialog" aria-label="Search">
         <div className="flex items-center gap-2 px-3 border-b border-line">
           <Search size={16} className="text-dim" />
           <input
@@ -121,7 +121,7 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
                       {h.canon_status && h.canon_status !== 'CANON' && <CanonBadge status={h.canon_status} />}
                     </>
                   ) : (
-                    <span className="chip border-line text-dim">{KIND_LABEL[h.kind] ?? h.kind}</span>
+                    <Badge>{KIND_LABEL[h.kind] ?? h.kind}</Badge>
                   )}
                 </div>
                 <div className="text-xs text-dim mt-0.5 line-clamp-2">

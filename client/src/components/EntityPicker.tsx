@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from 'react';
 import { X } from 'lucide-react';
 import { ENTITY_TYPE_LABELS, type EntityType } from '@shared/domain';
 import { useAppState } from '../lib/store';
+import { Badge } from './ui';
 
 /** Accessible combobox to choose a record from the index by name, alias-free ID or partial name. */
 export function EntityPicker({
@@ -75,7 +76,7 @@ export function EntityPicker({
         }}
       />
       {open && results.length > 0 && (
-        <ul role="listbox" className="absolute z-[1500] mt-1 max-h-64 w-full overflow-auto panel shadow-xl">
+        <ul role="listbox" className="absolute z-[1500] mt-1 max-h-64 w-full overflow-auto panel elev-2">
           {results.map((e, i) => (
             <li
               key={e.id}
@@ -110,12 +111,12 @@ export function EntityMultiPicker({ value, onChange, types, label }: { value: st
       {label && <span className="label">{label}</span>}
       <div className="flex flex-wrap gap-1">
         {value.map((id) => (
-          <span key={id} className="chip border-arcane/50 text-arcane">
+          <Badge key={id} tone="arcane">
             {index.get(id)?.name ?? id}
             <button type="button" onClick={() => onChange(value.filter((v) => v !== id))} aria-label={`Remove ${id}`}>
               <X size={11} />
             </button>
-          </span>
+          </Badge>
         ))}
       </div>
       <EntityPicker value={null} types={types} placeholder="Add a record…" onChange={(id) => id && !value.includes(id) && onChange([...value, id])} />

@@ -9,6 +9,7 @@ import { Dices } from 'lucide-react';
 import { api, useApi } from '../../lib/api';
 import { Markdown } from '../Markdown';
 import { CreatureLinks } from '../CreatureLinks';
+import { Badge, Section } from '../ui';
 
 interface Panel {
   region: { id: string; name: string; type: string };
@@ -45,20 +46,18 @@ export function RegionPanel({ id, onPick }: { id: string; onPick: (id: string) =
   return (
     <div className="space-y-4 mb-5 text-sm">
       {data.terrain && (
-        <div>
-          <div className="section-title mb-1">Terrain</div>
+        <Section title="Terrain">
           <div className="flex flex-wrap gap-1">
             {data.terrain.terrain.map((t) => (
-              <span key={t} className="chip border-line text-dim capitalize">
+              <Badge key={t} className="capitalize">
                 {t}
-              </span>
+              </Badge>
             ))}
           </div>
-        </div>
+        </Section>
       )}
       {st && (
-        <div className="space-y-2">
-          <div className="section-title">In this campaign</div>
+        <Section title="In this campaign" className="space-y-2">
           {st.holder && (
             <div>
               <span className="text-dim">Held by </span>
@@ -76,7 +75,7 @@ export function RegionPanel({ id, onPick }: { id: string; onPick: (id: string) =
                   </span>
                   <span className="flex gap-0.5 shrink-0" aria-label={`${a.progress} of ${a.segments}`}>
                     {Array.from({ length: a.segments }, (_, i) => (
-                      <span key={i} className={`h-2 w-2 rounded-sm ${i < a.progress ? 'bg-gold' : 'bg-white/15'}`} />
+                      <span key={i} className={`h-2 w-2 rounded-sm ${i < a.progress ? 'bg-gold' : 'bg-line'}`} />
                     ))}
                   </span>
                 </li>
@@ -109,11 +108,10 @@ export function RegionPanel({ id, onPick }: { id: string; onPick: (id: string) =
           <Link to="/campaign/regions" className="text-xs text-arcane">
             State of the World
           </Link>
-        </div>
+        </Section>
       )}
       {data.tables.length > 0 && (
-        <div>
-          <div className="section-title mb-1">Encounters</div>
+        <Section title="Encounters">
           <ul className="space-y-2">
             {data.tables.map((t) => {
               const r = rolls[t.id];
@@ -128,7 +126,7 @@ export function RegionPanel({ id, onPick }: { id: string; onPick: (id: string) =
                     </button>
                   </div>
                   {r && (
-                    <div className="mt-1 rounded border border-line bg-white/5 px-2 py-1 text-[13px]">
+                    <div className="mt-1 rounded border border-line bg-raised px-2 py-1 text-[13px]">
                       {typeof r === 'string' ? (
                         <span className="text-danger">{r}</span>
                       ) : (
@@ -143,11 +141,10 @@ export function RegionPanel({ id, onPick }: { id: string; onPick: (id: string) =
               );
             })}
           </ul>
-        </div>
+        </Section>
       )}
       {data.places.length > 0 && (
-        <div>
-          <div className="section-title mb-1">Places here ({data.places.length})</div>
+        <Section title={`Places here (${data.places.length})`}>
           <ul className="grid grid-cols-2 gap-x-3 gap-y-0.5">
             {places.map((p) => (
               <li key={p.id} className="truncate">
@@ -162,7 +159,7 @@ export function RegionPanel({ id, onPick }: { id: string; onPick: (id: string) =
               {allPlaces ? 'Fewer' : `All ${data.places.length}`}
             </button>
           )}
-        </div>
+        </Section>
       )}
     </div>
   );

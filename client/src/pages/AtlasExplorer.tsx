@@ -5,7 +5,7 @@ import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { displaySections } from '../lib/sections';
 import { Markdown } from '../components/Markdown';
-import { ErrorBox, Loading } from '../components/ui';
+import { Empty, ErrorBox, Loading, Section, Toggle, ask } from '../components/ui';
 import { MapView, kindOf, type ViewPin } from '../components/map/MapView';
 import { OutlineEditor, type Pt } from '../components/map/OutlineEditor';
 import { ENTITY_TYPE_LABELS, type Entity, type EntityType } from '../../../shared/domain';
@@ -163,7 +163,13 @@ function GmCodex({
             <button type="button" className="btn text-xs" onClick={() => onOutline('draw', e.name)}>
               Redraw it
             </button>
-            <button type="button" className="btn text-xs" onClick={() => window.confirm(`Remove the outline of ${e.name}?`) && run(() => api.del(`/api/shapes/${outline.id}`))}>
+            <button
+              type="button"
+              className="btn text-xs"
+              onClick={async () => {
+                if (await ask({ body: `Remove the outline of ${e.name}?`, danger: true, confirmLabel: 'Remove' })) void run(() => api.del(`/api/shapes/${outline.id}`));
+              }}
+            >
               <Trash2 size={13} /> Remove outline
             </button>
           </>
@@ -202,10 +208,9 @@ function GmCodex({
       <div className="flex-1 overflow-y-auto p-4">
         {REGION_TYPES.has(e.type) && <RegionPanel id={e.id} onPick={onPick} />}
         {e.player_summary && (
-          <div className="mb-4">
-            <div className="section-title mb-1">What players read</div>
+          <Section title="What players read" className="mb-4">
             <Markdown text={e.player_summary} />
-          </div>
+          </Section>
         )}
         {sections.map((s, i) => (
           <div key={i}>
@@ -272,10 +277,12 @@ export function AtlasExplorer() {
   useEffect(() => {
     if (!outline) return;
     const k = (ev: KeyboardEvent) => {
+      // Not while a dialog (such as "Throw away the changes?") is open over the map.
+      if (document.querySelector('[data-overlay]')) return;
       if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'z') {
         ev.preventDefault();
         undoOutline();
-      } else if (ev.key === 'Escape') cancelOutline();
+      } else if (ev.key === 'Escape') void cancelOutline();
       else if (ev.key === 'Enter' && !(ev.target instanceof HTMLTextAreaElement)) {
         if (outline.drawing) finishDrawing();
         else void saveOutline();
@@ -287,7 +294,21 @@ export function AtlasExplorer() {
 
   if (listErr) return <ErrorBox error={listErr} />;
   if (!mapList) return <Loading />;
-  if (!mapList.length || !current) return <p className="text-dim p-6">There are no maps yet. Add one in the Atlas, or apply the Worldkeeper additions.</p>;
+  if (!mapList.length || !current)
+    return (
+      <div className="p-6">
+        <Empty
+          title="There are no maps yet."
+          action={
+            <Link to="/atlas" className="btn-primary">
+              Open the Atlas
+            </Link>
+          }
+        >
+          Add one in the Atlas, or apply the Worldkeeper additions.
+        </Empty>
+      </div>
+    );
   if (!data) return <Loading />;
   const m = data.map;
   const select = (id: string | null) => {
@@ -368,8 +389,8 @@ export function AtlasExplorer() {
   function finishDrawing() {
     setOutline((o) => (o && o.points.length >= 3 ? { ...o, drawing: false } : o));
   }
-  function cancelOutline() {
-    if (outline?.history.length && !window.confirm('Throw away the changes to this outline?')) return;
+  async function cancelOutline() {
+    if (outline?.history.length && !(await ask({ body: 'Throw away the changes to this outline?', danger: true, confirmLabel: 'Throw away' }))) return;
     setOutline(null);
   }
   async function saveOutline() {
@@ -439,7 +460,7 @@ export function AtlasExplorer() {
             </button>
           </>
         )}
-        <button type="button" className="text-gold underline" onClick={cancelOutline}>
+        <button type="button" className="text-gold underline" onClick={() => void cancelOutline()}>
           Cancel
         </button>
       </span>
@@ -468,9 +489,9 @@ export function AtlasExplorer() {
       {status?.active_campaign_id ? (
         <div className="space-y-2">
           <div className="text-xs text-dim">{live ? 'A session is live: players see fog of war and the party now.' : 'No session is live: players see the whole map until one starts.'}</div>
-          <label className="flex items-center gap-2 text-xs">
-            <input type="checkbox" checked={showFog} onChange={(e) => setShowFog(e.target.checked)} /> Show the party's fog here
-          </label>
+          <Toggle checked={showFog} onChange={setShowFog}>
+            Show the party&apos;s fog here
+          </Toggle>
           <div className="flex flex-wrap gap-1.5">
             <button
               type="button"
@@ -488,7 +509,10 @@ export function AtlasExplorer() {
               <button
                 type="button"
                 className="btn text-xs"
-                onClick={() => window.confirm('Clear the whole trail on this map?') && act(async () => setEx(await api.del<Exploration>(`/api/exploration/trail?map_id=${m.id}`)))}
+                onClick={async () => {
+                  if (await ask({ body: 'Clear the whole trail on this map?', danger: true, confirmLabel: 'Clear' }))
+                    void act(async () => setEx(await api.del<Exploration>(`/api/exploration/trail?map_id=${m.id}`)));
+                }}
               >
                 Clear the trail
               </button>
@@ -522,9 +546,9 @@ export function AtlasExplorer() {
         </p>
       )}
       <div className="space-y-1">
-        <label className="flex items-center gap-2 text-xs">
-          <input type="checkbox" checked={showOutlines} onChange={(e) => setShowOutlines(e.target.checked)} /> Show every outline
-        </label>
+        <Toggle checked={showOutlines} onChange={setShowOutlines}>
+          Show every outline
+        </Toggle>
         <p className="text-xs text-dim">To draw a place's outline, open it and choose Draw its outline.</p>
       </div>
       <div>
