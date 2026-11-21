@@ -12,6 +12,7 @@ import { kindOf, saveProfile } from '../repo/profiles.js';
 import { clearTrail, explorationFor, inPlay, removeTravel, setDiscovered, travel } from '../repo/exploration.js';
 import { getActiveCampaignId } from '../repo/campaigns.js';
 import { campaignLayers, regionPanel } from '../repo/mapLayers.js';
+import { journey } from '../repo/journey.js';
 
 const IMAGE_TYPES: Record<string, string> = {
   'image/png': '.png',
@@ -144,6 +145,27 @@ export function atlasRoutes(ctx: AppContext) {
   r.post(
     '/exploration/discover',
     h((req) => setDiscovered(ctx.db, campaignOf(req.body?.campaign_id), Number(req.body?.map_id), String(req.body?.entity_id ?? ''), req.body?.discovered !== false)),
+  );
+  // Travel to here: move the party, and optionally move the calendar on and roll the region's encounters each day.
+  r.post(
+    '/exploration/journey',
+    h((req) => {
+      const b = req.body ?? {};
+      return journey(ctx.db, {
+        campaign_id: campaignOf(b.campaign_id),
+        map_id: Number(b.map_id),
+        to: {
+          entity_id: b.entity_id ? String(b.entity_id) : null,
+          x: b.x != null ? Number(b.x) : undefined,
+          y: b.y != null ? Number(b.y) : undefined,
+          label: b.label != null ? String(b.label).slice(0, 200) : undefined,
+        },
+        pace: b.pace,
+        days: b.days != null && b.days !== '' ? Number(b.days) : null,
+        advance: !!b.advance,
+        roll: !!b.roll,
+      });
+    }),
   );
   r.post(
     '/exploration/travel',

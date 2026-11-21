@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-18 · v0.3.10_
+_Last updated: 2026-11-18 · v0.3.11_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,10 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.11
+
+- **Travel tools on the map** (GM). Each map has a **Scale** (miles across, in the GM tools; migration 18 adds `maps.scale_miles`); the shipped maps have none until the GM sets one. With a scale: a scale bar, route tooltips with their length and days at a normal pace, and **Measure**, a ruler that shows the distance of the points clicked and the days at each 2024 pace (slow 18, normal 24, fast 30 miles a day). **Travel here** (place panel) and **Travel to a point** (GM tools) open a dialog: the distance from the party's last position, the pace, the days on the road (worked out, and editable), and two choices, to move the campaign's calendar on by those days and to roll the region's encounter table for the party's level once for each day (up to 30); the region is found from the place's parents or the region outline around the point. A live session logs every roll. `shared/travel.ts` and `server/src/repo/journey.ts`, with tests.
 
 ## v0.3.10
 
