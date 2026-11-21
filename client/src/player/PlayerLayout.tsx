@@ -141,7 +141,8 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
       label: 'Maps',
       icon: <MapIcon size={I} />,
       to: `${base}/maps`,
-      items: (maps ?? []).length > 1 ? (maps ?? []).map((m) => ({ to: `${base}/maps/${m.id}`, label: m.name, icon: <MapIcon size={I} /> })) : [],
+      // The maps page has its own picker, so the Maps workspace needs no sidebar.
+      items: [],
     },
     {
       id: 'campaign',
