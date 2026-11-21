@@ -160,8 +160,8 @@ const NAV: { title: string; items: Item[] }[] = [
   },
 ];
 
-/** Maintenance pages about the source files themselves; available in debug mode. */
-const DEBUG_ONLY = new Set(['/documents', '/broken']);
+/** Pages for developers (the source files themselves, the style guide); shown in debug mode only. */
+const DEBUG_ONLY = new Set(['/documents', '/broken', '/style-guide']);
 /** Menu items for the setting's own mechanics, shown only while they're switched on (Settings, Campaign mechanics). */
 const NEEDS: Record<string, keyof Mechanics> = {
   '/realm/aetheris': 'setting',

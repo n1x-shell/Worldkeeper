@@ -898,6 +898,22 @@ export function SettingsPage() {
   const { data: meta } = useApi<{ schemaVersion: number; dataDir: string; entities: number }>('/api/meta');
   const { theme, setTheme, reloadMeta } = useAppState();
   const [form, setForm] = useState<Record<string, string>>({});
+  const [texture, setTexture] = useState(() => {
+    try {
+      return localStorage.getItem('wk.texture') !== 'off';
+    } catch {
+      return true;
+    }
+  });
+  const toggleTexture = (on: boolean) => {
+    setTexture(on);
+    try {
+      localStorage.setItem('wk.texture', on ? 'on' : 'off');
+    } catch {
+      /* preference only */
+    }
+    document.documentElement.classList.toggle('no-texture', !on);
+  };
   useEffect(() => {
     if (data) setForm({ app_name: data.app_name ?? 'The Worldkeeper', world_date: data.world_date ?? '300 AB / Year 31 Unbound' });
   }, [data]);
@@ -913,10 +929,16 @@ export function SettingsPage() {
         </Field>
         <Field label="Theme">
           <select className="input" value={theme} onChange={(e) => setTheme(e.target.value as 'dark' | 'light')}>
-            <option value="dark">Dark (default)</option>
-            <option value="light">Light</option>
+            <option value="light">Warm Parchment (default)</option>
+            <option value="dark">Dark Codex</option>
           </select>
         </Field>
+        {theme === 'light' && (
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={!texture} onChange={(e) => toggleTexture(!e.target.checked)} /> Reduce texture
+            <span className="text-dim">(no paper grain on the background)</span>
+          </label>
+        )}
         <button
           className="btn-primary"
           onClick={async () => {

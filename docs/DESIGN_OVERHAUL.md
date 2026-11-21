@@ -221,7 +221,7 @@ Each step is its own PR with before-and-after screenshots. Nothing merges withou
 
 | Step | What | You review |
 | --- | --- | --- |
-| 1 | **Tokens and themes:** the parchment default, retuned dark, type scale, spacing, and a contrast test. A style-guide page in the app (Library menu → Style guide) shows every token and component | The style guide in both themes |
+| 1 | **Tokens and themes:** the parchment default, retuned dark, type scale, spacing, and a contrast test. A style-guide page for developers (debug mode only) shows every token and component | The style guide in both themes |
 | 2 | **Shell:** the top bar, workspaces, contextual sidebar, Library menu and campaign switcher. Every page reachable, same URLs | Navigation on every workspace |
 | 3 | **Components:** the shared set, applied across all pages; per-page styling removed | A page tour |
 | 4 | **Quick-Peek:** hover cards, the inspector, and split view in Live, Atlas and records; pinned stat blocks | Live Session and a record page |
