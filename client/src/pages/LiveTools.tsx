@@ -3,7 +3,7 @@ import { CreatureLinks } from '../components/CreatureLinks';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Coins, Dices, Gift, Minus, Plus, ScrollText, Shuffle, UserRound } from 'lucide-react';
-import { EntityLink } from '../components/ui';
+import { askText, Badge, Card, Empty, EntityLink } from '../components/ui';
 import { api, useApi } from '../lib/api';
 import type { Briefing } from './Briefing';
 import { Markdown } from '../components/Markdown';
@@ -57,23 +57,29 @@ function WhosNearby({ sessionId, onLogged }: { sessionId: number; onLogged: () =
     setR(Math.floor(Math.random() * 1000));
   };
   return (
-    <div className="panel-pad space-y-2">
-      <div className="flex items-center gap-2">
-        <UserRound size={15} className="text-gold" />
-        <div className="section-title">Who's nearby</div>
-        {data.place && <span className="text-xs text-dim">{data.place}</span>}
-        <button className="btn text-xs ml-auto" onClick={another} disabled={!list.length}>
+    <Card
+      className="space-y-2"
+      icon={<UserRound size={15} className="text-gold" />}
+      title="Who's nearby"
+      aside={data.place}
+      actions={
+        <button className="btn text-xs" onClick={another} disabled={!list.length}>
           <Shuffle size={12} /> {p ? 'Someone else' : 'Someone nearby'}
         </button>
-      </div>
-      {!list.length && <p className="text-xs text-dim">Nobody lives where the party is. Move the party on the map, or set the campaign's starting place.</p>}
+      }
+    >
+      {!list.length && (
+        <Empty compact title="Nobody lives where the party is.">
+          Move the party on the map, or set the campaign's starting place.
+        </Empty>
+      )}
       {p && (
         <div className="rounded-md border border-gold/40 p-2 text-sm space-y-1">
           <div className="flex flex-wrap items-baseline gap-2">
             <EntityLink id={p.id} />
             <span className="text-xs text-dim">{[p.species, p.knownAs, p.pronouns].filter((x) => x && x !== 'Unknown').join(', ')}</span>
             <span className="text-[10px] uppercase tracking-wider text-dim">{['right here', 'close by', 'in the area'][p.distance] ?? ''}</span>
-            {p.gmOnly && <span className="text-[10px] uppercase tracking-wider text-danger">GM only</span>}
+            {p.gmOnly && <Badge tone="danger">GM only</Badge>}
           </div>
           {p.tagline && <p className="italic text-dim">{p.tagline}</p>}
           {p.looks && (
@@ -102,7 +108,7 @@ function WhosNearby({ sessionId, onLogged }: { sessionId: number; onLogged: () =
           </button>
         </div>
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -111,12 +117,7 @@ function QuickTables({ sessionId, onLogged }: { sessionId: number; onLogged: () 
   const [result, setResult] = useState<{ table: string; text: string; creatures: { id: string; name: string }[] } | null>(null);
   if (!b) return null;
   return (
-    <div className="panel-pad space-y-2">
-      <div className="flex items-center gap-2">
-        <Dices size={15} className="text-gold" />
-        <div className="section-title">Tables for here</div>
-        {b.region && <span className="text-xs text-dim">{b.region.name}</span>}
-      </div>
+    <Card className="space-y-2" icon={<Dices size={15} className="text-gold" />} title="Tables for here" aside={b.region?.name}>
       {b.tables.length ? (
         <div className="flex flex-wrap gap-1.5">
           {b.tables.map((t) => (
@@ -133,9 +134,9 @@ function QuickTables({ sessionId, onLogged }: { sessionId: number; onLogged: () 
           ))}
         </div>
       ) : (
-        <p className="text-xs text-dim">
-          No tables for the party's location. <Link to="/tables">Random tables</Link>
-        </p>
+        <Empty compact title="No tables for the party's location.">
+          <Link to="/tables">Random tables</Link>
+        </Empty>
       )}
       {result && (
         <div className="rounded-md border border-gold/40 p-2 text-sm space-y-1">
@@ -157,7 +158,7 @@ function QuickTables({ sessionId, onLogged }: { sessionId: number; onLogged: () 
       <div className="pt-1 border-t border-line/60">
         <EncounterIdeas level={b.level} terrain={b.terrain} campaignId={b.campaign?.id} compact />
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -176,14 +177,7 @@ function QuickTreasure({ sessionId, campaignId, onLogged }: { sessionId: number;
   const t = b.treasure;
   const doRoll = async (kind: 'individual' | 'hoard') => setRoll(await api.post<Roll>('/api/treasure/roll', { tier: t.tier, region: t.region, kind }));
   return (
-    <div className="panel-pad space-y-2">
-      <div className="flex items-center gap-2">
-        <Coins size={15} className="text-gold" />
-        <div className="section-title">Treasure</div>
-        <span className="text-xs text-dim">
-          {t.label}, levels {t.tier}
-        </span>
-      </div>
+    <Card className="space-y-2" icon={<Coins size={15} className="text-gold" />} title="Treasure" aside={`${t.label}, levels ${t.tier}`}>
       <div className="flex gap-1.5">
         <button className="btn text-xs" onClick={() => doRoll('individual')}>
           Individual
@@ -195,7 +189,7 @@ function QuickTreasure({ sessionId, campaignId, onLogged }: { sessionId: number;
       {roll && (
         <div className="rounded-md border border-gold/40 p-2 text-sm space-y-1">
           <div>
-            {roll.coins.amount.toLocaleString('en')} {roll.coins.coin}
+            <span className="num">{roll.coins.amount.toLocaleString('en')}</span> {roll.coins.coin}
             {roll.goods.length > 0 && `, ${roll.goods.map((g) => (g.count > 1 ? `${g.count} × ${g.text}` : g.text)).join(', ')}`}
           </div>
           {roll.items.length > 0 && <div className="text-arcane">{roll.items.map((i) => i.name).join(', ')}</div>}
@@ -212,7 +206,7 @@ function QuickTreasure({ sessionId, campaignId, onLogged }: { sessionId: number;
           </button>
         </div>
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -229,27 +223,29 @@ function QuickStanding({ campaignId, onLogged }: { campaignId: number; onLogged:
   if (!data) return null;
   const rows = data.filter((r) => r.renown !== 0 || r.log.length).slice(0, 8);
   const adjust = async (r: StandingRow, delta: number) => {
-    const reason = window.prompt(`Why does ${r.name}'s view of the party change?`, '');
+    const reason = await askText({ title: `Why does ${r.name}'s view of the party change?`, confirmLabel: delta < 0 ? 'Lower standing' : 'Raise standing' });
     if (reason === null) return;
     const next = await api.post<StandingRow>('/api/standing/adjust', { campaign_id: campaignId, faction_id: r.faction_id, delta, reason });
     setData(data.map((x) => (x.faction_id === r.faction_id ? next : x)));
     onLogged();
   };
   return (
-    <div className="panel-pad space-y-2">
-      <div className="flex items-center gap-2">
-        <div className="section-title">Standing</div>
-        <Link to="/campaign/standing" className="text-xs text-arcane ml-auto">
+    <Card
+      className="space-y-2"
+      title="Standing"
+      actions={
+        <Link to="/campaign/standing" className="text-xs text-arcane">
           All factions
         </Link>
-      </div>
+      }
+    >
       {rows.length ? (
         <ul className="text-sm space-y-1">
           {rows.map((r) => (
             <li key={r.faction_id} className="flex items-center gap-2">
               <span className="flex-1 truncate">{r.name}</span>
               <span className="text-xs text-dim w-24 text-right">
-                {r.rank} ({r.renown})
+                {r.rank} (<span className="num">{r.renown}</span>)
               </span>
               <button className="btn-ghost p-0.5" onClick={() => adjust(r, -1)} aria-label={`Lower standing with ${r.name}`}>
                 <Minus size={13} />
@@ -261,9 +257,9 @@ function QuickStanding({ campaignId, onLogged }: { campaignId: number; onLogged:
           ))}
         </ul>
       ) : (
-        <p className="text-xs text-dim">The party hasn't dealt with any faction yet.</p>
+        <Empty compact title="The party hasn't dealt with any faction yet." />
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -277,14 +273,16 @@ function QuickHandouts({ campaignId, onLogged }: { campaignId: number; onLogged:
   const { data, reload } = useApi<Handout[]>(`/api/handouts?campaign_id=${campaignId}`);
   if (!data) return null;
   return (
-    <div className="panel-pad space-y-2">
-      <div className="flex items-center gap-2">
-        <Gift size={15} className="text-gold" />
-        <div className="section-title">Handouts</div>
-        <Link to="/campaign/handouts" className="text-xs text-arcane ml-auto">
+    <Card
+      className="space-y-2"
+      icon={<Gift size={15} className="text-gold" />}
+      title="Handouts"
+      actions={
+        <Link to="/campaign/handouts" className="text-xs text-arcane">
           Write one
         </Link>
-      </div>
+      }
+    >
       {data.length ? (
         <ul className="text-sm space-y-1">
           {data.slice(0, 8).map((h) => (
@@ -304,8 +302,8 @@ function QuickHandouts({ campaignId, onLogged }: { campaignId: number; onLogged:
           ))}
         </ul>
       ) : (
-        <p className="text-xs text-dim">No handouts written yet.</p>
+        <Empty compact title="No handouts written yet." />
       )}
-    </div>
+    </Card>
   );
 }

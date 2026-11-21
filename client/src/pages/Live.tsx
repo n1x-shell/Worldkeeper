@@ -5,7 +5,7 @@ import { Check, Plus, Square, Swords } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Session, StateRow } from '../lib/types';
-import { AutoTextarea, EntityLink, Field, Loading, PageHeader, ErrorBox } from '../components/ui';
+import { ask, askText, AutoTextarea, Badge, Card, Empty, EntityLink, Field, Loading, PageHeader, ErrorBox, Segmented } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { DiceRoller, EncounterTracker, NpcCard } from './DmTools';
 import { NeedCampaign, useActiveOverview, type Quest } from './Campaign';
@@ -49,7 +49,7 @@ export function LiveSession() {
   if (!live) {
     const planned = data.sessions.filter((s) => s.status === 'planned').sort((a, b) => a.number - b.number)[0];
     return (
-      <div className="max-w-xl mx-auto mt-10 panel p-6 space-y-3 text-center">
+      <Card featured className="max-w-xl mx-auto mt-10 p-6 space-y-3 text-center">
         <h1 className="text-xl text-gold">No live session</h1>
         <p className="text-sm text-dim">Start a prepared session, or create one now.</p>
         <button
@@ -62,7 +62,7 @@ export function LiveSession() {
         >
           Start session {planned ? `#${planned.number}` : '(new)'}
         </button>
-      </div>
+      </Card>
     );
   }
   return <LiveView session={live} quests={data.quests} onEnd={() => nav(`/session/${live.id}`)} />;
@@ -109,7 +109,7 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
             <button
               className="btn-danger"
               onClick={async () => {
-                if (!confirm('End the session? You will be taken to the recap and change review.')) return;
+                if (!(await ask({ title: 'End the session?', body: 'End the session? You will be taken to the recap and change review.', confirmLabel: 'End session' }))) return;
                 await api.post(`/api/sessions/${session.id}/end`);
                 onEnd();
               }}
@@ -124,8 +124,7 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
         <div className="space-y-3 min-w-0">
         {/* Scene and references */}
         <div className="grid gap-3 md:grid-cols-2">
-          <div className="panel-pad">
-            <div className="section-title mb-2">Current scene</div>
+          <Card title="Current scene">
             {scenes?.length ? (
               <select
                 className="input mb-2"
@@ -146,7 +145,9 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
                 ))}
               </select>
             ) : (
-              <p className="text-xs text-dim mb-2">Select adventures in session prep to pick scenes here.</p>
+              <Empty compact title="No scenes to pick.">
+                Select adventures in session prep to pick scenes here.
+              </Empty>
             )}
             {scene && (
               <>
@@ -160,21 +161,24 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
               </>
             )}
             {session.prep.readAloud && !scene && <div className="parchment p-3 font-serif text-[15px] whitespace-pre-wrap">{session.prep.readAloud}</div>}
-          </div>
-          <div className="panel-pad">
-            <div className="section-title mb-2">Relevant records</div>
+          </Card>
+          <Card title="Relevant records">
             <div className="space-y-2">
               {(session.prep.relevantIds ?? []).map((id) => (
                 <NpcCard key={id} id={id} />
               ))}
-              {!(session.prep.relevantIds ?? []).length && <p className="text-xs text-dim">Add relevant NPCs and places in session prep.</p>}
+              {!(session.prep.relevantIds ?? []).length && (
+                <Empty compact title="No relevant records yet.">
+                  Add relevant NPCs and places in session prep.
+                </Empty>
+              )}
             </div>
-          </div>
+          </Card>
         </div>
 
         {/* Combat */}
         <div className="space-y-3 min-w-0">
-          <div className="panel-pad">
+          <Card>
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <Swords size={15} className="text-gold" />
               <select className="input w-auto" value={encId ?? ''} onChange={(e) => setEncId(e.target.value ? Number(e.target.value) : null)}>
@@ -188,7 +192,7 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
               <button
                 className="btn"
                 onClick={async () => {
-                  const title = prompt('Encounter name', `Encounter ${(encs?.length ?? 0) + 1}`);
+                  const title = await askText({ title: 'Encounter name', initial: `Encounter ${(encs?.length ?? 0) + 1}`, confirmLabel: 'Create encounter' });
                   if (!title) return;
                   const e = await api.post<{ id: number }>('/api/encounters', { title, campaign_id: activeCampaignId, session_id: session.id });
                   await reloadEncs();
@@ -199,10 +203,9 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
                 <Plus size={14} /> New encounter
               </button>
             </div>
-            {encId ? <EncounterTracker key={encId} encounterId={encId} compact onLog={(t) => void addLog('combat', t)} /> : <p className="text-sm text-dim">No encounter running.</p>}
-          </div>
-          <div className="panel-pad">
-            <div className="section-title mb-2">Session log</div>
+            {encId ? <EncounterTracker key={encId} encounterId={encId} compact onLog={(t) => void addLog('combat', t)} /> : <Empty compact title="No encounter running." />}
+          </Card>
+          <Card title="Session log">
             <ul className="text-sm space-y-1 max-h-72 overflow-auto">
               {[...(log ?? [])].reverse().map((l) => (
                 <li key={l.id} className="flex gap-2">
@@ -213,22 +216,17 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
                   </span>
                 </li>
               ))}
-              {!log?.length && <li className="text-dim">Nothing recorded yet.</li>}
             </ul>
-          </div>
+            {!log?.length && <Empty compact title="Nothing recorded yet." />}
+          </Card>
         </div>
 
         </div>
         {/* Right: recording */}
         <div className="space-y-3">
-          <div className="panel-pad space-y-2">
-            <div className="section-title">Record</div>
-            <div className="flex flex-wrap gap-1">
-              {KINDS.map(([k, l]) => (
-                <button key={k} className={`chip ${kind === k ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setKind(k)}>
-                  {l}
-                </button>
-              ))}
+          <Card title="Record" className="space-y-2">
+            <div className="overflow-x-auto">
+              <Segmented size="sm" label="Kind of entry" value={kind} onChange={setKind} options={KINDS.map(([value, label]) => ({ value, label }))} />
             </div>
             <AutoTextarea
               minRows={3}
@@ -255,9 +253,8 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
             >
               <Check size={14} /> Save to log
             </button>
-          </div>
-          <div className="panel-pad space-y-2">
-            <div className="section-title">Quest updates</div>
+          </Card>
+          <Card title="Quest updates" className="space-y-2">
             {quests
               .filter((q) => ['open', 'active'].includes(q.status))
               .map((q) => (
@@ -280,7 +277,7 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
             <button
               className="btn-ghost text-xs"
               onClick={async () => {
-                const t = prompt('New quest title');
+                const t = await askText({ title: 'New quest title', confirmLabel: 'Create quest' });
                 if (!t) return;
                 await api.post('/api/quests', { campaign_id: activeCampaignId, title: t, status: 'active' });
                 void addLog('quest', `New quest: ${t}`);
@@ -288,10 +285,9 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
             >
               <Plus size={12} /> New quest
             </button>
-          </div>
+          </Card>
           <RevealPanel sessionId={session.id} onRevealed={() => void reloadLog()} />
-          <div className="panel-pad space-y-2">
-            <div className="section-title">World change (for review)</div>
+          <Card title="World change (for review)" className="space-y-2">
             <EntityPicker value={chg.entity} onChange={(id) => setChg({ ...chg, entity: id })} placeholder="Which record changed?" />
             <div className="grid grid-cols-2 gap-1">
               <Field label="Field">
@@ -315,15 +311,14 @@ function LiveView({ session, quests, onEnd }: { session: Session; quests: Quest[
             <ul className="text-xs space-y-0.5">
               {changes?.map((c) => (
                 <li key={c.id}>
-                  {c.entity_id ? <EntityLink id={c.entity_id} /> : 'World'}: {c.field} → {c.value} <span className="text-dim">({c.status})</span>
+                  {c.entity_id ? <EntityLink id={c.entity_id} /> : 'World'}: {c.field} → {c.value} <Badge tone={c.status === 'proposed' ? 'arcane' : c.status === 'active' || c.status === 'promoted' ? 'ok' : 'dim'}>{c.status}</Badge>
                 </li>
               ))}
             </ul>
-          </div>
-          <div className="panel-pad">
-            <div className="section-title mb-2">Dice</div>
+          </Card>
+          <Card title="Dice">
             <DiceRoller compact />
-          </div>
+          </Card>
           {activeCampaignId && <LiveTools sessionId={session.id} campaignId={activeCampaignId} onLogged={() => void reloadLog()} />}
         </div>
       </div>
@@ -362,15 +357,14 @@ function RevealPanel({ sessionId, onRevealed }: { sessionId: number; onRevealed:
   };
   const e = data?.entity;
   return (
-    <div className="panel-pad space-y-2">
-      <div className="section-title">Reveal to players</div>
+    <Card title="Reveal to players" className="space-y-2">
       <EntityPicker value={id} onChange={(v) => (setId(v), setMsg(null), setErr(null))} placeholder="What did they learn about?" />
       {err && <div className="text-xs text-danger">{err}</div>}
       {msg && <div className="text-xs text-ok">{msg}</div>}
       {e && (
         <div className="space-y-2 text-sm">
           <div className="flex items-center gap-2">
-            <span className={e.revealed ? 'text-ok text-xs' : 'text-dim text-xs'}>{e.revealed ? 'Known to players' : 'Unknown to players'}</span>
+            <Badge tone={e.revealed ? 'ok' : 'dim'}>{e.revealed ? 'Known to players' : 'Unknown to players'}</Badge>
             {!e.revealed && (
               <button className="btn text-xs ml-auto" onClick={() => reveal({ revealed: true }, `${e.name} is now known to players.`)}>
                 Reveal that it exists
@@ -419,6 +413,6 @@ function RevealPanel({ sessionId, onRevealed }: { sessionId: number; onRevealed:
           )}
         </div>
       )}
-    </div>
+    </Card>
   );
 }

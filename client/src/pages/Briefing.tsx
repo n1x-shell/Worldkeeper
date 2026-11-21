@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Compass, Wand2 } from 'lucide-react';
 import { useApi } from '../lib/api';
-import { EntityLink, Loading } from '../components/ui';
+import { Card, Empty, EntityLink, Loading } from '../components/ui';
 
 /**
  * Session prep from the world: a live briefing on the session's prep tab, built from the campaign's state. A button
@@ -56,15 +56,22 @@ export function BriefingPanel({ sessionId, onFill }: { sessionId: number; onFill
   if (!b) return <Loading />;
   const people = [...b.locals, ...b.met.filter((m) => !b.locals.some((l) => l.id === m.id))];
   return (
-    <div className="panel-pad space-y-3 lg:col-span-2">
-      <div className="flex flex-wrap items-center gap-2">
-        <Compass size={16} className="text-gold" />
-        <div className="section-title">From the world</div>
-        <span className="text-xs text-dim">Built from the campaign as it stands now. Party level {b.level}.</span>
-        <button type="button" className="btn text-xs ml-auto" onClick={() => onFill(b)} title="Copies into prep fields that are still empty. Nothing you've written is changed.">
+    <Card
+      featured
+      className="space-y-3 lg:col-span-2"
+      icon={<Compass size={16} className="text-gold" />}
+      title="From the world"
+      aside={
+        <>
+          Built from the campaign as it stands now. Party level <span className="num">{b.level}</span>.
+        </>
+      }
+      actions={
+        <button type="button" className="btn text-xs" onClick={() => onFill(b)} title="Copies into prep fields that are still empty. Nothing you've written is changed.">
           <Wand2 size={13} /> Fill the empty prep fields
         </button>
-      </div>
+      }
+    >
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3 text-sm">
         <Block title="Where the party is">
           {b.location ? (
@@ -104,7 +111,7 @@ export function BriefingPanel({ sessionId, onFill }: { sessionId: number; onFill
               {b.clues.length > 8 && <li className="text-dim">and {b.clues.length - 8} more</li>}
             </ul>
           ) : (
-            <p className="text-dim">No unfound clues point here.</p>
+            <Empty compact title="No unfound clues point here." />
           )}
           <Link to="/mysteries" className="text-xs text-arcane">
             Mysteries
@@ -121,7 +128,7 @@ export function BriefingPanel({ sessionId, onFill }: { sessionId: number; onFill
               ))}
             </p>
           ) : (
-            <p className="text-dim">Nobody yet.</p>
+            <Empty compact title="Nobody yet." />
           )}
           {b.met.length > 0 && <p className="text-xs text-dim mt-1">Includes the {b.met.length} the party has met in play.</p>}
         </Block>
@@ -131,7 +138,7 @@ export function BriefingPanel({ sessionId, onFill }: { sessionId: number; onFill
               {b.agendas.map((a) => (
                 <li key={a.id}>
                   {a.faction ?? 'A faction'}: {a.title}{' '}
-                  <span className="text-dim">
+                  <span className="text-dim num">
                     ({a.progress}/{a.segments})
                   </span>
                 </li>
@@ -151,7 +158,7 @@ export function BriefingPanel({ sessionId, onFill }: { sessionId: number; onFill
                 ))}
             </ul>
           ) : (
-            <p className="text-dim">No agenda or standing is about to tip.</p>
+            <Empty compact title="No agenda or standing is about to tip." />
           )}
         </Block>
         <Block title="Open quests">
@@ -162,7 +169,7 @@ export function BriefingPanel({ sessionId, onFill }: { sessionId: number; onFill
               ))}
             </ul>
           ) : (
-            <p className="text-dim">None open.</p>
+            <Empty compact title="None open." />
           )}
         </Block>
         <Block title="Tables for here">
@@ -184,11 +191,11 @@ export function BriefingPanel({ sessionId, onFill }: { sessionId: number; onFill
               )}
             </ul>
           ) : (
-            <p className="text-dim">No tables for this place yet.</p>
+            <Empty compact title="No tables for this place yet." />
           )}
         </Block>
       </div>
-    </div>
+    </Card>
   );
 }
 

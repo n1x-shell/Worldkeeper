@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Gift, ImagePlus, Plus, Trash2, Undo2 } from 'lucide-react';
 import { api, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
-import { AutoTextarea, ErrorBox, Loading, PageHeader, SaveStatus } from '../components/ui';
+import { ask, AutoTextarea, Card, Empty, ErrorBox, Loading, PageHeader, SaveStatus, Segmented } from '../components/ui';
 import { Markdown } from '../components/Markdown';
 import { NeedCampaign } from './Campaign';
 
@@ -24,6 +24,10 @@ export function HandoutsPage() {
   if (!activeCampaignId) return <NeedCampaign />;
   if (error) return <ErrorBox error={error} />;
   if (!data) return <Loading />;
+  const create = async () => {
+    await api.post('/api/handouts', { campaign_id: activeCampaignId, title: 'A new handout' });
+    reload();
+  };
   return (
     <div className="space-y-4">
       <PageHeader
@@ -31,18 +35,23 @@ export function HandoutsPage() {
         subtitle="Letters, read-aloud, maps and pictures for the players."
         note="Write them ahead of time. Give one to the players and it appears on their phones, and stays in their handbook."
         actions={
-          <button
-            className="btn-primary"
-            onClick={async () => {
-              await api.post('/api/handouts', { campaign_id: activeCampaignId, title: 'A new handout' });
-              reload();
-            }}
-          >
+          <button className="btn-primary" onClick={create}>
             <Plus size={14} /> New handout
           </button>
         }
       />
-      {!data.length && <p className="text-dim">No handouts yet.</p>}
+      {!data.length && (
+        <Empty
+          title="No handouts yet."
+          action={
+            <button className="btn" onClick={create}>
+              <Plus size={14} /> Write the first handout
+            </button>
+          }
+        >
+          Write a letter, a read-aloud passage or a picture caption, then give it to the players.
+        </Empty>
+      )}
       <div className="grid gap-3 lg:grid-cols-2">
         {data.map((h) => (
           <HandoutCard key={h.id} h={h} onChange={reload} />
@@ -62,20 +71,22 @@ function HandoutCard({ h: init, onChange }: { h: Handout; onChange: () => void }
     auto.schedule(n);
   };
   return (
-    <div className={`panel-pad space-y-2 ${h.pushed_at ? 'border-gold/50' : ''}`}>
+    <Card className={`space-y-2 ${h.pushed_at ? 'border-gold/50' : ''}`}>
       <div className="flex items-center gap-2">
         <input className="input font-display text-gold flex-1" value={h.title} onChange={(e) => set({ title: e.target.value })} aria-label="Title" />
         <SaveStatus state={auto.state} error={auto.error} />
       </div>
       {h.image_file && <img src={`/api/uploads/${h.image_file}`} alt="" className="max-h-56 rounded-md border border-line" />}
-      <div className="flex gap-2 text-xs">
-        <button className={`btn-ghost ${!preview ? 'text-gold' : ''}`} onClick={() => setPreview(false)}>
-          Write
-        </button>
-        <button className={`btn-ghost ${preview ? 'text-gold' : ''}`} onClick={() => setPreview(true)}>
-          What players see
-        </button>
-      </div>
+      <Segmented
+        size="sm"
+        label="Handout view"
+        value={preview ? 'preview' : 'write'}
+        onChange={(v) => setPreview(v === 'preview')}
+        options={[
+          { value: 'write', label: 'Write' },
+          { value: 'preview', label: 'What players see' },
+        ]}
+      />
       {preview ? (
         <div className="parchment p-3 font-serif text-[15px]">
           <Markdown text={h.body || '*Nothing written yet.*'} />
@@ -120,8 +131,9 @@ function HandoutCard({ h: init, onChange }: { h: Handout; onChange: () => void }
         {h.pushed_at && <span className="text-xs text-dim">Given {new Date(h.pushed_at).toLocaleString()}</span>}
         <button
           className="btn-ghost text-xs ml-auto hover:text-danger"
+          aria-label="Delete handout"
           onClick={async () => {
-            if (!window.confirm(`Delete "${h.title}"?`)) return;
+            if (!(await ask({ body: `Delete "${h.title}"?`, danger: true, confirmLabel: 'Delete' }))) return;
             await api.del(`/api/handouts/${h.id}`);
             onChange();
           }}
@@ -129,6 +141,6 @@ function HandoutCard({ h: init, onChange }: { h: Handout; onChange: () => void }
           <Trash2 size={13} />
         </button>
       </div>
-    </div>
+    </Card>
   );
 }

@@ -1,7 +1,7 @@
 import { Download, Printer } from 'lucide-react';
 import { useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
-import { ErrorBox, Loading, PageHeader } from '../components/ui';
+import { Card, ErrorBox, Loading, PageHeader } from '../components/ui';
 import { Markdown } from '../components/Markdown';
 import { NeedCampaign } from './Campaign';
 
@@ -29,9 +29,11 @@ export function PartyExportPage() {
           </>
         }
       />
-      <article className="wk-print panel p-6 max-w-3xl">
-        <Markdown text={data.markdown} />
-      </article>
+      <Card className="wk-print max-w-3xl">
+        <article>
+          <Markdown text={data.markdown} />
+        </article>
+      </Card>
     </div>
   );
 }
