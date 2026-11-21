@@ -47,7 +47,11 @@ export function LogTab({ load, refresh }: { load: () => Promise<LogEntry[]>; ref
           ]}
         />
       </div>
-      {shown.length === 0 && <Empty compact title="No changes yet.">Edits made in a burst of typing are grouped into one.</Empty>}
+      {shown.length === 0 && (
+        <Empty compact title="No changes yet.">
+          Edits made in a burst of typing are grouped into one.
+        </Empty>
+      )}
       {[...days].map(([day, entries]) => (
         <section key={day} className="space-y-1">
           <h3 className="ledger-rule">{day}</h3>

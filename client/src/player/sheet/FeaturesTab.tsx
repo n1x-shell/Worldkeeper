@@ -89,14 +89,7 @@ function FeatureList({
               >
                 {open === i ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
               </button>
-              <input
-                className="input-bare text-sm font-semibold text-ink"
-                value={f.name}
-                placeholder="Name"
-                aria-label="Name"
-                disabled={readOnly}
-                onChange={(e) => set(i, { name: e.target.value })}
-              />
+              <input className="input-bare text-sm font-semibold text-ink" value={f.name} placeholder="Name" aria-label="Name" disabled={readOnly} onChange={(e) => set(i, { name: e.target.value })} />
               <input
                 className="input-bare col-start-2 row-start-2 mb-1 text-xs text-dim sm:col-start-auto sm:row-start-auto sm:mb-0"
                 value={f.source}
@@ -108,7 +101,9 @@ function FeatureList({
               {!readOnly && (
                 <button
                   className="col-start-3 row-start-1 flex h-10 w-10 items-center justify-center rounded text-dim hover:bg-danger/10 hover:text-danger sm:col-start-auto sm:row-start-auto sm:h-7 sm:w-7"
-                  aria-label={`Remove ${f.name || 'feature'}`} onClick={() => onChange(list.filter((_, j) => j !== i))}>
+                  aria-label={`Remove ${f.name || 'feature'}`}
+                  onClick={() => onChange(list.filter((_, j) => j !== i))}
+                >
                   <X size={14} />
                 </button>
               )}

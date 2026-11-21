@@ -120,11 +120,7 @@ export function Tabs({ tabs, storeKey }: { tabs: Tab[]; storeKey: string }) {
   };
   return (
     <div className="space-y-5">
-      <div
-        className="grid grid-cols-3 gap-1 min-[420px]:grid-cols-4 sm:flex sm:flex-wrap sm:gap-x-1 sm:gap-y-0 sm:border-b sm:border-line"
-        role="tablist"
-        aria-label="Sheet sections"
-      >
+      <div className="grid grid-cols-3 gap-1 min-[420px]:grid-cols-4 sm:flex sm:flex-wrap sm:gap-x-1 sm:gap-y-0 sm:border-b sm:border-line" role="tablist" aria-label="Sheet sections">
         {tabs.map((t) => {
           const on = t.id === current?.id;
           return (

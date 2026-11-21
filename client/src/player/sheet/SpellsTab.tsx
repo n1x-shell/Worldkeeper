@@ -159,14 +159,18 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
                       <span className="relative flex h-10 items-center justify-center rounded md:h-7">
                         <Diamond
                           cover
-                          on={l === 0 || x.prepared} label={l === 0 ? 'Cantrip (always ready)' : 'Prepared'} onChange={l === 0 || readOnly ? undefined : (on) => setSpell(i, { prepared: on })}
+                          on={l === 0 || x.prepared}
+                          label={l === 0 ? 'Cantrip (always ready)' : 'Prepared'}
+                          onChange={l === 0 || readOnly ? undefined : (on) => setSpell(i, { prepared: on })}
                         />
                       </span>
                       <span className="flex items-center gap-1 min-w-0">
                         {byName.has(x.name.toLowerCase()) && (
                           <button
                             className="flex h-10 w-7 shrink-0 items-center justify-center rounded text-dim hover:text-gold md:h-7"
-                            onClick={() => setOpen(open === x.name ? null : x.name)} aria-label={`${open === x.name ? 'Hide' : 'Show'} ${x.name}`}>
+                            onClick={() => setOpen(open === x.name ? null : x.name)}
+                            aria-label={`${open === x.name ? 'Hide' : 'Show'} ${x.name}`}
+                          >
                             {open === x.name ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                           </button>
                         )}
@@ -196,7 +200,9 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
                       {!readOnly ? (
                         <button
                           className="flex h-10 w-10 items-center justify-center justify-self-end rounded text-dim hover:bg-danger/10 hover:text-danger md:h-7 md:w-7"
-                          aria-label={`Remove ${x.name || 'spell'}`} onClick={() => put({ spells: spells.filter((_, j) => j !== i) })}>
+                          aria-label={`Remove ${x.name || 'spell'}`}
+                          onClick={() => put({ spells: spells.filter((_, j) => j !== i) })}
+                        >
                           <X size={14} />
                         </button>
                       ) : (

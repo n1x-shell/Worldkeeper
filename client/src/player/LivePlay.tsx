@@ -188,11 +188,15 @@ export function PlayerHandouts() {
   const { source } = usePlayer();
   if (!campaigns) return null;
   const all = campaigns.flatMap((c) => (c.handouts ?? []).map((h) => ({ ...h, campaign: c.title })));
-  const newest = all.reduce<number | null>((m, h) => (m === null || h.pushed_at > (all.find((x) => x.id === m)?.pushed_at ?? '') ? h.id : m), null);
+  const newest = all.length ? all.reduce((a, b) => (b.pushed_at > a.pushed_at ? b : a)).id : null;
   return (
     <div className="mx-auto max-w-4xl space-y-5">
       <PageTitle eyebrow="Campaign" icon={<Gift size={14} />} title="Handouts" subtitle="Letters, maps and pictures the GM has handed you, newest first." />
-      {!all.length && <Empty icon={<Gift size={28} />} title="Nothing yet">When the GM hands you a letter, a map or a picture, it appears here.</Empty>}
+      {!all.length && (
+        <Empty icon={<Gift size={28} />} title="Nothing yet">
+          When the GM hands you a letter, a map or a picture, it appears here.
+        </Empty>
+      )}
       {all.map((h) => (
         <Card key={h.id} featured={h.id === newest} className="space-y-4 sm:p-6">
           <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -257,7 +261,11 @@ export function PlayerRegions() {
   return (
     <div className="mx-auto max-w-4xl space-y-5">
       <PageTitle eyebrow="Campaign" icon={<Compass size={14} />} title="Around the World" subtitle="What your party has seen and heard, region by region." />
-      {!all.length && <Empty icon={<Compass size={28} />} title="Nowhere yet">You haven't been anywhere yet.</Empty>}
+      {!all.length && (
+        <Empty icon={<Compass size={28} />} title="Nowhere yet">
+          You haven't been anywhere yet.
+        </Empty>
+      )}
       {all.map((r) => (
         <Card key={r.id} className="space-y-2">
           <h2>

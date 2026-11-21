@@ -60,8 +60,8 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
           )}
         </div>
         <p className="max-w-[72ch] text-sm leading-relaxed">
-          Thinning save: Charisma, <b className="num">DC {12 + page.thinning}</b>. Hearing your true name from someone who knows it gives Advantage. At 3, you stop answering to your name without effort. At 6, you
-          join the harmony.
+          Thinning save: Charisma, <b className="num">DC {12 + page.thinning}</b>. Hearing your true name from someone who knows it gives Advantage. At 3, you stop answering to your name without
+          effort. At 6, you join the harmony.
         </p>
         {gm ? (
           <Toggle checked={page.shardscarred} onChange={(v) => set({ shardscarred: v }, true)} hint="Advantage on saves against memory changes and rewriting">
@@ -74,13 +74,23 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
 
       <section className="space-y-2">
         <Rule>True name</Rule>
-        <input className="input font-serif text-[16px] max-sm:min-h-10" value={page.true_name} placeholder="The name that pulls you back" onChange={(e) => set({ true_name: e.target.value })} aria-label="True name" />
+        <input
+          className="input font-serif text-[16px] max-sm:min-h-10"
+          value={page.true_name}
+          placeholder="The name that pulls you back"
+          onChange={(e) => set({ true_name: e.target.value })}
+          aria-label="True name"
+        />
         <div className={`pt-1 ${LABEL}`}>Who knows it</div>
         <ul className="flex flex-wrap gap-1.5">
           {page.known_by.map((n) => (
             <li key={n} className="tag border-line bg-raised/50 text-ink">
               {n}
-              <button className="relative ml-0.5 text-dim hover:text-danger after:absolute after:-inset-3 after:content-['']" aria-label={`Remove ${n}`} onClick={() => set({ known_by: page.known_by.filter((x) => x !== n) }, true)}>
+              <button
+                className="relative ml-0.5 text-dim hover:text-danger after:absolute after:-inset-3 after:content-['']"
+                aria-label={`Remove ${n}`}
+                onClick={() => set({ known_by: page.known_by.filter((x) => x !== n) }, true)}
+              >
                 <X size={12} />
               </button>
             </li>
@@ -165,7 +175,13 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
             setNewMemory('');
           }}
         >
-          <input className="input flex-1 max-sm:min-h-10" value={newMemory} placeholder="A mother's laugh, the smell of rain on slate…" onChange={(e) => setNewMemory(e.target.value)} aria-label="Add a memory" />
+          <input
+            className="input flex-1 max-sm:min-h-10"
+            value={newMemory}
+            placeholder="A mother's laugh, the smell of rain on slate…"
+            onChange={(e) => setNewMemory(e.target.value)}
+            aria-label="Add a memory"
+          />
           <button className="btn justify-center max-sm:min-h-10 max-sm:min-w-10" aria-label="Add memory">
             <Plus size={14} />
           </button>

@@ -243,7 +243,15 @@ function Glance({ s, put, readOnly }: { s: Sheet; put: (p: Partial<Sheet>) => vo
           </span>
         }
       >
-        <input type="number" className={`${STAT_INPUT} ${NO_SPIN}`} value={s.ac ?? ''} placeholder="10" aria-label="Armor Class" disabled={readOnly} onChange={(e) => put({ ac: num(e.target.value) })} />
+        <input
+          type="number"
+          className={`${STAT_INPUT} ${NO_SPIN}`}
+          value={s.ac ?? ''}
+          placeholder="10"
+          aria-label="Armor Class"
+          disabled={readOnly}
+          onChange={(e) => put({ ac: num(e.target.value) })}
+        />
       </Stat>
       <Stat label="Initiative">{signed(initiative(s))}</Stat>
       <Stat label="Speed">
@@ -266,8 +274,7 @@ function Portrait({ name, url, onPortrait }: { name: string; url: string | null;
       setBusy((e as Error).message);
     }
   };
-  const badge =
-    "absolute flex h-7 w-7 items-center justify-center rounded-full border border-gold/60 bg-panel text-gold shadow-sm hover:bg-raised after:absolute after:-inset-1.5 after:content-['']";
+  const badge = "absolute flex h-7 w-7 items-center justify-center rounded-full border border-gold/60 bg-panel text-gold shadow-sm hover:bg-raised after:absolute after:-inset-1.5 after:content-['']";
   return (
     <figure className="relative w-20 sm:w-24 xl:w-28">
       <div className="ledger-frame !p-1">
@@ -283,7 +290,13 @@ function Portrait({ name, url, onPortrait }: { name: string; url: string | null;
       </div>
       {onPortrait && (
         <>
-          <button type="button" className={`${badge} -bottom-1 -right-1`} onClick={() => input.current?.click()} aria-label={url ? 'Change portrait' : 'Add portrait'} title={url ? 'Change portrait' : 'Add portrait'}>
+          <button
+            type="button"
+            className={`${badge} -bottom-1 -right-1`}
+            onClick={() => input.current?.click()}
+            aria-label={url ? 'Change portrait' : 'Add portrait'}
+            title={url ? 'Change portrait' : 'Add portrait'}
+          >
             <Camera size={14} />
           </button>
           {url && (
@@ -357,113 +370,116 @@ function Identity({
         <ChevronDown size={14} className="ml-auto shrink-0 text-dim transition-transform group-open:rotate-180" aria-hidden />
       </summary>
       <div className="space-y-3 border-t border-line px-3 pb-3 pt-3">
-      <Field label="Species">
-        <ChoiceSelect
-          label="Species"
-          value={value.species}
-          disabled={readOnly}
-          onChange={(v) => set({ species: v })}
-          groups={[
-            { label: 'Peoples of the world', options: (options?.peoples ?? []).map((p) => ({ value: p.name })) },
-            {
-              label: 'Other species in your rules',
-              options: Object.keys(rules?.species ?? {})
-                .filter((x) => !options?.peoples.some((p) => p.name.toLowerCase() === x.toLowerCase()))
-                .sort()
-                .map((x) => ({ value: x })),
-            },
-          ]}
-        />
-      </Field>
-      {value.species && speciesRules && speciesRules !== value.species && <p className="-mt-1.5 text-xs text-dim">Uses the {speciesRules} rules.</p>}
-      <div className="grid grid-cols-[1fr_5rem] gap-2">
-        <Field label="Class">
+        <Field label="Species">
           <ChoiceSelect
-            label="Class"
-            value={value.class_name}
+            label="Species"
+            value={value.species}
             disabled={readOnly}
-            onChange={(v) => set({ class_name: v })}
+            onChange={(v) => set({ species: v })}
             groups={[
-              { label: 'Classes', options: CLASSES.map((c) => ({ value: c.name })) },
+              { label: 'Peoples of the world', options: (options?.peoples ?? []).map((p) => ({ value: p.name })) },
               {
-                label: 'Other classes in your rules',
-                options: Object.keys(rules?.classes ?? {})
-                  .filter((x) => !CLASSES.some((c) => c.name.toLowerCase() === x.toLowerCase()))
+                label: 'Other species in your rules',
+                options: Object.keys(rules?.species ?? {})
+                  .filter((x) => !options?.peoples.some((p) => p.name.toLowerCase() === x.toLowerCase()))
                   .sort()
                   .map((x) => ({ value: x })),
               },
             ]}
           />
         </Field>
-        <Field label="Level">
-          <select
-            className="input max-sm:min-h-10"
-            value={value.level}
-            disabled={readOnly || levelLocked}
-            title={levelLocked ? 'Your GM sets your level' : undefined}
-            aria-label={levelLocked ? 'Level (your GM sets this)' : 'Level'}
-            onChange={(e) => set({ level: Number(e.target.value) })}
+        {value.species && speciesRules && speciesRules !== value.species && <p className="-mt-1.5 text-xs text-dim">Uses the {speciesRules} rules.</p>}
+        <div className="grid grid-cols-[1fr_5rem] gap-2">
+          <Field label="Class">
+            <ChoiceSelect
+              label="Class"
+              value={value.class_name}
+              disabled={readOnly}
+              onChange={(v) => set({ class_name: v })}
+              groups={[
+                { label: 'Classes', options: CLASSES.map((c) => ({ value: c.name })) },
+                {
+                  label: 'Other classes in your rules',
+                  options: Object.keys(rules?.classes ?? {})
+                    .filter((x) => !CLASSES.some((c) => c.name.toLowerCase() === x.toLowerCase()))
+                    .sort()
+                    .map((x) => ({ value: x })),
+                },
+              ]}
+            />
+          </Field>
+          <Field label="Level">
+            <select
+              className="input max-sm:min-h-10"
+              value={value.level}
+              disabled={readOnly || levelLocked}
+              title={levelLocked ? 'Your GM sets your level' : undefined}
+              aria-label={levelLocked ? 'Level (your GM sets this)' : 'Level'}
+              onChange={(e) => set({ level: Number(e.target.value) })}
+            >
+              {Array.from({ length: 20 }, (_, i) => (
+                <option key={i + 1}>{i + 1}</option>
+              ))}
+            </select>
+          </Field>
+        </div>
+        <Field label="Subclass" hint={sub?.known ? `Known in the world as a ${sub.known}` : value.level < 3 && info ? 'Chosen at level 3' : undefined}>
+          <ChoiceSelect
+            label="Subclass"
+            value={s.subclass ?? ''}
+            disabled={readOnly}
+            onChange={(v) => put({ subclass: v })}
+            groups={info ? [{ label: `${info.name} subclasses`, options: subs.map((x) => ({ value: x.name, label: `${x.name} (${x.book})` })) }] : []}
+          />
+        </Field>
+        <Field label="Background">
+          <ChoiceSelect
+            label="Background"
+            value={s.background ?? ''}
+            disabled={readOnly}
+            onChange={(v) => put({ background: v })}
+            groups={[
+              ...[...new Set(worldBgs.map((b) => b.from))].map((from) => ({
+                label: from === 'Ethereal' ? 'The Ethereal Realm' : from,
+                options: worldBgs.filter((b) => b.from === from).map((b) => ({ value: b.name })),
+              })),
+              { label: "Player's Handbook", options: BACKGROUNDS.map((b) => ({ value: b.name })) },
+              {
+                label: 'Other backgrounds in your rules',
+                options: Object.keys(rules?.backgrounds ?? {})
+                  .filter((n) => !BACKGROUNDS.some((x) => x.name.toLowerCase() === n.toLowerCase()) && !worldBgs.some((x) => x.name.toLowerCase() === n.toLowerCase()))
+                  .sort()
+                  .map((x) => ({ value: x })),
+              },
+            ]}
+          />
+        </Field>
+        <div className="grid grid-cols-2 gap-2">
+          <Field label="Alignment">
+            <select className="input max-sm:min-h-10" value={s.alignment ?? ''} disabled={readOnly} onChange={(e) => put({ alignment: e.target.value })}>
+              <option value="" />
+              {ALIGNMENTS.map((a) => (
+                <option key={a}>{a}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="XP">
+            <input type="number" min={0} className="input num max-sm:min-h-10" value={s.xp ?? ''} disabled={readOnly} onChange={(e) => put({ xp: num(e.target.value) })} />
+          </Field>
+        </div>
+        {needsBasics && (
+          <button
+            className="btn w-full justify-center text-xs max-sm:min-h-10"
+            onClick={applyBasics}
+            title="Saving throws, Hit Die, armor and weapon training, tools, spellcasting ability and class resources"
           >
-            {Array.from({ length: 20 }, (_, i) => (
-              <option key={i + 1}>{i + 1}</option>
-            ))}
-          </select>
-        </Field>
-      </div>
-      <Field label="Subclass" hint={sub?.known ? `Known in the world as a ${sub.known}` : value.level < 3 && info ? 'Chosen at level 3' : undefined}>
-        <ChoiceSelect
-          label="Subclass"
-          value={s.subclass ?? ''}
-          disabled={readOnly}
-          onChange={(v) => put({ subclass: v })}
-          groups={info ? [{ label: `${info.name} subclasses`, options: subs.map((x) => ({ value: x.name, label: `${x.name} (${x.book})` })) }] : []}
-        />
-      </Field>
-      <Field label="Background">
-        <ChoiceSelect
-          label="Background"
-          value={s.background ?? ''}
-          disabled={readOnly}
-          onChange={(v) => put({ background: v })}
-          groups={[
-            ...[...new Set(worldBgs.map((b) => b.from))].map((from) => ({
-              label: from === 'Ethereal' ? 'The Ethereal Realm' : from,
-              options: worldBgs.filter((b) => b.from === from).map((b) => ({ value: b.name })),
-            })),
-            { label: "Player's Handbook", options: BACKGROUNDS.map((b) => ({ value: b.name })) },
-            {
-              label: 'Other backgrounds in your rules',
-              options: Object.keys(rules?.backgrounds ?? {})
-                .filter((n) => !BACKGROUNDS.some((x) => x.name.toLowerCase() === n.toLowerCase()) && !worldBgs.some((x) => x.name.toLowerCase() === n.toLowerCase()))
-                .sort()
-                .map((x) => ({ value: x })),
-            },
-          ]}
-        />
-      </Field>
-      <div className="grid grid-cols-2 gap-2">
-        <Field label="Alignment">
-          <select className="input max-sm:min-h-10" value={s.alignment ?? ''} disabled={readOnly} onChange={(e) => put({ alignment: e.target.value })}>
-            <option value="" />
-            {ALIGNMENTS.map((a) => (
-              <option key={a}>{a}</option>
-            ))}
-          </select>
-        </Field>
-        <Field label="XP">
-          <input type="number" min={0} className="input num max-sm:min-h-10" value={s.xp ?? ''} disabled={readOnly} onChange={(e) => put({ xp: num(e.target.value) })} />
-        </Field>
-      </div>
-      {needsBasics && (
-        <button className="btn w-full justify-center text-xs max-sm:min-h-10" onClick={applyBasics} title="Saving throws, Hit Die, armor and weapon training, tools, spellcasting ability and class resources">
-          <Wand2 size={13} /> Fill in {info!.name} basics
-        </button>
-      )}
+            <Wand2 size={13} /> Fill in {info!.name} basics
+          </button>
+        )}
       </div>
     </details>
   );
 }
-
 
 /** The figures asked for now and then, Hit Dice and Heroic Inspiration, and the rests. */
 function Vitals({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Partial<Sheet>) => void; level: number; cls: string; readOnly: boolean }) {
@@ -472,9 +488,7 @@ function Vitals({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Partial<S
     <div className="space-y-3">
       <div className="grid grid-cols-3 gap-2">
         <Stat label="Proficiency">+{proficiencyBonus(level)}</Stat>
-        <Stat label="Passive Perception">
-          {passive(s, level, 'Perception')}
-        </Stat>
+        <Stat label="Passive Perception">{passive(s, level, 'Perception')}</Stat>
         <Stat label="Size">
           <select
             className="w-full appearance-none bg-transparent text-center text-base font-semibold text-ink focus:outline-none disabled:opacity-100 max-sm:min-h-8"
@@ -539,7 +553,7 @@ function AbilitiesTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Par
   return (
     <div className="space-y-6">
       <p className="text-xs text-dim">A filled diamond means proficient; a ringed one, Expertise (your Proficiency Bonus counts twice). Tap a skill to step through them.</p>
-      <div className="grid grid-cols-1 gap-2 min-[360px]:grid-cols-2 sm:gap-3 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-2 min-[360px]:grid-cols-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
         {ABILITIES.map((a) => (
           <section key={a} className="medallion" aria-label={ABILITY_NAMES[a]}>
             <h3 className="font-display text-[12px] uppercase tracking-[0.2em] text-gold">{ABILITY_NAMES[a]}</h3>
@@ -560,7 +574,10 @@ function AbilitiesTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Par
             <ul className="mt-2 w-full border-t border-gold/20 pt-1 text-sm">
               <li className={`${ROW} font-medium`}>
                 <Diamond cover on={!!s.saves?.includes(a)} label={`${ABILITY_NAMES[a]} saving throw proficiency`} onChange={readOnly ? undefined : () => put({ saves: toggle(s.saves, a) })} />
-                <span className="flex-1">Saving throw</span>
+                <span className="min-w-0 flex-1 truncate" title="Saving throw">
+                  <span className="xl:hidden">Save</span>
+                  <span className="max-xl:hidden">Saving throw</span>
+                </span>
                 <span className="num">{signed(saveBonus(s, level, a))}</span>
               </li>
               {SKILLS_BY[a].map((k) => (
@@ -598,9 +615,7 @@ function AbilitiesTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Par
           <span className={`w-full sm:w-auto ${LABEL}`}>Armor training</span>
           {(['light', 'medium', 'heavy', 'shields'] as const).map((k) => (
             <span key={k} className="relative flex items-center gap-1.5 rounded px-1 max-sm:min-h-10">
-              <Diamond
-                cover
-                on={!!s.armorTraining?.[k]} label={`${k} armor training`} onChange={readOnly ? undefined : (on) => put({ armorTraining: { ...(s.armorTraining ?? {}), [k]: on } })} />
+              <Diamond cover on={!!s.armorTraining?.[k]} label={`${k} armor training`} onChange={readOnly ? undefined : (on) => put({ armorTraining: { ...(s.armorTraining ?? {}), [k]: on } })} />
               {k[0].toUpperCase() + k.slice(1)}
             </span>
           ))}
@@ -618,7 +633,14 @@ function AbilitiesTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Par
         </div>
         <div className="space-y-1">
           <div className={LABEL}>
-            Weapon mastery {canMaster ? <span className="num normal-case tracking-normal">({masteries.length} of {canMaster})</span> : ''}
+            Weapon mastery{' '}
+            {canMaster ? (
+              <span className="num normal-case tracking-normal">
+                ({masteries.length} of {canMaster})
+              </span>
+            ) : (
+              ''
+            )}
           </div>
           <div className="flex flex-wrap gap-1.5 items-center">
             {masteries.map((m) => (
@@ -626,7 +648,11 @@ function AbilitiesTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Par
                 {m}
                 {weaponInfo(m) ? `: ${weaponInfo(m)!.mastery}` : ''}
                 {!readOnly && (
-                  <button aria-label={`Remove ${m}`} className="relative hover:text-danger after:absolute after:-inset-3 after:content-['']" onClick={() => put({ masteries: masteries.filter((x) => x !== m) })}>
+                  <button
+                    aria-label={`Remove ${m}`}
+                    className="relative hover:text-danger after:absolute after:-inset-3 after:content-['']"
+                    onClick={() => put({ masteries: masteries.filter((x) => x !== m) })}
+                  >
                     <X size={11} />
                   </button>
                 )}
@@ -757,7 +783,10 @@ function CombatTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Partia
           actions={
             !readOnly &&
             resourcesStale && (
-              <button className="btn-ghost text-xs max-sm:min-h-10" onClick={() => put({ resources: fresh.map((f) => ({ ...f, used: Math.min(f.max, resources.find((r) => r.name === f.name)?.used ?? 0) })) })}>
+              <button
+                className="btn-ghost text-xs max-sm:min-h-10"
+                onClick={() => put({ resources: fresh.map((f) => ({ ...f, used: Math.min(f.max, resources.find((r) => r.name === f.name)?.used ?? 0) })) })}
+              >
                 <Wand2 size={13} /> Set for {classInfo(cls)?.name} {level}
               </button>
             )
@@ -771,9 +800,7 @@ function CombatTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Partia
             <li key={i} className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-md border border-line bg-raised/40 px-3 py-2">
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-semibold text-ink">{r.name}</span>
-                <span className="text-xs text-dim">
-                  {r.reset === 'long' ? 'Back on a long rest' : r.reset === 'short' ? 'Back on a short rest' : 'One back on a short rest, all on a long rest'}
-                </span>
+                <span className="text-xs text-dim">{r.reset === 'long' ? 'Back on a long rest' : r.reset === 'short' ? 'Back on a short rest' : 'One back on a short rest, all on a long rest'}</span>
               </span>
               <Pips max={r.max} used={r.used} label={r.name} onChange={readOnly ? undefined : (used) => put({ resources: resources.map((x, j) => (j === i ? { ...x, used } : x)) })} />
             </li>
@@ -784,7 +811,12 @@ function CombatTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Partia
       <section className="space-y-2">
         <Rule>Conditions</Rule>
         <div className="max-sm:[&_.chip]:min-h-8 max-sm:[&_select]:min-h-10">
-          <ConditionChips value={s.conditions ?? []} options={CONDITIONS_2024.filter((c) => c !== 'Exhaustion')} onChange={readOnly ? undefined : (conditions) => put({ conditions })} readOnly={readOnly} />
+          <ConditionChips
+            value={s.conditions ?? []}
+            options={CONDITIONS_2024.filter((c) => c !== 'Exhaustion')}
+            onChange={readOnly ? undefined : (conditions) => put({ conditions })}
+            readOnly={readOnly}
+          />
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Exhaustion" hint={s.exhaustion ? `−${2 * s.exhaustion} to D20 Tests, Speed −${5 * s.exhaustion} ft.` : undefined}>
