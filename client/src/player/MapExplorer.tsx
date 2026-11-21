@@ -8,9 +8,10 @@ import { usePlayerData, type PEntity, type PMap } from './source';
 import { MapView, kindOf } from '../components/map/MapView';
 import { Badge } from '../components/ui/badges';
 import { Empty, Loading } from '../components/ui/feedback';
+import { useSidebarSlot } from '../components/sidebarSlot';
 
 /**
- * The handbook's full-screen map. Only player-safe data reaches it. Fog of war and the party's trail appear only when
+ * The handbook's map, filling the page under the top bar; its legend goes in the sidebar while that is open. Only player-safe data reaches it. Fog of war and the party's trail appear only when
  * the projection sends them, which it does only while the active campaign has a live session.
  */
 
@@ -83,6 +84,7 @@ export function MapExplorer() {
   const [sp, setSp] = useSearchParams();
   const { source, base } = usePlayer();
   const { maps, byId } = usePlayerIndex();
+  const slot = useSidebarSlot();
   const nav = useNavigate();
   const selected = sp.get('place');
   const m: PMap | undefined = maps && (maps.find((x) => String(x.id) === id) ?? maps.find((x) => x.parent_map_id == null) ?? maps[0]);
@@ -118,66 +120,35 @@ export function MapExplorer() {
     else next.delete('place');
     setSp(next, { replace: true });
   };
-  const places = m.markers.filter((mk) => mk.entity_id).length;
+  // The map fills the page under the top bar (the shell gives it the whole area), like the GM's Atlas.
   return (
-    <div className="space-y-4">
-      <header className="title-band elev-1 px-4 py-3 sm:px-6 sm:py-3.5">
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2.5">
-          <div className="min-w-0 flex-1 basis-[16rem]">
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-              <span className="section-title flex items-center gap-1.5 text-[12px]">
-                <MapIcon size={13} aria-hidden /> Maps
-              </span>
-              <h1 className="text-[22px] sm:text-[26px] text-ink leading-tight break-words">{m.name}</h1>
-            </div>
-            <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-dim">
-              <span>
-                <span className="num">{places}</span> {places === 1 ? 'place' : 'places'} marked. Choose one to read about it.
-              </span>
-              {exploration && (
-                <Badge tone="danger" icon={<Radio size={11} />}>
-                  Live session: places you haven't found yet are hidden
-                </Badge>
-              )}
-            </div>
-          </div>
-          {maps.length > 1 && (
-            <nav aria-label="Maps" className="flex flex-wrap gap-1.5">
-              {maps.map((x) => (
-                <Link
-                  key={x.id}
-                  to={`${base}/maps/${x.id}`}
-                  aria-current={x.id === m.id ? 'page' : undefined}
-                  className={`inline-flex items-center gap-1.5 rounded-full border px-3 min-h-[40px] sm:min-h-[32px] text-[13px] transition-colors ${
-                    x.id === m.id ? 'border-gold/70 bg-gold/15 text-gold' : 'border-line bg-panel text-dim hover:text-ink hover:border-gold/40'
-                  }`}
-                >
-                  <MapIcon size={13} aria-hidden /> {x.name}
-                </Link>
-              ))}
-            </nav>
-          )}
+    <div className="absolute inset-0">
+      <MapView
+        key={m.id}
+        contained
+        map={{ id: m.id, name: m.name, width: m.width, height: m.height, imageUrl: m.image_file ? source.imageUrl(m.image_file) : null }}
+        maps={maps}
+        sidebarSlot={slot}
+        mapHref={(x) => `${base}/maps/${x}`}
+        back={{ href: base || '/', label: 'Handbook' }}
+        pins={pins}
+        shapes={m.shapes}
+        selected={selected}
+        onSelect={select}
+        onChildMap={(x) => nav(`${base}/maps/${x}`)}
+        codex={selected ? <Codex id={selected} fallback={byId.get(selected)} onClose={() => select(null)} onPlace={select} pinned={pinned} /> : null}
+        exploration={exploration}
+        fog="hide"
+        notesKey="player"
+      />
+      {/* Hidden while a place is open, so it never covers the place's panel. */}
+      {exploration && !selected && (
+        <div className="pointer-events-none absolute bottom-20 md:bottom-auto md:top-3 left-1/2 -translate-x-1/2 z-[1000] max-w-[calc(100%-2rem)] md:max-w-[calc(100%-7rem)]">
+          <Badge tone="danger" icon={<Radio size={11} />} className="bg-panel/95 elev-2">
+            Live session: places you haven't found yet are hidden
+          </Badge>
         </div>
-      </header>
-      <div className="relative overflow-hidden rounded-md border border-line elev-1 h-[max(420px,calc(100dvh-13rem))]">
-        <MapView
-          key={m.id}
-          contained
-          map={{ id: m.id, name: m.name, width: m.width, height: m.height, imageUrl: m.image_file ? source.imageUrl(m.image_file) : null }}
-          maps={[]}
-          mapHref={(x) => `${base}/maps/${x}`}
-          back={{ href: base || '/', label: 'Handbook' }}
-          pins={pins}
-          shapes={m.shapes}
-          selected={selected}
-          onSelect={select}
-          onChildMap={(x) => nav(`${base}/maps/${x}`)}
-          codex={selected ? <Codex id={selected} fallback={byId.get(selected)} onClose={() => select(null)} onPlace={select} pinned={pinned} /> : null}
-          exploration={exploration}
-          fog="hide"
-          notesKey="player"
-        />
-      </div>
+      )}
     </div>
   );
 }

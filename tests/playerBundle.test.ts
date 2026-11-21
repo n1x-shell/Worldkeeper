@@ -48,6 +48,7 @@ const ALLOWED = [
   /^shared\//,
   /^client\/src\/components\/ui\/(badges|surfaces|data|inputs|overlays|feedback)\.tsx$/,
   /^client\/src\/components\/peek\/hover\.ts$/,
+  /^client\/src\/components\/sidebarSlot\.ts$/,
   /^client\/src\/components\/map\/(MapView|grouping)\.tsx?$/,
   /^client\/src\/components\/(ItemRules|CalendarView)\.tsx$/,
   /^client\/src\/lib\/(mechanics|rank)\.ts$/,

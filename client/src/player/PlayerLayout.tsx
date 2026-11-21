@@ -39,6 +39,7 @@ import { PLAYER_GROUPS, PLAYER_REALMS, OTHER_GROUP, playerWorkspaceFor, type Pla
 import { PlayerLiveCard } from './LivePlay';
 import { ConfirmHost, ToastHost } from '../components/ui/overlays';
 import { PlayerHoverCards } from './PlayerPeek';
+import { SidebarSlotContext } from '../components/sidebarSlot';
 
 const I = 16;
 const GROUP_ICONS: Record<string, ReactNode> = {
@@ -177,6 +178,31 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
   const ws = playerWorkspaceFor(loc.pathname);
   const current = shown.find((w) => w.id === ws) ?? shown[0];
   const sideItems = current && current.items.length > 1 ? current.items : [];
+  // The maps fill the page under the top bar, like the GM's Atlas; the sidebar then holds the map's legend.
+  const fullBleed = current?.id === 'maps';
+  const [slotEl, setSlotEl] = useState<HTMLElement | null>(null);
+  const [wide, setWide] = useState(() => typeof window === 'undefined' || !window.matchMedia || window.matchMedia('(min-width: 768px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia?.('(min-width: 768px)');
+    if (!mq) return;
+    const on = () => setWide(mq.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  const slot = fullBleed && wide && !collapsed ? slotEl : null;
+  const collapseButton = (
+    <button
+      className="btn-ghost"
+      onClick={() => {
+        setCollapsed(!collapsed);
+        write('wk.player.sidebar', collapsed ? '0' : '1');
+      }}
+      aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+      title={fullBleed ? "Collapse: the map's legend floats over it instead" : undefined}
+    >
+      {collapsed ? <ChevronsRight size={16} /> : <ChevronsLeft size={16} />}
+    </button>
+  );
 
   const link = (it: Item, compact: boolean) => (
     <NavLink
@@ -261,7 +287,14 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
         {themeButton}
       </header>
       <div className="flex-1 flex min-h-0">
-        {sideItems.length > 0 && (
+        {fullBleed && (
+          <aside className={`hidden md:flex flex-col shrink-0 bg-panel/70 border-r border-line transition-[width] duration-150 ${collapsed ? 'w-14' : 'w-[272px]'}`} aria-label="Map legend">
+            {!collapsed && <div ref={setSlotEl} className="flex-1 overflow-y-auto" />}
+            {collapsed && <div className="flex-1" />}
+            <div className={`border-t border-line p-2 flex ${collapsed ? 'justify-center' : 'justify-end'}`}>{collapseButton}</div>
+          </aside>
+        )}
+        {!fullBleed && sideItems.length > 0 && (
           <aside className={`hidden md:flex flex-col shrink-0 bg-panel/70 border-r border-line transition-[width] duration-150 ${collapsed ? 'w-14' : 'w-56'}`} aria-label={current?.label}>
             {!collapsed && (
               <div className="px-4 pt-4 pb-2 flex items-center gap-2 font-display text-gold text-[13px] tracking-wider">
@@ -309,12 +342,20 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
             </aside>
           </div>
         )}
-        <main className="flex-1 overflow-y-auto min-w-0" id="main">
-          <div className="mx-auto max-w-[1200px] p-4 md:p-6">
-            <Outlet />
-            <PlayerLiveCard />
-          </div>
-        </main>
+        {fullBleed ? (
+          <main className="flex-1 relative overflow-hidden min-w-0" id="main">
+            <SidebarSlotContext.Provider value={slot}>
+              <Outlet />
+            </SidebarSlotContext.Provider>
+          </main>
+        ) : (
+          <main className="flex-1 overflow-y-auto min-w-0" id="main">
+            <div className="mx-auto max-w-[1200px] p-4 md:p-6">
+              <Outlet />
+            </div>
+          </main>
+        )}
+        <PlayerLiveCard />
       </div>
       <PlayerHoverCards />
       <ConfirmHost />

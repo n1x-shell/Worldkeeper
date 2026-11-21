@@ -75,7 +75,7 @@ export function PlayerLiveCard() {
   const myTurn = !!current && isMe(current.name);
   const next = fight ? fight.order[(fight.order.findIndex((c) => c.current) + 1) % fight.order.length] : undefined;
   return (
-    <div className="fixed inset-x-3 bottom-3 z-40 space-y-2 sm:left-auto sm:w-96" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="fixed inset-x-3 bottom-3 z-[1400] space-y-2 sm:left-auto sm:w-96" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {fresh && (
         <Link
           to={`${base}/handouts`}
