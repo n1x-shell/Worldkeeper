@@ -1,6 +1,6 @@
 # Design Overhaul: Product Requirements
 
-**Status:** Draft for owner review
+**Status:** Approved direction (owner answers recorded in section 3); step 1 next
 **Scope:** The look and layout of the GM app, the in-app Player View, the table server and the published Player Handbook. No changes to data, rules or what players can see.
 
 ## 1. Why
@@ -31,6 +31,10 @@ The look of a medieval codex, with the discipline of a modern tool. The characte
 | Navigation | The PRD layout: workspace top bar, contextual collapsible sidebar, canvas, optional right inspector |
 | Themes | **Warm Parchment is the default**; **Dark Codex** is kept as the alternative |
 | Order | Merge pending work first (done: v0.3.6), then overhaul in reviewed steps |
+| Ornament | **A little more** than minimal: gold rules and title bands, plus corner marks on featured cards and an illuminated first letter on record titles |
+| Live workspace | The other workspace tabs **stay visible** during a session; Live gets a pulsing badge |
+| Player side | The published handbook and table server also **default to parchment** (dark available, remembered per device) |
+| Home page | The app opens on the **active campaign's overview** when a campaign is active, otherwise the World Dashboard; the app mark always goes to the World Dashboard |
 
 ## 4. Layout
 
@@ -46,7 +50,7 @@ The look of a medieval codex, with the discipline of a modern tool. The characte
 ```
 
 ### 4.1 Top bar (52px)
-- **Left:** the app mark and name (goes to the World Dashboard), then the **five workspaces**: Codex, Campaign, Characters, Atlas, Live. The current one is underlined in gold.
+- **Left:** the app mark and name (always goes to the World Dashboard; the app itself opens on the active campaign's overview when there is one), then the **five workspaces**: Codex, Campaign, Characters, Atlas, Live. The current one is underlined in gold.
 - **Centre-right:** the search trigger, showing "Search… Ctrl K". It opens the existing search palette.
 - **Right:**
   - the **active campaign** chip (click to switch campaigns);
@@ -137,6 +141,7 @@ Both themes share one set of semantic tokens. Components never use raw colours.
 - 4px grid: 4, 8, 12, 16, 24, 32, 48.
 - Radius 4px on controls and 6px on cards. No pill shapes except tags.
 - Borders are 1px `line`. The gold accent is a 2px rule under titles and a 1px inner frame on featured cards.
+- **Ornament (owner's choice: a little more).** Featured cards (record headers, the dashboard, session prep) get small gilt corner marks. Record titles open with an **illuminated first letter**: a Cinzel capital in gold on a faint framed square, drawn in CSS. There's no ornament inside tables, stat blocks, the initiative tracker or forms.
 - Three elevation levels: flat (panels), raised (hover cards, menus) and overlay (drawers, dialogs). Parchment uses soft warm shadows; dark uses a border plus shadow.
 
 ### 6.4 Icons
@@ -224,9 +229,6 @@ Each step is its own PR with before-and-after screenshots. Nothing merges withou
 | 6 | **Player side:** the handbook and table server on the same system | Handbook and phone screenshots |
 | 7 | Docs, screenshots in the README, and a release | The release |
 
-## 15. Open questions for the owner
+## 15. Owner answers
 
-1. **Ornament.** How much medieval decoration do you want: minimal (rules and title bands only), or a little more (corner marks on featured cards, illuminated initials on record titles)?
-2. **Live mode.** Should the Live workspace hide the other workspaces' tabs during a session (a distraction-free mode), or keep them visible?
-3. **Handbook default.** Should the published handbook also default to parchment, or keep dark?
-4. **Dashboard.** Should the World Dashboard stay the home page, or should the active campaign's overview be home once a campaign exists?
+All four open questions are answered (section 3): a little more ornament, Live keeps the other tabs visible, the player side defaults to parchment, and the app opens on the active campaign.
