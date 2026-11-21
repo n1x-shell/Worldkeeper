@@ -5,6 +5,7 @@ import L from 'leaflet';
 import { CircleMarker, ImageOverlay, MapContainer, Marker, Polygon, Polyline, Popup, Rectangle, SVGOverlay, Tooltip, useMap, useMapEvents } from 'react-leaflet';
 import { PACES, formatMiles, niceMiles, pathMiles, travelDays, type Pace } from '../../../../shared/travel';
 import { ArrowLeft, Eye, EyeOff, Layers, NotebookPen, Plus, Ruler, Trash2, Undo2, X } from 'lucide-react';
+import { groupByDistance } from './grouping';
 
 /**
  * The full-screen map view shared by the players' handbook and the GM's Atlas. The map fills the window; a legend
@@ -200,6 +201,88 @@ function Viewport({ bounds, onZoom, focus }: { bounds: L.LatLngBoundsExpression;
   return null;
 }
 
+/** Hands the Leaflet map to the view, and reports its zoom as it changes. */
+function MapGrab({ onMap, onZoom }: { onMap: (m: L.Map) => void; onZoom: (z: number) => void }) {
+  const map = useMap();
+  useEffect(() => {
+    onMap(map);
+    onZoom(map.getZoom());
+  }, [map, onMap, onZoom]);
+  useMapEvents({ zoomend: () => onZoom(map.getZoom()) });
+  return null;
+}
+
+/** Pins this close together on screen (pixels) are drawn as one numbered group until the reader zooms in. */
+const CLUSTER_PX = 34;
+const clusterIcon = (n: number) =>
+  L.divIcon({
+    className: '',
+    iconSize: [34, 34],
+    iconAnchor: [17, 17],
+    html: `<div class="wk-cluster"><span>${n}</span></div>`,
+  });
+
+/** A compass rose for the corner of the map (decoration; the maps have north at the top). */
+function Compass() {
+  return (
+    <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden className="wk-compass">
+      <circle cx="32" cy="32" r="27" fill="none" stroke="currentColor" strokeWidth="1" opacity=".55" />
+      <circle cx="32" cy="32" r="22" fill="none" stroke="currentColor" strokeWidth=".6" opacity=".4" />
+      <path d="M32 5 L36 32 L32 59 L28 32 Z" fill="currentColor" opacity=".9" />
+      <path d="M5 32 L32 28 L59 32 L32 36 Z" fill="currentColor" opacity=".55" />
+      <path d="M32 5 L36 32 L32 32 Z" fill="#0b0b10" opacity=".55" />
+      <text x="32" y="4" textAnchor="middle" fontSize="7" fill="currentColor" fontFamily="Cinzel, serif" dy="2.5">
+        N
+      </text>
+    </svg>
+  );
+}
+
+/** A small overview of the whole map, with the part in view outlined; click it to move there. */
+function Overview({ map, m }: { map: L.Map; m: { width: number; height: number; imageUrl: string | null } }) {
+  const W = 180;
+  const H = Math.round((W * m.height) / m.width);
+  const [view, setView] = useState<L.LatLngBounds>(() => map.getBounds());
+  useEffect(() => {
+    const on = () => setView(map.getBounds());
+    on();
+    map.on('move zoom resize', on);
+    return () => {
+      map.off('move zoom resize', on);
+    };
+  }, [map]);
+  const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+  const left = clamp(view.getWest() / m.width, 0, 1) * W;
+  const right = clamp(view.getEast() / m.width, 0, 1) * W;
+  const top = (1 - clamp(view.getNorth() / m.height, 0, 1)) * H;
+  const bottom = (1 - clamp(view.getSouth() / m.height, 0, 1)) * H;
+  return (
+    <button
+      type="button"
+      className="wk-overview pointer-events-auto"
+      style={{ width: W, height: H, backgroundImage: m.imageUrl ? `url(${m.imageUrl})` : undefined }}
+      aria-label="Overview of the whole map: click to move there"
+      title="Overview: click to move there"
+      onClick={(e) => {
+        const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        const x = ((e.clientX - r.left) / W) * m.width;
+        const y = (1 - (e.clientY - r.top) / H) * m.height;
+        map.panTo([y, x]);
+      }}
+    >
+      <span
+        className="wk-overview-view"
+        style={{
+          left: Math.min(left, (left + right) / 2 - 5),
+          top: Math.min(top, (top + bottom) / 2 - 5),
+          width: Math.max(10, right - left),
+          height: Math.max(10, bottom - top),
+        }}
+      />
+    </button>
+  );
+}
+
 /** Reports how many screen pixels one unit of the map's image takes, as the reader zooms. */
 function ScaleWatch({ onChange }: { onChange: (pxPerUnit: number) => void }) {
   const map = useMap();
@@ -245,7 +328,7 @@ function Fog({ w, h, clear, strength }: { w: number; h: number; clear: { x: numb
       interactive={false}
     >
       <defs>
-        <filter id={`${id}-blur`}>
+        <filter id={`${id}-blur`} filterUnits="userSpaceOnUse" x={-r} y={-r} width={w + 2 * r} height={h + 2 * r}>
           <feGaussianBlur stdDeviation={r * 0.35} />
         </filter>
         <mask id={`${id}-mask`}>
@@ -318,6 +401,12 @@ export interface MapViewProps {
 export function MapView(p: MapViewProps) {
   const { map: m } = p;
   const [rel, setRel] = useState(0);
+  const [lmap, setLmap] = useState<L.Map | null>(null);
+  const [zoom, setZoom] = useState(0);
+  const [query, setQuery] = useState('');
+  // Display choices, kept on this device: the map panels dark (the chart's palette) or in the app's theme; the overview.
+  const [panels, setPanels] = useState(readPref('wk.map.panels', 'dark'));
+  const [overview, setOverview] = useState(readPref('wk.map.overview', '1') === '1');
   const [legend, setLegend] = useState(!p.contained && readPref('wk.map.legend', window.innerWidth >= 768 ? '1' : '0') === '1');
   const [hidden, setHidden] = useState<Set<string>>(() => new Set(readPref('wk.map.hidden', '').split(',').filter(Boolean)));
   const [focus, setFocus] = useState<{
@@ -396,6 +485,19 @@ export function MapView(p: MapViewProps) {
     (pin) => !hidden.has(pin.kind) && !(pin.hidden && hidden.has('gmonly')) && (rel >= SHOW_FROM[pin.kind] || pin.entity_id === p.selected || p.draggable) && (fogMode === 'dim' || known(pin)),
   );
   const discoverable = p.pins.filter((x) => x.kind !== 'region' && x.entity_id);
+  // Grouped pins: places close together on screen at this zoom are one numbered group (not regions, the chosen
+  // place, or while drawing an outline; never at the closest zoom).
+  const groups = useMemo(() => {
+    if (!lmap || editing || zoom >= lmap.getMaxZoom()) return null;
+    const placed = visible.filter((pin) => pin.kind !== 'region' && pin.entity_id !== p.selected).map((pin) => ({ at: lmap.project([pin.y, pin.x], zoom), item: pin }));
+    return groupByDistance(placed, CLUSTER_PX)
+      .filter((g) => g.items.length > 1)
+      .map((g) => ({ at: L.point(g.at.x, g.at.y), pins: g.items }));
+  }, [lmap, zoom, visible, editing, p.selected]);
+  const grouped = new Set((groups ?? []).flatMap((g) => g.pins.map((x) => x.id)));
+  const drawn = visible.filter((pin) => !grouped.has(pin.id));
+  // Find a place: the pins this reader can see, by name.
+  const found = query.trim().length > 1 ? p.pins.filter((pin) => (fogMode === 'dim' || known(pin)) && pin.label.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 8) : [];
   const party = ex && ex.trail.length ? ex.trail[ex.trail.length - 1] : null;
   // Fog clears around discovered places and everywhere the party has been.
   const clear = ex ? [...p.pins.filter((x) => x.kind !== 'region' && x.entity_id && ex.discovered.has(x.entity_id)), ...ex.trail] : [];
@@ -431,9 +533,194 @@ export function MapView(p: MapViewProps) {
             }
           : null;
 
+  // The legend's contents: in the app's sidebar (GM) or the floating panel (handbook, or the GM's collapsed sidebar).
+  const legendInner = (
+    <>
+      <div className="font-display text-gold text-lg px-4 pt-3">{m.name}</div>
+      <div className="px-3 pt-2 relative">
+        <input
+          className="input py-1 text-sm"
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && found[0]) {
+              const f = found[0];
+              if (f.entity_id) select(f.entity_id);
+              else setFocus({ at: [f.y, f.x], n: Date.now() });
+              setQuery('');
+            }
+          }}
+          placeholder="Find a place on this map"
+          aria-label="Find a place on this map"
+        />
+        {found.length > 0 && (
+          <ul className="mt-1 rounded-md border border-line bg-raised text-sm overflow-hidden" role="listbox">
+            {found.map((f) => (
+              <li key={f.id}>
+                <button
+                  type="button"
+                  className="w-full text-left px-2 py-1 hover:bg-gold/10 hover:text-gold flex items-center gap-2"
+                  onClick={() => {
+                    if (f.entity_id) select(f.entity_id);
+                    else setFocus({ at: [f.y, f.x], n: Date.now() });
+                    setQuery('');
+                  }}
+                >
+                  <span className="truncate flex-1">{f.label}</span>
+                  {f.typeLabel && <span className="text-[10px] uppercase tracking-wider text-dim">{f.typeLabel}</span>}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        {query.trim().length > 1 && !found.length && <p className="text-xs text-dim mt-1">No place by that name on this map.</p>}
+      </div>
+      <div className="text-xs text-dim px-4 pb-2">
+        Click a place to read about it.
+        {counts.fortress || counts.vault ? ' Zoom in for fortresses and vaults.' : ''}
+        {regionShapes.length ? ' Hover a region to see its borders.' : ''}
+      </div>
+      {ex && (
+        <div className="mx-3 mb-2 rounded-md border border-line px-3 py-2 text-xs space-y-1">
+          <div>
+            <span className="text-gold">Explored:</span> {discoverable.filter((x) => ex.discovered.has(x.entity_id!)).length} of {discoverable.length} places
+          </div>
+          {party && (
+            <div>
+              <span className="text-gold">The party:</span> {party.label || 'on the road'}
+            </div>
+          )}
+        </div>
+      )}
+      <ul className="px-2 pb-2">
+        {KINDS.filter((k) => counts[k.key]).map((k) => {
+          const off = hidden.has(k.key);
+          return (
+            <li key={k.key}>
+              <button type="button" onClick={() => toggle(k.key)} className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 ${off ? 'opacity-45' : ''}`}>
+                {k.key === 'routes' ? (
+                  <span className="w-6 h-0 border-t-2 border-dashed border-gold/80 shrink-0" />
+                ) : (
+                  <span
+                    className={`wk-pin wk-pin-legend wk-pin-k-${k.key} shrink-0`}
+                    dangerouslySetInnerHTML={{
+                      __html: `<svg viewBox="0 0 24 24" width="14" height="14">${GLYPH[k.key as Kind]}</svg>`,
+                    }}
+                  />
+                )}
+                <span className="flex-1 text-left text-sm">{k.label}</span>
+                <span className="text-xs text-dim">{counts[k.key]}</span>
+                {off ? <EyeOff size={14} className="text-dim" /> : <Eye size={14} className="text-dim" />}
+              </button>
+            </li>
+          );
+        })}
+        {p.draggable && gmOnlyCount > 0 && (
+          <li>
+            <button
+              type="button"
+              onClick={() => toggle('gmonly')}
+              className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 ${hidden.has('gmonly') ? 'opacity-45' : ''}`}
+              title="Hide them to see the map as players do"
+            >
+              <span className="w-6 h-6 rounded-full border border-dashed border-danger/70 shrink-0" />
+              <span className="flex-1 text-left text-sm">Hidden from players</span>
+              <span className="text-xs text-dim">{gmOnlyCount}</span>
+              {hidden.has('gmonly') ? <EyeOff size={14} className="text-dim" /> : <Eye size={14} className="text-dim" />}
+            </button>
+          </li>
+        )}
+      </ul>
+      {p.layers && (
+        <div className="border-t border-line px-2 py-2">
+          <div className="px-2 pb-1 section-title text-[11px]">Campaign</div>
+          <ul>
+            {LAYERS.map((l) => {
+              const n = p.layers!.filter((s) => s.layer === l.key).reduce((t, s) => t + s.items.length, 0);
+              const off = layersOff.has(l.key);
+              return (
+                <li key={l.key}>
+                  <button
+                    type="button"
+                    disabled={!n}
+                    onClick={() => toggleLayer(l.key)}
+                    className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 disabled:opacity-35 ${off ? 'opacity-45' : ''}`}
+                  >
+                    <span className={`wk-badge wk-badge-${l.key} wk-badge-legend shrink-0`} dangerouslySetInnerHTML={{ __html: `<svg viewBox="0 0 24 24" width="12" height="12">${l.glyph}</svg>` }} />
+                    <span className="flex-1 text-left text-sm">{l.label}</span>
+                    <span className="text-xs text-dim">{n}</span>
+                    {off ? <EyeOff size={14} className="text-dim" /> : <Eye size={14} className="text-dim" />}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+      {/* Your own notes, kept on this device. */}
+      <div className="border-t border-line px-4 py-2">
+        <div className="flex items-center gap-2">
+          <NotebookPen size={14} className="text-gold" />
+          <span className="text-sm flex-1">Your notes</span>
+          <button type="button" className="btn-ghost text-xs" onClick={() => (setAddingNote(true), p.placing?.onCancel())}>
+            <Plus size={13} /> Add
+          </button>
+        </div>
+        {notes.length > 0 ? (
+          <ul className="mt-1 space-y-0.5">
+            {notes.map((n) => (
+              <li key={n.id} className="flex items-center gap-1 text-xs">
+                <button type="button" className="flex-1 text-left truncate hover:text-gold" onClick={() => (setFocus({ at: [n.y, n.x], n: Date.now() }), setOpenNote(n.id))}>
+                  {n.text || 'Untitled note'}
+                </button>
+                <button type="button" className="text-dim hover:text-danger p-0.5" aria-label="Delete note" onClick={() => saveNotes(notes.filter((x) => x.id !== n.id))}>
+                  <Trash2 size={12} />
+                </button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-xs text-dim mt-1">Pin your own notes to the map. Only this device keeps them.</p>
+        )}
+      </div>
+      {/* How the map looks, kept on this device. */}
+      <div className="border-t border-line px-4 py-2 space-y-1.5 text-sm">
+        <div className="flex items-center gap-2">
+          <span className="flex-1">Panels</span>
+          <span className="inline-flex rounded-md border border-line overflow-hidden text-xs" role="radiogroup" aria-label="Map panels">
+            {(
+              [
+                ['dark', 'Dark'],
+                ['theme', 'App theme'],
+              ] as const
+            ).map(([k, label]) => (
+              <button
+                key={k}
+                type="button"
+                role="radio"
+                aria-checked={panels === k}
+                className={`px-2 py-0.5 ${panels === k ? 'bg-gold/15 text-gold' : 'text-dim hover:text-ink'}`}
+                onClick={() => (setPanels(k), writePref('wk.map.panels', k))}
+              >
+                {label}
+              </button>
+            ))}
+          </span>
+        </div>
+        <label className="flex items-center gap-2 text-xs text-dim">
+          <input type="checkbox" checked={overview} onChange={(e) => (setOverview(e.target.checked), writePref('wk.map.overview', e.target.checked ? '1' : '0'))} /> Overview when zoomed in
+        </label>
+      </div>
+      {p.legendExtra}
+    </>
+  );
+
   return (
     // The chart is always drawn on the dark palette, whatever the app's theme, so its panels stay readable on the map.
-    <div className={`wk-explorer dark ${editing ? 'wk-editing ' : ''}${p.contained ? 'absolute inset-0' : 'fixed inset-0 z-50'} bg-[#0b0b10] text-ink`}>
+    <div
+      className={`wk-explorer ${panels === 'theme' ? 'wk-explorer-themed' : 'dark'} ${editing ? 'wk-editing ' : ''}${p.contained ? 'absolute inset-0' : 'fixed inset-0 z-50'} bg-[#0b0b10] text-ink`}
+    >
       <MapContainer
         key={m.id}
         crs={L.CRS.Simple}
@@ -446,6 +733,7 @@ export function MapView(p: MapViewProps) {
         attributionControl={false}
       >
         <Viewport bounds={bounds} onZoom={setRel} focus={focus} />
+        <MapGrab onMap={setLmap} onZoom={setZoom} />
         <Clicks onClick={mapClick} />
         {m.imageUrl ? <ImageOverlay url={m.imageUrl} bounds={bounds} /> : <Rectangle bounds={bounds} pathOptions={{ color: '#c9a24a', weight: 1, fillOpacity: 0.3 }} />}
         {ex && <Fog w={m.width} h={m.height} clear={clear} strength={fogMode === 'hide' ? 0.72 : 0.4} />}
@@ -507,7 +795,35 @@ export function MapView(p: MapViewProps) {
             }}
           />
         )}
-        {visible.map((pin) => {
+        {(groups ?? []).map((g) => {
+          const ll = lmap!.unproject(g.at, zoom);
+          return (
+            <Marker
+              key={`g:${g.pins.map((x) => x.id).join(',')}`}
+              position={ll}
+              icon={clusterIcon(g.pins.length)}
+              zIndexOffset={500}
+              eventHandlers={{
+                click: () => {
+                  // Zoom in just far enough to pull the places apart, not all the way.
+                  const b = L.latLngBounds(g.pins.map((x) => [x.y, x.x] as [number, number])).pad(0.6);
+                  lmap!.flyTo(b.getCenter(), Math.min(lmap!.getBoundsZoom(b), zoom + 1.5, lmap!.getMaxZoom()), { duration: 0.5 });
+                },
+              }}
+            >
+              <Tooltip direction="top" offset={[0, -14]} className="wk-map-tip">
+                <div className="text-[10px] uppercase tracking-wider opacity-70">{g.pins.length} places here: click to zoom in</div>
+                {g.pins.slice(0, 6).map((x) => (
+                  <div key={x.id} className="text-[12px]">
+                    {x.label}
+                  </div>
+                ))}
+                {g.pins.length > 6 && <div className="text-[11px] opacity-70">and {g.pins.length - 6} more</div>}
+              </Tooltip>
+            </Marker>
+          );
+        })}
+        {drawn.map((pin) => {
           const undiscovered = fogMode === 'dim' && !known(pin);
           return (
             <Marker
@@ -548,7 +864,7 @@ export function MapView(p: MapViewProps) {
         })}
         {p.layers &&
           (() => {
-            const shown = new Set(visible.map((v) => v.entity_id));
+            const shown = new Set(drawn.map((v) => v.entity_id));
             return p.layers
               .filter((s) => !layersOff.has(s.layer) && shown.has(s.entity_id))
               .map((s) => {
@@ -624,6 +940,12 @@ export function MapView(p: MapViewProps) {
         )}
         {p.editor}
       </MapContainer>
+
+      {/* The compass, and the overview while zoomed in (bottom right). */}
+      <div className="absolute right-3 bottom-3 z-[950] hidden sm:flex items-end gap-2 pointer-events-none">
+        <Compass />
+        {overview && lmap && rel > 0.6 && <Overview map={lmap} m={m} />}
+      </div>
 
       {/* Scale bar and ruler (bottom left), when the map has a scale. */}
       {milesPerUnit && (
@@ -732,239 +1054,13 @@ export function MapView(p: MapViewProps) {
                 ))}
               </nav>
             )}
-            <div className="border-t border-line mt-1 pt-1">
-              <div className="font-display text-gold text-lg px-4 pt-3">{m.name}</div>
-              <div className="text-xs text-dim px-4 pb-2">
-                Click a place to read about it.
-                {counts.fortress || counts.vault ? ' Zoom in for fortresses and vaults.' : ''}
-                {regionShapes.length ? ' Hover a region to see its borders.' : ''}
-              </div>
-              {ex && (
-                <div className="mx-3 mb-2 rounded-md border border-line px-3 py-2 text-xs space-y-1">
-                  <div>
-                    <span className="text-gold">Explored:</span> {discoverable.filter((x) => ex.discovered.has(x.entity_id!)).length} of {discoverable.length} places
-                  </div>
-                  {party && (
-                    <div>
-                      <span className="text-gold">The party:</span> {party.label || 'on the road'}
-                    </div>
-                  )}
-                </div>
-              )}
-              <ul className="px-2 pb-2">
-                {KINDS.filter((k) => counts[k.key]).map((k) => {
-                  const off = hidden.has(k.key);
-                  return (
-                    <li key={k.key}>
-                      <button type="button" onClick={() => toggle(k.key)} className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 ${off ? 'opacity-45' : ''}`}>
-                        {k.key === 'routes' ? (
-                          <span className="w-6 h-0 border-t-2 border-dashed border-gold/80 shrink-0" />
-                        ) : (
-                          <span
-                            className={`wk-pin wk-pin-legend wk-pin-k-${k.key} shrink-0`}
-                            dangerouslySetInnerHTML={{
-                              __html: `<svg viewBox="0 0 24 24" width="14" height="14">${GLYPH[k.key as Kind]}</svg>`,
-                            }}
-                          />
-                        )}
-                        <span className="flex-1 text-left text-sm">{k.label}</span>
-                        <span className="text-xs text-dim">{counts[k.key]}</span>
-                        {off ? <EyeOff size={14} className="text-dim" /> : <Eye size={14} className="text-dim" />}
-                      </button>
-                    </li>
-                  );
-                })}
-                {p.draggable && gmOnlyCount > 0 && (
-                  <li>
-                    <button
-                      type="button"
-                      onClick={() => toggle('gmonly')}
-                      className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 ${hidden.has('gmonly') ? 'opacity-45' : ''}`}
-                      title="Hide them to see the map as players do"
-                    >
-                      <span className="w-6 h-6 rounded-full border border-dashed border-danger/70 shrink-0" />
-                      <span className="flex-1 text-left text-sm">Hidden from players</span>
-                      <span className="text-xs text-dim">{gmOnlyCount}</span>
-                      {hidden.has('gmonly') ? <EyeOff size={14} className="text-dim" /> : <Eye size={14} className="text-dim" />}
-                    </button>
-                  </li>
-                )}
-              </ul>
-              {p.layers && (
-                <div className="border-t border-line px-2 py-2">
-                  <div className="px-2 pb-1 section-title text-[11px]">Campaign</div>
-                  <ul>
-                    {LAYERS.map((l) => {
-                      const n = p.layers!.filter((s) => s.layer === l.key).reduce((t, s) => t + s.items.length, 0);
-                      const off = layersOff.has(l.key);
-                      return (
-                        <li key={l.key}>
-                          <button
-                            type="button"
-                            disabled={!n}
-                            onClick={() => toggleLayer(l.key)}
-                            className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 disabled:opacity-35 ${off ? 'opacity-45' : ''}`}
-                          >
-                            <span
-                              className={`wk-badge wk-badge-${l.key} wk-badge-legend shrink-0`}
-                              dangerouslySetInnerHTML={{ __html: `<svg viewBox="0 0 24 24" width="12" height="12">${l.glyph}</svg>` }}
-                            />
-                            <span className="flex-1 text-left text-sm">{l.label}</span>
-                            <span className="text-xs text-dim">{n}</span>
-                            {off ? <EyeOff size={14} className="text-dim" /> : <Eye size={14} className="text-dim" />}
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              )}
-              {/* Your own notes, kept on this device. */}
-              <div className="border-t border-line px-4 py-2">
-                <div className="flex items-center gap-2">
-                  <NotebookPen size={14} className="text-gold" />
-                  <span className="text-sm flex-1">Your notes</span>
-                  <button type="button" className="btn-ghost text-xs" onClick={() => (setAddingNote(true), p.placing?.onCancel())}>
-                    <Plus size={13} /> Add
-                  </button>
-                </div>
-                {notes.length > 0 ? (
-                  <ul className="mt-1 space-y-0.5">
-                    {notes.map((n) => (
-                      <li key={n.id} className="flex items-center gap-1 text-xs">
-                        <button type="button" className="flex-1 text-left truncate hover:text-gold" onClick={() => (setFocus({ at: [n.y, n.x], n: Date.now() }), setOpenNote(n.id))}>
-                          {n.text || 'Untitled note'}
-                        </button>
-                        <button type="button" className="text-dim hover:text-danger p-0.5" aria-label="Delete note" onClick={() => saveNotes(notes.filter((x) => x.id !== n.id))}>
-                          <Trash2 size={12} />
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-xs text-dim mt-1">Pin your own notes to the map. Only this device keeps them.</p>
-                )}
-              </div>
-              {p.legendExtra}
-            </div>
+            <div className="border-t border-line mt-1 pt-1">{legendInner}</div>
           </div>,
           p.sidebarSlot!,
         )
       ) : (
         <aside className={`wk-map-panel left-3 top-16 w-64 ${p.contained ? 'max-h-[calc(100%-5rem)]' : 'max-h-[calc(100vh-5rem)]'} overflow-y-auto ${legend ? '' : 'wk-map-panel-hidden-left'}`}>
-          <div className="font-display text-gold text-lg px-4 pt-3">{m.name}</div>
-          <div className="text-xs text-dim px-4 pb-2">
-            Click a place to read about it.
-            {counts.fortress || counts.vault ? ' Zoom in for fortresses and vaults.' : ''}
-            {regionShapes.length ? ' Hover a region to see its borders.' : ''}
-          </div>
-          {ex && (
-            <div className="mx-3 mb-2 rounded-md border border-line px-3 py-2 text-xs space-y-1">
-              <div>
-                <span className="text-gold">Explored:</span> {discoverable.filter((x) => ex.discovered.has(x.entity_id!)).length} of {discoverable.length} places
-              </div>
-              {party && (
-                <div>
-                  <span className="text-gold">The party:</span> {party.label || 'on the road'}
-                </div>
-              )}
-            </div>
-          )}
-          <ul className="px-2 pb-2">
-            {KINDS.filter((k) => counts[k.key]).map((k) => {
-              const off = hidden.has(k.key);
-              return (
-                <li key={k.key}>
-                  <button type="button" onClick={() => toggle(k.key)} className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 ${off ? 'opacity-45' : ''}`}>
-                    {k.key === 'routes' ? (
-                      <span className="w-6 h-0 border-t-2 border-dashed border-gold/80 shrink-0" />
-                    ) : (
-                      <span
-                        className={`wk-pin wk-pin-legend wk-pin-k-${k.key} shrink-0`}
-                        dangerouslySetInnerHTML={{
-                          __html: `<svg viewBox="0 0 24 24" width="14" height="14">${GLYPH[k.key as Kind]}</svg>`,
-                        }}
-                      />
-                    )}
-                    <span className="flex-1 text-left text-sm">{k.label}</span>
-                    <span className="text-xs text-dim">{counts[k.key]}</span>
-                    {off ? <EyeOff size={14} className="text-dim" /> : <Eye size={14} className="text-dim" />}
-                  </button>
-                </li>
-              );
-            })}
-            {p.draggable && gmOnlyCount > 0 && (
-              <li>
-                <button
-                  type="button"
-                  onClick={() => toggle('gmonly')}
-                  className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 ${hidden.has('gmonly') ? 'opacity-45' : ''}`}
-                  title="Hide them to see the map as players do"
-                >
-                  <span className="w-6 h-6 rounded-full border border-dashed border-danger/70 shrink-0" />
-                  <span className="flex-1 text-left text-sm">Hidden from players</span>
-                  <span className="text-xs text-dim">{gmOnlyCount}</span>
-                  {hidden.has('gmonly') ? <EyeOff size={14} className="text-dim" /> : <Eye size={14} className="text-dim" />}
-                </button>
-              </li>
-            )}
-          </ul>
-          {p.layers && (
-            <div className="border-t border-line px-2 py-2">
-              <div className="px-2 pb-1 section-title text-[11px]">Campaign</div>
-              <ul>
-                {LAYERS.map((l) => {
-                  const n = p.layers!.filter((s) => s.layer === l.key).reduce((t, s) => t + s.items.length, 0);
-                  const off = layersOff.has(l.key);
-                  return (
-                    <li key={l.key}>
-                      <button
-                        type="button"
-                        disabled={!n}
-                        onClick={() => toggleLayer(l.key)}
-                        className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 disabled:opacity-35 ${off ? 'opacity-45' : ''}`}
-                      >
-                        <span
-                          className={`wk-badge wk-badge-${l.key} wk-badge-legend shrink-0`}
-                          dangerouslySetInnerHTML={{ __html: `<svg viewBox="0 0 24 24" width="12" height="12">${l.glyph}</svg>` }}
-                        />
-                        <span className="flex-1 text-left text-sm">{l.label}</span>
-                        <span className="text-xs text-dim">{n}</span>
-                        {off ? <EyeOff size={14} className="text-dim" /> : <Eye size={14} className="text-dim" />}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          )}
-          {/* Your own notes, kept on this device. */}
-          <div className="border-t border-line px-4 py-2">
-            <div className="flex items-center gap-2">
-              <NotebookPen size={14} className="text-gold" />
-              <span className="text-sm flex-1">Your notes</span>
-              <button type="button" className="btn-ghost text-xs" onClick={() => (setAddingNote(true), p.placing?.onCancel())}>
-                <Plus size={13} /> Add
-              </button>
-            </div>
-            {notes.length > 0 ? (
-              <ul className="mt-1 space-y-0.5">
-                {notes.map((n) => (
-                  <li key={n.id} className="flex items-center gap-1 text-xs">
-                    <button type="button" className="flex-1 text-left truncate hover:text-gold" onClick={() => (setFocus({ at: [n.y, n.x], n: Date.now() }), setOpenNote(n.id))}>
-                      {n.text || 'Untitled note'}
-                    </button>
-                    <button type="button" className="text-dim hover:text-danger p-0.5" aria-label="Delete note" onClick={() => saveNotes(notes.filter((x) => x.id !== n.id))}>
-                      <Trash2 size={12} />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-xs text-dim mt-1">Pin your own notes to the map. Only this device keeps them.</p>
-            )}
-          </div>
-          {p.legendExtra}
+          {legendInner}
         </aside>
       )}
 
