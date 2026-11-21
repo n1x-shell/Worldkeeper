@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { Eye, EyeOff, Flag, MapPin, PenLine, Trash2, X } from 'lucide-react';
+import { ArrowRight, Columns2, ExternalLink, Eye, EyeOff, Flag, MapPin, PanelRight, PenLine, Trash2, X } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { displaySections } from '../lib/sections';
 import { Markdown } from '../components/Markdown';
-import { Empty, ErrorBox, Loading, Section, Toggle, ask } from '../components/ui';
+import { Badge, Empty, ErrorBox, GmOnly, Loading, RealmBadge, Section, Toggle, TypeBadge, VisibilityBadge, ask } from '../components/ui';
+import { usePeek } from '../components/peek/context';
 import { MapView, kindOf, type ViewPin } from '../components/map/MapView';
 import { OutlineEditor, type Pt } from '../components/map/OutlineEditor';
-import { ENTITY_TYPE_LABELS, type Entity, type EntityType } from '../../../shared/domain';
+import { ENTITY_TYPE_LABELS, SECRET_HEADING_RE, type Entity, type EntityType } from '../../../shared/domain';
 import { RegionPanel } from '../components/map/RegionPanel';
 import { useSidebarSlot } from '../components/sidebarSlot';
 import { JourneyDialog, type JourneyTarget } from '../components/map/JourneyDialog';
@@ -111,6 +112,7 @@ function GmCodex({
   onOutline: (how: 'draw' | 'edit', name: string) => void;
 }) {
   const { debug } = useAppState();
+  const peek = usePeek();
   const { data } = useApi<{ entity: Entity }>(`/api/entities/${encodeURIComponent(id)}`);
   const [err, setErr] = useState<string | null>(null);
   const e = data?.entity;
@@ -127,101 +129,140 @@ function GmCodex({
   const discovered = exploration?.discovered.includes(id) ?? false;
   const sections = displaySections(e.body, debug);
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-start gap-2 p-4 border-b border-line">
-        <div className="min-w-0 flex-1">
-          <div className="text-[11px] uppercase tracking-widest text-dim">
-            {ENTITY_TYPE_LABELS[e.type as EntityType] ?? e.type} · {e.revealed ? 'known to players' : 'GM only'}
+    <div className="flex flex-col h-full" aria-label={e.name}>
+      {/* The same header as the inspector's: badges, the name, then Open, Peek and Open beside. */}
+      <header className="space-y-2 px-4 pt-4 pb-3 border-b border-line">
+        <div className="flex items-start gap-2">
+          <div className="flex flex-1 flex-wrap items-center gap-1 min-w-0">
+            <TypeBadge type={e.type} />
+            <RealmBadge realm={e.realm} />
+            <VisibilityBadge revealed={e.revealed} />
+            {marker?.hidden && (
+              <Badge tone="danger" icon={<EyeOff size={11} />} title="This pin is hidden from players">
+                Pin hidden
+              </Badge>
+            )}
+            {exploration && marker && discovered && <Badge tone="gold">Discovered</Badge>}
           </div>
-          <h2 className="font-display text-2xl text-gold leading-tight mt-0.5">{e.name}</h2>
-        </div>
-        <button type="button" onClick={onClose} className="btn-ghost p-1.5" aria-label="Close">
-          <X size={18} />
-        </button>
-      </div>
-      <div className="p-3 border-b border-line flex flex-wrap gap-2">
-        {marker && (
-          <button
-            type="button"
-            className="btn text-xs"
-            onClick={() =>
-              run(() =>
-                api.patch(`/api/markers/${marker.id}`, {
-                  hidden: !marker.hidden,
-                }),
-              )
-            }
-          >
-            {marker.hidden ? <EyeOff size={13} /> : <Eye size={13} />} {marker.hidden ? 'Hidden from players' : 'Shown to players'}
+          <button type="button" onClick={onClose} className="btn-ghost p-1.5 -mr-1.5 -mt-1" aria-label="Close" title="Close (Esc)">
+            <X size={16} />
           </button>
-        )}
-        {outline ? (
-          <>
-            <button type="button" className="btn text-xs" onClick={() => onOutline('edit', e.name)}>
-              <PenLine size={13} /> Reshape its outline
-            </button>
-            <button type="button" className="btn text-xs" onClick={() => onOutline('draw', e.name)}>
-              Redraw it
-            </button>
+        </div>
+        <h2 className="font-display text-2xl text-gold leading-tight">{e.name}</h2>
+        <div className="flex flex-wrap gap-1.5">
+          <Link to={`/e/${encodeURIComponent(e.id)}`} className="btn text-xs">
+            <ExternalLink size={13} /> Open
+          </Link>
+          {peek && (
+            <>
+              <button type="button" className="btn text-xs" onClick={() => peek.peek(e.id)} title="Read it in the inspector, beside the map">
+                <PanelRight size={13} /> Peek
+              </button>
+              <button type="button" className="btn text-xs" onClick={() => peek.openBeside(e.id)} title="Open its record in split view, beside the map">
+                <Columns2 size={13} /> Open beside
+              </button>
+            </>
+          )}
+        </div>
+      </header>
+      {/* The GM's tools for this place on this map. */}
+      <div className="px-4 py-3 border-b border-line bg-raised/40">
+        <div className="section-title text-[11px] mb-2">On this map</div>
+        <div className="flex flex-wrap gap-1.5">
+          {marker && (
             <button
               type="button"
               className="btn text-xs"
-              onClick={async () => {
-                if (await ask({ body: `Remove the outline of ${e.name}?`, danger: true, confirmLabel: 'Remove' })) void run(() => api.del(`/api/shapes/${outline.id}`));
-              }}
-            >
-              <Trash2 size={13} /> Remove outline
-            </button>
-          </>
-        ) : (
-          <button type="button" className="btn text-xs" onClick={() => onOutline('draw', e.name)}>
-            <PenLine size={13} /> Draw its outline
-          </button>
-        )}
-        {exploration && marker && (
-          <>
-            <button
-              type="button"
-              className={`btn text-xs ${discovered ? 'border-gold/70 text-gold' : ''}`}
+              aria-pressed={!marker.hidden}
               onClick={() =>
-                run(
-                  () =>
-                    api.post('/api/exploration/discover', {
-                      campaign_id: exploration.campaign_id,
-                      map_id: mapId,
-                      entity_id: id,
-                      discovered: !discovered,
-                    }),
-                  true,
+                run(() =>
+                  api.patch(`/api/markers/${marker.id}`, {
+                    hidden: !marker.hidden,
+                  }),
                 )
               }
             >
-              {discovered ? 'Discovered by the party' : 'Not yet discovered'}
+              {marker.hidden ? <EyeOff size={13} /> : <Eye size={13} />} {marker.hidden ? 'Hidden from players' : 'Shown to players'}
             </button>
-            <button type="button" className="btn text-xs" onClick={() => onTravel({ entity_id: id, x: marker.x, y: marker.y, label: e.name })}>
-              <Flag size={13} /> Travel here
+          )}
+          {outline ? (
+            <>
+              <button type="button" className="btn text-xs" onClick={() => onOutline('edit', e.name)}>
+                <PenLine size={13} /> Reshape its outline
+              </button>
+              <button type="button" className="btn text-xs" onClick={() => onOutline('draw', e.name)}>
+                Redraw it
+              </button>
+              <button
+                type="button"
+                className="btn text-xs"
+                onClick={async () => {
+                  if (await ask({ body: `Remove the outline of ${e.name}?`, danger: true, confirmLabel: 'Remove' })) void run(() => api.del(`/api/shapes/${outline.id}`));
+                }}
+              >
+                <Trash2 size={13} /> Remove outline
+              </button>
+            </>
+          ) : (
+            <button type="button" className="btn text-xs" onClick={() => onOutline('draw', e.name)}>
+              <PenLine size={13} /> Draw its outline
             </button>
-          </>
-        )}
+          )}
+          {exploration && marker && (
+            <>
+              <button
+                type="button"
+                className={`btn text-xs ${discovered ? 'border-gold/70 text-gold' : ''}`}
+                aria-pressed={discovered}
+                onClick={() =>
+                  run(
+                    () =>
+                      api.post('/api/exploration/discover', {
+                        campaign_id: exploration.campaign_id,
+                        map_id: mapId,
+                        entity_id: id,
+                        discovered: !discovered,
+                      }),
+                    true,
+                  )
+                }
+              >
+                {discovered ? 'Discovered by the party' : 'Not yet discovered'}
+              </button>
+              <button type="button" className="btn text-xs" onClick={() => onTravel({ entity_id: id, x: marker.x, y: marker.y, label: e.name })}>
+                <Flag size={13} /> Travel here
+              </button>
+            </>
+          )}
+        </div>
+        {err && <p className="text-danger text-xs mt-2">{err}</p>}
       </div>
-      {err && <p className="text-danger text-xs px-4 pt-2">{err}</p>}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
         {REGION_TYPES.has(e.type) && <RegionPanel id={e.id} onPick={onPick} />}
         {e.player_summary && (
-          <Section title="What players read" className="mb-4">
-            <Markdown text={e.player_summary} />
+          <Section title="What players read">
+            <Markdown text={e.player_summary} className="prose-lore prose-peek" />
           </Section>
         )}
-        {sections.map((s, i) => (
-          <div key={i}>
-            {s.heading && <h3 className="font-display text-gold/90 mt-3 mb-1">{s.heading}</h3>}
-            <Markdown text={s.content} />
-          </div>
-        ))}
+        {sections.map((s, i) => {
+          const inner = (
+            <section>
+              {s.heading && <h3 className="section-title mb-1">{s.heading}</h3>}
+              <Markdown text={s.content} className="prose-lore prose-peek" />
+            </section>
+          );
+          return s.secret || SECRET_HEADING_RE.test(s.heading) ? (
+            <GmOnly key={i} label={/\b(gm|dm) only\b/i.test(s.heading) ? null : undefined}>
+              {inner}
+            </GmOnly>
+          ) : (
+            <div key={i}>{inner}</div>
+          );
+        })}
       </div>
-      <div className="p-3 border-t border-line">
-        <Link to={`/e/${encodeURIComponent(e.id)}`} className="text-sm text-arcane">
-          Open its record
+      <div className="px-4 py-2.5 border-t border-line flex items-center gap-2">
+        <Link to={`/e/${encodeURIComponent(e.id)}`} className="text-sm text-arcane hover:text-gold inline-flex items-center gap-1">
+          Open its record <ArrowRight size={13} />
         </Link>
       </div>
     </div>
@@ -626,6 +667,7 @@ export function AtlasExplorer() {
         layers={layers ?? null}
         scaleMiles={m.scale_miles ?? null}
         sidebarSlot={sidebarSlot}
+        peekPins
         onOpenLink={(href) => nav(href)}
         fog="dim"
         notesKey="gm"

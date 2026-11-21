@@ -60,12 +60,14 @@ export const GLYPH: Record<Kind | 'note' | 'party', string> = {
   note: '<path d="M5 19l1-4L15 6l3 3-9 9zM14 7l3 3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
   party: '<path d="M7 21V4M7 4h11l-3 4 3 4H7" fill="currentColor" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>',
 };
-const pinIcon = (kind: Kind | 'note' | 'party', extra = '') =>
+const attr = (v: string) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+/** `peek`: the record behind the pin, so the GM app's Quick-Peek gives it a hover card (data-peek). */
+const pinIcon = (kind: Kind | 'note' | 'party', extra = '', peek?: string | null) =>
   L.divIcon({
     className: '',
     iconSize: [28, 28],
     iconAnchor: [14, 14],
-    html: `<div class="wk-pin wk-pin-k-${kind}${kind === 'region' ? ' wk-pin-region' : ''}${extra}"><svg viewBox="0 0 24 24" width="16" height="16">${GLYPH[kind]}</svg></div>`,
+    html: `<div class="wk-pin wk-pin-k-${kind}${kind === 'region' ? ' wk-pin-region' : ''}${extra}"${peek ? ` data-peek="${attr(peek)}"` : ''}><svg viewBox="0 0 24 24" width="16" height="16">${GLYPH[kind]}</svg></div>`,
   });
 
 /** The campaign on the map (GM only): each layer's things at a place, drawn as a small badge beside its pin. */
@@ -404,12 +406,24 @@ export interface MapViewProps {
   /** GM app: the app's sidebar, to hold the legend and the map switcher instead of the floating panel. While it is
    * collapsed (null), the floating legend comes back. */
   sidebarSlot?: HTMLElement | null;
+  /** GM app: pins that are records get the Quick-Peek hover card (and middle-click or a long press to peek) instead
+   * of the map's own name card. The handbook has no Quick-Peek, so it keeps the name cards. */
+  peekPins?: boolean;
 }
 
 export function MapView(p: MapViewProps) {
   const { map: m } = p;
   const [rel, setRel] = useState(0);
   const [lmap, setLmap] = useState<L.Map | null>(null);
+  // The view's own width (it narrows in split view and beside the inspector): where the banner fits beside the codex.
+  const [boxW, setBoxW] = useState(() => (typeof window === 'undefined' ? 1440 : window.innerWidth));
+  useEffect(() => {
+    if (!lmap || typeof ResizeObserver === 'undefined') return;
+    const el = lmap.getContainer();
+    const ro = new ResizeObserver(() => setBoxW(el.clientWidth));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [lmap]);
   const [zoom, setZoom] = useState(0);
   const [query, setQuery] = useState('');
   // Display choices, kept on this device: the map panels dark (the chart's palette) or in the app's theme; the overview.
@@ -460,6 +474,7 @@ export function MapView(p: MapViewProps) {
     wasInSidebar.current = inSidebar;
   }, [inSidebar, p.contained]);
   const fogMode = p.fog ?? 'hide';
+  const codexOpen = !!p.selected && !!p.codex && window.innerWidth >= 640;
 
   // Arriving with a place already chosen: fly to it.
   useEffect(() => {
@@ -824,12 +839,18 @@ export function MapView(p: MapViewProps) {
         })}
         {drawn.map((pin) => {
           const undiscovered = fogMode === 'dim' && !known(pin);
+          // A record's pin peeks (its hover card) rather than showing the name card too.
+          const peeks = !!p.peekPins && !!pin.entity_id && !editing;
           return (
             <Marker
               key={pin.id}
               position={[pin.y, pin.x]}
               draggable={!!p.draggable && !editing}
-              icon={pinIcon(pin.kind, `${pin.entity_id === p.selected ? ' wk-pin-active' : ''}${undiscovered ? ' wk-pin-undiscovered' : ''}${pin.hidden ? ' wk-pin-gmonly' : ''}`)}
+              icon={pinIcon(
+                pin.kind,
+                `${pin.entity_id === p.selected ? ' wk-pin-active' : ''}${undiscovered ? ' wk-pin-undiscovered' : ''}${pin.hidden ? ' wk-pin-gmonly' : ''}`,
+                peeks ? pin.entity_id : null,
+              )}
               zIndexOffset={pin.entity_id === p.selected ? 1000 : pin.kind === 'region' ? -100 : 0}
               eventHandlers={{
                 click: () => {
@@ -848,16 +869,18 @@ export function MapView(p: MapViewProps) {
                 },
               }}
             >
-              <Tooltip direction="top" offset={[0, -12]} className="wk-map-tip">
-                <div className="font-display text-[13px]">{pin.label}</div>
-                {pin.typeLabel && (
-                  <div className="text-[10px] uppercase tracking-wider opacity-70">
-                    {pin.typeLabel}
-                    {undiscovered ? ' · not yet discovered' : ''}
-                    {pin.hidden ? ' · hidden from players' : ''}
-                  </div>
-                )}
-              </Tooltip>
+              {!peeks && (
+                <Tooltip direction="top" offset={[0, -12]} className="wk-map-tip">
+                  <div className="font-display text-[13px]">{pin.label}</div>
+                  {pin.typeLabel && (
+                    <div className="text-[10px] uppercase tracking-wider opacity-70">
+                      {pin.typeLabel}
+                      {undiscovered ? ' · not yet discovered' : ''}
+                      {pin.hidden ? ' · hidden from players' : ''}
+                    </div>
+                  )}
+                </Tooltip>
+              )}
             </Marker>
           );
         })}
@@ -1012,8 +1035,17 @@ export function MapView(p: MapViewProps) {
           </div>
         </div>
       )}
-      {(p.banner || p.placing || addingNote) && (
-        <div className={`absolute ${inSidebar ? 'top-3' : 'top-16'} left-1/2 -translate-x-1/2 z-[1000] wk-map-btn pointer-events-auto text-center max-w-[90vw]`}>
+      {/* Beside the open codex in a narrow view, only prompts (placing, a note) show; the live notice waits. */}
+      {((p.banner && !(codexOpen && boxW < 900)) || p.placing || addingNote) && (
+        <div
+          className={`absolute left-1/2 -translate-x-1/2 wk-map-btn pointer-events-auto text-center max-w-[90%] ${
+            !codexOpen
+              ? `${inSidebar ? 'top-3' : 'top-16'} z-[1000]`
+              : boxW >= 900
+                ? `${inSidebar ? 'top-3' : 'top-16'} z-[1000] left-[calc((100%-27rem)/2)] max-w-[calc(100%-29rem)]`
+                : 'bottom-16 z-[1010]'
+          }`}
+        >
           {p.placing ? (
             <span>
               {p.placing.prompt}{' '}
@@ -1065,7 +1097,7 @@ export function MapView(p: MapViewProps) {
 
       {/* Codex: slides out from the right when a place is chosen. */}
       <aside
-        className={`wk-map-panel right-0 top-0 bottom-0 w-full sm:w-[420px] sm:right-3 ${inSidebar ? 'sm:top-3' : 'sm:top-16'} sm:bottom-3 ${p.selected && p.codex ? '' : 'wk-map-panel-hidden-right'}`}
+        className={`wk-map-panel right-0 top-0 bottom-0 w-full sm:w-[min(420px,calc(100%-1.5rem))] sm:right-3 ${inSidebar ? 'sm:top-3' : 'sm:top-16'} sm:bottom-3 ${p.selected && p.codex ? '' : 'wk-map-panel-hidden-right'}`}
       >
         {p.selected && p.codex}
       </aside>

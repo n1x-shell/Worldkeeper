@@ -9,7 +9,7 @@ import { Dices } from 'lucide-react';
 import { api, useApi } from '../../lib/api';
 import { Markdown } from '../Markdown';
 import { CreatureLinks } from '../CreatureLinks';
-import { Badge, Section } from '../ui';
+import { Badge, EntityLink, Section } from '../ui';
 
 interface Panel {
   region: { id: string; name: string; type: string };
@@ -61,9 +61,7 @@ export function RegionPanel({ id, onPick }: { id: string; onPick: (id: string) =
           {st.holder && (
             <div>
               <span className="text-dim">Held by </span>
-              <Link className="text-arcane" to={`/e/${st.holder.id}`}>
-                {st.holder.name}
-              </Link>
+              <EntityLink id={st.holder.id}>{st.holder.name}</EntityLink>
             </div>
           )}
           {st.agendas.length > 0 && (
@@ -148,7 +146,7 @@ export function RegionPanel({ id, onPick }: { id: string; onPick: (id: string) =
           <ul className="grid grid-cols-2 gap-x-3 gap-y-0.5">
             {places.map((p) => (
               <li key={p.id} className="truncate">
-                <button type="button" className="text-left text-arcane hover:text-gold truncate max-w-full" onClick={() => onPick(p.id)} title={p.name}>
+                <button type="button" className="text-left text-arcane hover:text-gold truncate max-w-full" onClick={() => onPick(p.id)} data-peek={p.id}>
                   {p.name}
                 </button>
               </li>
