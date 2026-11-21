@@ -197,8 +197,8 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
         <SaveStatus state={auto.state} error={auto.error} />
       </div>
       {alert && (
-        <div className="panel border-amber-500/60 bg-amber-500/10 p-2 text-sm flex items-center gap-2" role="alert">
-          <Brain size={14} className="text-amber-400" /> {alert}
+        <div className="panel border-warn/60 bg-warn/10 p-2 text-sm flex items-center gap-2" role="alert">
+          <Brain size={14} className="text-warn" /> {alert}
           <button className="btn-ghost ml-auto" onClick={() => setAlert(null)}>
             Dismiss
           </button>
@@ -264,7 +264,7 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
                       <input className="input w-12 py-0.5 text-center" value={c.maxHp} onChange={(e) => setC(c.id, (x) => ({ ...x, maxHp: Number(e.target.value) || 0 }))} aria-label="Max HP" />
                     </div>
                     <div className="h-1 bg-raised rounded mt-1">
-                      <div className={`h-full rounded ${pct > 0.5 ? 'bg-ok' : pct > 0.25 ? 'bg-amber-500' : 'bg-danger'}`} style={{ width: `${Math.max(0, Math.min(1, pct)) * 100}%` }} />
+                      <div className={`h-full rounded ${pct > 0.5 ? 'bg-ok' : pct > 0.25 ? 'bg-warn' : 'bg-danger'}`} style={{ width: `${Math.max(0, Math.min(1, pct)) * 100}%` }} />
                     </div>
                     {c.tempHp > 0 && <div className="text-[10px] text-arcane">+{c.tempHp} temp</div>}
                   </td>

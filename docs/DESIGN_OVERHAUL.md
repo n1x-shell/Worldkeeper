@@ -1,6 +1,6 @@
 # Design Overhaul: Product Requirements
 
-**Status:** Approved direction (owner answers recorded in section 3); step 1 next
+**Status:** Approved direction (owner answers recorded in section 3). Step 1 (tokens and themes) done in v0.3.7; step 2 next
 **Scope:** The look and layout of the GM app, the in-app Player View, the table server and the published Player Handbook. No changes to data, rules or what players can see.
 
 ## 1. Why

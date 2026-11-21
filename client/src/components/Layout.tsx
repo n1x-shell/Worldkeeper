@@ -59,6 +59,7 @@ import {
   Feather,
   KeyRound,
   Ghost,
+  Palette,
 } from 'lucide-react';
 import { useAppState } from '../lib/store';
 import { SearchPalette } from './SearchPalette';
@@ -153,6 +154,7 @@ const NAV: { title: string; items: Item[] }[] = [
       { to: '/history', label: 'Change History', icon: <History size={I} /> },
       { to: '/documents', label: 'Source Documents', icon: <BookOpen size={I} /> },
       { to: '/backups', label: 'Backups', icon: <Archive size={I} /> },
+      { to: '/style-guide', label: 'Style Guide', icon: <Palette size={I} /> },
       { to: '/settings', label: 'Settings', icon: <Settings size={I} /> },
     ],
   },

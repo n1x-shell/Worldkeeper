@@ -165,7 +165,7 @@ export function GraphPage() {
         </label>
       </div>
       {error && <ErrorBox error={error} />}
-      {data?.truncated && <p className="text-xs text-amber-400">Showing the first {data.nodes.length} records. Narrow the filters for a full view.</p>}
+      {data?.truncated && <p className="text-xs text-warn">Showing the first {data.nodes.length} records. Narrow the filters for a full view.</p>}
       <div className="panel h-[72vh]">
         {loading && !flow ? (
           <Loading />

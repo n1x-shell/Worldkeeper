@@ -206,8 +206,8 @@ export function NewEntity() {
         </p>
       )}
       {similar.length > 0 && (
-        <div className="panel border-amber-500/50 p-3 text-sm">
-          <div className="text-amber-400 mb-1">Already in your library? Link to one of these instead of creating a duplicate:</div>
+        <div className="panel border-warn/50 p-3 text-sm">
+          <div className="text-warn mb-1">Already in your library? Link to one of these instead of creating a duplicate:</div>
           <ul>
             {similar.slice(0, 8).map((s) => (
               <li key={s.id}>

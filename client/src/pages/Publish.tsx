@@ -185,7 +185,7 @@ export function PublishPage() {
             <a className="text-arcane underline inline-flex items-center gap-1" href={last.url} target="_blank" rel="noreferrer">
               {last.url} <ExternalLink size={12} />
             </a>
-            {last.pagesNote && <div className="text-amber-400">{last.pagesNote}</div>}
+            {last.pagesNote && <div className="text-warn">{last.pagesNote}</div>}
             <Dev>
               <div className="text-xs text-dim">
                 Uploaded {last.uploaded} changed files, {last.unchanged} unchanged · Pages: {last.pages}

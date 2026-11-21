@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-18 · v0.3.6_
+_Last updated: 2026-11-18 · v0.3.7_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,10 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.7
+
+- **Design overhaul, step 1: tokens and themes** (docs/DESIGN_OVERHAUL.md). **Warm Parchment is now the GM app's default theme**; Dark Codex stays one click away, and a saved choice is kept. Both themes were retuned so every text colour reaches WCAG AA on every surface, with new tokens for control borders, warnings, item rarity, the realms and canon labels (`tests/designTokens.test.ts` checks all of them). New shared styles: aligned numbers, three elevations, gilt title rules and title bands, gilt corner marks, an illuminated first letter, rarity tags and one GM-only treatment. Shared badges and the pages' warning and success colours now use the tokens, so they read on parchment. A **Style Guide** page (Library Management) shows every token and piece in both themes, with live contrast, and a **Reduce texture** switch for the parchment's paper grain. The player side keeps its current default until step 6.
 
 ## v0.3.6
 
