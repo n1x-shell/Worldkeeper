@@ -1,6 +1,6 @@
 # Design Overhaul: Product Requirements
 
-**Status:** Approved direction (owner answers recorded in section 3). Step 1 (tokens and themes) done in v0.3.7, step 2 (the shell) in v0.3.8, step 3 (the shared components) in v0.3.14, step 4 (Quick-Peek) in v0.3.15; step 5 next
+**Status:** Approved direction (owner answers recorded in section 3). Step 1 (tokens and themes) done in v0.3.7, step 2 (the shell) in v0.3.8, step 3 (the shared components) in v0.3.14, step 4 (Quick-Peek) in v0.3.15, step 5 (the key pages) in v0.3.16; step 6 next
 **Scope:** The look and layout of the GM app, the in-app Player View, the table server and the published Player Handbook. No changes to data, rules or what players can see.
 
 ## 1. Why
@@ -184,6 +184,14 @@ Shared components replace per-page styling. Each has default, hover, active, foc
 6. **World Dashboard** as the home page.
 
 The other pages get the shell and shared components without bespoke layouts.
+
+**As built (v0.3.16):**
+1. **Record page:** an illuminated title in a gilt title band (breadcrumb, aliases, badges; Favorite, Edit and a More menu), the lore as the hero in a ~72ch column, an "On this page" list when there's room, At a glance and the stat block beside it. The columns follow the width the page actually has (split view, the docked inspector). Its details (connections, mentioned in, latest changes) live in the inspector's "This page" tab (`useInspectorPanel`), which opens by itself at 1440px+ unless the GM closed it there, and show inline otherwise.
+2. **Party and Characters:** a party summary strip (size, levels, hit points, AC, best passive Perception), the roster as character cards (portrait, class and level, player, HP, AC, passive Perception, status), and the chosen sheet at full width under its toolbar. `?character=` follows the selection.
+3. **Session prep:** a session title band (status, dates, Start live session), "Your prep" as a featured card with the fields that matter first, then the board from the world: where the party is, quests in play, likely NPCs, clues, encounters (with Run), moving soon, adventures in play with their scenes, and tables — each with its count and "and N more".
+4. **Live Session:** a slim header (date, place, round and turn, Pinned, Prep notes, End session) over two panes: the tracker (now a two-line row per combatant, no sideways scroll), the quick log and the session log; beside them Scene, Map (the party's map, read-only, pins peek) and Record. The other tools fold below. The panes stack under 940px of page width.
+5. **Atlas explorer:** record pins hover-peek (middle-click and long press peek too); the place panel follows the inspector's header pattern with Open, Peek and Open beside.
+6. **World Dashboard:** a title band with a large search prompt, the active campaign featured (sessions, party, quests, and Prep / Go live / Party), recently viewed and favorites, realm cards in their colours, the state of the world (the Return, open questions, canon review; broken references in debug mode), then agendas, world events, mysteries, places, people and recent edits.
 
 ## 10. Player side
 

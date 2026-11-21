@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-21 · v0.3.15_
+_Last updated: 2026-11-21 · v0.3.16_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,10 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.16
+
+- **Design overhaul step 5: the six key pages at high fidelity** (`docs/DESIGN_OVERHAUL.md` §9, "As built"): the record page (illuminated title band, lore column, record details in the inspector's new "This page" tab via `useInspectorPanel`, which auto-opens at 1440px+), Party and Characters (summary strip, character cards, full-width sheet), Session prep (title band, "Your prep", the board from the world), Live Session (header with round and turn, tracker and log beside Scene / Map / Record, folding tools; the tracker is a two-line row per combatant), the Atlas explorer (record pins hover-peek, the place panel matches the inspector) and the World Dashboard. Links on parchment use a `parchlink` token. The top bar fits at 1440 (Player View shows its label from 1536px). The dev server's API target can be set with `WK_API`.
 
 ## v0.3.15
 

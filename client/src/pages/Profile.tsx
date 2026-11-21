@@ -200,7 +200,7 @@ function SourceCell({ values }: { values: SourceValue[] }) {
               <BookOpen size={10} /> {v.from}
             </div>
           </Dev>
-          <Markdown text={named(v.text.length > 900 ? v.text.slice(0, 900) + '…' : v.text)} className="prose-lore text-[14px] text-parchink [&_p]:my-1 [&_a]:!text-[#3b4a8f] [&_strong]:!text-parchink" />
+          <Markdown text={named(v.text.length > 900 ? v.text.slice(0, 900) + '…' : v.text)} className="prose-lore text-[14px] text-parchink [&_p]:my-1 [&_a]:!text-parchlink [&_strong]:!text-parchink" />
         </div>
       ))}
     </div>

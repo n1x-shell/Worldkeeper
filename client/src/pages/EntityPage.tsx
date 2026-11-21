@@ -586,7 +586,7 @@ function Fact({ k, v }: { k: string; v: string }) {
     <div className="min-w-0">
       <dt className="text-[11px] uppercase tracking-wider opacity-60">{k}</dt>
       <dd className="font-serif text-[15px] leading-snug break-words">
-        <Markdown text={v} className="[&_p]:my-0 [&_a]:!text-[#3b4a8f]" />
+        <Markdown text={v} className="[&_p]:my-0 [&_a]:!text-parchlink" />
       </dd>
     </div>
   );
@@ -1127,7 +1127,7 @@ function RelationshipsTab({ entityId, rels, onChange }: { entityId: string; rels
 
 // ------------------------------------------------------------------ Player view
 /** Lore on the parchment card stays dark-on-paper in both themes. */
-const ON_PAPER = '[&_h2]:!text-parchink [&_h2]:!border-parchink/20 [&_strong]:!text-parchink [&_a]:!text-[#3b4a8f] [&_blockquote]:!text-parchink/80 [&_table]:!border-parchink/25 [&_th]:!border-parchink/25 [&_td]:!border-parchink/25 [&_th]:!bg-parchink/10 [&_th]:!text-parchink';
+const ON_PAPER = '[&_h2]:!text-parchink [&_h2]:!border-parchink/20 [&_strong]:!text-parchink [&_a]:!text-parchlink [&_blockquote]:!text-parchink/80 [&_table]:!border-parchink/25 [&_th]:!border-parchink/25 [&_td]:!border-parchink/25 [&_th]:!bg-parchink/10 [&_th]:!text-parchink';
 function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { heading: string; secret: boolean }[]; onPatch: (b: Record<string, unknown>, m?: string) => Promise<void> }) {
   const debug = useDebug();
   const [summary, setSummary] = useState(entity.player_summary);
