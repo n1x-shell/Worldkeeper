@@ -52,7 +52,7 @@ export function ProfilePanel({ entityId, entityName }: { entityId: string; entit
   const camp = data.fields.filter((f) => f.scope === 'campaign');
   return (
     <div className="space-y-6">
-      <p className="text-sm text-dim">What your lore says about {entityName} sits beside your own notes. Your notes never change the record itself.</p>
+      <p className="text-sm text-dim max-w-[72ch]">What your lore says about {entityName} sits beside your own notes. Your notes never change the record itself.</p>
       <ScopeEditor key={`w-${entityId}`} title="In every campaign" subtitle="Your notes about who they are." fields={world} data={data} scope="world" campaignId={null} onSaved={reload} />
       {activeCampaignId ? (
         <ScopeEditor
@@ -116,18 +116,27 @@ function ScopeEditor({
     setValues(next);
     auto.schedule(next);
   };
+  // The world scope shows the lore beside the GM's notes; the campaign scope has only the GM's notes.
+  const cols = scope === 'world' ? 'lg:grid-cols-[180px_minmax(0,1fr)_minmax(0,1fr)]' : 'lg:grid-cols-[180px_minmax(0,1fr)]';
   return (
     <Card flush title={title} aside={subtitle} actions={<SaveStatus state={auto.state} error={auto.error} />}>
       {err && <ErrorBox error={err} />}
+      {scope === 'world' && (
+        <div className={`hidden lg:grid gap-3 ${cols} border-t border-line bg-raised/40 px-4 py-1.5 text-[11px] uppercase tracking-wider text-dim`} aria-hidden>
+          <span />
+          <span>From your lore</span>
+          <span>Your notes</span>
+        </div>
+      )}
       <div className="divide-y divide-line/60 border-t border-line">
         {fields.map((f) => {
           const row = (
-            <div className={`grid gap-3 lg:grid-cols-[180px_1fr_1fr] ${f.secret ? '' : 'p-4'}`}>
+            <div className={`grid gap-x-4 gap-y-2 ${cols} ${f.secret ? 'py-2 pr-1' : 'px-4 py-3.5'}`}>
               <div>
                 <div className="text-sm font-medium">{f.label}</div>
                 {f.hint && <div className="text-[11px] text-dim mt-0.5">{f.hint}</div>}
               </div>
-              <SourceCell values={data.source[f.key] ?? []} scope={scope} />
+              {scope === 'world' && <SourceCell values={data.source[f.key] ?? []} />}
               <div>
                 <FieldEditor
                   field={f}
@@ -150,12 +159,13 @@ function ScopeEditor({
             </div>
           );
           return f.secret ? (
-            <div key={f.key} className="p-2">
+            <div key={f.key} className="px-2 py-1.5">
               <GmOnly
                 inline
+                className="!pl-3.5"
                 label={
                   <span className="inline-flex items-center gap-1">
-                    <Lock size={11} /> GM only
+                    <Lock size={10} aria-hidden /> GM only
                   </span>
                 }
               >
@@ -171,11 +181,18 @@ function ScopeEditor({
   );
 }
 
-function SourceCell({ values, scope }: { values: SourceValue[]; scope: 'world' | 'campaign' }) {
-  if (scope === 'campaign') return <div />;
-  if (!values.length) return <div className="text-xs text-dim self-center">UNDEFINED</div>;
+function SourceCell({ values }: { values: SourceValue[] }) {
+  const { index } = useAppState();
+  if (!values.length)
+    return (
+      <div className="text-xs text-dim self-start lg:pt-2" title="Your lore does not say">
+        <span className="lg:hidden">From your lore: </span>UNDEFINED
+      </div>
+    );
+  // A bare reference ("[SET-001]") reads as the record's name.
+  const named = (t: string) => t.replace(/(^|[^\w\]])\[([A-Z]{2,5}-[\w-]+)\]/g, (_m, pre: string, id: string) => `${pre}[${(index.get(id)?.name ?? id).replace(/([\\[\]])/g, '\\$1')}](wk:${id})`);
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 min-w-0">
       {values.map((v, i) => (
         <div key={i} className="parchment px-3 py-2">
           <Dev>
@@ -183,7 +200,7 @@ function SourceCell({ values, scope }: { values: SourceValue[]; scope: 'world' |
               <BookOpen size={10} /> {v.from}
             </div>
           </Dev>
-          <Markdown text={v.text.length > 900 ? v.text.slice(0, 900) + '…' : v.text} className="prose-lore text-[14px] text-parchink [&_p]:my-1 [&_a]:text-[#3b4a8f]" />
+          <Markdown text={named(v.text.length > 900 ? v.text.slice(0, 900) + '…' : v.text)} className="prose-lore text-[14px] text-parchink [&_p]:my-1 [&_a]:!text-[#3b4a8f] [&_strong]:!text-parchink" />
         </div>
       ))}
     </div>
