@@ -62,7 +62,7 @@ export function DataTable<T>({
     const out = [...rows].sort((a, b) => cmp(val(a), val(b)));
     return sort.dir === 'desc' ? out.reverse() : out;
   }, [rows, sort, columns]);
-  const alignOf = (c: Column<T>) => (c.align ?? (c.num ? 'right' : 'left'));
+  const alignOf = (c: Column<T>) => c.align ?? (c.num ? 'right' : 'left');
   return (
     <div className={`overflow-auto ${className}`} style={maxHeight ? { maxHeight } : undefined}>
       <table className="table data-table">

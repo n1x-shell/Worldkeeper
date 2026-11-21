@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-21 · v0.3.13_
+_Last updated: 2026-11-21 · v0.3.14_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,10 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.14
+
+- **Design overhaul step 3: the shared components** (`client/src/components/ui/`, see `docs/DESIGN_OVERHAUL.md` §7), applied across every GM page. Titled panels are Cards (featured ones with gilt corners); GM-only text everywhere, record secrets and Markdown `wk-secret` blocks included, has the same stitched red margin and "GM only" label (GmOnly); read-only lists are sortable DataTables with sticky headers and tabular numbers; the tracker's hit points are HpBar and HpStepper, its conditions ConditionChips; settings that take effect at once are switches (Toggle, role "switch"), filters and list choices checkboxes (Check); one-of-a-few choices are Segmented controls (theme, rumour truth, mystery state, treasure kind, book sections, timeline realm); badges use tones, not raw colours; empties say what's missing and offer the next step; loading shows skeleton lines. Every `confirm()`, `prompt()` and `alert()` is now the app's own dialog (`ask()`, `askText()`, `toast()`), in the player sheet and builder too. The relationship graph follows the theme. Stat blocks' traits and actions fold. The style guide shows the whole set. E2E answers the app's dialogs.
 
 ## v0.3.13
 

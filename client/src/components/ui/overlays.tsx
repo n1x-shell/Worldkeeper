@@ -70,7 +70,21 @@ export function Drawer({ title, onClose, children, side = 'right', width = 380 }
   );
 }
 
-export function Confirm({ title, body, confirmLabel = 'Confirm', danger, onConfirm, onCancel }: { title: string; body: ReactNode; confirmLabel?: string; danger?: boolean; onConfirm: () => void; onCancel: () => void }) {
+export function Confirm({
+  title,
+  body,
+  confirmLabel = 'Confirm',
+  danger,
+  onConfirm,
+  onCancel,
+}: {
+  title: string;
+  body: ReactNode;
+  confirmLabel?: string;
+  danger?: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
   return (
     <Modal title={title} onClose={onCancel}>
       <div className="text-sm space-y-4">
@@ -185,7 +199,16 @@ export function ConfirmHost() {
     cur.resolve(ok);
     setQueue((q) => q.slice(1));
   };
-  return <Confirm title={cur.title ?? 'Are you sure?'} body={cur.body} confirmLabel={cur.confirmLabel ?? (cur.danger ? 'Delete' : 'OK')} danger={cur.danger} onConfirm={() => done(true)} onCancel={() => done(false)} />;
+  return (
+    <Confirm
+      title={cur.title ?? 'Are you sure?'}
+      body={cur.body}
+      confirmLabel={cur.confirmLabel ?? (cur.danger ? 'Delete' : 'OK')}
+      danger={cur.danger}
+      onConfirm={() => done(true)}
+      onCancel={() => done(false)}
+    />
+  );
 }
 
 export function Toast({ message, onDone, tone = 'gold' }: { message: ReactNode; onDone: () => void; tone?: 'gold' | 'danger' | 'ok' }) {

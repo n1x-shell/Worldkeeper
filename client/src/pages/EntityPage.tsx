@@ -197,7 +197,7 @@ export function EntityPage() {
           <article className="panel elev-1 p-5 min-w-0">
             {displaySections(e.body, debug).map((s, i) =>
               s.secret ? (
-                <GmOnly key={i} className="my-3">
+                <GmOnly key={i} className="my-3" label={/\b(gm|dm) only\b/i.test(s.heading) ? null : undefined}>
                   <Markdown text={`## ${s.heading}\n\n${s.content}`} />
                 </GmOnly>
               ) : (

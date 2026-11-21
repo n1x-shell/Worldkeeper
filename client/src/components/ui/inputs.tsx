@@ -28,7 +28,21 @@ export function Select({ className = '', children, ...p }: SelectHTMLAttributes<
  * An on/off switch for a setting that takes effect at once ("Players see it", "Revealed"). It is a real checkbox
  * (role "switch"), so it works with the keyboard and screen readers.
  */
-export function Toggle({ checked, onChange, children, hint, disabled, className = '' }: { checked: boolean; onChange: (v: boolean) => void; children?: ReactNode; hint?: ReactNode; disabled?: boolean; className?: string }) {
+export function Toggle({
+  checked,
+  onChange,
+  children,
+  hint,
+  disabled,
+  className = '',
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  children?: ReactNode;
+  hint?: ReactNode;
+  disabled?: boolean;
+  className?: string;
+}) {
   return (
     <label className={`inline-flex items-start gap-2 text-sm cursor-pointer ${disabled ? 'opacity-60 cursor-default' : ''} ${className}`}>
       <input type="checkbox" role="switch" className="toggle" checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} aria-checked={checked} />
@@ -43,7 +57,23 @@ export function Toggle({ checked, onChange, children, hint, disabled, className 
 }
 
 /** A checkbox with its label: for choosing things (a filter, items in a list), where a switch would be odd. */
-export function Check({ checked, onChange, children, hint, disabled, className = '', label }: { checked: boolean; onChange: (v: boolean) => void; children?: ReactNode; hint?: ReactNode; disabled?: boolean; className?: string; label?: string }) {
+export function Check({
+  checked,
+  onChange,
+  children,
+  hint,
+  disabled,
+  className = '',
+  label,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  children?: ReactNode;
+  hint?: ReactNode;
+  disabled?: boolean;
+  className?: string;
+  label?: string;
+}) {
   return (
     <label className={`inline-flex items-start gap-2 text-sm cursor-pointer ${disabled ? 'opacity-60 cursor-default' : ''} ${className}`}>
       <input type="checkbox" className="check" checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} aria-label={label} />
@@ -58,7 +88,21 @@ export function Check({ checked, onChange, children, hint, disabled, className =
 }
 
 /** One choice from a few, side by side. Arrow keys move the choice. */
-export function Segmented<T extends string>({ options, value, onChange, label, size = 'md', disabled }: { options: { value: T; label: ReactNode; title?: string }[]; value: T; onChange: (v: T) => void; label: string; size?: 'sm' | 'md'; disabled?: boolean }) {
+export function Segmented<T extends string>({
+  options,
+  value,
+  onChange,
+  label,
+  size = 'md',
+  disabled,
+}: {
+  options: { value: T; label: ReactNode; title?: string }[];
+  value: T;
+  onChange: (v: T) => void;
+  label: string;
+  size?: 'sm' | 'md';
+  disabled?: boolean;
+}) {
   const keys = (e: KeyboardEvent) => {
     const i = options.findIndex((o) => o.value === value);
     const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;

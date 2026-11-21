@@ -45,10 +45,10 @@ export function ErrorBox({ error, onRetry }: { error: Error | string; onRetry?: 
 /** Nothing here yet: a title, a line on why, and one clear next step (`action`). `compact` for inside a card. */
 export function Empty({ title, children, action, icon, compact }: { title: string; children?: ReactNode; action?: ReactNode; icon?: ReactNode; compact?: boolean }) {
   return (
-    <div className={compact ? 'py-4 text-center' : 'panel p-8 text-center'}>
+    <div className={compact ? 'py-3 text-center' : 'panel p-8 text-center'}>
       {icon && <div className="flex justify-center text-gold/60 mb-2">{icon}</div>}
-      <p className={`font-display text-gold/80 ${compact ? 'text-sm' : ''}`}>{title}</p>
-      {children && <div className="mt-2 text-sm text-dim">{children}</div>}
+      <p className={compact ? 'text-sm text-dim italic' : 'font-display text-gold/80'}>{title}</p>
+      {children && <div className={`text-dim ${compact ? 'mt-1 text-xs' : 'mt-2 text-sm'}`}>{children}</div>}
       {action && <div className="mt-4 flex justify-center gap-2">{action}</div>}
     </div>
   );

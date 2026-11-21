@@ -412,9 +412,12 @@ export function CharacterBuilder() {
                 <button className="btn" onClick={() => void navigator.clipboard?.writeText(JSON.stringify(sheet, null, 2))} title="The whole sheet as text, to keep or share">
                   <Copy size={14} /> Copy as text
                 </button>
-                <button className="btn-ghost ml-auto" onClick={async () => {
+                <button
+                  className="btn-ghost ml-auto"
+                  onClick={async () => {
                     if (await ask({ title: 'Start again?', body: 'This build is cleared.', danger: true, confirmLabel: 'Start again' })) (save(EMPTY_BUILD), setStep(0));
-                  }}>
+                  }}
+                >
                   <RotateCcw size={14} /> Start again
                 </button>
               </div>

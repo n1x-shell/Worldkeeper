@@ -948,9 +948,11 @@ export function SettingsPage() {
           />
         </div>
         {theme === 'light' && (
-          <Toggle className="flex" checked={!texture} onChange={(v) => toggleTexture(!v)}>
-            Reduce texture <span className="text-dim">(no paper grain on the background)</span>
-          </Toggle>
+          <div>
+            <Toggle checked={!texture} onChange={(v) => toggleTexture(!v)}>
+              Reduce texture <span className="text-dim">(no paper grain on the background)</span>
+            </Toggle>
+          </div>
         )}
         <button
           className="btn-primary"

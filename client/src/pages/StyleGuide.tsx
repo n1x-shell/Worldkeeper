@@ -144,8 +144,22 @@ export function StyleGuidePage() {
               value={theme}
               onChange={setTheme}
               options={[
-                { value: 'light', label: <span className="inline-flex items-center gap-1.5"><Sun size={14} /> Warm Parchment</span> },
-                { value: 'dark', label: <span className="inline-flex items-center gap-1.5"><Moon size={14} /> Dark Codex</span> },
+                {
+                  value: 'light',
+                  label: (
+                    <span className="inline-flex items-center gap-1.5">
+                      <Sun size={14} /> Warm Parchment
+                    </span>
+                  ),
+                },
+                {
+                  value: 'dark',
+                  label: (
+                    <span className="inline-flex items-center gap-1.5">
+                      <Moon size={14} /> Dark Codex
+                    </span>
+                  ),
+                },
               ]}
             />
             <Toggle checked={!texture} onChange={(v) => toggleTexture(!v)}>
@@ -264,7 +278,15 @@ export function StyleGuidePage() {
           </button>
         </div>
         {demo.dialog && (
-          <Modal title="A dialog" onClose={() => setDemo({ ...demo, dialog: false })} footer={<button className="btn-primary" onClick={() => setDemo({ ...demo, dialog: false })}>Done</button>}>
+          <Modal
+            title="A dialog"
+            onClose={() => setDemo({ ...demo, dialog: false })}
+            footer={
+              <button className="btn-primary" onClick={() => setDemo({ ...demo, dialog: false })}>
+                Done
+              </button>
+            }
+          >
             <p className="text-sm">Dialogs sit at the third elevation. Esc or a click outside closes them.</p>
           </Modal>
         )}

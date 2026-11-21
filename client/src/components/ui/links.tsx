@@ -8,7 +8,12 @@ export function EntityLink({ id, children, className = '' }: { id: string; child
   const { index, indexLoaded } = useAppState();
   const e = index.get(id);
   const { debug } = useAppState();
-  if (indexLoaded && !e) return <span className="text-danger underline decoration-wavy" title={debug ? `No record with ID ${id}` : 'This record no longer exists'}>{children ?? (debug ? id : 'missing record')}</span>;
+  if (indexLoaded && !e)
+    return (
+      <span className="text-danger underline decoration-wavy" title={debug ? `No record with ID ${id}` : 'This record no longer exists'}>
+        {children ?? (debug ? id : 'missing record')}
+      </span>
+    );
   return (
     <Link to={`/e/${encodeURIComponent(id)}`} className={`text-arcane hover:text-gold ${className}`} title={debug && e ? `${e.name} · ${id}` : undefined}>
       {children ?? e?.name ?? id}

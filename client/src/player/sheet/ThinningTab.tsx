@@ -119,7 +119,8 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
               <button
                 className="btn-ghost text-sm"
                 onClick={async () => {
-                  if (await ask({ title: 'Strike this memory?', body: `Strike "${m.text}" for good? Lost memories don't come back.`, danger: true, confirmLabel: 'Strike it' })) set({ memories: page.memories.map((x) => (x === m ? { ...x, struck: true } : x)) }, true);
+                  if (await ask({ title: 'Strike this memory?', body: `Strike "${m.text}" for good? Lost memories don't come back.`, danger: true, confirmLabel: 'Strike it' }))
+                    set({ memories: page.memories.map((x) => (x === m ? { ...x, struck: true } : x)) }, true);
                 }}
               >
                 Strike
