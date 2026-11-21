@@ -41,6 +41,7 @@ import {
   type Build,
   type Improvement,
 } from './builder/compute';
+import { ask, askText, toast } from '../components/ui/overlays';
 
 /**
  * The character builder: a complete D&D 2024 character at any level, one step at a time, with the sheet building
@@ -171,14 +172,16 @@ export function CharacterBuilder() {
     } catch {
       /* private window */
     }
-    if (!code) code = (prompt('Your character code, from your GM:') ?? '').trim().toUpperCase();
+    if (!code) code = ((await askText({ title: 'Your character code', label: 'The code from your GM', confirmLabel: 'Continue' })) ?? '').trim().toUpperCase();
     if (!code || !source.myPage || !source.saveMyPage) return;
     const page = await source.myPage(code);
-    if (!page) return alert(`No character has the code ${code}. Check it with your GM.`);
+    if (!page) return toast(`No character has the code ${code}. Check it with your GM.`, 'danger');
     if (
-      !confirm(
-        `Replace ${page.name}'s sheet with this build? Everything on the sheet is replaced (your GM's notes and your character page are kept). The level stays ${page.level}, as your GM set it.`,
-      )
+      !(await ask({
+        title: `Replace ${page.name}'s sheet?`,
+        body: `Everything on the sheet is replaced with this build (your GM's notes and your character page are kept). The level stays ${page.level}, as your GM set it.`,
+        confirmLabel: 'Replace the sheet',
+      }))
     )
       return;
     const built = b.level === page.level ? sheet : buildSheet({ ...b, level: page.level }, { world, speciesRules: people?.rules ?? null, text, spells });
@@ -409,7 +412,9 @@ export function CharacterBuilder() {
                 <button className="btn" onClick={() => void navigator.clipboard?.writeText(JSON.stringify(sheet, null, 2))} title="The whole sheet as text, to keep or share">
                   <Copy size={14} /> Copy as text
                 </button>
-                <button className="btn-ghost ml-auto" onClick={() => (confirm('Start again? This build is cleared.') ? (save(EMPTY_BUILD), setStep(0)) : undefined)}>
+                <button className="btn-ghost ml-auto" onClick={async () => {
+                    if (await ask({ title: 'Start again?', body: 'This build is cleared.', danger: true, confirmLabel: 'Start again' })) (save(EMPTY_BUILD), setStep(0));
+                  }}>
                   <RotateCcw size={14} /> Start again
                 </button>
               </div>

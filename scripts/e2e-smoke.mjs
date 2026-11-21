@@ -108,8 +108,10 @@ try {
   await page.getByPlaceholder('What happened? (Ctrl+Enter to save)').fill('The party arrived at the Crooked Nail.');
   await page.getByRole('button', { name: 'Save to log' }).click();
   await expectText('The party arrived at the Crooked Nail.');
-  page.once('dialog', (d) => d.accept('Ambush'));
   await page.getByRole('button', { name: 'New encounter' }).click();
+  // The app asks in its own dialog (not the browser's).
+  await page.getByRole('dialog').getByRole('textbox').fill('Ambush');
+  await page.getByRole('dialog').getByRole('textbox').press('Enter');
   await page.getByPlaceholder('Bandit, wolf…').fill('Bandit');
   await page.locator('input').filter({ hasText: '' });
   await page.getByRole('button', { name: 'Add', exact: true }).click();
@@ -118,8 +120,8 @@ try {
   await expectText('Round 1');
   await shot(page, '07-live');
   step('live session: log + encounter with initiative');
-  page.once('dialog', (d) => d.accept());
   await page.getByRole('button', { name: 'End session' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'End session' }).click();
   await page.waitForURL(/\/session\//);
   await page.getByRole('tab', { name: 'Recap' }).click();
   await page.getByRole('button', { name: /Generate draft/ }).click();

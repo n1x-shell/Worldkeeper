@@ -35,6 +35,7 @@ import { UserRound, Printer,
 import { usePlayer, usePlayerIndex } from './context';
 import { PLAYER_GROUPS, PLAYER_REALMS, OTHER_GROUP } from './categories';
 import { PlayerLiveCard } from './LivePlay';
+import { ConfirmHost, ToastHost } from '../components/ui/overlays';
 
 const I = 16;
 const GROUP_ICONS: Record<string, ReactNode> = {
@@ -235,6 +236,8 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
             <PlayerLiveCard />
           </div>
         </main>
+      <ConfirmHost />
+      <ToastHost />
       </div>
     </div>
   );

@@ -6,6 +6,7 @@
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
 import { Rule } from './parts';
+import { ask } from '../../components/ui/overlays';
 
 export interface ThinningPage {
   true_name: string;
@@ -117,8 +118,8 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
               />
               <button
                 className="btn-ghost text-sm"
-                onClick={() => {
-                  if (confirm(`Strike "${m.text}" for good? Lost memories don't come back.`)) set({ memories: page.memories.map((x) => (x === m ? { ...x, struck: true } : x)) }, true);
+                onClick={async () => {
+                  if (await ask({ title: 'Strike this memory?', body: `Strike "${m.text}" for good? Lost memories don't come back.`, danger: true, confirmLabel: 'Strike it' })) set({ memories: page.memories.map((x) => (x === m ? { ...x, struck: true } : x)) }, true);
                 }}
               >
                 Strike
