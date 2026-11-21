@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-21 · v0.3.17_
+_Last updated: 2026-11-21 · v0.4.0_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,11 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.4.0 "Illuminated"
+
+- **The design overhaul is complete** (`docs/DESIGN_OVERHAUL.md`, steps 1 to 7, v0.3.7 to v0.4.0): Warm Parchment and Dark Codex themes on one set of tokens; the shell with five workspaces; the shared components; Quick-Peek (hover cards, the inspector, split view, pinned stat blocks); the six key pages at high fidelity; the player side (the table server and the published handbook) on the same design, kept free of GM code by `tests/playerBundle.test.ts`.
+- **Docs:** new README screenshots (`docs/images/`, listed in its README), a Quick-Peek section and the themes in `docs/FEATURES.md`, the new keys in `docs/DEVELOPMENT.md` (`]`, `Esc`, middle-click), prep and live play in `docs/QUICKSTART.md`, and the handbook's navigation in `docs/PLAYER_VIEW.md`.
 
 ## v0.3.17
 

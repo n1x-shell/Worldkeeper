@@ -55,6 +55,9 @@ Use a supported Rust toolchain and your OS-specific dependencies for desktop pac
 | `Ctrl+K` or `/` | Global search |
 | `Alt+D` | DM screen |
 | `[` or `Ctrl+\` | Collapse/expand the sidebar (its icon rail) |
+| `]` | Open or close the inspector (peeked records, the page's own details, pinned stat blocks) |
+| `Esc` | Close the hover card, the inspector or a dialog |
+| Middle-click a record link | Peek it into the inspector |
 | `Ctrl+Enter` | Save live-session log entry |
 | `@` in a text area | Suggest a record; `Enter`/`Tab` selects, `Esc` cancels |
 
