@@ -54,7 +54,7 @@ Use a supported Rust toolchain and your OS-specific dependencies for desktop pac
 | --- | --- |
 | `Ctrl+K` or `/` | Global search |
 | `Alt+D` | DM screen |
-| `Ctrl+\` | Collapse/expand sidebar |
+| `[` or `Ctrl+\` | Collapse/expand the sidebar (its icon rail) |
 | `Ctrl+Enter` | Save live-session log entry |
 | `@` in a text area | Suggest a record; `Enter`/`Tab` selects, `Esc` cancels |
 

@@ -1,183 +1,109 @@
+/**
+ * The app shell (docs/DESIGN_OVERHAUL.md, sections 4 and 5): a top bar with the five workspaces (Codex, Campaign,
+ * Characters, Atlas, Live), search, the active campaign, Player View, the theme and the Library menu; a sidebar with
+ * the current workspace's pages, collapsible to an icon rail; and the page itself. URLs are unchanged: this only
+ * decides where each link sits.
+ */
 import { useMechanics } from '../lib/mechanics';
-import type { Mechanics } from '../../../shared/mechanics';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import {
-  MessageCircleQuestion,
-  Atom,
-  BookOpen,
-  BookMarked,
-  CalendarDays,
-  Castle,
-  Printer,
-  ChevronsLeft,
-  ChevronsRight,
-  Clock,
-  Compass,
-  Crown,
-  Dice5,
-  Eye,
-  FileWarning,
-  Flag,
-  Gem,
-  Gift,
-  Globe2,
-  History,
-  Home,
-  Landmark,
-  Library,
-  ListChecks,
-  CircleHelp,
-  Map as MapIcon,
-  MapPinned,
-  Moon,
-  Network,
-  NotebookPen,
-  Scale,
-  ScrollText,
-  Search,
-  Settings,
-  Shield,
-  Skull,
-  Sparkles,
-  Sun,
-  Swords,
-  Table2,
-  Users,
-  UserSquare2,
-  Signature,
-  Eclipse,
-  Archive,
-  Upload,
-  Drama,
-  Flame,
-  Mountain,
-  Waypoints,
-  HeartPulse,
-  Gavel,
-  LibraryBig,
-  Feather,
-  KeyRound,
-  Ghost,
-  Palette,
-} from 'lucide-react';
+import { BookMarked, Check, ChevronDown, ChevronsLeft, ChevronsRight, Compass, Eye, MapPinned, Menu, Moon, Search, Settings, Sun, X } from 'lucide-react';
 import { useAppState } from '../lib/store';
+import { api } from '../lib/api';
 import { SearchPalette } from './SearchPalette';
+import { DEBUG_ONLY, LIBRARY, NEEDS, WORKSPACES, matches, workspaceFor, type Group, type Item } from './navigation';
 
-type Item = { to: string; label: string; icon: ReactNode };
 const I = 16;
-const NAV: { title: string; items: Item[] }[] = [
-  {
-    title: 'World',
-    items: [
-      { to: '/', label: 'World Dashboard', icon: <Home size={I} /> },
-      { to: '/world', label: 'World Overview', icon: <Globe2 size={I} /> },
-      { to: '/atlas', label: 'World Atlas', icon: <MapIcon size={I} /> },
-      { to: '/realm/aetheris', label: 'Aetheris', icon: <Mountain size={I} /> },
-      { to: '/realm/kaelmar', label: 'Kaelmar', icon: <Flame size={I} /> },
-      { to: '/realm/ethereal', label: 'Ethereal Realm', icon: <Ghost size={I} /> },
-      { to: '/timeline', label: 'World Timeline', icon: <Clock size={I} /> },
-      { to: '/browse/cosmology', label: 'Cosmology', icon: <Atom size={I} /> },
-      { to: '/browse/pantheon', label: 'Pantheon', icon: <Crown size={I} /> },
-      { to: '/browse/cultures', label: 'Cultures and Peoples', icon: <Users size={I} /> },
-      { to: '/browse/magic', label: 'Magic Systems', icon: <Sparkles size={I} /> },
-    ],
-  },
-  {
-    title: 'Encyclopedia',
-    items: [
-      { to: '/browse/all', label: 'All Lore', icon: <Library size={I} /> },
-      { to: '/browse/regions', label: 'Regions and Settlements', icon: <Castle size={I} /> },
-      { to: '/browse/landmarks', label: 'Landmarks and Buildings', icon: <Landmark size={I} /> },
-      { to: '/browse/npcs', label: 'NPCs', icon: <UserSquare2 size={I} /> },
-      { to: '/browse/factions', label: 'Factions and Cults', icon: <Flag size={I} /> },
-      { to: '/browse/artifacts', label: 'Shards and Artifacts', icon: <Gem size={I} /> },
-      { to: '/browse/creatures', label: 'Creatures', icon: <Skull size={I} /> },
-      { to: '/browse/events', label: 'Historical Events', icon: <ScrollText size={I} /> },
-      { to: '/mysteries', label: 'Mysteries and Secrets', icon: <Eye size={I} /> },
-      { to: '/graph', label: 'Relationships', icon: <Network size={I} /> },
-    ],
-  },
-  {
-    title: 'Campaigns',
-    items: [
-      { to: '/campaigns', label: 'All Campaigns', icon: <BookMarked size={I} /> },
-      { to: '/campaign', label: 'Active Campaign', icon: <Compass size={I} /> },
-      { to: '/campaign/adventures', label: 'Adventures', icon: <MapPinned size={I} /> },
-      { to: '/campaign/arcs', label: 'Story Arcs', icon: <Waypoints size={I} /> },
-      { to: '/campaign/quests', label: 'Quests', icon: <ListChecks size={I} /> },
-      { to: '/campaign/standing', label: 'Faction Standing', icon: <Scale size={I} /> },
-      { to: '/campaign/faction-web', label: 'Faction Web', icon: <Network size={I} /> },
-      { to: '/campaign/return', label: 'The Return', icon: <Eclipse size={I} /> },
-      { to: '/campaign/treasure', label: 'Treasure', icon: <Gem size={I} /> },
-      { to: '/campaign/handouts', label: 'Handouts', icon: <Gift size={I} /> },
-      { to: '/campaign/bastions', label: 'Bastions and Downtime', icon: <Castle size={I} /> },
-      { to: '/campaign/sessions', label: 'Sessions', icon: <BookOpen size={I} /> },
-      { to: '/campaign/calendar', label: 'Calendar', icon: <CalendarDays size={I} /> },
-      { to: '/campaign/regions', label: 'State of the World', icon: <Globe2 size={I} /> },
-      { to: '/campaign/encounters', label: 'Encounters', icon: <Swords size={I} /> },
-      { to: '/campaign/party', label: 'Party and Characters', icon: <Shield size={I} /> },
-      { to: '/campaign/journal', label: 'Session Journal', icon: <Feather size={I} /> },
-      { to: '/campaign/party-export', label: 'What the Party Knows', icon: <Printer size={I} /> },
-    ],
-  },
-  {
-    title: 'Dungeon Master Tools',
-    items: [
-      { to: '/dm', label: 'DM Screen', icon: <Drama size={I} /> },
-      { to: '/tracker', label: 'Encounter Tracker', icon: <Swords size={I} /> },
-      { to: '/tracker/quick', label: 'Initiative', icon: <HeartPulse size={I} /> },
-      { to: '/conditions', label: 'Combat Conditions', icon: <Scale size={I} /> },
-      { to: '/npc-ref', label: 'NPC Quick Reference', icon: <UserSquare2 size={I} /> },
-      { to: '/names', label: 'Name Generator', icon: <Signature size={I} /> },
-      { to: '/agendas', label: 'Faction Agendas', icon: <Flag size={I} /> },
-      { to: '/rumours', label: 'Rumours', icon: <MessageCircleQuestion size={I} /> },
-      { to: '/world-events', label: 'World Events', icon: <Sparkles size={I} /> },
-      { to: '/tables', label: 'Random Tables', icon: <Table2 size={I} /> },
-      { to: '/dice', label: 'Dice Roller', icon: <Dice5 size={I} /> },
-      { to: '/rules', label: 'Rules Reference', icon: <Gavel size={I} /> },
-      { to: '/books', label: 'Your Books', icon: <LibraryBig size={I} /> },
-      { to: '/quick-reference', label: 'Quick Reference', icon: <ScrollText size={I} /> },
-      { to: '/notes', label: 'Notes and Scratchpad', icon: <NotebookPen size={I} /> },
-    ],
-  },
-  {
-    title: 'Library Management',
-    items: [
-      { to: '/search', label: 'Search', icon: <Search size={I} /> },
-      { to: '/publish', label: 'Publish for Players', icon: <Globe2 size={I} /> },
-      { to: '/import', label: 'Import and Export', icon: <Upload size={I} /> },
-      { to: '/review', label: 'Canon Review', icon: <KeyRound size={I} /> },
-      { to: '/consistency', label: 'Consistency Check', icon: <ListChecks size={I} /> },
-      { to: '/open-questions', label: 'Open Questions', icon: <CircleHelp size={I} /> },
-      { to: '/broken', label: 'Broken References', icon: <FileWarning size={I} /> },
-      { to: '/history', label: 'Change History', icon: <History size={I} /> },
-      { to: '/documents', label: 'Source Documents', icon: <BookOpen size={I} /> },
-      { to: '/backups', label: 'Backups', icon: <Archive size={I} /> },
-      { to: '/style-guide', label: 'Style Guide', icon: <Palette size={I} /> },
-      { to: '/settings', label: 'Settings', icon: <Settings size={I} /> },
-    ],
-  },
-];
 
-/** Pages for developers (the source files themselves, the style guide); shown in debug mode only. */
-const DEBUG_ONLY = new Set(['/documents', '/broken', '/style-guide']);
-/** Menu items for the setting's own mechanics, shown only while they're switched on (Settings, Campaign mechanics). */
-const NEEDS: Record<string, keyof Mechanics> = {
-  '/realm/aetheris': 'setting',
-  '/realm/kaelmar': 'setting',
-  '/realm/ethereal': 'setting',
-  '/quick-reference': 'setting',
-  '/campaign/return': 'theReturn',
-};
+/** A small menu that opens under its button and closes on a click outside or Escape. */
+function Dropdown({ button, label, children, align = 'right', active }: { button: ReactNode; label: string; children: (close: () => void) => ReactNode; align?: 'left' | 'right'; active?: boolean }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => !ref.current?.contains(e.target as Node) && setOpen(false);
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+  return (
+    <div className="relative" ref={ref}>
+      <button className={`btn-ghost ${active || open ? 'text-gold bg-gold/10' : ''}`} aria-haspopup="menu" aria-expanded={open} aria-label={label} title={label} onClick={() => setOpen(!open)}>
+        {button}
+      </button>
+      {open && (
+        <div role="menu" className={`absolute top-full mt-1 z-[1900] min-w-[220px] panel elev-2 py-1 ${align === 'right' ? 'right-0' : 'left-0'}`}>
+          {children(() => setOpen(false))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const menuItem = 'flex items-center gap-2.5 px-3 py-1.5 text-sm text-ink hover:bg-raised hover:text-gold w-full text-left';
 
 export function Layout() {
-  const { sidebarCollapsed: collapsed, setSidebarCollapsed, theme, setTheme, appName, debug } = useAppState();
+  const { sidebarCollapsed: collapsed, setSidebarCollapsed, theme, setTheme, appName, debug, activeCampaignId, setActiveCampaignId } = useAppState();
   const mech = useMechanics();
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
   const loc = useLocation();
   const nav = useNavigate();
+  const ws = workspaceFor(loc.pathname);
+  // Below 1280px the sidebar is the icon rail unless the GM opens it (for this visit).
+  const [narrow, setNarrow] = useState(() => typeof window !== 'undefined' && window.matchMedia?.('(max-width: 1279px)').matches);
+  const [openNarrow, setOpenNarrow] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia?.('(max-width: 1279px)');
+    if (!mq) return;
+    const on = () => setNarrow(mq.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  const compact = narrow ? !openNarrow : collapsed;
+  const toggleSidebar = () => (narrow ? setOpenNarrow(!openNarrow) : setSidebarCollapsed(!collapsed));
+
+  const visible = (it: Item) => (debug || !DEBUG_ONLY.has(it.to)) && (!NEEDS[it.to] || !mech || mech[NEEDS[it.to]]);
+
+  // Campaigns, for the switcher; maps, for the Atlas sidebar; whether a session is live, for the Live tab.
+  const [campaigns, setCampaigns] = useState<{ id: number; title: string }[]>([]);
+  const [maps, setMaps] = useState<{ id: number; name: string }[]>([]);
+  const [live, setLive] = useState(false);
+  useEffect(() => {
+    void api
+      .get<{ id: number; title: string }[]>('/api/campaigns')
+      .then(setCampaigns)
+      .catch(() => undefined);
+  }, [activeCampaignId]);
+  useEffect(() => {
+    if (ws !== 'atlas') return;
+    void api
+      .get<{ id: number; name: string }[]>('/api/maps')
+      .then(setMaps)
+      .catch(() => undefined);
+  }, [ws]);
+  useEffect(() => {
+    const check = () =>
+      void api
+        .get<{ live: boolean }>('/api/player/live')
+        .then((r) => setLive(!!r.live))
+        .catch(() => undefined);
+    check();
+    const t = setInterval(check, 30000);
+    return () => clearInterval(t);
+  }, [loc.pathname]);
+
+  // The app opens on the active campaign's overview when there is one (the app mark still goes to the dashboard).
+  const opened = useRef(false);
+  useEffect(() => {
+    if (opened.current || activeCampaignId == null) return;
+    opened.current = true;
+    if (loc.pathname === '/' && !sessionStorageFlag()) nav('/campaign', { replace: true });
+  }, [activeCampaignId, loc.pathname, nav]);
 
   useEffect(() => setMobileNav(false), [loc.pathname]);
   useEffect(() => {
@@ -190,86 +116,219 @@ export function Layout() {
         e.preventDefault();
         setSearchOpen(true);
       } else if (!typing && e.altKey && e.key === 'd') nav('/dm');
-      else if ((e.ctrlKey || e.metaKey) && e.key === '\\') setSidebarCollapsed(!collapsed);
+      else if (((e.ctrlKey || e.metaKey) && e.key === '\\') || (!typing && !e.ctrlKey && !e.metaKey && !e.altKey && e.key === '[')) toggleSidebar();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [collapsed, setSidebarCollapsed, nav]);
+  });
 
-  const sidebar = (
-    <nav aria-label="Main" className="flex flex-col h-full">
-      <div className={`flex items-center gap-2 px-3 py-3 border-b border-line ${collapsed ? 'justify-center' : ''}`}>
-        <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden className="text-gold shrink-0">
-          <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" strokeWidth="2" />
-          <path d="M16 3v26M3 16h26" stroke="currentColor" strokeWidth="1.2" />
-          <circle cx="16" cy="16" r="4" fill="currentColor" opacity=".5" />
-        </svg>
-        {!collapsed && <span className="font-display text-gold text-[15px] truncate">{appName}</span>}
-      </div>
+  const current = WORKSPACES.find((w) => w.id === ws);
+  const groups: Group[] = useMemo(() => {
+    if (ws === 'library') return [LIBRARY];
+    const gs = current?.groups ?? [];
+    if (ws !== 'atlas' || !maps.length) return gs;
+    return [...gs, { title: 'Each map', items: maps.map((m) => ({ to: `/atlas/${m.id}`, label: m.name, icon: MapPinned })) }];
+  }, [ws, current, maps]);
+
+  const link = (it: Item, compact: boolean) =>
+    it.external ? (
+      <a
+        key={it.to}
+        href={it.to}
+        target="_blank"
+        rel="noreferrer"
+        title={compact ? it.label : undefined}
+        className={`flex items-center gap-2.5 mx-2 px-2 py-1.5 rounded-md text-[13px] text-ink/80 hover:bg-raised hover:text-ink ${compact ? 'justify-center' : ''}`}
+      >
+        <span className="shrink-0 opacity-90">
+          <it.icon size={I} />
+        </span>
+        {!compact && <span className="truncate">{it.label}</span>}
+      </a>
+    ) : (
+      <NavLink
+        key={it.to}
+        to={it.to}
+        end={it.to === '/' || it.to === '/campaign' || it.to === '/tracker' || it.to === '/atlas'}
+        title={compact ? it.label : undefined}
+        className={({ isActive }) =>
+          `flex items-center gap-2.5 mx-2 px-2 py-1.5 rounded-md text-[13px] transition-colors ${compact ? 'justify-center' : ''} ${isActive ? 'bg-gold/10 text-gold font-medium' : 'text-ink/80 hover:bg-raised hover:text-ink'}`
+        }
+      >
+        <span className="shrink-0 opacity-90">
+          <it.icon size={I} />
+        </span>
+        {!compact && <span className="truncate">{it.label}</span>}
+      </NavLink>
+    );
+
+  const sidebar = (compact: boolean, all = false) => (
+    <nav aria-label={all ? 'All pages' : `${current?.label ?? 'Library'} pages`} className="flex flex-col h-full">
+      {!compact && !all && (
+        <div className="px-4 pt-4 pb-2 flex items-center gap-2 text-gold">
+          {current ? <current.icon size={I} /> : <Settings size={I} />}
+          <span className="font-display text-[15px] tracking-wide">{current?.label ?? 'Library'}</span>
+        </div>
+      )}
       <div className="flex-1 overflow-y-auto py-2">
-        {NAV.map((g) => (
-          <div key={g.title} className="mb-2">
-            {!collapsed && <div className="px-4 pt-2 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim/80">{g.title}</div>}
-            {g.items
-              .filter((it) => (debug || !DEBUG_ONLY.has(it.to)) && (!NEEDS[it.to] || !mech || mech[NEEDS[it.to]]))
-              .map((it) => (
-                <NavLink
-                  key={it.to}
-                  to={it.to}
-                  end={it.to === '/' || it.to === '/campaign' || it.to === '/tracker'}
-                  title={collapsed ? it.label : undefined}
-                  className={({ isActive }) =>
-                    `flex items-center gap-2.5 mx-2 px-2 py-1.5 rounded-md text-[13px] transition-colors ${collapsed ? 'justify-center' : ''} ${
-                      isActive ? 'bg-gold/10 text-gold' : 'text-ink/80 hover:bg-raised hover:text-ink'
-                    }`
-                  }
-                >
-                  <span className="shrink-0 opacity-90">{it.icon}</span>
-                  {!collapsed && <span className="truncate">{it.label}</span>}
-                </NavLink>
-              ))}
-          </div>
-        ))}
+        {(all ? [...WORKSPACES.map((w) => ({ title: w.label, items: w.groups.flatMap((g) => g.items) })), LIBRARY] : groups).map((g) => {
+          const items = g.items.filter(visible);
+          if (!items.length) return null;
+          return (
+            <div key={g.title} className="mb-2">
+              {!compact ? <div className="px-4 pt-2 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim">{g.title}</div> : <div className="mx-3 my-1.5 border-t border-line" />}
+              {items.map((it) => link(it, compact))}
+            </div>
+          );
+        })}
       </div>
-      <div className={`border-t border-line p-2 flex ${collapsed ? 'flex-col' : ''} gap-1`}>
-        <button className="btn-ghost" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label="Toggle light/dark theme" title="Toggle theme">
-          {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
-        </button>
-        <button className="btn-ghost" onClick={() => setSidebarCollapsed(!collapsed)} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} title="Collapse (Ctrl+\)">
-          {collapsed ? <ChevronsRight size={16} /> : <ChevronsLeft size={16} />}
-        </button>
-      </div>
+      {!all && (
+        <div className={`border-t border-line p-2 flex ${compact ? 'justify-center' : 'justify-end'}`}>
+          <button className="btn-ghost" onClick={toggleSidebar} aria-label={compact ? 'Expand sidebar' : 'Collapse sidebar'} title="Collapse or expand ( [ )">
+            {compact ? <ChevronsRight size={16} /> : <ChevronsLeft size={16} />}
+          </button>
+        </div>
+      )}
     </nav>
   );
 
+  const activeTitle = campaigns.find((c) => c.id === activeCampaignId)?.title;
+
   return (
-    <div className="flex h-full">
-      <aside className={`hidden md:block shrink-0 bg-panel/80 border-r border-line transition-[width] duration-150 ${collapsed ? 'w-14' : 'w-60'}`}>{sidebar}</aside>
-      {mobileNav && (
-        <div className="fixed inset-0 z-[1800] md:hidden bg-black/60" onClick={() => setMobileNav(false)}>
-          <aside className="w-64 h-full bg-panel border-r border-line" onClick={(e) => e.stopPropagation()}>
-            {sidebar}
-          </aside>
+    <div className="flex flex-col h-full">
+      <header className="h-[52px] shrink-0 flex items-center gap-1 border-b border-line bg-panel px-2 md:px-3 elev-1 relative z-[1500]">
+        <button className="btn-ghost md:hidden" onClick={() => setMobileNav(true)} aria-label="Open navigation">
+          <Menu size={18} />
+        </button>
+        <NavLink to="/" onClick={() => markDashboardVisited()} className="flex items-center gap-2 pr-3 mr-1 md:border-r border-line h-8" title="World Dashboard">
+          <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden className="text-gold shrink-0">
+            <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" strokeWidth="2" />
+            <path d="M16 3v26M3 16h26" stroke="currentColor" strokeWidth="1.2" />
+            <circle cx="16" cy="16" r="4" fill="currentColor" opacity=".5" />
+          </svg>
+          <span className="hidden xl:inline font-display text-gold text-[15px] whitespace-nowrap">{appName}</span>
+        </NavLink>
+        <nav aria-label="Workspaces" className="hidden md:flex items-stretch h-full">
+          {WORKSPACES.map((w) => {
+            const on = ws === w.id;
+            return (
+              <button
+                key={w.id}
+                onClick={() => nav(w.home)}
+                aria-current={on ? 'page' : undefined}
+                title={w.label}
+                className={`relative flex items-center gap-1.5 px-2 lg:px-3 text-sm font-display tracking-wide whitespace-nowrap transition-colors ${on ? 'text-gold' : 'text-ink/75 hover:text-ink'}`}
+              >
+                <w.icon size={I} />
+                <span className="hidden lg:inline">{w.label}</span>
+                {w.id === 'live' && live && <span className="ml-0.5 h-2 w-2 rounded-full bg-danger animate-pulse" title="A session is live" />}
+                {on && <span className="absolute left-2 right-2 bottom-0 h-[2px] bg-gold rounded-full" />}
+              </button>
+            );
+          })}
+        </nav>
+        <button
+          onClick={() => setSearchOpen(true)}
+          className="ml-auto md:ml-3 flex items-center gap-2 rounded-md border border-line bg-raised px-2.5 h-8 text-sm text-dim hover:border-gold/60 min-w-0 shrink-0 lg:w-48 xl:w-72"
+          aria-label="Search"
+          title="Search (Ctrl K)"
+        >
+          <Search size={14} className="shrink-0" /> <span className="hidden lg:inline truncate">Search…</span>
+          <kbd className="ml-auto hidden xl:inline whitespace-nowrap text-[10px] border border-line rounded px-1">Ctrl K</kbd>
+        </button>
+        <div className="ml-auto flex items-center gap-1">
+          <Dropdown
+            label="Active campaign"
+            align="right"
+            button={
+              <span className="flex items-center gap-1.5 max-w-[180px]">
+                <Compass size={15} className="shrink-0" />
+                <span className="hidden xl:inline truncate text-sm">{activeTitle ?? 'No campaign'}</span>
+                <ChevronDown size={13} className="shrink-0" />
+              </span>
+            }
+          >
+            {(close) => (
+              <>
+                <div className="px-3 pt-1.5 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim">Active campaign</div>
+                {campaigns.map((c) => (
+                  <button
+                    key={c.id}
+                    role="menuitemradio"
+                    aria-checked={c.id === activeCampaignId}
+                    className={menuItem}
+                    onClick={async () => {
+                      close();
+                      await setActiveCampaignId(c.id);
+                    }}
+                  >
+                    <span className="w-4 shrink-0">{c.id === activeCampaignId && <Check size={14} className="text-gold" />}</span>
+                    <span className="truncate">{c.title}</span>
+                  </button>
+                ))}
+                {!campaigns.length && <div className="px-3 py-1.5 text-sm text-dim">No campaigns yet.</div>}
+                <div className="my-1 border-t border-line" />
+                <button
+                  className={menuItem}
+                  onClick={() => {
+                    close();
+                    nav('/campaigns');
+                  }}
+                >
+                  <BookMarked size={14} /> All campaigns
+                </button>
+              </>
+            )}
+          </Dropdown>
+          <a href="/player" target="_blank" rel="noreferrer" className="btn-ghost" title="Open the player view in a new tab">
+            <Eye size={16} /> <span className="hidden xl:inline whitespace-nowrap">Player View</span>
+          </a>
+          <button
+            className="btn-ghost"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label={theme === 'dark' ? 'Use Warm Parchment' : 'Use Dark Codex'}
+            title={theme === 'dark' ? 'Warm Parchment' : 'Dark Codex'}
+          >
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+          <Dropdown label="Library" align="right" active={ws === 'library'} button={<Settings size={16} />}>
+            {(close) => (
+              <>
+                <div className="px-3 pt-1.5 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim">Library</div>
+                {LIBRARY.items.filter(visible).map((it) => (
+                  <button
+                    key={it.to}
+                    role="menuitem"
+                    className={`${menuItem} ${matches(loc.pathname, it.to) ? 'text-gold' : ''}`}
+                    onClick={() => {
+                      close();
+                      nav(it.to);
+                    }}
+                  >
+                    <it.icon size={I} /> {it.label}
+                  </button>
+                ))}
+              </>
+            )}
+          </Dropdown>
         </div>
-      )}
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="flex items-center gap-2 border-b border-line bg-panel/60 px-3 py-2">
-          <button className="btn-ghost md:hidden" onClick={() => setMobileNav(true)} aria-label="Open navigation">
-            ☰
-          </button>
-          <button onClick={() => setSearchOpen(true)} className="flex-1 max-w-xl input flex items-center gap-2 text-dim text-left">
-            <Search size={14} /> Search names and lore… <kbd className="ml-auto text-[10px] border border-line rounded px-1">Ctrl K</kbd>
-          </button>
-          <div className="ml-auto flex items-center gap-1">
-            <NavLink to="/campaign/live" className="btn">
-              <Swords size={14} /> <span className="hidden sm:inline">Live Session</span>
-            </NavLink>
-            <a href="/player" target="_blank" rel="noreferrer" className="btn" title="Open the player view in a new tab">
-              <Eye size={14} /> <span className="hidden sm:inline">Player View</span>
-            </a>
+      </header>
+      <div className="flex-1 flex min-h-0">
+        <aside className={`hidden md:block shrink-0 bg-panel/70 border-r border-line transition-[width] duration-150 ${compact ? 'w-14' : 'w-[248px]'}`}>{sidebar(compact)}</aside>
+        {mobileNav && (
+          <div className="fixed inset-0 z-[1800] md:hidden bg-black/50" onClick={() => setMobileNav(false)}>
+            <aside className="w-72 h-full bg-panel border-r border-line flex flex-col" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between px-3 py-2 border-b border-line">
+                <span className="font-display text-gold">{appName}</span>
+                <button className="btn-ghost" onClick={() => setMobileNav(false)} aria-label="Close navigation">
+                  <X size={16} />
+                </button>
+              </div>
+              <div className="flex-1 min-h-0">{sidebar(false, true)}</div>
+            </aside>
           </div>
-        </header>
-        <main className="flex-1 overflow-y-auto" id="main">
+        )}
+        <main className="flex-1 overflow-y-auto min-w-0" id="main">
           <div className="mx-auto max-w-[1500px] p-4 md:p-6">
             <Outlet />
           </div>
@@ -278,4 +337,21 @@ export function Layout() {
       {searchOpen && <SearchPalette onClose={() => setSearchOpen(false)} />}
     </div>
   );
+}
+
+// Once the GM has chosen the dashboard in this visit, a reload doesn't send them back to the campaign.
+const FLAG = 'wk.dashboardVisited';
+function sessionStorageFlag() {
+  try {
+    return sessionStorage.getItem(FLAG) === '1';
+  } catch {
+    return false;
+  }
+}
+function markDashboardVisited() {
+  try {
+    sessionStorage.setItem(FLAG, '1');
+  } catch {
+    /* preference only */
+  }
 }

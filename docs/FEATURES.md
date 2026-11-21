@@ -4,6 +4,10 @@
 
 This document describes the features documented for Worldkeeper v0.2. For implementation completeness, test outcomes and known issues, refer to [DEVELOPMENT_STATUS.md](../DEVELOPMENT_STATUS.md). No official rulebook text or monster stat blocks are bundled; rules and statistics come from your own sources or entries.
 
+## Finding your way
+
+The top bar holds the five workspaces: **Codex** (the world and its records), **Campaign** (the active campaign, its prep and the state of the world), **Characters** (the party, the builder and reference), **Atlas** (maps) and **Live** (running the session; a red dot shows while a session is live). The sidebar lists only the current workspace's pages, and collapses to an icon rail (`[`); below 1280px wide it starts as the rail. Search (`Ctrl+K`), the active campaign (switch it from its menu), Player View, the theme and the **Library** menu (the gear: import and export, Canon Review, backups, Settings and the other maintenance pages) are on the right. The app opens on the active campaign's overview when there is one; the app mark always goes to the World Dashboard.
+
 ## Encyclopedia
 
 Each entry has a stable ID (for example `NPC-010`, `VLT-305` or `CON-001-DOM`), original name and aliases, category, parent, realm, canon status, source references and tags. Those fields are preserved through imports and revision history.
@@ -13,6 +17,7 @@ Record pages provide facts, identified GM-only text, child records, connections,
 To cross-link records in natural prose, use `@[Mara Venn]` or type `@` and select a suggested record. If names collide, a suggestion can include a distinguishing type, such as `@[Kaelholm (Settlement)]`. Links feed the relationship graph. Existing `Name [ID]` references remain supported and render using the record name.
 
 IDs, source citations, filenames, tags and editorial annotations are hidden by default in normal play-focused screens. Enable **Settings → Technical details**, or launch with `WORLDKEEPER_DEBUG=1`, to show them. New records start from library templates; unsupported facts remain `UNDEFINED`, and likely duplicates trigger a warning.
+
 
 ## NPC and faction profiles
 
@@ -122,7 +127,7 @@ The app ships with the Worldkeeper setting's mechanics, and runs just as well as
 
 | Switch | What it covers |
 | --- | --- |
-| The setting's pages | Aetheris, Kaelmar and the Ethereal Realm in the menu, and the setting's quick reference |
+| The setting's pages | Aetheris, Kaelmar and the Ethereal Realm in the Codex, and the setting's quick reference |
 | Thinning, true names and memories | The Thinning tab on sheets and character pages, with true names, named memories and Shardscarred |
 | The Return | The Return's clock for the GM, and its signs and omens for players |
 | Fading salvage | Treasure from the Ethereal Realm fades unless it's anchored |
@@ -143,7 +148,7 @@ A switched-off mechanic leaves the menus, the sheets, the player view and the pu
 
 ## Library management
 
-Library Management contains import preview, confirmation and history, exports, Canon Review, broken-reference reporting, change history, backup and restore, and app settings.
+The **Library** menu (the gear, top right) holds import preview, confirmation and history, exports, Canon Review, broken-reference reporting, change history, backup and restore, and app settings.
 
 **Canon controls:** Changes are versioned with reasons. Edited canonical records can be reviewed using diffs and either approved or reverted. New entries start `PROPOSED`; campaign overlays do not silently promote local developments to universal canon. Protected setting bibles and original references are retained verbatim.
 

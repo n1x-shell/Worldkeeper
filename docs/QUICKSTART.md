@@ -22,7 +22,7 @@ For development, `npm run dev` serves the API at `:4310` and Vite at <http://loc
 
 ## 2. Import your world
 
-1. Open **Library Management → Import and Export**.
+1. Open **Library (the gear, top right) → Import and Export**.
 2. Choose a ZIP archive of your Markdown lore, for example `Amsel_Unified_World_Lore_Reference_v10.zip`.
 3. Select **Preview import**.
 4. Inspect the new/updated/unchanged counts, duplicate IDs, skipped templates and copies, broken references, protected originals and conflicts with your edits.

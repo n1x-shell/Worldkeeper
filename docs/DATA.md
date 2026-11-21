@@ -18,7 +18,7 @@ GitHub publishing credentials are held separately in `secrets.json` in the data 
 
 ## Importing Markdown lore
 
-In **Library Management → Import and Export**, select a ZIP archive, preview changes, and confirm only after examining the report. The importer understands:
+In **Library (the gear, top right) → Import and Export**, select a ZIP archive, preview changes, and confirm only after examining the report. The importer understands:
 
 - Record metadata including `ID`, `Name`, aliases, category, parent, realm/continent, canon status, source and tags.
 - Multiple records in one Markdown file.
