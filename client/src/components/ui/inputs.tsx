@@ -1,6 +1,5 @@
-/** Inputs: fields, switches, checkboxes, segmented controls, tabs and the growing text area. */
-import { useEffect, useRef, type InputHTMLAttributes, type KeyboardEvent, type ReactNode, type SelectHTMLAttributes } from 'react';
-import { useLinkSuggest } from '../LinkSuggest';
+/** Inputs: fields, switches, checkboxes, segmented controls and tabs. No app dependencies (the player handbook uses these). */
+import type { InputHTMLAttributes, KeyboardEvent, ReactNode, SelectHTMLAttributes } from 'react';
 
 export function Field({ label, children, hint }: { label: string; children: ReactNode; hint?: ReactNode }) {
   return (
@@ -149,55 +148,6 @@ export function Tabs<T extends string>({ tabs, value, onChange }: { tabs: { id: 
           {t.label}
         </button>
       ))}
-    </div>
-  );
-}
-
-/**
- * Text area that grows with its content. Typing `[[` offers record-link suggestions
- * (inserts `Name [ID]`); pass `links={false}` to turn that off.
- */
-export function AutoTextarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { minRows?: number; links?: boolean }) {
-  const { minRows = 3, className = '', links = true, onKeyDown, onChange, onBlur, onClick, onKeyUp, ...rest } = props;
-  const ref = useRef<HTMLTextAreaElement>(null);
-  const suggest = useLinkSuggest(ref, links);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    el.style.height = 'auto';
-    el.style.height = `${Math.max(el.scrollHeight, minRows * 22)}px`;
-  }, [props.value, minRows]);
-  return (
-    <div className="relative">
-      <textarea
-        ref={ref}
-        rows={minRows}
-        className={`input font-mono text-[13px] leading-relaxed resize-y ${className}`}
-        {...rest}
-        onChange={(e) => {
-          onChange?.(e);
-          suggest.update();
-        }}
-        onKeyDown={(e) => {
-          if (suggest.onKeyDown(e)) return;
-          onKeyDown?.(e);
-        }}
-        onKeyUp={(e) => {
-          if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) suggest.update();
-          onKeyUp?.(e);
-        }}
-        onClick={(e) => {
-          suggest.update();
-          onClick?.(e);
-        }}
-        onBlur={(e) => {
-          setTimeout(suggest.close, 150);
-          onBlur?.(e);
-        }}
-        aria-autocomplete={links ? 'list' : undefined}
-        aria-expanded={links ? suggest.open : undefined}
-      />
-      {suggest.popup}
     </div>
   );
 }

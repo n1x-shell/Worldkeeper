@@ -21,7 +21,7 @@ export function Md({ text, className = 'prose-lore' }: { text: string; className
         components={{
           a: ({ href, children }) =>
             href?.startsWith('/player/') ? (
-              <Link to={`${base}${href.slice('/player'.length)}`} className="wk-ref">
+              <Link to={`${base}${href.slice('/player'.length)}`} className="wk-ref" data-peek={/^\/player\/e\/([^/?#]+)/.exec(href)?.[1] ? decodeURIComponent(/^\/player\/e\/([^/?#]+)/.exec(href)![1]) : undefined}>
                 {children}
               </Link>
             ) : (

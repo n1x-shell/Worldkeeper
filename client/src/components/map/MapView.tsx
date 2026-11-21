@@ -6,7 +6,7 @@ import { CircleMarker, ImageOverlay, MapContainer, Marker, Polygon, Polyline, Po
 import { PACES, formatMiles, niceMiles, pathMiles, travelDays, type Pace } from '../../../../shared/travel';
 import { ArrowLeft, Eye, EyeOff, Layers, NotebookPen, Plus, Ruler, Trash2, Undo2, X } from 'lucide-react';
 import { groupByDistance } from './grouping';
-import { Check, Segmented } from '../ui';
+import { Check, Segmented } from '../ui/inputs';
 
 /**
  * The full-screen map view shared by the players' handbook and the GM's Atlas. The map fills the window; a legend
