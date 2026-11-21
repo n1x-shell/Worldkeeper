@@ -2,7 +2,7 @@ import { packBackground } from './builder/compute';
 import { ItemRulesList } from '../components/ItemRules';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, Camera, Check, Copy, Dices, Minus, Plus, Printer, RotateCcw, Send, Trash2, Wand2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Camera, Check, Copy, Dices, Minus, Plus, Printer, RotateCcw, Send, Trash2, UserPlus, Wand2 } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
 import { usePlayerData, type PEntity } from './source';
 import { generateNames } from '../../../shared/names';
@@ -188,6 +188,37 @@ export function CharacterBuilder() {
     navigate(`${base}/me/${code}`);
   };
 
+  // In the GM's own app: save the build straight into a campaign's Party and Characters.
+  const [gm, setGm] = useState<{ campaigns: { id: number; title: string }[]; active: number | null } | null>(null);
+  const [gmCampaign, setGmCampaign] = useState<number | null>(null);
+  const [gmState, setGmState] = useState<{ busy?: boolean; error?: string }>({});
+  useEffect(() => {
+    let live = true;
+    void source
+      .gmCampaigns?.()
+      .then((g) => {
+        if (!live || !g) return;
+        setGm(g);
+        setGmCampaign(g.active ?? g.campaigns[0]?.id ?? null);
+      })
+      .catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [source]);
+  const saveToParty = async () => {
+    if (!gmCampaign || !source.gmSaveCharacter) return;
+    setGmState({ busy: true });
+    try {
+      const { portrait, ...rest } = sheet.sheet as Record<string, unknown> & { portrait?: string };
+      const id = await source.gmSaveCharacter(gmCampaign, { name: sheet.name, species: sheet.species, class_name: sheet.class_name, level: sheet.level, sheet: rest }, portrait || undefined);
+      if (gmCampaign !== gm?.active) await fetch('/api/campaigns/active', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: gmCampaign }) });
+      navigate(`/campaign/party?character=${id}`);
+    } catch (x) {
+      setGmState({ error: (x as Error).message });
+    }
+  };
+
   if (!entities) return null;
   const canSpell = !!info?.caster;
   const stepDone = [!!b.people, !!b.cls, !!b.background, true, true, true, true, !!b.name, true, true];
@@ -356,6 +387,25 @@ export function CharacterBuilder() {
                     <Send size={14} /> Send to my sheet
                   </button>
                 )}
+                {gm &&
+                  (gm.campaigns.length ? (
+                    <span className="flex items-center gap-1">
+                      <button className="btn" disabled={gmState.busy || !gmCampaign} onClick={() => void saveToParty()} title="Add this character to the campaign's Party and Characters (GM only)">
+                        <UserPlus size={14} /> {gmState.busy ? 'Saving…' : 'Save to Party and Characters'}
+                      </button>
+                      {gm.campaigns.length > 1 && (
+                        <select className="input w-auto" value={gmCampaign ?? ''} onChange={(e) => setGmCampaign(Number(e.target.value))} aria-label="Campaign">
+                          {gm.campaigns.map((c) => (
+                            <option key={c.id} value={c.id}>
+                              {c.title}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-dim self-center">Make a campaign to save characters to its party.</span>
+                  ))}
                 <button className="btn" onClick={() => void navigator.clipboard?.writeText(JSON.stringify(sheet, null, 2))} title="The whole sheet as text, to keep or share">
                   <Copy size={14} /> Copy as text
                 </button>
@@ -363,6 +413,7 @@ export function CharacterBuilder() {
                   <RotateCcw size={14} /> Start again
                 </button>
               </div>
+              {gmState.error && <p className="text-xs text-danger print:hidden">{gmState.error}</p>}
               <Checklist b={b} sheet={sheet} />
               <div className="overflow-x-auto print:overflow-visible">
                 <PrintSheet value={sheet} portraitUrl={b.portrait || null} />

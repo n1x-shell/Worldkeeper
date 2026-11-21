@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-18 · v0.3.5_
+_Last updated: 2026-11-18 · v0.3.6_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,10 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.6
+
+- **Save to Party and Characters** in the Make a Character builder: in the GM's own app (Player View), the finished build is added to a campaign's party (the active campaign, or one chosen from a list), with its portrait, and the Party and Characters page opens on it. The button needs the GM's routes, so it never appears on the table server or the published handbook.
 
 ## v0.3.5
 
