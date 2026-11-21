@@ -11,13 +11,13 @@ const CANON_STYLES: Record<string, string> = {
   PROPOSED: 'border-arcane/60 text-arcane bg-arcane/10',
   CONFLICT: 'border-danger/60 text-danger bg-danger/10',
   UNDEFINED: 'border-line text-dim',
-  RUMOR: 'border-amber-500/50 text-amber-400 bg-amber-500/10',
-  BELIEF: 'border-teal-500/50 text-teal-400 bg-teal-500/10',
+  RUMOR: 'border-warn/50 text-warn bg-warn/10',
+  BELIEF: 'border-belief/50 text-belief bg-belief/10',
   SECRET: 'border-danger/60 text-danger bg-danger/10',
-  HOMEBREW: 'border-fuchsia-500/50 text-fuchsia-400 bg-fuchsia-500/10',
-  UNVERIFIED: 'border-orange-500/50 text-orange-400 bg-orange-500/10',
+  HOMEBREW: 'border-homebrew/50 text-homebrew bg-homebrew/10',
+  UNVERIFIED: 'border-warn/50 text-warn bg-warn/10',
   OFFICIAL: 'border-ok/60 text-ok bg-ok/10',
-  'OUTSIDE 2024 CORE': 'border-orange-500/50 text-orange-300',
+  'OUTSIDE 2024 CORE': 'border-warn/50 text-warn',
 };
 
 export function CanonBadge({ status }: { status: string }) {
@@ -36,10 +36,10 @@ export function CanonFlags({ status, flags }: { status: string; flags: string[] 
 }
 
 const REALM_STYLES: Record<string, string> = {
-  aetheris: 'border-amber-600/50 text-amber-300',
-  kaelmar: 'border-emerald-600/50 text-emerald-300',
-  ethereal: 'border-violet-500/50 text-violet-300',
-  world: 'border-sky-600/50 text-sky-300',
+  aetheris: 'border-realm-aetheris/50 text-realm-aetheris',
+  kaelmar: 'border-realm-kaelmar/50 text-realm-kaelmar',
+  ethereal: 'border-realm-ethereal/50 text-realm-ethereal',
+  world: 'border-realm-world/50 text-realm-world',
 };
 export function RealmBadge({ realm }: { realm: string }) {
   return <span className={`chip ${REALM_STYLES[realm] ?? 'border-line text-dim'}`}>{REALM_LABELS[realm as Realm] ?? realm}</span>;
@@ -75,7 +75,7 @@ export function EntityLink({ id, children, className = '' }: { id: string; child
 export function SaveStatus({ state, error }: { state: SaveState; error?: string | null }) {
   const map: Record<SaveState, [ReactNode, string, string]> = {
     idle: [<CircleDashed size={13} key="i" />, 'No changes', 'text-dim'],
-    dirty: [<CircleDashed size={13} key="d" />, 'Unsaved changes…', 'text-amber-400'],
+    dirty: [<CircleDashed size={13} key="d" />, 'Unsaved changes…', 'text-warn'],
     saving: [<Loader2 size={13} className="animate-spin" key="s" />, 'Saving…', 'text-dim'],
     saved: [<Check size={13} key="ok" />, 'All changes saved', 'text-ok'],
     error: [<AlertTriangle size={13} key="e" />, `Save failed${error ? `: ${error}` : ''}`, 'text-danger'],

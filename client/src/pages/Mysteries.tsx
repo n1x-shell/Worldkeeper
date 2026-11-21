@@ -41,7 +41,7 @@ interface Mystery {
 }
 
 const STATE_LABEL: Record<SecretState, string> = { unknown: 'Unknown', suspected: 'Suspected', known: 'Known' };
-const STATE_STYLE: Record<SecretState, string> = { unknown: 'border-line text-dim', suspected: 'border-gold/60 text-gold', known: 'border-emerald-500/50 text-emerald-300' };
+const STATE_STYLE: Record<SecretState, string> = { unknown: 'border-line text-dim', suspected: 'border-gold/60 text-gold', known: 'border-ok/50 text-ok' };
 const KIND_LABEL: Record<ClueKind, string> = { rumour: 'Rumour', npc: 'Who knows', place: 'Where', item: 'Item', text: 'Clue' };
 
 function StatePicker({ value, disabled, onChange }: { value: SecretState; disabled: boolean; onChange: (s: SecretState) => void }) {

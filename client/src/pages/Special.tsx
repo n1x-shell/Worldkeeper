@@ -80,7 +80,7 @@ function OverlayControls({ entityId, rows, fields, onChange }: { entityId: strin
         <ul className="text-xs space-y-0.5">
           {rows.map((r) => (
             <li key={r.id}>
-              <span className="text-dim">{r.field}:</span> {r.value} {r.status === 'proposed' && <span className="text-amber-400">(proposed)</span>}
+              <span className="text-dim">{r.field}:</span> {r.value} {r.status === 'proposed' && <span className="text-warn">(proposed)</span>}
             </li>
           ))}
         </ul>
@@ -111,12 +111,12 @@ export function VaultsPage() {
           return (
             <button key={x.id} onClick={() => setSel(x.id)} className={`panel p-3 text-left hover:border-gold/60 ${v?.id === x.id ? 'border-gold' : ''}`}>
               <div className="flex items-center gap-1.5 text-sm font-display text-gold">
-                {sealed ? <Lock size={13} /> : <Unlock size={13} className="text-amber-400" />} {x.name}
+                {sealed ? <Lock size={13} /> : <Unlock size={13} className="text-warn" />} {x.name}
               </div>
               <Dev>
                 <div className="text-[11px] text-dim">{x.id}</div>
               </Dev>
-              <div className={`text-xs mt-1 ${sealed ? 'text-dim' : 'text-amber-400'}`}>{st}</div>
+              <div className={`text-xs mt-1 ${sealed ? 'text-dim' : 'text-warn'}`}>{st}</div>
             </button>
           );
         })}

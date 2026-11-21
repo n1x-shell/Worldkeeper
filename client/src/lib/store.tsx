@@ -43,7 +43,7 @@ const write = (k: string, v: string) => {
 };
 
 export function AppStateProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<'dark' | 'light'>(read('wk.theme', 'dark') === 'light' ? 'light' : 'dark');
+  const [theme, setThemeState] = useState<'dark' | 'light'>(read('wk.theme', 'light') === 'dark' ? 'dark' : 'light'); // Warm Parchment is the default
   const [sidebarCollapsed, setCollapsed] = useState(read('wk.sidebar', '0') === '1');
   const [activeCampaignId, setActive] = useState<number | null>(null);
   const [index, setIndex] = useState<Map<string, EntitySummary>>(new Map());
@@ -57,6 +57,8 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     document.documentElement.classList.toggle('light', theme === 'light');
+    // "Reduce texture" (Style guide): no paper grain on the parchment background.
+    document.documentElement.classList.toggle('no-texture', read('wk.texture', 'on') === 'off');
   }, [theme]);
 
   const reloadIndex = useCallback(async () => {

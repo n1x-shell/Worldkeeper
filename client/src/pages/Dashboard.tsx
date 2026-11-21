@@ -196,7 +196,7 @@ export function Dashboard() {
               {a.recentChanges.map((c) => (
                 <li key={c.id}>
                   {c.entity_id ? <EntityLink id={c.entity_id}>{c.entity_name ?? c.entity_id}</EntityLink> : 'World'}: {c.field} → <strong>{c.value}</strong>
-                  {c.status === 'proposed' && <span className="text-xs text-amber-400"> (proposed)</span>}
+                  {c.status === 'proposed' && <span className="text-xs text-warn"> (proposed)</span>}
                 </li>
               ))}
             </ul>

@@ -24,7 +24,7 @@ export interface Rumour {
 
 export const TRUTH_LABELS: Record<Truth, string> = { true: 'True', false: 'False', partly: 'Partly true', unknown: 'Not decided' };
 const TRUTH_STYLE: Record<Truth, string> = {
-  true: 'border-emerald-500/50 text-emerald-300',
+  true: 'border-ok/50 text-ok',
   false: 'border-danger/60 text-danger',
   partly: 'border-gold/60 text-gold',
   unknown: 'border-line text-dim',
@@ -243,8 +243,8 @@ interface Stances {
   links: { source_id: string; target_id: string; type: string; label: string; description: string }[];
 }
 const STANCE_STYLE: Record<string, string> = {
-  Allied: 'bg-emerald-500/40',
-  Friendly: 'bg-emerald-500/20',
+  Allied: 'bg-ok/40',
+  Friendly: 'bg-ok/20',
   Uneasy: 'bg-white/5',
   Rival: 'bg-gold/30',
   'At war': 'bg-danger/50',

@@ -29,6 +29,7 @@ import { BackupsPage, BrokenPage, ConsistencyPage, HistoryPage, ImportExportPage
 import { RumoursPage } from './pages/Rumours';
 import { PlayerApp } from './player/PlayerApp';
 import { PublishPage } from './pages/Publish';
+import { StyleGuidePage } from './pages/StyleGuide';
 
 function Page({ children }: { children: React.ReactNode }) {
   return <ErrorBoundary>{children}</ErrorBoundary>;
@@ -525,6 +526,14 @@ export function App() {
             element={
               <Page>
                 <BackupsPage />
+              </Page>
+            }
+          />
+          <Route
+            path="style-guide"
+            element={
+              <Page>
+                <StyleGuidePage />
               </Page>
             }
           />

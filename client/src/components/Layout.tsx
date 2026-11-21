@@ -59,6 +59,7 @@ import {
   Feather,
   KeyRound,
   Ghost,
+  Palette,
 } from 'lucide-react';
 import { useAppState } from '../lib/store';
 import { SearchPalette } from './SearchPalette';
@@ -153,13 +154,14 @@ const NAV: { title: string; items: Item[] }[] = [
       { to: '/history', label: 'Change History', icon: <History size={I} /> },
       { to: '/documents', label: 'Source Documents', icon: <BookOpen size={I} /> },
       { to: '/backups', label: 'Backups', icon: <Archive size={I} /> },
+      { to: '/style-guide', label: 'Style Guide', icon: <Palette size={I} /> },
       { to: '/settings', label: 'Settings', icon: <Settings size={I} /> },
     ],
   },
 ];
 
-/** Maintenance pages about the source files themselves; available in debug mode. */
-const DEBUG_ONLY = new Set(['/documents', '/broken']);
+/** Pages for developers (the source files themselves, the style guide); shown in debug mode only. */
+const DEBUG_ONLY = new Set(['/documents', '/broken', '/style-guide']);
 /** Menu items for the setting's own mechanics, shown only while they're switched on (Settings, Campaign mechanics). */
 const NEEDS: Record<string, keyof Mechanics> = {
   '/realm/aetheris': 'setting',

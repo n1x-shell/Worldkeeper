@@ -182,19 +182,19 @@ function ImportPreview({
         <Stat label="Broken references" value={s.brokenRefs.length} sub={`${s.duplicates.length} duplicate IDs resolved · ${s.skipped.length} skipped blocks`} />
       </div>
       {s.warnings.map((w, i) => (
-        <div key={i} className="text-sm text-amber-400 flex gap-1">
+        <div key={i} className="text-sm text-warn flex gap-1">
           <AlertTriangle size={14} /> {w}
         </div>
       ))}
       {s.protectedDocs.map((d) => (
-        <div key={d.path} className="text-sm text-amber-400">
+        <div key={d.path} className="text-sm text-warn">
           Protected: {d.path}. {d.note}
         </div>
       ))}
       {s.missingFromSource.length > 0 && <div className="text-sm text-dim">{s.missingFromSource.length} imported records are not in this archive. They are kept, never deleted.</div>}
       {s.conflicts.length > 0 && (
-        <div className="panel border-amber-500/50 p-3 space-y-1">
-          <div className="text-amber-400 text-sm font-medium">Conflicts: you edited these records and the source also changed. Default keeps your version.</div>
+        <div className="panel border-warn/50 p-3 space-y-1">
+          <div className="text-warn text-sm font-medium">Conflicts: you edited these records and the source also changed. Default keeps your version.</div>
           {s.conflicts.map((c) => (
             <div key={c.id} className="flex items-center gap-2 text-sm">
               <span className="flex-1">
@@ -232,7 +232,7 @@ function ImportPreview({
                     <td>
                       <TypeBadge type={e.type} />
                     </td>
-                    <td className={e.action === 'conflict' ? 'text-amber-400' : e.action === 'create' ? 'text-ok' : ''}>{e.action}</td>
+                    <td className={e.action === 'conflict' ? 'text-warn' : e.action === 'create' ? 'text-ok' : ''}>{e.action}</td>
                   </tr>
                 ))}
             {show === 'skipped' &&
@@ -898,6 +898,22 @@ export function SettingsPage() {
   const { data: meta } = useApi<{ schemaVersion: number; dataDir: string; entities: number }>('/api/meta');
   const { theme, setTheme, reloadMeta } = useAppState();
   const [form, setForm] = useState<Record<string, string>>({});
+  const [texture, setTexture] = useState(() => {
+    try {
+      return localStorage.getItem('wk.texture') !== 'off';
+    } catch {
+      return true;
+    }
+  });
+  const toggleTexture = (on: boolean) => {
+    setTexture(on);
+    try {
+      localStorage.setItem('wk.texture', on ? 'on' : 'off');
+    } catch {
+      /* preference only */
+    }
+    document.documentElement.classList.toggle('no-texture', !on);
+  };
   useEffect(() => {
     if (data) setForm({ app_name: data.app_name ?? 'The Worldkeeper', world_date: data.world_date ?? '300 AB / Year 31 Unbound' });
   }, [data]);
@@ -913,10 +929,16 @@ export function SettingsPage() {
         </Field>
         <Field label="Theme">
           <select className="input" value={theme} onChange={(e) => setTheme(e.target.value as 'dark' | 'light')}>
-            <option value="dark">Dark (default)</option>
-            <option value="light">Light</option>
+            <option value="light">Warm Parchment (default)</option>
+            <option value="dark">Dark Codex</option>
           </select>
         </Field>
+        {theme === 'light' && (
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={!texture} onChange={(e) => toggleTexture(!e.target.checked)} /> Reduce texture
+            <span className="text-dim">(no paper grain on the background)</span>
+          </label>
+        )}
         <button
           className="btn-primary"
           onClick={async () => {

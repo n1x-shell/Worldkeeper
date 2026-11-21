@@ -10,37 +10,74 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Theme tokens (RGB triplets so Tailwind can apply opacity). Dark is the default. */
+/*
+ * Design tokens (docs/DESIGN_OVERHAUL.md, section 6). RGB triplets, so Tailwind can apply opacity.
+ * Warm Parchment (.light) is the default; Dark Codex (.dark) is the alternative. Every text token passes WCAG AA
+ * (4.5:1) on bg, panel and raised, and edge (control borders) passes 3:1, in both themes (tests/designTokens.test.ts).
+ * Components use these tokens, never raw colours.
+ */
 :root,
+.light {
+  --bg: 239 230 210; /* page: warm parchment */
+  --panel: 247 241 227; /* cards and bars: vellum */
+  --raised: 251 247 238; /* inputs, hovers */
+  --line: 214 200 170; /* hairlines and dividers */
+  --edge: 140 122 92; /* control borders (inputs), 3:1 */
+  --ink: 42 34 25; /* text: iron-gall */
+  --dim: 98 84 64; /* secondary text */
+  --gold: 128 90 18; /* accent, links on hover, focus */
+  --parchment: 246 238 218; /* the character sheet's paper */
+  --parchink: 52 40 26;
+  --arcane: 48 68 150; /* record links */
+  --danger: 156 46 36;
+  --ok: 44 100 56;
+  --warn: 138 86 8;
+  /* Item rarity */
+  --r-common: 98 88 74;
+  --r-uncommon: 40 104 54;
+  --r-rare: 36 82 160;
+  --r-very-rare: 116 56 148;
+  --r-legendary: 146 82 8;
+  --r-artifact: 156 40 34;
+  /* Realms and canon labels */
+  --realm-aetheris: 136 82 10;
+  --realm-kaelmar: 30 104 68;
+  --realm-ethereal: 104 60 150;
+  --realm-world: 30 88 138;
+  --belief: 20 104 100;
+  --homebrew: 146 40 108;
+  --shadow: 92 66 30;
+  color-scheme: light;
+}
 .dark {
   --bg: 17 18 22;
   --panel: 24 26 31;
   --raised: 33 36 43;
   --line: 52 56 66;
+  --edge: 108 114 128;
   --ink: 228 223 210;
-  --dim: 150 146 136;
-  --gold: 201 162 74;
+  --dim: 160 155 144;
+  --gold: 208 170 84;
   --parchment: 233 222 196;
   --parchink: 52 40 26;
-  --arcane: 122 140 214;
-  --danger: 205 92 82;
-  --ok: 110 170 120;
+  --arcane: 146 162 228;
+  --danger: 232 122 110;
+  --ok: 122 186 132;
+  --warn: 222 176 84;
+  --r-common: 176 171 160;
+  --r-uncommon: 118 196 128;
+  --r-rare: 124 170 240;
+  --r-very-rare: 192 152 236;
+  --r-legendary: 234 168 80;
+  --r-artifact: 240 124 112;
+  --realm-aetheris: 236 184 92;
+  --realm-kaelmar: 110 200 150;
+  --realm-ethereal: 190 160 240;
+  --realm-world: 120 186 232;
+  --belief: 96 200 190;
+  --homebrew: 232 128 200;
+  --shadow: 0 0 0;
   color-scheme: dark;
-}
-.light {
-  --bg: 240 236 226;
-  --panel: 250 247 240;
-  --raised: 255 253 248;
-  --line: 214 205 186;
-  --ink: 36 32 26;
-  --dim: 108 100 86;
-  --gold: 150 112 30;
-  --parchment: 246 238 218;
-  --parchink: 52 40 26;
-  --arcane: 72 88 168;
-  --danger: 170 60 50;
-  --ok: 60 120 70;
-  color-scheme: light;
 }
 
 html,
@@ -51,6 +88,12 @@ body,
 body {
   @apply bg-bg text-ink font-sans antialiased;
   background-image: radial-gradient(ellipse at top, rgb(var(--gold) / 0.05), transparent 60%);
+}
+/* Parchment: a very faint paper grain on the page background only ("Reduce texture" turns it off). */
+html.light:not(.no-texture) body {
+  background-image:
+    radial-gradient(ellipse at top, rgb(var(--gold) / 0.06), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .26 0 0 0 0 .12 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 h1,
@@ -87,7 +130,7 @@ h3 {
     @apply inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm text-dim hover:text-gold hover:bg-raised transition-colors;
   }
   .input {
-    @apply w-full rounded-md border border-line bg-bg/60 px-2.5 py-1.5 text-sm text-ink placeholder:text-dim/70 focus:border-gold/70 focus:outline-none;
+    @apply w-full rounded-md border border-edge/70 bg-raised px-2.5 py-1.5 text-sm text-ink placeholder:text-dim/70 focus:border-gold/70 focus:outline-none;
   }
   .label {
     @apply block text-xs uppercase tracking-wider text-dim mb-1;
@@ -104,11 +147,121 @@ h3 {
   .table th {
     @apply text-left text-xs uppercase tracking-wider text-dim font-medium px-3 py-2 border-b border-line;
   }
+  .table th.text-right {
+    text-align: right;
+  }
+  .table th.text-center {
+    text-align: center;
+  }
   .table td {
     @apply px-3 py-2 border-b border-line/50 align-top;
   }
   .table tr:hover td {
     @apply bg-raised/50;
+  }
+
+  /* ---- Design system additions (docs/DESIGN_OVERHAUL.md, sections 6 and 7) ---- */
+  /* Numbers that line up: stats, HP, AC, DCs, modifiers. */
+  .num {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+  /* Elevation: flat panels, raised (hover cards, menus), overlay (drawers, dialogs). */
+  .elev-1 {
+    box-shadow: 0 1px 2px rgb(var(--shadow) / 0.12);
+  }
+  .elev-2 {
+    box-shadow:
+      0 2px 6px rgb(var(--shadow) / 0.14),
+      0 8px 24px rgb(var(--shadow) / 0.12);
+  }
+  .elev-3 {
+    box-shadow:
+      0 4px 12px rgb(var(--shadow) / 0.18),
+      0 18px 48px rgb(var(--shadow) / 0.2);
+  }
+  /* A title with a 2px gilt rule beneath it. */
+  .title-rule {
+    @apply font-display text-ink tracking-wide pb-1.5;
+    background: linear-gradient(90deg, rgb(var(--gold)), rgb(var(--gold) / 0.15) 70%, transparent) bottom left / 100% 2px no-repeat;
+  }
+  /* A record's title band: the name over a faint gilt wash. */
+  .title-band {
+    @apply relative rounded-md border border-line px-5 py-4;
+    background: linear-gradient(180deg, rgb(var(--gold) / 0.08), transparent 70%), rgb(var(--panel));
+  }
+  /* Gilt corner marks on featured cards. */
+  .gilt-corners {
+    position: relative;
+    --c: rgb(var(--gold) / 0.75);
+    background-image:
+      linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)),
+      linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c));
+    background-repeat: no-repeat;
+    background-size:
+      14px 1px,
+      1px 14px,
+      14px 1px,
+      1px 14px,
+      14px 1px,
+      1px 14px,
+      14px 1px,
+      1px 14px;
+    background-position:
+      5px 5px,
+      5px 5px,
+      calc(100% - 5px) 5px,
+      calc(100% - 5px) 5px,
+      5px calc(100% - 5px),
+      5px calc(100% - 5px),
+      calc(100% - 5px) calc(100% - 5px),
+      calc(100% - 5px) calc(100% - 5px);
+  }
+  /* An illuminated first letter: a gold Cinzel capital in a faint framed square. */
+  .illuminated::first-letter {
+    @apply font-display text-gold;
+    font-size: 1.35em;
+    line-height: 1;
+    margin-right: 0.06em;
+    padding: 0 0.12em;
+    border: 1px solid rgb(var(--gold) / 0.5);
+    background: rgb(var(--gold) / 0.1);
+    border-radius: 2px;
+  }
+  /* Tags: rarity, status. */
+  .tag {
+    @apply inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium leading-4;
+  }
+  .rarity-common {
+    color: rgb(var(--r-common));
+    border-color: rgb(var(--r-common) / 0.5);
+  }
+  .rarity-uncommon {
+    color: rgb(var(--r-uncommon));
+    border-color: rgb(var(--r-uncommon) / 0.5);
+  }
+  .rarity-rare {
+    color: rgb(var(--r-rare));
+    border-color: rgb(var(--r-rare) / 0.5);
+  }
+  .rarity-very-rare {
+    color: rgb(var(--r-very-rare));
+    border-color: rgb(var(--r-very-rare) / 0.5);
+  }
+  .rarity-legendary {
+    color: rgb(var(--r-legendary));
+    border-color: rgb(var(--r-legendary) / 0.5);
+  }
+  .rarity-artifact {
+    color: rgb(var(--r-artifact));
+    border-color: rgb(var(--r-artifact) / 0.5);
+  }
+  /* GM-only material: a stitched red margin and a label, the same everywhere. */
+  .gm-only {
+    @apply relative rounded-md border border-danger/30 bg-danger/5 py-2 pl-4 pr-3;
+    background-image: repeating-linear-gradient(180deg, rgb(var(--danger) / 0.7) 0 6px, transparent 6px 10px);
+    background-size: 2px 100%;
+    background-repeat: no-repeat;
+    background-position: 6px 0;
   }
 }
 

@@ -120,7 +120,7 @@ export function EntityPage() {
             <CanonFlags status={e.canon_status} flags={e.canon_flags} />
             <VisibilityBadge revealed={e.revealed} />
             {e.modified_since_import && (
-              <Link to="/review" className="chip border-amber-500/60 text-amber-400">
+              <Link to="/review" className="chip border-warn/60 text-warn">
                 <AlertTriangle size={11} /> Edited, not yet reviewed
               </Link>
             )}
@@ -358,8 +358,8 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
     <div className="space-y-4">
       {conflict && <ErrorBox error={conflict} />}
       {isCanonImport && (
-        <div className="panel border-amber-500/40 bg-amber-500/5 p-3 text-sm flex gap-2">
-          <AlertTriangle size={16} className="text-amber-400 shrink-0 mt-0.5" />
+        <div className="panel border-warn/40 bg-warn/5 p-3 text-sm flex gap-2">
+          <AlertTriangle size={16} className="text-warn shrink-0 mt-0.5" />
           <div>
             This is canon lore. Your changes are kept in its history and wait in Canon Review until you approve them.
             <Dev>
@@ -662,7 +662,7 @@ function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { 
             Players see only the name, your summary, the facts you reveal and the sections you tick. GM-only sections can't be shown; write a fact instead.
           </p>
           {secretRecord && (
-            <div className="text-xs text-amber-400 flex gap-1">
+            <div className="text-xs text-warn flex gap-1">
               <AlertTriangle size={13} /> This record is marked SECRET. Read each section before revealing it: secrets may appear outside GM-only headings.
             </div>
           )}

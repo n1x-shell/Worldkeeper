@@ -377,7 +377,7 @@ function RevealPanel({ sessionId, onRevealed }: { sessionId: number; onRevealed:
               </button>
             )}
           </div>
-          {e.canon_flags.includes('SECRET') && <div className="text-[11px] text-amber-400">Contains secrets: check a section before revealing it.</div>}
+          {e.canon_flags.includes('SECRET') && <div className="text-[11px] text-warn">Contains secrets: check a section before revealing it.</div>}
           <div className="flex flex-wrap gap-1">
             {data!.sections
               .filter((s) => s.heading && (debug || !isEditorial(s.heading)))
