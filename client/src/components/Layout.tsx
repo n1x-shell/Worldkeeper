@@ -271,7 +271,7 @@ export function Layout() {
               label="Active campaign"
               align="right"
               button={
-                <span className="flex items-center gap-1.5 max-w-[180px]">
+                <span className="flex items-center gap-1.5 max-w-[160px]">
                   <Compass size={15} className="shrink-0" />
                   <span className="hidden xl:inline truncate text-sm">{activeTitle ?? 'No campaign'}</span>
                   <ChevronDown size={13} className="shrink-0" />
@@ -310,8 +310,8 @@ export function Layout() {
                 </>
               )}
             </Dropdown>
-            <a href="/player" target="_blank" rel="noreferrer" className="btn-ghost" title="Open the player view in a new tab">
-              <Eye size={16} /> <span className="hidden xl:inline whitespace-nowrap">Player View</span>
+            <a href="/player" target="_blank" rel="noreferrer" className="btn-ghost" title="Open the player view in a new tab" aria-label="Player View">
+              <Eye size={16} /> <span className="hidden 2xl:inline whitespace-nowrap">Player View</span>
             </a>
             <InspectorButton />
             <button
