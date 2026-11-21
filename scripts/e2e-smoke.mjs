@@ -155,6 +155,19 @@ try {
   if ((await seer.first().getAttribute('href')) !== '/e/NPC-001') throw new Error('mention did not link to the record');
   if ((await page.locator('main a.wk-ref', { hasText: 'Hollow Refuge' }).first().getAttribute('href')) !== '/e/SET-001') throw new Error('typed @[Name] did not link');
   await shot(page, '13b-mentions-rendered');
+  // Quick-Peek: hovering a record link shows its card; Peek opens it in the inspector; Open beside splits the page.
+  await seer.first().hover();
+  const card = page.locator('.wk-hovercard');
+  await card.getByText('The Blind Seer').first().waitFor({ timeout: 5000 });
+  await card.getByRole('button', { name: 'Peek' }).click();
+  await page.locator('aside[aria-label="Inspector"]').getByRole('heading', { name: 'The Blind Seer' }).waitFor();
+  await page.locator('aside[aria-label="Inspector"]').getByRole('button', { name: 'Open beside' }).click();
+  await page.waitForURL(/beside=NPC-001/);
+  await page.locator('section[aria-label="Open beside"]').getByRole('heading', { name: 'The Blind Seer' }).waitFor();
+  await shot(page, '13c-quick-peek');
+  await page.locator('section[aria-label="Open beside"]').getByRole('button', { name: 'Close' }).click();
+  await page.waitForURL((u) => !u.search.includes('beside'));
+  step('Quick-Peek: hover card, inspector and split view');
   const rel = await (await fetch(`${base}/api/entities/NPC-010`)).json();
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
   await page.locator('textarea').last().fill('');

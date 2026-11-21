@@ -1,6 +1,6 @@
 # Design Overhaul: Product Requirements
 
-**Status:** Approved direction (owner answers recorded in section 3). Step 1 (tokens and themes) done in v0.3.7, step 2 (the shell) in v0.3.8, step 3 (the shared components) in v0.3.14; step 4 next
+**Status:** Approved direction (owner answers recorded in section 3). Step 1 (tokens and themes) done in v0.3.7, step 2 (the shell) in v0.3.8, step 3 (the shared components) in v0.3.14, step 4 (Quick-Peek) in v0.3.15; step 5 next
 **Scope:** The look and layout of the GM app, the in-app Player View, the table server and the published Player Handbook. No changes to data, rules or what players can see.
 
 ## 1. Why
@@ -171,6 +171,8 @@ Shared components replace per-page styling. Each has default, hover, active, foc
 - **Open.** A normal click opens the Dedicated View, as today. **Open beside** (on the card) opens it in split view.
 - **Touch.** On tablets, tapping a link shows the card and a second tap opens it. A long press peeks.
 - **Live.** Stat blocks can be **pinned** in the inspector during a session (several at once, collapsible), and stay pinned until the session ends.
+
+**As built (v0.3.15):** `client/src/components/peek/`. Anything with `data-peek="<ID>"` (record links and `@[Name]` links) gets the hover card through one listener on the page, so new links need nothing else. The card and the inspector read `GET /api/entities/:id/peek` (summary, three facts, sections, links, whether it has a stat block), which, unlike opening the record, isn't counted as a visit; peeks are cached for the visit. Split view is `?beside=<ID>` in the address, so it survives a reload and works on every page (the Atlas map redraws to fit); under 1024px the record opens in a drawer instead. While split, the record page stacks its side column. Pins are kept on the device and cleared when the live session ends; the tracker's combatants have a Pin too. Opening the inspector by hand shows the pins when nothing has been peeked, and always in Live, the tracker and the DM screen. Map pins already open their place panel in the Atlas; peeking pins and the record page's inspector panel come with the key pages (step 5).
 
 ## 9. Pages to redesign first (high fidelity)
 

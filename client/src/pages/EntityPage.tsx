@@ -106,7 +106,7 @@ export function EntityPage() {
         </div>
       )}
       <div className="flex flex-wrap items-start gap-3">
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-[16rem]">
           <div className="text-xs text-dim flex items-center gap-1 flex-wrap mb-1">
             {data.parent ? (
               <>
@@ -193,7 +193,7 @@ export function EntityPage() {
       />
 
       {tab === 'record' && (
-        <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
+        <div className="wk-record-grid grid gap-4 lg:grid-cols-[1fr_320px]">
           <article className="panel elev-1 p-5 min-w-0">
             {displaySections(e.body, debug).map((s, i) =>
               s.secret ? (
