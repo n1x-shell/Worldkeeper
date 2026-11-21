@@ -1,9 +1,10 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { CalendarDays, ChevronDown, Compass, Gift, Shield, Swords } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { usePlayer, usePlayerIndex } from './context';
+import { PlayerPageTitle } from './PlayerPages';
 import { CalendarView, TodayCard } from '../components/CalendarView';
 import { formatDate } from '../../../shared/calendar';
 import { Badge } from '../components/ui/badges';
@@ -19,31 +20,6 @@ const read = (k: string) => {
     return null;
   }
 };
-
-/**
- * A player page's title band, in the handbook's style: a quiet eyebrow, the title, a short gilt rule and a line on
- * what the page is.
- */
-export function PageTitle({ eyebrow, icon, title, subtitle, aside }: { eyebrow?: ReactNode; icon?: ReactNode; title: ReactNode; subtitle?: ReactNode; aside?: ReactNode }) {
-  return (
-    <header className="title-band elev-1 px-5 py-4 sm:px-7 sm:py-5">
-      <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
-        <div className="min-w-0 flex-1 basis-[18rem]">
-          {eyebrow && (
-            <div className="section-title flex items-center gap-2">
-              {icon}
-              {eyebrow}
-            </div>
-          )}
-          <h1 className="mt-1.5 break-words text-[26px] leading-tight text-ink sm:text-[32px]">{title}</h1>
-          <div className="mt-2 h-0.5 w-24 bg-gradient-to-r from-gold to-transparent" aria-hidden />
-          {subtitle && <div className="mt-3 max-w-[72ch] text-sm text-dim">{subtitle}</div>}
-        </div>
-        {aside && <div className="w-full shrink-0 sm:w-auto">{aside}</div>}
-      </div>
-    </header>
-  );
-}
 
 /** The name of this device's own character (from its remembered page code), to find "you" in the turn order. */
 function useMyName() {
@@ -191,7 +167,7 @@ export function PlayerHandouts() {
   const newest = all.length ? all.reduce((a, b) => (b.pushed_at > a.pushed_at ? b : a)).id : null;
   return (
     <div className="mx-auto max-w-4xl space-y-5">
-      <PageTitle eyebrow="Campaign" icon={<Gift size={14} />} title="Handouts" subtitle="Letters, maps and pictures the GM has handed you, newest first." />
+      <PlayerPageTitle eyebrow="Campaign" icon={<Gift size={14} />} title="Handouts" subtitle="Letters, maps and pictures the GM has handed you, newest first." />
       {!all.length && (
         <Empty icon={<Gift size={28} />} title="Nothing yet">
           When the GM hands you a letter, a map or a picture, it appears here.
@@ -228,7 +204,11 @@ export function PlayerCalendar() {
   const cal = c.calendar;
   return (
     <div className="space-y-5">
-      <PageTitle eyebrow="Campaign" icon={<CalendarDays size={14} />} title="Calendar" subtitle={<TodayCard date={cal.date} />} />
+      <PlayerPageTitle eyebrow="Campaign" icon={<CalendarDays size={14} />} title="Calendar" subtitle="The date in the world, the festivals and what's coming.">
+        <div className="mt-4">
+          <TodayCard date={cal.date} />
+        </div>
+      </PlayerPageTitle>
       <Card title="Coming up">
         {cal.coming.length ? (
           <ul className="divide-y divide-line text-sm">
@@ -260,7 +240,7 @@ export function PlayerRegions() {
   const all = campaigns.flatMap((c) => c.regions ?? []);
   return (
     <div className="mx-auto max-w-4xl space-y-5">
-      <PageTitle eyebrow="Campaign" icon={<Compass size={14} />} title="Around the World" subtitle="What your party has seen and heard, region by region." />
+      <PlayerPageTitle eyebrow="Campaign" icon={<Compass size={14} />} title="Around the World" subtitle="What your party has seen and heard, region by region." />
       {!all.length && (
         <Empty icon={<Compass size={28} />} title="Nowhere yet">
           You haven't been anywhere yet.

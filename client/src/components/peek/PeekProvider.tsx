@@ -156,17 +156,7 @@ export function PeekProvider({ live, children }: { live: boolean; children: Reac
   return (
     <PeekContext.Provider value={value}>
       {children}
-      {card &&
-        createPortal(
-          <HoverCard
-            card={card}
-            api={value}
-            onEnter={onCardEnter}
-            onLeave={onCardLeave}
-            onDone={() => setCard(null)}
-          />,
-          document.body,
-        )}
+      {card && createPortal(<HoverCard card={card} api={value} onEnter={onCardEnter} onLeave={onCardLeave} onDone={() => setCard(null)} />, document.body)}
     </PeekContext.Provider>
   );
 }

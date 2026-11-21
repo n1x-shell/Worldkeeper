@@ -145,6 +145,4 @@ export function useHoverCards({ load, peek }: { load?: (id: string) => Promise<u
     timers.current.hide = window.setTimeout(() => setCard(null), 220);
   }, []);
   return { card, setCard, onCardEnter, onCardLeave };
-
-
 }

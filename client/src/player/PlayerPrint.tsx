@@ -1,12 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Printer } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
-import { Md } from './PlayerPages';
+import { Md, PlayerPageTitle } from './PlayerPages';
 import { OTHER_GROUP, PLAYER_GROUPS, groupOf } from './categories';
 import type { PEntity } from './source';
 import type { ReactNode } from 'react';
 import { Card } from '../components/ui/surfaces';
-import { PageTitle } from './LivePlay';
 
 /** The table cards: one page each, in this order, found by name. */
 export const CARD_NAMES = ['Session Zero', 'Hollow Refuge in One Page', 'Ashvale in One Page', 'The Nameless Asylum in One Page', 'House Rules', 'Safety Tools'];
@@ -61,7 +60,7 @@ export function PlayerPrint() {
   return (
     <div className="space-y-4">
       <div className="wk-print-controls space-y-4">
-        <PageTitle
+        <PlayerPageTitle
           eyebrow="Handbook"
           icon={<Printer size={14} />}
           title="Print"

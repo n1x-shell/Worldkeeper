@@ -63,7 +63,6 @@ describe('the player handbook bundle', () => {
   });
 });
 
-
 describe('the handbook navigation', () => {
   it('puts every page under one of its five workspaces, in the app (/player) and the published handbook', () => {
     for (const [p, w] of [

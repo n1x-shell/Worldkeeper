@@ -4,6 +4,10 @@
 
 Worldkeeper separates GM-managed material from material deliberately revealed to players. Its player endpoints generate a dedicated player-safe projection, rather than sending every field to a browser and hiding secret elements with CSS. This is a security design, not a guarantee that every possible disclosure bug has been eliminated.
 
+## How it looks and finds its way
+
+The player view, the table server and the published handbook share one design with the GM app (Warm Parchment by default, Dark Codex as a toggle, remembered on each device). The top bar has **World** (home and the realms), **Records** (all lore by kind, the faction web), **Maps**, **Campaign** (quests, recaps, standing, treasure, handouts, the calendar, news from around the world, signs and omens) and **My Character** (your sheet on the table server, Make a Character, Print); the sidebar lists the current one's pages, and on a phone the menu holds everything. Hovering a link to an entry shows its card (on a phone, tap once for the card and again to open it); the cards come from the same player-only data as the pages, so they never show more. A test (`tests/playerBundle.test.ts`) checks that the handbook carries none of the GM app's code.
+
 ## Local player view
 
 Open <http://127.0.0.1:4310/player> on the DM machine, or select **Player View** in the application. This is useful for inspecting what the player interface displays, but **the local DM server also has DM routes**. Do not treat this URL alone as an access control boundary when making the server reachable over a network.
