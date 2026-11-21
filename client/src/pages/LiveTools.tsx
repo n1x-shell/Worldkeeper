@@ -1,9 +1,9 @@
 import { EncounterIdeas } from '../components/EncounterIdeas';
 import { CreatureLinks } from '../components/CreatureLinks';
-import { useState } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Coins, Dices, Gift, Minus, Plus, ScrollText, Shuffle, UserRound } from 'lucide-react';
-import { askText, Badge, Card, Empty, EntityLink } from '../components/ui';
+import { ChevronDown, Coins, Dices, Flag, Gift, Minus, Plus, ScrollText, Shuffle, UserRound } from 'lucide-react';
+import { askText, Badge, Empty, EntityLink } from '../components/ui';
 import { api, useApi } from '../lib/api';
 import type { Briefing } from './Briefing';
 import { Markdown } from '../components/Markdown';
@@ -12,6 +12,72 @@ import { Markdown } from '../components/Markdown';
  * The live session's quick tools: roll the region's tables, roll and keep treasure, change standing, and give handouts.
  * Everything that matters is written to the session log, so it feeds the recap.
  */
+const OPEN_KEY = 'wk.live.tools';
+const readOpen = (): Record<string, boolean> => {
+  try {
+    return JSON.parse(localStorage.getItem(OPEN_KEY) ?? '{}') as Record<string, boolean>;
+  } catch {
+    return {};
+  }
+};
+
+/**
+ * One of Live's secondary tools: a header row that folds it away (40px, for tablets), with a quiet summary beside the
+ * title. Whether each is open is remembered on this device.
+ */
+export function ToolSection({
+  id,
+  title,
+  icon,
+  aside,
+  actions,
+  defaultOpen = false,
+  children,
+}: {
+  id: string;
+  title: string;
+  icon?: ReactNode;
+  aside?: ReactNode;
+  actions?: ReactNode;
+  defaultOpen?: boolean;
+  children: ReactNode;
+}) {
+  const [open, setOpenState] = useState(() => readOpen()[id] ?? defaultOpen);
+  const bodyId = useId();
+  const setOpen = (v: boolean) => {
+    setOpenState(v);
+    try {
+      localStorage.setItem(OPEN_KEY, JSON.stringify({ ...readOpen(), [id]: v }));
+    } catch {
+      /* preference only */
+    }
+  };
+  return (
+    <section className="border-b border-line/70 last:border-b-0" aria-label={title}>
+      <div className="flex items-center gap-2 pr-2">
+        <button
+          type="button"
+          className="group flex min-h-11 flex-1 min-w-0 items-center gap-2 px-3 text-left hover:bg-raised/60"
+          aria-expanded={open}
+          aria-controls={bodyId}
+          onClick={() => setOpen(!open)}
+        >
+          <ChevronDown size={14} className={`shrink-0 text-dim transition-transform motion-reduce:transition-none ${open ? '' : '-rotate-90'}`} aria-hidden />
+          {icon && <span className="shrink-0 text-gold">{icon}</span>}
+          <span className="section-title text-[12px] whitespace-nowrap group-hover:text-gold">{title}</span>
+          {aside && <span className="ml-1 min-w-0 truncate text-xs text-dim">{aside}</span>}
+        </button>
+        {open && actions && <div className="flex shrink-0 items-center gap-1.5">{actions}</div>}
+      </div>
+      {open && (
+        <div id={bodyId} className="space-y-2 px-3 pb-3 pt-0.5">
+          {children}
+        </div>
+      )}
+    </section>
+  );
+}
+
 export function LiveTools({ sessionId, campaignId, onLogged }: { sessionId: number; campaignId: number; onLogged: () => void }) {
   return (
     <>
@@ -57,13 +123,13 @@ function WhosNearby({ sessionId, onLogged }: { sessionId: number; onLogged: () =
     setR(Math.floor(Math.random() * 1000));
   };
   return (
-    <Card
-      className="space-y-2"
-      icon={<UserRound size={15} className="text-gold" />}
+    <ToolSection
+      id="nearby"
+      icon={<UserRound size={15} />}
       title="Who's nearby"
       aside={data.place}
       actions={
-        <button className="btn text-xs" onClick={another} disabled={!list.length}>
+        <button className="btn h-10 text-xs" onClick={another} disabled={!list.length}>
           <Shuffle size={12} /> {p ? 'Someone else' : 'Someone nearby'}
         </button>
       }
@@ -98,7 +164,7 @@ function WhosNearby({ sessionId, onLogged }: { sessionId: number; onLogged: () =
             </p>
           )}
           <button
-            className="btn-ghost text-xs"
+            className="btn-ghost h-10 text-xs"
             onClick={async () => {
               await api.post('/api/session-log', { session_id: sessionId, kind: 'npc', text: `Met ${p.name}.`, entity_id: p.id });
               onLogged();
@@ -108,7 +174,7 @@ function WhosNearby({ sessionId, onLogged }: { sessionId: number; onLogged: () =
           </button>
         </div>
       )}
-    </Card>
+    </ToolSection>
   );
 }
 
@@ -117,13 +183,13 @@ function QuickTables({ sessionId, onLogged }: { sessionId: number; onLogged: () 
   const [result, setResult] = useState<{ table: string; text: string; creatures: { id: string; name: string }[] } | null>(null);
   if (!b) return null;
   return (
-    <Card className="space-y-2" icon={<Dices size={15} className="text-gold" />} title="Tables for here" aside={b.region?.name}>
+    <ToolSection id="tables" icon={<Dices size={15} />} title="Tables for here" aside={b.region?.name}>
       {b.tables.length ? (
         <div className="flex flex-wrap gap-1.5">
           {b.tables.map((t) => (
             <button
               key={t.id}
-              className="btn text-xs"
+              className="btn h-10 text-xs"
               onClick={async () => {
                 const r = await api.post<{ result: string; creatures?: { id: string; name: string }[] }>(`/api/random-tables/${t.id}/roll`);
                 setResult({ table: t.name, text: r.result, creatures: r.creatures ?? [] });
@@ -144,7 +210,7 @@ function QuickTables({ sessionId, onLogged }: { sessionId: number; onLogged: () 
           <Markdown text={result.text} />
           <CreatureLinks creatures={result.creatures} label="From your books" />
           <button
-            className="btn-ghost text-xs"
+            className="btn-ghost h-10 text-xs"
             onClick={async () => {
               await api.post('/api/session-log', { session_id: sessionId, kind: 'roll', text: result.text.replace(/\*\*/g, '') });
               setResult(null);
@@ -158,7 +224,7 @@ function QuickTables({ sessionId, onLogged }: { sessionId: number; onLogged: () 
       <div className="pt-1 border-t border-line/60">
         <EncounterIdeas level={b.level} terrain={b.terrain} campaignId={b.campaign?.id} compact />
       </div>
-    </Card>
+    </ToolSection>
   );
 }
 
@@ -177,12 +243,12 @@ function QuickTreasure({ sessionId, campaignId, onLogged }: { sessionId: number;
   const t = b.treasure;
   const doRoll = async (kind: 'individual' | 'hoard') => setRoll(await api.post<Roll>('/api/treasure/roll', { tier: t.tier, region: t.region, kind }));
   return (
-    <Card className="space-y-2" icon={<Coins size={15} className="text-gold" />} title="Treasure" aside={`${t.label}, levels ${t.tier}`}>
+    <ToolSection id="treasure" icon={<Coins size={15} />} title="Treasure" aside={`${t.label}, levels ${t.tier}`}>
       <div className="flex gap-1.5">
-        <button className="btn text-xs" onClick={() => doRoll('individual')}>
+        <button className="btn h-10 text-xs" onClick={() => doRoll('individual')}>
           Individual
         </button>
-        <button className="btn text-xs" onClick={() => doRoll('hoard')}>
+        <button className="btn h-10 text-xs" onClick={() => doRoll('hoard')}>
           Hoard
         </button>
       </div>
@@ -195,7 +261,7 @@ function QuickTreasure({ sessionId, campaignId, onLogged }: { sessionId: number;
           {roll.items.length > 0 && <div className="text-arcane">{roll.items.map((i) => i.name).join(', ')}</div>}
           {roll.hook && <div className="italic text-dim">{roll.hook}</div>}
           <button
-            className="btn-ghost text-xs"
+            className="btn-ghost h-10 text-xs"
             onClick={async () => {
               await api.post('/api/party-treasure/from-roll', { campaign_id: campaignId, roll, found_at: b.location?.name ?? '' });
               setRoll(null);
@@ -206,7 +272,7 @@ function QuickTreasure({ sessionId, campaignId, onLogged }: { sessionId: number;
           </button>
         </div>
       )}
-    </Card>
+    </ToolSection>
   );
 }
 
@@ -230,11 +296,13 @@ function QuickStanding({ campaignId, onLogged }: { campaignId: number; onLogged:
     onLogged();
   };
   return (
-    <Card
-      className="space-y-2"
+    <ToolSection
+      id="standing"
+      icon={<Flag size={15} />}
       title="Standing"
+      aside={rows.length ? `${rows.length} faction${rows.length === 1 ? '' : 's'}` : undefined}
       actions={
-        <Link to="/campaign/standing" className="text-xs text-arcane">
+        <Link to="/campaign/standing" className="inline-flex h-10 items-center px-1 text-xs text-arcane hover:underline">
           All factions
         </Link>
       }
@@ -247,10 +315,10 @@ function QuickStanding({ campaignId, onLogged }: { campaignId: number; onLogged:
               <span className="text-xs text-dim w-24 text-right">
                 {r.rank} (<span className="num">{r.renown}</span>)
               </span>
-              <button className="btn-ghost p-0.5" onClick={() => adjust(r, -1)} aria-label={`Lower standing with ${r.name}`}>
+              <button className="btn-ghost h-10 w-10 justify-center" onClick={() => adjust(r, -1)} aria-label={`Lower standing with ${r.name}`}>
                 <Minus size={13} />
               </button>
-              <button className="btn-ghost p-0.5" onClick={() => adjust(r, 1)} aria-label={`Raise standing with ${r.name}`}>
+              <button className="btn-ghost h-10 w-10 justify-center" onClick={() => adjust(r, 1)} aria-label={`Raise standing with ${r.name}`}>
                 <Plus size={13} />
               </button>
             </li>
@@ -259,7 +327,7 @@ function QuickStanding({ campaignId, onLogged }: { campaignId: number; onLogged:
       ) : (
         <Empty compact title="The party hasn't dealt with any faction yet." />
       )}
-    </Card>
+    </ToolSection>
   );
 }
 
@@ -273,12 +341,13 @@ function QuickHandouts({ campaignId, onLogged }: { campaignId: number; onLogged:
   const { data, reload } = useApi<Handout[]>(`/api/handouts?campaign_id=${campaignId}`);
   if (!data) return null;
   return (
-    <Card
-      className="space-y-2"
-      icon={<Gift size={15} className="text-gold" />}
+    <ToolSection
+      id="handouts"
+      icon={<Gift size={15} />}
       title="Handouts"
+      aside={data.length ? `${data.filter((h) => h.pushed_at).length} of ${data.length} given` : undefined}
       actions={
-        <Link to="/campaign/handouts" className="text-xs text-arcane">
+        <Link to="/campaign/handouts" className="inline-flex h-10 items-center px-1 text-xs text-arcane hover:underline">
           Write one
         </Link>
       }
@@ -289,7 +358,7 @@ function QuickHandouts({ campaignId, onLogged }: { campaignId: number; onLogged:
             <li key={h.id} className="flex items-center gap-2">
               <span className="flex-1 truncate">{h.title}</span>
               <button
-                className={`btn text-xs ${h.pushed_at ? '' : 'border-gold/60 text-gold'}`}
+                className={`btn h-10 text-xs ${h.pushed_at ? '' : 'border-gold/60 text-gold'}`}
                 onClick={async () => {
                   await api.post(`/api/handouts/${h.id}/push`, { pushed: !h.pushed_at });
                   reload();
@@ -304,6 +373,6 @@ function QuickHandouts({ campaignId, onLogged }: { campaignId: number; onLogged:
       ) : (
         <Empty compact title="No handouts written yet." />
       )}
-    </Card>
+    </ToolSection>
   );
 }

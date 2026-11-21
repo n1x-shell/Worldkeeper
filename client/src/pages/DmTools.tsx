@@ -1,8 +1,8 @@
 import { CreatureLinks } from '../components/CreatureLinks';
 import { useMechanics } from '../lib/mechanics';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Dice5, Plus, Shield, Skull, Trash2, Users, Sword, Eye, EyeOff, Brain, Pin } from 'lucide-react';
+import { ArrowDownWideNarrow, BookOpen, ChevronLeft, ChevronRight, Dice5, Plus, Shield, Skull, Trash2, Users, Sword, Eye, EyeOff, Brain, Pin } from 'lucide-react';
 import { CONDITIONS_2024 } from '@shared/domain';
 import { applyDamage, applyHealing, newCombatant, nextTurn, previousTurn, rollDice, sortByInitiative, type Combatant, type DiceResult } from '@shared/play';
 import { api, qs, useApi, useAutosave } from '../lib/api';
@@ -49,8 +49,30 @@ interface BookCreature {
   source: string;
 }
 const bookLabel = (c: BookCreature) => `${c.name} (CR ${c.cr ?? '?'})`;
+/** The tracker's first line: initiative, the combatant, AC, HP and (from the sm breakpoint) its row actions. */
+const ROW = 'grid grid-cols-[3.5rem_3.5rem_minmax(0,1fr)] sm:grid-cols-[3.5rem_minmax(0,1fr)_3.5rem_7.5rem_7.75rem] items-center gap-2';
+/** On phones the name takes the first line to itself; initiative, AC and HP share the next. */
+const NAME_CELL = 'min-w-0 col-span-3 order-first sm:col-span-1 sm:order-none';
 
-export function EncounterTracker({ encounterId, compact = false, onLog }: { encounterId: number; compact?: boolean; onLog?: (text: string) => void }) {
+/** Where a fight stands, for a page that shows it elsewhere too (Live's header). */
+export interface CombatStatus {
+  title: string;
+  round: number;
+  turn: string | null;
+}
+
+export function EncounterTracker({
+  encounterId,
+  compact = false,
+  onLog,
+  onStatus,
+}: {
+  encounterId: number;
+  compact?: boolean;
+  onLog?: (text: string) => void;
+  /** Told the round and whose turn it is whenever they change. */
+  onStatus?: (s: CombatStatus | null) => void;
+}) {
   const peek = usePeek();
   const { data, error } = useApi<Encounter>(`/api/encounters/${encounterId}`);
   const [enc, setEnc] = useState<Encounter | null>(null);
@@ -99,6 +121,13 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
   useEffect(() => {
     if (data) setEnc(data);
   }, [data]);
+  const statusKey = enc ? `${enc.title}|${enc.round}|${enc.round > 0 ? (enc.combatants[enc.turn_index]?.name ?? '') : ''}` : '';
+  useEffect(() => {
+    if (!onStatus || !enc) return;
+    onStatus(enc.round > 0 ? { title: enc.title, round: enc.round, turn: enc.combatants[enc.turn_index]?.name ?? null } : null);
+    // Only when what it reports changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statusKey]);
   if (error) return <ErrorBox error={error} />;
   if (!enc) return <Loading />;
   const save = (p: Partial<Encounter>) => {
@@ -164,36 +193,46 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
     } else setC(c.id, (x) => applyHealing(x, amt));
   };
 
+  // Touch-sized controls (40px): the tracker is used on tablets at the table.
+  const tap = 'h-10 min-w-10 justify-center';
+  const cell = 'input num h-10 px-1 text-center';
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap items-center gap-2">
-        {!compact && <input className="input max-w-xs font-display" value={enc.title} onChange={(e) => save({ title: e.target.value })} />}
-        {!compact && (
+      {!compact && (
+        <div className="flex flex-wrap items-center gap-2">
+          <input className="input h-10 max-w-xs font-display" value={enc.title} onChange={(e) => save({ title: e.target.value })} aria-label="Encounter name" />
           <div className="w-56" title="Where it happens: it shows on the map">
             <EntityPicker value={enc.location_id ?? null} types={PLACE_TYPES} placeholder="Where? (shows on the map)" onChange={(id) => save({ location_id: id })} />
           </div>
-        )}
-        <Badge tone="gold">Round {enc.round || '—'}</Badge>
-        <button className="btn" onClick={prev} disabled={enc.round === 0} aria-label="Previous turn">
-          <ChevronLeft size={14} />
+        </div>
+      )}
+      {/* Turn controls: where the fight is, then what to do next. */}
+      <div className="flex flex-wrap items-center gap-2">
+        <div className={`flex h-10 items-center gap-2 rounded-md border px-3 ${enc.round > 0 ? 'border-gold/60 bg-gold/10' : 'border-line bg-raised'}`} aria-live="polite">
+          <span className={`num text-sm font-semibold whitespace-nowrap ${enc.round > 0 ? 'text-gold' : 'text-dim'}`}>{enc.round > 0 ? `Round ${enc.round}` : 'Not started'}</span>
+          {active && <span className="max-w-[10rem] truncate text-sm text-ink">· {active.name}</span>}
+        </div>
+        <button className={`btn ${tap}`} onClick={prev} disabled={enc.round === 0} aria-label="Previous turn" title="Previous turn">
+          <ChevronLeft size={16} />
         </button>
-        <button className="btn-primary" onClick={next}>
-          {enc.round === 0 ? 'Start combat' : 'Next turn'} <ChevronRight size={14} />
+        <button className={`btn-primary ${tap}`} onClick={next}>
+          {enc.round === 0 ? 'Start combat' : 'Next turn'} <ChevronRight size={16} />
         </button>
-        <button className="btn" onClick={rollMissing} title="Roll d20 + bonus for anyone without initiative">
+        <span className="mx-0.5 hidden h-6 border-l border-line sm:block" aria-hidden />
+        <button className={`btn ${tap}`} onClick={rollMissing} title="Roll d20 + bonus for anyone without initiative">
           <Dice5 size={14} /> Roll missing
         </button>
-        <button className="btn" onClick={sort}>
-          Sort
+        <button className={`btn ${tap}`} onClick={sort} title="Sort by initiative">
+          <ArrowDownWideNarrow size={14} /> Sort
         </button>
         {party && party.length > 0 && (
-          <button className="btn" onClick={addPCs}>
+          <button className={`btn ${tap}`} onClick={addPCs}>
             <Users size={14} /> Add party
           </button>
         )}
         {enc.round > 0 && (
           <button
-            className="btn"
+            className={`btn ${tap}`}
             onClick={() => {
               onLog?.(`${enc.title} ended after ${enc.round} round(s).`);
               save({ round: 0, turn_index: 0, status: 'finished' });
@@ -202,169 +241,173 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
             End combat
           </button>
         )}
-        <SaveStatus state={auto.state} error={auto.error} />
+        <span className="ml-auto">
+          <SaveStatus state={auto.state} error={auto.error} />
+        </span>
       </div>
       {alert && (
         <div className="panel border-warn/60 bg-warn/10 p-2 text-sm flex items-center gap-2" role="alert">
-          <Brain size={14} className="text-warn" /> {alert}
-          <button className="btn-ghost ml-auto" onClick={() => setAlert(null)}>
+          <Brain size={14} className="text-warn shrink-0" /> {alert}
+          <button className={`btn-ghost ml-auto ${tap}`} onClick={() => setAlert(null)}>
             Dismiss
           </button>
         </div>
       )}
-      <Card flush className="overflow-x-auto">
-        <table className="table data-table">
-          <thead>
-            <tr>
-              <th>Init</th>
-              <th>Combatant</th>
-              <th>AC</th>
-              <th>HP</th>
-              <th>Damage / heal</th>
-              <th>Conditions</th>
-              <th>Concentration</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {list.map((c, i) => {
-              const isTurn = enc.round > 0 && i === enc.turn_index;
-              return (
-                <Fragment key={c.id}>
-                <tr className={`${isTurn ? 'bg-gold/10' : ''} ${c.defeated ? 'opacity-40' : ''}`}>
-                  <td className="w-16">
-                    <input
-                      className="input num w-14 py-0.5 text-center"
-                      value={c.initiative ?? ''}
-                      onChange={(e) => setC(c.id, (x) => ({ ...x, initiative: e.target.value === '' ? null : Number(e.target.value) }))}
-                      aria-label={`${c.name} initiative`}
-                    />
-                  </td>
-                  <td>
-                    <div className="flex items-center gap-1.5">
-                      {isTurn && <span className="text-gold">▶</span>}
-                      {c.isPC ? <Shield size={12} className="text-arcane" /> : <Sword size={12} className="text-dim" />}
-                      <input className="bg-transparent outline-none font-medium min-w-0" value={c.name} onChange={(e) => setC(c.id, (x) => ({ ...x, name: e.target.value }))} />
-                    </div>
-                    {c.entityId && <EntityLink id={c.entityId} className="text-[11px]" />}
-                    {(c.statblockId || c.entityId) && (
-                      <button className="text-[11px] text-gold underline ml-2" onClick={() => setOpenBlock(openBlock === c.id ? null : c.id)}>
-                        {openBlock === c.id ? 'Hide stat block' : 'Stat block'}
-                      </button>
-                    )}
-                    {(c.statblockId || c.entityId) && peek && (
-                      <button
-                        className="text-[11px] text-gold underline ml-2"
-                        onClick={() => peek.pin({ id: (c.statblockId || c.entityId)!, name: c.name.replace(/\s+\d+$/, '') })}
-                        title="Pin its stat block in the inspector until the session ends"
-                      >
-                        Pin
-                      </button>
-                    )}
+      {/* The turn order: one row per combatant. The first line is what you read at a glance (initiative, name, AC, HP);
+          the second is what you change (damage and healing, conditions, concentration, its stat block). */}
+      <div className="panel overflow-hidden" role="list" aria-label="Turn order">
+        <div className={`${ROW} !hidden sm:!grid px-3 py-1.5 border-b border-line text-[11px] uppercase tracking-wider text-dim`} aria-hidden>
+          <span className="text-center">Init</span>
+          <span>Combatant</span>
+          <span className="text-center">AC</span>
+          <span>HP</span>
+          <span />
+        </div>
+        {list.map((c, i) => {
+          const isTurn = enc.round > 0 && i === enc.turn_index;
+          const block = c.statblockId || c.entityId;
+          const rowActions = (
+            <div className="flex items-center justify-end gap-0.5">
+              <button className={`btn-ghost ${tap} ${c.defeated ? 'text-danger' : ''}`} title={c.defeated ? 'Restore' : 'Mark defeated'} aria-label={c.defeated ? `Restore ${c.name}` : `Mark ${c.name} defeated`} aria-pressed={!!c.defeated} onClick={() => setC(c.id, (x) => ({ ...x, defeated: !x.defeated }))}>
+                <Skull size={15} />
+              </button>
+              <button className={`btn-ghost ${tap}`} title={c.hidden ? 'Hidden from players' : 'Visible to players'} aria-label={c.hidden ? `Show ${c.name} to players` : `Hide ${c.name} from players`} aria-pressed={!!c.hidden} onClick={() => setC(c.id, (x) => ({ ...x, hidden: !x.hidden }))}>
+                {c.hidden ? <EyeOff size={15} /> : <Eye size={15} />}
+              </button>
+              <button className={`btn-ghost ${tap} hover:text-danger`} onClick={() => save({ combatants: list.filter((x) => x.id !== c.id), turn_index: Math.min(enc.turn_index, Math.max(0, list.length - 2)) })} aria-label="Remove" title={`Remove ${c.name}`}>
+                <Trash2 size={15} />
+              </button>
+            </div>
+          );
+          return (
+            <div
+              key={c.id}
+              role="listitem"
+              aria-current={isTurn ? 'true' : undefined}
+              className={`border-b border-line/60 last:border-b-0 px-3 pt-2 pb-2.5 space-y-3.5 ${isTurn ? 'bg-gold/10 shadow-[inset_3px_0_0_rgb(var(--gold))]' : ''} ${c.defeated ? 'opacity-50' : ''}`}
+            >
+              <div className={ROW}>
+                <input
+                  className={`${cell} ${isTurn ? 'border-gold/70 text-gold font-semibold' : ''}`}
+                  inputMode="numeric"
+                  value={c.initiative ?? ''}
+                  onChange={(e) => setC(c.id, (x) => ({ ...x, initiative: e.target.value === '' ? null : Number(e.target.value) }))}
+                  aria-label={`${c.name} initiative`}
+                />
+                <div className={NAME_CELL}>
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    {c.isPC ? <Shield size={13} className="text-arcane shrink-0" aria-label="Player character" /> : <Sword size={13} className="text-dim shrink-0" aria-label="Opponent" />}
+                    <input className="min-w-0 flex-1 bg-transparent outline-none font-medium truncate focus-visible:underline" value={c.name} onChange={(e) => setC(c.id, (x) => ({ ...x, name: e.target.value }))} aria-label="Name" />
+                    {c.concentration && <Badge tone="arcane" className="shrink-0" title={`Concentrating on ${c.concentration}`}>Conc.</Badge>}
+                  </div>
+                  <div className="flex items-center gap-2 min-w-0 text-[11px]">
+                    {c.entityId && <EntityLink id={c.entityId} className="text-[11px] shrink-0 max-w-[50%] truncate" />}
                     {!c.isPC && (
                       <input
-                        className="block bg-transparent outline-none text-[11px] text-dim w-full"
+                        className="min-w-0 flex-1 bg-transparent outline-none text-[11px] text-dim placeholder:text-dim/70"
                         placeholder="Players see it as…"
                         title="The name players see on their phones. Leave blank to show its name."
                         value={c.playerName ?? ''}
                         onChange={(e) => setC(c.id, (x) => ({ ...x, playerName: e.target.value }))}
                       />
                     )}
-                  </td>
-                  <td className="w-14">
-                    <input className="input num w-12 py-0.5 text-center" value={c.ac ?? ''} onChange={(e) => setC(c.id, (x) => ({ ...x, ac: e.target.value === '' ? null : Number(e.target.value) }))} aria-label="AC" />
-                  </td>
-                  <td className="w-36">
-                    <div className="flex items-center gap-1">
-                      <input className="input num w-12 py-0.5 text-center" value={c.hp} onChange={(e) => setC(c.id, (x) => ({ ...x, hp: Number(e.target.value) || 0 }))} aria-label="HP" />/
-                      <input className="input num w-12 py-0.5 text-center" value={c.maxHp} onChange={(e) => setC(c.id, (x) => ({ ...x, maxHp: Number(e.target.value) || 0 }))} aria-label="Max HP" />
-                    </div>
-                    <HpBar hp={c.hp} max={c.maxHp} temp={c.tempHp} className="mt-1" />
-                  </td>
-                  <td className="w-44">
-                    <HpStepper onDamage={(n) => hit(c, 1, n)} onHeal={(n) => hit(c, -1, n)} onTemp={(n) => setC(c.id, (x) => ({ ...x, tempHp: n }))} />
-                  </td>
-                  <td>
-                    <ConditionChips value={c.conditions} options={CONDITIONS_2024} onChange={(next) => setC(c.id, (x) => ({ ...x, conditions: next }))} />
-                  </td>
-                  <td className="w-32">
-                    <input className="input py-0.5 text-xs" placeholder="spell" value={c.concentration ?? ''} onChange={(e) => setC(c.id, (x) => ({ ...x, concentration: e.target.value || null }))} aria-label="Concentration" />
-                  </td>
-                  <td className="whitespace-nowrap">
-                    <button className="btn-ghost" title={c.defeated ? 'Restore' : 'Mark defeated'} onClick={() => setC(c.id, (x) => ({ ...x, defeated: !x.defeated }))}>
-                      <Skull size={13} />
+                  </div>
+                </div>
+                <input className={cell} inputMode="numeric" value={c.ac ?? ''} onChange={(e) => setC(c.id, (x) => ({ ...x, ac: e.target.value === '' ? null : Number(e.target.value) }))} aria-label="AC" />
+                <div className="relative min-w-0">
+                  <div className="flex items-center gap-1 text-dim">
+                    <input className={`${cell} w-full min-w-0`} inputMode="numeric" value={c.hp} onChange={(e) => setC(c.id, (x) => ({ ...x, hp: Number(e.target.value) || 0 }))} aria-label="HP" />/
+                    <input className={`${cell} w-full min-w-0`} inputMode="numeric" value={c.maxHp} onChange={(e) => setC(c.id, (x) => ({ ...x, maxHp: Number(e.target.value) || 0 }))} aria-label="Max HP" />
+                  </div>
+                  <HpBar hp={c.hp} max={c.maxHp} temp={c.tempHp} className="absolute inset-x-0 top-full mt-1" />
+                </div>
+                <div className="hidden sm:block">{rowActions}</div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="[&_.btn]:h-10 [&_.btn]:w-10 [&_.btn]:justify-center [&_.input]:h-10">
+                  <HpStepper onDamage={(n) => hit(c, 1, n)} onHeal={(n) => hit(c, -1, n)} onTemp={(n) => setC(c.id, (x) => ({ ...x, tempHp: n }))} />
+                </div>
+                <div className="min-w-0 [&_.chip]:min-h-8 [&_select]:h-10">
+                  <ConditionChips value={c.conditions} options={CONDITIONS_2024} onChange={(next) => setC(c.id, (x) => ({ ...x, conditions: next }))} />
+                </div>
+                <div className="flex items-center gap-0.5">
+                  {block && (
+                    <button className={`btn-ghost ${tap} ${openBlock === c.id ? 'text-gold' : ''}`} onClick={() => setOpenBlock(openBlock === c.id ? null : c.id)} aria-expanded={openBlock === c.id} aria-label={openBlock === c.id ? 'Hide stat block' : 'Stat block'} title={openBlock === c.id ? 'Hide its stat block' : 'Show its stat block here'}>
+                      <BookOpen size={15} />
                     </button>
-                    <button className="btn-ghost" title={c.hidden ? 'Hidden from players' : 'Visible'} onClick={() => setC(c.id, (x) => ({ ...x, hidden: !x.hidden }))}>
-                      {c.hidden ? <EyeOff size={13} /> : <Eye size={13} />}
+                  )}
+                  {block && peek && (
+                    <button className={`btn-ghost ${tap}`} onClick={() => peek.pin({ id: block, name: c.name.replace(/\s+\d+$/, '') })} aria-label={`Pin ${c.name}'s stat block`} title="Pin its stat block in the inspector until the session ends">
+                      <Pin size={15} />
                     </button>
-                    <button className="btn-ghost" onClick={() => save({ combatants: list.filter((x) => x.id !== c.id), turn_index: Math.min(enc.turn_index, Math.max(0, list.length - 2)) })} aria-label="Remove">
-                      <Trash2 size={13} />
-                    </button>
-                  </td>
-                </tr>
-                {openBlock === c.id && (
-                  <tr>
-                    <td colSpan={99} className="px-3 pb-3">
-                      <div className="rounded border border-line p-3 max-w-3xl">
-                        <StatBlockById id={(c.statblockId || c.entityId)!} />
-                      </div>
-                    </td>
-                  </tr>
-                )}
-                </Fragment>
-              );
-            })}
-          </tbody>
-        </table>
-        {!list.length && <Empty compact title="Add combatants below." />}
-      </Card>
-      <Card className="flex flex-wrap gap-2 items-end">
-        <div className="w-40 grow">
-          <Field label="Name">
-            <input className="input" value={newName} onChange={(e) => setNewName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()} placeholder="Bandit, wolf…" />
-          </Field>
-        </div>
-        <div className="w-52 grow">
-          <Field label="Linked record (optional)">
-            <EntityPicker value={newEntity} types={['npc', 'creature']} onChange={setNewEntity} />
-          </Field>
-        </div>
-        {(bookList?.length ?? 0) > 0 && (
-          <div className="w-56 grow">
-            <Field label="From your books">
-              <input className="input" list="wk-book-creatures" value={bookQ} onChange={(e) => pickBook(e.target.value)} placeholder="Goblin Warrior, Lich…" aria-label="Creature from your books" />
-              <datalist id="wk-book-creatures">
-                {(bookList ?? []).map((c) => (
-                  <option key={c.id} value={bookLabel(c)} />
-                ))}
-              </datalist>
+                  )}
+                  <div className="sm:hidden">{rowActions}</div>
+                </div>
+                <input className="input h-10 w-28 min-w-[7rem] flex-1 text-xs" placeholder="Concentration" value={c.concentration ?? ''} onChange={(e) => setC(c.id, (x) => ({ ...x, concentration: e.target.value || null }))} aria-label="Concentration" />
+              </div>
+              {openBlock === c.id && block && (
+                <div className="rounded-md border border-line p-3">
+                  <StatBlockById id={block} />
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {!list.length && <Empty compact title="No combatants yet." >Add them below, or add the party.</Empty>}
+      </div>
+      {/* Adding combatants. */}
+      <div className="panel p-3 space-y-2">
+        <h3 className="section-title text-xs">Add combatants</h3>
+        <div className="flex flex-wrap gap-2 items-end [&_.input]:h-10">
+          <div className="w-40 grow">
+            <Field label="Name">
+              <input className="input" value={newName} onChange={(e) => setNewName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()} placeholder="Bandit, wolf…" />
             </Field>
           </div>
-        )}
-        <div className="w-16">
-          <Field label="Init">
-            <input className="input" value={newInit} onChange={(e) => setNewInit(e.target.value)} />
-          </Field>
+          <div className="w-52 grow">
+            <Field label="Linked record (optional)">
+              <EntityPicker value={newEntity} types={['npc', 'creature']} onChange={setNewEntity} />
+            </Field>
+          </div>
+          {(bookList?.length ?? 0) > 0 && (
+            <div className="w-52 grow">
+              <Field label="From your books">
+                <input className="input" list="wk-book-creatures" value={bookQ} onChange={(e) => pickBook(e.target.value)} placeholder="Goblin Warrior, Lich…" aria-label="Creature from your books" />
+                <datalist id="wk-book-creatures">
+                  {(bookList ?? []).map((c) => (
+                    <option key={c.id} value={bookLabel(c)} />
+                  ))}
+                </datalist>
+              </Field>
+            </div>
+          )}
+          <div className="flex gap-2 items-end">
+            <div className="w-14">
+              <Field label="Init">
+                <input className="input num text-center px-1" inputMode="numeric" value={newInit} onChange={(e) => setNewInit(e.target.value)} />
+              </Field>
+            </div>
+            <div className="w-14">
+              <Field label="HP">
+                <input className="input num text-center px-1" inputMode="numeric" value={newHp} onChange={(e) => setNewHp(e.target.value)} />
+              </Field>
+            </div>
+            <div className="w-14">
+              <Field label="AC">
+                <input className="input num text-center px-1" inputMode="numeric" value={newAc} onChange={(e) => setNewAc(e.target.value)} />
+              </Field>
+            </div>
+            <div className="w-14">
+              <Field label="Count">
+                <input className="input num text-center px-1" inputMode="numeric" value={newCount} onChange={(e) => setNewCount(e.target.value)} />
+              </Field>
+            </div>
+            <button className={`btn-primary ${tap}`} onClick={add}>
+              <Plus size={14} /> Add
+            </button>
+          </div>
         </div>
-        <div className="w-16">
-          <Field label="HP">
-            <input className="input" value={newHp} onChange={(e) => setNewHp(e.target.value)} />
-          </Field>
-        </div>
-        <div className="w-16">
-          <Field label="AC">
-            <input className="input" value={newAc} onChange={(e) => setNewAc(e.target.value)} />
-          </Field>
-        </div>
-        <div className="w-14">
-          <Field label="Count">
-            <input className="input" value={newCount} onChange={(e) => setNewCount(e.target.value)} />
-          </Field>
-        </div>
-        <button className="btn-primary" onClick={add}>
-          <Plus size={14} /> Add
-        </button>
-      </Card>
+      </div>
       <Dev>
         <p className="text-xs text-dim">Statistics are whatever you enter. Picking a creature record, or a creature from your imported books, fills them in and links its stat block.</p>
       </Dev>
