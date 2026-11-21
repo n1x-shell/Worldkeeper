@@ -302,7 +302,7 @@ In Kaelmar, mystics are often glyph-burned visionaries, carrying glyphs that gre
 
 | Start in | What it's like |
 | --- | --- |
-| @[Hollow Refuge], Aetheris | Neutral ground in the middle of five warring dominions, half a day from a shard everyone wants. |
+| @[Hollow Refuge], Aetheris | Neutral ground in the middle of five warring dominions, a week from a shard everyone wants. |
 | @[Ashvale], Kaelmar | A town on the lip of the Rift, where the keeping song is sung at the stones, and the old vaults are sealed. |
 | @[The Nameless Asylum], the Ethereal Realm | A refuge in the Hollow Verge, between the worlds, for people who remember too much. |
 

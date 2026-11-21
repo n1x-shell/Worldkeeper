@@ -26,7 +26,7 @@ Magistrate Seline Ashby
 
 ## Getting there
 
-Empyrean Spire is about three days south-west; the Luminara Gate about four days north-east, on foot, as pilgrims go.
+Empyrean Spire is about a week and a half south-west; the Luminara Gate about two weeks north-east, on foot, as pilgrims go.
 
 ## What people say
 

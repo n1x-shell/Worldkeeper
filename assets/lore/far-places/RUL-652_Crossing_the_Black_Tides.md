@@ -14,7 +14,7 @@ Tags: realm/world, cat/rule, status/canon, vis/player
 The width of the Black Tides, the cost of passage, the tolls on the crossing and what is worth carrying. Standard D&D prices still apply to everything else (SYS-902). The player-facing text is in the handbook.
 
 ## Width
-About 1,100 km (700 miles) from the Eternal Veil [REG-005] to Kaelholm [SET-302]. Ships cross slowly, under short sail in the dark middle, which is why it takes two weeks.
+About 1,000 km (600 miles) from the Eternal Veil [REG-005] to Kaelholm [SET-302]. Ships cross slowly, under short sail in the dark middle, which is why it takes two weeks.
 
 ## Passage, tolls and the catalogue
 - Passage is at the book rate, 1 sp per mile: 70 gp, with food. Smugglers charge double. Working your passage is free, if a captain will have you.

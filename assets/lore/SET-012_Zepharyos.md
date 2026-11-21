@@ -17,4 +17,4 @@ The City of the Unbound, among the clouds. Capital of the Fractured Nexus and se
 
 ## Travel
 
-About a week beyond the dominion's border, which is itself about a week from Hollow Refuge.
+About a week and a half beyond the dominion's border, which is itself about two weeks from Hollow Refuge.

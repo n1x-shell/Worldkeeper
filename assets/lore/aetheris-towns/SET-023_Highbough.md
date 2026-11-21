@@ -26,7 +26,7 @@ Elder Aelis Thornweave
 
 ## Getting there
 
-The Rootspire is about four days east through roadless forest, with a guide.
+The Rootspire is about ten days east through roadless forest, with a guide.
 
 ## What people say
 

@@ -10,6 +10,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { applyErrata } from './errata.js';
 import type { DB } from './db/connection.js';
 import type { SourceFile } from './import/scan.js';
 import { buildPlan, commitPlan } from './import/importer.js';
@@ -47,6 +48,8 @@ interface LinkSpec {
   type: string;
   label?: string;
   description?: string;
+  /** The label this link was shipped with before; a library's link that still has it gets the new one. */
+  was_label?: string;
 }
 
 /** Add the curated links. Links whose records do not exist (yet) are skipped and reported. */
@@ -66,7 +69,12 @@ export function applyLinks(db: DB, dir = DEFAULT_ADDITIONS_DIR): { added: number
       continue;
     }
     if (already.get(l.source, l.target, l.type, l.type)) continue;
-    if (curated.get(l.source, l.target, l.type)) continue;
+    if (curated.get(l.source, l.target, l.type)) {
+      // A shipped label that changed (for example a travel time): updated only where the library still has the old one.
+      if (l.was_label && l.label !== l.was_label)
+        db.prepare(`UPDATE relationships SET label = ? WHERE source_id = ? AND target_id = ? AND type = ? AND origin = 'user' AND label = ?`).run(l.label, l.source, l.target, l.type, l.was_label);
+      continue;
+    }
     createRelationship(db, { source_id: l.source, target_id: l.target, type: l.type as RelationshipType, label: l.label ?? '', description: l.description ?? '', canon_status: 'CANON' });
     added++;
   }
@@ -131,6 +139,8 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?:
   const rumours = syncRumours(db, readPlayerText(path.resolve(dir, '../player-text')));
   const mysteries = syncMysteries(db, path.join(dir, 'mysteries.json'));
   const timeline = applyTimeline(db, dir);
+  // Corrections to wording the library already has (records, player text, adventures), where it's still the old wording.
+  const errata = applyErrata(db, path.join(dir, 'errata.json'));
   // The world's maps (pins, routes, region outlines). Maps the library already has are only topped up.
   const mapsAdded = uploadsDir ? applyMaps(db, uploadsDir, path.resolve(dir, '../maps'), { onlyRevealed: false }) : [];
   // Ready-to-run adventures, added to the GM's Adventures (ones the library already has are left alone).
@@ -144,5 +154,18 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?:
       itemTables(treasureData(path.resolve(dir, '../treasure'))).map((t) => ({ name: t.name, region: null, entries: t.entries })),
     ),
   ];
-  return { records: files.length, imported, links, rumours, mysteries, timeline, maps: mapsAdded, adventures: adventuresAdded, tables: tablesAdded };
+  // Errata for adventures run after the shipped adventures are added (a library that had none gets them corrected too).
+  const adventureErrata = applyErrata(db, path.join(dir, 'errata.json'));
+  return {
+    records: files.length,
+    imported,
+    links,
+    rumours,
+    mysteries,
+    timeline,
+    maps: mapsAdded,
+    adventures: adventuresAdded,
+    tables: tablesAdded,
+    errata: { records: errata.records + adventureErrata.records, adventures: errata.adventures + adventureErrata.adventures },
+  };
 }

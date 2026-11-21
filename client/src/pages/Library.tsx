@@ -1011,12 +1011,14 @@ function AdditionsPanel({ onDone }: { onDone: (msg: string) => void }) {
         onClick={async () => {
           setBusy(true);
           try {
-            const r = await api.post<{ records: number; links: { added: number }; rumours: { total: number }; mysteries: { secrets: number }; adventures?: string[]; tables?: string[] }>(
+            const r = await api.post<{ records: number; links: { added: number }; rumours: { total: number }; mysteries: { secrets: number }; adventures?: string[]; tables?: string[]; maps?: { name: string; moved?: number }[] }>(
               '/api/additions/apply',
               {},
             );
             onDone(
-              `Additions applied: ${r.records} records, ${r.links.added} new links, ${r.rumours.total} rumours and ${r.mysteries.secrets} secrets${r.adventures?.length ? `, ${r.adventures.length} new adventures` : ''}${r.tables?.length ? `, ${r.tables.length} new random tables` : ''}. A backup was taken first.`,
+              `Additions applied: ${r.records} records, ${r.links.added} new links, ${r.rumours.total} rumours and ${r.mysteries.secrets} secrets${r.adventures?.length ? `, ${r.adventures.length} new adventures` : ''}${r.tables?.length ? `, ${r.tables.length} new random tables` : ''}${
+                (r.maps ?? []).some((m) => m.moved) ? `; on the maps, ${(r.maps ?? []).reduce((n, m) => n + (m.moved ?? 0), 0)} pins, routes and outlines updated to the map's scale` : ''
+              }. A backup was taken first.`,
             );
           } finally {
             setBusy(false);

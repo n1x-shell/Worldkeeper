@@ -26,7 +26,7 @@ Lamplighter Ezri
 
 ## Getting there
 
-Half a day east, on the road.
+About nine days east, on the road.
 
 ## What people say
 

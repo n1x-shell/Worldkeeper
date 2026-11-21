@@ -32,7 +32,7 @@ The rule held. Hollow Refuge has been neutral ground ever since, because every f
 
 For six years the dominions fought over where each one ended. Nobody had drawn the borders; the five worlds had simply met where they met, and every faction thought the line belonged a little further out.
 
-The fighting settled where it settled. Each dominion's border now lies about a week from Hollow Refuge. Only on the Bloodfields, where the Legion's land meets the Wildborn's, did the fighting never stop. It's a permanent warfront to this day.
+The fighting settled where it settled. Each dominion's border now lies one to two weeks from Hollow Refuge. Only on the Bloodfields, where the Legion's land meets the Wildborn's, did the fighting never stop. It's a permanent warfront to this day.
 
 **What people say**
 
@@ -137,7 +137,7 @@ In 296 AB, shepherds in the hills found glass growing out of bare rock, smooth a
 
 *Year 30 Unbound (299 AB)*
 
-In the thirtieth year, a gravedigger on the Bloodmarked Fields turned up earth that glowed red at night. By winter, every faction had heard the rumour: a shard lay under the Fields. By spring, all five had sent someone to Hollow Refuge, half a day's walk away.
+In the thirtieth year, a gravedigger on the Bloodmarked Fields turned up earth that glowed red at night. By winter, every faction had heard the rumour: a shard lay under the Fields. By spring, all five had sent someone to Hollow Refuge, a week's walk away.
 
 **What people say**
 

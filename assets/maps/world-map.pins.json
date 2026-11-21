@@ -1,7 +1,7 @@
 {
   "name": "The World",
   "image": "world-map.webp",
-  "note": "Pin positions are pixels from the image's top-left corner, placed on drawn features rather than over the lettering. Only pins whose record is revealed are added for players.",
+  "note": "Pin positions are pixels from the image's top-left corner, placed on drawn features rather than over the lettering. Only pins whose record is revealed are added for players. scale_miles: the map is drawn to scale, about this many miles across (0.8 miles to a pixel), as the known world (Distances in Aetheris [RUL-651]).",
   "pins": [
     {
       "id": "CON-301",
@@ -423,5 +423,6 @@
       "y": 600,
       "category": "settlement"
     }
-  ]
+  ],
+  "scale_miles": 2675
 }

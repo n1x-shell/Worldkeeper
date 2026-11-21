@@ -26,7 +26,7 @@ Chandler Ossery Thane
 
 ## Getting there
 
-A day's walk south-west, past Blackveil Fortress.
+About two weeks' walk south-west, past Blackveil Fortress.
 
 ## What people say
 

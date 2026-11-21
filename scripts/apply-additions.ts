@@ -12,6 +12,6 @@ import { applyAdditions } from '../server/src/additions.js';
 const ctx = new AppContext(resolvePaths(process.argv[2]));
 const r = applyAdditions(ctx.db, undefined, ctx.paths.uploadsDir);
 console.log(
-  `Additions applied: ${r.records} records (${r.imported?.created ?? 0} new, ${r.imported?.updated ?? 0} updated), ${r.links.added} links, ${r.rumours.total} rumours (${r.rumours.added} new), ${r.mysteries.mysteries} mysteries with ${r.mysteries.secrets} secrets and ${r.mysteries.clues} clues, ${r.timeline} timeline rows, ${r.adventures.length} adventures and ${r.tables.length} random tables added, maps: ${r.maps.map((m) => `${m.name} (${m.created ? 'added' : 'topped up'}: ${m.pins} pins, ${m.routes} routes, ${m.regions} regions)`).join('; ') || 'none'}.`,
+  `Additions applied: ${r.records} records (${r.imported?.created ?? 0} new, ${r.imported?.updated ?? 0} updated), ${r.links.added} links, ${r.rumours.total} rumours (${r.rumours.added} new), ${r.mysteries.mysteries} mysteries with ${r.mysteries.secrets} secrets and ${r.mysteries.clues} clues, ${r.timeline} timeline rows, ${r.adventures.length} adventures and ${r.tables.length} random tables added, maps: ${r.maps.map((m) => `${m.name} (${m.created ? 'added' : 'topped up'}: ${m.pins} pins, ${m.routes} routes, ${m.regions} regions${m.moved ? `, ${m.moved} updated to the map's scale` : ''})`).join('; ') || 'none'}.`,
 );
 if (r.links.skipped.length) console.log(`Skipped ${r.links.skipped.length} links whose records are not in this library: ${r.links.skipped.join('; ')}`);

@@ -26,7 +26,7 @@ Anchor-Master Wenna Gale
 
 ## Getting there
 
-Zepharyos is about two days away, by chain-ladder and mountain road, or a day if the island has drifted the right way.
+Zepharyos is about eight days away, by chain-ladder and mountain road, or a few days if the island has drifted the right way.
 
 ## What people say
 

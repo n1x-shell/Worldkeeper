@@ -47,7 +47,7 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 | --- | --- | --- |
 | The Eternal Veil's ports, in Aetheris | About two weeks by ship | Across the Black Tides, in the dark. Regular crossings have only just begun. |
 | The Eastern Mountains | West, a long road inland | Goliath country, and the Ascendancy's. |
-| Ashvale and the Rift | About 1,500 km west | Right across the continent. |
+| Ashvale and the Rift | About 1,300 km (800 miles) west | Right across the continent. |
 
 **What people say**
 
@@ -93,7 +93,7 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 
 | From Empyrean Spire to | Time | Notes |
 | --- | --- | --- |
-| Hollow Refuge | About two weeks | A week to the border, a week across the Radiant Expanse. |
+| Hollow Refuge | About three and a half weeks | About two weeks to the border, a week and a half across the Radiant Expanse. |
 | The Luminara Gate | North, across the golden plains | Pilgrims walk it. |
 
 **What people say**
@@ -138,7 +138,7 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 
 | From Varkhaal to | Time | Notes |
 | --- | --- | --- |
-| Hollow Refuge | About two weeks | A week to the border at the Bloodfields, a week through the iron mountains. |
+| Hollow Refuge | About two and a half weeks | A week and a half to the border at the Bloodfields, a week through the iron mountains. |
 | The Anvil of Dominion | Under the mountains nearby | Forge-roads, hot and crowded. |
 
 **What people say**
@@ -182,7 +182,7 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 
 | From Zepharyos to | Time | Notes |
 | --- | --- | --- |
-| Hollow Refuge | About two weeks | A week to the border, a week through storm country. |
+| Hollow Refuge | About three and a half weeks | About two weeks to the border, a week and a half through storm country. |
 | The Echoing Halls and the Rift of Unmaking | Elsewhere in the Fractured Nexus | Neither is anywhere you want to be. |
 
 **What people say**
@@ -225,7 +225,7 @@ The great cities, in the same layout as Hollow Refuge and Ashvale: **Read aloud*
 
 | From Noctis to | Time | Notes |
 | --- | --- | --- |
-| Hollow Refuge | About two weeks | A week to the border, a week through the dusk. |
+| Hollow Refuge | Nearly three weeks | About two weeks to the border, five days through the dusk. |
 | The dusk coast and the Black Tides | West | Ships cross to Kaelholm in about two weeks. |
 | The Umbral Paths | Everywhere and nowhere | Shifting roads that lead anywhere. |
 

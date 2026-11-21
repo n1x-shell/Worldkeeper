@@ -26,7 +26,7 @@ Reeve Bram Hollis
 
 ## Getting there
 
-A day west, round the edge of the Fields.
+About a week and a half west, round the edge of the Fields.
 
 ## What people say
 

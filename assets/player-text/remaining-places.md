@@ -31,7 +31,7 @@ The Hollow Marches sit in the middle, and nobody rules them.
 
 **Getting around**
 
-Each dominion's border is about a week from Hollow Refuge. Each capital is about another week past its border.
+Each dominion's border is one to two weeks from Hollow Refuge, and each capital another five days to a week and a half past it.
 
 **What people say**
 
@@ -72,7 +72,7 @@ Each dominion's border is about a week from Hollow Refuge. Each capital is about
 
 **Getting around**
 
-The border is about a week from Hollow Refuge, and Empyrean Spire is about another week beyond it.
+The border is about two weeks from Hollow Refuge, and Empyrean Spire is about a week and a half beyond it.
 
 **What people say**
 
@@ -112,7 +112,7 @@ The border is about a week from Hollow Refuge, and Empyrean Spire is about anoth
 
 **Getting around**
 
-The border is about a week from Hollow Refuge, and Varkhaal is about another week beyond it.
+The border is about a week and a half from Hollow Refuge, and Varkhaal is about another week beyond it.
 
 **What people say**
 
@@ -152,7 +152,7 @@ The border is about a week from Hollow Refuge, and Varkhaal is about another wee
 
 **Getting around**
 
-The border is about a week from Hollow Refuge, and Zepharyos is about another week beyond it. The high country is all storms and floating rock.
+The border is about two weeks from Hollow Refuge, and Zepharyos is about a week and a half beyond it. The high country is all storms and floating rock.
 
 **What people say**
 
@@ -193,7 +193,7 @@ The border is about a week from Hollow Refuge, and Zepharyos is about another we
 
 **Getting around**
 
-The border is about a week from Hollow Refuge, and Noctis is about another week beyond it. The crossing to Kaelmar takes about two weeks.
+The border is about two weeks from Hollow Refuge, and Noctis is about five days beyond it. The crossing to Kaelmar takes about two weeks.
 
 **What people say**
 
@@ -398,7 +398,7 @@ Three gods are dead: Maruun the Sundered Tide, Aurex the Throne-Breaker and the 
 
 **Getting around**
 
-- In Aetheris, each dominion's border is about a week from Hollow Refuge, and each capital about another week beyond.
+- In Aetheris, each dominion's border is one to two weeks from Hollow Refuge, and the capitals two to three and a half weeks.
 - Kaelmar is about 1,500 km from the Rift to the east coast.
 - The crossing between the continents takes about two weeks by ship.
 

@@ -18,7 +18,7 @@ Years 3 to 8 Unbound (272 to 277 AB).
 
 For six years the dominions fought over where each one ended. Nobody had drawn the borders; the five worlds had simply met where they met, and every faction thought the line belonged a little further out.
 
-The fighting settled where it settled. Each dominion's border now lies about a week from Hollow Refuge. Only on the Bloodfields, where the Legion's land meets the Wildborn's, did the fighting never stop. It's a permanent warfront to this day.
+The fighting settled where it settled. Each dominion's border now lies one to two weeks from Hollow Refuge. Only on the Bloodfields, where the Legion's land meets the Wildborn's, did the fighting never stop. It's a permanent warfront to this day.
 
 ## What people say
 

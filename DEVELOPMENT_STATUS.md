@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-18 · v0.3.11_
+_Last updated: 2026-11-18 · v0.3.12_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,12 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.12
+
+- **The world map is drawn to scale, and every travel time follows it** (owner decisions, DEC-910). The map is about 2,700 miles across (`scale_miles` in `assets/maps/world-map.pins.json`), as the known world; the pins stay where they were, and the times were rewritten to match them at a normal pace (24 miles a day on foot, about 50 by ship). The Hollow Marches are about a month across: the Crossroads of Fate about three days from Hollow Refuge, the Bloodmarked Fields about a week, Blackveil Fortress about a week and a half. Dominion borders are one to two weeks from the Refuge and the capitals two to three and a half weeks; Ashvale's villages are two to four weeks from the town; Kaelholm to Ashvale is about 1,300 km (800 miles). The crossing of the Black Tides stays about two weeks (about 600 miles). Updated: all 34 timed route labels and their 31 matching links, *Distances in Aetheris* [RUL-651], *Crossing the Black Tides* [RUL-652], the capitals, the towns, Tollrock, Kittiwake, two histories, the handbook's pages, and three adventures (the dead man now walks three days and nights to the waystone).
+- **Errata** (`assets/lore/errata.json`, `server/src/errata.ts`): corrections to wording a library already has, applied by Apply additions and the handbook build only where the old wording is still there: records' text, fields and player text (the archive's own records too: Hollow Refuge, the Hollow Marches, the Bloodmarked Fields, the Crossroads, the Rift, the five dominions, the world layout, the dominions directory), and adventures by title, including campaign copies. Record changes are revisions and show in Canon Review. Route labels (`assets/maps/world-map.moves.json`) and curated links (`was_label` in `links.json`) are relabelled the same way, only where unchanged; Apply additions also sets the world map's scale if it has none. On the old test library all 84 errata, 34 route labels and 31 links applied, and nothing the GM changed was touched.
+- The maps zoom in to four times the image's size (was about 1.4).
 
 ## v0.3.11
 

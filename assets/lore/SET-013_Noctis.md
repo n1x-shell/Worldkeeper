@@ -17,4 +17,4 @@ The City of Masks, in endless dusk. Capital of the Eternal Veil and seat of the 
 
 ## Travel
 
-About a week beyond the dominion's border, which is itself about a week from Hollow Refuge.
+About five days beyond the dominion's border, which is itself about two weeks from Hollow Refuge.

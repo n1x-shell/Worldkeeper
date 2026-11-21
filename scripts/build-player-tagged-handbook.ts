@@ -28,6 +28,7 @@ import { handbookReveals } from '../server/src/player/handbookReveals.js';
 import { buildPlayerSite } from '../server/src/publish/site.js';
 import { applyMaps } from '../server/src/mapAdditions.js';
 import { applyLinks, loreFiles } from '../server/src/additions.js';
+import { applyErrata } from '../server/src/errata.js';
 
 const [dataDir, archive, outDir] = process.argv.slice(2);
 const ctx = new AppContext(resolvePaths(dataDir));
@@ -36,6 +37,9 @@ const ctx = new AppContext(resolvePaths(dataDir));
 const files = [...readSource(archive), ...loreFiles()];
 commitPlan(ctx.db, files, buildPlan(ctx.db, files, path.basename(archive)));
 const linked = applyLinks(ctx.db);
+// Corrections to the archive's own wording (assets/lore/errata.json), before anything is revealed.
+const fixed = applyErrata(ctx.db, path.resolve(import.meta.dirname, '../assets/lore/errata.json'));
+console.log(`errata: ${fixed.records} records corrected`);
 console.log(`links: ${linked.added} added${linked.skipped.length ? `, ${linked.skipped.length} skipped` : ''}`);
 // The handbook's reveals (player-tagged records' safe sections, and the DM-written player text), by the same rules
 // the app's "Match the published handbook" action uses (server/src/player/handbookReveals.ts).

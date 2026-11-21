@@ -439,7 +439,7 @@ export function MapView(p: MapViewProps) {
         crs={L.CRS.Simple}
         bounds={bounds}
         minZoom={-5}
-        maxZoom={0.5}
+        maxZoom={2}
         zoomSnap={0.25}
         zoomControl={false}
         style={{ position: 'absolute', inset: 0, background: '#0b0b10' }}

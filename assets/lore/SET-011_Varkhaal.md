@@ -17,4 +17,4 @@ The Iron Citadel, with its Great Arena. Capital of the Tyrant's Dominion and sea
 
 ## Travel
 
-About a week beyond the dominion's border, which is itself about a week from Hollow Refuge.
+About a week beyond the dominion's border, which is itself about a week and a half from Hollow Refuge.
