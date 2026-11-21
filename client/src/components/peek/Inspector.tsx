@@ -12,10 +12,15 @@ import { RecordPeek } from './RecordPeek';
 export function Inspector({ overlay }: { overlay: boolean }) {
   const p = usePeek();
   const docked = !!p?.inspectorOpen && !overlay;
+  const setDocked = p?.setDocked;
   useEffect(() => {
     document.documentElement.classList.toggle('wk-inspector-docked', docked);
-    return () => document.documentElement.classList.remove('wk-inspector-docked');
-  }, [docked]);
+    setDocked?.(docked);
+    return () => {
+      document.documentElement.classList.remove('wk-inspector-docked');
+      setDocked?.(false);
+    };
+  }, [docked, setDocked]);
   if (!p || !p.inspectorOpen) return null;
   const current = p.inspected[p.inspected.length - 1] ?? null;
   return (
@@ -31,6 +36,7 @@ export function Inspector({ overlay }: { overlay: boolean }) {
           value={p.tab}
           onChange={p.setTab}
           options={[
+            ...(p.panel ? [{ value: 'page' as const, label: 'This page' }] : []),
             { value: 'record', label: 'Peek' },
             { value: 'pinned', label: <span className="inline-flex items-center gap-1">Pinned{p.pins.length ? <span className="num">({p.pins.length})</span> : null}</span> },
           ]}
@@ -45,7 +51,9 @@ export function Inspector({ overlay }: { overlay: boolean }) {
         </button>
       </div>
       <div className="flex-1 overflow-y-auto p-4">
-        {p.tab === 'record' ? (
+        {/* A page's own panel is portalled here (see panel.tsx); kept mounted so the page can reach it. */}
+        <div ref={p.setPanelEl} className={p.tab === 'page' && p.panel ? '' : 'hidden'} aria-label={p.panel?.title} />
+        {p.tab === 'page' && p.panel ? null : p.tab === 'record' ? (
           current ? (
             <RecordPeek key={current} id={current} mode="inspector" />
           ) : (

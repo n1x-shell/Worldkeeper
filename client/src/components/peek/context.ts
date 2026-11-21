@@ -24,6 +24,8 @@ export interface Pin {
   name: string;
 }
 
+export type InspectorTab = 'page' | 'record' | 'pinned';
+
 export interface PeekApi {
   /** Open a record in the inspector. */
   peek: (id: string) => void;
@@ -36,8 +38,15 @@ export interface PeekApi {
   /** What the inspector shows: the peeked records (newest last), or the pinned stat blocks. */
   inspected: string[];
   back: () => void;
-  tab: 'record' | 'pinned';
-  setTab: (t: 'record' | 'pinned') => void;
+  tab: InspectorTab;
+  setTab: (t: InspectorTab) => void;
+  /** A page's own panel in the inspector ("This page"): its title, and where to portal it while the inspector is docked. */
+  panel: { title: string; el: HTMLElement | null } | null;
+  setPanelTitle: (title: string | null) => void;
+  setPanelEl: (el: HTMLElement | null) => void;
+  /** Whether the inspector is docked beside the page (wide screens), rather than overlaying it. */
+  docked: boolean;
+  setDocked: (d: boolean) => void;
   pins: Pin[];
   pin: (p: Pin) => void;
   unpin: (id: string) => void;
