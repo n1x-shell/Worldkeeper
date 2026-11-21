@@ -7,10 +7,11 @@
 import { useMechanics } from '../lib/mechanics';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { BookMarked, Check, ChevronDown, ChevronsLeft, ChevronsRight, Compass, Eye, MapPinned, Menu, Moon, Search, Settings, Sun, X } from 'lucide-react';
+import { BookMarked, Check, ChevronDown, ChevronsLeft, ChevronsRight, Compass, Eye, Map as MapIcon, MapPinned, Menu, Moon, Search, Settings, Sun, X } from 'lucide-react';
 import { useAppState } from '../lib/store';
 import { api } from '../lib/api';
 import { SearchPalette } from './SearchPalette';
+import { SidebarSlotContext } from './sidebarSlot';
 import { DEBUG_ONLY, FULL_BLEED, LIBRARY, NEEDS, WORKSPACES, matches, workspaceFor, type Group, type Item } from './navigation';
 
 const I = 16;
@@ -65,6 +66,19 @@ export function Layout() {
     return () => mq.removeEventListener('change', on);
   }, []);
   const compact = narrow ? !openNarrow : collapsed;
+  // Phones have no sidebar (the menu drawer instead), so pages keep their own controls there.
+  const [wide, setWide] = useState(() => typeof window === 'undefined' || !window.matchMedia || window.matchMedia('(min-width: 768px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia?.('(min-width: 768px)');
+    if (!mq) return;
+    const on = () => setWide(mq.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+  // On a full-view page (the map), the open sidebar is handed to the page for its own controls.
+  const [slotEl, setSlotEl] = useState<HTMLElement | null>(null);
+  const fullBleed = FULL_BLEED.test(loc.pathname);
+  const slot = fullBleed && wide && !compact ? slotEl : null;
   const toggleSidebar = () => (narrow ? setOpenNarrow(!openNarrow) : setSidebarCollapsed(!collapsed));
 
   const visible = (it: Item) => (debug || !DEBUG_ONLY.has(it.to)) && (!NEEDS[it.to] || !mech || mech[NEEDS[it.to]]);
@@ -127,7 +141,7 @@ export function Layout() {
     if (ws === 'library') return [LIBRARY];
     const gs = current?.groups ?? [];
     if (ws !== 'atlas' || !maps.length) return gs;
-    return [...gs, { title: 'Each map', items: maps.map((m) => ({ to: `/atlas/explore/${m.id}`, label: m.name, icon: MapPinned })) }];
+    return [{ title: 'Maps', items: maps.map((m) => ({ to: `/atlas/explore/${m.id}`, label: m.name, icon: MapPinned })) }, ...gs];
   }, [ws, current, maps]);
 
   const link = (it: Item, compact: boolean) =>
@@ -314,7 +328,23 @@ export function Layout() {
         </div>
       </header>
       <div className="flex-1 flex min-h-0">
-        <aside className={`hidden md:block shrink-0 bg-panel/70 border-r border-line transition-[width] duration-150 ${compact ? 'w-14' : 'w-[248px]'}`}>{sidebar(compact)}</aside>
+        <aside className={`hidden md:block shrink-0 bg-panel/70 border-r border-line transition-[width] duration-150 ${compact ? 'w-14' : fullBleed ? 'w-[272px]' : 'w-[248px]'}`}>
+          {fullBleed && !compact ? (
+            <div className="flex flex-col h-full">
+              <div ref={setSlotEl} className="flex-1 overflow-y-auto" />
+              <div className="border-t border-line p-2 flex items-center">
+                <NavLink to="/atlas" className="btn-ghost text-xs" title="Add maps and list their pins">
+                  <MapIcon size={14} /> Manage maps
+                </NavLink>
+                <button className="btn-ghost ml-auto" onClick={toggleSidebar} aria-label="Collapse sidebar" title="Collapse ( [ ): the map's legend floats over it instead">
+                  <ChevronsLeft size={16} />
+                </button>
+              </div>
+            </div>
+          ) : (
+            sidebar(compact)
+          )}
+        </aside>
         {mobileNav && (
           <div className="fixed inset-0 z-[1800] md:hidden bg-black/50" onClick={() => setMobileNav(false)}>
             <aside className="w-72 h-full bg-panel border-r border-line flex flex-col" onClick={(e) => e.stopPropagation()}>
@@ -328,9 +358,11 @@ export function Layout() {
             </aside>
           </div>
         )}
-        {FULL_BLEED.test(loc.pathname) ? (
+        {fullBleed ? (
           <main className="flex-1 relative overflow-hidden min-w-0" id="main">
-            <Outlet />
+            <SidebarSlotContext.Provider value={slot}>
+              <Outlet />
+            </SidebarSlotContext.Provider>
           </main>
         ) : (
           <main className="flex-1 overflow-y-auto min-w-0" id="main">

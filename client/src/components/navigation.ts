@@ -53,7 +53,6 @@ import {
   Sparkles,
   Swords,
   Table2,
-  Telescope,
   Upload,
   UserPlus,
   UserSquare2,
@@ -194,15 +193,13 @@ export const WORKSPACES: Workspace[] = [
     id: 'atlas',
     label: 'Atlas',
     icon: MapIcon,
-    // The full map view is the Atlas's home; World Atlas is where maps are added and managed.
+    // The full map view is the Atlas's home. The sidebar lists each map (added by the shell) and, on the map
+    // itself, holds its legend; Manage maps is where maps are added and pins are listed.
     home: '/atlas/explore',
     groups: [
       {
-        title: 'Maps',
-        items: [
-          { to: '/atlas/explore', label: 'Map Explorer', icon: Telescope },
-          { to: '/atlas', label: 'World Atlas', icon: MapIcon },
-        ],
+        title: 'Manage',
+        items: [{ to: '/atlas', label: 'Manage maps', icon: MapIcon }],
       },
     ],
   },
