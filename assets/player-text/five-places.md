@@ -32,9 +32,9 @@ Each place has three parts:
 
 | From Hollow Refuge to | Time | How safe |
 | --- | --- | --- |
-| The Crossroads of Fate | Half a day | Watched, usually safe |
-| The Bloodmarked Fields | Half a day | Risky |
-| Blackveil Fortress | 1 day | Risky |
+| The Crossroads of Fate | About three days | Watched, usually safe |
+| The Bloodmarked Fields | About a week | Risky |
+| Blackveil Fortress | About a week and a half | Risky |
 
 Past those three, the roads get worse. The routes out to the Rift are openly hostile.
 
@@ -83,8 +83,8 @@ Past those three, the roads get worse. The routes out to the Rift are openly hos
 **What you know**
 
 - Every faction fights here, and the fighting is over shards. They keep surfacing in this ground.
-- It's half a day from Hollow Refuge, and the road is risky.
-- From the Fields it's half a day to the Scar, or a full day to Wither's Hollow. Both roads are dangerous.
+- It's about a week from Hollow Refuge, and the road is risky.
+- From the Fields it's about nine days to the Scar, or two and a half weeks to Wither's Hollow. Both roads are dangerous.
 - Nobody holds the Fields for long.
 
 **What people say**
@@ -111,7 +111,7 @@ The Rift opens in two places, one on each continent. Use the read-aloud text for
 
 **What you know**
 
-- The eastern Rift sits at the far edge of the Hollow Marches. Every road there is openly hostile. It's a day from Blackveil Fortress, or half a day from the Sunken Archive or Wither's Hollow.
+- The eastern Rift sits at the far edge of the Hollow Marches. Every road there is openly hostile. It's about two and a half weeks from Blackveil Fortress, a week and a half from the Sunken Archive, or four days from Wither's Hollow.
 - The western Rift runs beside Ashvale. The town is built right on its lip.
 - Ashvale's ring of thirteen standing stones stands close to the edge.
 

@@ -5,7 +5,7 @@ Levels: 4 to 5 (written for level 4)
 Linked: LOC-003, NPC-376, NPC-010, NPC-422, CLT-007, NPC-095, CRE-014, CRE-502, CRE-033, CRE-012, SET-001, NPC-437, NPC-369, HOOK-931, HOOK-010, COS-032
 
 ## Premise
-The three ends of Lemmy Carrow's thread have come together: his body's end from the Crooked Nail, his voice, and Lemmy himself. The thread can be tied back only where it snapped, at the waystone of the Crossroads of Fate [LOC-003], at dusk, with all three ends present. The Crossroads is half a day from Hollow Refuge, watched, and usually safe.
+The three ends of Lemmy Carrow's thread have come together: his body's end from the Crooked Nail, his voice, and Lemmy himself. The thread can be tied back only where it snapped, at the waystone of the Crossroads of Fate [LOC-003], at dusk, with all three ends present. The Crossroads is about three days from Hollow Refuge, watched, and usually safe.
 
 The truth: the Hollow Tribunal [CLT-007] has been waiting for exactly this. It wants to know whether a cut thread of the Loom can be tied again, and who can do it. When the three ends come together at the waystone, the Hollow Court appears, as it does wherever a judgement is due, and Justicar Quell [NPC-095] sits in judgement on whether the thread may be retied.
 

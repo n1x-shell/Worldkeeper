@@ -17,4 +17,4 @@ A floating city of white stone. Capital of the Radiant Ascendancy and seat of th
 
 ## Travel
 
-About a week beyond the dominion's border, which is itself about a week from Hollow Refuge.
+About a week and a half beyond the dominion's border, which is itself about two weeks from Hollow Refuge.

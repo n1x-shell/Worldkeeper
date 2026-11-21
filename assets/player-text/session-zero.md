@@ -64,7 +64,7 @@ Each player, in turn, picks someone already at the table and answers one of thes
 
 **What everyone here knows.**
 
-- The Bloodmarked Fields, half a day away, are a war over shards that never stops.
+- The Bloodmarked Fields, a week away, are a war over shards that never stops.
 - The Rift, at the far edge of the Marches, has no bottom. Few who go down it come back.
 - Shards are pieces of what broke the Cycle. Touching one marks you for life.
 - Across the Black Tides lies Kaelmar, a second continent. The crossing is made in the dark.

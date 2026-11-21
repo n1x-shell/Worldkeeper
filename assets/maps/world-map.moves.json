@@ -1,0 +1,521 @@
+{
+  "note": "Previous shipped route labels (and their lines, unchanged): Apply additions relabels a route only while it is still exactly as shipped.",
+  "routes": [
+    {
+      "label": "Hollow Refuge to the Crossroads of Fate: about three days, watched, usually safe",
+      "was_label": "Hollow Refuge to the Crossroads of Fate: half a day, watched, usually safe",
+      "was_points": [
+        [
+          2420,
+          990
+        ],
+        [
+          2384,
+          894
+        ]
+      ]
+    },
+    {
+      "label": "Hollow Refuge to the Bloodmarked Fields: about a week, risky",
+      "was_label": "Hollow Refuge to the Bloodmarked Fields: half a day, risky",
+      "was_points": [
+        [
+          2420,
+          990
+        ],
+        [
+          2640,
+          1030
+        ]
+      ]
+    },
+    {
+      "label": "Hollow Refuge to Blackveil Fortress: about a week and a half, risky",
+      "was_label": "Hollow Refuge to Blackveil Fortress: a day, risky",
+      "was_points": [
+        [
+          2420,
+          990
+        ],
+        [
+          2490,
+          644
+        ]
+      ]
+    },
+    {
+      "label": "the Crossroads of Fate to the Scar: about six days, dangerous",
+      "was_label": "the Crossroads of Fate to the Scar: half a day, dangerous",
+      "was_points": [
+        [
+          2384,
+          894
+        ],
+        [
+          2540,
+          790
+        ]
+      ]
+    },
+    {
+      "label": "the Crossroads of Fate to the Sunken Archive: about ten days, risky",
+      "was_label": "the Crossroads of Fate to the Sunken Archive: a day, risky",
+      "was_points": [
+        [
+          2384,
+          894
+        ],
+        [
+          2200,
+          1120
+        ]
+      ]
+    },
+    {
+      "label": "the Bloodmarked Fields to the Scar: about nine days, dangerous",
+      "was_label": "the Bloodmarked Fields to the Scar: half a day, dangerous",
+      "was_points": [
+        [
+          2640,
+          1030
+        ],
+        [
+          2540,
+          790
+        ]
+      ]
+    },
+    {
+      "label": "the Bloodmarked Fields to Wither's Hollow: about two and a half weeks, dangerous",
+      "was_label": "the Bloodmarked Fields to Wither's Hollow: a day, dangerous",
+      "was_points": [
+        [
+          2640,
+          1030
+        ],
+        [
+          2090,
+          964
+        ]
+      ]
+    },
+    {
+      "label": "Blackveil Fortress to the Rift: about two and a half weeks, openly hostile",
+      "was_label": "Blackveil Fortress to the Rift: a day, openly hostile",
+      "was_points": [
+        [
+          2490,
+          644
+        ],
+        [
+          2010,
+          860
+        ]
+      ]
+    },
+    {
+      "label": "the Sunken Archive to the Rift: about a week and a half, openly hostile",
+      "was_label": "the Sunken Archive to the Rift: half a day, openly hostile",
+      "was_points": [
+        [
+          2200,
+          1120
+        ],
+        [
+          2010,
+          860
+        ]
+      ]
+    },
+    {
+      "label": "Wither's Hollow to the Rift: about four days, openly hostile",
+      "was_label": "Wither's Hollow to the Rift: half a day, openly hostile",
+      "was_points": [
+        [
+          2090,
+          964
+        ],
+        [
+          2010,
+          860
+        ]
+      ]
+    },
+    {
+      "label": "Hollow Refuge to Empyrean Spire: about three and a half weeks: about two weeks to the border, a week and a half more across the Radiant Expanse",
+      "was_label": "Hollow Refuge to Empyrean Spire: about two weeks, a week to the border and a week through the Radiant Expanse",
+      "was_points": [
+        [
+          2420,
+          990
+        ],
+        [
+          2500,
+          660
+        ],
+        [
+          2580,
+          270
+        ]
+      ]
+    },
+    {
+      "label": "Hollow Refuge to Varkhaal: about two and a half weeks: a week and a half to the border at the Bloodfields, a week more through the iron mountains",
+      "was_label": "Hollow Refuge to Varkhaal: about two weeks, a week to the border and a week through the iron mountains",
+      "was_points": [
+        [
+          2420,
+          990
+        ],
+        [
+          2680,
+          940
+        ],
+        [
+          2920,
+          930
+        ]
+      ]
+    },
+    {
+      "label": "Hollow Refuge to Zepharyos: about three and a half weeks: about two weeks to the border, a week and a half more through storm country",
+      "was_label": "Hollow Refuge to Zepharyos: about two weeks, a week to the border and a week through storm country",
+      "was_points": [
+        [
+          2420,
+          990
+        ],
+        [
+          2220,
+          660
+        ],
+        [
+          2040,
+          350
+        ]
+      ]
+    },
+    {
+      "label": "Hollow Refuge to Noctis: nearly three weeks: about two weeks to the border, five days more through the dusk",
+      "was_label": "Hollow Refuge to Noctis: about two weeks, a week to the border and a week through the dusk",
+      "was_points": [
+        [
+          2420,
+          990
+        ],
+        [
+          2120,
+          1000
+        ],
+        [
+          1850,
+          1030
+        ]
+      ]
+    },
+    {
+      "label": "Hollow Refuge to the Rootspire: about two weeks: a week to the border, a week more through roadless forest",
+      "was_label": "Hollow Refuge to the Rootspire: about two weeks, a week to the border and a week through roadless forest",
+      "was_points": [
+        [
+          2420,
+          990
+        ],
+        [
+          2480,
+          1200
+        ],
+        [
+          2550,
+          1400
+        ]
+      ]
+    },
+    {
+      "label": "Kaelholm to Ashvale: about 1,300 km (800 miles), right across the continent",
+      "was_label": "Kaelholm to Ashvale: about 1,500 km, right across the continent",
+      "was_points": [
+        [
+          1144,
+          1176
+        ],
+        [
+          900,
+          940
+        ],
+        [
+          600,
+          720
+        ],
+        [
+          370,
+          560
+        ]
+      ]
+    },
+    {
+      "label": "Coldwater to Ashvale: about two weeks on foot",
+      "was_label": "Coldwater to Ashvale: about a day on foot",
+      "was_points": [
+        [
+          150,
+          940
+        ],
+        [
+          370,
+          560
+        ]
+      ]
+    },
+    {
+      "label": "Haskett's Mill to Ashvale: about three weeks by cart, along the river road",
+      "was_label": "Haskett's Mill to Ashvale: half a day by cart, along the river road",
+      "was_points": [
+        [
+          304,
+          1260
+        ],
+        [
+          370,
+          560
+        ]
+      ]
+    },
+    {
+      "label": "Greyfold to Ashvale: about two and a half weeks' walk",
+      "was_label": "Greyfold to Ashvale: a day's walk",
+      "was_points": [
+        [
+          180,
+          1070
+        ],
+        [
+          370,
+          560
+        ]
+      ]
+    },
+    {
+      "label": "Low Fenn to Ashvale: about three weeks: two weeks by barge, then a week by road",
+      "was_label": "Low Fenn to Ashvale: a day and a half: a day by barge, then half a day by road",
+      "was_points": [
+        [
+          660,
+          1424
+        ],
+        [
+          370,
+          560
+        ]
+      ]
+    },
+    {
+      "label": "Oakhallow to Ashvale: about two weeks' walk, through the woods",
+      "was_label": "Oakhallow to Ashvale: a day's walk, through the woods",
+      "was_points": [
+        [
+          240,
+          1024
+        ],
+        [
+          370,
+          560
+        ]
+      ]
+    },
+    {
+      "label": "Sallow Cross to Ashvale: about three and a half weeks, on the best road in the hills",
+      "was_label": "Sallow Cross to Ashvale: half a day, on the best road in the hills",
+      "was_points": [
+        [
+          476,
+          1292
+        ],
+        [
+          370,
+          560
+        ]
+      ]
+    },
+    {
+      "label": "Kettleby to Ashvale: about three weeks' walk",
+      "was_label": "Kettleby to Ashvale: a day's walk",
+      "was_points": [
+        [
+          230,
+          1180
+        ],
+        [
+          370,
+          560
+        ]
+      ]
+    },
+    {
+      "label": "Brannock to Ashvale: about two weeks, over the ridges",
+      "was_label": "Brannock to Ashvale: a day and a half, over the ridges",
+      "was_points": [
+        [
+          320,
+          1010
+        ],
+        [
+          370,
+          560
+        ]
+      ]
+    },
+    {
+      "label": "Thornmere to Ashvale: nearly four weeks' walk",
+      "was_label": "Thornmere to Ashvale: a day's walk",
+      "was_points": [
+        [
+          470,
+          1360
+        ],
+        [
+          370,
+          560
+        ]
+      ]
+    },
+    {
+      "label": "Archwell to Hollow Refuge: about a week and a half on foot, past the Ashen Spire",
+      "was_label": "Archwell to Hollow Refuge: a day on foot, past the Ashen Spire",
+      "was_points": [
+        [
+          2170,
+          754
+        ],
+        [
+          2270,
+          914
+        ],
+        [
+          2420,
+          990
+        ]
+      ]
+    },
+    {
+      "label": "Tallowmarch to Hollow Refuge: about two weeks on foot, past Blackveil Fortress",
+      "was_label": "Tallowmarch to Hollow Refuge: a day on foot, past Blackveil Fortress",
+      "was_points": [
+        [
+          2600,
+          690
+        ],
+        [
+          2490,
+          644
+        ],
+        [
+          2420,
+          990
+        ]
+      ]
+    },
+    {
+      "label": "Lastlight to Hollow Refuge: about nine days, on the road",
+      "was_label": "Lastlight to Hollow Refuge: half a day, on the road",
+      "was_points": [
+        [
+          2164,
+          1024
+        ],
+        [
+          2420,
+          990
+        ]
+      ]
+    },
+    {
+      "label": "Stakewall to Hollow Refuge: about a week and a half, round the edge of the Fields",
+      "was_label": "Stakewall to Hollow Refuge: a day, round the edge of the Fields",
+      "was_points": [
+        [
+          2750,
+          1120
+        ],
+        [
+          2580,
+          1120
+        ],
+        [
+          2420,
+          990
+        ]
+      ]
+    },
+    {
+      "label": "Dawnmere to Empyrean Spire: about a week and a half, as pilgrims walk",
+      "was_label": "Dawnmere to Empyrean Spire: about three days, as pilgrims walk",
+      "was_points": [
+        [
+          2830,
+          510
+        ],
+        [
+          2580,
+          270
+        ]
+      ]
+    },
+    {
+      "label": "Ironwake to Varkhaal: about ten days",
+      "was_label": "Ironwake to Varkhaal: about two days",
+      "was_points": [
+        [
+          3096,
+          1160
+        ],
+        [
+          2920,
+          930
+        ]
+      ]
+    },
+    {
+      "label": "Driftholm to Zepharyos: about eight days, by chain-ladder and mountain road",
+      "was_label": "Driftholm to Zepharyos: about two days, by chain-ladder and mountain road",
+      "was_points": [
+        [
+          2260,
+          244
+        ],
+        [
+          2040,
+          350
+        ]
+      ]
+    },
+    {
+      "label": "Mothhaven to Noctis: about nine days down the coast",
+      "was_label": "Mothhaven to Noctis: about three days down the coast",
+      "was_points": [
+        [
+          1870,
+          756
+        ],
+        [
+          1850,
+          1030
+        ]
+      ]
+    },
+    {
+      "label": "Highbough to the Rootspire: about ten days through roadless forest, with a guide",
+      "was_label": "Highbough to the Rootspire: about four days through roadless forest, with a guide",
+      "was_points": [
+        [
+          2240,
+          1380
+        ],
+        [
+          2550,
+          1400
+        ]
+      ]
+    }
+  ]
+}

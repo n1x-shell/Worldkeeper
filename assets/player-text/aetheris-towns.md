@@ -25,7 +25,7 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 | The Gate Hall | The hollow inside the arch, now the village hall, market and dancehall. |
 | The Five Carvings | The arch's faces, each carved by a different world. Scholars come to copy them. |
 
-**Getting to Hollow Refuge.** A day's walk south-east, past the Ashen Spire.
+**Getting to Hollow Refuge.** About a week and a half's walk south-east, past the Ashen Spire.
 
 **What people say**
 
@@ -54,7 +54,7 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 | The Hives | Hundreds of skeps on the hill behind the village, and the best honey in the Marches. |
 | The Six-Niche Shrine | A shrine with a light for every living god, and an empty seventh niche nobody fills. |
 
-**Getting to Hollow Refuge.** A day's walk south-west, past Blackveil Fortress.
+**Getting to Hollow Refuge.** About two weeks' walk south-west, past Blackveil Fortress.
 
 **What people say**
 
@@ -83,7 +83,7 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 | The Last Inn | A coaching inn full of travellers going both ways, and the best place in the Marches to hire a guide into the dusk. |
 | The Oil Store | Barrels of lamp oil in a stone barn, guarded like treasure. |
 
-**Getting to Hollow Refuge.** Half a day east, on the road.
+**Getting to Hollow Refuge.** About nine days east, on the road.
 
 **What people say**
 
@@ -112,7 +112,7 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 | The Bell Gate | The only gate, with a bell that every child knows how to ring. |
 | The Barley Fields | Inside the wall and out. The outside fields are harvested in armour. |
 
-**Getting to Hollow Refuge.** A day west, round the edge of the Fields.
+**Getting to Hollow Refuge.** About a week and a half west, round the edge of the Fields.
 
 **What people say**
 
@@ -141,7 +141,7 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 | The Pilgrim Hall | Where travellers are fed, housed, counted and watched. |
 | The Bell of Hours | A great bell that rings every hour, day and night. In Dawnmere, everything stops when it rings. |
 
-**Getting around.** Empyrean Spire is about three days south-west; the Luminara Gate about four days north-east, on foot, as pilgrims go.
+**Getting around.** Empyrean Spire is about a week and a half south-west; the Luminara Gate about two weeks north-east, on foot, as pilgrims go.
 
 **What people say**
 
@@ -170,7 +170,7 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 | The Veterans' Hall | Where old soldiers drink, argue and settle disputes, by duel if they have to. |
 | The Proving Yard | Where every blade made in Ironwake is tested, and every smith with it. |
 
-**Getting around.** Varkhaal is about two days north. Hollow Refuge about two weeks west.
+**Getting around.** Varkhaal is about ten days north. Hollow Refuge about three weeks west.
 
 **What people say**
 
@@ -199,7 +199,7 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 | The Chime Market | A market where every stall has wind-chimes, so you can find it in a storm. |
 | The Edge | The rim of the island, with a rope rail. Children dare each other to lean out. |
 
-**Getting around.** Zepharyos is about two days away, by chain-ladder and mountain road, or a day if the island has drifted the right way.
+**Getting around.** Zepharyos is about eight days away, by chain-ladder and mountain road, or a few days if the island has drifted the right way.
 
 **What people say**
 
@@ -228,7 +228,7 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 | The Moth Lantern | A tavern with one lit window, which is why it's full of moths, and sailors. |
 | The Dark Dock | Where the ships that cross the Black Tides tie up. No lanterns allowed. |
 
-**Getting around.** Noctis is about three days south, down the coast. Kaelholm is about two weeks west, across the Black Tides.
+**Getting around.** Noctis is about nine days south, down the coast. Kaelholm is about two weeks west, across the Black Tides.
 
 **What people say**
 
@@ -257,7 +257,7 @@ Four villages of the Hollow Marches, and a town in each of the five dominions. E
 | The Long Platform | The village hall, a platform between six trees, open to the sky. |
 | The Root Shrine | Down on the forest floor, the one place in Highbough on the ground: Orrowen's shrine. |
 
-**Getting around.** The Rootspire is about four days east through roadless forest, with a guide.
+**Getting around.** The Rootspire is about ten days east through roadless forest, with a guide.
 
 **What people say**
 

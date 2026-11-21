@@ -16,7 +16,7 @@ Year 30 Unbound (299 AB).
 
 ## What happened
 
-In the thirtieth year, a gravedigger on the Bloodmarked Fields turned up earth that glowed red at night. By winter, every faction had heard the rumour: a shard lay under the Fields. By spring, all five had sent someone to Hollow Refuge, half a day's walk away.
+In the thirtieth year, a gravedigger on the Bloodmarked Fields turned up earth that glowed red at night. By winter, every faction had heard the rumour: a shard lay under the Fields. By spring, all five had sent someone to Hollow Refuge, a week's walk away.
 
 ## What people say
 

@@ -158,10 +158,10 @@ Linked: LOC-003
 
 > As the sun touches the walls, the dead man puts both hands flat on the table and stands up. The chair doesn't scrape. He takes his cap from wherever it is now, puts it on, and walks out of the East Gate toward the Crossroads, at a courier's steady pace, the silver thread trailing from his hand.
 
-He walks for half a day without stopping. Four Forgotten Legionnaires rise from the verge to march beside him. They only fight anyone who tries to stop him or seize the thread.
+He walks for three days and nights without stopping or sleeping: the Crossroads is about three days from the Refuge. Four Forgotten Legionnaires rise from the verge to march beside him. They only fight anyone who tries to stop him or seize the thread.
 
-Halfway to the waystone, in the last of the light, the ambush comes: whichever faction didn't get the tube, with the agents who survived the alley and whatever it could add (two Legion Scouts, or a Veil Adept [CRE-012] casting from the ditch). They want the tube, or the thread, or both. The dead man doesn't stop walking. If the party falls behind, he reaches the waystone without them and the thread's end is lost, so the fight must move. Run it as a running battle along the road, a round or two at each bend.
+On the second night, halfway to the waystone, the ambush comes: whichever faction didn't get the tube, with the agents who survived the alley and whatever it could add (two Legion Scouts, or a Veil Adept [CRE-012] casting from the ditch). They want the tube, or the thread, or both. The dead man doesn't stop walking. If the party falls behind, he reaches the waystone without them and the thread's end is lost, so the fight must move. Run it as a running battle along the road, a round or two at each bend.
 
-At the waystone [LOC-003] he stops, turns to the party member he has been looking at, and fades like breath on glass. The thread uncoils into that character's hand. For a moment, every road around the waystone points west, across the sea.
+He reaches the waystone [LOC-003] at dusk on the third day. He stops, turns to the party member he has been looking at, and fades like breath on glass. The thread uncoils into that character's hand. For a moment, every road around the waystone points west, across the sea.
 
 End the session there, or with a single line from somewhere nobody can see: "Two more stops."

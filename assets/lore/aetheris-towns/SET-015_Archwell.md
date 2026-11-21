@@ -26,7 +26,7 @@ Well-Warden Ysolde Varn
 
 ## Getting there
 
-A day's walk south-east, past the Ashen Spire.
+About a week and a half's walk south-east, past the Ashen Spire.
 
 ## What people say
 

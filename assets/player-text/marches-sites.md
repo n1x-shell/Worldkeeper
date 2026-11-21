@@ -47,14 +47,14 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 
 - An endless battlefield of rusted steel in the Hollow Marches.
 - The dead soldiers there do not rest.
-- Half a day from the Crossroads of Fate or the Bloodmarked Fields. Both roads are dangerous.
+- About six days from the Crossroads of Fate, or nine from the Bloodmarked Fields. Both roads are dangerous.
 
 **Getting around**
 
 | From the Scar to | Time | How safe |
 | --- | --- | --- |
-| The Crossroads of Fate | Half a day | Dangerous |
-| The Bloodmarked Fields | Half a day | Dangerous |
+| The Crossroads of Fate | About six days | Dangerous |
+| The Bloodmarked Fields | About nine days | Dangerous |
 
 **What people say**
 
@@ -82,8 +82,8 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 
 | From Blackveil to | Time | How safe |
 | --- | --- | --- |
-| Hollow Refuge | 1 day | Risky |
-| The Rift | 1 day | Openly hostile |
+| Hollow Refuge | About a week and a half | Risky |
+| The Rift | About two and a half weeks | Openly hostile |
 
 **What people say**
 
@@ -111,8 +111,8 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 
 | From the Archive to | Time | How safe |
 | --- | --- | --- |
-| The Crossroads of Fate | 1 day | Risky |
-| The Rift | Half a day | Openly hostile |
+| The Crossroads of Fate | About ten days | Risky |
+| The Rift | About a week and a half | Openly hostile |
 
 **What people say**
 
@@ -141,8 +141,8 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 
 | From Wither's Hollow to | Time | How safe |
 | --- | --- | --- |
-| The Bloodmarked Fields | 1 day | Dangerous |
-| The Rift | Half a day | Openly hostile |
+| The Bloodmarked Fields | About two and a half weeks | Dangerous |
+| The Rift | About four days | Openly hostile |
 
 **What people say**
 
@@ -191,9 +191,9 @@ The named sites and faction camps of the Hollow Marches, in the same layout as t
 
 | From the Crossroads to | Time | How safe |
 | --- | --- | --- |
-| Hollow Refuge | Half a day | Watched, usually safe |
-| The Scar | Half a day | Dangerous |
-| The Sunken Archive | 1 day | Risky |
+| Hollow Refuge | About three days | Watched, usually safe |
+| The Scar | About six days | Dangerous |
+| The Sunken Archive | About ten days | Risky |
 
 **What people say**
 

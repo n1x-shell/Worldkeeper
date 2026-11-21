@@ -25,7 +25,7 @@ The nine villages in the hills west and south of Ashvale: its home villages, riv
 | The Shearing Barn | The biggest building in Coldwater, used for everything from shearing to weddings. |
 | The Fold Stones | A ring of old sheep-folds on the hill above the village, older than anyone remembers. |
 
-**Getting to Ashvale.** About a day's walk east, down out of the hills.
+**Getting to Ashvale.** About two weeks' walk east, down out of the hills.
 
 **What people say**
 
@@ -53,7 +53,7 @@ The nine villages in the hills west and south of Ashvale: its home villages, riv
 | The Flour Market | Where grain comes in and flour goes out, every market day. |
 | The Weir House | A tavern on the mill pond. Everyone in the hills ends up there eventually. |
 
-**Getting to Ashvale.** Half a day by cart, along the river road.
+**Getting to Ashvale.** About three weeks by cart, along the river road.
 
 **What people say**
 
@@ -82,7 +82,7 @@ The nine villages in the hills west and south of Ashvale: its home villages, riv
 | The Record Room | Shelves of births, marriages and deaths, older than Ashvale's. |
 | The Lantern Field | A meadow where children with light under their skin glow faintly at dusk. |
 
-**Getting to Ashvale.** A day's walk north-east.
+**Getting to Ashvale.** About two and a half weeks' walk north-east.
 
 **What people say**
 
@@ -111,7 +111,7 @@ The nine villages in the hills west and south of Ashvale: its home villages, riv
 | The Long Platform | The village's market and meeting place, built over open water. |
 | The Drowned Stair | Old stone steps that go down into the fen and disappear. Nobody uses them. |
 
-**Getting to Ashvale.** A day and a half: a day by barge, then half a day by road.
+**Getting to Ashvale.** About three weeks: two weeks by barge, then a week by road.
 
 **What people say**
 
@@ -140,7 +140,7 @@ The nine villages in the hills west and south of Ashvale: its home villages, riv
 | The Charcoal Clearing | Smoking kilns at the edge of the wood. |
 | The Hermit's Path | The trail into the deep wood, where Oda Fernlow lived for forty years. |
 
-**Getting to Ashvale.** A day's walk east, through the woods.
+**Getting to Ashvale.** About two weeks' walk east, through the woods.
 
 **What people say**
 
@@ -168,7 +168,7 @@ The nine villages in the hills west and south of Ashvale: its home villages, riv
 | The Toll Willow | A great willow where every traveller pays the crossing toll. |
 | The Sallow Barns | The goodwife's barns. One of them is locked. |
 
-**Getting to Ashvale.** Half a day north, on the best road in the hills.
+**Getting to Ashvale.** About three and a half weeks north, on the best road in the hills.
 
 **What people say**
 
@@ -197,7 +197,7 @@ The nine villages in the hills west and south of Ashvale: its home villages, riv
 | The Deep Cellars | Cellars that go down further than anyone admits. |
 | The Tasting Green | The village green, where every barrel is tried before it is sold. |
 
-**Getting to Ashvale.** A day's walk east.
+**Getting to Ashvale.** About three weeks' walk east.
 
 **What people say**
 
@@ -225,7 +225,7 @@ The nine villages in the hills west and south of Ashvale: its home villages, riv
 | The Wind Stones | Standing stones on the ridge, where the young swear oaths before leaving. |
 | The East Road Gate | Where those who go east say goodbye. Names are carved on the posts. |
 
-**Getting to Ashvale.** A day and a half east, over the ridges.
+**Getting to Ashvale.** About two weeks east, over the ridges.
 
 **What people say**
 
@@ -253,7 +253,7 @@ The nine villages in the hills west and south of Ashvale: its home villages, riv
 | The Boat Hall | Where the boats are mended, and the village gossips. |
 | The Still Water | The far end of the lake, where nobody fishes. |
 
-**Getting to Ashvale.** A day's walk north.
+**Getting to Ashvale.** Nearly four weeks' walk north.
 
 **What people say**
 

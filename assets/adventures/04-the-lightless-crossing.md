@@ -39,7 +39,7 @@ Or Courier-Captain Shae Darrow [NPC-437] finds them first, with a letter (see th
 - Tidecant, the sailors' pidgin of Common and Kaelish: a party that can't speak it pays twice for everything and hears half of what the crew whispers.
 
 ## Encounters
-- **The Umbral Paths (optional, any time before the coast).** Shae Darrow offers to take the party to Mothhaven by the Shadow Pact's roads in a day instead of a week, for a favour later. On the way, a Shadow Lasher [CRE-016] hunting the Paths takes an interest in the thread. Shae fights beside them.
+- **The Umbral Paths (optional, any time before the coast).** Shae Darrow offers to take the party to Mothhaven by the Shadow Pact's roads in two days instead of nearly three weeks, for a favour later. On the way, a Shadow Lasher [CRE-016] hunting the Paths takes an interest in the thread. Shae fights beside them.
 - **The Pier (Mothhaven).** Pact smugglers (two Silent Blade Agents [CRE-014], a third on a rooftop at level 3 or higher) try to steal the "glowing cargo" from the party's room by night. They fight to get away, not to kill.
 - **The Salt-Fish Crate (first week at sea).** A swarm of Thread Mites (1d4 + 2 [CRE-033]) bursts from the cargo, drawn to the thread. Any sailor they bite forgets the name of a friend aboard.
 - **Up the Anchor Chain (over the trench, climax).** When the thread's light shows, two Drowned Saints [CRE-032] climb the anchor chain in the dark, and at level 3 or higher a third comes up through the bilges. The water around the ship rises in a slow swell toward the light. If the light is hidden again (wrapped, sunk in a sealed box, swallowed by someone brave), the swell drops and the Saints fight on alone.

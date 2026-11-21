@@ -26,7 +26,7 @@ Forgemaster Kiro Vashti
 
 ## Getting there
 
-Varkhaal is about two days north. Hollow Refuge about two weeks west.
+Varkhaal is about ten days north. Hollow Refuge about three weeks west.
 
 ## What people say
 

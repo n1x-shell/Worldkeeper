@@ -7262,73 +7262,85 @@
    "source": "SET-001",
    "target": "LOC-003",
    "type": "connected_through",
-   "label": "Half a day, watched, usually safe"
+   "label": "About three days, watched, usually safe",
+   "was_label": "Half a day, watched, usually safe"
   },
   {
    "source": "SET-001",
    "target": "LOC-002",
    "type": "connected_through",
-   "label": "Half a day, risky"
+   "label": "About a week, risky",
+   "was_label": "Half a day, risky"
   },
   {
    "source": "SET-001",
    "target": "LOC-032",
    "type": "connected_through",
-   "label": "A day, risky"
+   "label": "About ten days, risky",
+   "was_label": "A day, risky"
   },
   {
    "source": "LOC-003",
    "target": "LOC-031",
    "type": "connected_through",
-   "label": "Half a day, dangerous"
+   "label": "About nine days, dangerous",
+   "was_label": "Half a day, dangerous"
   },
   {
    "source": "LOC-003",
    "target": "LOC-033",
    "type": "connected_through",
-   "label": "A day, risky"
+   "label": "About ten days, risky",
+   "was_label": "A day, risky"
   },
   {
    "source": "LOC-002",
    "target": "LOC-031",
    "type": "connected_through",
-   "label": "Half a day, dangerous"
+   "label": "About nine days, dangerous",
+   "was_label": "Half a day, dangerous"
   },
   {
    "source": "LOC-002",
    "target": "LOC-034",
    "type": "connected_through",
-   "label": "A day, dangerous"
+   "label": "About two and a half weeks, dangerous",
+   "was_label": "A day, dangerous"
   },
   {
    "source": "SET-001",
    "target": "SET-010",
    "type": "connected_through",
-   "label": "About two weeks, a week to the border and a week through the radiant expanse"
+   "label": "About three and a half weeks: about two weeks to the border, a week and a half more across the Radiant Expanse",
+   "was_label": "About two weeks, a week to the border and a week through the radiant expanse"
   },
   {
    "source": "SET-001",
    "target": "SET-011",
    "type": "connected_through",
-   "label": "About two weeks, a week to the border and a week through the iron mountains"
+   "label": "About two and a half weeks: a week and a half to the border at the Bloodfields, a week more through the iron mountains",
+   "was_label": "About two weeks, a week to the border and a week through the iron mountains"
   },
   {
    "source": "SET-001",
    "target": "SET-012",
    "type": "connected_through",
-   "label": "About two weeks, a week to the border and a week through storm country"
+   "label": "About three and a half weeks: about two weeks to the border, a week and a half more through storm country",
+   "was_label": "About two weeks, a week to the border and a week through storm country"
   },
   {
    "source": "SET-001",
    "target": "SET-013",
    "type": "connected_through",
-   "label": "About two weeks, a week to the border and a week through the dusk"
+   "label": "Nearly three weeks: about two weeks to the border, five days more through the dusk",
+   "was_label": "About two weeks, a week to the border and a week through the dusk"
   },
   {
    "source": "SET-001",
    "target": "SET-014",
    "type": "connected_through",
-   "label": "About two weeks, a week to the border and a week through roadless forest"
+   "label": "About two weeks: a week to the border, a week more through roadless forest",
+   "was_label": "About two weeks, a week to the border and a week through roadless forest"
   },
   {
    "source": "SET-013",
@@ -7340,115 +7352,134 @@
    "source": "SET-302",
    "target": "SET-301",
    "type": "connected_through",
-   "label": "About 1,500 km, right across the continent"
+   "label": "About 1,300 km (800 miles), right across the continent",
+   "was_label": "About 1,500 km, right across the continent"
   },
   {
    "source": "SET-320",
    "target": "SET-301",
    "type": "connected_through",
-   "label": "About a day on foot"
+   "label": "About two weeks on foot",
+   "was_label": "About a day on foot"
   },
   {
    "source": "SET-321",
    "target": "SET-301",
    "type": "connected_through",
-   "label": "Half a day by cart, along the river road"
+   "label": "About three weeks by cart, along the river road",
+   "was_label": "Half a day by cart, along the river road"
   },
   {
    "source": "SET-322",
    "target": "SET-301",
    "type": "connected_through",
-   "label": "A day's walk"
+   "label": "Nearly four weeks' walk",
+   "was_label": "A day's walk"
   },
   {
    "source": "SET-323",
    "target": "SET-301",
    "type": "connected_through",
-   "label": "A day and a half: a day by barge, then half a day by road"
+   "label": "About three weeks: two weeks by barge, then a week by road",
+   "was_label": "A day and a half: a day by barge, then half a day by road"
   },
   {
    "source": "SET-324",
    "target": "SET-301",
    "type": "connected_through",
-   "label": "A day's walk, through the woods"
+   "label": "About two weeks' walk, through the woods",
+   "was_label": "A day's walk, through the woods"
   },
   {
    "source": "SET-325",
    "target": "SET-301",
    "type": "connected_through",
-   "label": "Half a day, on the best road in the hills"
+   "label": "About three and a half weeks, on the best road in the hills",
+   "was_label": "Half a day, on the best road in the hills"
   },
   {
    "source": "SET-326",
    "target": "SET-301",
    "type": "connected_through",
-   "label": "A day's walk"
+   "label": "Nearly four weeks' walk",
+   "was_label": "A day's walk"
   },
   {
    "source": "SET-327",
    "target": "SET-301",
    "type": "connected_through",
-   "label": "A day and a half, over the ridges"
+   "label": "About two weeks, over the ridges",
+   "was_label": "A day and a half, over the ridges"
   },
   {
    "source": "SET-328",
    "target": "SET-301",
    "type": "connected_through",
-   "label": "A day's walk"
+   "label": "Nearly four weeks' walk",
+   "was_label": "A day's walk"
   },
   {
    "source": "SET-015",
    "target": "SET-001",
    "type": "connected_through",
-   "label": "A day on foot, past the ashen spire"
+   "label": "About a week and a half on foot, past the Ashen Spire",
+   "was_label": "A day on foot, past the ashen spire"
   },
   {
    "source": "SET-016",
    "target": "SET-001",
    "type": "connected_through",
-   "label": "A day on foot, past blackveil fortress"
+   "label": "About two weeks on foot, past Blackveil Fortress",
+   "was_label": "A day on foot, past blackveil fortress"
   },
   {
    "source": "SET-017",
    "target": "SET-001",
    "type": "connected_through",
-   "label": "Half a day, on the road"
+   "label": "About nine days, on the road",
+   "was_label": "Half a day, on the road"
   },
   {
    "source": "SET-018",
    "target": "SET-001",
    "type": "connected_through",
-   "label": "A day, round the edge of the fields"
+   "label": "About a week and a half, round the edge of the Fields",
+   "was_label": "A day, round the edge of the fields"
   },
   {
    "source": "SET-019",
    "target": "SET-010",
    "type": "connected_through",
-   "label": "About three days, as pilgrims walk"
+   "label": "About a week and a half, as pilgrims walk",
+   "was_label": "About three days, as pilgrims walk"
   },
   {
    "source": "SET-020",
    "target": "SET-011",
    "type": "connected_through",
-   "label": "About two days"
+   "label": "About ten days",
+   "was_label": "About two days"
   },
   {
    "source": "SET-021",
    "target": "SET-012",
    "type": "connected_through",
-   "label": "About two days, by chain-ladder and mountain road"
+   "label": "About eight days, by chain-ladder and mountain road",
+   "was_label": "About two days, by chain-ladder and mountain road"
   },
   {
    "source": "SET-022",
    "target": "SET-013",
    "type": "connected_through",
-   "label": "About three days down the coast"
+   "label": "About nine days down the coast",
+   "was_label": "About three days down the coast"
   },
   {
    "source": "SET-023",
    "target": "SET-014",
    "type": "connected_through",
-   "label": "About four days through roadless forest, with a guide"
+   "label": "About ten days through roadless forest, with a guide",
+   "was_label": "About four days through roadless forest, with a guide"
   },
   {
    "source": "COS-909",

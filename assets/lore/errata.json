@@ -1,0 +1,426 @@
+{
+  "reason": "The world map is drawn to scale (about 2,700 miles across): travel times follow it (owner decision, DEC-910)",
+  "note": "Corrections to wording in a library: Apply additions and the handbook build apply them where the old wording is still there (server/src/errata.ts).",
+  "errata": [
+    {
+      "id": "SET-015",
+      "find": "**Getting to Hollow Refuge.** A day's walk south-east, past the Ashen Spire.",
+      "replace": "**Getting to Hollow Refuge.** About a week and a half's walk south-east, past the Ashen Spire."
+    },
+    {
+      "id": "SET-016",
+      "find": "**Getting to Hollow Refuge.** A day's walk south-west, past Blackveil Fortress.",
+      "replace": "**Getting to Hollow Refuge.** About two weeks' walk south-west, past Blackveil Fortress."
+    },
+    {
+      "id": "SET-017",
+      "find": "**Getting to Hollow Refuge.** Half a day east, on the road.",
+      "replace": "**Getting to Hollow Refuge.** About nine days east, on the road."
+    },
+    {
+      "id": "SET-018",
+      "find": "**Getting to Hollow Refuge.** A day west, round the edge of the Fields.",
+      "replace": "**Getting to Hollow Refuge.** About a week and a half west, round the edge of the Fields."
+    },
+    {
+      "id": "SET-019",
+      "find": "**Getting around.** Empyrean Spire is about three days south-west; the Luminara Gate about four days north-east, on foot, as pilgrims go.",
+      "replace": "**Getting around.** Empyrean Spire is about a week and a half south-west; the Luminara Gate about two weeks north-east, on foot, as pilgrims go."
+    },
+    {
+      "id": "SET-020",
+      "find": "**Getting around.** Varkhaal is about two days north. Hollow Refuge about two weeks west.",
+      "replace": "**Getting around.** Varkhaal is about ten days north. Hollow Refuge about three weeks west."
+    },
+    {
+      "id": "SET-021",
+      "find": "**Getting around.** Zepharyos is about two days away, by chain-ladder and mountain road, or a day if the island has drifted the right way.",
+      "replace": "**Getting around.** Zepharyos is about eight days away, by chain-ladder and mountain road, or a few days if the island has drifted the right way."
+    },
+    {
+      "id": "SET-022",
+      "find": "**Getting around.** Noctis is about three days south, down the coast. Kaelholm is about two weeks west, across the Black Tides.",
+      "replace": "**Getting around.** Noctis is about nine days south, down the coast. Kaelholm is about two weeks west, across the Black Tides."
+    },
+    {
+      "id": "SET-023",
+      "find": "**Getting around.** The Rootspire is about four days east through roadless forest, with a guide.",
+      "replace": "**Getting around.** The Rootspire is about ten days east through roadless forest, with a guide."
+    },
+    {
+      "id": "RUL-004",
+      "find": "| @[Hollow Refuge], Aetheris | Neutral ground in the middle of five warring dominions, half a day from a shard everyone wants. |",
+      "replace": "| @[Hollow Refuge], Aetheris | Neutral ground in the middle of five warring dominions, a week from a shard everyone wants. |"
+    },
+    {
+      "id": "RUL-651",
+      "find": "Aetheris measures journeys in days, not miles: half a day to the Bloodmarked Fields, a week to a dominion's border. If you need miles, a day's travel on a road is about 24 miles (40 km), and less in the Hollow Marches, where the roads give out.\n\n- **The Hollow Marches** are about four days across, roughly 100 miles.\n- **Each dominion's border** is about a week from Hollow Refuge, roughly 170 miles.\n- **Each capital** is about another week beyond its border, roughly 340 miles from the Refuge.\n- **Aetheris** is about 750 miles across, much the same size as Kaelmar.",
+      "replace": "Aetheris measures journeys in days, not miles: three days to the Crossroads of Fate, a week to the Bloodmarked Fields, one to two weeks to a dominion's border. If you need miles, a day's travel on foot is about 24 miles (40 km), less where the roads give out, and about 50 miles by ship.\n\n- **The Hollow Marches** are about a month across, roughly 800 miles.\n- **Each dominion's border** is one to two weeks from Hollow Refuge: the Verdant Rebirth about a week, the Tyrant's Dominion a week and a half, the others about two weeks.\n- **The capitals** are two to three and a half weeks from the Refuge: the Rootspire about two weeks, Varkhaal about two and a half, Noctis nearly three, Empyrean Spire and Zepharyos about three and a half.\n- **Aetheris** is about 1,300 miles across, and Kaelmar about 1,000.\n- **The world map** is drawn to scale, about 2,700 miles across. It shows the known world; the world itself is larger."
+    },
+    {
+      "id": "RUL-652",
+      "find": "The Black Tides are about 700 miles wide, from the ports of the Eternal Veil to Kaelholm. Ships cross slowly, under short sail, with every lantern out over the trench. It takes about two weeks.",
+      "replace": "The Black Tides are about 600 miles wide, from the ports of the Eternal Veil to Kaelholm. Ships cross slowly, under short sail, with every lantern out over the trench. It takes about two weeks."
+    },
+    {
+      "id": "REG-001",
+      "find": "| The Crossroads of Fate | Half a day | Watched, usually safe |",
+      "replace": "| The Crossroads of Fate | About three days | Watched, usually safe |"
+    },
+    {
+      "id": "REG-001",
+      "find": "| The Bloodmarked Fields | Half a day | Risky |",
+      "replace": "| The Bloodmarked Fields | About a week | Risky |"
+    },
+    {
+      "id": "REG-001",
+      "find": "| Blackveil Fortress | 1 day | Risky |",
+      "replace": "| Blackveil Fortress | About a week and a half | Risky |"
+    },
+    {
+      "id": "LOC-002",
+      "find": "- It's half a day from Hollow Refuge, and the road is risky.",
+      "replace": "- It's about a week from Hollow Refuge, and the road is risky."
+    },
+    {
+      "id": "LOC-002",
+      "find": "- From the Fields it's half a day to the Scar, or a full day to Wither's Hollow. Both roads are dangerous.",
+      "replace": "- From the Fields it's about nine days to the Scar, or two and a half weeks to Wither's Hollow. Both roads are dangerous."
+    },
+    {
+      "id": "LOC-901",
+      "find": "- The eastern Rift sits at the far edge of the Hollow Marches. Every road there is openly hostile. It's a day from Blackveil Fortress, or half a day from the Sunken Archive or Wither's Hollow.",
+      "replace": "- The eastern Rift sits at the far edge of the Hollow Marches. Every road there is openly hostile. It's about two and a half weeks from Blackveil Fortress, a week and a half from the Sunken Archive, or four days from Wither's Hollow."
+    },
+    {
+      "id": "HIS-012",
+      "find": "The fighting settled where it settled. Each dominion's border now lies about a week from Hollow Refuge. Only on the Bloodfields, where the Legion's land meets the Wildborn's, did the fighting never stop. It's a permanent warfront to this day.",
+      "replace": "The fighting settled where it settled. Each dominion's border now lies one to two weeks from Hollow Refuge. Only on the Bloodfields, where the Legion's land meets the Wildborn's, did the fighting never stop. It's a permanent warfront to this day."
+    },
+    {
+      "id": "HIS-021",
+      "find": "In the thirtieth year, a gravedigger on the Bloodmarked Fields turned up earth that glowed red at night. By winter, every faction had heard the rumour: a shard lay under the Fields. By spring, all five had sent someone to Hollow Refuge, half a day's walk away.",
+      "replace": "In the thirtieth year, a gravedigger on the Bloodmarked Fields turned up earth that glowed red at night. By winter, every faction had heard the rumour: a shard lay under the Fields. By spring, all five had sent someone to Hollow Refuge, a week's walk away."
+    },
+    {
+      "id": "LOC-031",
+      "find": "- Half a day from the Crossroads of Fate or the Bloodmarked Fields. Both roads are dangerous.",
+      "replace": "- About six days from the Crossroads of Fate, or nine from the Bloodmarked Fields. Both roads are dangerous."
+    },
+    {
+      "id": "LOC-031",
+      "find": "| The Crossroads of Fate | Half a day | Dangerous |",
+      "replace": "| The Crossroads of Fate | About six days | Dangerous |"
+    },
+    {
+      "id": "LOC-031",
+      "find": "| The Bloodmarked Fields | Half a day | Dangerous |",
+      "replace": "| The Bloodmarked Fields | About nine days | Dangerous |"
+    },
+    {
+      "id": "LOC-032",
+      "find": "| Hollow Refuge | 1 day | Risky |",
+      "replace": "| Hollow Refuge | About a week and a half | Risky |"
+    },
+    {
+      "id": "LOC-032",
+      "find": "| The Rift | 1 day | Openly hostile |",
+      "replace": "| The Rift | About two and a half weeks | Openly hostile |"
+    },
+    {
+      "id": "LOC-033",
+      "find": "| The Crossroads of Fate | 1 day | Risky |",
+      "replace": "| The Crossroads of Fate | About ten days | Risky |"
+    },
+    {
+      "id": "LOC-033",
+      "find": "| The Rift | Half a day | Openly hostile |",
+      "replace": "| The Rift | About a week and a half | Openly hostile |"
+    },
+    {
+      "id": "LOC-034",
+      "find": "| The Bloodmarked Fields | 1 day | Dangerous |",
+      "replace": "| The Bloodmarked Fields | About two and a half weeks | Dangerous |"
+    },
+    {
+      "id": "LOC-034",
+      "find": "| The Rift | Half a day | Openly hostile |",
+      "replace": "| The Rift | About four days | Openly hostile |"
+    },
+    {
+      "id": "LOC-003",
+      "find": "| Hollow Refuge | Half a day | Watched, usually safe |",
+      "replace": "| Hollow Refuge | About three days | Watched, usually safe |"
+    },
+    {
+      "id": "LOC-003",
+      "find": "| The Scar | Half a day | Dangerous |",
+      "replace": "| The Scar | About six days | Dangerous |"
+    },
+    {
+      "id": "LOC-003",
+      "find": "| The Sunken Archive | 1 day | Risky |",
+      "replace": "| The Sunken Archive | About ten days | Risky |"
+    },
+    {
+      "id": "CON-001",
+      "find": "Each dominion's border is about a week from Hollow Refuge. Each capital is about another week past its border.",
+      "replace": "Each dominion's border is one to two weeks from Hollow Refuge, and each capital another five days to a week and a half past it."
+    },
+    {
+      "id": "REG-002",
+      "find": "The border is about a week from Hollow Refuge, and Empyrean Spire is about another week beyond it.",
+      "replace": "The border is about two weeks from Hollow Refuge, and Empyrean Spire is about a week and a half beyond it."
+    },
+    {
+      "id": "REG-003",
+      "find": "The border is about a week from Hollow Refuge, and Varkhaal is about another week beyond it.",
+      "replace": "The border is about a week and a half from Hollow Refuge, and Varkhaal is about another week beyond it."
+    },
+    {
+      "id": "REG-004",
+      "find": "The border is about a week from Hollow Refuge, and Zepharyos is about another week beyond it. The high country is all storms and floating rock.",
+      "replace": "The border is about two weeks from Hollow Refuge, and Zepharyos is about a week and a half beyond it. The high country is all storms and floating rock."
+    },
+    {
+      "id": "REG-005",
+      "find": "The border is about a week from Hollow Refuge, and Noctis is about another week beyond it. The crossing to Kaelmar takes about two weeks.",
+      "replace": "The border is about two weeks from Hollow Refuge, and Noctis is about five days beyond it. The crossing to Kaelmar takes about two weeks."
+    },
+    {
+      "id": "REG-901",
+      "find": "- In Aetheris, each dominion's border is about a week from Hollow Refuge, and each capital about another week beyond.",
+      "replace": "- In Aetheris, each dominion's border is one to two weeks from Hollow Refuge, and the capitals two to three and a half weeks."
+    },
+    {
+      "id": "RUL-641",
+      "find": "- The Bloodmarked Fields, half a day away, are a war over shards that never stops.",
+      "replace": "- The Bloodmarked Fields, a week away, are a war over shards that never stops."
+    },
+    {
+      "id": "SET-302",
+      "find": "| Ashvale and the Rift | About 1,500 km west | Right across the continent. |",
+      "replace": "| Ashvale and the Rift | About 1,300 km (800 miles) west | Right across the continent. |"
+    },
+    {
+      "id": "SET-010",
+      "find": "| Hollow Refuge | About two weeks | A week to the border, a week across the Radiant Expanse. |",
+      "replace": "| Hollow Refuge | About three and a half weeks | About two weeks to the border, a week and a half across the Radiant Expanse. |"
+    },
+    {
+      "id": "SET-011",
+      "find": "| Hollow Refuge | About two weeks | A week to the border at the Bloodfields, a week through the iron mountains. |",
+      "replace": "| Hollow Refuge | About two and a half weeks | A week and a half to the border at the Bloodfields, a week through the iron mountains. |"
+    },
+    {
+      "id": "SET-012",
+      "find": "| Hollow Refuge | About two weeks | A week to the border, a week through storm country. |",
+      "replace": "| Hollow Refuge | About three and a half weeks | About two weeks to the border, a week and a half through storm country. |"
+    },
+    {
+      "id": "SET-013",
+      "find": "| Hollow Refuge | About two weeks | A week to the border, a week through the dusk. |",
+      "replace": "| Hollow Refuge | Nearly three weeks | About two weeks to the border, five days through the dusk. |"
+    },
+    {
+      "id": "SET-320",
+      "find": "**Getting to Ashvale.** About a day's walk east, down out of the hills.",
+      "replace": "**Getting to Ashvale.** About two weeks' walk east, down out of the hills."
+    },
+    {
+      "id": "SET-321",
+      "find": "**Getting to Ashvale.** Half a day by cart, along the river road.",
+      "replace": "**Getting to Ashvale.** About three weeks by cart, along the river road."
+    },
+    {
+      "id": "SET-322",
+      "find": "**Getting to Ashvale.** A day's walk north-east.",
+      "replace": "**Getting to Ashvale.** About two and a half weeks' walk north-east."
+    },
+    {
+      "id": "SET-323",
+      "find": "**Getting to Ashvale.** A day and a half: a day by barge, then half a day by road.",
+      "replace": "**Getting to Ashvale.** About three weeks: two weeks by barge, then a week by road."
+    },
+    {
+      "id": "SET-324",
+      "find": "**Getting to Ashvale.** A day's walk east, through the woods.",
+      "replace": "**Getting to Ashvale.** About two weeks' walk east, through the woods."
+    },
+    {
+      "id": "SET-325",
+      "find": "**Getting to Ashvale.** Half a day north, on the best road in the hills.",
+      "replace": "**Getting to Ashvale.** About three and a half weeks north, on the best road in the hills."
+    },
+    {
+      "id": "SET-326",
+      "find": "**Getting to Ashvale.** A day's walk east.",
+      "replace": "**Getting to Ashvale.** About three weeks' walk east."
+    },
+    {
+      "id": "SET-327",
+      "find": "**Getting to Ashvale.** A day and a half east, over the ridges.",
+      "replace": "**Getting to Ashvale.** About two weeks east, over the ridges."
+    },
+    {
+      "id": "SET-328",
+      "find": "**Getting to Ashvale.** A day's walk north.",
+      "replace": "**Getting to Ashvale.** Nearly four weeks' walk north."
+    },
+    {
+      "adventure": "The Dead Man at the Crooked Nail",
+      "find": "He walks for half a day without stopping. Four Forgotten Legionnaires rise from the verge to march beside him. They only fight anyone who tries to stop him or seize the thread.",
+      "replace": "He walks for three days and nights without stopping or sleeping: the Crossroads is about three days from the Refuge. Four Forgotten Legionnaires rise from the verge to march beside him. They only fight anyone who tries to stop him or seize the thread."
+    },
+    {
+      "adventure": "The Dead Man at the Crooked Nail",
+      "find": "Halfway to the waystone, in the last of the light, the ambush comes: whichever faction didn't get the tube, with the agents who survived the alley and whatever it could add (two Legion Scouts, or a Veil Adept [CRE-012] casting from the ditch).",
+      "replace": "On the second night, halfway to the waystone, the ambush comes: whichever faction didn't get the tube, with the agents who survived the alley and whatever it could add (two Legion Scouts, or a Veil Adept [CRE-012] casting from the ditch)."
+    },
+    {
+      "adventure": "The Dead Man at the Crooked Nail",
+      "find": "At the waystone [LOC-003] he stops, turns to the party member he has been looking at, and fades like breath on glass.",
+      "replace": "He reaches the waystone [LOC-003] at dusk on the third day. He stops, turns to the party member he has been looking at, and fades like breath on glass."
+    },
+    {
+      "adventure": "The Lightless Crossing",
+      "find": "- **The Umbral Paths (optional, any time before the coast).** Shae Darrow offers to take the party to Mothhaven by the Shadow Pact's roads in a day instead of a week, for a favour later.",
+      "replace": "- **The Umbral Paths (optional, any time before the coast).** Shae Darrow offers to take the party to Mothhaven by the Shadow Pact's roads in two days instead of nearly three weeks, for a favour later."
+    },
+    {
+      "adventure": "The Waystone at Dusk",
+      "find": "The Crossroads is half a day from Hollow Refuge, watched, and usually safe.",
+      "replace": "The Crossroads is about three days from Hollow Refuge, watched, and usually safe."
+    },
+    {
+      "id": "SET-001",
+      "find": "Half a day to the Crossroads of Fate (danger 1); half a day to the Bloodmarked Fields (danger 2); one day to Blackveil Fortress (danger 2).",
+      "replace": "About three days to the Crossroads of Fate (danger 1); about a week to the Bloodmarked Fields (danger 2); about a week and a half to Blackveil Fortress (danger 2)."
+    },
+    {
+      "id": "LOC-002",
+      "find": "Half a day from Hollow Refuge (danger 2); half a day to the Scar (danger 3); one day to Wither's Hollow (danger 3).",
+      "replace": "About a week from Hollow Refuge (danger 2); about nine days to the Scar (danger 3); about two and a half weeks to Wither's Hollow (danger 3)."
+    },
+    {
+      "id": "LOC-003",
+      "find": "Half a day from Hollow Refuge (danger 1); half a day to the Scar (danger 3); one day to the Sunken Archive (danger 2).",
+      "replace": "About three days from Hollow Refuge (danger 1); about six days to the Scar (danger 3); about ten days to the Sunken Archive (danger 2)."
+    },
+    {
+      "id": "LOC-901",
+      "find": "One day from Blackveil Fortress, or half a day from the Sunken Archive or Wither's Hollow.",
+      "replace": "About two and a half weeks from Blackveil Fortress, a week and a half from the Sunken Archive, or four days from Wither's Hollow."
+    },
+    {
+      "id": "REG-001",
+      "find": "| Hollow Refuge to the Crossroads of Fate | Half a day | 1 |",
+      "replace": "| Hollow Refuge to the Crossroads of Fate | About three days | 1 |"
+    },
+    {
+      "id": "REG-001",
+      "find": "| Hollow Refuge to the Bloodmarked Fields | Half a day | 2 |",
+      "replace": "| Hollow Refuge to the Bloodmarked Fields | About a week | 2 |"
+    },
+    {
+      "id": "REG-001",
+      "find": "| Hollow Refuge to Blackveil Fortress | 1 day | 2 |",
+      "replace": "| Hollow Refuge to Blackveil Fortress | About a week and a half | 2 |"
+    },
+    {
+      "id": "REG-001",
+      "find": "| Crossroads of Fate to the Scar | Half a day | 3 |",
+      "replace": "| Crossroads of Fate to the Scar | About six days | 3 |"
+    },
+    {
+      "id": "REG-001",
+      "find": "| Crossroads of Fate to the Sunken Archive | 1 day | 2 |",
+      "replace": "| Crossroads of Fate to the Sunken Archive | About ten days | 2 |"
+    },
+    {
+      "id": "REG-001",
+      "find": "| Bloodmarked Fields to the Scar | Half a day | 3 |",
+      "replace": "| Bloodmarked Fields to the Scar | About nine days | 3 |"
+    },
+    {
+      "id": "REG-001",
+      "find": "| Bloodmarked Fields to Wither's Hollow | 1 day | 3 |",
+      "replace": "| Bloodmarked Fields to Wither's Hollow | About two and a half weeks | 3 |"
+    },
+    {
+      "id": "REG-001",
+      "find": "| Blackveil Fortress to the Rift | 1 day | 4 |",
+      "replace": "| Blackveil Fortress to the Rift | About two and a half weeks | 4 |"
+    },
+    {
+      "id": "REG-001",
+      "find": "| Sunken Archive to the Rift | Half a day | 4 |",
+      "replace": "| Sunken Archive to the Rift | About a week and a half | 4 |"
+    },
+    {
+      "id": "REG-001",
+      "find": "| Wither's Hollow to the Rift | Half a day | 4 |",
+      "replace": "| Wither's Hollow to the Rift | About four days | 4 |"
+    },
+    {
+      "id": "REG-901",
+      "find": "| Scale | Each dominion's border is about a week's travel from Hollow Refuge, and each capital is about another week beyond its border. |",
+      "replace": "| Scale | Each dominion's border is one to two weeks' travel from Hollow Refuge, and the capitals two to three and a half weeks. The world map is drawn to scale, about 2,700 miles across. |"
+    },
+    {
+      "id": "CON-001-DOM",
+      "find": "From Hollow Refuge to the dominion border: roughly one week. From border to faction capital: roughly another week.",
+      "replace": "From Hollow Refuge to the dominion border: one to two weeks. From border to faction capital: five days to a week and a half."
+    },
+    {
+      "id": "REG-002",
+      "find": "The bible sets the border at about a week's travel from Hollow Refuge [SET-001] and its capital at roughly a further week.",
+      "replace": "The border is about two weeks's travel from Hollow Refuge [SET-001], and its capital a week and a half further."
+    },
+    {
+      "id": "REG-002",
+      "find": "Roughly one week from Hollow Refuge to the border, then another week to the capital",
+      "replace": "About two weeks from Hollow Refuge to the border, then a week and a half more to the capital"
+    },
+    {
+      "id": "REG-003",
+      "find": "The bible sets the border at about a week's travel from Hollow Refuge [SET-001] and its capital at roughly a further week.",
+      "replace": "The border is about a week and a half's travel from Hollow Refuge [SET-001], and its capital about a week further."
+    },
+    {
+      "id": "REG-003",
+      "find": "Roughly one week from Hollow Refuge to the border, then another week to the capital",
+      "replace": "About a week and a half from Hollow Refuge to the border, then about a week more to the capital"
+    },
+    {
+      "id": "REG-004",
+      "find": "The bible sets the border at about a week's travel from Hollow Refuge [SET-001] and its capital at roughly a further week.",
+      "replace": "The border is about two weeks's travel from Hollow Refuge [SET-001], and its capital a week and a half further."
+    },
+    {
+      "id": "REG-004",
+      "find": "Roughly one week from Hollow Refuge to the border, then another week to the capital",
+      "replace": "About two weeks from Hollow Refuge to the border, then a week and a half more to the capital"
+    },
+    {
+      "id": "REG-005",
+      "find": "The bible sets the border at about a week's travel from Hollow Refuge [SET-001] and its capital at roughly a further week.",
+      "replace": "The border is about two weeks's travel from Hollow Refuge [SET-001], and its capital about five days further."
+    },
+    {
+      "id": "REG-005",
+      "find": "Roughly one week from Hollow Refuge to the border, then another week to the capital",
+      "replace": "About two weeks from Hollow Refuge to the border, then about five days more to the capital"
+    },
+    {
+      "id": "REG-006",
+      "find": "The bible sets the border at about a week's travel from Hollow Refuge [SET-001] and its capital at roughly a further week.",
+      "replace": "The border is about a week's travel from Hollow Refuge [SET-001], and its capital about a week further."
+    },
+    {
+      "id": "REG-006",
+      "find": "Roughly one week from Hollow Refuge to the border, then another week to the capital",
+      "replace": "About a week from Hollow Refuge to the border, then about a week more to the capital"
+    }
+  ]
+}

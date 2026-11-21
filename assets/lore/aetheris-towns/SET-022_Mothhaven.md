@@ -26,7 +26,7 @@ Harbourmaster Gulen Saltback
 
 ## Getting there
 
-Noctis is about three days south, down the coast. Kaelholm is about two weeks west, across the Black Tides.
+Noctis is about nine days south, down the coast. Kaelholm is about two weeks west, across the Black Tides.
 
 ## What people say
 

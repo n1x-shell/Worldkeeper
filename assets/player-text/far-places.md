@@ -27,12 +27,13 @@ Everyone in Ashvale knows the words. Nobody agrees what they mean. The Boundary 
 
 *How far is a week's walk?*
 
-Aetheris measures journeys in days, not miles: half a day to the Bloodmarked Fields, a week to a dominion's border. If you need miles, a day's travel on a road is about 24 miles (40 km), and less in the Hollow Marches, where the roads give out.
+Aetheris measures journeys in days, not miles: three days to the Crossroads of Fate, a week to the Bloodmarked Fields, one to two weeks to a dominion's border. If you need miles, a day's travel on foot is about 24 miles (40 km), less where the roads give out, and about 50 miles by ship.
 
-- **The Hollow Marches** are about four days across, roughly 100 miles.
-- **Each dominion's border** is about a week from Hollow Refuge, roughly 170 miles.
-- **Each capital** is about another week beyond its border, roughly 340 miles from the Refuge.
-- **Aetheris** is about 750 miles across, much the same size as Kaelmar.
+- **The Hollow Marches** are about a month across, roughly 800 miles.
+- **Each dominion's border** is one to two weeks from Hollow Refuge: the Verdant Rebirth about a week, the Tyrant's Dominion a week and a half, the others about two weeks.
+- **The capitals** are two to three and a half weeks from the Refuge: the Rootspire about two weeks, Varkhaal about two and a half, Noctis nearly three, Empyrean Spire and Zepharyos about three and a half.
+- **Aetheris** is about 1,300 miles across, and Kaelmar about 1,000.
+- **The world map** is drawn to scale, about 2,700 miles across. It shows the known world; the world itself is larger.
 
 The map shows where places are, not how far apart. Trust the travellers' times on the routes.
 
@@ -40,7 +41,7 @@ The map shows where places are, not how far apart. Trust the travellers' times o
 
 *Two weeks in the dark, and what it costs.*
 
-The Black Tides are about 700 miles wide, from the ports of the Eternal Veil to Kaelholm. Ships cross slowly, under short sail, with every lantern out over the trench. It takes about two weeks.
+The Black Tides are about 600 miles wide, from the ports of the Eternal Veil to Kaelholm. Ships cross slowly, under short sail, with every lantern out over the trench. It takes about two weeks.
 
 **Passage.** About 70 gp for the crossing, with food. Smugglers charge double and ask no questions. You can work your passage as crew, if a captain will have you.
 

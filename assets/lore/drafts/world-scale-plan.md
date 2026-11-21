@@ -1,6 +1,6 @@
-# DRAFT: Putting the world map to scale
+# Putting the world map to scale (superseded)
 
-**Status:** draft for the owner's approval. Nothing here is applied yet.
+**Status:** superseded. The owner preferred to keep every pin where it was drawn, and to change the travel times instead; that is what was applied in v0.3.12 (DEC-910). Kept as the record of the reasoning.
 **Owner's choice (21 November 2026):** "the known world", at about 2,700 miles across, keeping the canon crossing of the Black Tides.
 
 ## 1. Why the map doesn't add up today
