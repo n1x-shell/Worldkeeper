@@ -8,31 +8,53 @@ Originally designed for a world with three branches, **Aetheris**, **Kaelmar**, 
 
 **No account, required cloud service, paid API or AI dependency.** World data lives on your computer in SQLite and an uploads directory, with backups and portable exports.
 
-> **Status:** v0.3, early functional release. Some features and desktop platform builds are still undergoing validation. Read [Development Status](DEVELOPMENT_STATUS.md) before relying on the application for important campaign data.
+> **Status:** v0.4 **“Illuminated”**, an early functional release with a complete redesign: one design for the GM app, the table server and the player handbook, in Warm Parchment or Dark Codex. Some features and desktop platform builds are still undergoing validation. Read [Development Status](DEVELOPMENT_STATUS.md) before relying on the application for important campaign data.
 
 ## Screenshots
 
-Actual screenshots from Worldkeeper, showing the application and interactive atlases.
+Actual screenshots from Worldkeeper, with the Worldkeeper setting's world and a sample campaign, *The Loose Thread*.
 
 ### World dashboard
 
-![Worldkeeper world dashboard showing Aetheris, Kaelmar, and the Ethereal Realm](docs/images/dashboard.png)
+Your active campaign, what you were reading, your favourites, the realms and the state of the world, in Warm Parchment.
 
-### World atlas
+![The World Dashboard: the active campaign with its sessions, party and quests, recently viewed records, favourites and the realms](docs/images/dashboard.jpg)
 
-| World map | Region border editor |
+### Records, with Quick-Peek
+
+Every record opens on its lore, with an illuminated title; its connections, mentions and latest changes sit in the inspector on the right. Hover any record link for a card, peek it into the inspector, or open it beside the page.
+
+| A record and its inspector | A hover card |
 | --- | --- |
-| ![World atlas with Aetheris and Kaelmar](docs/images/atlas1.jpeg) | ![GM drawing and editing region boundaries on the World Atlas](docs/images/region.jpeg) |
+| ![Hollow Refuge's record page with its connections in the inspector](docs/images/record.jpg) | ![A hover card for The Hollow Marches over a record's text](docs/images/quick-peek.jpg) |
+
+### The Atlas
+
+The maps fill the screen, drawn to scale, with the campaign's quests, adventure places and the party on them. Hover a pin for its card; click it for its panel.
+
+| The world | The Ethereal Realm |
+| --- | --- |
+| ![The world map with Hollow Refuge's panel open, the party there, and the legend in the sidebar](docs/images/atlas.jpg) | ![The Ethereal Realm's chart](docs/images/ethereal.jpg) |
 
 The region border editor lets the GM draw and adjust regional boundaries directly on the atlas.
 
-### Ethereal Realm
+![GM drawing and editing region boundaries on the World Atlas](docs/images/region.jpeg)
 
-![Ethereal Realm atlas showing the Hollow Verge and the Nameless Asylum](docs/images/atlas2.jpeg)
+### Prepare, play and keep the party
 
-### Session management
+| Session prep | Live session (Dark Codex) |
+| --- | --- |
+| ![Session prep: your prep notes and the board built from the world](docs/images/session-prep.jpg) | ![A live session: the encounter tracker beside the scene's read-aloud text](docs/images/live-session.jpg) |
 
-![Worldkeeper session preparation interface](docs/images/live-session.png)
+![Party and Characters: the party summary, character cards and a full D&D 2024 sheet](docs/images/party.jpg)
+
+### The player handbook
+
+What the players see, on the table server or published to GitHub Pages: only what you have revealed, on desktop or a phone.
+
+| The handbook | On a phone |
+| --- | --- |
+| ![The player handbook's home: the world, open quests and the realms, with the live initiative card](docs/images/handbook.jpg) | ![An entry in the handbook on a phone, in Dark Codex](docs/images/handbook-phone-entry.jpg) |
 
 ## Why Worldkeeper?
 
@@ -57,6 +79,7 @@ The region border editor lets the GM draw and adjust regional boundaries directl
 | **Standard D&D or the setting** | Switch the Worldkeeper setting's own mechanics on or off; treasure and encounters can come from your books |
 | **Player publishing** | Player-only server, static player handbook, optional GitHub Pages publishing |
 | **Library operations** | Previewed imports, protective merging, exports, backups and restoration |
+| **Design** | Warm Parchment or Dark Codex; five workspaces; hover cards, an inspector and split view; tablet and phone layouts for the table |
 
 See the [complete feature reference](docs/FEATURES.md).
 
@@ -159,7 +182,7 @@ Contributions are welcome subject to review; see [Contributing](CONTRIBUTING.md)
 
 ## Roadmap
 
-v0.2, **“At the table,”** added record-link suggestions, structured NPC and faction profiles, in-session player reveals, timeline eras and desktop packaging. See [Development Status](DEVELOPMENT_STATUS.md) for feature maturity, known issues and next steps.
+v0.2, **“At the table,”** added record-link suggestions, structured NPC and faction profiles, in-session player reveals, timeline eras and desktop packaging. v0.3, **“Your books, your table,”** added the full D&D 2024 character sheet and builder, rules packs from your own books, the SRD 5.2.1 and the to-scale world map. v0.4, **“Illuminated,”** redesigned everything: the GM app, the table server and the player handbook. See [Development Status](DEVELOPMENT_STATUS.md) for feature maturity, known issues and next steps.
 
 An optional, provider-independent AI assistant is planned for a later phase. Any generated lore should enter as a `PROPOSED` draft subject to GM review, not silently become canon.
 

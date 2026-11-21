@@ -2,11 +2,15 @@
 
 [← README](../README.md) · [Quick Start](QUICKSTART.md) · [Development Status](../DEVELOPMENT_STATUS.md)
 
-This document describes the features documented for Worldkeeper v0.2. For implementation completeness, test outcomes and known issues, refer to [DEVELOPMENT_STATUS.md](../DEVELOPMENT_STATUS.md). No official rulebook text or monster stat blocks are bundled; rules and statistics come from your own sources or entries.
+This document describes Worldkeeper's features as of v0.4. For implementation completeness, test outcomes and known issues, refer to [DEVELOPMENT_STATUS.md](../DEVELOPMENT_STATUS.md). No official rulebook text or monster stat blocks are bundled; rules and statistics come from your own sources or entries.
 
 ## Finding your way
 
 The top bar holds the five workspaces: **Codex** (the world and its records), **Campaign** (the active campaign, its prep and the state of the world), **Characters** (the party, the builder and reference), **Atlas** (the full map view; its sidebar holds the map switcher and the map's legend and tools, and Manage maps) and **Live** (running the session; a red dot shows while a session is live). The sidebar lists only the current workspace's pages, and collapses to an icon rail (`[`); below 1280px wide it starts as the rail. Search (`Ctrl+K`), the active campaign (switch it from its menu), Player View, the theme and the **Library** menu (the gear: import and export, Canon Review, backups, Settings and the other maintenance pages) are on the right. The app opens on the active campaign's overview when there is one; the app mark always goes to the World Dashboard.
+
+## Quick-Peek: hover cards, the inspector and split view
+
+Rest the pointer on any record link (or tab to it) and a card shows what it is: its type, realm, whether players can see it, a short summary and a few facts. From the card, **Peek** opens it in the **inspector**, a panel on the right (`]` toggles it; middle-click a link to peek straight away), **Open beside** opens it next to the page you're on (drag the divider; it's remembered), **Pin** keeps a creature's stat block in the inspector until the live session ends, and **Open** goes to it. On a tablet, tap once for the card and again to open; a long press peeks. On a record page the inspector shows the record's connections, what mentions it and its latest changes (it opens by itself on wide screens). Pins on the Atlas and combatants in the tracker peek too.
 
 ## The map, for the GM
 
@@ -172,7 +176,7 @@ The local `/player` interface provides a preview of material that has been expli
 
 ## Interface and technical options
 
-The application includes a dark fantasy default theme, a readable light theme, collapsible navigation, search shortcuts, and responsive layouts for tablet and phone use. A Tauri desktop build path bundles the server, SQLite driver and its runtime to avoid requiring an external Node installation for end users.
+The application has two themes, **Warm Parchment** (the default) and **Dark Codex**, switched from the top bar and remembered on each device (Settings also has **Reduce texture**). Navigation collapses to an icon rail; the Live page and the player side are laid out for tablets and phones at the table. The shared components and the design rules are in [the design overhaul](DESIGN_OVERHAUL.md); developers can see every one on the Style Guide page (debug mode). A Tauri desktop build path bundles the server, SQLite driver and its runtime to avoid requiring an external Node installation for end users.
 
 The world is stored locally in SQLite plus an uploads folder; no paid API or AI dependency is required. An optional AI assistant is planned, but is not represented as a shipping feature. If developed, generated content should enter as `PROPOSED` drafts and require GM approval.
 

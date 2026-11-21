@@ -1,6 +1,6 @@
 # Design Overhaul: Product Requirements
 
-**Status:** Approved direction (owner answers recorded in section 3). Step 1 (tokens and themes) done in v0.3.7, step 2 (the shell) in v0.3.8, step 3 (the shared components) in v0.3.14, step 4 (Quick-Peek) in v0.3.15, step 5 (the key pages) in v0.3.16, step 6 (the player side) in v0.3.17; step 7 next
+**Status:** Approved direction (owner answers recorded in section 3). Step 1 (tokens and themes) done in v0.3.7, step 2 (the shell) in v0.3.8, step 3 (the shared components) in v0.3.14, step 4 (Quick-Peek) in v0.3.15, step 5 (the key pages) in v0.3.16, step 6 (the player side) in v0.3.17, and step 7 (docs, screenshots and the release) in v0.4.0. **The overhaul is complete.**
 **Scope:** The look and layout of the GM app, the in-app Player View, the table server and the published Player Handbook. No changes to data, rules or what players can see.
 
 ## 1. Why

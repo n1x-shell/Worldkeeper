@@ -45,7 +45,7 @@ Re-imports preserve unchanged records and do not delete records merely because t
 
 ## 3. Explore the encyclopedia
 
-Open **Dashboard**, then browse records or use `Ctrl+K` to search. Records retain their canonical stable IDs, source references and provenance, even when the interface hides editorial details. Enable **Settings → Technical details** to inspect those fields.
+Open the **World Dashboard** (the app mark, top left), then browse records in **Codex** or use `Ctrl+K` to search. Hover a record link for its card, and press `]` for the inspector. Records retain their canonical stable IDs, source references and provenance, even when the interface hides editorial details. Enable **Settings → Technical details** to inspect those fields.
 
 Create links in descriptions or notes with `@[Record Name]`; type `@` in the editor to select a record. Check the relationship graph and atlas for existing links. Missing or ambiguous source facts remain `UNDEFINED`, rather than being guessed by the application.
 
@@ -61,7 +61,7 @@ An event in one campaign does not automatically alter the shared world encyclope
 
 ## 5. Prepare and run a session
 
-Create a session with a recap, party location, goals, scenes, relevant NPCs, clues, encounters and possible consequences. Click **Live Session** to track initiative, conditions, events, quests and proposed changes as play unfolds.
+Create a session and open its **Preparation** tab: your prep notes (goals, scenes, relevant NPCs, clues, encounters, possible consequences) sit on top, and below them a board built from the world: where the party is, quests in play, likely NPCs, clues to find, encounters, adventures in play and the tables for that region. **Fill the empty prep fields** copies the useful parts into your notes. Click **Start live session** to run it: the encounter tracker and the log on the left, the scene, the map or any record on the right, and pinned stat blocks in the inspector (`]`).
 
 When players discover something, use the explicit **Reveal to players** flow. You can reveal a record's existence, an allowed section, or a GM-authored player-safe fact. Inspect each reveal before confirming it.
 
