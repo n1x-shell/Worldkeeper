@@ -37,7 +37,7 @@ server/src/
   routes/            thin HTTP handlers per area
   cli/import.ts      command-line import
 client/src/
-  components/        Layout (sidebar/top bar), SearchPalette, Markdown, EntityPicker, ui primitives
+  components/        Layout (top bar, workspace sidebar), navigation (where every page sits), SearchPalette, Markdown, EntityPicker, ui primitives
   lib/               api client + autosave hook, app state (theme, active campaign, record index)
   pages/             Dashboard, EntityList, EntityPage (view/edit/relationships/player/campaign/history),
                      WorldPages, Atlas, Graph, Special (vaults/shards/dominions/ethereal), Campaign, Live,

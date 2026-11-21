@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-18 · v0.3.7_
+_Last updated: 2026-11-18 · v0.3.8_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,10 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.8
+
+- **Design overhaul, step 2: the new layout** (docs/DESIGN_OVERHAUL.md). The 66-link sidebar is replaced by a top bar of five workspaces (Codex, Campaign, Characters, Atlas, Live) and a sidebar with only the current workspace's pages, in short groups; it collapses to an icon rail with `[` (or `Ctrl+\`), and below 1280px wide starts as the rail. The top bar also holds search, an **active campaign** switcher, Player View, the theme and the **Library** menu (gear) for maintenance pages and Settings. Characters links the builder (Make a Character). The Atlas opens on the full map view (the Map Explorer, with its legend, place panel and GM tools), which now fills the main view beside the sidebar instead of covering the whole window, and keeps its dark chart palette in either theme; the sidebar lists each map, opening in that view, and World Atlas is where maps are added and managed. the Live tab shows a red dot while a session is live. The app opens on the active campaign's overview when there is one, and the app mark goes to the World Dashboard. Every page keeps its URL; `tests/navigation.test.ts` checks that all 66 old links still have a home and that every route belongs to the right workspace. Phones get every page in the menu drawer.
 
 ## v0.3.7
 
