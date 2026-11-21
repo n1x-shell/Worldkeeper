@@ -5,7 +5,9 @@
  */
 import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
-import { Rule } from './parts';
+import { LABEL, Rule } from './parts';
+import { Badge } from '../../components/ui/badges';
+import { Toggle } from '../../components/ui/inputs';
 import { ask } from '../../components/ui/overlays';
 
 export interface ThinningPage {
@@ -37,27 +39,34 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
                 role="radio"
                 aria-checked={n === page.thinning}
                 aria-label={`Thinning ${n}`}
-                className={`h-9 w-9 rounded border text-sm ${n === page.thinning ? 'bg-gold/30 border-gold text-gold' : n && n <= page.thinning ? 'bg-gold/10 border-gold/50 text-gold' : 'border-line text-dim'}`}
+                className={`num h-10 w-10 rounded-md border text-base font-semibold transition-colors ${n === page.thinning ? 'border-gold bg-gold/25 text-gold' : n && n <= page.thinning ? 'border-gold/50 bg-gold/10 text-gold' : 'border-line bg-raised/40 text-dim hover:text-ink'}`}
                 onClick={() => set({ thinning: n }, true)}
               >
                 {n}
               </button>
             ) : (
-              <span key={n} className={`flex h-9 w-9 items-center justify-center rounded border text-sm ${n <= page.thinning ? 'bg-gold/30 border-gold text-gold' : 'border-line text-dim'}`}>
+              <span
+                key={n}
+                className={`num flex h-10 w-10 items-center justify-center rounded-md border text-base font-semibold ${n <= page.thinning ? 'border-gold bg-gold/25 text-gold' : 'border-line bg-raised/40 text-dim'}`}
+              >
                 {n}
               </span>
             ),
           )}
-          {page.shardscarred && !gm && <span className="chip border-gold/50 text-gold ml-2">Shardscarred</span>}
+          {page.shardscarred && !gm && (
+            <Badge tone="gold" className="ml-2">
+              Shardscarred
+            </Badge>
+          )}
         </div>
-        <p className="text-sm">
-          Thinning save: Charisma, <b>DC {12 + page.thinning}</b>. Hearing your true name from someone who knows it gives Advantage. At 3, you stop answering to your name without effort. At 6, you
+        <p className="max-w-[72ch] text-sm leading-relaxed">
+          Thinning save: Charisma, <b className="num">DC {12 + page.thinning}</b>. Hearing your true name from someone who knows it gives Advantage. At 3, you stop answering to your name without effort. At 6, you
           join the harmony.
         </p>
         {gm ? (
-          <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" checked={page.shardscarred} onChange={(e) => set({ shardscarred: e.target.checked }, true)} /> Shardscarred: Advantage on saves against memory changes and rewriting
-          </label>
+          <Toggle checked={page.shardscarred} onChange={(v) => set({ shardscarred: v }, true)} hint="Advantage on saves against memory changes and rewriting">
+            Shardscarred
+          </Toggle>
         ) : (
           <p className="text-xs text-dim">Your GM changes this after a failed save, or when a month among people who use your name brings you back a step.</p>
         )}
@@ -65,13 +74,13 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
 
       <section className="space-y-2">
         <Rule>True name</Rule>
-        <input className="input font-serif text-[16px]" value={page.true_name} placeholder="The name that pulls you back" onChange={(e) => set({ true_name: e.target.value })} aria-label="True name" />
-        <div className="text-[10px] uppercase tracking-[0.16em] text-dim pt-1">Who knows it</div>
+        <input className="input font-serif text-[16px] max-sm:min-h-10" value={page.true_name} placeholder="The name that pulls you back" onChange={(e) => set({ true_name: e.target.value })} aria-label="True name" />
+        <div className={`pt-1 ${LABEL}`}>Who knows it</div>
         <ul className="flex flex-wrap gap-1.5">
           {page.known_by.map((n) => (
-            <li key={n} className="chip border-line">
+            <li key={n} className="tag border-line bg-raised/50 text-ink">
               {n}
-              <button className="ml-1 text-dim hover:text-danger" aria-label={`Remove ${n}`} onClick={() => set({ known_by: page.known_by.filter((x) => x !== n) }, true)}>
+              <button className="relative ml-0.5 text-dim hover:text-danger after:absolute after:-inset-3 after:content-['']" aria-label={`Remove ${n}`} onClick={() => set({ known_by: page.known_by.filter((x) => x !== n) }, true)}>
                 <X size={12} />
               </button>
             </li>
@@ -88,13 +97,13 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
           }}
         >
           <input
-            className="input flex-1"
+            className="input flex-1 max-sm:min-h-10"
             value={newName}
             placeholder="Someone who knows the true name"
             onChange={(e) => setNewName(e.target.value)}
             aria-label="Add someone who knows your true name"
           />
-          <button className="btn" aria-label="Add">
+          <button className="btn justify-center max-sm:min-h-10 max-sm:min-w-10" aria-label="Add">
             <Plus size={14} />
           </button>
         </form>
@@ -103,7 +112,7 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
       <section className="space-y-2">
         <Rule>Named memories</Rule>
         {toStrike && (
-          <p className="rounded border border-gold/60 p-2 text-sm text-gold">
+          <p className="rounded-md border border-warn/50 bg-warn/10 px-3 py-2 text-sm text-warn" role="status">
             {gm ? 'Thinning is above the struck memories: the player strikes one.' : 'Your Thinning has gone up. Strike one memory, for good.'}
           </p>
         )}
@@ -111,13 +120,13 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
           {kept.map((m) => (
             <li key={m.id ?? m.text} className="flex gap-2 items-center">
               <input
-                className="input flex-1 font-serif text-[15px]"
+                className="input flex-1 font-serif text-[16px] max-sm:min-h-10"
                 value={m.text}
                 aria-label="Memory"
                 onChange={(e) => set({ memories: page.memories.map((x) => (x === m ? { ...x, text: e.target.value } : x)) })}
               />
               <button
-                className="btn-ghost text-sm"
+                className="btn-ghost text-sm max-sm:min-h-10"
                 onClick={async () => {
                   if (await ask({ title: 'Strike this memory?', body: `Strike "${m.text}" for good? Lost memories don't come back.`, danger: true, confirmLabel: 'Strike it' }))
                     set({ memories: page.memories.map((x) => (x === m ? { ...x, struck: true } : x)) }, true);
@@ -126,7 +135,7 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
                 Strike
               </button>
               {gm && (
-                <button className="btn-ghost text-sm" aria-label={`Remove ${m.text}`} onClick={() => set({ memories: page.memories.filter((x) => x !== m) }, true)}>
+                <button className="btn-ghost text-sm max-sm:min-h-10" aria-label={`Remove ${m.text}`} onClick={() => set({ memories: page.memories.filter((x) => x !== m) }, true)}>
                   <X size={14} />
                 </button>
               )}
@@ -134,7 +143,7 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
           ))}
           {struck.map((m) => (
             <li key={m.id ?? m.text} className="flex items-center gap-2 px-3">
-              <span className="flex-1 text-dim line-through font-serif">{m.text}</span>
+              <span className="flex-1 font-serif text-[16px] text-dim line-through decoration-danger/60">{m.text}</span>
               {gm && (
                 <button
                   className="btn-ghost text-xs"
@@ -156,8 +165,8 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
             setNewMemory('');
           }}
         >
-          <input className="input flex-1" value={newMemory} placeholder="A mother's laugh, the smell of rain on slate…" onChange={(e) => setNewMemory(e.target.value)} aria-label="Add a memory" />
-          <button className="btn" aria-label="Add memory">
+          <input className="input flex-1 max-sm:min-h-10" value={newMemory} placeholder="A mother's laugh, the smell of rain on slate…" onChange={(e) => setNewMemory(e.target.value)} aria-label="Add a memory" />
+          <button className="btn justify-center max-sm:min-h-10 max-sm:min-w-10" aria-label="Add memory">
             <Plus size={14} />
           </button>
         </form>
@@ -165,7 +174,7 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
 
       <section className="space-y-2">
         <Rule>{gm ? "The player's notes" : 'Notes'}</Rule>
-        <textarea className="input min-h-[120px]" value={page.notes} onChange={(e) => set({ notes: e.target.value })} aria-label="Notes" />
+        <textarea className="input min-h-[120px] font-serif text-[16px] leading-relaxed" value={page.notes} onChange={(e) => set({ notes: e.target.value })} aria-label="Notes" />
       </section>
     </div>
   );

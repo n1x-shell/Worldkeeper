@@ -3,7 +3,8 @@ import { useMemo, useState } from 'react';
 import { ChevronDown, ChevronRight, Plus, Search, X } from 'lucide-react';
 import { ABILITIES, mod, signed, spellAttack, spellSaveDc, type Sheet, type Spell } from '@shared/sheet';
 import { ABILITY_NAMES, classInfo, spellCounts, spellSlotsFor } from '@shared/rules2024';
-import { Diamond, Field, Pips, Rule } from './parts';
+import { Diamond, Field, LABEL, NO_SPIN, Pips, Rule, Stat } from './parts';
+import { Check } from '../../components/ui/inputs';
 import { loadSpells, useLoaded, type SrdSpell } from './options';
 
 const LEVEL_NAME = (l: number) => (l === 0 ? 'Cantrips' : `Level ${l}`);
@@ -52,9 +53,9 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-3 sm:grid-cols-4">
-        <Field label="Spellcasting ability">
-          <select className="input" value={s.spellAbility ?? ''} onChange={(e) => put({ spellAbility: e.target.value })} disabled={readOnly}>
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 sm:gap-3">
+        <Field label="Spellcasting ability" className="col-span-3 sm:col-span-1">
+          <select className="input max-sm:min-h-10" value={s.spellAbility ?? ''} onChange={(e) => put({ spellAbility: e.target.value })} disabled={readOnly}>
             <option value="">None</option>
             {ABILITIES.map((a) => (
               <option key={a} value={a}>
@@ -63,23 +64,14 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
             ))}
           </select>
         </Field>
-        <div className="stat-box">
-          <span className="stat-label">Modifier</span>
-          <span className="stat-value">{s.spellAbility ? signed(mod(s, s.spellAbility as (typeof ABILITIES)[number])) : '—'}</span>
-        </div>
-        <div className="stat-box">
-          <span className="stat-label">Spell save DC</span>
-          <span className="stat-value">{dc ?? '—'}</span>
-        </div>
-        <div className="stat-box">
-          <span className="stat-label">Spell attack</span>
-          <span className="stat-value">{atk === null ? '—' : signed(atk)}</span>
-        </div>
+        <Stat label="Modifier">{s.spellAbility ? signed(mod(s, s.spellAbility as (typeof ABILITIES)[number])) : '—'}</Stat>
+        <Stat label="Spell save DC">{dc ?? '—'}</Stat>
+        <Stat label="Spell attack">{atk === null ? '—' : signed(atk)}</Stat>
       </div>
       {info?.spellAbility && s.spellAbility !== info.spellAbility && !readOnly && (
         <p className="text-sm text-dim">
           {info.name}s cast with {ABILITY_NAMES[info.spellAbility]}.{' '}
-          <button className="text-gold underline" onClick={() => put({ spellAbility: info.spellAbility })}>
+          <button className="text-gold underline underline-offset-2 max-sm:min-h-10" onClick={() => put({ spellAbility: info.spellAbility })}>
             Use {ABILITY_NAMES[info.spellAbility]}
           </button>
         </p>
@@ -89,7 +81,7 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
         <Rule
           actions={
             info?.caster && !readOnly ? (
-              <button className="btn-ghost text-xs" onClick={fromTable} title={`Totals from the ${info.name} table at level ${level}`}>
+              <button className="btn-ghost text-xs max-sm:min-h-10" onClick={fromTable} title={`Totals from the ${info.name} table at level ${level}`}>
                 Set totals for {info.name} {level}
               </button>
             ) : null
@@ -102,13 +94,13 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
           {Array.from({ length: 9 }, (_, i) => String(i + 1)).map((l) => {
             const sl = slots[l] ?? { max: 0, used: 0 };
             return (
-              <div key={l} className={`ledger-card p-2 space-y-1 text-center ${sl.max ? '' : 'opacity-60'}`}>
-                <div className="text-[10px] uppercase tracking-[0.16em] text-dim">Level {l}</div>
+              <div key={l} className={`space-y-1 rounded-md border p-2 text-center ${sl.max ? 'border-line bg-raised/50' : 'border-line/60 bg-transparent'}`}>
+                <div className={`text-[10px] font-medium uppercase tracking-[0.1em] ${sl.max ? 'text-gold' : 'text-dim'}`}>Level {l}</div>
                 <input
                   type="number"
                   min={0}
                   max={9}
-                  className="input-bare text-center"
+                  className={`input-bare num text-center text-lg font-semibold ${sl.max ? '' : 'text-dim'} ${NO_SPIN}`}
                   value={sl.max || ''}
                   placeholder="0"
                   aria-label={`Level ${l} slots in total`}
@@ -126,7 +118,7 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
         <Rule
           actions={
             !readOnly && (
-              <button className="btn text-xs" onClick={() => setAdding(!adding)} aria-expanded={adding}>
+              <button className="btn text-xs max-sm:min-h-10" onClick={() => setAdding(!adding)} aria-expanded={adding}>
                 <Plus size={13} /> Add a spell
               </button>
             )
@@ -147,8 +139,11 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
           .filter((l) => spells.some((x) => x.level === l))
           .map((l) => (
             <div key={l} className="space-y-1">
-              <div className="text-xs uppercase tracking-[0.16em] text-gold/80">{LEVEL_NAME(l)}</div>
-              <div className="hidden md:grid grid-cols-[1.25rem_1fr_7rem_6rem_5.5rem_1fr_1.5rem] gap-2 px-1 text-[10px] uppercase tracking-wider text-dim">
+              <div className="flex items-baseline gap-2 pt-2">
+                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-gold">{LEVEL_NAME(l)}</span>
+                <span className="num text-xs text-dim">{spells.filter((x) => x.level === l).length}</span>
+              </div>
+              <div className={`hidden md:grid grid-cols-[1.5rem_1fr_7rem_6rem_5.5rem_1fr_1.75rem] gap-2 px-1 ${LABEL} !text-[10px]`}>
                 <span title="Prepared">P</span>
                 <span>Name</span>
                 <span>Casting time</span>
@@ -159,12 +154,19 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
               </div>
               {spells.map((x, i) =>
                 x.level !== l ? null : (
-                  <div key={i} className="rounded border border-line/60 bg-bg/30">
-                    <div className="grid grid-cols-[1.25rem_1fr_1.5rem] md:grid-cols-[1.25rem_1fr_7rem_6rem_5.5rem_1fr_1.5rem] gap-2 items-center p-1">
-                      <Diamond on={l === 0 || x.prepared} label={l === 0 ? 'Cantrip (always ready)' : 'Prepared'} onChange={l === 0 || readOnly ? undefined : (on) => setSpell(i, { prepared: on })} />
+                  <div key={i} className="rounded-md border border-line bg-raised/40">
+                    <div className="grid grid-cols-[2rem_minmax(0,1fr)_2.5rem] items-center gap-2 p-1 md:grid-cols-[1.5rem_1fr_7rem_6rem_5.5rem_1fr_1.75rem]">
+                      <span className="relative flex h-10 items-center justify-center rounded md:h-7">
+                        <Diamond
+                          cover
+                          on={l === 0 || x.prepared} label={l === 0 ? 'Cantrip (always ready)' : 'Prepared'} onChange={l === 0 || readOnly ? undefined : (on) => setSpell(i, { prepared: on })}
+                        />
+                      </span>
                       <span className="flex items-center gap-1 min-w-0">
                         {byName.has(x.name.toLowerCase()) && (
-                          <button className="text-dim hover:text-gold" onClick={() => setOpen(open === x.name ? null : x.name)} aria-label={`${open === x.name ? 'Hide' : 'Show'} ${x.name}`}>
+                          <button
+                            className="flex h-10 w-7 shrink-0 items-center justify-center rounded text-dim hover:text-gold md:h-7"
+                            onClick={() => setOpen(open === x.name ? null : x.name)} aria-label={`${open === x.name ? 'Hide' : 'Show'} ${x.name}`}>
                             {open === x.name ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                           </button>
                         )}
@@ -192,7 +194,9 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
                       </span>
                       <input className="input-bare hidden md:block text-sm" value={x.notes ?? ''} aria-label="Notes" disabled={readOnly} onChange={(e) => setSpell(i, { notes: e.target.value })} />
                       {!readOnly ? (
-                        <button className="text-dim hover:text-danger" aria-label={`Remove ${x.name || 'spell'}`} onClick={() => put({ spells: spells.filter((_, j) => j !== i) })}>
+                        <button
+                          className="flex h-10 w-10 items-center justify-center justify-self-end rounded text-dim hover:bg-danger/10 hover:text-danger md:h-7 md:w-7"
+                          aria-label={`Remove ${x.name || 'spell'}`} onClick={() => put({ spells: spells.filter((_, j) => j !== i) })}>
                           <X size={14} />
                         </button>
                       ) : (
@@ -212,12 +216,12 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
 
 function SpellText({ sp }: { sp: SrdSpell }) {
   return (
-    <div className="border-t border-line/60 px-3 py-2 text-sm space-y-2">
-      <div className="text-xs text-dim">
+    <div className="space-y-2 border-t border-line px-3 py-2.5 text-sm">
+      <div className="num text-xs text-dim">
         {sp.level === 0 ? `${sp.school} cantrip` : `Level ${sp.level} ${sp.school}`} · {sp.time} · {sp.range} · {sp.components} · {sp.duration}
       </div>
       {sp.text.split('\n\n').map((p, i) => (
-        <p key={i} className="font-serif text-[15px] leading-snug">
+        <p key={i} className="max-w-[72ch] font-serif text-[16px] leading-relaxed">
           {p}
         </p>
       ))}
@@ -238,13 +242,13 @@ function SpellPicker({ srd, cls, level, have, onPick, onHand }: { srd: SrdSpell[
     .filter((x) => !q || x.name.toLowerCase().includes(q.toLowerCase()))
     .slice(0, 40);
   return (
-    <div className="ledger-card space-y-2">
+    <div className="space-y-2 rounded-md border border-gold/40 bg-raised/40 p-3">
       <div className="flex flex-wrap gap-2 items-center">
         <span className="relative flex-1 min-w-[12rem]">
-          <Search size={14} className="absolute left-2 top-2.5 text-dim" />
-          <input className="input pl-7" placeholder="Search the SRD's spells" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search spells" autoFocus />
+          <Search size={14} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-dim" />
+          <input className="input pl-8 max-sm:min-h-10" placeholder="Search the SRD's spells" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search spells" autoFocus />
         </span>
-        <select className="input w-auto" value={lv} onChange={(e) => setLv(e.target.value === '' ? '' : Number(e.target.value))} aria-label="Spell level">
+        <select className="input w-auto max-sm:min-h-10" value={lv} onChange={(e) => setLv(e.target.value === '' ? '' : Number(e.target.value))} aria-label="Spell level">
           <option value="">Any level</option>
           {Array.from({ length: 10 }, (_, l) => (
             <option key={l} value={l}>
@@ -254,23 +258,23 @@ function SpellPicker({ srd, cls, level, have, onPick, onHand }: { srd: SrdSpell[
           ))}
         </select>
         {cls && (
-          <label className="text-sm flex items-center gap-1.5">
-            <input type="checkbox" checked={mine} onChange={(e) => setMine(e.target.checked)} /> {cls} spells only
-          </label>
+          <Check checked={mine} onChange={setMine} className="max-sm:min-h-10 max-sm:items-center">
+            {cls} spells only
+          </Check>
         )}
-        <button className="btn-ghost text-sm" onClick={onHand}>
+        <button className="btn-ghost text-sm max-sm:min-h-10" onClick={onHand}>
           Type one in
         </button>
       </div>
       {!srd && <p className="text-sm text-dim">Loading spells…</p>}
-      <ul className="max-h-80 overflow-auto divide-y divide-line/50">
+      <ul className="max-h-80 divide-y divide-line overflow-auto">
         {list.map((x) => (
           <li key={x.name} className="py-1.5">
             <div className="flex items-center gap-2">
-              <button className="btn-ghost text-xs" onClick={() => onPick(x)} aria-label={`Add ${x.name}`}>
+              <button className="btn-ghost h-10 w-10 shrink-0 justify-center text-xs md:h-8 md:w-8" onClick={() => onPick(x)} aria-label={`Add ${x.name}`}>
                 <Plus size={13} />
               </button>
-              <button className="flex-1 text-left" onClick={() => setPeek(peek === x.name ? null : x.name)}>
+              <button className="min-h-10 min-w-0 flex-1 text-left md:min-h-0" onClick={() => setPeek(peek === x.name ? null : x.name)}>
                 <span className="font-serif text-[15px]">{x.name}</span>{' '}
                 <span className="text-xs text-dim">
                   {x.level === 0 ? 'cantrip' : `level ${x.level}`} · {x.school} · {x.time.replace(/, which you take.*$/, '')}
