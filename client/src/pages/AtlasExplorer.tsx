@@ -11,6 +11,7 @@ import { OutlineEditor, type Pt } from '../components/map/OutlineEditor';
 import { ENTITY_TYPE_LABELS, type Entity, type EntityType } from '../../../shared/domain';
 import { RegionPanel } from '../components/map/RegionPanel';
 import { useSidebarSlot } from '../components/sidebarSlot';
+import { JourneyDialog, type JourneyTarget } from '../components/map/JourneyDialog';
 import type { MapLayerSpot } from '../components/map/MapView';
 
 /** Kinds of record that get the region panel (terrain, campaign state, places, encounter tables). */
@@ -30,6 +31,8 @@ interface MapRow {
   image_file: string | null;
   width: number;
   height: number;
+  /** Miles across (the image's width), for distances and travel times. */
+  scale_miles?: number | null;
 }
 interface MarkerRow {
   id: number;
@@ -93,8 +96,11 @@ function GmCodex({
   onChange,
   onOutline,
   onPick,
+  onTravel,
 }: {
   onPick: (id: string) => void;
+  /** Travel to this place (the journey dialog). */
+  onTravel: (to: JourneyTarget) => void;
   id: string;
   mapId: number;
   marker?: MarkerRow;
@@ -186,22 +192,8 @@ function GmCodex({
             >
               {discovered ? 'Discovered by the party' : 'Not yet discovered'}
             </button>
-            <button
-              type="button"
-              className="btn text-xs"
-              onClick={() =>
-                run(
-                  () =>
-                    api.post('/api/exploration/travel', {
-                      campaign_id: exploration.campaign_id,
-                      map_id: mapId,
-                      entity_id: id,
-                    }),
-                  true,
-                )
-              }
-            >
-              <Flag size={13} /> The party is here
+            <button type="button" className="btn text-xs" onClick={() => onTravel({ entity_id: id, x: marker.x, y: marker.y, label: e.name })}>
+              <Flag size={13} /> Travel here
             </button>
           </>
         )}
@@ -254,6 +246,7 @@ export function AtlasExplorer() {
   } | null>(null);
   const [showFog, setShowFog] = useState(true);
   const [showOutlines, setShowOutlines] = useState(false);
+  const [journeyTo, setJourneyTo] = useState<JourneyTarget | null>(null);
   const [outline, setOutline] = useState<Outline | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const selected = sp.get('place');
@@ -311,18 +304,16 @@ export function AtlasExplorer() {
       setErr((x as Error).message);
     }
   };
-  const travelTo = (x: number, y: number) =>
+  const travelTo = (x: number, y: number) => {
+    setPlacing(null);
+    setJourneyTo({ x: Math.round(x), y: Math.round(y), label: '' });
+  };
+  const saveScale = (v: string) =>
     act(async () => {
-      const label = window.prompt('Where is the party? (a short name for this spot)', '') ?? '';
-      setEx(
-        await api.post<Exploration>('/api/exploration/travel', {
-          map_id: m.id,
-          x,
-          y,
-          label,
-        }),
-      );
-      setPlacing(null);
+      const n = v.trim() === '' ? null : Number(v);
+      if (n != null && !(n > 0)) throw new Error('The scale is a number of miles, more than 0.');
+      await api.patch(`/api/maps/${m.id}`, { scale_miles: n });
+      await reload();
     });
   const placePin = (u: Unplaced) =>
     setPlacing({
@@ -460,6 +451,20 @@ export function AtlasExplorer() {
     <div className="border-t border-line px-4 py-3 space-y-3 text-sm">
       <div className="section-title">GM tools</div>
       {err && <p className="text-danger text-xs">{err}</p>}
+      <label className="flex items-center gap-2 text-xs" title="How far it is from the map's left edge to its right edge. Distances, the ruler and travel times use it.">
+        <span>Scale</span>
+        <input
+          key={`${m.id}-${m.scale_miles ?? ''}`}
+          className="input w-24 py-1 num"
+          type="number"
+          min={1}
+          defaultValue={m.scale_miles ?? ''}
+          placeholder="miles"
+          onBlur={(e) => e.target.value !== String(m.scale_miles ?? '') && saveScale(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
+        />
+        <span className="text-dim">miles across</span>
+      </label>
       {status?.active_campaign_id ? (
         <div className="space-y-2">
           <div className="text-xs text-dim">{live ? 'A session is live: players see fog of war and the party now.' : 'No session is live: players see the whole map until one starts.'}</div>
@@ -477,7 +482,7 @@ export function AtlasExplorer() {
                 })
               }
             >
-              <Flag size={13} /> Move the party to a point
+              <Flag size={13} /> Travel to a point
             </button>
             {!!ex?.trail.length && (
               <button
@@ -541,67 +546,82 @@ export function AtlasExplorer() {
     </div>
   );
 
+  const lastStop = ex?.trail.at(-1) ?? null;
   return (
-    <MapView
-      key={m.id}
-      map={{
-        id: m.id,
-        name: m.name,
-        width: m.width,
-        height: m.height,
-        imageUrl: m.image_file ? `/api/uploads/${m.image_file}` : null,
-      }}
-      maps={[...mapList].sort((a, b) => a.id - b.id).map((x) => ({ id: x.id, name: x.name }))}
-      mapHref={(x) => `/atlas/explore/${x}`}
-      contained
-      back={{ href: `/atlas/${m.id}`, label: 'Atlas' }}
-      pins={pins}
-      shapes={data.shapes}
-      selected={selected}
-      onSelect={select}
-      onChildMap={(x) => nav(`/atlas/explore/${x}`)}
-      codex={
-        selected && !outline ? (
-          <GmCodex
-            key={selected}
-            id={selected}
-            mapId={m.id}
-            marker={marker}
-            outline={outlineOf(selected)}
-            onOutline={startOutline}
-            exploration={ex ?? null}
-            onClose={() => select(null)}
-            onPick={(pid) => select(pid)}
-            onChange={(next) => {
-              if (next) setEx(next);
-              else void reload();
-              void reloadEx();
-            }}
-          />
-        ) : null
-      }
-      exploration={exploration}
-      layers={layers ?? null}
-      sidebarSlot={sidebarSlot}
-      onOpenLink={(href) => nav(href)}
-      fog="dim"
-      notesKey="gm"
-      draggable
-      onMovePin={(pin, x, y) =>
-        act(async () => {
-          setData({
-            ...data,
-            markers: data.markers.map((mk) => (mk.id === pin.id ? { ...mk, x, y } : mk)),
-          });
-          await api.patch(`/api/markers/${pin.id}`, { x, y });
-        })
-      }
-      placing={placing ? { ...placing, onCancel: () => setPlacing(null) } : null}
-      legendExtra={tools}
-      banner={outlineBanner || (live ? <span>Live session: players see fog of war and the party.</span> : undefined)}
-      editor={outline ? <OutlineEditor points={outline.points} drawing={outline.drawing || outline.points.length < 3} onChange={changeOutline} onClose={finishDrawing} /> : undefined}
-      editingShapeId={outline?.shapeId}
-      showOutlines={showOutlines}
-    />
+    <>
+      {journeyTo && status?.active_campaign_id && (
+        <JourneyDialog
+          campaignId={status.active_campaign_id}
+          map={m}
+          from={lastStop ? { x: lastStop.x, y: lastStop.y, label: lastStop.label } : null}
+          to={journeyTo}
+          onClose={() => setJourneyTo(null)}
+          onDone={(next) => (setEx(next as Exploration), void reloadEx())}
+        />
+      )}
+      <MapView
+        key={m.id}
+        map={{
+          id: m.id,
+          name: m.name,
+          width: m.width,
+          height: m.height,
+          imageUrl: m.image_file ? `/api/uploads/${m.image_file}` : null,
+        }}
+        maps={[...mapList].sort((a, b) => a.id - b.id).map((x) => ({ id: x.id, name: x.name }))}
+        mapHref={(x) => `/atlas/explore/${x}`}
+        contained
+        back={{ href: `/atlas/${m.id}`, label: 'Atlas' }}
+        pins={pins}
+        shapes={data.shapes}
+        selected={selected}
+        onSelect={select}
+        onChildMap={(x) => nav(`/atlas/explore/${x}`)}
+        codex={
+          selected && !outline ? (
+            <GmCodex
+              key={selected}
+              id={selected}
+              mapId={m.id}
+              marker={marker}
+              outline={outlineOf(selected)}
+              onOutline={startOutline}
+              exploration={ex ?? null}
+              onClose={() => select(null)}
+              onPick={(pid) => select(pid)}
+              onTravel={setJourneyTo}
+              onChange={(next) => {
+                if (next) setEx(next);
+                else void reload();
+                void reloadEx();
+              }}
+            />
+          ) : null
+        }
+        exploration={exploration}
+        layers={layers ?? null}
+        scaleMiles={m.scale_miles ?? null}
+        sidebarSlot={sidebarSlot}
+        onOpenLink={(href) => nav(href)}
+        fog="dim"
+        notesKey="gm"
+        draggable
+        onMovePin={(pin, x, y) =>
+          act(async () => {
+            setData({
+              ...data,
+              markers: data.markers.map((mk) => (mk.id === pin.id ? { ...mk, x, y } : mk)),
+            });
+            await api.patch(`/api/markers/${pin.id}`, { x, y });
+          })
+        }
+        placing={placing ? { ...placing, onCancel: () => setPlacing(null) } : null}
+        legendExtra={tools}
+        banner={outlineBanner || (live ? <span>Live session: players see fog of war and the party.</span> : undefined)}
+        editor={outline ? <OutlineEditor points={outline.points} drawing={outline.drawing || outline.points.length < 3} onChange={changeOutline} onClose={finishDrawing} /> : undefined}
+        editingShapeId={outline?.shapeId}
+        showOutlines={showOutlines}
+      />
+    </>
   );
 }

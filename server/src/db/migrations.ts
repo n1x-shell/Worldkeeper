@@ -717,6 +717,11 @@ CREATE TABLE rules_entries (
     name: 'encounters: where they happen, for the map',
     sql: `ALTER TABLE encounters ADD COLUMN location_id TEXT;`,
   },
+  {
+    version: 18,
+    name: 'maps: their scale (miles across), for distances and travel times',
+    sql: `ALTER TABLE maps ADD COLUMN scale_miles REAL;`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

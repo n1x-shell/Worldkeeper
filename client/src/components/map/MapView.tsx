@@ -2,8 +2,9 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
-import { ImageOverlay, MapContainer, Marker, Polygon, Polyline, Popup, Rectangle, SVGOverlay, Tooltip, useMap, useMapEvents } from 'react-leaflet';
-import { ArrowLeft, Eye, EyeOff, Layers, NotebookPen, Plus, Trash2 } from 'lucide-react';
+import { CircleMarker, ImageOverlay, MapContainer, Marker, Polygon, Polyline, Popup, Rectangle, SVGOverlay, Tooltip, useMap, useMapEvents } from 'react-leaflet';
+import { PACES, formatMiles, niceMiles, pathMiles, travelDays, type Pace } from '../../../../shared/travel';
+import { ArrowLeft, Eye, EyeOff, Layers, NotebookPen, Plus, Ruler, Trash2, Undo2, X } from 'lucide-react';
 
 /**
  * The full-screen map view shared by the players' handbook and the GM's Atlas. The map fills the window; a legend
@@ -199,6 +200,24 @@ function Viewport({ bounds, onZoom, focus }: { bounds: L.LatLngBoundsExpression;
   return null;
 }
 
+/** Reports how many screen pixels one unit of the map's image takes, as the reader zooms. */
+function ScaleWatch({ onChange }: { onChange: (pxPerUnit: number) => void }) {
+  const map = useMap();
+  useEffect(() => {
+    const report = () => {
+      const a = map.latLngToContainerPoint([0, 0]);
+      const b = map.latLngToContainerPoint([0, 1000]);
+      onChange((b.x - a.x) / 1000);
+    };
+    report();
+    map.on('zoomend resize', report);
+    return () => {
+      map.off('zoomend resize', report);
+    };
+  }, [map, onChange]);
+  return null;
+}
+
 function Clicks({ onClick }: { onClick: ((x: number, y: number) => void) | null }) {
   const map = useMap();
   useEffect(() => {
@@ -289,6 +308,8 @@ export interface MapViewProps {
   /** GM: the campaign on the map (quests, adventure places, people, encounters), and how to open what they link to. */
   layers?: MapLayerSpot[] | null;
   onOpenLink?: (href: string) => void;
+  /** How many miles the map is across (its width): a scale bar, a ruler and travel times on routes. */
+  scaleMiles?: number | null;
   /** GM app: the app's sidebar, to hold the legend and the map switcher instead of the floating panel. While it is
    * collapsed (null), the floating legend comes back. */
   sidebarSlot?: HTMLElement | null;
@@ -321,6 +342,20 @@ export function MapView(p: MapViewProps) {
   const ex = p.exploration ?? null;
   const editing = !!p.editor;
   const inSidebar = !!p.sidebarSlot;
+  // The scale bar and the ruler, when the map has a scale.
+  const milesPerUnit = p.scaleMiles && m.width ? p.scaleMiles / m.width : null;
+  const [pxPerUnit, setPxPerUnit] = useState(0);
+  const [measuring, setMeasuring] = useState(false);
+  const [ruler, setRuler] = useState<[number, number][]>([]);
+  const rulerMiles = milesPerUnit ? (pathMiles(ruler, { width: m.width, scale_miles: p.scaleMiles }) ?? 0) : 0;
+  const bar =
+    milesPerUnit && pxPerUnit > 0
+      ? (() => {
+          const pxPerMile = pxPerUnit / milesPerUnit;
+          const miles = niceMiles(110 / pxPerMile);
+          return { miles, px: miles * pxPerMile };
+        })()
+      : null;
   // In the GM app, collapsing the sidebar is how to see just the map: the floating legend then starts closed.
   const wasInSidebar = useRef(inSidebar);
   useEffect(() => {
@@ -338,13 +373,14 @@ export function MapView(p: MapViewProps) {
   useEffect(() => {
     const k = (ev: KeyboardEvent) => {
       if (ev.key !== 'Escape' || p.editor) return;
-      if (p.placing) p.placing.onCancel();
+      if (measuring) setMeasuring(false);
+      else if (p.placing) p.placing.onCancel();
       else if (addingNote) setAddingNote(false);
       else p.onSelect(null);
     };
     window.addEventListener('keydown', k);
     return () => window.removeEventListener('keydown', k);
-  }, [p, addingNote]);
+  }, [p, addingNote, measuring]);
 
   const bounds: L.LatLngBoundsExpression = [
     [0, 0],
@@ -377,21 +413,23 @@ export function MapView(p: MapViewProps) {
   };
   const mapClick = editing
     ? null
-    : p.placing
-      ? p.placing.onPlace
-      : addingNote
-        ? (x: number, y: number) => {
-            const n: Note = {
-              id: Math.random().toString(36).slice(2),
-              x,
-              y,
-              text: '',
-            };
-            saveNotes([...notes, n]);
-            setAddingNote(false);
-            setOpenNote(n.id);
-          }
-        : null;
+    : measuring
+      ? (x: number, y: number) => setRuler((r) => [...r, [x, y]])
+      : p.placing
+        ? p.placing.onPlace
+        : addingNote
+          ? (x: number, y: number) => {
+              const n: Note = {
+                id: Math.random().toString(36).slice(2),
+                x,
+                y,
+                text: '',
+              };
+              saveNotes([...notes, n]);
+              setAddingNote(false);
+              setOpenNote(n.id);
+            }
+          : null;
 
   return (
     // The chart is always drawn on the dark palette, whatever the app's theme, so its panels stay readable on the map.
@@ -439,9 +477,18 @@ export function MapView(p: MapViewProps) {
         {!hidden.has('routes') &&
           routes.map((s) => (
             <Polyline key={s.id} positions={s.points.map(([x, y]) => [y, x] as [number, number])} pathOptions={{ color: s.color, weight: 2, dashArray: '5 5' }}>
-              {s.label && (
+              {(s.label || milesPerUnit) && (
                 <Tooltip sticky direction="bottom" offset={[0, 14]} className="wk-map-tip">
-                  <span className="text-[12px]">{s.label}</span>
+                  {s.label && <div className="text-[12px]">{s.label}</div>}
+                  {milesPerUnit &&
+                    (() => {
+                      const mi = pathMiles(s.points, { width: m.width, scale_miles: p.scaleMiles }) ?? 0;
+                      return (
+                        <div className="text-[11px] opacity-80 num">
+                          {formatMiles(mi)} · {travelDays(mi, 'normal')} days at a normal pace
+                        </div>
+                      );
+                    })()}
                 </Tooltip>
               )}
             </Polyline>
@@ -564,8 +611,65 @@ export function MapView(p: MapViewProps) {
             onDelete={() => (saveNotes(notes.filter((x) => x.id !== n.id)), setOpenNote(null))}
           />
         ))}
+        {milesPerUnit && <ScaleWatch onChange={setPxPerUnit} />}
+        {ruler.length > 0 && (
+          <>
+            {/* A dark edge under a light line, readable on pale parchment and on dark seas. */}
+            <Polyline positions={ruler.map(([x, y]) => [y, x] as [number, number])} interactive={false} pathOptions={{ color: '#0b0b10', weight: 6, opacity: 0.55 }} />
+            <Polyline positions={ruler.map(([x, y]) => [y, x] as [number, number])} interactive={false} pathOptions={{ color: '#f2e3b3', weight: 2.5, dashArray: '8 6' }} />
+            {ruler.map(([x, y], i) => (
+              <CircleMarker key={i} center={[y, x]} radius={4} interactive={false} pathOptions={{ color: '#f2e3b3', fillColor: '#0b0b10', fillOpacity: 1, weight: 2 }} />
+            ))}
+          </>
+        )}
         {p.editor}
       </MapContainer>
+
+      {/* Scale bar and ruler (bottom left), when the map has a scale. */}
+      {milesPerUnit && (
+        <div className="absolute left-3 bottom-3 z-[1000] flex flex-col items-start gap-2 pointer-events-none">
+          {measuring && (
+            <div className="wk-map-btn pointer-events-auto flex-col items-start gap-1 text-sm max-w-xs" role="status">
+              <div className="flex items-center gap-2 w-full">
+                <Ruler size={14} className="text-gold" />
+                <span className="font-medium num">{ruler.length > 1 ? formatMiles(rulerMiles) : 'Click the map to measure'}</span>
+                <button type="button" className="ml-auto p-0.5 hover:text-gold" aria-label="Undo the last point" title="Undo" disabled={!ruler.length} onClick={() => setRuler((r) => r.slice(0, -1))}>
+                  <Undo2 size={14} />
+                </button>
+                <button type="button" className="p-0.5 hover:text-gold" aria-label="Stop measuring" title="Done (Esc)" onClick={() => setMeasuring(false)}>
+                  <X size={14} />
+                </button>
+              </div>
+              {ruler.length > 1 && (
+                <div className="text-xs opacity-80 num">
+                  {(Object.keys(PACES) as Pace[]).map((k, i) => (
+                    <span key={k}>
+                      {i ? ' · ' : ''}
+                      {PACES[k].label} {travelDays(rulerMiles, k)} {travelDays(rulerMiles, k) === 1 ? 'day' : 'days'}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+          <div className="flex items-end gap-2">
+            <button
+              type="button"
+              className={`wk-map-btn pointer-events-auto ${measuring ? 'text-gold border-gold/60' : ''}`}
+              onClick={() => (measuring ? setMeasuring(false) : (setRuler([]), setMeasuring(true)))}
+              title="Measure a distance (click points on the map)"
+            >
+              <Ruler size={15} /> <span className="hidden sm:inline">Measure</span>
+            </button>
+            {bar && (
+              <div className="wk-scale-bar pointer-events-none" aria-label={`Scale: ${bar.miles} miles`}>
+                <div className="wk-scale-line" style={{ width: Math.round(bar.px) }} />
+                <span className="num">{bar.miles.toLocaleString('en-GB')} mi</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Top bar: back, the legend, the maps (in the GM app's sidebar instead, while it is open). */}
       {!inSidebar && (

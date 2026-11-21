@@ -16,6 +16,8 @@ export const maps = makeCrud({
     height: z.number().int().min(1).max(30000).default(1400),
     layers: z.array(z.string().max(100)).max(50).default(['Locations', 'Regions', 'Routes']),
     player_visible: z.boolean().default(false),
+    /** How many miles the map's image is across (its width): distances, the ruler and travel times use it. */
+    scale_miles: z.number().positive().max(1000000).nullable().optional(),
   }),
   jsonColumns: ['layers'],
   boolColumns: ['player_visible'],
