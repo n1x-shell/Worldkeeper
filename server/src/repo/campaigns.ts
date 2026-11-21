@@ -441,6 +441,8 @@ export const encounters = makeCrud({
     session_id: z.number().int().nullable().optional(),
     title: z.string().trim().min(1).max(300),
     notes: zText().default(''),
+    /** Where it happens (a place), so it shows on the map. */
+    location_id: zId,
     round: z.number().int().min(0).default(0),
     turn_index: z.number().int().min(0).default(0),
     status: z.enum(['prepared', 'running', 'finished']).default('prepared'),

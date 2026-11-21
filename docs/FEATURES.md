@@ -8,6 +8,10 @@ This document describes the features documented for Worldkeeper v0.2. For implem
 
 The top bar holds the five workspaces: **Codex** (the world and its records), **Campaign** (the active campaign, its prep and the state of the world), **Characters** (the party, the builder and reference), **Atlas** (the full map view, and adding and managing maps) and **Live** (running the session; a red dot shows while a session is live). The sidebar lists only the current workspace's pages, and collapses to an icon rail (`[`); below 1280px wide it starts as the rail. Search (`Ctrl+K`), the active campaign (switch it from its menu), Player View, the theme and the **Library** menu (the gear: import and export, Canon Review, backups, Settings and the other maintenance pages) are on the right. The app opens on the active campaign's overview when there is one; the app mark always goes to the World Dashboard.
 
+## The map, for the GM
+
+The Atlas opens on the full map view. Its legend's **Campaign** section adds the active campaign to the map, as badges beside the pins: open quests, adventure places, who lives where, and prepared encounters (give an encounter a place with **Where** in the tracker). Hover a badge to see what's there, or click it to open any of it. **Hidden from players** hides the GM-only pins, to see the map as players do. Click a region for its panel: terrain, its state in the campaign, faction clocks, its encounter tables with a **Roll** button, and the places inside it.
+
 ## Encyclopedia
 
 Each entry has a stable ID (for example `NPC-010`, `VLT-305` or `CON-001-DOM`), original name and aliases, category, parent, realm, canon status, source references and tags. Those fields are preserved through imports and revision history.

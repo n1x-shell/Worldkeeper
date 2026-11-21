@@ -11,6 +11,7 @@ import { badRequest, notFound } from '../lib/errors.js';
 import { kindOf, saveProfile } from '../repo/profiles.js';
 import { clearTrail, explorationFor, inPlay, removeTravel, setDiscovered, travel } from '../repo/exploration.js';
 import { getActiveCampaignId } from '../repo/campaigns.js';
+import { campaignLayers, regionPanel } from '../repo/mapLayers.js';
 
 const IMAGE_TYPES: Record<string, string> = {
   'image/png': '.png',
@@ -119,6 +120,19 @@ export function atlasRoutes(ctx: AppContext) {
     if (!id || !Number.isInteger(id)) throw badRequest('Choose an active campaign first');
     return id;
   };
+  // The campaign on the map (GM only): quests, adventure places, people and encounters at their places.
+  r.get(
+    '/map-layers',
+    h((req) => {
+      const id = req.query.campaign_id ? Number(req.query.campaign_id) : getActiveCampaignId(ctx.db);
+      return id ? campaignLayers(ctx.db, id, Number(req.query.map_id)) : [];
+    }),
+  );
+  // A region's panel: terrain, encounter tables, places, and its state in the active (or given) campaign.
+  r.get(
+    '/regions/:id/panel',
+    h((req) => regionPanel(ctx.db, String(req.params.id), req.query.campaign_id ? Number(req.query.campaign_id) : getActiveCampaignId(ctx.db))),
+  );
   r.get(
     '/exploration/status',
     h(() => ({ active_campaign_id: getActiveCampaignId(ctx.db), in_play: inPlay(ctx.db) })),

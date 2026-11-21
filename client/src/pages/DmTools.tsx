@@ -32,7 +32,11 @@ interface Encounter {
   turn_index: number;
   status: string;
   combatants: Combatant[];
+  /** Where it happens, so it shows on the map. */
+  location_id?: string | null;
 }
+/** Places an encounter can happen at (shown on the map's Prepared encounters layer). */
+const PLACE_TYPES = ['region', 'settlement', 'landmark', 'building', 'dungeon', 'vault', 'ethereal_domain', 'adventure_location'];
 
 interface BookCreature {
   id: string;
@@ -52,7 +56,7 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
   const [alert, setAlert] = useState<string | null>(null);
   const { activeCampaignId } = useAppState();
   const { data: party } = useApi<Character[]>(activeCampaignId ? `/api/characters?campaign_id=${activeCampaignId}` : null);
-  const auto = useAutosave((e: Encounter) => api.patch(`/api/encounters/${e.id}`, { title: e.title, notes: e.notes, round: e.round, turn_index: e.turn_index, status: e.status, combatants: e.combatants }), 400);
+  const auto = useAutosave((e: Encounter) => api.patch(`/api/encounters/${e.id}`, { title: e.title, notes: e.notes, round: e.round, turn_index: e.turn_index, status: e.status, combatants: e.combatants, location_id: e.location_id ?? null }), 400);
   const [newName, setNewName] = useState('');
   const [newEntity, setNewEntity] = useState<string | null>(null);
   const [newInit, setNewInit] = useState('');
@@ -165,6 +169,11 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
         {!compact && <input className="input max-w-xs font-display" value={enc.title} onChange={(e) => save({ title: e.target.value })} />}
+        {!compact && (
+          <div className="w-56" title="Where it happens: it shows on the map">
+            <EntityPicker value={enc.location_id ?? null} types={PLACE_TYPES} placeholder="Where? (shows on the map)" onChange={(id) => save({ location_id: id })} />
+          </div>
+        )}
         <span className="chip border-gold/60 text-gold">Round {enc.round || '—'}</span>
         <button className="btn" onClick={prev} disabled={enc.round === 0} aria-label="Previous turn">
           <ChevronLeft size={14} />

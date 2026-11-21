@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-18 · v0.3.8_
+_Last updated: 2026-11-18 · v0.3.9_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,11 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.9
+
+- **The campaign on the map** (GM's Map Explorer). A new **Campaign** section in the legend switches four layers on and off, each drawn as a small badge beside the pin of its place (or of the nearest place above it with a pin): **Open quests** (open, active and rumoured quests at their place, marked when hidden from players), **Adventure places** (the places in the active campaign's adventures and their scenes, unless finished or shelved), **Who is here** (where people live or are found; off to start, as there are many) and **Prepared encounters**. Hovering a badge lists what's there; clicking it opens a list that links to each quest, adventure, record or encounter. A **Hidden from players** switch hides the GM-only pins, to see the map as players do. Encounters have a new **Where** field in the tracker (migration 17), which puts them on the map; campaign exports carry it.
+- **Region panel.** Clicking a region (or a realm, nation, continent or Ethereal domain) shows, above its text: its terrain, its state in the active campaign (who holds it, faction agendas with their clocks, standing, recent changes, places found, clues and rumours, with a link to State of the World), its encounter tables with a **Roll** button (results link the stat blocks they name), and the places inside it, each opening on the map.
 
 ## v0.3.8
 
