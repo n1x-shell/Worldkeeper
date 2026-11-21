@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { CalendarDays, Compass, Eye, Flag, History, ListChecks, Play, Upload, Star, MapPinned, Users } from 'lucide-react';
 import { useApi } from '../lib/api';
-import { ErrorBox, Loading, PageHeader, RealmBadge, TypeBadge, EntityLink } from '../components/ui';
+import { Card, Empty, ErrorBox, Loading, PageHeader, RealmBadge, TypeBadge, EntityLink } from '../components/ui';
 import { Markdown } from '../components/Markdown';
 import { useDebug } from '../components/Dev';
 import type { EntitySummary } from '../lib/types';
@@ -34,23 +34,8 @@ interface Dash {
   factions: Row[];
 }
 
-function Card({ title, icon, children, action }: { title: string; icon?: React.ReactNode; children: React.ReactNode; action?: React.ReactNode }) {
-  return (
-    <section className="panel-pad">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="section-title flex items-center gap-2">
-          {icon}
-          {title}
-        </h2>
-        {action}
-      </div>
-      {children}
-    </section>
-  );
-}
-
 function RowList({ rows, empty }: { rows: Row[]; empty: string }) {
-  if (!rows.length) return <p className="text-sm text-dim">{empty}</p>;
+  if (!rows.length) return <Empty compact title={empty} />;
   return (
     <ul className="space-y-1.5">
       {rows.map((r) => (
@@ -65,7 +50,7 @@ function RowList({ rows, empty }: { rows: Row[]; empty: string }) {
   );
 }
 
-const BRANCH_ART: Record<string, string> = { aetheris: 'from-amber-700/25', kaelmar: 'from-emerald-700/25', ethereal: 'from-violet-700/25' };
+const BRANCH_ART: Record<string, string> = { aetheris: 'from-realm-aetheris/15', kaelmar: 'from-realm-kaelmar/15', ethereal: 'from-realm-ethereal/15' };
 
 export function Dashboard() {
   const debug = useDebug();
@@ -76,12 +61,17 @@ export function Dashboard() {
 
   if (data.counts.entities === 0)
     return (
-      <div className="max-w-2xl mx-auto mt-16 text-center space-y-4">
-        <h1 className="text-3xl text-gold">Your world is waiting</h1>
-        <p className="text-dim">The library is empty. Import your world archive (a ZIP of the Markdown encyclopedia) to populate the encyclopedia, timeline and branches. Nothing is invented: only your source files are used.</p>
-        <Link to="/import" className="btn-primary text-base">
-          <Upload size={16} /> Import world archive
-        </Link>
+      <div className="max-w-2xl mx-auto mt-16">
+        <Empty
+          title="Your world is waiting"
+          action={
+            <Link to="/import" className="btn-primary text-base">
+              <Upload size={16} /> Import world archive
+            </Link>
+          }
+        >
+          The library is empty. Import your world archive (a ZIP of the Markdown encyclopedia) to populate the encyclopedia, timeline and branches. Nothing is invented: only your source files are used.
+        </Empty>
       </div>
     );
 
@@ -96,7 +86,11 @@ export function Dashboard() {
               <CalendarDays size={14} /> World date: <strong className="text-ink">{a?.campaign.current_date ?? data.worldDate ?? 'UNDEFINED'}</strong>
               {a && <span className="text-dim">(campaign date)</span>}
             </span>
-            {debug && <span>{data.counts.entities} records · {data.counts.relationships} links · {data.counts.documents} source files</span>}
+            {debug && (
+              <span className="num">
+                {data.counts.entities} records · {data.counts.relationships} links · {data.counts.documents} source files
+              </span>
+            )}
           </span>
         }
         actions={
@@ -121,12 +115,14 @@ export function Dashboard() {
 
       <div className="grid gap-4 md:grid-cols-3">
         {data.branches.map((b) => (
-          <Link key={b.id} to={`/realm/${b.realm}`} className={`panel p-4 bg-gradient-to-br ${BRANCH_ART[b.realm] ?? ''} to-transparent hover:border-gold/60 transition-colors block`}>
+          <Link key={b.id} to={`/realm/${b.realm}`} className={`panel elev-1 p-4 bg-gradient-to-br ${BRANCH_ART[b.realm] ?? ''} to-transparent hover:border-gold/60 transition-colors block`}>
             <div className="flex items-center justify-between">
               <h2 className="text-lg text-gold">{b.name}</h2>
               <RealmBadge realm={b.realm} />
             </div>
-            <div className="text-sm text-dim mt-1 mb-2">{b.count} entries</div>
+            <div className="text-sm text-dim mt-1 mb-2">
+              <span className="num">{b.count}</span> entries
+            </div>
             <div className="text-sm line-clamp-4 opacity-90">
               <Markdown text={b.excerpt} className="prose-lore text-[15px] leading-snug" />
             </div>
@@ -135,7 +131,7 @@ export function Dashboard() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <Card title="Active campaign" icon={<Compass size={15} />} action={<Link to="/campaigns" className="btn-ghost text-xs">All campaigns</Link>}>
+        <Card featured title="Active campaign" icon={<Compass size={15} />} actions={<Link to="/campaigns" className="btn-ghost text-xs">All campaigns</Link>}>
           {a ? (
             <div className="space-y-2 text-sm">
               <Link to="/campaign" className="text-lg text-ink hover:text-gold font-display">
@@ -150,9 +146,9 @@ export function Dashboard() {
               </div>
             </div>
           ) : (
-            <p className="text-sm text-dim">
-              No active campaign. <Link className="text-arcane" to="/campaigns">Create or choose one</Link>. No campaign events are shown until sessions are recorded.
-            </p>
+            <Empty compact title="No active campaign" action={<Link className="btn" to="/campaigns">Create or choose one</Link>}>
+              No campaign events are shown until sessions are recorded.
+            </Empty>
           )}
         </Card>
         <Card title="Open quests" icon={<ListChecks size={15} />}>
@@ -165,10 +161,10 @@ export function Dashboard() {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-dim">No open quests recorded.</p>
+            <Empty compact title="No open quests recorded." />
           )}
         </Card>
-        <Card title="Faction agendas" icon={<Flag size={15} />} action={<Link to="/agendas" className="btn-ghost text-xs">Manage</Link>}>
+        <Card title="Faction agendas" icon={<Flag size={15} />} actions={<Link to="/agendas" className="btn-ghost text-xs">Manage</Link>}>
           {a?.plans.length ? (
             <ul className="space-y-2 text-sm">
               {a.plans.map((p) => (
@@ -184,7 +180,7 @@ export function Dashboard() {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-dim">No active faction plans. Plans are optional campaign tools you create; none are generated automatically.</p>
+            <Empty compact title="No active faction plans.">Plans are optional campaign tools you create; none are generated automatically.</Empty>
           )}
         </Card>
       </div>
@@ -201,10 +197,10 @@ export function Dashboard() {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-dim">No campaign changes recorded yet.</p>
+            <Empty compact title="No campaign changes recorded yet." />
           )}
         </Card>
-        <Card title="Mysteries and secrets" icon={<Eye size={15} />} action={<Link to="/mysteries" className="btn-ghost text-xs">All</Link>}>
+        <Card title="Mysteries and secrets" icon={<Eye size={15} />} actions={<Link to="/mysteries" className="btn-ghost text-xs">All</Link>}>
           <RowList rows={data.mysteries} empty="None imported." />
         </Card>
         <Card title="Recently viewed" icon={<History size={15} />}>
@@ -232,7 +228,7 @@ export function Dashboard() {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-dim">No edits since import.</p>
+            <Empty compact title="No edits since import." />
           )}
         </Card>
       </div>

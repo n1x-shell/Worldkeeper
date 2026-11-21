@@ -4,7 +4,7 @@ import { Lock, Plus, Trash2, Upload, BookOpen } from 'lucide-react';
 import { INFLUENCE_LEVELS, type ProfileData, type ProfileField, type ProfileKind, type ProfileValue } from '@shared/profiles';
 import { api, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
-import { AutoTextarea, EntityLink, ErrorBox, Loading, SaveStatus } from '../components/ui';
+import { AutoTextarea, Card, Empty, EntityLink, ErrorBox, GmOnly, Loading, SaveStatus } from '../components/ui';
 import { EntityMultiPicker, EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
 import { Dev } from '../components/Dev';
@@ -66,12 +66,19 @@ export function ProfilePanel({ entityId, entityName }: { entityId: string; entit
           onSaved={reload}
         />
       ) : (
-        <p className="text-sm">
-          <Link to="/campaigns" className="text-arcane">
-            Choose an active campaign
-          </Link>{' '}
-          to record attitude, status, promises, debts and what the party knows.
-        </p>
+        <Card>
+          <Empty
+            compact
+            title="No active campaign"
+            action={
+              <Link to="/campaigns" className="btn">
+                Choose an active campaign
+              </Link>
+            }
+          >
+            Choose one to record attitude, status, promises, debts and what the party knows.
+          </Empty>
+        </Card>
       )}
     </div>
   );
@@ -110,53 +117,57 @@ function ScopeEditor({
     auto.schedule(next);
   };
   return (
-    <section className="panel">
-      <div className="flex flex-wrap items-center gap-3 px-4 py-3 border-b border-line">
-        <div>
-          <h2 className="section-title">{title}</h2>
-          <div className="text-xs text-dim">{subtitle}</div>
-        </div>
-        <div className="ml-auto">
-          <SaveStatus state={auto.state} error={auto.error} />
-        </div>
-      </div>
+    <Card flush title={title} aside={subtitle} actions={<SaveStatus state={auto.state} error={auto.error} />}>
       {err && <ErrorBox error={err} />}
-      <div className="divide-y divide-line/60">
-        {fields.map((f) => (
-          <div key={f.key} className="grid gap-3 p-4 lg:grid-cols-[180px_1fr_1fr]">
-            <div>
-              <div className="text-sm font-medium">{f.label}</div>
-              {f.secret && (
-                <div className="text-[11px] text-danger flex items-center gap-1 mt-0.5">
-                  <Lock size={11} /> GM only
-                </div>
-              )}
-              {f.hint && <div className="text-[11px] text-dim mt-0.5">{f.hint}</div>}
+      <div className="divide-y divide-line/60 border-t border-line">
+        {fields.map((f) => {
+          const row = (
+            <div className={`grid gap-3 lg:grid-cols-[180px_1fr_1fr] ${f.secret ? '' : 'p-4'}`}>
+              <div>
+                <div className="text-sm font-medium">{f.label}</div>
+                {f.hint && <div className="text-[11px] text-dim mt-0.5">{f.hint}</div>}
+              </div>
+              <SourceCell values={data.source[f.key] ?? []} scope={scope} />
+              <div>
+                <FieldEditor
+                  field={f}
+                  value={values[f.key]}
+                  onChange={(v) => set(f.key, v)}
+                  entityId={data.entityId}
+                  onUploaded={(file) => {
+                    setValues({ ...values, portrait: file });
+                    onSaved();
+                  }}
+                  onError={setErr}
+                />
+                {f.key === 'lastEncountered' && data.lastLogged && (
+                  <div className="text-xs text-dim mt-1">
+                    Last seen in session {data.lastLogged.session_number}
+                    {data.lastLogged.played_on && ` (${data.lastLogged.played_on})`}: “{data.lastLogged.text}”
+                  </div>
+                )}
+              </div>
             </div>
-            <SourceCell values={data.source[f.key] ?? []} scope={scope} />
-            <div>
-              <FieldEditor
-                field={f}
-                value={values[f.key]}
-                onChange={(v) => set(f.key, v)}
-                entityId={data.entityId}
-                onUploaded={(file) => {
-                  setValues({ ...values, portrait: file });
-                  onSaved();
-                }}
-                onError={setErr}
-              />
-              {f.key === 'lastEncountered' && data.lastLogged && (
-                <div className="text-xs text-dim mt-1">
-                  Last seen in session {data.lastLogged.session_number}
-                  {data.lastLogged.played_on && ` (${data.lastLogged.played_on})`}: “{data.lastLogged.text}”
-                </div>
-              )}
+          );
+          return f.secret ? (
+            <div key={f.key} className="p-2">
+              <GmOnly
+                inline
+                label={
+                  <span className="inline-flex items-center gap-1">
+                    <Lock size={11} /> GM only
+                  </span>
+                }
+              >
+                {row}
+              </GmOnly>
             </div>
-          </div>
-        ))}
+          ) : (
+            <div key={f.key}>{row}</div>
+          );
+        })}
       </div>
-    </section>
+    </Card>
   );
 }
 
@@ -284,8 +295,8 @@ export function ProfileSummary({ p, keys }: { p: ProfileResponse; keys: string[]
         if (!f) return null;
         const v = profileValue(p, k);
         const refs = v && (f.type === 'ref' || f.type === 'refs') ? v.text.split(/,\s*/).filter((x) => /^[A-Z]{2,4}-/.test(x)) : [];
-        return (
-          <div key={k} className={f.secret ? 'border border-danger/40 bg-danger/5 rounded p-1.5' : ''}>
+        const body = (
+          <>
             <span className={`text-[10px] uppercase tracking-wider ${f.secret ? 'text-danger' : 'text-dim'}`}>{f.label}: </span>
             {!v ? (
               <span className="text-dim">UNDEFINED</span>
@@ -297,7 +308,14 @@ export function ProfileSummary({ p, keys }: { p: ProfileResponse; keys: string[]
                 {v.origin !== 'source' && <span className="text-[10px] text-arcane ml-1">({v.origin === 'campaign' ? 'campaign' : 'DM'})</span>}
               </span>
             )}
-          </div>
+          </>
+        );
+        return f.secret ? (
+          <GmOnly key={k} inline label={null}>
+            {body}
+          </GmOnly>
+        ) : (
+          <div key={k}>{body}</div>
         );
       })}
     </>

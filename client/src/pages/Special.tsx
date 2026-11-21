@@ -4,7 +4,7 @@ import { KeyRound, Gem, Ghost, Lock, Unlock, AlertTriangle, Plus } from 'lucide-
 import { VAULT_STATES } from '@shared/domain';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
-import { CanonFlags, EntityLink, ErrorBox, Loading, PageHeader, TypeBadge } from '../components/ui';
+import { Badge, Card, CanonFlags, Empty, EntityLink, ErrorBox, GmOnly, KeyValue, Loading, PageHeader, TypeBadge } from '../components/ui';
 import { Markdown } from '../components/Markdown';
 import { Dev, useDebug } from '../components/Dev';
 import { displaySections, splitSections } from '../lib/sections';
@@ -33,12 +33,17 @@ function OverlayControls({ entityId, rows, fields, onChange }: { entityId: strin
   const [err, setErr] = useState<string | null>(null);
   if (!activeCampaignId)
     return (
-      <p className="text-xs text-dim">
-        <Link to="/campaigns" className="text-arcane">
-          Choose an active campaign
-        </Link>{' '}
-        to track what changes in play.
-      </p>
+      <Empty
+        compact
+        title="No active campaign"
+        action={
+          <Link to="/campaigns" className="btn">
+            Choose an active campaign
+          </Link>
+        }
+      >
+        Choose one to track what changes in play.
+      </Empty>
     );
   const opts = fields.find((x) => x.name === f)?.options;
   return (
@@ -80,7 +85,7 @@ function OverlayControls({ entityId, rows, fields, onChange }: { entityId: strin
         <ul className="text-xs space-y-0.5">
           {rows.map((r) => (
             <li key={r.id}>
-              <span className="text-dim">{r.field}:</span> {r.value} {r.status === 'proposed' && <span className="text-warn">(proposed)</span>}
+              <span className="text-dim">{r.field}:</span> {r.value} {r.status === 'proposed' && <Badge tone="warn">proposed</Badge>}
             </li>
           ))}
         </ul>
@@ -109,7 +114,7 @@ export function VaultsPage() {
           const st = latest(x.campaignState, 'Vault state')?.value ?? 'Sealed';
           const sealed = st === 'Sealed';
           return (
-            <button key={x.id} onClick={() => setSel(x.id)} className={`panel p-3 text-left hover:border-gold/60 ${v?.id === x.id ? 'border-gold' : ''}`}>
+            <button key={x.id} onClick={() => setSel(x.id)} className={`panel elev-1 p-3 text-left hover:border-gold/60 ${v?.id === x.id ? 'border-gold' : ''}`}>
               <div className="flex items-center gap-1.5 text-sm font-display text-gold">
                 {sealed ? <Lock size={13} /> : <Unlock size={13} className="text-warn" />} {x.name}
               </div>
@@ -123,54 +128,57 @@ export function VaultsPage() {
       </div>
       {v && (
         <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
-          <div className="panel p-5">
+          <Card featured>
             <div className="flex items-center gap-2 mb-2">
               <Link to={`/e/${v.id}`} className="text-2xl font-display text-gold">
                 {v.name}
               </Link>
               <CanonFlags status={v.canon_status} flags={[]} />
             </div>
-            <dl className="grid sm:grid-cols-2 gap-x-6 gap-y-2 text-sm mb-4">
-              {[
+            <KeyValue
+              className="mb-4"
+              items={[
                 ['Location', field(v, 'Region')],
                 ['Purpose (strand of the work)', field(v, 'Strand of the work')],
                 ['Key', field(v, 'Key')],
                 ['Canon state', field(v, 'State')],
                 ['Novel code', field(v, 'Novel code')],
-              ].map(([k, val]) => (
-                <div key={k}>
-                  <dt className="text-xs uppercase tracking-wider text-dim">{k}</dt>
-                  <dd>{val}</dd>
+              ]}
+            />
+            {displaySections(v.body, debug).map((s, i) =>
+              s.secret ? (
+                <GmOnly key={i} className="my-2">
+                  <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
+                </GmOnly>
+              ) : (
+                <div key={i}>
+                  <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
                 </div>
-              ))}
-            </dl>
-            {displaySections(v.body, debug).map((s, i) => (
-              <div key={i} className={s.secret ? 'wk-secret border border-danger/40 bg-danger/5 rounded px-3 my-2' : ''}>
-                <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
-              </div>
-            ))}
-          </div>
+              ),
+            )}
+          </Card>
           <aside className="space-y-3">
-            <div className="panel-pad">
-              <div className="section-title mb-2">This campaign</div>
+            <Card title="This campaign">
               <OverlayControls
                 entityId={v.id}
                 rows={v.campaignState}
                 fields={[{ name: 'Vault state', options: VAULT_STATES }, { name: 'Clue discovered' }, { name: 'Known guardian' }, { name: 'Consequence observed' }, { name: 'Related adventure' }]}
                 onChange={reload}
               />
-            </div>
-            <div className="panel-pad">
-              <div className="section-title mb-2">Associated records</div>
-              <ul className="text-sm space-y-1">
-                {v.related.map((r) => (
-                  <li key={r.id}>
-                    <EntityLink id={r.id}>{r.name}</EntityLink> <TypeBadge type={r.type} />
-                  </li>
-                ))}
-                {!v.related.length && <li className="text-dim">None linked.</li>}
-              </ul>
-            </div>
+            </Card>
+            <Card title="Associated records">
+              {v.related.length ? (
+                <ul className="text-sm space-y-1">
+                  {v.related.map((r) => (
+                    <li key={r.id}>
+                      <EntityLink id={r.id}>{r.name}</EntityLink> <TypeBadge type={r.type} />
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <Empty compact title="None linked." />
+              )}
+            </Card>
           </aside>
         </div>
       )}
@@ -187,8 +195,8 @@ export function ShardsPage() {
   return (
     <div className="space-y-4">
       <PageHeader icon={<Gem size={22} />} title="Crystal Shards" subtitle="Where each shard lies is GM-only." note="Campaign holders and locations are tracked per campaign. The Aetherfall Cycle is broken at the start; nothing here resets the world." />
-      <div className="panel overflow-x-auto">
-        <table className="table">
+      <Card flush className="overflow-x-auto">
+        <table className="table data-table">
           <thead>
             <tr>
               <th>Shard</th>
@@ -235,7 +243,7 @@ export function ShardsPage() {
             ))}
           </tbody>
         </table>
-      </div>
+      </Card>
     </div>
   );
 }
@@ -247,8 +255,7 @@ export function DominionsPage() {
     <div className="space-y-4">
       <PageHeader title="Dominions, Factions and Enclaves" subtitle="Aetheris after the Cycle: the five dominions side by side, the Hollow Marches between them." />
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">{regions?.map((r) => <RegionCard key={r.id} id={r.id} />) ?? <Loading />}</div>
-      <div className="panel-pad">
-        <div className="section-title mb-2">Factions, cults and hidden powers</div>
+      <Card title="Factions, cults and hidden powers">
         <div className="grid gap-1 sm:grid-cols-2 lg:grid-cols-4 text-sm">
           {factions?.map((f) => (
             <div key={f.id}>
@@ -256,18 +263,23 @@ export function DominionsPage() {
             </div>
           ))}
         </div>
-      </div>
+      </Card>
     </div>
   );
 }
 
 function RegionCard({ id }: { id: string }) {
   const { data } = useApi<{ entity: Entity }>(`/api/entities/${id}`);
-  if (!data) return <div className="panel p-4"><Loading /></div>;
+  if (!data)
+    return (
+      <Card>
+        <Loading />
+      </Card>
+    );
   const e = data.entity;
   const first = splitSections(e.body).find((s) => s.content && !s.secret);
   return (
-    <div className="panel p-4">
+    <Card>
       <Link to={`/e/${id}`} className="font-display text-gold text-lg">
         {e.name}
       </Link>
@@ -279,7 +291,7 @@ function RegionCard({ id }: { id: string }) {
         ))}
       </div>
       {first && <Markdown text={first.content.slice(0, 500)} className="prose-lore text-[14px]" />}
-    </div>
+    </Card>
   );
 }
 
@@ -316,26 +328,23 @@ export function EtherealExplorer() {
       </div>
       <div className="grid gap-4 lg:grid-cols-[420px_1fr]">
         <div className="space-y-3">
-          <div className="panel p-3 border-sky-700/40">
-            <div className="section-title mb-2">Continents</div>
+          <Card title="Continents" className="border-realm-world/40">
             <div className="flex gap-2 text-sm">
               <EntityLink id="CON-001">Aetheris</EntityLink> · <EntityLink id="CON-301">Kaelmar</EntityLink> · <EntityLink id="LOC-901">The Rift</EntityLink>
             </div>
-          </div>
+          </Card>
           <div className="text-center text-dim text-xs">▼ crossing ▼</div>
-          <div className="panel p-3 border-violet-500/40">
-            <div className="section-title mb-2">Border layer</div>
+          <Card title="Border layer" className="border-realm-ethereal/40">
             {layers.border.length ? <DomainButtons list={layers.border} sel={sel} setSel={setSel} /> : <DomainButtons list={(domains ?? []).filter((d) => d.id === 'ETH-501')} sel={sel} setSel={setSel} />}
-          </div>
+          </Card>
           <div className="text-center text-dim text-xs flex items-center justify-center gap-1">
             <AlertTriangle size={12} /> deeper access requires conditions ▼
           </div>
-          <div className="panel p-3 border-violet-700/50 bg-violet-900/10">
-            <div className="section-title mb-2">Deep domains</div>
+          <Card title="Deep domains" className="border-realm-ethereal/50 bg-realm-ethereal/5">
             <DomainButtons list={(domains ?? []).filter((d) => d.id !== 'ETH-501' && !layers.border.includes(d))} sel={sel} setSel={setSel} />
-          </div>
+          </Card>
         </div>
-        <div className="panel p-5 min-w-0">{sel ? <DomainDetail id={sel} /> : realm ? <Markdown text={splitSections(realm.entity.body).filter((s) => !s.secret).map((s) => (s.heading ? `## ${s.heading}\n\n${s.content}` : s.content)).join('\n\n')} /> : <Loading />}</div>
+        <Card className="min-w-0">{sel ? <DomainDetail id={sel} /> : realm ? <Markdown text={splitSections(realm.entity.body).filter((s) => !s.secret).map((s) => (s.heading ? `## ${s.heading}\n\n${s.content}` : s.content)).join('\n\n')} /> : <Loading />}</Card>
       </div>
     </div>
   );
@@ -345,7 +354,7 @@ function DomainButtons({ list, sel, setSel }: { list: EntitySummary[]; sel: stri
   return (
     <div className="grid gap-1.5">
       {list.map((d) => (
-        <button key={d.id} onClick={() => setSel(d.id)} className={`text-left px-3 py-2 rounded-md border ${sel === d.id ? 'border-gold text-gold bg-gold/10' : 'border-line hover:border-violet-400/60'}`}>
+        <button key={d.id} onClick={() => setSel(d.id)} className={`text-left px-3 py-2 rounded-md border ${sel === d.id ? 'border-gold text-gold bg-gold/10' : 'border-line hover:border-realm-ethereal/60'}`}>
           <div className="font-display text-sm">{d.name}</div>
           <Dev>
             <div className="text-[11px] text-dim">{d.id}</div>
@@ -369,11 +378,17 @@ function DomainDetail({ id }: { id: string }) {
         {e.name}
       </Link>
       <div className="text-xs text-dim mb-2">{/deep/i.test(e.parent_raw ?? '') ? 'Deep domain' : /border/i.test(e.parent_raw ?? '') ? 'Border layer' : null}</div>
-      {displaySections(e.body, debug).map((s, i) => (
-        <div key={i} className={s.secret || /access/i.test(s.heading) ? 'border border-violet-500/30 rounded px-3 my-2 bg-violet-900/10' : ''}>
-          <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
-        </div>
-      ))}
+      {displaySections(e.body, debug).map((s, i) =>
+        s.secret ? (
+          <GmOnly key={i} className="my-2">
+            <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
+          </GmOnly>
+        ) : (
+          <div key={i} className={/access/i.test(s.heading) ? 'border border-realm-ethereal/30 rounded px-3 my-2 bg-realm-ethereal/5' : ''}>
+            <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
+          </div>
+        ),
+      )}
       <div className="section-title mt-4 mb-1">Inhabitants, sites and links</div>
       <div className="flex flex-wrap gap-2 text-sm">
         {uniq.map((l) => (

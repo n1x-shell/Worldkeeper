@@ -5,7 +5,7 @@ import { CANON_STATUSES, ENTITY_TYPES, ENTITY_TYPE_LABELS, REALMS, REALM_LABELS,
 import { api, qs, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary } from '../lib/types';
-import { CanonBadge, Empty, EntityLink, ErrorBox, Field, Loading, PageHeader, RealmBadge, TypeBadge } from '../components/ui';
+import { Badge, CanonBadge, Card, Empty, EntityLink, ErrorBox, Field, Loading, PageHeader, RealmBadge, Segmented, Toggle, TypeBadge } from '../components/ui';
 import { Markdown } from '../components/Markdown';
 import { EntityPicker } from '../components/EntityPicker';
 import { Snippet, hitPath, type Hit } from '../components/SearchPalette';
@@ -17,7 +17,7 @@ import { displaySections } from '../lib/sections';
 function RecordExcerpt({ id, maxSections = 99 }: { id: string; maxSections?: number }) {
   const debug = useDebug();
   const { data, error } = useApi<{ entity: Entity }>(`/api/entities/${id}`);
-  if (error) return <p className="text-sm text-dim">Not in the library yet.</p>;
+  if (error) return <Empty compact title="Not in the library yet." />;
   if (!data) return <Loading />;
   const secs = displaySections(data.entity.body, debug).filter((s) => !s.secret).slice(0, maxSections);
   return (
@@ -37,12 +37,12 @@ export function WorldOverview() {
     <div className="space-y-5">
       <PageHeader title="World Overview" subtitle="One world, three branches." />
       <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
-        <div className="panel p-5">
+        <Card featured>
           <RecordExcerpt id="WLD-901" />
-        </div>
-        <div className="panel p-5">
+        </Card>
+        <Card featured>
           <RecordExcerpt id="WLD-906" />
-        </div>
+        </Card>
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {[
@@ -50,10 +50,10 @@ export function WorldOverview() {
           ['CON-301', 'kaelmar'],
           ['CON-501', 'ethereal'],
         ].map(([id, realm]) => (
-          <div key={id} className="panel p-4">
+          <Card key={id}>
             <RealmBadge realm={realm} />
             <RecordExcerpt id={id} maxSections={2} />
-          </div>
+          </Card>
         ))}
       </div>
     </div>
@@ -109,7 +109,7 @@ export function RealmPage() {
       {error && <ErrorBox error={error} />}
       <div className="grid gap-3 md:grid-cols-3">
         {(tools[realm] ?? []).map((t) => (
-          <Link key={t.to} to={t.to} className="panel p-4 hover:border-gold/60 block">
+          <Link key={t.to} to={t.to} className="panel elev-1 p-4 hover:border-gold/60 block">
             <div className="flex items-center gap-2 text-gold font-display">
               {t.icon} {t.label}
             </div>
@@ -118,7 +118,7 @@ export function RealmPage() {
         ))}
       </div>
       {root && (
-        <details className="panel p-4" open>
+        <details className="panel elev-1 p-4" open>
           <summary className="cursor-pointer section-title">Overview</summary>
           <RecordExcerpt id={root} maxSections={3} />
         </details>
@@ -129,7 +129,7 @@ export function RealmPage() {
         </button>
         {groups.map(([t, arr]) => (
           <button key={t} className={`chip ${type === t ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setType(t)}>
-            {ENTITY_TYPE_LABELS[t as EntityType] ?? t} ({arr.length})
+            {ENTITY_TYPE_LABELS[t as EntityType] ?? t} (<span className="num">{arr.length}</span>)
           </button>
         ))}
       </div>
@@ -164,7 +164,7 @@ export function NewEntity() {
     <div className="max-w-3xl space-y-4">
       <PageHeader title="New record" subtitle="New records start as proposed until you approve them in Canon Review." />
       {err && <ErrorBox error={err} />}
-      <div className="panel-pad grid gap-3 md:grid-cols-2">
+      <Card className="grid gap-3 md:grid-cols-2">
         <Field label="Name">
           <input className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} autoFocus />
         </Field>
@@ -199,14 +199,14 @@ export function NewEntity() {
         <Field label="Source">
           <input className="input" value={form.source_raw} onChange={(e) => setForm({ ...form, source_raw: e.target.value })} />
         </Field>
-      </div>
+      </Card>
       {template && debug && (
         <p className="text-sm text-dim">
           Using the library template <strong>{template.name}</strong>: {template.fields.length} fields and {template.sections.length} sections will be added, all marked UNDEFINED.
         </p>
       )}
       {similar.length > 0 && (
-        <div className="panel border-warn/50 p-3 text-sm">
+        <Card className="border-warn/50 text-sm">
           <div className="text-warn mb-1">Already in your library? Link to one of these instead of creating a duplicate:</div>
           <ul>
             {similar.slice(0, 8).map((s) => (
@@ -215,7 +215,7 @@ export function NewEntity() {
               </li>
             ))}
           </ul>
-        </div>
+        </Card>
       )}
       <button
         className="btn-primary"
@@ -318,7 +318,7 @@ export function TimelinePage() {
       {error && <ErrorBox error={error} />}
       {managing && eras && <EraManager eras={eras} onChange={() => (void reloadEras(), void reload())} />}
       {adding && (
-        <div className="panel-pad grid gap-2 md:grid-cols-[160px_1fr_160px_140px_auto] items-end">
+        <Card className="grid gap-2 md:grid-cols-[160px_1fr_160px_140px_auto] items-end">
           <Field label="Time">
             <input className="input" value={form.time_label} onChange={(e) => setForm({ ...form, time_label: e.target.value })} />
           </Field>
@@ -345,7 +345,7 @@ export function TimelinePage() {
           >
             Save
           </button>
-        </div>
+        </Card>
       )}
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Filter by era">
@@ -364,14 +364,16 @@ export function TimelinePage() {
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="text-xs uppercase tracking-wider text-dim mr-1">Realm</span>
-          {['', 'aetheris', 'kaelmar', 'world', 'both'].map((r) => (
-            <button key={r} className={`chip ${realm === r ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setParam('realm', r)}>
-              {r || 'All'}
-            </button>
-          ))}
-          <label className="ml-3 text-sm text-dim flex items-center gap-1">
-            <input type="checkbox" checked={grouped} onChange={(e) => setParam('group', e.target.checked ? '1' : '')} /> Group by era
-          </label>
+          <Segmented
+            size="sm"
+            label="Filter by realm"
+            value={realm}
+            onChange={(r) => setParam('realm', r)}
+            options={['', 'aetheris', 'kaelmar', 'world', 'both'].map((r) => ({ value: r, label: <span className="capitalize">{r || 'All'}</span> }))}
+          />
+          <Toggle checked={grouped} onChange={(v) => setParam('group', v ? '1' : '')} className="ml-3 text-dim">
+            Group by era
+          </Toggle>
         </div>
       </div>
       {!data ? (
@@ -386,10 +388,10 @@ export function TimelinePage() {
               {list.map((r) => (
                 <li key={r.id} className="ml-5">
                   <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full border-2 border-gold bg-bg" />
-                  <div className="panel p-3">
+                  <Card>
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-display text-gold text-sm">{r.time_label}</span>
-                      <span className="chip border-line text-dim">{r.realm_label}</span>
+                      <Badge>{r.realm_label}</Badge>
                       {/SECRET/i.test(r.access) && <CanonBadge status="SECRET" />}
                       {r.origin === 'user' && <CanonBadge status="PROPOSED" />}
                       <select
@@ -415,17 +417,16 @@ export function TimelinePage() {
                         {r.access} · {r.source}
                       </div>
                     </Dev>
-                  </div>
+                  </Card>
                 </li>
               ))}
             </ol>
           </section>
         ))
       )}
-      <div className="panel p-4">
-        <div className="section-title mb-2">Event records{eraFilter.length ? ' in the selected eras' : ''}</div>
+      <Card title={`Event records${eraFilter.length ? ' in the selected eras' : ''}`}>
         <EventList eras={eraFilter} />
-      </div>
+      </Card>
     </div>
   );
 }
@@ -441,8 +442,7 @@ function EraManager({ eras, onChange }: { eras: Era[]; onChange: () => void }) {
     onChange();
   };
   return (
-    <div className="panel-pad space-y-2">
-      <div className="section-title">Eras</div>
+    <Card title="Eras" className="space-y-2">
       <p className="text-xs text-dim">Rename, reorder or add eras. Aetheris and Kaelmar keep their own chronologies, so the order is only for display.</p>
       {err && <ErrorBox error={err} />}
       {eras.map((e, i) => (
@@ -493,7 +493,7 @@ function EraManager({ eras, onChange }: { eras: Era[]; onChange: () => void }) {
           <Plus size={13} /> Add era
         </button>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -506,7 +506,7 @@ function EventList({ eras = [] }: { eras?: string[] }) {
         return tagged.length ? tagged.some((t) => eras.includes(t)) : eras.includes('__none');
       })
     : data;
-  return rows.length ? <EntityTable rows={rows} /> : <p className="text-sm text-dim">No event records carry these era tags.</p>;
+  return rows.length ? <EntityTable rows={rows} /> : <Empty compact title="No event records carry these era tags." />;
 }
 
 export function SearchPage() {
@@ -569,7 +569,7 @@ export function SearchPage() {
       {data && (
         <ul className="space-y-2">
           {data.map((h) => (
-            <li key={h.kind + h.ref} className="panel p-3">
+            <li key={h.kind + h.ref} className="panel elev-1 p-3">
               <Link to={hitPath(h)} className="flex flex-wrap items-center gap-2">
                 <span className="text-ink hover:text-gold font-medium">{h.title}</span>
                 {h.kind === 'entity' ? (
@@ -582,7 +582,7 @@ export function SearchPage() {
                     {h.canon_status && <CanonBadge status={h.canon_status} />}
                   </>
                 ) : (
-                  <span className="chip border-line text-dim">{h.kind}</span>
+                  <Badge>{h.kind}</Badge>
                 )}
               </Link>
               <div className="text-sm text-dim mt-1">
@@ -612,7 +612,7 @@ export function DocumentsPage() {
     <div className="space-y-4">
       <PageHeader title="Source Documents" note="Every imported file, stored verbatim. Setting bibles and references are protected and never overwritten." />
       <div className="grid gap-4 lg:grid-cols-[360px_1fr]">
-        <div className="panel p-2 max-h-[80vh] overflow-auto">
+        <Card flush className="p-2 max-h-[80vh] overflow-auto">
           <input className="input mb-2" placeholder="Filter files…" value={filter} onChange={(e) => setFilter(e.target.value)} />
           <ul className="text-sm">
             {docs
@@ -630,10 +630,10 @@ export function DocumentsPage() {
                 </li>
               ))}
           </ul>
-        </div>
-        <div className="panel p-5 min-w-0">
+        </Card>
+        <Card className="min-w-0">
           {!path ? (
-            <p className="text-dim">Choose a document.</p>
+            <Empty compact title="Choose a document." />
           ) : !doc ? (
             <Loading />
           ) : (
@@ -645,7 +645,7 @@ export function DocumentsPage() {
               <Markdown text={fenceMetadata(doc.content)} />
             </>
           )}
-        </div>
+        </Card>
       </div>
     </div>
   );

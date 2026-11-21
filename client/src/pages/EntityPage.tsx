@@ -25,16 +25,23 @@ import { StatBlockPanel } from '../components/StatBlock';
 import { Dev, useDebug } from '../components/Dev';
 import {
   AutoTextarea,
+  Badge,
   CanonFlags,
+  Card,
+  Check,
   Confirm,
+  DataTable,
+  Empty,
   EntityLink,
   ErrorBox,
   Field,
+  GmOnly,
   Loading,
   Modal,
   RealmBadge,
   SaveStatus,
   Tabs,
+  Toggle,
   TypeBadge,
   VisibilityBadge,
   useToast,
@@ -120,11 +127,13 @@ export function EntityPage() {
             <CanonFlags status={e.canon_status} flags={e.canon_flags} />
             <VisibilityBadge revealed={e.revealed} />
             {e.modified_since_import && (
-              <Link to="/review" className="chip border-warn/60 text-warn">
-                <AlertTriangle size={11} /> Edited, not yet reviewed
+              <Link to="/review">
+                <Badge tone="warn" icon={<AlertTriangle size={11} />}>
+                  Edited, not yet reviewed
+                </Badge>
               </Link>
             )}
-            {e.archived && <span className="chip border-danger/50 text-danger">Archived</span>}
+            {e.archived && <Badge tone="danger">Archived</Badge>}
           </div>
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -185,13 +194,12 @@ export function EntityPage() {
 
       {tab === 'record' && (
         <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
-          <article className="panel p-5 min-w-0">
+          <article className="panel elev-1 p-5 min-w-0">
             {displaySections(e.body, debug).map((s, i) =>
               s.secret ? (
-                <div key={i} className="wk-secret border border-danger/40 bg-danger/5 rounded-md px-4 py-2 my-3">
-                  <div className="text-[10px] uppercase tracking-widest text-danger mb-1">GM only</div>
+                <GmOnly key={i} className="my-3">
                   <Markdown text={`## ${s.heading}\n\n${s.content}`} />
-                </div>
+                </GmOnly>
               ) : (
                 <Markdown key={i} text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
               ),
@@ -226,8 +234,7 @@ export function EntityPage() {
               {debug && e.source_file && <div className="text-xs opacity-70 pt-1">File: {e.source_file}</div>}
             </div>
             {data.children.length > 0 && (
-              <div className="panel-pad">
-                <div className="section-title mb-2">Contains ({data.children.length})</div>
+              <Card title={<>Contains (<span className="num">{data.children.length}</span>)</>}>
                 <ul className="text-sm space-y-1 max-h-72 overflow-auto">
                   {data.children.map((c) => (
                     <li key={c.id}>
@@ -235,7 +242,7 @@ export function EntityPage() {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </Card>
             )}
             <RelationshipSummary rels={data.relationships} selfId={e.id} onMore={() => setTab('relationships')} />
             <TreasurePanel entityId={e.id} type={e.type} />
@@ -284,14 +291,15 @@ function RelationshipSummary({ rels, selfId, onMore }: { rels: RelationshipView[
   const curated = rels.filter((r) => r.type !== 'references');
   const show = (curated.length ? curated : rels).slice(0, 12);
   return (
-    <div className="panel-pad">
-      <div className="flex justify-between items-center mb-2">
-        <div className="section-title">Connections</div>
+    <Card
+      title="Connections"
+      actions={
         <button className="btn-ghost text-xs" onClick={onMore}>
-          All {rels.length}
+          All <span className="num">{rels.length}</span>
         </button>
-      </div>
-      {!rels.length && <p className="text-sm text-dim">No relationships yet.</p>}
+      }
+    >
+      {!rels.length && <Empty compact title="No relationships yet." />}
       <ul className="text-sm space-y-1">
         {show.map((r) => {
           const out = r.source_id === selfId;
@@ -304,7 +312,7 @@ function RelationshipSummary({ rels, selfId, onMore }: { rels: RelationshipView[
           );
         })}
       </ul>
-    </div>
+    </Card>
   );
 }
 
@@ -358,7 +366,7 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
     <div className="space-y-4">
       {conflict && <ErrorBox error={conflict} />}
       {isCanonImport && (
-        <div className="panel border-warn/40 bg-warn/5 p-3 text-sm flex gap-2">
+        <Card className="border-warn/40 bg-warn/5 text-sm flex gap-2">
           <AlertTriangle size={16} className="text-warn shrink-0 mt-0.5" />
           <div>
             This is canon lore. Your changes are kept in its history and wait in Canon Review until you approve them.
@@ -366,7 +374,7 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
               {' '}Source file: {entity.source_file}. The original source file is never modified.
             </Dev>
           </div>
-        </div>
+        </Card>
       )}
       <div className="flex flex-wrap items-center gap-3 sticky top-0 z-10 bg-bg/90 backdrop-blur py-2">
         <SaveStatus state={auto.state} error={auto.error} />
@@ -430,14 +438,9 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
         <Field label="Labels">
           <div className="flex flex-wrap gap-2 text-xs">
             {['SECRET', 'HOMEBREW', 'UNVERIFIED', 'OFFICIAL', 'OUTSIDE 2024 CORE'].map((f) => (
-              <label key={f} className="flex items-center gap-1">
-                <input
-                  type="checkbox"
-                  checked={draft.canon_flags.includes(f)}
-                  onChange={(e) => update({ canon_flags: e.target.checked ? [...draft.canon_flags, f] : draft.canon_flags.filter((x) => x !== f) })}
-                />
+              <Check key={f} className="text-xs" checked={draft.canon_flags.includes(f)} onChange={(on) => update({ canon_flags: on ? [...draft.canon_flags, f] : draft.canon_flags.filter((x) => x !== f) })}>
                 {f}
-              </label>
+              </Check>
             ))}
           </div>
         </Field>
@@ -478,9 +481,9 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
           <AutoTextarea minRows={16} value={draft.body} onChange={(e) => update({ body: e.target.value })} onBlur={() => void auto.flush()} />
         </Field>
         {preview && (
-          <div className="panel p-4 overflow-auto max-h-[80vh]">
+          <Card className="overflow-auto max-h-[80vh]">
             <Markdown text={draft.body} />
-          </div>
+          </Card>
         )}
       </div>
       <Field label="DM notes">
@@ -519,11 +522,17 @@ function RelationshipsTab({ entityId, rels, onChange }: { entityId: string; rels
       </div>
       {Object.entries(groups).map(([origin, list]) =>
         list.length ? (
-          <section key={origin} className="panel overflow-x-auto">
-            <div className="px-4 py-2 border-b border-line section-title">
-              {titles[origin] ?? origin} ({list.length})
-            </div>
-            <table className="table">
+          <Card
+            key={origin}
+            flush
+            className="overflow-x-auto"
+            title={
+              <>
+                {titles[origin] ?? origin} (<span className="num">{list.length}</span>)
+              </>
+            }
+          >
+            <table className="table data-table border-t border-line">
               <tbody>
                 {list.map((r) => {
                   const out = r.source_id === entityId;
@@ -576,7 +585,7 @@ function RelationshipsTab({ entityId, rels, onChange }: { entityId: string; rels
                 })}
               </tbody>
             </table>
-          </section>
+          </Card>
         ) : null,
       )}
       {adding && (
@@ -653,11 +662,10 @@ function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { 
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <div className="space-y-4">
-        <div className="panel-pad space-y-3">
-          <label className="flex items-center gap-2">
-            <input type="checkbox" checked={entity.revealed} onChange={(e) => onPatch({ revealed: e.target.checked, reason: e.target.checked ? 'Revealed to players' : 'Hidden from players' }, e.target.checked ? 'Revealed to players' : 'Hidden from players')} />
+        <Card className="space-y-3">
+          <Toggle checked={entity.revealed} onChange={(on) => onPatch({ revealed: on, reason: on ? 'Revealed to players' : 'Hidden from players' }, on ? 'Revealed to players' : 'Hidden from players')}>
             <span className="font-medium">Players know this record exists</span>
-          </label>
+          </Toggle>
           <p className="text-xs text-dim">
             Players see only the name, your summary, the facts you reveal and the sections you tick. GM-only sections can't be shown; write a fact instead.
           </p>
@@ -666,35 +674,31 @@ function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { 
               <AlertTriangle size={13} /> This record is marked SECRET. Read each section before revealing it: secrets may appear outside GM-only headings.
             </div>
           )}
-        </div>
-        <div className="panel-pad space-y-2">
+        </Card>
+        <Card className="space-y-2">
           <Field label="Player summary (what the party knows)">
             <textarea className="input" rows={4} value={summary} onChange={(e) => setSummary(e.target.value)} onBlur={() => summary !== entity.player_summary && onPatch({ player_summary: summary }, 'Player summary saved')} />
           </Field>
-        </div>
-        <div className="panel-pad">
+        </Card>
+        <Card>
           <div className="label">Reveal sections</div>
           <ul className="space-y-1 text-sm">
             {sections
               .filter((s) => s.heading && (debug || !isEditorial(s.heading)))
               .map((s) => (
                 <li key={s.heading}>
-                  <label className={`flex items-center gap-2 ${s.secret ? 'opacity-50' : ''}`}>
-                    <input
-                      type="checkbox"
-                      disabled={s.secret}
-                      checked={entity.revealed_sections.includes(s.heading)}
-                      onChange={(e) =>
-                        onPatch({ revealed_sections: e.target.checked ? [...entity.revealed_sections, s.heading] : entity.revealed_sections.filter((h) => h !== s.heading) })
-                      }
-                    />
-                    {s.heading} {s.secret && <span className="text-xs text-danger">GM only</span>}
-                  </label>
+                  <Check
+                    disabled={s.secret}
+                    checked={entity.revealed_sections.includes(s.heading)}
+                    onChange={(on) => onPatch({ revealed_sections: on ? [...entity.revealed_sections, s.heading] : entity.revealed_sections.filter((h) => h !== s.heading) })}
+                  >
+                    {s.heading} {s.secret && <Badge tone="danger">GM only</Badge>}
+                  </Check>
                 </li>
               ))}
           </ul>
-        </div>
-        <div className="panel-pad space-y-2">
+        </Card>
+        <Card className="space-y-2">
           <div className="label">Revealed facts (written for players)</div>
           <ul className="text-sm space-y-1">
             {entity.revealed_facts.map((f, i) => (
@@ -719,12 +723,11 @@ function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { 
               Reveal
             </button>
           </div>
-        </div>
+        </Card>
       </div>
-      <div className="panel p-4">
-        <div className="section-title mb-2">Exactly what players see</div>
+      <Card title="Exactly what players see">
         {!entity.revealed ? (
-          <p className="text-sm text-dim">Hidden. This record does not exist for players.</p>
+          <Empty compact title="Hidden. This record does not exist for players." />
         ) : preview ? (
           <div className="parchment p-4">
             <h2 className="text-xl">{preview.name}</h2>
@@ -743,7 +746,7 @@ function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { 
         ) : (
           <Loading />
         )}
-      </div>
+      </Card>
     </div>
   );
 }
@@ -763,7 +766,7 @@ function CampaignTab({ entity, rows, activeCampaignId, onChange }: { entity: Ent
       {err && <ErrorBox error={err} />}
       {msg && <div className="text-sm text-ok">{msg}</div>}
       {activeCampaignId ? (
-        <div className="panel-pad grid gap-2 md:grid-cols-[200px_1fr_1fr_auto] items-end">
+        <Card className="grid gap-2 md:grid-cols-[200px_1fr_1fr_auto] items-end">
           <Field label="Field">
             <input className="input" value={field} onChange={(e) => setField(e.target.value)} />
           </Field>
@@ -789,62 +792,65 @@ function CampaignTab({ entity, rows, activeCampaignId, onChange }: { entity: Ent
           >
             Record
           </button>
-        </div>
+        </Card>
       ) : (
-        <p className="text-sm">
-          <Link className="text-arcane" to="/campaigns">Choose an active campaign</Link> to record campaign-specific changes.
-        </p>
+        <Card>
+          <Empty
+            compact
+            title="No active campaign"
+            action={
+              <Link className="btn" to="/campaigns">
+                Choose an active campaign
+              </Link>
+            }
+          >
+            Choose one to record campaign-specific changes.
+          </Empty>
+        </Card>
       )}
-      <div className="panel overflow-x-auto">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Campaign</th>
-              <th>Field</th>
-              <th>Value</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.id}>
-                <td>{r.campaign_title}</td>
-                <td>{r.field}</td>
-                <td>
+      <Card flush>
+        <DataTable
+          rows={rows}
+          rowKey={(r) => r.id}
+          empty="No campaign has changed this record."
+          columns={[
+            { key: 'campaign_title', label: 'Campaign', sortable: true },
+            { key: 'field', label: 'Field', sortable: true },
+            {
+              key: 'value',
+              label: 'Value',
+              render: (r) => (
+                <>
                   {r.value}
                   {r.note && <div className="text-xs text-dim">{r.note}</div>}
-                </td>
-                <td>{r.status}</td>
-                <td className="text-right">
-                  {r.status === 'active' && (
-                    <button
-                      className="btn"
-                      onClick={async () => {
-                        try {
-                          await api.post(`/api/campaign-state/${r.id}/promote`, { reason: 'Proposed from record page' });
-                          setMsg('Sent to Canon Review. The world record changes only if you approve it there.');
-                        } catch (x) {
-                          setErr((x as Error).message);
-                        }
-                      }}
-                    >
-                      Propose as canon
-                    </button>
-                  )}
-                </td>
-              </tr>
-            ))}
-            {!rows.length && (
-              <tr>
-                <td colSpan={5} className="text-dim">
-                  No campaign has changed this record.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                </>
+              ),
+            },
+            { key: 'status', label: 'Status', sortable: true },
+            {
+              key: 'actions',
+              label: '',
+              align: 'right',
+              render: (r) =>
+                r.status === 'active' && (
+                  <button
+                    className="btn"
+                    onClick={async () => {
+                      try {
+                        await api.post(`/api/campaign-state/${r.id}/promote`, { reason: 'Proposed from record page' });
+                        setMsg('Sent to Canon Review. The world record changes only if you approve it there.');
+                      } catch (x) {
+                        setErr((x as Error).message);
+                      }
+                    }}
+                  >
+                    Propose as canon
+                  </button>
+                ),
+            },
+          ]}
+        />
+      </Card>
     </div>
   );
 }
@@ -859,34 +865,33 @@ function HistoryTab({ entity, onRestored }: { entity: Entity; onRestored: () => 
   return (
     <div className="space-y-3">
       <p className="text-sm text-dim">Earlier versions of this record. Restoring one keeps the current version in history too.</p>
-      <div className="panel overflow-x-auto">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>When</th>
-              <th>Version</th>
-              <th>Change</th>
-              <th>Reason</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {data?.map((r) => (
-              <tr key={r.id}>
-                <td className="whitespace-nowrap text-xs">{new Date(r.created_at).toLocaleString()}</td>
-                <td>v{r.version}</td>
-                <td>{r.change_type}</td>
-                <td className="text-sm">{r.reason}</td>
-                <td className="text-right whitespace-nowrap">
+      <Card flush>
+        {!data ? (
+          <Loading />
+        ) : (
+          <DataTable
+            rows={data}
+            rowKey={(r) => r.id}
+            columns={[
+              { key: 'created_at', label: 'When', sortValue: (r) => r.created_at, className: 'whitespace-nowrap text-xs', render: (r) => new Date(r.created_at).toLocaleString() },
+              { key: 'version', label: 'Version', num: true, sortValue: (r) => r.version, render: (r) => `v${r.version}` },
+              { key: 'change_type', label: 'Change', sortable: true },
+              { key: 'reason', label: 'Reason', className: 'text-sm' },
+              {
+                key: 'view',
+                label: '',
+                align: 'right',
+                className: 'whitespace-nowrap',
+                render: (r) => (
                   <button className="btn-ghost" onClick={async () => setView(await api.get(`/api/revisions/${r.id}`))}>
                     View
                   </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                ),
+              },
+            ]}
+          />
+        )}
+      </Card>
       {view && (
         <Modal title={`Version ${view.snapshot.version} of ${view.snapshot.name}`} onClose={() => setView(null)} wide>
           <div className="space-y-3">
