@@ -11,7 +11,7 @@ import { BookMarked, Check, ChevronDown, ChevronsLeft, ChevronsRight, Compass, E
 import { useAppState } from '../lib/store';
 import { api } from '../lib/api';
 import { SearchPalette } from './SearchPalette';
-import { DEBUG_ONLY, LIBRARY, NEEDS, WORKSPACES, matches, workspaceFor, type Group, type Item } from './navigation';
+import { DEBUG_ONLY, FULL_BLEED, LIBRARY, NEEDS, WORKSPACES, matches, workspaceFor, type Group, type Item } from './navigation';
 
 const I = 16;
 
@@ -127,7 +127,7 @@ export function Layout() {
     if (ws === 'library') return [LIBRARY];
     const gs = current?.groups ?? [];
     if (ws !== 'atlas' || !maps.length) return gs;
-    return [...gs, { title: 'Each map', items: maps.map((m) => ({ to: `/atlas/${m.id}`, label: m.name, icon: MapPinned })) }];
+    return [...gs, { title: 'Each map', items: maps.map((m) => ({ to: `/atlas/explore/${m.id}`, label: m.name, icon: MapPinned })) }];
   }, [ws, current, maps]);
 
   const link = (it: Item, compact: boolean) =>
@@ -149,7 +149,7 @@ export function Layout() {
       <NavLink
         key={it.to}
         to={it.to}
-        end={it.to === '/' || it.to === '/campaign' || it.to === '/tracker' || it.to === '/atlas'}
+        end={it.to === '/' || it.to === '/campaign' || it.to === '/tracker' || it.to === '/atlas' || it.to === '/atlas/explore'}
         title={compact ? it.label : undefined}
         className={({ isActive }) =>
           `flex items-center gap-2.5 mx-2 px-2 py-1.5 rounded-md text-[13px] transition-colors ${compact ? 'justify-center' : ''} ${isActive ? 'bg-gold/10 text-gold font-medium' : 'text-ink/80 hover:bg-raised hover:text-ink'}`
@@ -328,11 +328,17 @@ export function Layout() {
             </aside>
           </div>
         )}
-        <main className="flex-1 overflow-y-auto min-w-0" id="main">
-          <div className="mx-auto max-w-[1500px] p-4 md:p-6">
+        {FULL_BLEED.test(loc.pathname) ? (
+          <main className="flex-1 relative overflow-hidden min-w-0" id="main">
             <Outlet />
-          </div>
-        </main>
+          </main>
+        ) : (
+          <main className="flex-1 overflow-y-auto min-w-0" id="main">
+            <div className="mx-auto max-w-[1500px] p-4 md:p-6">
+              <Outlet />
+            </div>
+          </main>
+        )}
       </div>
       {searchOpen && <SearchPalette onClose={() => setSearchOpen(false)} />}
     </div>

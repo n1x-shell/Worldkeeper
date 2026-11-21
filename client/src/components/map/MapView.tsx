@@ -244,6 +244,8 @@ export interface MapViewProps {
   editingShapeId?: number | null;
   /** GM: show every outline, not only the hovered one. */
   showOutlines?: boolean;
+  /** Fill the page's main view (the GM app, beside its sidebar and under its top bar) instead of the whole window. */
+  contained?: boolean;
 }
 
 export function MapView(p: MapViewProps) {
@@ -327,7 +329,8 @@ export function MapView(p: MapViewProps) {
         : null;
 
   return (
-    <div className={`wk-explorer ${editing ? 'wk-editing ' : ''}fixed inset-0 z-50 bg-[#0b0b10] text-ink`}>
+    // The chart is always drawn on the dark palette, whatever the app's theme, so its panels stay readable on the map.
+    <div className={`wk-explorer dark ${editing ? 'wk-editing ' : ''}${p.contained ? 'absolute inset-0' : 'fixed inset-0 z-50'} bg-[#0b0b10] text-ink`}>
       <MapContainer
         key={m.id}
         crs={L.CRS.Simple}
@@ -499,7 +502,7 @@ export function MapView(p: MapViewProps) {
       )}
 
       {/* Legend: slides out from the left. */}
-      <aside className={`wk-map-panel left-3 top-16 w-64 max-h-[calc(100vh-5rem)] overflow-y-auto ${legend ? '' : 'wk-map-panel-hidden-left'}`}>
+      <aside className={`wk-map-panel left-3 top-16 w-64 ${p.contained ? 'max-h-[calc(100%-5rem)]' : 'max-h-[calc(100vh-5rem)]'} overflow-y-auto ${legend ? '' : 'wk-map-panel-hidden-left'}`}>
         <div className="font-display text-gold text-lg px-4 pt-3">{m.name}</div>
         <div className="text-xs text-dim px-4 pb-2">
           Click a place to read about it.

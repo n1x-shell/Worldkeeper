@@ -194,13 +194,14 @@ export const WORKSPACES: Workspace[] = [
     id: 'atlas',
     label: 'Atlas',
     icon: MapIcon,
-    home: '/atlas',
+    // The full map view is the Atlas's home; World Atlas is where maps are added and managed.
+    home: '/atlas/explore',
     groups: [
       {
         title: 'Maps',
         items: [
-          { to: '/atlas', label: 'World Atlas', icon: MapIcon },
           { to: '/atlas/explore', label: 'Map Explorer', icon: Telescope },
+          { to: '/atlas', label: 'World Atlas', icon: MapIcon },
         ],
       },
     ],
@@ -291,3 +292,6 @@ export function workspaceFor(path: string): WorkspaceId | 'library' {
   if (best) return (best as { ws: WorkspaceId | 'library' }).ws;
   return FALLBACK.find(([re]) => re.test(path))?.[1] ?? 'codex';
 }
+
+/** Pages that fill the main view edge to edge, with no page margins (the map explorer). */
+export const FULL_BLEED = /^\/atlas\/explore(\/|$)/;

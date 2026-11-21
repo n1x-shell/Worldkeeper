@@ -540,6 +540,7 @@ export function AtlasExplorer() {
       }}
       maps={[...mapList].sort((a, b) => a.id - b.id).map((x) => ({ id: x.id, name: x.name }))}
       mapHref={(x) => `/atlas/explore/${x}`}
+      contained
       back={{ href: `/atlas/${m.id}`, label: 'Atlas' }}
       pins={pins}
       shapes={data.shapes}
