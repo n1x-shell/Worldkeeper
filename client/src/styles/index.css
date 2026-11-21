@@ -28,6 +28,7 @@
   --gold: 128 90 18; /* accent, links on hover, focus */
   --parchment: 246 238 218; /* the character sheet's paper */
   --parchink: 52 40 26;
+  --parchlink: 59 74 143; /* links on the paper, which stays light in both themes */
   --arcane: 48 68 150; /* record links */
   --danger: 156 46 36;
   --ok: 44 100 56;
@@ -60,6 +61,7 @@
   --gold: 208 170 84;
   --parchment: 233 222 196;
   --parchink: 52 40 26;
+  --parchlink: 59 74 143; /* links on the paper, which stays light in both themes */
   --arcane: 146 162 228;
   --danger: 232 122 110;
   --ok: 122 186 132;

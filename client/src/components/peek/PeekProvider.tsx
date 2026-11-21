@@ -14,8 +14,9 @@ import { Columns2, ExternalLink, PanelRight, Pin as PinIcon } from 'lucide-react
 import { api } from '../../lib/api';
 import { KeyValue, Skeleton } from '../ui';
 import { Markdown } from '../Markdown';
-import { PeekContext, type PeekApi, type PeekData, type Pin } from './context';
+import { PeekContext, type InspectorTab, type PeekApi, type PeekData, type Pin } from './context';
 import { FactValue, PeekBadges } from './RecordPeek';
+import { setAutoOpen } from './panel';
 
 const PINS = 'wk.pins';
 const readPins = (): Pin[] => {
@@ -93,20 +94,30 @@ export function PeekProvider({ live, children }: { live: boolean; children: Reac
   }, [live]);
 
   const [inspected, setInspected] = useState<string[]>([]);
-  const [tab, setTab] = useState<'record' | 'pinned'>('record');
+  const [tab, setTab] = useState<InspectorTab>('record');
+  const [panelTitle, setPanelTitle] = useState<string | null>(null);
+  const [panelEl, setPanelEl] = useState<HTMLElement | null>(null);
+  const [docked, setDocked] = useState(false);
+  const panel = useMemo(() => (panelTitle ? { title: panelTitle, el: panelEl } : null), [panelTitle, panelEl]);
   const peek = useCallback((id: string) => {
     setInspected((l) => [...l.filter((x) => x !== id), id].slice(-20));
     setTab('record');
     setOpen(true);
   }, []);
   const back = useCallback(() => setInspected((l) => l.slice(0, -1)), []);
+  useEffect(() => {
+    if (!panelTitle && tab === 'page') setTab(pins.length && !inspected.length ? 'pinned' : 'record');
+  }, [panelTitle, tab, pins.length, inspected.length]);
   // Opened by hand (the button or `]`): the pinned stat blocks when nothing has been peeked, or during play.
   const setInspectorOpen = useCallback(
     (open: boolean) => {
       if (open && pins.length && (inspected.length === 0 || /^\/(campaign\/live|tracker|dm)(\/|$)/.test(window.location.pathname))) setTab('pinned');
+      else if (open && panelTitle && inspected.length === 0) setTab('page');
+      // On a page with its own panel, remember whether the GM wants the inspector there.
+      if (panelTitle) setAutoOpen(open);
       setOpen(open);
     },
-    [pins.length, inspected.length],
+    [pins.length, inspected.length, panelTitle],
   );
   const pinAndShow = useCallback(
     (x: Pin) => {
@@ -246,8 +257,29 @@ export function PeekProvider({ live, children }: { live: boolean; children: Reac
   }, [load, peek]);
 
   const value = useMemo<PeekApi>(
-    () => ({ peek, openBeside, closeBeside, beside, inspectorOpen, setInspectorOpen, inspected, back, tab, setTab, pins, pin: pinAndShow, unpin, load, cached }),
-    [peek, openBeside, closeBeside, beside, inspectorOpen, inspected, back, tab, pins, pinAndShow, unpin, load, cached],
+    () => ({
+      peek,
+      openBeside,
+      closeBeside,
+      beside,
+      inspectorOpen,
+      setInspectorOpen,
+      inspected,
+      back,
+      tab,
+      setTab,
+      panel,
+      setPanelTitle,
+      setPanelEl,
+      docked,
+      setDocked,
+      pins,
+      pin: pinAndShow,
+      unpin,
+      load,
+      cached,
+    }),
+    [peek, openBeside, closeBeside, beside, inspectorOpen, setInspectorOpen, inspected, back, tab, panel, docked, pins, pinAndShow, unpin, load, cached],
   );
   return (
     <PeekContext.Provider value={value}>

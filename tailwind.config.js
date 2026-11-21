@@ -15,6 +15,7 @@ export default {
         gold: 'rgb(var(--gold) / <alpha-value>)',
         parchment: 'rgb(var(--parchment) / <alpha-value>)',
         parchink: 'rgb(var(--parchink) / <alpha-value>)',
+        parchlink: 'rgb(var(--parchlink) / <alpha-value>)',
         arcane: 'rgb(var(--arcane) / <alpha-value>)',
         danger: 'rgb(var(--danger) / <alpha-value>)',
         ok: 'rgb(var(--ok) / <alpha-value>)',
