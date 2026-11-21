@@ -25,6 +25,7 @@ import { canonReview, baselineFor, reviewDecision } from '../repo/review.js';
 import { decideProposal } from '../repo/campaigns.js';
 import { splitSections } from '../import/parseMarkdown.js';
 import { isSecretHeading } from '../player/projection.js';
+import { peekEntity } from '../repo/peek.js';
 import { TYPE_GROUPS } from '../../../shared/domain.js';
 import { revealDuringPlay } from '../repo/reveal.js';
 import { createEra, listEras, setRowEra, updateEra } from '../repo/eras.js';
@@ -94,6 +95,11 @@ export function worldRoutes(ctx: AppContext) {
         baseline: e.modified_since_import ? baselineFor(ctx.db, id) : null,
       };
     }),
+  );
+  // A record at a glance (hover cards, the inspector, split view). Not counted as a visit.
+  r.get(
+    '/entities/:id/peek',
+    h((req) => peekEntity(ctx.db, String(req.params.id))),
   );
   r.patch(
     '/entities/:id',

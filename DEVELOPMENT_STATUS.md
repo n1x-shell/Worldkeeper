@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-21 · v0.3.14_
+_Last updated: 2026-11-21 · v0.3.15_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,10 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.15
+
+- **Design overhaul step 4: Quick-Peek** (`client/src/components/peek/`, `server/src/repo/peek.ts`, see `docs/DESIGN_OVERHAUL.md` §8). Hover a record link (EntityLink or `@[Name]` in any lore) for 350ms, or focus it, for a card: type, realm, reveal state, a short summary, three facts, and Peek / Open beside / Pin / Open. Middle-click peeks. On touch, the first tap shows the card and the second opens; a long press peeks. **The inspector** (`]`, Esc, the top-bar button; docked at 1280px and up, an overlay below) shows peeked records (sections fold, GM-only marked, connections, stat block) with Back, and the **pinned stat blocks**, which last until the live session ends (pin from a card, a peek, split view or the tracker). **Split view**: `?beside=<ID>` opens a record beside any page, the Atlas map included, with a draggable, remembered divider (a drawer under 1024px). `GET /api/entities/:id/peek` doesn't count as a visit. Tests: `tests/peek.test.ts`; the E2E hovers a link, peeks, opens beside and closes it.
 
 ## v0.3.14
 

@@ -209,6 +209,13 @@ function MapGrab({ onMap, onZoom }: { onMap: (m: L.Map) => void; onZoom: (z: num
     onMap(map);
     onZoom(map.getZoom());
   }, [map, onMap, onZoom]);
+  // The map's box changes size when a record opens beside it or the inspector opens: redraw to fit.
+  useEffect(() => {
+    if (typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => map.invalidateSize({ pan: false }));
+    ro.observe(map.getContainer());
+    return () => ro.disconnect();
+  }, [map]);
   useMapEvents({ zoomend: () => onZoom(map.getZoom()) });
   return null;
 }

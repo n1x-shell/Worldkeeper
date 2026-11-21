@@ -14,6 +14,10 @@ import { SearchPalette } from './SearchPalette';
 import { SidebarSlotContext } from './sidebarSlot';
 import { DEBUG_ONLY, FULL_BLEED, LIBRARY, NEEDS, WORKSPACES, matches, workspaceFor, type Group, type Item } from './navigation';
 import { ConfirmHost, ToastHost } from './ui';
+import { PeekProvider } from './peek/PeekProvider';
+import { Inspector } from './peek/Inspector';
+import { SplitView } from './peek/Beside';
+import { InspectorButton, PeekKeys } from './peek/controls';
 
 const I = 16;
 
@@ -68,6 +72,15 @@ export function Layout() {
   }, []);
   const compact = narrow ? !openNarrow : collapsed;
   // Phones have no sidebar (the menu drawer instead), so pages keep their own controls there.
+  // Split view needs room: 1024px and up (narrower, the record opens as a drawer).
+  const [splitOk, setSplitOk] = useState(() => typeof window === 'undefined' || !window.matchMedia || window.matchMedia('(min-width: 1024px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia?.('(min-width: 1024px)');
+    if (!mq) return;
+    const on = () => setSplitOk(mq.matches);
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
   const [wide, setWide] = useState(() => typeof window === 'undefined' || !window.matchMedia || window.matchMedia('(min-width: 768px)').matches);
   useEffect(() => {
     const mq = window.matchMedia?.('(min-width: 768px)');
@@ -210,173 +223,185 @@ export function Layout() {
   const activeTitle = campaigns.find((c) => c.id === activeCampaignId)?.title;
 
   return (
-    <div className="flex flex-col h-full">
-      <header className="h-[52px] shrink-0 flex items-center gap-1 border-b border-line bg-panel px-2 md:px-3 elev-1 relative z-[1500]">
-        <button className="btn-ghost md:hidden" onClick={() => setMobileNav(true)} aria-label="Open navigation">
-          <Menu size={18} />
-        </button>
-        <NavLink to="/" onClick={() => markDashboardVisited()} className="flex items-center gap-2 pr-3 mr-1 md:border-r border-line h-8" title="World Dashboard">
-          <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden className="text-gold shrink-0">
-            <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" strokeWidth="2" />
-            <path d="M16 3v26M3 16h26" stroke="currentColor" strokeWidth="1.2" />
-            <circle cx="16" cy="16" r="4" fill="currentColor" opacity=".5" />
-          </svg>
-          <span className="hidden xl:inline font-display text-gold text-[15px] whitespace-nowrap">{appName}</span>
-        </NavLink>
-        <nav aria-label="Workspaces" className="hidden md:flex items-stretch h-full">
-          {WORKSPACES.map((w) => {
-            const on = ws === w.id;
-            return (
-              <button
-                key={w.id}
-                onClick={() => nav(w.home)}
-                aria-current={on ? 'page' : undefined}
-                title={w.label}
-                className={`relative flex items-center gap-1.5 px-2 lg:px-3 text-sm font-display tracking-wide whitespace-nowrap transition-colors ${on ? 'text-gold' : 'text-ink/75 hover:text-ink'}`}
-              >
-                <w.icon size={I} />
-                <span className="hidden lg:inline">{w.label}</span>
-                {w.id === 'live' && live && <span className="ml-0.5 h-2 w-2 rounded-full bg-danger animate-pulse" title="A session is live" />}
-                {on && <span className="absolute left-2 right-2 bottom-0 h-[2px] bg-gold rounded-full" />}
-              </button>
-            );
-          })}
-        </nav>
-        <button
-          onClick={() => setSearchOpen(true)}
-          className="ml-auto md:ml-3 flex items-center gap-2 rounded-md border border-line bg-raised px-2.5 h-8 text-sm text-dim hover:border-gold/60 min-w-0 shrink-0 lg:w-48 xl:w-72"
-          aria-label="Search"
-          title="Search (Ctrl K)"
-        >
-          <Search size={14} className="shrink-0" /> <span className="hidden lg:inline truncate">Search…</span>
-          <kbd className="ml-auto hidden xl:inline whitespace-nowrap text-[10px] border border-line rounded px-1">Ctrl K</kbd>
-        </button>
-        <div className="ml-auto flex items-center gap-1">
-          <Dropdown
-            label="Active campaign"
-            align="right"
-            button={
-              <span className="flex items-center gap-1.5 max-w-[180px]">
-                <Compass size={15} className="shrink-0" />
-                <span className="hidden xl:inline truncate text-sm">{activeTitle ?? 'No campaign'}</span>
-                <ChevronDown size={13} className="shrink-0" />
-              </span>
-            }
-          >
-            {(close) => (
-              <>
-                <div className="px-3 pt-1.5 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim">Active campaign</div>
-                {campaigns.map((c) => (
-                  <button
-                    key={c.id}
-                    role="menuitemradio"
-                    aria-checked={c.id === activeCampaignId}
-                    className={menuItem}
-                    onClick={async () => {
-                      close();
-                      await setActiveCampaignId(c.id);
-                    }}
-                  >
-                    <span className="w-4 shrink-0">{c.id === activeCampaignId && <Check size={14} className="text-gold" />}</span>
-                    <span className="truncate">{c.title}</span>
-                  </button>
-                ))}
-                {!campaigns.length && <div className="px-3 py-1.5 text-sm text-dim">No campaigns yet.</div>}
-                <div className="my-1 border-t border-line" />
-                <button
-                  className={menuItem}
-                  onClick={() => {
-                    close();
-                    nav('/campaigns');
-                  }}
-                >
-                  <BookMarked size={14} /> All campaigns
-                </button>
-              </>
-            )}
-          </Dropdown>
-          <a href="/player" target="_blank" rel="noreferrer" className="btn-ghost" title="Open the player view in a new tab">
-            <Eye size={16} /> <span className="hidden xl:inline whitespace-nowrap">Player View</span>
-          </a>
-          <button
-            className="btn-ghost"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            aria-label={theme === 'dark' ? 'Use Warm Parchment' : 'Use Dark Codex'}
-            title={theme === 'dark' ? 'Warm Parchment' : 'Dark Codex'}
-          >
-            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+    <PeekProvider live={live}>
+      <PeekKeys />
+      <div className="flex flex-col h-full">
+        <header className="h-[52px] shrink-0 flex items-center gap-1 border-b border-line bg-panel px-2 md:px-3 elev-1 relative z-[1500]">
+          <button className="btn-ghost md:hidden" onClick={() => setMobileNav(true)} aria-label="Open navigation">
+            <Menu size={18} />
           </button>
-          <Dropdown label="Library" align="right" active={ws === 'library'} button={<Settings size={16} />}>
-            {(close) => (
-              <>
-                <div className="px-3 pt-1.5 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim">Library</div>
-                {LIBRARY.items.filter(visible).map((it) => (
+          <NavLink to="/" onClick={() => markDashboardVisited()} className="flex items-center gap-2 pr-3 mr-1 md:border-r border-line h-8" title="World Dashboard">
+            <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden className="text-gold shrink-0">
+              <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" strokeWidth="2" />
+              <path d="M16 3v26M3 16h26" stroke="currentColor" strokeWidth="1.2" />
+              <circle cx="16" cy="16" r="4" fill="currentColor" opacity=".5" />
+            </svg>
+            <span className="hidden xl:inline font-display text-gold text-[15px] whitespace-nowrap">{appName}</span>
+          </NavLink>
+          <nav aria-label="Workspaces" className="hidden md:flex items-stretch h-full">
+            {WORKSPACES.map((w) => {
+              const on = ws === w.id;
+              return (
+                <button
+                  key={w.id}
+                  onClick={() => nav(w.home)}
+                  aria-current={on ? 'page' : undefined}
+                  title={w.label}
+                  className={`relative flex items-center gap-1.5 px-2 lg:px-3 text-sm font-display tracking-wide whitespace-nowrap transition-colors ${on ? 'text-gold' : 'text-ink/75 hover:text-ink'}`}
+                >
+                  <w.icon size={I} />
+                  <span className="hidden lg:inline">{w.label}</span>
+                  {w.id === 'live' && live && <span className="ml-0.5 h-2 w-2 rounded-full bg-danger animate-pulse" title="A session is live" />}
+                  {on && <span className="absolute left-2 right-2 bottom-0 h-[2px] bg-gold rounded-full" />}
+                </button>
+              );
+            })}
+          </nav>
+          <button
+            onClick={() => setSearchOpen(true)}
+            className="ml-auto md:ml-3 flex items-center gap-2 rounded-md border border-line bg-raised px-2.5 h-8 text-sm text-dim hover:border-gold/60 min-w-0 shrink-0 lg:w-48 xl:w-72"
+            aria-label="Search"
+            title="Search (Ctrl K)"
+          >
+            <Search size={14} className="shrink-0" /> <span className="hidden lg:inline truncate">Search…</span>
+            <kbd className="ml-auto hidden xl:inline whitespace-nowrap text-[10px] border border-line rounded px-1">Ctrl K</kbd>
+          </button>
+          <div className="ml-auto flex items-center gap-1">
+            <Dropdown
+              label="Active campaign"
+              align="right"
+              button={
+                <span className="flex items-center gap-1.5 max-w-[180px]">
+                  <Compass size={15} className="shrink-0" />
+                  <span className="hidden xl:inline truncate text-sm">{activeTitle ?? 'No campaign'}</span>
+                  <ChevronDown size={13} className="shrink-0" />
+                </span>
+              }
+            >
+              {(close) => (
+                <>
+                  <div className="px-3 pt-1.5 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim">Active campaign</div>
+                  {campaigns.map((c) => (
+                    <button
+                      key={c.id}
+                      role="menuitemradio"
+                      aria-checked={c.id === activeCampaignId}
+                      className={menuItem}
+                      onClick={async () => {
+                        close();
+                        await setActiveCampaignId(c.id);
+                      }}
+                    >
+                      <span className="w-4 shrink-0">{c.id === activeCampaignId && <Check size={14} className="text-gold" />}</span>
+                      <span className="truncate">{c.title}</span>
+                    </button>
+                  ))}
+                  {!campaigns.length && <div className="px-3 py-1.5 text-sm text-dim">No campaigns yet.</div>}
+                  <div className="my-1 border-t border-line" />
                   <button
-                    key={it.to}
-                    role="menuitem"
-                    className={`${menuItem} ${matches(loc.pathname, it.to) ? 'text-gold' : ''}`}
+                    className={menuItem}
                     onClick={() => {
                       close();
-                      nav(it.to);
+                      nav('/campaigns');
                     }}
                   >
-                    <it.icon size={I} /> {it.label}
+                    <BookMarked size={14} /> All campaigns
                   </button>
-                ))}
-              </>
-            )}
-          </Dropdown>
-        </div>
-      </header>
-      <div className="flex-1 flex min-h-0">
-        <aside className={`hidden md:block shrink-0 bg-panel/70 border-r border-line transition-[width] duration-150 ${compact ? 'w-14' : fullBleed ? 'w-[272px]' : 'w-[248px]'}`}>
-          {fullBleed && !compact ? (
-            <div className="flex flex-col h-full">
-              <div ref={setSlotEl} className="flex-1 overflow-y-auto" />
-              <div className="border-t border-line p-2 flex items-center">
-                <NavLink to="/atlas" className="btn-ghost text-xs" title="Add maps and list their pins">
-                  <MapIcon size={14} /> Manage maps
-                </NavLink>
-                <button className="btn-ghost ml-auto" onClick={toggleSidebar} aria-label="Collapse sidebar" title="Collapse ( [ ): the map's legend floats over it instead">
-                  <ChevronsLeft size={16} />
-                </button>
-              </div>
-            </div>
-          ) : (
-            sidebar(compact)
-          )}
-        </aside>
-        {mobileNav && (
-          <div className="fixed inset-0 z-[1800] md:hidden bg-black/50" onClick={() => setMobileNav(false)}>
-            <aside className="w-72 h-full bg-panel border-r border-line flex flex-col" onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center justify-between px-3 py-2 border-b border-line">
-                <span className="font-display text-gold">{appName}</span>
-                <button className="btn-ghost" onClick={() => setMobileNav(false)} aria-label="Close navigation">
-                  <X size={16} />
-                </button>
-              </div>
-              <div className="flex-1 min-h-0">{sidebar(false, true)}</div>
-            </aside>
+                </>
+              )}
+            </Dropdown>
+            <a href="/player" target="_blank" rel="noreferrer" className="btn-ghost" title="Open the player view in a new tab">
+              <Eye size={16} /> <span className="hidden xl:inline whitespace-nowrap">Player View</span>
+            </a>
+            <InspectorButton />
+            <button
+              className="btn-ghost"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              aria-label={theme === 'dark' ? 'Use Warm Parchment' : 'Use Dark Codex'}
+              title={theme === 'dark' ? 'Warm Parchment' : 'Dark Codex'}
+            >
+              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+            <Dropdown label="Library" align="right" active={ws === 'library'} button={<Settings size={16} />}>
+              {(close) => (
+                <>
+                  <div className="px-3 pt-1.5 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim">Library</div>
+                  {LIBRARY.items.filter(visible).map((it) => (
+                    <button
+                      key={it.to}
+                      role="menuitem"
+                      className={`${menuItem} ${matches(loc.pathname, it.to) ? 'text-gold' : ''}`}
+                      onClick={() => {
+                        close();
+                        nav(it.to);
+                      }}
+                    >
+                      <it.icon size={I} /> {it.label}
+                    </button>
+                  ))}
+                </>
+              )}
+            </Dropdown>
           </div>
-        )}
-        {fullBleed ? (
-          <main className="flex-1 relative overflow-hidden min-w-0" id="main">
-            <SidebarSlotContext.Provider value={slot}>
-              <Outlet />
-            </SidebarSlotContext.Provider>
-          </main>
-        ) : (
-          <main className="flex-1 overflow-y-auto min-w-0" id="main">
-            <div className="mx-auto max-w-[1500px] p-4 md:p-6">
-              <Outlet />
+        </header>
+        <div className="flex-1 flex min-h-0">
+          <aside className={`hidden md:block shrink-0 bg-panel/70 border-r border-line transition-[width] duration-150 ${compact ? 'w-14' : fullBleed ? 'w-[272px]' : 'w-[248px]'}`}>
+            {fullBleed && !compact ? (
+              <div className="flex flex-col h-full">
+                <div ref={setSlotEl} className="flex-1 overflow-y-auto" />
+                <div className="border-t border-line p-2 flex items-center">
+                  <NavLink to="/atlas" className="btn-ghost text-xs" title="Add maps and list their pins">
+                    <MapIcon size={14} /> Manage maps
+                  </NavLink>
+                  <button className="btn-ghost ml-auto" onClick={toggleSidebar} aria-label="Collapse sidebar" title="Collapse ( [ ): the map's legend floats over it instead">
+                    <ChevronsLeft size={16} />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              sidebar(compact)
+            )}
+          </aside>
+          {mobileNav && (
+            <div className="fixed inset-0 z-[1800] md:hidden bg-black/50" onClick={() => setMobileNav(false)}>
+              <aside className="w-72 h-full bg-panel border-r border-line flex flex-col" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between px-3 py-2 border-b border-line">
+                  <span className="font-display text-gold">{appName}</span>
+                  <button className="btn-ghost" onClick={() => setMobileNav(false)} aria-label="Close navigation">
+                    <X size={16} />
+                  </button>
+                </div>
+                <div className="flex-1 min-h-0">{sidebar(false, true)}</div>
+              </aside>
             </div>
-          </main>
-        )}
+          )}
+          {fullBleed ? (
+            <main className="flex-1 relative overflow-hidden min-w-0" id="main">
+              <SplitView enabled={splitOk}>
+                <SidebarSlotContext.Provider value={slot}>
+                  <Outlet />
+                </SidebarSlotContext.Provider>
+              </SplitView>
+            </main>
+          ) : (
+            <main className="flex-1 overflow-hidden min-w-0" id="main">
+              <SplitView enabled={splitOk}>
+                <div className="h-full overflow-y-auto" id="main-scroll">
+                  <div className="mx-auto max-w-[1500px] p-4 md:p-6">
+                    <Outlet />
+                  </div>
+                </div>
+              </SplitView>
+            </main>
+          )}
+          {!narrow && <Inspector overlay={false} />}
+        </div>
+        {narrow && <Inspector overlay />}
+        {searchOpen && <SearchPalette onClose={() => setSearchOpen(false)} />}
+        <ConfirmHost />
+        <ToastHost />
       </div>
-      {searchOpen && <SearchPalette onClose={() => setSearchOpen(false)} />}
-      <ConfirmHost />
-      <ToastHost />
-    </div>
+    </PeekProvider>
   );
 }
 

@@ -13,6 +13,7 @@ import {
   Card,
   Check,
   ConditionChips,
+  EntityLink,
   DataTable,
   Drawer,
   Empty,
@@ -295,6 +296,14 @@ export function StyleGuidePage() {
             <p className="text-sm text-dim">The inspector's content opens here on narrow screens.</p>
           </Drawer>
         )}
+      </GuideSection>
+
+      <GuideSection title="Quick-Peek">
+        <p className="text-sm text-dim">
+          Hover a record link for its card: <EntityLink id="SET-001" />, <EntityLink id="NPC-010" />. From the card, <strong>Peek</strong> opens it in the inspector (or middle-click the link),{' '}
+          <strong>Open beside</strong> splits the page, and <strong>Pin</strong> keeps a stat block in the inspector until the live session ends. <kbd className="chip border-line">]</kbd> toggles the
+          inspector. On a tablet, tap once for the card and again to open; a long press peeks.
+        </p>
       </GuideSection>
 
       <GuideSection title="Lore text">

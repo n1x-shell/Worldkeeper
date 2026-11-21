@@ -20,6 +20,7 @@ import { ProfileSummary, type ProfileResponse } from './Profile';
 import { StanceMatrix } from './Rumours';
 import { profileKindFor } from '@shared/profiles';
 import { INFLUENCE_LEVELS } from '@shared/profiles';
+import { usePeek } from '../components/peek/context';
 
 // ------------------------------------------------------------------ Encounter tracker (used standalone and in live mode)
 interface Encounter {
@@ -50,6 +51,7 @@ interface BookCreature {
 const bookLabel = (c: BookCreature) => `${c.name} (CR ${c.cr ?? '?'})`;
 
 export function EncounterTracker({ encounterId, compact = false, onLog }: { encounterId: number; compact?: boolean; onLog?: (text: string) => void }) {
+  const peek = usePeek();
   const { data, error } = useApi<Encounter>(`/api/encounters/${encounterId}`);
   const [enc, setEnc] = useState<Encounter | null>(null);
   const [alert, setAlert] = useState<string | null>(null);
@@ -248,6 +250,15 @@ export function EncounterTracker({ encounterId, compact = false, onLog }: { enco
                     {(c.statblockId || c.entityId) && (
                       <button className="text-[11px] text-gold underline ml-2" onClick={() => setOpenBlock(openBlock === c.id ? null : c.id)}>
                         {openBlock === c.id ? 'Hide stat block' : 'Stat block'}
+                      </button>
+                    )}
+                    {(c.statblockId || c.entityId) && peek && (
+                      <button
+                        className="text-[11px] text-gold underline ml-2"
+                        onClick={() => peek.pin({ id: (c.statblockId || c.entityId)!, name: c.name.replace(/\s+\d+$/, '') })}
+                        title="Pin its stat block in the inspector until the session ends"
+                      >
+                        Pin
                       </button>
                     )}
                     {!c.isPC && (

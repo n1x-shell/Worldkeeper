@@ -47,7 +47,7 @@ export function Markdown({ text, className = 'prose-lore' }: { text: string; cla
               const id = href.slice(3);
               const e = index.get(id);
               return (
-                <Link to={`/e/${encodeURIComponent(id)}`} className="wk-ref" title={e?.name ?? undefined}>
+                <Link to={`/e/${encodeURIComponent(id)}`} className="wk-ref" data-peek={id}>
                   {children}
                 </Link>
               );
