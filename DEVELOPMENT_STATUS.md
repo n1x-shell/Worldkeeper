@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-18 · v0.3.9_
+_Last updated: 2026-11-18 · v0.3.10_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,10 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.10
+
+- **The map's controls live in the sidebar.** In the Atlas's full map view, the app's sidebar holds the map: a map switcher at the top, then the legend (kinds of place, routes, the Campaign layers), your notes and the GM tools, with **Manage maps** (the former World Atlas page) at the bottom. The map no longer has a panel floating over its left side, a back button or its own map buttons. Collapsing the sidebar (`[`) shows just the map; the legend then floats over it, closed, behind its **Legend** button (as at tablet widths, where the sidebar starts collapsed, and on phones). On other Atlas pages the sidebar lists each map and Manage maps; the separate Map Explorer and "Each map" links are gone. The place panel on the right is unchanged. The players' handbook map keeps its floating legend.
 
 ## v0.3.9
 

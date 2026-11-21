@@ -10,6 +10,7 @@ import { MapView, kindOf, type ViewPin } from '../components/map/MapView';
 import { OutlineEditor, type Pt } from '../components/map/OutlineEditor';
 import { ENTITY_TYPE_LABELS, type Entity, type EntityType } from '../../../shared/domain';
 import { RegionPanel } from '../components/map/RegionPanel';
+import { useSidebarSlot } from '../components/sidebarSlot';
 import type { MapLayerSpot } from '../components/map/MapView';
 
 /** Kinds of record that get the region panel (terrain, campaign state, places, encounter tables). */
@@ -242,6 +243,8 @@ export function AtlasExplorer() {
     in_play: { campaignId: number; sessionId: number } | null;
   }>('/api/exploration/status');
   const { data: ex, reload: reloadEx, setData: setEx } = useApi<Exploration>(current && status?.active_campaign_id ? `/api/exploration?map_id=${current}` : null);
+  // The app's sidebar, to hold the legend while it is open.
+  const sidebarSlot = useSidebarSlot();
   // The campaign on the map: quests, adventure places, people, prepared encounters.
   const { data: layers } = useApi<MapLayerSpot[]>(current && status?.active_campaign_id ? `/api/map-layers?map_id=${current}` : null);
   const { data: unplaced, reload: reloadUnplaced } = useApi<Unplaced[]>(data ? `/api/maps/unplaced${data.map.entity_id ? `?scope=${encodeURIComponent(data.map.entity_id)}` : ''}` : null);
@@ -579,6 +582,7 @@ export function AtlasExplorer() {
       }
       exploration={exploration}
       layers={layers ?? null}
+      sidebarSlot={sidebarSlot}
       onOpenLink={(href) => nav(href)}
       fog="dim"
       notesKey="gm"
