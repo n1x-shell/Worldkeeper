@@ -118,6 +118,10 @@ export interface PlayerSource {
   myLog?(code: string): Promise<import('./sheet/LogTab').LogEntry[]>;
   /** Save a new portrait (a small data URL), or remove it (null). */
   myPortrait?(code: string, image: string | null): Promise<PCharacterPage>;
+  /** Only in the GM's own app (never the table server or the handbook): the campaigns a new character can join. */
+  gmCampaigns?(): Promise<{ campaigns: { id: number; title: string }[]; active: number | null } | null>;
+  /** Only in the GM's own app: add a character to a campaign's Party and Characters. Returns the new character's id. */
+  gmSaveCharacter?(campaignId: number, c: { name: string; species: string; class_name: string; level: number; sheet: Record<string, unknown> }, portrait?: string): Promise<number>;
 }
 
 /** A character's own page: memories, true name, who knows it, and Thinning (set by the GM). */
@@ -175,6 +179,24 @@ export const apiSource: PlayerSource = {
     const body = (await r.json().catch(() => ({}))) as PCharacterPage & { error?: string };
     if (!r.ok) throw new Error(body.error ?? `Couldn't save the portrait (${r.status})`);
     return body;
+  },
+  // The table server runs in player mode, where the GM's routes don't exist: these are for the GM's app only.
+  gmCampaigns: async () => {
+    const h = await getJson<{ mode?: string }>('/api/health').catch(() => null);
+    if (h?.mode !== 'dm') return null;
+    const [campaigns, active] = await Promise.all([getJson<{ id: number; title: string }[]>('/api/campaigns'), getJson<{ id: number | null }>('/api/campaigns/active')]);
+    return { campaigns: campaigns.map((c) => ({ id: c.id, title: c.title })), active: active.id };
+  },
+  gmSaveCharacter: async (campaignId, c, portrait) => {
+    const send = async <T>(url: string, method: string, body: unknown) => {
+      const r = await fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const out = (await r.json().catch(() => ({}))) as T & { error?: string };
+      if (!r.ok) throw new Error(out.error ?? `Couldn't save (${r.status})`);
+      return out;
+    };
+    const made = await send<{ id: number }>('/api/characters', 'POST', { campaign_id: campaignId, kind: 'pc', ...c });
+    if (portrait) await send('/api/characters/' + made.id + '/portrait', 'POST', { image: portrait });
+    return made.id;
   },
 };
 

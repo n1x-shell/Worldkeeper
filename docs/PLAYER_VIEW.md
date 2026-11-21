@@ -28,7 +28,7 @@ Each character in a campaign has a full D&D 2024 character sheet with a portrait
 - Players keep their whole sheet up to date, portrait included, except their level and Thinning, which the GM sets. The GM can edit everything, for a player who would rather not.
 - The sheet's **Log** tab lists every change, who made it (the player or the GM) and when. Changes to the GM's setting mechanics, world ties and notes are never shown to players, and a player's save never changes them.
 - Players can add memories, reword the ones they still have, and strike one when their Thinning goes up. A struck memory stays struck. The GM can restore one if the table agrees.
-- On the table server, the **Make a Character** builder's **Send to my sheet** button fills in the sheet from a finished build. **Print** on My Character prints the sheet on two pages, laid out like the official one.
+- On the table server, the **Make a Character** builder's **Send to my sheet** button fills in the sheet from a finished build. In the GM's own app, **Save to Party and Characters** adds it to a campaign's party instead (GM only; never on the table server or the published handbook). **Print** on My Character prints the sheet on two pages, laid out like the official one.
 - A character's sheet is visible only to whoever has its code, and to the GM. **New code** stops an old link working.
 - The code is the only protection, so the same network precautions apply.
 - Rules from the GM's imported rules packs (see [Rules packs](RULES_PACKS.md)) appear in sheets and the builder on the table server. The published handbook's builder has only the SRD, and nothing if the GM turned the SRD off.

@@ -347,7 +347,9 @@ export function StateTable({ rows, onChange, title = 'Campaign-specific world ch
 const ABILS = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'];
 export function PartyPage() {
   const { data, reload, activeCampaignId } = useActiveOverview();
-  const [sel, setSel] = useState<number | null>(null);
+  // "?character=" opens that character (the builder's "Save to Party and Characters" comes here).
+  const [sp] = useSearchParams();
+  const [sel, setSel] = useState<number | null>(Number(sp.get('character')) || null);
   if (!activeCampaignId) return <NeedCampaign />;
   if (!data) return <Loading />;
   const ch = data.characters.find((c) => c.id === sel) ?? data.characters[0];
