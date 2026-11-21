@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Coins, Dices, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
-import { EntityLink, ErrorBox, Field, Loading, PageHeader } from '../components/ui';
+import { Badge, Card, Check, Empty, EntityLink, ErrorBox, Field, Loading, PageHeader, RarityTag, Segmented } from '../components/ui';
 import { NeedCampaign } from './Campaign';
 import { ItemRulesList } from '../components/ItemRules';
 
@@ -95,7 +95,7 @@ export function TreasurePage() {
         note="Magic is scarce: about half the DMG's items, with the world's own items turning up where they belong. Artifacts never come up on a roll; they rest where their records say."
       />
 
-      <div className="panel-pad space-y-3">
+      <Card className="space-y-3">
         <div className="grid gap-2 md:grid-cols-[1fr_1.4fr_auto_auto] items-end">
           <Field label="Party level">
             <select className="input" value={tier} onChange={(e) => setTier(e.target.value)}>
@@ -115,13 +115,15 @@ export function TreasurePage() {
               ))}
             </select>
           </Field>
-          <div className="flex rounded-md border border-line overflow-hidden h-[38px]">
-            {(['individual', 'hoard'] as const).map((k) => (
-              <button key={k} type="button" className={`px-3 text-sm ${kind === k ? 'bg-gold/20 text-gold' : 'text-dim'}`} onClick={() => setKind(k)}>
-                {k === 'individual' ? 'Individual' : 'Hoard'}
-              </button>
-            ))}
-          </div>
+          <Segmented
+            label="Kind of treasure"
+            value={kind}
+            onChange={setKind}
+            options={[
+              { value: 'individual', label: 'Individual' },
+              { value: 'hoard', label: 'Hoard' },
+            ]}
+          />
           <button className="btn-primary h-[38px]" onClick={doRoll} disabled={!opts.regions.length}>
             <Dices size={15} /> Roll
           </button>
@@ -140,7 +142,7 @@ export function TreasurePage() {
             <div className="flex items-center gap-2">
               <Coins size={15} className="text-gold" />
               <span className="font-display text-lg">
-                {roll.coins.amount.toLocaleString('en')} {roll.coins.coin}
+                <span className="num">{roll.coins.amount.toLocaleString('en')}</span> {roll.coins.coin}
               </span>
               <span className="text-sm text-dim">{roll.coins.note}</span>
             </div>
@@ -149,7 +151,7 @@ export function TreasurePage() {
                 {roll.goods.map((g) => (
                   <li key={g.text}>
                     {g.count > 1 ? `${g.count} × ` : ''}
-                    {g.text} <span className="text-dim">({gp(g.gp)} each)</span>
+                    {g.text} <span className="text-dim num">({gp(g.gp)} each)</span>
                   </li>
                 ))}
               </ul>
@@ -158,7 +160,7 @@ export function TreasurePage() {
               <ul className="text-sm space-y-1">
                 {roll.items.map((it, i) => (
                   <li key={i} className="flex flex-wrap items-baseline gap-2">
-                    <span className="text-xs px-1.5 rounded bg-arcane/20 capitalize">{it.rarity}</span>
+                    <RarityTag rarity={it.rarity} />
                     {it.entity_id ? <EntityLink id={it.entity_id} /> : <span>{it.name}</span>}
                   </li>
                 ))}
@@ -168,7 +170,9 @@ export function TreasurePage() {
             {roll.kind === 'hoard' && !roll.items.length && <p className="text-sm text-dim">No magic this time.</p>}
             {roll.hook && <p className="text-sm italic">{roll.hook}</p>}
             {roll.fades && fading && <p className="text-xs text-dim">Salvage from lost worlds: it fades once taken out of the Ethereal Realm unless it's anchored.</p>}
-            <div className="text-sm text-dim">Worth about {gp(roll.total_gp)}, before magic.</div>
+            <div className="text-sm text-dim">
+              Worth about <span className="num">{gp(roll.total_gp)}</span>, before magic.
+            </div>
             <div className="flex flex-wrap gap-2 items-end pt-1">
               <input className="input max-w-xs" placeholder="Found at (optional)" value={foundAt} onChange={(e) => setFoundAt(e.target.value)} />
               <button className="btn" onClick={keep}>
@@ -180,86 +184,93 @@ export function TreasurePage() {
             </div>
           </div>
         )}
-      </div>
+      </Card>
 
-      <div className="flex flex-wrap items-baseline gap-3">
-        <h2 className="section-title">The party's treasure</h2>
-        <span className="text-sm text-dim">
-          {held.length} things carried or stored, worth about {gp(worth)}
-        </span>
-        <AddLine campaignId={activeCampaignId} onAdded={reload} />
-        <label className="flex items-center gap-2 text-sm ml-auto">
-          <input type="checkbox" checked={showAll} onChange={(e) => setShowAll(e.target.checked)} /> Show sold, spent and lost
-        </label>
-      </div>
-      {!list.length ? (
-        <p className="text-dim text-sm">Nothing yet.</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="text-left text-xs uppercase tracking-wider text-dim">
-              <tr>
-                <th className="py-1 pr-2">Treasure</th>
-                <th className="pr-2">Worth</th>
-                <th className="pr-2">Carried by</th>
-                <th className="pr-2">Status</th>
-                <th className="pr-2">Found</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {list.map((r) => (
-                <tr key={r.id} className="border-t border-line align-top">
-                  <td className="py-1.5 pr-2">
-                    <div className="flex flex-wrap items-baseline gap-1.5">
-                      {r.quantity > 1 && r.kind !== 'coins' && <span className="text-dim">{r.quantity} ×</span>}
-                      {r.entity_id ? <EntityLink id={r.entity_id} /> : <span>{r.name}</span>}
-                      {r.rarity && <span className="text-[11px] px-1.5 rounded bg-arcane/20 capitalize">{r.rarity}</span>}
-                      {fading && r.fades && !r.anchored && (
-                        <button className="text-[11px] px-1.5 rounded bg-danger/30" title="Mark it anchored once its story has been told" onClick={() => patch(r, { anchored: true })}>
-                          fading
-                        </button>
-                      )}
-                      {fading && r.fades && r.anchored && <span className="text-[11px] px-1.5 rounded bg-gold/20">anchored</span>}
-                    </div>
-                  </td>
-                  <td className="pr-2 whitespace-nowrap">{r.value_gp ? gp(r.value_gp) : <span className="text-dim">—</span>}</td>
-                  <td className="pr-2">
-                    <select className="input py-0.5 text-sm" value={r.holder} onChange={(e) => patch(r, { holder: e.target.value })}>
-                      <option value="">The party</option>
-                      {(chars ?? []).map((c) => (
-                        <option key={c.id} value={c.name}>
-                          {c.name}
-                        </option>
-                      ))}
-                      {r.holder && !(chars ?? []).some((c) => c.name === r.holder) && <option value={r.holder}>{r.holder}</option>}
-                    </select>
-                  </td>
-                  <td className="pr-2">
-                    <select className="input py-0.5 text-sm" value={r.status} onChange={(e) => patch(r, { status: e.target.value })}>
-                      {STATUSES.map((s) => (
-                        <option key={s}>{s}</option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="pr-2 text-dim">{r.found_at}</td>
-                  <td className="whitespace-nowrap">
-                    <button className="btn-ghost p-1" title={r.player_visible ? 'Players see this' : 'Hidden from players'} onClick={() => patch(r, { player_visible: !r.player_visible })}>
-                      {r.player_visible ? <Eye size={14} /> : <EyeOff size={14} />}
-                    </button>
-                    <button className="btn-ghost p-1 hover:text-danger" title="Delete" onClick={async () => (await api.del(`/api/party-treasure/${r.id}`), reload())}>
-                      <Trash2 size={14} />
-                    </button>
-                  </td>
+      <Card
+        title="The party's treasure"
+        aside={
+          <span className="text-sm">
+            <span className="num">{held.length}</span> things carried or stored, worth about <span className="num">{gp(worth)}</span>
+          </span>
+        }
+        actions={
+          <>
+            <AddLine campaignId={activeCampaignId} onAdded={reload} />
+            <Check checked={showAll} onChange={setShowAll}>
+              Show sold, spent and lost
+            </Check>
+          </>
+        }
+      >
+        {!list.length ? (
+          <Empty compact title="Nothing yet." />
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="table data-table">
+              <thead>
+                <tr>
+                  <th>Treasure</th>
+                  <th className="text-right">Worth</th>
+                  <th>Carried by</th>
+                  <th>Status</th>
+                  <th>Found</th>
+                  <th />
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          <div className="pt-3">
-            <ItemRulesList names={list.filter((r) => r.kind !== 'coins' && !r.entity_id).map((r) => r.name)} title="What the party's items do (from your books)" />
+              </thead>
+              <tbody>
+                {list.map((r) => (
+                  <tr key={r.id} className="align-top">
+                    <td>
+                      <div className="flex flex-wrap items-baseline gap-1.5">
+                        {r.quantity > 1 && r.kind !== 'coins' && <span className="text-dim num">{r.quantity} ×</span>}
+                        {r.entity_id ? <EntityLink id={r.entity_id} /> : <span>{r.name}</span>}
+                        {r.rarity && <RarityTag rarity={r.rarity} />}
+                        {fading && r.fades && !r.anchored && (
+                          <button title="Mark it anchored once its story has been told" onClick={() => patch(r, { anchored: true })}>
+                            <Badge tone="danger">fading</Badge>
+                          </button>
+                        )}
+                        {fading && r.fades && r.anchored && <Badge tone="gold">anchored</Badge>}
+                      </div>
+                    </td>
+                    <td className="num text-right whitespace-nowrap">{r.value_gp ? gp(r.value_gp) : <span className="text-dim">—</span>}</td>
+                    <td>
+                      <select className="input py-0.5 text-sm" value={r.holder} onChange={(e) => patch(r, { holder: e.target.value })}>
+                        <option value="">The party</option>
+                        {(chars ?? []).map((c) => (
+                          <option key={c.id} value={c.name}>
+                            {c.name}
+                          </option>
+                        ))}
+                        {r.holder && !(chars ?? []).some((c) => c.name === r.holder) && <option value={r.holder}>{r.holder}</option>}
+                      </select>
+                    </td>
+                    <td>
+                      <select className="input py-0.5 text-sm" value={r.status} onChange={(e) => patch(r, { status: e.target.value })}>
+                        {STATUSES.map((s) => (
+                          <option key={s}>{s}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="text-dim">{r.found_at}</td>
+                    <td className="whitespace-nowrap">
+                      <button className="btn-ghost p-1" title={r.player_visible ? 'Players see this' : 'Hidden from players'} onClick={() => patch(r, { player_visible: !r.player_visible })}>
+                        {r.player_visible ? <Eye size={14} /> : <EyeOff size={14} />}
+                      </button>
+                      <button className="btn-ghost p-1 hover:text-danger" title="Delete" onClick={async () => (await api.del(`/api/party-treasure/${r.id}`), reload())}>
+                        <Trash2 size={14} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="pt-3">
+              <ItemRulesList names={list.filter((r) => r.kind !== 'coins' && !r.entity_id).map((r) => r.name)} title="What the party's items do (from your books)" />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </Card>
     </div>
   );
 }
@@ -302,11 +313,10 @@ export function TreasurePanel({ entityId, type }: { entityId: string; type: stri
   const { data } = useApi<CatalogueInfo | null>(type === 'item' || type === 'artifact' ? `/api/treasure/catalogue/${encodeURIComponent(entityId)}` : null);
   if (!data) return null;
   return (
-    <div className="panel-pad space-y-2 text-sm">
-      <div className="section-title">Treasure</div>
+    <Card title="Treasure" className="space-y-2 text-sm">
       <div className="flex flex-wrap gap-1.5">
-        <span className="text-xs px-1.5 rounded bg-arcane/20 capitalize">{data.rarity}</span>
-        {data.attunement && <span className="text-xs px-1.5 rounded bg-line">requires attunement</span>}
+        <RarityTag rarity={data.rarity} />
+        {data.attunement && <Badge>requires attunement</Badge>}
       </div>
       {data.rules && (
         <div>
@@ -344,6 +354,6 @@ export function TreasurePanel({ entityId, type }: { entityId: string; type: stri
           </ul>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

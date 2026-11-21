@@ -8,6 +8,7 @@ import { Dices, Plus } from 'lucide-react';
 import { api } from '../lib/api';
 import { newCombatant } from '../../../shared/play';
 import { CreatureLinks } from './CreatureLinks';
+import { Empty } from './ui';
 
 interface Idea {
   label: string;
@@ -75,17 +76,21 @@ export function EncounterIdeas({ level, terrain, region, campaignId, compact = f
         </button>
         {res && (
           <span className="text-xs text-dim">
-            Level {level}, budget {res.budget.toLocaleString()} XP{res.terrain.length ? `, ${res.terrain.join(', ')}` : ''}
+            Level <span className="num">{level}</span>, budget <span className="num">{res.budget.toLocaleString()}</span> XP{res.terrain.length ? `, ${res.terrain.join(', ')}` : ''}
           </span>
         )}
       </div>
       {err && <p className="text-danger text-sm">{err}</p>}
-      {res && !res.ideas.length && <p className="text-sm text-dim">Nothing in your books fits. Try another difficulty or terrain, or import a monster book.</p>}
+      {res && !res.ideas.length && (
+        <Empty compact title="Nothing in your books fits.">
+          Try another difficulty or terrain, or import a monster book.
+        </Empty>
+      )}
       {res?.ideas.map((idea, i) => (
         <div key={i} className="rounded border border-line p-2 space-y-1">
           <div className="flex flex-wrap items-center gap-2 text-sm">
             <span className="font-medium">{idea.label}</span>
-            <span className="text-xs text-dim">
+            <span className="text-xs text-dim num">
               {idea.xp.toLocaleString()} XP of {idea.budget.toLocaleString()}
             </span>
             {campaignId && (

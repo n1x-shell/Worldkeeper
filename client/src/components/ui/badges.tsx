@@ -91,5 +91,5 @@ const RARITY_CLASS: Record<string, string> = {
 /** An item's rarity, in its colour. Unknown rarities show plainly. */
 export function RarityTag({ rarity }: { rarity: string }) {
   const k = rarity.trim().toLowerCase();
-  return <span className={`tag ${RARITY_CLASS[k] ?? 'border-line text-dim'}`}>{rarity}</span>;
+  return <span className={`tag capitalize ${RARITY_CLASS[k] ?? 'border-line text-dim'}`}>{rarity}</span>;
 }

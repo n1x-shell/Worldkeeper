@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Globe2 } from 'lucide-react';
 import { useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
-import { EntityLink, ErrorBox, Loading, PageHeader } from '../components/ui';
+import { Card, EntityLink, ErrorBox, Loading, PageHeader } from '../components/ui';
 import { NeedCampaign } from './Campaign';
 
 /** The state of the world, region by region, as this campaign has left it. */
@@ -36,17 +36,24 @@ export function RegionsPage() {
       />
       <div className="grid gap-3 lg:grid-cols-2">
         {sorted.map((s) => (
-          <section key={s.region.id} className={`panel-pad space-y-2 ${touched(s) ? '' : 'opacity-70'}`}>
-            <div className="flex flex-wrap items-baseline gap-2">
-              <Globe2 size={15} className="text-gold self-center" />
-              <EntityLink id={s.region.id} className="font-display text-lg text-gold" />
-              {s.holder && (
-                <span className="text-xs text-dim">
+          <Card
+            key={s.region.id}
+            className={`space-y-2 ${touched(s) ? '' : 'opacity-70'}`}
+            icon={<Globe2 size={15} className="text-gold" />}
+            title={<EntityLink id={s.region.id} className="font-display text-lg text-gold" />}
+            aside={
+              s.holder && (
+                <>
                   held by <EntityLink id={s.holder.id} />
-                </span>
-              )}
-              <span className="text-xs text-dim ml-auto">{s.places} places</span>
-            </div>
+                </>
+              )
+            }
+            actions={
+              <span className="text-xs text-dim">
+                <span className="num">{s.places}</span> places
+              </span>
+            }
+          >
             <div className="grid gap-2 sm:grid-cols-2 text-sm">
               <Box title="Moving here">
                 {s.agendas.length || s.standing.length ? (
@@ -54,14 +61,14 @@ export function RegionsPage() {
                     {s.agendas.map((a) => (
                       <li key={a.id}>
                         {a.faction}: {a.title}{' '}
-                        <span className="text-dim">
+                        <span className="text-dim num">
                           ({a.progress}/{a.segments})
                         </span>
                       </li>
                     ))}
                     {s.standing.map((x) => (
                       <li key={x.faction_id} className="text-dim">
-                        The party is {x.rank} with {x.name} ({x.renown})
+                        The party is {x.rank} with {x.name} (<span className="num">{x.renown}</span>)
                       </li>
                     ))}
                   </ul>
@@ -99,7 +106,7 @@ export function RegionsPage() {
                 )}
                 {s.rumours.heard + s.rumours.unheard > 0 && (
                   <div className="text-xs text-dim mt-1">
-                    Rumours heard: {s.rumours.heard} of {s.rumours.heard + s.rumours.unheard}. <Link to="/rumours">Rumours</Link>
+                    Rumours heard: <span className="num">{s.rumours.heard}</span> of <span className="num">{s.rumours.heard + s.rumours.unheard}</span>. <Link to="/rumours">Rumours</Link>
                   </div>
                 )}
               </Box>
@@ -118,7 +125,7 @@ export function RegionsPage() {
                 )}
               </Box>
             </div>
-          </section>
+          </Card>
         ))}
       </div>
     </div>

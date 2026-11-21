@@ -137,7 +137,8 @@ export function HpBar({ hp, max, temp = 0, label, className = '' }: { hp: number
         </div>
       )}
       <div className="h-1.5 bg-raised rounded-full overflow-hidden" role="meter" aria-valuemin={0} aria-valuemax={max} aria-valuenow={hp} aria-label="Hit points">
-        <div className={`h-full rounded-full transition-[width] ${pct > 0.5 ? 'bg-ok' : pct > 0.25 ? 'bg-warn' : 'bg-danger'}`} style={{ width: `${pct * 100}%` }} />
+        {/* No maximum yet (a combatant added without hit points): an empty track, not a dying one. */}
+        {max > 0 && <div className={`h-full rounded-full transition-[width] ${pct > 0.5 ? 'bg-ok' : pct > 0.25 ? 'bg-warn' : 'bg-danger'}`} style={{ width: `${pct * 100}%` }} />}
       </div>
       {!label && temp > 0 && <div className="text-[10px] text-arcane num">+{temp} temp</div>}
     </div>
