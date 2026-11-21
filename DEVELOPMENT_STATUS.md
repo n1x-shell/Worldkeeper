@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-18 · v0.3.12_
+_Last updated: 2026-11-21 · v0.3.13_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,10 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.13
+
+- **Map look and usability** (`client/src/components/map/MapView.tsx`, GM and player maps): **Find a place** in the legend (fog-aware, Enter picks the first); grouped pins (greedy screen-space grouping at 34px, off at the closest zoom and while drawing; a click zooms in 1.5 levels or until they separate); a framed edge and vignette, a compass, and an overview inset when zoomed in (click to pan); a **Panels** choice, dark or the app's theme (`wk.map.panels`, `wk.map.overview` kept per device). The fog's blur has an explicit filter region, which removes a seam at high zoom.
 
 ## v0.3.12
 
