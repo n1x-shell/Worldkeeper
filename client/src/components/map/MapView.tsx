@@ -64,6 +64,45 @@ const pinIcon = (kind: Kind | 'note' | 'party', extra = '') =>
     html: `<div class="wk-pin wk-pin-k-${kind}${kind === 'region' ? ' wk-pin-region' : ''}${extra}"><svg viewBox="0 0 24 24" width="16" height="16">${GLYPH[kind]}</svg></div>`,
   });
 
+/** The campaign on the map (GM only): each layer's things at a place, drawn as a small badge beside its pin. */
+export type MapLayerId = 'quests' | 'adventures' | 'people' | 'encounters';
+export interface MapLayerSpot {
+  layer: MapLayerId;
+  entity_id: string;
+  place: string;
+  x: number;
+  y: number;
+  items: { id: string; label: string; href: string; hint?: string }[];
+}
+export const LAYERS: { key: MapLayerId; label: string; glyph: string; anchor: [number, number] }[] = [
+  {
+    key: 'quests',
+    label: 'Open quests',
+    glyph: '<path d="M12 4v10" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="19" r="1.6" fill="currentColor"/>',
+    anchor: [-5, 27],
+  },
+  { key: 'adventures', label: 'Adventure places', glyph: '<path d="M6 21V4h11l-2.5 4 2.5 4H6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>', anchor: [27, 27] },
+  {
+    key: 'people',
+    label: 'Who is here',
+    glyph: '<circle cx="12" cy="8" r="3.6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M5 20c0-3.8 3.2-6 7-6s7 2.2 7 6" fill="none" stroke="currentColor" stroke-width="2.2"/>',
+    anchor: [-5, -5],
+  },
+  {
+    key: 'encounters',
+    label: 'Prepared encounters',
+    glyph: '<path d="M5 19 19 5M15 5h4v4M19 19 5 5M5 9V5h4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
+    anchor: [27, -5],
+  },
+];
+const layerIcon = (l: (typeof LAYERS)[number], n: number) =>
+  L.divIcon({
+    className: '',
+    iconSize: [22, 22],
+    iconAnchor: l.anchor,
+    html: `<div class="wk-badge wk-badge-${l.key}"><svg viewBox="0 0 24 24" width="12" height="12">${l.glyph}</svg>${n > 1 ? `<span>${n}</span>` : ''}</div>`,
+  });
+
 /** Point a pin's name card away from the nearest screen edge. */
 function placeTip(marker: L.Marker) {
   const tip = marker.getTooltip();
@@ -246,6 +285,9 @@ export interface MapViewProps {
   showOutlines?: boolean;
   /** Fill the page's main view (the GM app, beside its sidebar and under its top bar) instead of the whole window. */
   contained?: boolean;
+  /** GM: the campaign on the map (quests, adventure places, people, encounters), and how to open what they link to. */
+  layers?: MapLayerSpot[] | null;
+  onOpenLink?: (href: string) => void;
 }
 
 export function MapView(p: MapViewProps) {
@@ -258,6 +300,15 @@ export function MapView(p: MapViewProps) {
     n: number;
   } | null>(null);
   const [hoverRegion, setHoverRegion] = useState<string | null>(null);
+  // Campaign layers switched off (people is off to start: there are a lot of them).
+  const [layersOff, setLayersOff] = useState<Set<string>>(() => new Set(readPref('wk.map.layersOff', 'people').split(',').filter(Boolean)));
+  const toggleLayer = (k: string) => {
+    const n = new Set(layersOff);
+    if (n.has(k)) n.delete(k);
+    else n.add(k);
+    setLayersOff(n);
+    writePref('wk.map.layersOff', [...n].join(','));
+  };
   const notesStore = `wk.notes.${p.notesKey}.${m.id}`;
   const [notes, setNotes] = useState<Note[]>(() => JSON.parse(readPref(notesStore, '[]')) as Note[]);
   const [addingNote, setAddingNote] = useState(false);
@@ -293,7 +344,10 @@ export function MapView(p: MapViewProps) {
   const known = (pin: ViewPin) => !ex || pin.kind === 'region' || (pin.entity_id != null && ex.discovered.has(pin.entity_id));
   const counts: Record<string, number> = { routes: routes.length };
   for (const pin of p.pins) if (fogMode === 'dim' || known(pin)) counts[pin.kind] = (counts[pin.kind] ?? 0) + 1;
-  const visible = p.pins.filter((pin) => !hidden.has(pin.kind) && (rel >= SHOW_FROM[pin.kind] || pin.entity_id === p.selected || p.draggable) && (fogMode === 'dim' || known(pin)));
+  const gmOnlyCount = p.pins.filter((pin) => pin.hidden).length;
+  const visible = p.pins.filter(
+    (pin) => !hidden.has(pin.kind) && !(pin.hidden && hidden.has('gmonly')) && (rel >= SHOW_FROM[pin.kind] || pin.entity_id === p.selected || p.draggable) && (fogMode === 'dim' || known(pin)),
+  );
   const discoverable = p.pins.filter((x) => x.kind !== 'region' && x.entity_id);
   const party = ex && ex.trail.length ? ex.trail[ex.trail.length - 1] : null;
   // Fog clears around discovered places and everywhere the party has been.
@@ -434,6 +488,45 @@ export function MapView(p: MapViewProps) {
             </Marker>
           );
         })}
+        {p.layers &&
+          (() => {
+            const shown = new Set(visible.map((v) => v.entity_id));
+            return p.layers
+              .filter((s) => !layersOff.has(s.layer) && shown.has(s.entity_id))
+              .map((s) => {
+                const l = LAYERS.find((x) => x.key === s.layer)!;
+                return (
+                  <Marker key={`${s.layer}:${s.entity_id}`} position={[s.y, s.x]} icon={layerIcon(l, s.items.length)} zIndexOffset={900}>
+                    <Tooltip direction="top" offset={[0, -10]} className="wk-map-tip">
+                      <div className="text-[10px] uppercase tracking-wider opacity-70">
+                        {l.label} · {s.place}
+                      </div>
+                      {s.items.slice(0, 4).map((i) => (
+                        <div key={i.id} className="text-[12px]">
+                          {i.label}
+                        </div>
+                      ))}
+                      {s.items.length > 4 && <div className="text-[11px] opacity-70">and {s.items.length - 4} more</div>}
+                    </Tooltip>
+                    <Popup className="wk-note-popup" maxWidth={280} autoPanPaddingTopLeft={[300, 80]} autoPanPaddingBottomRight={[40, 40]}>
+                      <div className="text-[10px] uppercase tracking-wider text-dim mb-1">
+                        {l.label} · {s.place}
+                      </div>
+                      <ul className="space-y-1 max-h-60 overflow-y-auto">
+                        {s.items.map((i) => (
+                          <li key={i.id}>
+                            <button type="button" className="text-left text-sm text-arcane hover:text-gold underline-offset-2 hover:underline" onClick={() => p.onOpenLink?.(i.href)}>
+                              {i.label}
+                            </button>
+                            {i.hint && <span className="text-xs text-dim"> · {i.hint}</span>}
+                          </li>
+                        ))}
+                      </ul>
+                    </Popup>
+                  </Marker>
+                );
+              });
+          })()}
         {party && (
           <Marker
             position={[party.y, party.x]}
@@ -544,7 +637,51 @@ export function MapView(p: MapViewProps) {
               </li>
             );
           })}
+          {p.draggable && gmOnlyCount > 0 && (
+            <li>
+              <button
+                type="button"
+                onClick={() => toggle('gmonly')}
+                className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 ${hidden.has('gmonly') ? 'opacity-45' : ''}`}
+                title="Hide them to see the map as players do"
+              >
+                <span className="w-6 h-6 rounded-full border border-dashed border-danger/70 shrink-0" />
+                <span className="flex-1 text-left text-sm">Hidden from players</span>
+                <span className="text-xs text-dim">{gmOnlyCount}</span>
+                {hidden.has('gmonly') ? <EyeOff size={14} className="text-dim" /> : <Eye size={14} className="text-dim" />}
+              </button>
+            </li>
+          )}
         </ul>
+        {p.layers && (
+          <div className="border-t border-line px-2 py-2">
+            <div className="px-2 pb-1 section-title text-[11px]">Campaign</div>
+            <ul>
+              {LAYERS.map((l) => {
+                const n = p.layers!.filter((s) => s.layer === l.key).reduce((t, s) => t + s.items.length, 0);
+                const off = layersOff.has(l.key);
+                return (
+                  <li key={l.key}>
+                    <button
+                      type="button"
+                      disabled={!n}
+                      onClick={() => toggleLayer(l.key)}
+                      className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 disabled:opacity-35 ${off ? 'opacity-45' : ''}`}
+                    >
+                      <span
+                        className={`wk-badge wk-badge-${l.key} wk-badge-legend shrink-0`}
+                        dangerouslySetInnerHTML={{ __html: `<svg viewBox="0 0 24 24" width="12" height="12">${l.glyph}</svg>` }}
+                      />
+                      <span className="flex-1 text-left text-sm">{l.label}</span>
+                      <span className="text-xs text-dim">{n}</span>
+                      {off ? <EyeOff size={14} className="text-dim" /> : <Eye size={14} className="text-dim" />}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        )}
         {/* Your own notes, kept on this device. */}
         <div className="border-t border-line px-4 py-2">
           <div className="flex items-center gap-2">

@@ -382,6 +382,30 @@ h3 {
   background: rgb(14 13 18 / 0.82);
   backdrop-filter: blur(6px);
 }
+.wk-badge {
+  @apply flex items-center justify-center gap-0.5 rounded-full border px-1 text-[10px] font-semibold leading-none shadow-lg;
+  min-width: 22px;
+  height: 22px;
+  color: rgb(var(--b));
+  border-color: rgb(var(--b) / 0.9);
+  background: rgb(14 13 18 / 0.9);
+}
+.wk-badge-legend {
+  width: 24px;
+  height: 24px;
+}
+.wk-badge-quests {
+  --b: 232 186 90;
+}
+.wk-badge-adventures {
+  --b: 146 162 228;
+}
+.wk-badge-people {
+  --b: 196 208 222;
+}
+.wk-badge-encounters {
+  --b: 236 124 110;
+}
 .wk-map-panel {
   @apply absolute z-[1000] rounded-lg border border-line shadow-2xl overflow-hidden transition-transform duration-300 ease-out;
   background: rgb(14 13 18 / 0.92);
@@ -406,6 +430,10 @@ h3 {
 /* Name cards sit above the map's side panels and bars, never under them. */
 .wk-explorer .leaflet-tooltip-pane {
   z-index: 1100;
+}
+/* Popups (a layer badge's list) open above the legend and place panels too. */
+.wk-explorer .leaflet-popup-pane {
+  z-index: 1150;
 }
 .wk-map-tip {
   width: max-content;

@@ -712,6 +712,11 @@ CREATE TABLE rules_entries (
 );
 `,
   },
+  {
+    version: 17,
+    name: 'encounters: where they happen, for the map',
+    sql: `ALTER TABLE encounters ADD COLUMN location_id TEXT;`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

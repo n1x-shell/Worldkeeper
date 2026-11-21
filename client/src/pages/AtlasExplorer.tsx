@@ -9,6 +9,11 @@ import { ErrorBox, Loading } from '../components/ui';
 import { MapView, kindOf, type ViewPin } from '../components/map/MapView';
 import { OutlineEditor, type Pt } from '../components/map/OutlineEditor';
 import { ENTITY_TYPE_LABELS, type Entity, type EntityType } from '../../../shared/domain';
+import { RegionPanel } from '../components/map/RegionPanel';
+import type { MapLayerSpot } from '../components/map/MapView';
+
+/** Kinds of record that get the region panel (terrain, campaign state, places, encounter tables). */
+const REGION_TYPES = new Set(['region', 'ethereal_domain', 'realm', 'nation', 'continent']);
 
 /**
  * The GM's full-screen Atlas: the same map view as the players' handbook, plus the GM's tools. Drag pins to move
@@ -86,7 +91,9 @@ function GmCodex({
   onClose,
   onChange,
   onOutline,
+  onPick,
 }: {
+  onPick: (id: string) => void;
   id: string;
   mapId: number;
   marker?: MarkerRow;
@@ -200,6 +207,7 @@ function GmCodex({
       </div>
       {err && <p className="text-danger text-xs px-4 pt-2">{err}</p>}
       <div className="flex-1 overflow-y-auto p-4">
+        {REGION_TYPES.has(e.type) && <RegionPanel id={e.id} onPick={onPick} />}
         {e.player_summary && (
           <div className="mb-4">
             <div className="section-title mb-1">What players read</div>
@@ -234,6 +242,8 @@ export function AtlasExplorer() {
     in_play: { campaignId: number; sessionId: number } | null;
   }>('/api/exploration/status');
   const { data: ex, reload: reloadEx, setData: setEx } = useApi<Exploration>(current && status?.active_campaign_id ? `/api/exploration?map_id=${current}` : null);
+  // The campaign on the map: quests, adventure places, people, prepared encounters.
+  const { data: layers } = useApi<MapLayerSpot[]>(current && status?.active_campaign_id ? `/api/map-layers?map_id=${current}` : null);
   const { data: unplaced, reload: reloadUnplaced } = useApi<Unplaced[]>(data ? `/api/maps/unplaced${data.map.entity_id ? `?scope=${encodeURIComponent(data.map.entity_id)}` : ''}` : null);
   const [placing, setPlacing] = useState<{
     prompt: string;
@@ -558,6 +568,7 @@ export function AtlasExplorer() {
             onOutline={startOutline}
             exploration={ex ?? null}
             onClose={() => select(null)}
+            onPick={(pid) => select(pid)}
             onChange={(next) => {
               if (next) setEx(next);
               else void reload();
@@ -567,6 +578,8 @@ export function AtlasExplorer() {
         ) : null
       }
       exploration={exploration}
+      layers={layers ?? null}
+      onOpenLink={(href) => nav(href)}
       fog="dim"
       notesKey="gm"
       draggable
