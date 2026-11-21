@@ -61,3 +61,15 @@ export function previewText(md: string): string {
   }
   return '';
 }
+
+export type PlayerWorkspace = 'world' | 'records' | 'maps' | 'campaign' | 'character';
+
+/** Which workspace a handbook path belongs to. */
+export function playerWorkspaceFor(path: string): PlayerWorkspace {
+  const p = path.replace(/^\/player(?=\/|$)/, '') || '/';
+  if (/^\/(browse|e|search|factions-web)(\/|$)/.test(p)) return 'records';
+  if (/^\/maps(\/|$)/.test(p)) return 'maps';
+  if (/^\/(quests|recaps|standing|treasure|handouts|calendar|regions|omens|journal)(\/|$)/.test(p)) return 'campaign';
+  if (/^\/(me|builder|print)(\/|$)/.test(p)) return 'character';
+  return 'world';
+}

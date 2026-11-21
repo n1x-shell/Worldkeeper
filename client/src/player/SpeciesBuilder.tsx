@@ -4,6 +4,9 @@ import { ArrowLeft, ArrowRight, Flower2, Search } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
 import { usePlayerData, type PEntity } from './source';
 import { Md } from './PlayerPages';
+import { Badge, RealmBadge } from '../components/ui/badges';
+import { Tabs } from '../components/ui/inputs';
+import { Empty, Loading } from '../components/ui/feedback';
 
 /**
  * Species and Classes, laid out like a character builder: pick from the list on the left, read everything about it on
@@ -16,9 +19,9 @@ const TABS = [
 ] as const;
 
 const CONTINENTS = [
-  { key: 'aetheris', label: 'Aetheris', dot: 'bg-arcane' },
-  { key: 'kaelmar', label: 'Kaelmar', dot: 'bg-gold' },
-  { key: 'ethereal', label: 'Ethereal Realm', dot: 'bg-ink/70' },
+  { key: 'aetheris', label: 'Aetheris', dot: 'bg-realm-aetheris' },
+  { key: 'kaelmar', label: 'Kaelmar', dot: 'bg-realm-kaelmar' },
+  { key: 'ethereal', label: 'Ethereal Realm', dot: 'bg-realm-ethereal' },
 ];
 
 /** The thirteen classes. Other calling records are the world's names for them. */
@@ -70,75 +73,88 @@ export function SpeciesBuilder({ entities }: { entities: PEntity[] }) {
   const shown = chosen ?? list[0];
 
   return (
-    <div>
-      <div className="mb-4">
-        <h1 className="text-2xl text-gold">Species and Classes</h1>
-        <div className="text-sm text-dim mt-1">
+    <div className="space-y-5">
+      <header className="title-band elev-1 !px-4 !py-4 sm:!px-6 sm:!py-5">
+        <div className="section-title">Peoples and classes</div>
+        <h1 className="illuminated mt-1 text-[26px] sm:text-[30px] leading-tight text-ink">Species and Classes</h1>
+        <p className="mt-2 text-sm text-dim max-w-[72ch]">
           Who your character is, and what they do. Pick one to read about it, or{' '}
-          <Link to={`${base}/builder`} className="text-arcane">
+          <Link to={`${base}/builder`} className="text-arcane hover:underline">
             make a character
           </Link>{' '}
           step by step.
-        </div>
-      </div>
-      <div className="flex gap-1 border-b border-line mb-4" role="tablist">
-        {TABS.map((t, i) => (
-          <button
-            key={t.key}
-            role="tab"
-            aria-selected={t.key === tab.key}
-            className={`px-4 py-2 -mb-px border-b-2 font-display ${t.key === tab.key ? 'border-gold text-gold' : 'border-transparent text-dim hover:text-ink'}`}
-            onClick={() => set({ tab: t.key === 'species' ? null : t.key, pick: null })}
-          >
-            {t.label} <span className="text-xs opacity-70">{counts[i]}</span>
-          </button>
-        ))}
-      </div>
-      <div className="grid gap-4 md:grid-cols-[260px_1fr]">
+        </p>
+      </header>
+      <Tabs
+        tabs={TABS.map((t, i) => ({
+          id: t.key,
+          label: (
+            <span className="inline-flex items-center gap-1.5 font-display tracking-wide">
+              {t.label} <span className="num text-xs text-dim">{counts[i]}</span>
+            </span>
+          ),
+        }))}
+        value={tab.key}
+        onChange={(k) => set({ tab: k === 'species' ? null : k, pick: null })}
+      />
+      <div className="grid gap-5 md:grid-cols-[17rem_minmax(0,1fr)]">
         {/* The list. On a phone it hides while something is picked. */}
-        <div className={`${chosen ? 'hidden md:block' : ''} min-w-0`}>
-          <label className="relative block mb-2">
-            <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-dim" />
-            <input className="input w-full pl-8" placeholder={`Find a ${tab.key === 'species' ? 'species' : 'class'}`} value={q} onChange={(e) => setQ(e.target.value)} />
+        <div className={`${chosen ? 'hidden md:block' : ''} min-w-0 space-y-3`}>
+          <label className="relative block">
+            <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-dim" aria-hidden />
+            <input
+              className="input w-full pl-8 min-h-10 sm:min-h-0"
+              placeholder={`Find a ${tab.key === 'species' ? 'species' : 'class'}`}
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              aria-label={`Find a ${tab.key === 'species' ? 'species' : 'class'}`}
+            />
           </label>
-          <ul className="panel p-1 md:max-h-[70vh] md:overflow-y-auto" aria-label={tab.label}>
-            {list.map((e) => (
-              <li key={e.id}>
-                <button
-                  className={`w-full text-left rounded px-2.5 py-2 flex items-center gap-2 ${shown?.id === e.id ? (chosen ? 'bg-gold/15 text-gold' : 'md:bg-gold/15 md:text-gold hover:bg-white/5') : 'hover:bg-white/5'}`}
-                  onClick={() => set({ pick: e.id })}
-                  aria-current={shown?.id === e.id}
-                >
-                  <span className="flex-1 min-w-0">
-                    <span className="block truncate font-display">{e.name}</span>
-                    {knownAs(e) && <span className="block truncate text-xs text-dim">called a {knownAs(e)}</span>}
-                  </span>
-                  {e.bloom && <Flower2 size={13} className="text-gold shrink-0" aria-label="Shaped by the Bloom" />}
-                  <span className="flex gap-0.5 shrink-0">
-                    {where(e).map((c) => (
-                      <span key={c.key} className={`w-1.5 h-1.5 rounded-full ${c.dot}`} title={c.label} />
-                    ))}
-                  </span>
-                </button>
+          <ul className="panel elev-1 p-1 md:max-h-[70vh] md:overflow-y-auto" aria-label={tab.label}>
+            {list.map((e) => {
+              const on = shown?.id === e.id;
+              return (
+                <li key={e.id}>
+                  <button
+                    className={`w-full min-h-10 text-left rounded-md px-2.5 py-1.5 flex items-center gap-2 transition-colors ${on ? (chosen ? 'bg-gold/10 text-gold' : 'md:bg-gold/10 md:text-gold hover:bg-raised') : 'hover:bg-raised'}`}
+                    onClick={() => set({ pick: e.id })}
+                    aria-current={on}
+                  >
+                    <span className="flex-1 min-w-0">
+                      <span className="block truncate font-display tracking-wide">{e.name}</span>
+                      {knownAs(e) && <span className="block truncate text-xs text-dim">called a {knownAs(e)}</span>}
+                    </span>
+                    {e.bloom && <Flower2 size={13} className="text-gold shrink-0" aria-label="Shaped by the Bloom" />}
+                    <span className="flex gap-1 shrink-0">
+                      {where(e).map((c) => (
+                        <span key={c.key} className={`w-1.5 h-1.5 rounded-full ${c.dot}`} title={c.label} />
+                      ))}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+            {!list.length && (
+              <li>
+                <Empty compact title={q ? `Nothing matches “${q}”.` : `No ${tab.key === 'species' ? 'species' : 'classes'} yet.`} />
               </li>
-            ))}
-            {!list.length && <li className="text-sm text-dim p-3">Nothing matches.</li>}
+            )}
           </ul>
           {worldNames.length > 0 && (
-            <div className="mt-3 px-1 text-sm">
-              <div className="text-xs uppercase tracking-widest text-dim mb-1">What the world calls them</div>
+            <div className="px-1 text-sm">
+              <div className="section-title !text-xs mb-1.5">What the world calls them</div>
               <div className="flex flex-wrap gap-x-3 gap-y-1">
                 {worldNames.map((e) => (
-                  <button key={e.id} className={`hover:text-gold ${shown?.id === e.id ? 'text-gold' : 'text-arcane'}`} onClick={() => set({ pick: e.id })}>
+                  <button key={e.id} className={`min-h-8 hover:text-gold ${shown?.id === e.id ? 'text-gold' : 'text-arcane'}`} onClick={() => set({ pick: e.id })}>
                     {e.name}
                   </button>
                 ))}
               </div>
             </div>
           )}
-          <div className="flex flex-wrap gap-3 text-xs text-dim mt-2 px-1">
+          <div className="flex flex-wrap gap-3 text-xs text-dim px-1">
             {CONTINENTS.filter((c) => c.key !== 'ethereal' || list.some((e) => where(e).includes(c))).map((c) => (
-              <span key={c.key} className="inline-flex items-center gap-1">
+              <span key={c.key} className="inline-flex items-center gap-1.5">
                 <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} /> {c.label}
               </span>
             ))}
@@ -150,7 +166,9 @@ export function SpeciesBuilder({ entities }: { entities: PEntity[] }) {
           </div>
         </div>
         {/* The page. On a phone it only shows once something is picked. */}
-        <div className={`${chosen ? '' : 'hidden md:block'} min-w-0`}>{shown ? <Detail entry={shown} onBack={() => set({ pick: null })} /> : <p className="text-dim">Nothing here yet.</p>}</div>
+        <div className={`${chosen ? '' : 'hidden md:block'} min-w-0`}>
+          {shown ? <Detail entry={shown} onBack={() => set({ pick: null })} /> : <Empty title="Nothing here yet">When your GM shares peoples and classes, they appear here.</Empty>}
+        </div>
       </div>
     </div>
   );
@@ -164,34 +182,39 @@ function Detail({ entry, onBack }: { entry: PEntity; onBack: () => void }) {
   const e = { ...entry, ...(data ?? {}), realms: entry.realms, bloom: entry.bloom ?? data?.bloom };
   const places = where(e);
   return (
-    <article className="panel p-5 space-y-3">
-      <button className="md:hidden text-sm text-arcane inline-flex items-center gap-1" onClick={onBack}>
-        <ArrowLeft size={13} /> All {e.type === 'calling' ? 'classes' : 'species'}
+    <article className="panel elev-1 gilt-corners p-4 sm:p-6 space-y-4">
+      <button className="md:hidden min-h-10 -mt-1 text-sm text-arcane inline-flex items-center gap-1" onClick={onBack}>
+        <ArrowLeft size={14} /> All {e.type === 'calling' ? 'classes' : 'species'}
       </button>
-      <div>
-        <h2 className="text-3xl text-gold font-display">{e.name}</h2>
-        <div className="flex flex-wrap gap-1.5 mt-2">
-          {places.map((c) => (
-            <span key={c.key} className="chip border-line text-ink inline-flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full ${c.dot}`} /> {c.label}
-            </span>
-          ))}
-          {e.bloom && (
-            <span className="chip border-gold/60 text-gold inline-flex items-center gap-1.5" title="The spore-storms of the Bloom in Kaelmar rewrote this people.">
-              <Flower2 size={12} /> Shaped by the Bloom
-            </span>
-          )}
-        </div>
+      <header className="border-b border-line pb-4">
+        <h2 className="illuminated text-[26px] sm:text-[30px] leading-tight text-ink break-words">{e.name}</h2>
+        {(places.length > 0 || e.bloom) && (
+          <div className="flex flex-wrap gap-1.5 mt-3">
+            {places.map((c) => (
+              <RealmBadge key={c.key} realm={c.key} />
+            ))}
+            {e.bloom && (
+              <Badge tone="gold" icon={<Flower2 size={12} />} title="The spore-storms of the Bloom in Kaelmar rewrote this people.">
+                Shaped by the Bloom
+              </Badge>
+            )}
+          </div>
+        )}
+      </header>
+      {!data && !e.summary && <Loading inline label="Opening…" />}
+      <div className="max-w-[72ch] space-y-4">
+        {e.summary && <Md text={e.summary} />}
+        {e.sections?.map((s) => (
+          <Md key={s.heading} text={`## ${s.heading}\n\n${s.content}`} />
+        ))}
       </div>
-      {e.summary && <Md text={e.summary} />}
-      {e.sections?.map((s) => (
-        <Md key={s.heading} text={`## ${s.heading}\n\n${s.content}`} />
-      ))}
-      {!e.summary && !e.sections?.length && <p className="text-dim">You know of them, but little more.</p>}
+      {data !== undefined && !e.summary && !e.sections?.length && <p className="text-dim italic">You know of them, but little more.</p>}
       {byId.has(e.id) && (
-        <Link to={`${base}/e/${encodeURIComponent(e.id)}`} className="text-sm text-arcane inline-flex items-center gap-1">
-          Open the full page <ArrowRight size={13} />
-        </Link>
+        <div className="border-t border-line pt-3">
+          <Link to={`${base}/e/${encodeURIComponent(e.id)}`} data-peek={e.id} className="btn min-h-10 sm:min-h-0">
+            Open the full page <ArrowRight size={14} />
+          </Link>
+        </div>
       )}
     </article>
   );

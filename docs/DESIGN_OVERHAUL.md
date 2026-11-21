@@ -1,6 +1,6 @@
 # Design Overhaul: Product Requirements
 
-**Status:** Approved direction (owner answers recorded in section 3). Step 1 (tokens and themes) done in v0.3.7, step 2 (the shell) in v0.3.8, step 3 (the shared components) in v0.3.14, step 4 (Quick-Peek) in v0.3.15, step 5 (the key pages) in v0.3.16; step 6 next
+**Status:** Approved direction (owner answers recorded in section 3). Step 1 (tokens and themes) done in v0.3.7, step 2 (the shell) in v0.3.8, step 3 (the shared components) in v0.3.14, step 4 (Quick-Peek) in v0.3.15, step 5 (the key pages) in v0.3.16, step 6 (the player side) in v0.3.17; step 7 next
 **Scope:** The look and layout of the GM app, the in-app Player View, the table server and the published Player Handbook. No changes to data, rules or what players can see.
 
 ## 1. Why
@@ -199,6 +199,8 @@ The other pages get the shell and shared components without bespoke layouts.
 - Their own navigation stays simpler: a top bar with World, Records, Maps, Campaign and My Character, and a sidebar for the current section.
 - Hover cards show only what players may see. That information comes from the player projection, as today.
 - The printable sheet and printable handbook keep their print layouts.
+
+**As built (v0.3.17):** `client/src/player/PlayerLayout.tsx` has the five workspaces (`playerWorkspaceFor` in `categories.ts`), a section sidebar and a phone drawer; parchment is the default. Hover cards (`PlayerPeek.tsx`) use the shared delegation (`components/peek/hover.ts`) with data from `source.entity`, so they show exactly what the handbook shows. Every page is on the design: the home (latest recap featured, quests, realm cards, browse tiles, maps), entries (illuminated title band, lore column, At a glance, connections, mentioned in), browse, realm and search, the campaign pages, the maps (filling the page under the top bar like the GM's Atlas, with the legend in the sidebar), My Character and the shared sheet (a header band with hit points, AC, initiative and speed; phone-first tabs and touch targets), the live card ("Your turn"), Print's controls and the character builder (a stepper, choice cards, a live summary). Player code imports only the ui files with no app dependencies (badges, surfaces, data, inputs, overlays, feedback); `tests/playerBundle.test.ts` walks the handbook's imports and fails on GM code.
 
 ## 11. Responsive behaviour
 

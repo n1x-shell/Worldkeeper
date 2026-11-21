@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ChevronDown, ChevronRight, Plus, Wand2, X } from 'lucide-react';
 import type { Feature, Sheet } from '@shared/sheet';
 import { classInfo, ORIGIN_FEATS } from '@shared/rules2024';
-import { Rule } from './parts';
+import { LABEL, Rule } from './parts';
 import { classFeaturesFor, featFor, hasClassRules, loadRulesText, speciesTraitsFor, useLoaded } from './options';
 
 /** Add features that aren't there yet (by name and source), keeping the ones the player wrote or changed. */
@@ -36,12 +36,12 @@ function FeatureList({
           !readOnly && (
             <span className="flex gap-1">
               {fill && (
-                <button className="btn-ghost text-xs" onClick={fill} title={fillLabel}>
+                <button className="btn-ghost text-xs max-sm:min-h-10" onClick={fill} title={fillLabel}>
                   <Wand2 size={13} /> {fillLabel}
                 </button>
               )}
               <button
-                className="btn-ghost text-xs"
+                className="btn-ghost text-xs max-sm:min-h-10"
                 onClick={() => {
                   onChange([...list, { name: '', source: '', text: '' }]);
                   setOpen(list.length);
@@ -57,14 +57,14 @@ function FeatureList({
       </Rule>
       {addOptions && !readOnly && (
         <div className="flex gap-2">
-          <select className="input" value={pick} onChange={(e) => setPick(e.target.value)} aria-label={`Add from the list: ${title}`}>
+          <select className="input max-sm:min-h-10" value={pick} onChange={(e) => setPick(e.target.value)} aria-label={`Add from the list: ${title}`}>
             <option value="">Add from the list…</option>
             {addOptions.map((o) => (
               <option key={o}>{o}</option>
             ))}
           </select>
           <button
-            className="btn"
+            className="btn max-sm:min-h-10"
             disabled={!pick}
             onClick={async () => {
               const t = await loadRulesText();
@@ -79,26 +79,19 @@ function FeatureList({
       {list.length === 0 && <p className="text-sm text-dim">None yet.</p>}
       <ul className="space-y-1.5">
         {list.map((f, i) => (
-          <li key={i} className="rounded border border-line/60 bg-bg/30">
-            <div className="flex items-center gap-2 px-2 py-1.5">
+          <li key={i} className={`rounded-md border bg-raised/40 ${open === i ? 'border-gold/40' : 'border-line'}`}>
+            <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_2.5rem] items-center gap-x-1 py-0.5 pr-0.5 sm:grid-cols-[2rem_minmax(0,1fr)_10rem_2rem] sm:gap-x-2 sm:py-1">
               <button
-                className="text-dim hover:text-gold"
+                className="flex h-10 items-center justify-center rounded text-dim hover:text-gold sm:h-7"
                 onClick={() => setOpen(open === i ? null : i)}
                 aria-expanded={open === i}
                 aria-label={`${open === i ? 'Hide' : 'Show'} ${f.name || 'feature'}`}
               >
                 {open === i ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
               </button>
+              <input className="input-bare text-sm font-semibold text-ink" value={f.name} placeholder="Name" aria-label="Name" disabled={readOnly} onChange={(e) => set(i, { name: e.target.value })} />
               <input
-                className="input-bare font-display text-[14px] tracking-wide flex-1"
-                value={f.name}
-                placeholder="Name"
-                aria-label="Name"
-                disabled={readOnly}
-                onChange={(e) => set(i, { name: e.target.value })}
-              />
-              <input
-                className="input-bare text-xs text-dim w-36"
+                className="input-bare col-start-2 row-start-2 mb-1 text-xs text-dim sm:col-start-auto sm:row-start-auto sm:mb-0"
                 value={f.source}
                 placeholder="Where it's from"
                 aria-label="Source"
@@ -106,17 +99,21 @@ function FeatureList({
                 onChange={(e) => set(i, { source: e.target.value })}
               />
               {!readOnly && (
-                <button className="text-dim hover:text-danger" aria-label={`Remove ${f.name || 'feature'}`} onClick={() => onChange(list.filter((_, j) => j !== i))}>
+                <button
+                  className="col-start-3 row-start-1 flex h-10 w-10 items-center justify-center rounded text-dim hover:bg-danger/10 hover:text-danger sm:col-start-auto sm:row-start-auto sm:h-7 sm:w-7"
+                  aria-label={`Remove ${f.name || 'feature'}`}
+                  onClick={() => onChange(list.filter((_, j) => j !== i))}
+                >
                   <X size={14} />
                 </button>
               )}
             </div>
             {open === i &&
               (readOnly ? (
-                <div className="px-3 pb-2 font-serif text-[15px] whitespace-pre-wrap">{f.text}</div>
+                <div className="max-w-[72ch] whitespace-pre-wrap border-t border-line px-3 py-2.5 font-serif text-[16px] leading-relaxed">{f.text}</div>
               ) : (
                 <textarea
-                  className="input font-serif text-[15px] min-h-28 rounded-none border-x-0 border-b-0"
+                  className="input min-h-28 rounded-none rounded-b-md border-x-0 border-b-0 font-serif text-[16px] leading-relaxed"
                   value={f.text}
                   aria-label={`${f.name} text`}
                   onChange={(e) => set(i, { text: e.target.value })}
@@ -181,7 +178,7 @@ export function FeaturesTab({
             .filter(([k]) => s[k])
             .map(([k, label]) => (
               <label key={k} className="block">
-                <span className="text-[10px] uppercase tracking-[0.16em] text-dim">{label}</span>
+                <span className={`block ${LABEL}`}>{label}</span>
                 <textarea className="input min-h-20" value={s[k] ?? ''} disabled={readOnly} onChange={(e) => put({ [k]: e.target.value })} />
               </label>
             ))}

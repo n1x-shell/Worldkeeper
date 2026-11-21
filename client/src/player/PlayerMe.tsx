@@ -1,7 +1,9 @@
 import { useMechanics } from '../lib/mechanics';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { Printer } from 'lucide-react';
+import { KeyRound, Printer, UserRound } from 'lucide-react';
+import type { ReactNode } from 'react';
+import { Loading, SaveStatus } from '../components/ui/feedback';
 import { usePlayer } from './context';
 import type { PCharacterPage } from './source';
 import { FullSheet } from './sheet/FullSheet';
@@ -36,28 +38,46 @@ export function PlayerMe() {
   const [entered, setEntered] = useState('');
   if (!source.myPage) {
     return (
-      <div className="panel p-6 max-w-xl space-y-2">
-        <h1 className="text-2xl text-gold">My Character</h1>
-        <p>Your character page lives on the table server, where you can keep it up to date. Ask your GM for your link.</p>
-      </div>
+      <Welcome title="My Character">
+        <p className="text-sm text-ink/85">Your character page lives on the table server, where you can keep it up to date. Ask your GM for your link.</p>
+      </Welcome>
     );
   }
   if (!code) {
     const last = remembered();
     if (last) return <Navigate to={`${base}/me/${last}`} replace />;
     return (
-      <form
-        className="panel p-6 max-w-md space-y-3"
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (entered.trim()) navigate(`${base}/me/${entered.trim().toUpperCase()}`);
-        }}
-      >
-        <h1 className="text-2xl text-gold">My Character</h1>
-        <p className="text-sm text-dim">Enter the code your GM gave you for your character.</p>
-        <input className="input w-full tracking-widest uppercase" value={entered} onChange={(e) => setEntered(e.target.value)} placeholder="ABCD2345" aria-label="Character code" />
-        <button className="btn-primary">Open my page</button>
-      </form>
+      <Welcome title="My Character">
+        <form
+          className="space-y-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (entered.trim()) navigate(`${base}/me/${entered.trim().toUpperCase()}`);
+          }}
+        >
+          <p className="text-sm text-ink/85">Your sheet, your portrait and your story, kept up to date at the table. Enter the code your GM gave you for your character.</p>
+          <label className="block space-y-1.5">
+            <span className="label">Character code</span>
+            <span className="relative block">
+              <KeyRound size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-dim" aria-hidden />
+              <input
+                className="input num h-12 pl-10 text-lg uppercase tracking-[0.3em] placeholder:tracking-[0.3em]"
+                value={entered}
+                onChange={(e) => setEntered(e.target.value)}
+                placeholder="ABCD2345"
+                aria-label="Character code"
+                autoComplete="off"
+                autoCapitalize="characters"
+                spellCheck={false}
+              />
+            </span>
+          </label>
+          <button className="btn-primary h-11 w-full justify-center text-[15px]" disabled={!entered.trim()}>
+            Open my page
+          </button>
+          <p className="text-center text-xs text-dim">This device remembers it, so next time your page opens by itself.</p>
+        </form>
+      </Welcome>
     );
   }
   return <MyPage key={code} code={code} />;
@@ -102,14 +122,15 @@ function MyPage({ code }: { code: string }) {
   const loadLog = useCallback(() => source.myLog!(code), [source, code]);
   const mech = useMechanics();
 
-  if (page === undefined) return <p className="text-dim text-sm">Loading…</p>;
+  if (page === undefined) return <Loading label="Opening your character…" />;
   if (page === null)
     return (
-      <div className="panel p-6 max-w-md space-y-3">
-        <h1 className="text-2xl text-gold">My Character</h1>
-        <p>No character has the code {code}. Check it with your GM.</p>
+      <Welcome title="My Character">
+        <p className="text-sm text-ink/85">
+          No character has the code <span className="num font-semibold tracking-[0.15em] text-ink">{code}</span>. Check it with your GM.
+        </p>
         <button
-          className="btn"
+          className="btn h-11 w-full justify-center"
           onClick={() => {
             remember('');
             navigate(`${base}/me`);
@@ -117,18 +138,16 @@ function MyPage({ code }: { code: string }) {
         >
           Try another code
         </button>
-      </div>
+      </Welcome>
     );
 
   const thinning: ThinningPage = page;
   return (
-    <div className="space-y-3 max-w-6xl">
-      <div className="flex items-center gap-2 print:hidden">
-        <h1 className="text-sm uppercase tracking-[0.2em] text-dim font-display">My Character</h1>
-        <span className="text-xs text-dim" aria-live="polite">
-          {status}
-        </span>
-        <button className="btn-ghost ml-auto text-sm" onClick={() => window.print()}>
+    <div className="mx-auto max-w-6xl space-y-3">
+      <div className="flex min-h-10 flex-wrap items-center gap-x-3 gap-y-1 print:hidden">
+        <h1 className="section-title">My Character</h1>
+        {status && <SaveStatus state={status === 'Saving…' ? 'saving' : status === 'Saved' ? 'saved' : 'error'} error={status} />}
+        <button className="btn ml-auto max-sm:min-h-10" onClick={() => window.print()}>
           <Printer size={14} /> Print
         </button>
       </div>
@@ -164,6 +183,23 @@ function MyPage({ code }: { code: string }) {
           extraTabs={mech?.thinning === false ? [] : [{ id: 'thinning', label: 'Thinning', content: <ThinningTab page={thinning} onChange={(t, now) => void save({ ...page, ...t }, now)} /> }]}
         />
       </div>
+    </div>
+  );
+}
+
+/** A welcoming card for the way in: the code to enter, or why there's nothing here. */
+function Welcome({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="mx-auto max-w-md pt-4 sm:pt-12">
+      <section className="panel elev-2 gilt-corners space-y-5 px-6 py-8 sm:px-8">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full border border-gold/50 bg-gold/10 text-gold" aria-hidden>
+            <UserRound size={26} />
+          </span>
+          <h1 className="title-rule text-[28px] text-gold">{title}</h1>
+        </div>
+        {children}
+      </section>
     </div>
   );
 }

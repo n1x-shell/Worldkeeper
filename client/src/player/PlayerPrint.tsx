@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Printer } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
-import { Md } from './PlayerPages';
+import { Md, PlayerPageTitle } from './PlayerPages';
 import { OTHER_GROUP, PLAYER_GROUPS, groupOf } from './categories';
 import type { PEntity } from './source';
+import type { ReactNode } from 'react';
+import { Card } from '../components/ui/surfaces';
 
 /** The table cards: one page each, in this order, found by name. */
 export const CARD_NAMES = ['Session Zero', 'Hollow Refuge in One Page', 'Ashvale in One Page', 'The Nameless Asylum in One Page', 'House Rules', 'Safety Tools'];
@@ -57,28 +59,47 @@ export function PlayerPrint() {
   if (!entities) return null;
   return (
     <div className="space-y-4">
-      <div className="wk-print-controls space-y-3">
-        <h1 className="text-3xl text-gold">Print</h1>
-        <p className="text-sm text-dim">Choose what to print. Each entry starts on a new sheet. Use your browser&apos;s print, or &ldquo;Save as PDF&rdquo;, to make a file.</p>
-        <div className="flex flex-wrap gap-1.5">
-          <button className={`chip ${choice === 'cards' ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setChoice('cards')}>
-            Table cards
-          </button>
-          {groups.map(({ g, list }) => (
-            <button key={g.key} className={`chip ${choice === g.key ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setChoice(g.key)}>
-              {g.label} ({list.length})
+      <div className="wk-print-controls space-y-4">
+        <PlayerPageTitle
+          eyebrow="Handbook"
+          icon={<Printer size={14} />}
+          title="Print"
+          subtitle="Choose what to print. Each entry starts on a new sheet. Use your browser's print, or “Save as PDF”, to make a file."
+        />
+        <Card title="What to print">
+          <div className="flex flex-wrap gap-2" role="group" aria-label="What to print">
+            <Choice on={choice === 'cards'} onClick={() => setChoice('cards')}>
+              Table cards
+            </Choice>
+            {groups.map(({ g, list }) => (
+              <Choice key={g.key} on={choice === g.key} onClick={() => setChoice(g.key)} count={list.length}>
+                {g.label}
+              </Choice>
+            ))}
+            <Choice on={choice === 'all'} onClick={() => setChoice('all')} count={entities.length}>
+              The whole handbook
+            </Choice>
+          </div>
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-line pt-4">
+            <p className="min-w-0 flex-1 basis-[16rem] text-sm text-dim">
+              {choice === 'cards' ? (
+                'The table cards: Session Zero, a one-page primer for each starting place, the House Rules and the Safety Tools.'
+              ) : (
+                <span className="num">{chosen.length} entries, one to a sheet.</span>
+              )}
+            </p>
+            <button className="btn-primary min-h-10 justify-center px-4 max-sm:w-full" disabled={!pages} onClick={() => window.print()}>
+              <Printer size={15} />{' '}
+              {pages ? (
+                'Print or save as PDF'
+              ) : (
+                <span className="num">
+                  Getting ready… {progress} of {chosen.length}
+                </span>
+              )}
             </button>
-          ))}
-          <button className={`chip ${choice === 'all' ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setChoice('all')}>
-            The whole handbook ({entities.length})
-          </button>
-        </div>
-        <p className="text-xs text-dim">
-          {choice === 'cards' ? 'The table cards: Session Zero, a one-page primer for each starting place, the House Rules and the Safety Tools.' : `${chosen.length} entries.`}
-        </p>
-        <button className="btn-primary inline-flex items-center gap-2" disabled={!pages} onClick={() => window.print()}>
-          <Printer size={15} /> {pages ? 'Print or save as PDF' : `Getting ready… ${progress} of ${chosen.length}`}
-        </button>
+          </div>
+        </Card>
       </div>
       {pages && (
         <div className="wk-print wk-print-pages space-y-6">
@@ -97,5 +118,20 @@ export function PlayerPrint() {
         </div>
       )}
     </div>
+  );
+}
+
+/** One choice of what to print: a tag-like toggle, finger-sized on a phone. */
+function Choice({ on, onClick, count, children }: { on: boolean; onClick: () => void; count?: number; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={onClick}
+      className={`inline-flex min-h-10 items-center gap-1.5 rounded-md border px-3 text-sm transition-colors sm:min-h-8 ${on ? 'border-gold/70 bg-gold/15 font-medium text-gold' : 'border-line bg-raised/50 text-ink/85 hover:border-gold/50 hover:text-ink'}`}
+    >
+      {children}
+      {count !== undefined && <span className={`num text-xs ${on ? 'text-gold/80' : 'text-dim'}`}>{count}</span>}
+    </button>
   );
 }

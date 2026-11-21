@@ -3,29 +3,54 @@ import { useState, type ReactNode } from 'react';
 
 export const num = (v: string) => (v === '' ? undefined : Number(v));
 
+/** The small caps over a field or a figure. */
+export const LABEL = 'text-[11px] font-medium uppercase tracking-[0.12em] text-dim';
+
 /** A labelled field. */
 export function Field({ label, hint, children, className = '' }: { label: string; hint?: string; children: ReactNode; className?: string }) {
   return (
-    <label className={`block space-y-0.5 ${className}`}>
-      <span className="text-[10px] uppercase tracking-[0.16em] text-dim">{label}</span>
+    <label className={`block space-y-1 ${className}`}>
+      <span className={`block ${LABEL}`}>{label}</span>
       {children}
-      {hint && <span className="block text-[11px] text-dim">{hint}</span>}
+      {hint && <span className="block text-xs text-dim">{hint}</span>}
     </label>
   );
 }
 
+/** A figure in a box: AC, Initiative, a passive score, a coin. The value is tabular, so columns of them line up. */
+export function Stat({ label, children, foot, className = '', title }: { label: ReactNode; children: ReactNode; foot?: ReactNode; className?: string; title?: string }) {
+  return (
+    <div className={`flex min-w-0 flex-col items-center justify-center rounded-md border border-line bg-raised/60 px-2 py-1.5 text-center ${className}`} title={title}>
+      <span className="block max-w-full text-[10px] font-medium uppercase leading-tight tracking-[0.08em] text-dim">{label}</span>
+      <span className="num block w-full text-xl font-semibold leading-tight text-ink">{children}</span>
+      {foot}
+    </div>
+  );
+}
+
+/** Number inputs drawn as plain figures: no spinner arrows. */
+export const NO_SPIN = '[-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none';
+
+/** The bare input inside a Stat: it takes the box's figure style. */
+export const STAT_INPUT = 'num w-full bg-transparent text-center text-xl font-semibold leading-tight text-ink placeholder:text-dim/60 focus:outline-none disabled:opacity-100';
+
 /** A section heading in the ledger's style, with optional actions on the right. */
 export function Rule({ children, actions }: { children: ReactNode; actions?: ReactNode }) {
   return (
-    <div className="flex items-center gap-2">
-      <h3 className="ledger-rule flex-1">{children}</h3>
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
+      <h3 className="ledger-rule min-w-[14rem] flex-1">{children}</h3>
       {actions}
     </div>
   );
 }
 
-/** The official sheet's diamond: a toggle with its meaning spelled out for screen readers and on hover. */
-export function Diamond({ on, onChange, label, disabled, double }: { on: boolean; onChange?: (on: boolean) => void; label: string; disabled?: boolean; double?: boolean }) {
+/**
+ * The official sheet's diamond: a toggle with its meaning spelled out for screen readers and on hover. `cover` makes
+ * the whole row it sits in (the nearest positioned parent) the thing to tap, which is how a 16px diamond gets a
+ * finger-sized target on a phone.
+ */
+export function Diamond({ on, onChange, label, disabled, double, cover }: { on: boolean; onChange?: (on: boolean) => void; label: string; disabled?: boolean; double?: boolean; cover?: boolean }) {
+  const live = !disabled && !!onChange;
   return (
     <button
       type="button"
@@ -33,8 +58,8 @@ export function Diamond({ on, onChange, label, disabled, double }: { on: boolean
       aria-checked={on}
       aria-label={label}
       title={label}
-      disabled={disabled || !onChange}
-      className={`diamond ${double ? 'diamond-double' : ''}`}
+      disabled={!live}
+      className={`diamond ${double ? 'diamond-double' : ''} ${cover && live ? "after:absolute after:inset-0 after:rounded after:content-[''] hover:after:bg-gold/5" : ''}`}
       onClick={() => onChange?.(!on)}
     />
   );
@@ -47,7 +72,7 @@ export function Pips({ max, used, onChange, label }: { max: number; used: number
       <span className="inline-flex items-center gap-1 text-sm">
         <input
           type="number"
-          className="input-bare w-12 text-center"
+          className="input-bare num w-12 text-center"
           min={0}
           max={max}
           value={max - used}
@@ -72,7 +97,10 @@ export interface Tab {
   label: string;
   content: ReactNode;
 }
-/** Tabs along the top of the sheet; the open one is remembered for this browser. */
+/**
+ * Tabs along the top of the sheet; the open one is remembered for this browser. On a phone they wrap into a grid of
+ * finger-sized cells (every section in view, no sideways scrolling); from a small tablet up they're a single row.
+ */
 export function Tabs({ tabs, storeKey }: { tabs: Tab[]; storeKey: string }) {
   const [open, setOpen] = useState(() => {
     try {
@@ -91,29 +119,35 @@ export function Tabs({ tabs, storeKey }: { tabs: Tab[]; storeKey: string }) {
     }
   };
   return (
-    <div className="space-y-4">
-      <div className="ledger-tabs" role="tablist" aria-label="Sheet sections">
-        {tabs.map((t) => (
-          <button
-            key={t.id}
-            role="tab"
-            id={`tab-${t.id}`}
-            aria-selected={t.id === current?.id}
-            aria-controls={`panel-${t.id}`}
-            className="ledger-tab"
-            onClick={() => choose(t.id)}
-            onKeyDown={(e) => {
-              const i = tabs.findIndex((x) => x.id === t.id);
-              const next = e.key === 'ArrowRight' ? tabs[(i + 1) % tabs.length] : e.key === 'ArrowLeft' ? tabs[(i - 1 + tabs.length) % tabs.length] : null;
-              if (next) {
-                choose(next.id);
-                document.getElementById(`tab-${next.id}`)?.focus();
-              }
-            }}
-          >
-            {t.label}
-          </button>
-        ))}
+    <div className="space-y-5">
+      <div className="grid grid-cols-3 gap-1 min-[420px]:grid-cols-4 sm:flex sm:flex-wrap sm:gap-x-1 sm:gap-y-0 sm:border-b sm:border-line" role="tablist" aria-label="Sheet sections">
+        {tabs.map((t) => {
+          const on = t.id === current?.id;
+          return (
+            <button
+              key={t.id}
+              role="tab"
+              id={`tab-${t.id}`}
+              aria-selected={on}
+              aria-controls={`panel-${t.id}`}
+              tabIndex={on ? 0 : -1}
+              className={`relative min-h-10 whitespace-nowrap rounded-md border px-2 text-sm font-medium transition-colors sm:-mb-px sm:min-h-0 sm:rounded-none sm:border-0 sm:border-b-2 sm:px-3 sm:py-2 ${
+                on ? 'border-gold/60 bg-gold/15 text-gold sm:border-gold sm:bg-transparent' : 'border-line bg-raised/50 text-dim hover:text-ink sm:border-transparent sm:bg-transparent'
+              }`}
+              onClick={() => choose(t.id)}
+              onKeyDown={(e) => {
+                const i = tabs.findIndex((x) => x.id === t.id);
+                const next = e.key === 'ArrowRight' ? tabs[(i + 1) % tabs.length] : e.key === 'ArrowLeft' ? tabs[(i - 1 + tabs.length) % tabs.length] : null;
+                if (next) {
+                  choose(next.id);
+                  document.getElementById(`tab-${next.id}`)?.focus();
+                }
+              }}
+            >
+              {t.label}
+            </button>
+          );
+        })}
       </div>
       {current && (
         <div role="tabpanel" id={`panel-${current.id}`} aria-labelledby={`tab-${current.id}`}>
@@ -147,11 +181,11 @@ export function ChoiceSelect({
   if (typing)
     return (
       <span className="flex gap-1">
-        <input className="input" value={value} onChange={(e) => onChange(e.target.value)} aria-label={label} disabled={disabled} autoFocus={!value} />
+        <input className="input max-sm:min-h-10" value={value} onChange={(e) => onChange(e.target.value)} aria-label={label} disabled={disabled} autoFocus={!value} />
         {!disabled && (
           <button
             type="button"
-            className="btn-ghost text-xs"
+            className="btn-ghost text-xs max-sm:min-h-10"
             onClick={() => {
               setTyping(false);
               if (!known) onChange('');
@@ -165,7 +199,7 @@ export function ChoiceSelect({
     );
   return (
     <select
-      className="input"
+      className="input max-sm:min-h-10"
       value={known ? value : ''}
       aria-label={label}
       disabled={disabled}

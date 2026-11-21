@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-21 · v0.3.16_
+_Last updated: 2026-11-21 · v0.3.17_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,10 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.3.17
+
+- **Design overhaul step 6: the player side** (`docs/DESIGN_OVERHAUL.md` §10, `docs/PLAYER_VIEW.md`). The player view, table server and published handbook get the GM app's design: a top bar with World, Records, Maps, Campaign and My Character and a sidebar for the current one (a drawer on phones); parchment by default. Hover cards from the player projection only. Every page redesigned: home, entries, browse, realm, search, quests, recaps, standing, treasure, handouts, calendar, around the world, signs and omens, the faction web, the maps (filling the page under the top bar like the GM's Atlas, the legend in the sidebar), My Character and the shared sheet (also on the GM's Party page), the live card, Print's controls, the character builder and Species and Classes. `tests/playerBundle.test.ts` guards the handbook against GM code (it found MapView pulling in the GM app's state since v0.3.14; fixed). Shared ui split so most of it is player-safe (`pageHeader.tsx`, `textarea.tsx` hold the app-dependent parts).
 
 ## v0.3.16
 

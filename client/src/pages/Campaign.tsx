@@ -581,8 +581,10 @@ function CharacterSheet({ ch: initial, onDeleted, onEdited }: { ch: Character; o
     <section className="space-y-3" aria-label={`${ch.name}'s sheet`}>
       <div className="title-band flex flex-wrap items-end gap-x-4 gap-y-3 !py-3">
         <div className="min-w-0 basis-full sm:basis-auto sm:mr-2 self-center">
-          <div className="text-[11px] uppercase tracking-wider text-dim">Character sheet</div>
-          <h2 className="font-display text-xl text-gold leading-tight truncate">{ch.name || 'Unnamed'}</h2>
+          {/* The sheet's own header names the character; this band holds the GM's settings for it. */}
+          <h2 className="text-[11px] uppercase tracking-wider text-dim">
+            For the GM<span className="sr-only">: {ch.name || 'Unnamed'}</span>
+          </h2>
         </div>
         <div className="w-full sm:w-56">
           <Field label="Player">
