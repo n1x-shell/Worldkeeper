@@ -1,52 +1,69 @@
-/** The growing text area, with record-link suggestions (GM app). */
-import { useEffect, useRef } from 'react';
-import { useLinkSuggest } from '../LinkSuggest';
+/** Long text in the GM app: the Markdown editor (components/editor), used like a text area. */
+import { lazy, Suspense, type KeyboardEvent } from 'react';
+
+// The editor (CodeMirror and its Markdown support) loads on first use, so the app's first page stays quick.
+const MarkdownEditor = lazy(() => import('../editor/MarkdownEditor').then((m) => ({ default: m.MarkdownEditor })));
+
+type TextChange = { target: { value: string }; currentTarget: { value: string } };
 
 /**
- * Text area that grows with its content. Typing `[[` offers record-link suggestions
- * (inserts `Name [ID]`); pass `links={false}` to turn that off.
+ * The editor (CodeMirror 6) with a text area's props, so every page's long text gets highlighting, shortcuts and `@`
+ * record links. `full` adds the toolbar, Write/Preview/Split, the outline and full screen, for records, scenes,
+ * recaps, notes and handouts. `links={false}` turns record links off. `onKeyDown` sees keys before the editor does,
+ * so a page's own shortcut (Ctrl+Enter to save) still works. Until the editor has loaded, a plain text area stands in.
  */
-export function AutoTextarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { minRows?: number; links?: boolean }) {
-  const { minRows = 3, className = '', links = true, onKeyDown, onChange, onBlur, onClick, onKeyUp, ...rest } = props;
-  const ref = useRef<HTMLTextAreaElement>(null);
-  const suggest = useLinkSuggest(ref, links);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    el.style.height = 'auto';
-    el.style.height = `${Math.max(el.scrollHeight, minRows * 22)}px`;
-  }, [props.value, minRows]);
+export function AutoTextarea(props: {
+  value?: string | number | readonly string[];
+  onChange?: (e: TextChange) => void;
+  onBlur?: () => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLElement>) => void;
+  placeholder?: string;
+  minRows?: number;
+  links?: boolean;
+  full?: boolean;
+  className?: string;
+  autoFocus?: boolean;
+  'aria-label'?: string;
+}) {
+  const { value = '', onChange, onBlur, onKeyDown, placeholder, minRows = 3, links = true, full = false, className = '', autoFocus } = props;
+  const text = String(value ?? '');
+  const change = (v: string) => onChange?.({ target: { value: v }, currentTarget: { value: v } });
+  const fallback = (
+    <textarea
+      className="input w-full leading-relaxed"
+      rows={minRows}
+      value={text}
+      placeholder={placeholder}
+      aria-label={props['aria-label']}
+      onChange={(e) => change(e.target.value)}
+      onBlur={onBlur}
+    />
+  );
   return (
-    <div className="relative">
-      <textarea
-        ref={ref}
-        rows={minRows}
-        className={`input font-mono text-[13px] leading-relaxed resize-y ${className}`}
-        {...rest}
-        onChange={(e) => {
-          onChange?.(e);
-          suggest.update();
-        }}
-        onKeyDown={(e) => {
-          if (suggest.onKeyDown(e)) return;
-          onKeyDown?.(e);
-        }}
-        onKeyUp={(e) => {
-          if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) suggest.update();
-          onKeyUp?.(e);
-        }}
-        onClick={(e) => {
-          suggest.update();
-          onClick?.(e);
-        }}
-        onBlur={(e) => {
-          setTimeout(suggest.close, 150);
-          onBlur?.(e);
-        }}
-        aria-autocomplete={links ? 'list' : undefined}
-        aria-expanded={links ? suggest.open : undefined}
-      />
-      {suggest.popup}
+    <div
+      onKeyDownCapture={
+        onKeyDown
+          ? (e) => {
+              onKeyDown(e);
+              if (e.defaultPrevented) e.stopPropagation();
+            }
+          : undefined
+      }
+    >
+      <Suspense fallback={fallback}>
+        <MarkdownEditor
+          value={text}
+          onChange={change}
+          onBlur={onBlur}
+          placeholder={placeholder}
+          minRows={minRows}
+          links={links}
+          full={full}
+          label={props['aria-label']}
+          autoFocus={autoFocus}
+          className={className.replace(/\b(input|font-mono|font-sans|text-sm|text-\[\d+px\]|min-h-\d+)\b/g, '').trim()}
+        />
+      </Suspense>
     </div>
   );
 }

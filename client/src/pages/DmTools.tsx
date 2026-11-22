@@ -1100,7 +1100,7 @@ function NoteEditor({ n, onDelete, onSaved }: { n: Note; onDelete: () => void; o
         </button>
       </div>
       <div className="grid gap-3 lg:grid-cols-2">
-        <AutoTextarea minRows={18} value={x.body} onChange={(e) => set({ body: e.target.value })} />
+        <AutoTextarea full minRows={18} aria-label={x.title || 'Note'} value={x.body} onChange={(e) => set({ body: e.target.value })} />
         <Card>
           <Markdown text={x.body || '_Empty_'} />
         </Card>

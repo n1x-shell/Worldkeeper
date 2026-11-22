@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-22 · v0.4.6_
+_Last updated: 2026-11-22 · v0.4.7_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,15 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.4.7: the editor (own-world step 7)
+
+Step 7 of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md).
+
+- **The Markdown editor** (`client/src/components/editor/`), CodeMirror 6 (`@codemirror/state`, `view`, `commands`, `language`, `lang-markdown`, `autocomplete`, `@lezer/highlight`): Markdown highlighting in the app's fonts and colours (both themes, through the CSS variables); bold, italic, heading, list, quote, table, record link and GM-only section on a toolbar and shortcuts (Ctrl+B, Ctrl+I, Ctrl+Alt+2, Ctrl+Shift+8, Ctrl+Shift+9, Ctrl+K); `@` and `[[` record links completed from the library (inserting `@[Name]`, as before); and, in its full form, Write, Split and Preview (remembered per device in `wk.editor.mode`), a section outline beside long texts, and full screen. Tab leaves the editor, as in any form.
+- **Everywhere:** `AutoTextarea` is now the editor with a text area's props (`onChange(e)` with `e.target.value`, `onKeyDown` seen first, so Ctrl+Enter shortcuts still work), so every long text changed at once. The full editor is on records' descriptions and player text, notes, recaps, scenes, handouts and templates; the record editor's separate preview is replaced by the editor's own. Autosave, the save status, change reasons and conflict protection are unchanged (the editor is controlled, as the text area was).
+- **Load:** the editor is its own chunk (about 190 kB gzipped), loaded the first time a long text is shown; a plain text area stands in meanwhile, so the GM app's first page is no bigger.
+- **Tests:** `tests/editor.test.ts` (record-link completion), and the E2E edits a record (toolbar, GM-only section, Split preview, outline), a scene and a handout, with `@` suggestions and the live log through the editor.
 
 ## v0.4.6: rules for any world (own-world step 6)
 

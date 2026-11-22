@@ -17,6 +17,7 @@ import { Card } from '../components/ui/surfaces';
 import { Check, Field, Toggle } from '../components/ui/inputs';
 import { Modal, ask, toast } from '../components/ui/overlays';
 import { Empty, ErrorBox, Loading } from '../components/ui/feedback';
+import { AutoTextarea } from '../components/ui/textarea';
 
 const CATEGORY_LABEL: Record<TypeCategory, string> = {
   place: 'Places',
@@ -287,7 +288,7 @@ function TemplateEditor({ initial, onClose, onSave }: { initial: string; onClose
           label="Markdown"
           hint={'"## Facts" with "- **Name**: guidance"; then a "## Section" each, with "> Guidance:" and "> Example (Source):". Add "(GM only)" to a heading to keep it from players.'}
         >
-          <textarea className="input font-mono text-xs min-h-[26rem]" value={md} onChange={(e) => setMd(e.target.value)} spellCheck={false} aria-label="Template Markdown" />
+          <AutoTextarea value={md} onChange={(e) => setMd(e.target.value)} minRows={22} links={false} aria-label="Template Markdown" />
         </Field>
         <div className="min-w-0">
           <div className="label mb-1.5">Preview</div>
