@@ -119,7 +119,7 @@ The quickest way is a copy of the **5etools** data:
 
 Spells, species, classes and subclasses, backgrounds and feats then reach the character sheets and the builder. Creatures become stat blocks for the GM, and magic items show their rules in treasure and on sheets. Only use material from books you own. What you import stays in your library: it is never part of the published handbook, a player export, a campaign export or this repository. You can also write your own packs in Markdown. See [Rules packs](docs/RULES_PACKS.md).
 
-To run a standard D&D campaign without the Worldkeeper setting's own systems, switch its modules off in **Settings → Modules** (a library without the setting has them off already). Some parts of the app (the calendar) still assume the setting's world for now; [the plan](docs/OWN_WORLD_PLAN.md) covers making them your own. See [Features](docs/FEATURES.md#modules-a-standard-dd-campaign-or-the-worldkeeper-setting).
+To run a standard D&D campaign without the Worldkeeper setting's own systems, switch its modules off in **Settings → Modules** (a library without the setting has them off already). Each world has its own calendar (**Campaign → Calendar → The world's calendar**). See [Features](docs/FEATURES.md#modules-a-standard-dd-campaign-or-the-worldkeeper-setting).
 
 ## How it works
 

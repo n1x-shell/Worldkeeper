@@ -30,7 +30,7 @@ export function partyExport(db: DB, campaignId: number): { title: string; markdo
     ),
   ].sort();
   const L: string[] = [`# ${c.title}: what the party knows`, ''];
-  if (c.calendar) L.push(`*${formatDate(c.calendar.date)}*`, '');
+  if (c.calendar) L.push(`*${formatDate(c.calendar.def, c.calendar.date)}*`, '');
   if (c.recaps.length) {
     L.push('## The story so far', '');
     for (const r of c.recaps) L.push(`### Session ${r.number}${r.title ? `: ${r.title}` : ''}`, '', strip(r.recap), '');

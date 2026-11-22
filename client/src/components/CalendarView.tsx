@@ -1,8 +1,9 @@
-import { EXTRA_DAYS, FESTIVALS, MONTHS, MOONS, WEEKDAYS, dayOfYear, formatDate, moonPhase, seasonOf, weekday, type WDate } from '../../../shared/calendar';
+import { dayOfYear, extraDay, festivalsOf, formatDate, moonPhase, seasonOf, weekday, type CalendarDef, type WDate } from '../../../shared/calendar';
 
 /**
- * The world's year at a glance: twelve 30-day months and the three festival days, with today marked, festivals and
- * events on their days, and the Lamp's full and new moons. Used by the GM's calendar and the players' handbook.
+ * The world's year at a glance, through its calendar (shared/calendar.ts): its months and the days outside them, with
+ * today marked, festivals and events on their days, and the first moon's full and new nights. Used by the GM's
+ * calendar and the players' handbook.
  */
 export interface CalEvent {
   day: number;
@@ -13,18 +14,17 @@ export interface CalEvent {
 
 const MOON_GLYPH = ['●', '◔', '◑', '◕', '○', '◕', '◐', '◔'];
 
-export function TodayCard({ date }: { date: WDate }) {
+export function TodayCard({ def, date }: { def: CalendarDef; date: WDate }) {
+  const season = seasonOf(def, date.day);
   return (
     <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-      <div className="font-display text-2xl text-gold">{formatDate(date)}</div>
-      <div className="text-sm text-dim">
-        {WEEKDAYS[weekday(date)]}, {seasonOf(date.day)}
-      </div>
+      <div className="font-display text-2xl text-gold">{formatDate(def, date)}</div>
+      <div className="text-sm text-dim">{[def.weekdays[weekday(def, date)], season].filter(Boolean).join(', ')}</div>
       <div className="text-sm text-dim flex gap-3">
-        {MOONS.map((m) => {
-          const p = moonPhase(date, m);
+        {(def.moons ?? []).map((m) => {
+          const p = moonPhase(def, date, m);
           return (
-            <span key={m.name} title={`${m.name} (${m.look})`}>
+            <span key={m.name} title={m.look ? `${m.name} (${m.look})` : m.name}>
               {MOON_GLYPH[p.index]} {m.name}: {p.phase.toLowerCase()}
             </span>
           );
@@ -34,15 +34,17 @@ export function TodayCard({ date }: { date: WDate }) {
   );
 }
 
-export function CalendarView({ date, events, onDay }: { date: WDate; events: CalEvent[]; onDay?: (day: number) => void }) {
+export function CalendarView({ def, date, events, onDay }: { def: CalendarDef; date: WDate; events: CalEvent[]; onDay?: (day: number) => void }) {
+  const festivals = festivalsOf(def);
+  const moon = def.moons?.[0];
   const on = (day: number) => [
-    ...FESTIVALS.filter((f) => f.day === day).map((f) => ({ title: f.name, kind: 'festival' as const })),
+    ...festivals.filter((f) => f.day === day).map((f) => ({ title: f.name, kind: 'festival' as const })),
     ...events.filter((e) => e.day === day && (e.year == null || e.year === date.year)),
   ];
   const Cell = ({ day, label }: { day: number; label: string }) => {
     const items = on(day);
     const today = day === date.day;
-    const lamp = moonPhase({ year: date.year, day }, MOONS[0]);
+    const phase = moon ? moonPhase(def, { year: date.year, day }, moon) : null;
     return (
       <button
         type="button"
@@ -52,31 +54,36 @@ export function CalendarView({ date, events, onDay }: { date: WDate; events: Cal
         className={`relative h-9 rounded text-[11px] text-left px-1 border ${today ? 'border-gold bg-gold/20 text-gold' : items.length ? 'border-arcane/50 bg-arcane/10' : 'border-transparent hover:border-line'} ${onDay ? 'cursor-pointer' : 'cursor-default'}`}
       >
         <span className="num">{label}</span>
-        {(lamp.full || lamp.dark) && <span className="absolute right-0.5 top-0 text-[9px] opacity-70">{lamp.full ? '○' : '●'}</span>}
+        {phase && (phase.full || phase.dark) && <span className="absolute right-0.5 top-0 text-[9px] opacity-70">{phase.full ? '○' : '●'}</span>}
         {items.length > 0 && <span className="absolute left-1 bottom-0.5 right-1 truncate text-[9px] leading-tight text-arcane">{items[0].title}</span>}
       </button>
     );
   };
-  const Festival = ({ day, name }: { day: number; name: string }) => (
-    <div className="col-span-full">
-      <div className={`rounded border px-2 py-1 text-xs ${day === date.day ? 'border-gold bg-gold/20 text-gold' : 'border-gold/30'}`}>
-        <Cell day={day} label={name} />
+  const Extra = ({ name }: { name: string }) => {
+    const day = extraDay(def, name)!;
+    return (
+      <div className="col-span-full">
+        <div className={`rounded border px-2 py-1 text-xs ${day === date.day ? 'border-gold bg-gold/20 text-gold' : 'border-gold/30'}`}>
+          <Cell day={day} label={name} />
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
+  const extrasAfter = (i: number) => (def.extraDays ?? []).filter((e) => e.after === i);
   return (
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-      {MONTHS.map((m, mi) => (
-        <div key={m} className="rounded-md border border-line p-2">
-          {mi === 0 && <Festival day={EXTRA_DAYS[0].day} name={EXTRA_DAYS[0].name} />}
-          {mi === 6 && <Festival day={EXTRA_DAYS[1].day} name={EXTRA_DAYS[1].name} />}
-          <div className="text-xs uppercase tracking-widest text-dim my-1">{m}</div>
+      {def.months.map((m, mi) => (
+        <div key={`${m.name}-${mi}`} className="rounded-md border border-line p-2">
+          {mi === 0 && extrasAfter(-1).map((e) => <Extra key={e.name} name={e.name} />)}
+          <div className="text-xs uppercase tracking-widest text-dim my-1">{m.name}</div>
           <div className="grid grid-cols-6 gap-0.5">
-            {Array.from({ length: 30 }, (_, i) => (
-              <Cell key={i} day={dayOfYear(mi, i + 1)} label={String(i + 1)} />
+            {Array.from({ length: m.days }, (_, i) => (
+              <Cell key={i} day={dayOfYear(def, mi, i + 1)} label={String(i + 1)} />
             ))}
           </div>
-          {mi === 10 && <Festival day={EXTRA_DAYS[2].day} name={EXTRA_DAYS[2].name} />}
+          {extrasAfter(mi).map((e) => (
+            <Extra key={e.name} name={e.name} />
+          ))}
         </div>
       ))}
     </div>

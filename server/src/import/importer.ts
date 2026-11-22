@@ -467,9 +467,6 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
       result.templates++;
     }
 
-    // 6. Settings defaults that come from the source (only if never set by the DM).
-    db.prepare(`INSERT OR IGNORE INTO settings (key, value) VALUES ('world_date', '300 AB / Year 31 Unbound')`).run();
-
     reindexAll(db);
     void touched;
   });

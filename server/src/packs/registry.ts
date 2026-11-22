@@ -13,6 +13,8 @@ import { syncPackTemplates } from '../repo/templates.js';
 import { forgetTypes } from '../repo/recordTypes.js';
 import type { PackInfo, PackManifest } from '../../../shared/packs.js';
 import { reindexAll } from '../repo/search.js';
+import { syncPackCalendar } from '../repo/calendars.js';
+import type { CalendarDef } from '../../../shared/calendar.js';
 
 export interface AvailablePack {
   manifest: PackManifest;
@@ -133,6 +135,8 @@ export function syncPackDefinitions(db: DB, m: PackManifest, dir: string) {
   })();
   forgetTypes(db);
   syncPackTemplates(db, m.id, path.join(dir, 'templates'));
+  const cal = m.calendar && path.join(dir, m.calendar.file);
+  if (cal && fs.existsSync(cal)) syncPackCalendar(db, m.id, JSON.parse(fs.readFileSync(cal, 'utf8')) as CalendarDef, m.calendar!.worlds);
 }
 
 /** Bring every installed pack's definitions up to date (at start). */
@@ -186,6 +190,8 @@ export function uninstallPack(db: DB, id: string) {
     for (const t of db.prepare('SELECT key FROM record_types WHERE pack_id = ?').all(id) as { key: string }[]) {
       if (!db.prepare('SELECT 1 FROM entities WHERE type = ? LIMIT 1').get(t.key)) db.prepare('DELETE FROM record_types WHERE key = ?').run(t.key);
     }
+    // Its calendar: a world that used it goes back to the default (realms.calendar_id is set to null).
+    db.prepare('DELETE FROM calendars WHERE pack_id = ?').run(id);
     db.prepare('DELETE FROM setting_packs WHERE id = ?').run(id);
   })();
   forgetTypes(db);

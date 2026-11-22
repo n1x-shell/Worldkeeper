@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-22 · v0.4.4_
+_Last updated: 2026-11-22 · v0.4.5_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,18 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.4.5: the calendar as data (own-world step 5)
+
+Step 5 of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md).
+
+- **Calendar definitions** (`shared/calendar.ts`): months (name, days, season), days outside the months (placed after a month), weekdays, moons (cycle and offset), ways of writing the year (`{y} AB`, `Year {y} Unbound` with its offset; the first is the main one), festivals (by month and day, by a day outside the months, or by day of the year) and the year a campaign starts. Every function takes the definition: `yearDays`, `dayOfYear`, `monthDay`, `dayName`, `formatDate`, `formatYear`, `parseDate`, `addDays`, `daysBetween`, `weekday`, `seasonOf`, `festivalsOf`, `upcoming`, `moonPhase`, `isValidDate`. Presets: twelve months of thirty days (the default) and like ours (January to December, no leap years).
+- **The setting's calendar is pack data** (`packs/worldkeeper/calendar.json`, `pack.json` `calendar`), checked against the old code for every day of the year: dates, parsing, seasons, weekdays, both moons and every festival match.
+- **Storage** (migration 24): table `calendars` (a pack's, written at start; a world's own), `realms.calendar_id` (a world's calendar; realms above it are tried next, then the default), and campaign dates as `date_year`/`date_day` and `start_year`/`start_day`, read from the old text dates at start through the world's calendar (`adoptCampaignDates`). The text columns are kept in step for exports; a date typed as text into the API is read through the calendar. Removing a pack takes its calendar with it; campaigns keep their year and day.
+- **API:** `/api/calendar` gives the definition with the date and the start; `PUT /api/calendar/start`; `/api/calendars` (each world's calendar, the presets, the packs' calendars); `PUT /api/calendars/:worldId` with `preset`, `calendar_id` or `def` (checked). Events are checked against the calendar's year before they're written.
+- **Pages:** the Calendar page and the players' calendar draw any calendar (the handbook snapshot carries the definition); a date picker with the calendar's months sets a campaign's start and date; **The world's calendar** card chooses a pack's or a preset, or edits one's own line by line. The setting's "300 AB" defaults are gone (campaigns, Settings, the importer), and the timeline no longer names the setting's years.
+- **Tests:** `tests/calendars.test.ts`, and the calendar tests in `tests/worldTools.test.ts` (the setting's year round trip, the presets, a new world's calendar changed under a campaign, a calendar of one's own).
+- **Not yet:** a session's in-world date is still free text; timeline rows keep their text dates.
 
 ## v0.4.4: modules (own-world step 4)
 

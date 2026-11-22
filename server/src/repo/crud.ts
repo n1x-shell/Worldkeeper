@@ -63,8 +63,10 @@ export function makeCrud<S extends z.ZodObject<z.ZodRawShape>>(opts: CrudOptions
         .prepare(`INSERT INTO ${opts.table} (${keys.join(', ')}) VALUES (${keys.map((k) => '@' + k).join(', ')})`)
         .run(data);
       const row = api.get(db, Number(res.lastInsertRowid));
-      opts.onChange?.(db, row);
-      return row;
+      if (!opts.onChange) return row;
+      // The hook may change the row (a campaign's dates): give back what was saved.
+      opts.onChange(db, row);
+      return api.get(db, Number(res.lastInsertRowid));
     },
     update(db: DB, id: number, input: unknown) {
       api.get(db, id);
@@ -82,8 +84,9 @@ export function makeCrud<S extends z.ZodObject<z.ZodRawShape>>(opts: CrudOptions
       }
       if (sets.length) db.prepare(`UPDATE ${opts.table} SET ${sets.join(', ')} WHERE id = @__id`).run({ ...data, __id: id });
       const row = api.get(db, id);
-      opts.onChange?.(db, row);
-      return row;
+      if (!opts.onChange) return row;
+      opts.onChange(db, row);
+      return api.get(db, id);
     },
     remove(db: DB, id: number) {
       api.get(db, id);

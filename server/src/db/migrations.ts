@@ -962,6 +962,25 @@ INSERT INTO settings (key, value) SELECT 'modules', '{}' WHERE EXISTS (SELECT 1 
 UPDATE settings SET value = json_set(value, '$.renown', json('true')) WHERE key = 'modules' AND EXISTS (SELECT 1 FROM campaigns);
 `,
   },
+  {
+    version: 24,
+    name: 'calendars as data: a calendar per world, and campaign dates as a year and a day',
+    sql: `
+CREATE TABLE calendars (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  def TEXT NOT NULL,
+  pack_id TEXT,
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+ALTER TABLE realms ADD COLUMN calendar_id TEXT REFERENCES calendars(id) ON DELETE SET NULL;
+-- Filled from the old text dates at start, through the campaign's calendar (server/src/repo/calendars.ts).
+ALTER TABLE campaigns ADD COLUMN date_year INTEGER;
+ALTER TABLE campaigns ADD COLUMN date_day INTEGER;
+ALTER TABLE campaigns ADD COLUMN start_year INTEGER;
+ALTER TABLE campaigns ADD COLUMN start_day INTEGER;
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

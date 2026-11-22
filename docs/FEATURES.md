@@ -63,6 +63,12 @@ Each type has a **template**: the facts it should have (a town's population and 
 
 A setting is a pack you can add to your library or leave out: its realms, record types, templates, records, maps, adventures, tables and tools. **Library → Setting packs** installs, updates and removes them, taking a backup first each time. Updating brings in what's new without touching your own records; removing takes out only what the pack brought. If one of your records already has an ID the pack uses, yours is kept and the page tells you. The Worldkeeper setting is the first pack; a library without it is plain D&D, with none of its tools in the menus.
 
+## Calendars
+
+Each world has its own calendar: its months and how long they are, days outside the months (an equinox, a festival day), weekdays, seasons, moons, how years are written ("1247 AR", or "300 AB" with "Year 31 Unbound" alongside), and its yearly festivals. A setting pack brings its own (the Worldkeeper setting's 363-day year of Aetheris and Kaelmar); a world of your own starts with twelve months of thirty days, and **Campaign → Calendar → The world's calendar** switches it to one like ours, back to a pack's, or to one you write out yourself, line by line.
+
+A campaign's date is kept as a year and a day, so changing the calendar keeps every campaign where it was; only how the date reads changes. The campaign's page sets where it started and where it is now with the calendar's own months; the Calendar page, travel, the session briefing, the players' calendar and the party export all read the world's calendar.
+
 ## World branches and timelines
 
 ### Aetheris
