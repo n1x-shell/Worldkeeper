@@ -206,7 +206,7 @@ export function PlayerCalendar() {
     <div className="space-y-5">
       <PlayerPageTitle eyebrow="Campaign" icon={<CalendarDays size={14} />} title="Calendar" subtitle="The date in the world, the festivals and what's coming.">
         <div className="mt-4">
-          <TodayCard date={cal.date} />
+          <TodayCard def={cal.def} date={cal.date} />
         </div>
       </PlayerPageTitle>
       <Card title="Coming up">
@@ -216,7 +216,7 @@ export function PlayerCalendar() {
               <li key={i} className="py-2 first:pt-0 last:pb-0">
                 <span className={x.kind === 'festival' ? 'text-gold font-medium' : 'text-arcane font-medium'}>{x.title}</span>{' '}
                 <span className="num text-dim text-xs">
-                  {x.inDays === 0 ? 'today' : x.inDays === 1 ? 'tomorrow' : `in ${x.inDays} days`}, {formatDate(x.date, 'ab')}
+                  {x.inDays === 0 ? 'today' : x.inDays === 1 ? 'tomorrow' : `in ${x.inDays} days`}, {formatDate(cal.def, x.date, 'short')}
                   {x.where ? `, ${x.where}` : ''}
                 </span>
                 {x.notes && <div className="text-xs text-dim">{x.notes}</div>}
@@ -227,7 +227,7 @@ export function PlayerCalendar() {
           <p className="text-sm text-dim">Nothing for a while.</p>
         )}
       </Card>
-      <CalendarView date={cal.date} events={cal.coming.filter((x) => x.kind === 'event').map((x) => ({ day: x.date.day, year: x.date.year, title: x.title, kind: 'event' as const }))} />
+      <CalendarView def={cal.def} date={cal.date} events={cal.coming.filter((x) => x.kind === 'event').map((x) => ({ day: x.date.day, year: x.date.year, title: x.title, kind: 'event' as const }))} />
     </div>
   );
 }

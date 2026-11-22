@@ -9,6 +9,8 @@ import { api, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Campaign, Session, StateRow } from '../lib/types';
 import { ask, askText, AutoTextarea, Badge, Card, Check as CheckBox, DataTable, Empty, EntityLink, ErrorBox, Field, GmOnly, HpBar, KeyValue, Loading, Modal, PageHeader, SaveStatus, Section, Skeleton, Tabs, Toggle, useToast, type Tone } from '../components/ui';
+import { DatePicker } from '../components/DatePicker';
+import { formatDate, type CalendarDef, type WDate } from '../../../shared/calendar';
 import { EntityMultiPicker, EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
 import { FullSheet } from '../player/sheet/FullSheet';
@@ -100,7 +102,7 @@ export function NeedCampaign() {
 export function CampaignsPage() {
   const { data, reload, error } = useApi<Campaign[]>('/api/campaigns');
   const { activeCampaignId, setActiveCampaignId } = useAppState();
-  const [form, setForm] = useState({ title: '', premise: '', starting_location_id: null as string | null, starting_date: '300 AB / Year 31 Unbound' });
+  const [form, setForm] = useState({ title: '', premise: '', starting_location_id: null as string | null });
   const [err, setErr] = useState<string | null>(null);
   const nav = useNavigate();
   return (
@@ -140,15 +142,13 @@ export function CampaignsPage() {
         <Field label="Starting location">
           <EntityPicker value={form.starting_location_id} onChange={(id) => setForm({ ...form, starting_location_id: id })} />
         </Field>
-        <Field label="Starting date">
-          <input className="input" value={form.starting_date} onChange={(e) => setForm({ ...form, starting_date: e.target.value })} />
-        </Field>
         <button
           className="btn-primary"
           disabled={!form.title.trim()}
           onClick={async () => {
             try {
-              const c = await api.post<Campaign>('/api/campaigns', { ...form, current_date: form.starting_date });
+              // It starts on the first day of its world's starting year; set the date on the campaign's page.
+              const c = await api.post<Campaign>('/api/campaigns', form);
               await setActiveCampaignId(c.id);
               nav('/campaign');
             } catch (x) {
@@ -221,7 +221,7 @@ export function ActiveCampaign() {
   const set = (p: Partial<Campaign>) => {
     const n = { ...c, ...p };
     setC(n);
-    auto.schedule({ title: n.title, world_id: n.world_id, premise: n.premise, starting_location_id: n.starting_location_id, starting_date: n.starting_date, current_date: n.current_date, status: n.status, players: n.players, active_factions: n.active_factions, notes: n.notes });
+    auto.schedule({ title: n.title, world_id: n.world_id, premise: n.premise, starting_location_id: n.starting_location_id, status: n.status, players: n.players, active_factions: n.active_factions, notes: n.notes });
   };
   return (
     <div className="space-y-4">
@@ -252,12 +252,7 @@ export function ActiveCampaign() {
                 ))}
               </select>
             </Field>
-            <Field label="Starting date">
-              <input className="input" value={c.starting_date} onChange={(e) => set({ starting_date: e.target.value })} />
-            </Field>
-            <Field label="Current in-world date">
-              <input className="input" value={c.current_date} onChange={(e) => set({ current_date: e.target.value })} />
-            </Field>
+            <CampaignDates campaignId={c.id} />
             <Field label="Starting location">
               <EntityPicker value={c.starting_location_id} onChange={(id) => set({ starting_location_id: id })} />
             </Field>
@@ -2112,5 +2107,54 @@ function SceneFlow({ adventureId }: { adventureId: number }) {
         Refresh
       </button>
     </div>
+  );
+}
+
+/** Where the campaign started and where it is now, in its world's calendar (set with the calendar's own months). */
+function CampaignDates({ campaignId }: { campaignId: number }) {
+  const { data, reload } = useApi<{ def: CalendarDef; date: WDate; start: WDate }>(`/api/calendar?campaign_id=${campaignId}&days=1`);
+  const [editing, setEditing] = useState<'start' | 'date' | null>(null);
+  const [value, setValue] = useState<WDate | null>(null);
+  if (!data) return null;
+  const row = (which: 'start' | 'date', label: string) => (
+    <Field label={label}>
+      <div className="flex items-center gap-2">
+        <span className="input flex-1 truncate">{formatDate(data.def, data[which])}</span>
+        <button
+          className="btn"
+          type="button"
+          onClick={() => {
+            setValue(data[which]);
+            setEditing(which);
+          }}
+        >
+          Change
+        </button>
+      </div>
+    </Field>
+  );
+  return (
+    <>
+      {row('start', 'Starting date')}
+      {row('date', 'Current in-world date')}
+      {editing && value && (
+        <Modal title={editing === 'start' ? 'Where the campaign started' : "The campaign's date"} onClose={() => setEditing(null)}>
+          <div className="space-y-3">
+            <DatePicker def={data.def} value={value} onChange={setValue} />
+            <button
+              className="btn-primary"
+              onClick={async () => {
+                if (editing === 'start') await api.put('/api/calendar/start', { campaign_id: campaignId, date: value });
+                else await api.post('/api/calendar/date', { campaign_id: campaignId, date: value });
+                setEditing(null);
+                reload();
+              }}
+            >
+              Set it
+            </button>
+          </div>
+        </Modal>
+      )}
+    </>
   );
 }

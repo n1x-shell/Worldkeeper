@@ -1,6 +1,6 @@
 # Your own world: a plan
 
-**Status:** approved direction (owner answers in §4, 22 November 2026). Step 1 (realms as data) is built, in v0.4.1; step 2 (record types and templates) in v0.4.2; step 3 (setting packs) in v0.4.3; step 4 (modules) in v0.4.4.
+**Status:** approved direction (owner answers in §4, 22 November 2026). Step 1 (realms as data) is built, in v0.4.1; step 2 (record types and templates) in v0.4.2; step 3 (setting packs) in v0.4.3; step 4 (modules) in v0.4.4; step 5 (the calendar as data) in v0.4.5.
 **Goal:** someone who opens a fresh Worldkeeper with no archive to import can click **Next, Next, Finish** and have their own world: named realms, a first campaign and a few records that teach them the system. From then on, every kind of record has a template, a guided way to fill it in, and a modern Markdown editor for anyone who'd rather write it themselves.
 
 **The principle: one foundation.** The app is a framework: realms, record types, templates, records, maps, campaigns, the editor, guided creation and optional modules. The Worldkeeper setting is **content on that framework**, packaged as a **setting pack**. It has no special place in the app's code. A GM's own world and the Worldkeeper setting are built the same way, stored the same way and edited the same way. The only difference is where the content came from:

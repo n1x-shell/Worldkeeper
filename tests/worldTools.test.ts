@@ -51,9 +51,19 @@ describe('calendar', () => {
     // The same year and day, read through the new calendar.
     expect(setCampaignDate(db, c.id, { days: 0 }).text).toBe('January 6, Year 2');
     expect(() => calendarEvents.create(db, { campaign_id: c.id, day: 366, title: 'Nope' })).toThrow();
+    expect(calendarEvents.list(db, { campaign_id: c.id })).toEqual([]);
     // A calendar of its own.
     setWorldCalendar(db, 'world', {
-      def: { name: 'Two moons', months: [{ name: 'Light', days: 50 }, { name: 'Dark', days: 50 }], weekdays: ['Up', 'Down'], eras: [{ format: '{y} AR' }], startYear: 1247 },
+      def: {
+        name: 'Two moons',
+        months: [
+          { name: 'Light', days: 50 },
+          { name: 'Dark', days: 50 },
+        ],
+        weekdays: ['Up', 'Down'],
+        eras: [{ format: '{y} AR' }],
+        startYear: 1247,
+      },
     });
     expect(setCampaignDate(db, c.id, { date: { year: 1247, day: 60 } }).text).toBe('Dark 10, 1247 AR');
     expect(() => setWorldCalendar(db, 'world', { def: { name: 'Bad', months: [], weekdays: [], eras: [] } })).toThrow();

@@ -9,7 +9,7 @@ import { makeCrud } from './crud.js';
 import { addDays, festivalsOf, upcoming, yearDays, type CalendarDef, type WDate } from '../../../shared/calendar.js';
 import { campaignCalendar, campaignDates, writeCampaignDate } from './calendars.js';
 
-export const calendarEvents = makeCrud({
+const eventsCrud = makeCrud({
   table: 'calendar_events',
   schema: z.object({
     campaign_id: z.number().int(),
@@ -22,10 +22,25 @@ export const calendarEvents = makeCrud({
   }),
   boolColumns: ['yearly', 'player_visible'],
   orderBy: 'year, day',
-  onChange: (db, row) => {
-    if ((row.day as number) > yearDays(campaignCalendar(db, row.campaign_id as number))) throw badRequest('Not a day in this calendar');
-  },
 });
+
+/** A day must be one of its campaign's calendar: checked before anything is written. */
+function checkDay(db: DB, campaignId: number, day: unknown) {
+  if (typeof day === 'number' && day > yearDays(campaignCalendar(db, campaignId))) throw badRequest('Not a day in this calendar');
+}
+export const calendarEvents: typeof eventsCrud = {
+  ...eventsCrud,
+  create(db, input) {
+    const i = (input ?? {}) as { campaign_id?: number; day?: number };
+    if (i.campaign_id) checkDay(db, i.campaign_id, i.day);
+    return eventsCrud.create(db, input);
+  },
+  update(db, id, input) {
+    const row = eventsCrud.get(db, id) as { campaign_id: number };
+    checkDay(db, row.campaign_id, (input as { day?: number } | undefined)?.day);
+    return eventsCrud.update(db, id, input);
+  },
+};
 
 export const campaignDate = (db: DB, campaignId: number): WDate => campaignDates(db, campaignId).date;
 

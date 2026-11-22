@@ -374,7 +374,7 @@ export function TimelinePage() {
     <div className="space-y-4">
       <PageHeader
         title="World Timeline"
-        subtitle="300 AB = Year 31 Unbound. The events of 927 AB are a possible future, not history." note="Imported from the World Timeline index. Dates the source does not give are not invented. Eras come from your library's era tags; rows take the era of the records they link to, and you can assign the rest."
+        subtitle="The world's history, as your records tell it." note="Imported from the World Timeline index. Dates the source does not give are not invented. Eras come from your library's era tags; rows take the era of the records they link to, and you can assign the rest."
         actions={
           <>
             <button className="btn" onClick={() => setManaging(!managing)}>

@@ -232,7 +232,7 @@ export function StyleGuidePage() {
                 ['Characters', 4],
                 ['Open quests', 3],
                 ['Party level', 5],
-                ['In-world date', '12 Thawmonth, Year 31 Unbound'],
+                ['In-world date', 'Second Month 12, Year 4'],
               ]}
             />
           </Card>
