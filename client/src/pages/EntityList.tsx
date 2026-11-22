@@ -1,37 +1,40 @@
+import { useRecordTypes } from '../components/recordTypes';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Plus, Star } from 'lucide-react';
-import { CANON_STATUSES, ENTITY_TYPE_LABELS, TYPE_GROUPS, type EntityType } from '@shared/domain';
+import { CANON_STATUSES } from '@shared/domain';
 import { useApi, qs } from '../lib/api';
 import { Card, CanonFlags, Check, DataTable, Empty, ErrorBox, Loading, PageHeader, RealmBadge, TypeBadge, VisibilityBadge, type Column } from '../components/ui';
 import type { EntitySummary } from '../lib/types';
 import { useDebug } from '../components/Dev';
 import { useRealms } from '../components/realms';
 
-export const BROWSE_GROUPS: Record<string, { title: string; types?: EntityType[]; note?: string }> = {
+/** The Codex's browse pages: a browse group of the type registry (`browse`), or a few types by name. */
+export const BROWSE_GROUPS: Record<string, { title: string; browse?: string; types?: string[]; note?: string }> = {
   all: { title: 'All Lore' },
-  regions: { title: 'Regions and Settlements', types: TYPE_GROUPS.regions },
-  landmarks: { title: 'Landmarks and Buildings', types: TYPE_GROUPS.landmarks },
-  places: { title: 'All Places', types: TYPE_GROUPS.places },
-  npcs: { title: 'NPCs', types: ['npc'] },
-  factions: { title: 'Factions and Cults', types: TYPE_GROUPS.factions },
-  artifacts: { title: 'Shards and Artifacts', types: TYPE_GROUPS.artifacts },
+  regions: { title: 'Regions and Settlements', browse: 'regions' },
+  landmarks: { title: 'Landmarks and Buildings', browse: 'landmarks' },
+  places: { title: 'All Places', browse: 'places' },
+  npcs: { title: 'NPCs', browse: 'npcs' },
+  factions: { title: 'Factions and Cults', browse: 'factions' },
+  artifacts: { title: 'Shards and Artifacts', browse: 'artifacts' },
   creatures: {
     title: 'Creatures',
-    types: ['creature'],
+    browse: 'creatures',
     note: 'The source library describes creatures inside overview documents (see Source Documents) rather than as individual CRE records. Create creature records here when you need them.',
   },
-  events: { title: 'Historical Events', types: ['event'] },
+  events: { title: 'Historical Events', browse: 'events' },
   cosmology: { title: 'Cosmology', types: ['cosmology'] },
-  pantheon: { title: 'Pantheon', types: ['deity'] },
-  cultures: { title: 'Cultures and Peoples', types: TYPE_GROUPS.cultures },
+  pantheon: { title: 'Pantheon', browse: 'pantheon' },
+  cultures: { title: 'Cultures and Peoples', browse: 'cultures' },
   magic: { title: 'Magic Systems', types: ['magic_system', 'system'] },
-  rules: { title: 'Rules and Setting Mechanics', types: ['rule', 'system'] },
-  hooks: { title: 'Adventure Hooks', types: ['adventure_hook'] },
+  rules: { title: 'Rules and Setting Mechanics', browse: 'rules' },
+  hooks: { title: 'Adventure Hooks', browse: 'hooks' },
   indexes: { title: 'Indexes and Registers', types: ['index', 'register'] },
 };
 
 export function EntityTable({ rows, showRealm = true }: { rows: EntitySummary[]; showRealm?: boolean }) {
+  const recordTypes = useRecordTypes();
   const nav = useNavigate();
   const debug = useDebug();
   const columns: Column<EntitySummary>[] = [
@@ -50,7 +53,7 @@ export function EntityTable({ rows, showRealm = true }: { rows: EntitySummary[];
       ),
     },
     ...(debug ? [{ key: 'id', label: 'ID', sortable: true, headClassName: 'hidden sm:table-cell', className: 'hidden sm:table-cell text-dim text-xs whitespace-nowrap' }] : []),
-    { key: 'type', label: 'Type', sortValue: (e) => ENTITY_TYPE_LABELS[e.type as EntityType] ?? e.type, render: (e) => <TypeBadge type={e.type} /> },
+    { key: 'type', label: 'Type', sortValue: (e) => recordTypes.label(e.type), render: (e) => <TypeBadge type={e.type} /> },
     ...(showRealm
       ? [
           {
@@ -88,10 +91,12 @@ export function EntityTable({ rows, showRealm = true }: { rows: EntitySummary[];
 }
 
 export function EntityList({ group: groupProp, realm: fixedRealm }: { group?: string; realm?: string }) {
+  const recordTypes = useRecordTypes();
   const realms = useRealms();
   const params = useParams();
   const group = groupProp ?? params.group ?? 'all';
-  const def = BROWSE_GROUPS[group] ?? BROWSE_GROUPS.all;
+  const group0 = BROWSE_GROUPS[group] ?? BROWSE_GROUPS.all;
+  const def = { ...group0, types: group0.types ?? (group0.browse ? recordTypes.browse(group0.browse) : undefined) };
   const debug = useDebug();
   const [realm, setRealm] = useState<string>(fixedRealm ?? '');
   const [canon, setCanon] = useState('');
@@ -104,7 +109,7 @@ export function EntityList({ group: groupProp, realm: fixedRealm }: { group?: st
     const n = q.trim().toLowerCase();
     return (data ?? []).filter((e) => !n || e.name.toLowerCase().includes(n) || e.id.toLowerCase().includes(n) || e.tags.some((t) => t.includes(n)));
   }, [data, q]);
-  const typeChoices = def.types ?? (Object.keys(ENTITY_TYPE_LABELS) as EntityType[]);
+  const typeChoices = def.types ?? recordTypes.list.filter((t) => !t.traits.meta).map((t) => t.key);
 
   return (
     <div>
@@ -135,7 +140,7 @@ export function EntityList({ group: groupProp, realm: fixedRealm }: { group?: st
             <option value="">All types</option>
             {typeChoices.map((t) => (
               <option key={t} value={t}>
-                {ENTITY_TYPE_LABELS[t]}
+                {recordTypes.label(t)}
               </option>
             ))}
           </select>

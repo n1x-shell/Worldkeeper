@@ -15,11 +15,16 @@ import type { Entity } from '../../../shared/domain.js';
 import { repairRealms } from '../repo/realms.js';
 import { SETTING_REALMS } from '../import/normalize.js';
 import { placeSettingWorld } from '../import/settingRealms.js';
+import { listRealms } from '../repo/realms.js';
+import { BUILTIN_REGISTRY } from '../../../shared/recordTypes.js';
+import { syncBuiltinTypes, types } from '../repo/recordTypes.js';
+import { normalizeRealm, normalizeType } from '../import/normalize.js';
 
 /** Tables included in a full JSON export, in dependency order. */
 const TABLES = [
   'settings',
   'realms',
+  'record_types',
   'entities',
   'entity_revisions',
   'relationships',
@@ -77,15 +82,24 @@ const slug = (s: string) =>
     .replace(/\s+/g, '_')
     .slice(0, 60) || 'entry';
 
-/** Render a record in the library's own metadata-header format so it can be re-imported. */
-export function entityToMarkdown(e: Entity): string {
+/**
+ * Render a record in the library's own metadata-header format so it can be re-imported with its type and realm. The
+ * original wording is kept when it still reads back as the record's type and realm; otherwise (a record made here, or
+ * one whose type or realm was changed) the type's label and the realm's name are written instead.
+ */
+export function entityToMarkdown(e: Entity, db?: DB): string {
+  const reg = db ? types(db) : BUILTIN_REGISTRY;
+  const known = db ? listRealms(db, { includeArchived: true }).map((r) => ({ id: r.id, name: r.name })) : [];
+  const category = e.category_raw && normalizeType(e.id, e.category_raw, reg) === e.type ? e.category_raw : reg.label(e.type);
+  const realmName = known.find((r) => r.id === e.realm)?.name ?? e.realm;
+  const realm = e.realm_raw && normalizeRealm(e.realm_raw, known).realm === e.realm ? e.realm_raw : realmName;
   const head: [string, string][] = [
     ['ID', e.id],
     ['Name', e.name],
     ['Alternate names', e.aliases.length ? e.aliases.join('; ') : 'None'],
-    ['Category', e.category_raw ?? e.type],
+    ['Category', category],
     ['Parent', e.parent_raw ?? (e.parent_id ? `[${e.parent_id}]` : 'None')],
-    ['Continent or realm', e.realm_raw ?? e.realm],
+    ['Continent or realm', realm],
     ['Canon status', e.canon_raw ?? e.canon_status],
     ['Source', e.source_raw ?? 'UNDEFINED'],
     ['Tags', e.tags.join(', ')],
@@ -122,6 +136,7 @@ export function importJson(db: DB, data: ReturnType<typeof exportJson>) {
     // An export from before realms were data names its realms only on records: make sure each exists.
     repairRealms(db, SETTING_REALMS);
     placeSettingWorld(db);
+    syncBuiltinTypes(db); // the imported types replace the registry this library had cached
     reindexAll(db);
   });
   tx();
@@ -132,7 +147,7 @@ export function exportMarkdownZip(db: DB): Buffer {
   const rows = db.prepare('SELECT * FROM entities ORDER BY id').all() as EntityRow[];
   for (const r of rows) {
     const e = rowToEntity(r);
-    zip.addFile(`Worldkeeper_Library/${e.realm}/${e.type}/${e.id}_${slug(e.name)}.md`, Buffer.from(entityToMarkdown(e), 'utf8'));
+    zip.addFile(`Worldkeeper_Library/${e.realm}/${e.type}/${e.id}_${slug(e.name)}.md`, Buffer.from(entityToMarkdown(e, db), 'utf8'));
   }
   zip.addFile(
     'Worldkeeper_Library/README.md',
@@ -278,7 +293,7 @@ export function exportPlayerZip(db: DB): Buffer {
 }
 
 export function entityExportMarkdown(db: DB, id: string) {
-  return entityToMarkdown(getEntity(db, id));
+  return entityToMarkdown(getEntity(db, id), db);
 }
 
 export { parseJson };

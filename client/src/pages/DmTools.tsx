@@ -37,7 +37,7 @@ interface Encounter {
   location_id?: string | null;
 }
 /** Places an encounter can happen at (shown on the map's Prepared encounters layer). */
-const PLACE_TYPES = ['region', 'settlement', 'landmark', 'building', 'dungeon', 'vault', 'ethereal_domain', 'adventure_location'];
+const PLACE_TYPES = ['@place'];
 
 interface BookCreature {
   id: string;
@@ -366,7 +366,7 @@ export function EncounterTracker({
           </div>
           <div className="w-52 grow">
             <Field label="Linked record (optional)">
-              <EntityPicker value={newEntity} types={['npc', 'creature']} onChange={setNewEntity} />
+              <EntityPicker value={newEntity} types={['@person', 'creature']} onChange={setNewEntity} />
             </Field>
           </div>
           {(bookList?.length ?? 0) > 0 && (
@@ -725,7 +725,7 @@ export function AgendasPage() {
       <PageHeader title="Faction Agendas" subtitle="Progress tracks for what each faction is pursuing in this campaign." note="They advance only when you advance them; nothing runs automatically and no world reset exists." />
       <Card className="grid gap-2 md:grid-cols-[260px_1fr_auto] items-end">
         <Field label="Faction">
-          <EntityPicker value={faction} types={['faction', 'cult', 'family']} onChange={setFaction} />
+          <EntityPicker value={faction} types={['@group']} onChange={setFaction} />
         </Field>
         <Field label="Plan">
           <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="What are they trying to do?" />

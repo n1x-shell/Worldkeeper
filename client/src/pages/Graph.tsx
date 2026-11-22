@@ -1,7 +1,8 @@
+import { useRecordTypes } from '../components/recordTypes';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ReactFlow, Background, Controls, MarkerType, type Edge, type Node } from '@xyflow/react';
-import { CANON_STATUSES, ENTITY_TYPE_LABELS, RELATIONSHIP_LABELS, RELATIONSHIP_TYPES, type EntityType, type RelationshipType } from '@shared/domain';
+import { CANON_STATUSES, RELATIONSHIP_LABELS, RELATIONSHIP_TYPES, type EntityType, type RelationshipType } from '@shared/domain';
 import { qs, useApi } from '../lib/api';
 import { Card, Check, Empty, ErrorBox, Loading, PageHeader } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
@@ -9,6 +10,7 @@ import { useAppState } from '../lib/store';
 import type { Relationship } from '../lib/types';
 import { REALM_COLORS } from '@shared/realms';
 import { useRealms } from '../components/realms';
+import type { RecordTypes } from '../components/recordTypes';
 
 interface GraphData {
   focus: string;
@@ -58,17 +60,19 @@ function usePalette(theme: string): Palette {
   }, [theme]);
   return p;
 }
-const TYPE_GROUPS: Record<string, string[]> = {
-  People: ['npc'],
-  Groups: ['faction', 'cult', 'family'],
-  Places: ['continent', 'realm', 'region', 'settlement', 'landmark', 'building', 'vault', 'ethereal_domain', 'dungeon'],
-  'Shards & artifacts': ['shard', 'artifact', 'item', 'vault_key'],
-  Deities: ['deity'],
-  Events: ['event', 'cosmology'],
-};
+/** The graph's type filter: groups from the type registry's traits and categories. */
+const graphGroups = (t: RecordTypes): Record<string, string[]> => ({
+  People: t.with('person'),
+  Groups: t.with('group'),
+  Places: t.with('place'),
+  Things: t.with('holdable'),
+  'Peoples and species': t.with('folk'),
+  'Myth and history': t.of('myth'),
+  Creatures: t.of('creature'),
+});
 
 /** Radial layout: focus in the centre, each depth on its own ring, nodes on a ring grouped by type. */
-function layout(d: GraphData, debug: boolean, pal: Palette, realmColor: (id: string) => string): { nodes: Node[]; edges: Edge[] } {
+function layout(d: GraphData, debug: boolean, pal: Palette, realmColor: (id: string) => string, typeLabel: (t: string) => string): { nodes: Node[]; edges: Edge[] } {
   const rings = new Map<number, GraphData['nodes']>();
   for (const n of d.nodes) rings.set(n.depth, [...(rings.get(n.depth) ?? []), n]);
   const nodes: Node[] = [];
@@ -87,7 +91,7 @@ function layout(d: GraphData, debug: boolean, pal: Palette, realmColor: (id: str
             <div className="text-left">
               <div className="font-medium leading-tight text-[12px]">{n.name}</div>
               <div className="text-[10px] opacity-70">
-                {ENTITY_TYPE_LABELS[n.type as EntityType] ?? n.type}
+                {typeLabel(n.type)}
                 {debug ? ` · ${n.id}` : ''}
               </div>
             </div>
@@ -120,6 +124,7 @@ function layout(d: GraphData, debug: boolean, pal: Palette, realmColor: (id: str
 }
 
 export function GraphPage() {
+  const recordTypes = useRecordTypes();
   const [sp, setSp] = useSearchParams();
   const nav = useNavigate();
   const realms = useRealms();
@@ -133,11 +138,11 @@ export function GraphPage() {
   const [rel, setRel] = useState('');
   const [era, setEra] = useState('');
   const { data: eras } = useApi<{ key: string; name: string }[]>('/api/eras');
-  const url = `/api/graph${qs({ focus, depth, refs: refs ? undefined : '0', types: group ? TYPE_GROUPS[group] : undefined, realms: realm, canon, rel, eras: era })}`;
+  const url = `/api/graph${qs({ focus, depth, refs: refs ? undefined : '0', types: group ? graphGroups(recordTypes)[group] : undefined, realms: realm, canon, rel, eras: era })}`;
   const { data, error, loading } = useApi<GraphData>(focus ? url : null);
   const { debug, theme } = useAppState();
   const pal = usePalette(theme);
-  const flow = useMemo(() => (data ? layout(data, debug, pal, (id) => realms.get(id).color) : null), [data, debug, pal, realms]);
+  const flow = useMemo(() => (data ? layout(data, debug, pal, (id) => realms.get(id).color, recordTypes.label) : null), [data, debug, pal, realms, recordTypes]);
 
   return (
     <div className="space-y-3">
@@ -159,7 +164,7 @@ export function GraphPage() {
           <span className="label">Entity type</span>
           <select className="input w-auto" value={group} onChange={(e) => setGroup(e.target.value)}>
             <option value="">All</option>
-            {Object.keys(TYPE_GROUPS).map((g) => (
+            {Object.keys(graphGroups(recordTypes)).map((g) => (
               <option key={g}>{g}</option>
             ))}
           </select>

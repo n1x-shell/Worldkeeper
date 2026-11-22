@@ -28,6 +28,7 @@ import { QuickReferencePage } from './pages/QuickReference';
 import { BackupsPage, BrokenPage, ConsistencyPage, HistoryPage, ImportExportPage, OpenQuestionsPage, ReviewPage, SettingsPage } from './pages/Library';
 import { RumoursPage } from './pages/Rumours';
 import { RealmsPage } from './pages/Realms';
+import { TemplatesPage } from './pages/Templates';
 import { PlayerApp } from './player/PlayerApp';
 import { PublishPage } from './pages/Publish';
 import { StyleGuidePage } from './pages/StyleGuide';
@@ -79,6 +80,14 @@ export function App() {
             element={
               <Page>
                 <AtlasPage />
+              </Page>
+            }
+          />
+          <Route
+            path="templates"
+            element={
+              <Page>
+                <TemplatesPage />
               </Page>
             }
           />

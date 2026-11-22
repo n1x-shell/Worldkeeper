@@ -2,12 +2,16 @@ import fs from 'node:fs';
 import type { Paths } from './config.js';
 import { openDatabase, type DB } from './db/connection.js';
 import { ensureEras } from './repo/eras.js';
+import { syncBuiltinTypes } from './repo/recordTypes.js';
+import { syncBuiltinTemplates } from './repo/templates.js';
 
 /** Holds the live database handle so a restore can swap it without restarting the server. */
 export class AppContext {
   db: DB;
   constructor(public paths: Paths, public mode: 'dm' | 'player' = 'dm') {
     this.db = openDatabase(paths.dbFile);
+    syncBuiltinTypes(this.db);
+    syncBuiltinTemplates(this.db);
     ensureEras(this.db);
   }
 
@@ -20,6 +24,8 @@ export class AppContext {
     fs.copyFileSync(stagedFile, this.paths.dbFile);
     fs.unlinkSync(stagedFile);
     this.db = openDatabase(this.paths.dbFile);
+    syncBuiltinTypes(this.db);
+    syncBuiltinTemplates(this.db);
     ensureEras(this.db);
   }
 }

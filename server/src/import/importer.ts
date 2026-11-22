@@ -12,6 +12,7 @@ import { loadMentionIndex } from '../repo/mentions.js';
 import { reindexAll } from '../repo/search.js';
 import { deriveTimelineEras, eraVocabularyFromText, seedEras } from '../repo/eras.js';
 import { ensureSettingRealm } from './settingRealms.js';
+import { types } from '../repo/recordTypes.js';
 
 export type DocKind =
   | 'bible'
@@ -82,6 +83,7 @@ function readLocator(files: SourceFile[]): Map<string, string> {
 }
 
 export function buildPlan(db: DB, files: SourceFile[], sourceName: string): ImportPlan {
+  const reg = types(db);
   const knownRealms = listRealms(db, { includeArchived: true }).map((r) => ({ id: r.id, name: r.name }));
   const plan: ImportPlan = {
     sourceName,
@@ -130,7 +132,7 @@ export function buildPlan(db: DB, files: SourceFile[], sourceName: string): Impo
         plan.skipped.push({ id: b.id || '(none)', file: f.path, line: b.startLine, reason: 'Block has no valid stable ID' });
         return;
       }
-      const draft = blockToDraft(b, f.path, knownRealms);
+      const draft = blockToDraft(b, f.path, knownRealms, reg);
       const list = candidates.get(b.id) ?? [];
       list.push({ draft, standalone: i === 0, kind });
       candidates.set(b.id, list);

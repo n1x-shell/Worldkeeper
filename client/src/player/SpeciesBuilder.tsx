@@ -8,6 +8,7 @@ import { Badge, RealmBadge } from '../components/ui/badges';
 import { Tabs } from '../components/ui/inputs';
 import { Empty, Loading } from '../components/ui/feedback';
 import { realmClass, useRealms } from '../components/realms';
+import { handbookTypesWith } from './categories';
 
 /**
  * Species and Classes, laid out like a character builder: pick from the list on the left, read everything about it on
@@ -15,7 +16,7 @@ import { realmClass, useRealms } from '../components/realms';
  * the classes (Warrior, Mage and the rest) are listed under the classes.
  */
 const TABS = [
-  { key: 'species', label: 'Species', types: ['people', 'species', 'culture'] },
+  { key: 'species', label: 'Species', types: handbookTypesWith('folk') },
   { key: 'classes', label: 'Classes', types: ['calling'] },
 ] as const;
 
@@ -49,7 +50,8 @@ export function SpeciesBuilder({ entities }: { entities: PEntity[] }) {
   // ?tab=callings is the older link to the same tab.
   const tabKey = params.get('tab') === 'callings' ? 'classes' : params.get('tab');
   const tab = TABS.find((t) => t.key === tabKey) ?? TABS[0];
-  const inTab = (t: (typeof TABS)[number], e: PEntity) => (t.key === 'classes' ? isClass(e) : (t.types as readonly string[]).includes(e.type));
+  const inTab = (t: (typeof TABS)[number], e: PEntity) =>
+    t.key === 'classes' ? isClass(e) : handbookTypesWith('folk').includes(e.type);
   const [q, setQ] = useState('');
   const list = useMemo(
     () =>
@@ -60,7 +62,7 @@ export function SpeciesBuilder({ entities }: { entities: PEntity[] }) {
     [entities, tab, q],
   );
   const pick = params.get('pick');
-  const chosen = entities.find((e) => e.id === pick && (tab.types as readonly string[]).includes(e.type));
+  const chosen = entities.find((e) => e.id === pick && (tab.key === 'species' ? handbookTypesWith('folk') : (tab.types as readonly string[])).includes(e.type));
   // The world's names for the classes (Warrior, Mage and the rest), linked under the class list.
   const worldNames = tab.key === 'classes' ? entities.filter((e) => e.type === 'calling' && !isClass(e)).sort((a, b) => a.name.localeCompare(b.name)) : [];
   const set = (next: Record<string, string | null>) => {

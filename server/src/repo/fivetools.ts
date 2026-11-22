@@ -11,6 +11,7 @@ import type Database from 'better-sqlite3';
 import { badRequest } from '../lib/errors.js';
 import { rulesSpeciesName } from '../../../shared/rulesView.js';
 import { listPacks } from './rulesPacks.js';
+import { types } from './recordTypes.js';
 
 type DB = Database.Database;
 type J = Record<string, unknown>;
@@ -372,7 +373,8 @@ export function importFivetools(db: DB, buf: Buffer, books: string[] = DEFAULT_B
   for (const r of own) add('species', r.name as string, '', species(r));
   const haveSpecies = new Set(own.map((r) => norm(r.name as string)));
   const wanted = new Set<string>();
-  for (const row of db.prepare(`SELECT player_summary, body, fields FROM entities WHERE type IN ('people','species','culture')`).all() as J[]) {
+  const folk = types(db).with('folk');
+  for (const row of db.prepare(`SELECT player_summary, body, fields FROM entities WHERE type IN (${folk.map(() => '?').join(',') || "''"})`).all(...folk) as J[]) {
     const n = rulesSpeciesName(`${row.player_summary ?? ''}\n${row.body ?? ''}\n${row.fields ?? ''}`);
     if (n) wanted.add(n);
   }

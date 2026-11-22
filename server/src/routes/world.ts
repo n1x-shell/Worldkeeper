@@ -28,11 +28,14 @@ import { isSecretHeading } from '../player/projection.js';
 import { peekEntity } from '../repo/peek.js';
 import { createRealm, deleteRealm, getRealm, listRealms, realmExists, reorderRealms, updateRealm } from '../repo/realms.js';
 import { timelineRealms } from '../import/importer.js';
+import { createRecordType, deleteRecordType, listRecordTypes, updateRecordType } from '../repo/recordTypes.js';
+import { createTemplate, deleteTemplate, duplicateTemplate, listTemplates, updateTemplate } from '../repo/templates.js';
 import { TYPE_GROUPS } from '../../../shared/domain.js';
 import { revealDuringPlay } from '../repo/reveal.js';
 import { createEra, listEras, setRowEra, updateEra } from '../repo/eras.js';
 import { getProfile, influenceMatrix, saveProfile } from '../repo/profiles.js';
 import { makeNames, namePeoples } from '../repo/names.js';
+import { types as typeRegistry } from '../repo/recordTypes.js';
 
 export function worldRoutes(ctx: AppContext) {
   const r = Router();
@@ -98,6 +101,26 @@ export function worldRoutes(ctx: AppContext) {
       };
     }),
   );
+  // Record types: the registry (shared/recordTypes.ts), with the GM's own types.
+  r.get(
+    '/record-types',
+    h((req) => listRecordTypes(ctx.db, { counts: true, includeArchived: req.query.archived === '1' })),
+  );
+  r.post(
+    '/record-types',
+    h((req) => createRecordType(ctx.db, req.body)),
+  );
+  r.patch(
+    '/record-types/:key',
+    h((req) => updateRecordType(ctx.db, String(req.params.key), req.body)),
+  );
+  r.delete(
+    '/record-types/:key',
+    h((req) => {
+      deleteRecordType(ctx.db, String(req.params.key));
+      return { ok: true };
+    }),
+  );
   // Realms: the library's worlds, continents and planes (docs/OWN_WORLD_PLAN.md §2.1).
   r.get(
     '/realms',
@@ -153,7 +176,7 @@ export function worldRoutes(ctx: AppContext) {
       const e = getEntity(ctx.db, String(req.params.id));
       res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
       res.setHeader('Content-Disposition', `attachment; filename="${e.id}.md"`);
-      res.send(entityToMarkdown(e));
+      res.send(entityToMarkdown(e, ctx.db));
     }),
   );
 
@@ -292,15 +315,29 @@ export function worldRoutes(ctx: AppContext) {
       return d;
     }),
   );
+  // Templates: the built-in ones, the archive's, and the GM's own (Library → Templates).
   r.get(
     '/templates',
-    h(() =>
-      (ctx.db.prepare('SELECT * FROM templates ORDER BY name').all() as { fields: string; sections: string }[]).map((t) => ({
-        ...t,
-        fields: parseJson(t.fields, []),
-        sections: parseJson(t.sections, []),
-      })),
-    ),
+    h(() => listTemplates(ctx.db)),
+  );
+  r.post(
+    '/templates',
+    h((req) => createTemplate(ctx.db, req.body)),
+  );
+  r.post(
+    '/templates/:id/duplicate',
+    h((req) => duplicateTemplate(ctx.db, String(req.params.id))),
+  );
+  r.put(
+    '/templates/:id',
+    h((req) => updateTemplate(ctx.db, String(req.params.id), req.body)),
+  );
+  r.delete(
+    '/templates/:id',
+    h((req) => {
+      deleteTemplate(ctx.db, String(req.params.id));
+      return { ok: true };
+    }),
   );
 
   // Canon review
@@ -397,9 +434,9 @@ export function worldRoutes(ctx: AppContext) {
         recentEdits: recentlyEdited(db, 8),
         favorites: listEntities(db, { favorite: true }).slice(0, 12),
         mysteries: db.prepare(`SELECT id, name, type, realm FROM entities WHERE archived = 0 AND (id IN ('WLD-907','WLD-908','DEC-901') OR tags LIKE '%"cat/secret"%') ORDER BY id LIMIT 10`).all(),
-        keyPlaces: quick(['settlement', 'vault', 'ethereal_domain'], 10),
+        keyPlaces: quick(typeRegistry(db).list.filter((t) => t.pin === 'site').map((t) => t.key), 10),
         keyPeople: db.prepare(`SELECT id, name, type, realm FROM entities WHERE type = 'npc' AND archived = 0 ORDER BY favorite DESC, id LIMIT 8`).all(),
-        factions: quick(['faction', 'cult'], 12),
+        factions: quick(typeRegistry(db).with('group'), 12),
         importRuns: db.prepare(`SELECT id, source_name, status, started_at FROM import_runs ORDER BY id DESC LIMIT 3`).all(),
         typeGroups: TYPE_GROUPS,
       };

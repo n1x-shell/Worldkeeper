@@ -85,6 +85,6 @@ describe('mentions in the library', () => {
   it('user-created records are mentionable by name', () => {
     const ctx = seeded();
     createEntity(ctx.db, { name: 'Brother Quill', type: 'npc', realm: 'kaelmar', canon_status: 'PROPOSED', aliases: [], tags: [], fields: [], body: '', notes: '' });
-    expect(loadMentionIndex(ctx.db).resolve('Brother Quill')).toEqual({ id: 'CUS-0001' });
+    expect(loadMentionIndex(ctx.db).resolve('Brother Quill')).toEqual({ id: 'NPC-0001' });
   });
 });

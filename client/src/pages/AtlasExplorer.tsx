@@ -1,3 +1,4 @@
+import { useRecordTypes } from '../components/recordTypes';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowRight, Columns2, ExternalLink, Eye, EyeOff, Flag, MapPin, PanelRight, PenLine, Trash2, X } from 'lucide-react';
@@ -9,14 +10,13 @@ import { Badge, Empty, ErrorBox, GmOnly, Loading, RealmBadge, Section, Toggle, T
 import { usePeek } from '../components/peek/context';
 import { MapView, kindOf, type ViewPin } from '../components/map/MapView';
 import { OutlineEditor, type Pt } from '../components/map/OutlineEditor';
-import { ENTITY_TYPE_LABELS, SECRET_HEADING_RE, type Entity, type EntityType } from '../../../shared/domain';
+import { SECRET_HEADING_RE, type Entity } from '../../../shared/domain';
 import { RegionPanel } from '../components/map/RegionPanel';
 import { useSidebarSlot } from '../components/sidebarSlot';
 import { JourneyDialog, type JourneyTarget } from '../components/map/JourneyDialog';
 import type { MapLayerSpot } from '../components/map/MapView';
 
 /** Kinds of record that get the region panel (terrain, campaign state, places, encounter tables). */
-const REGION_TYPES = new Set(['region', 'ethereal_domain', 'realm', 'nation', 'continent']);
 
 /**
  * The GM's full-screen Atlas: the same map view as the players' handbook, plus the GM's tools. Drag pins to move
@@ -111,6 +111,7 @@ function GmCodex({
   onChange: (ex?: Exploration) => void;
   onOutline: (how: 'draw' | 'edit', name: string) => void;
 }) {
+  const recordTypes = useRecordTypes();
   const { debug } = useAppState();
   const peek = usePeek();
   const { data } = useApi<{ entity: Entity }>(`/api/entities/${encodeURIComponent(id)}`);
@@ -238,7 +239,7 @@ function GmCodex({
         {err && <p className="text-danger text-xs mt-2">{err}</p>}
       </div>
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-        {REGION_TYPES.has(e.type) && <RegionPanel id={e.id} onPick={onPick} />}
+        {recordTypes.get(e.type)?.traits.regionLike && <RegionPanel id={e.id} onPick={onPick} />}
         {e.player_summary && (
           <Section title="What players read">
             <Markdown text={e.player_summary} className="prose-lore prose-peek" />
@@ -270,6 +271,7 @@ function GmCodex({
 }
 
 export function AtlasExplorer() {
+  const recordTypes = useRecordTypes();
   const { mapId } = useParams();
   const [sp, setSp] = useSearchParams();
   const nav = useNavigate();
@@ -306,8 +308,8 @@ export function AtlasExplorer() {
         y: mk.y,
         entity_id: mk.entity_id,
         child_map_id: mk.child_map_id,
-        kind: kindOf(mk.entity_type ?? undefined),
-        typeLabel: mk.entity_type ? (ENTITY_TYPE_LABELS[mk.entity_type as EntityType] ?? mk.entity_type) : undefined,
+        kind: kindOf(mk.entity_type ?? undefined, recordTypes),
+        typeLabel: mk.entity_type ? recordTypes.label(mk.entity_type) : undefined,
         hidden: mk.hidden,
       })),
     [data],
@@ -599,7 +601,7 @@ export function AtlasExplorer() {
             {unplaced.map((u) => (
               <li key={u.id}>
                 <button type="button" className="w-full text-left flex items-center gap-1.5 hover:text-gold" onClick={() => placePin(u)}>
-                  <MapPin size={12} className="text-dim" /> {u.name} <span className="text-dim">({ENTITY_TYPE_LABELS[u.type as EntityType] ?? u.type})</span>
+                  <MapPin size={12} className="text-dim" /> {u.name} <span className="text-dim">({recordTypes.label(u.type)})</span>
                 </button>
               </li>
             ))}

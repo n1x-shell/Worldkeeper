@@ -1,3 +1,4 @@
+import { BUILTIN_REGISTRY, type TypeRegistry } from '@shared/recordTypes';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
@@ -18,18 +19,14 @@ import { Check, Segmented } from '../ui/inputs';
  */
 
 export type Kind = 'region' | 'settlement' | 'landmark' | 'fortress' | 'vault' | 'other';
-export const kindOf = (type: string | undefined): Kind =>
-  type === 'continent' || type === 'realm' || type === 'region' || type === 'world' || type === 'ethereal_domain'
-    ? 'region'
-    : type === 'settlement'
-      ? 'settlement'
-      : type === 'landmark'
-        ? 'landmark'
-        : type === 'building'
-          ? 'fortress'
-          : type === 'vault'
-            ? 'vault'
-            : 'other';
+/** A pin's look, from its record type in the registry: areas as regions, then by the type's icon. */
+const ICON_KIND: Record<string, Kind> = { castle: 'settlement', landmark: 'landmark', compass: 'landmark', home: 'fortress', door: 'fortress', lock: 'vault' };
+export const kindOf = (type: string | undefined, reg: TypeRegistry = BUILTIN_REGISTRY): Kind => {
+  const t = type ? reg.get(type) : undefined;
+  if (!t) return 'other';
+  if (t.pin === 'area') return 'region';
+  return ICON_KIND[t.icon] ?? 'other';
+};
 
 const KINDS: { key: Kind | 'routes'; label: string }[] = [
   { key: 'region', label: 'Lands and regions' },

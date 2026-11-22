@@ -20,12 +20,15 @@ import { playerRegions } from '../repo/regionState.js';
 import type { DB } from '../db/connection.js';
 import { SECRET_HEADING_RE, ENTITY_TYPE_LABELS, type EntityType } from '../../../shared/domain.js';
 import { listRealms } from '../repo/realms.js';
+import { listRecordTypes } from '../repo/recordTypes.js';
+import type { RecordTypeDef } from '../../../shared/recordTypes.js';
 import type { RealmInfo } from '../../../shared/realms.js';
 import { parseJson } from '../lib/json.js';
 import { splitSections } from '../import/parseMarkdown.js';
 import { parseRefs, type MentionIndex } from '../../../shared/mentions.js';
 import { loadMentionIndex } from '../repo/mentions.js';
 import { playerExploration } from '../repo/exploration.js';
+import { types } from '../repo/recordTypes.js';
 
 export interface PlayerEntity {
   id: string;
@@ -55,6 +58,8 @@ interface Row {
   revealed_facts: string;
   revealed: number;
   archived: number;
+  /** Read for structured facts only (a people's "Found in"); never sent to players. */
+  fields?: string;
 }
 
 export function isSecretHeading(heading: string) {
@@ -81,8 +86,6 @@ function scrubRefs(text: string, revealed: Set<string>, index: MentionIndex): st
 }
 
 /** Kinds of record whose names are ordinary words too often to link from prose. */
-const NO_AUTOLINK = new Set(['creature', 'calling', 'people', 'item', 'rule', 'system', 'species', 'culture', 'index', 'register', 'redirect', 'adventure_hook']);
-const PLACE_TYPES = new Set(['world', 'continent', 'realm', 'region', 'nation', 'settlement', 'landmark', 'building', 'vault', 'ethereal_domain']);
 interface Lexicon {
   re: RegExp | null;
   byName: Map<string, string>;
@@ -90,6 +93,10 @@ interface Lexicon {
 
 /** Names of revealed records, as they are written in prose (no leading "The", no nickname or bracketed note; a god by the name before the comma). */
 function buildLexicon(db: DB): Lexicon {
+  const reg = types(db);
+  // Not linked from prose: ordinary-word names, bookkeeping and adventure hooks. A shared name goes to the place.
+  const NO_AUTOLINK = new Set(reg.list.filter((t) => t.traits.commonNoun || t.traits.meta || t.category === 'adventure').map((t) => t.key));
+  const PLACE_TYPES = new Set(reg.with('place'));
   const rows = db.prepare(`SELECT id, name, type FROM entities WHERE revealed = 1 AND archived = 0`).all() as { id: string; name: string; type: string }[];
   const groups = new Map<string, { id: string; type: string }[]>();
   for (const r of rows) {
@@ -154,7 +161,11 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, realmsInfo:
   const linked = new Set<string>();
   // Peoples and callings belong wherever their player-visible text says they're found (never from GM text).
   const realms = new Set<string>([r.realm]);
-  if (r.type === 'people' || r.type === 'calling') {
+  // A people's "Found in" fact (its template's) says where it lives; without one, it's read from the player text.
+  const foundIn = realmsInfo.folk.has(r.type) ? (parseJson<[string, string][]>(r.fields ?? '[]', []).find(([k, v]) => /^found in$/i.test(k) && v.trim())?.[1] ?? '') : '';
+  if (foundIn) {
+    for (const c of realmsInfo.continents) if (c.nameRe.test(foundIn) || foundIn.toLowerCase().includes(c.id)) realms.add(c.id);
+  } else if (realmsInfo.folk.has(r.type)) {
     // A people of a world is found on its continents; and on any continent its player text names.
     const own = realmsInfo.byId.get(r.realm);
     if (own?.kind === 'world') realmsInfo.continents.filter((c) => c.parent_id === own.id || !c.parent_id).forEach((c) => realms.add(c.id));
@@ -180,7 +191,7 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, realmsInfo:
       : sections,
   };
   // A people found in a named place of a continent (the Radiant Expanse, the Deepwood) is found on that continent.
-  if (placeRealm && (r.type === 'people' || r.type === 'calling')) {
+  if (placeRealm && !foundIn && realmsInfo.folk.has(r.type)) {
     for (const m of [out.summary, ...out.sections.map((x) => x.content)].join('\n').matchAll(/\/player\/e\/([A-Z]{2,5}-\d{3,4})/g)) {
       const realm = placeRealm.get(m[1]);
       if (realm && realmsInfo.continents.some((c) => c.id === realm)) realms.add(realm);
@@ -194,6 +205,8 @@ interface RealmContext {
   byId: Map<string, RealmInfo>;
   /** Continents, with a pattern for their name in text. */
   continents: (RealmInfo & { nameRe: RegExp })[];
+  /** Peoples, species, cultures and callings (the registry's folk), whose continents are worked out. */
+  folk: Set<string>;
 }
 const esc = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 /**
@@ -215,7 +228,16 @@ function realmContext(db: DB): RealmContext {
   return {
     byId: new Map(list.map((r) => [r.id, r])),
     continents: list.filter((r) => r.kind === 'continent' && visible.has(r.id)).map((r) => ({ ...r, nameRe: new RegExp(`\\b${esc(r.name.replace(/^the\s+/i, ''))}\\b`) })),
+    folk: new Set(types(db).of('folk')),
   };
+}
+
+/** The record types players see: those their revealed records have (a GM's own type stays unnamed until then). */
+export function playerTypes(db: DB): RecordTypeDef[] {
+  const used = new Set((db.prepare('SELECT DISTINCT type FROM entities WHERE revealed = 1 AND archived = 0').all() as { type: string }[]).map((r) => r.type));
+  return listRecordTypes(db)
+    .filter((t) => used.has(t.key))
+    .map(({ builtin: _b, archived: _a, sort_order: _s, records: _r, ...t }) => t);
 }
 
 /** The realms players see: unarchived ones their revealed records are in (and what holds those), without counts. */
@@ -227,14 +249,15 @@ export function playerRealms(db: DB): Omit<RealmInfo, 'records'>[] {
 
 /** The continent of every place record, for working out where a people is found. */
 function placeRealms(db: DB) {
-  const rows = db.prepare(`SELECT id, realm FROM entities WHERE type IN ('continent','region','nation','settlement','landmark','building','dungeon','vault') AND archived = 0`).all() as {
+  const P = types(db).with('place');
+  const rows = db.prepare(`SELECT id, realm FROM entities WHERE type IN (${P.map(() => '?').join(',') || "''"}) AND archived = 0`).all(...P) as {
     id: string;
     realm: string;
   }[];
   return new Map(rows.map((x) => [x.id, x.realm]));
 }
 
-const COLS = 'id, name, type, realm, tags, body, player_summary, revealed_sections, revealed_facts, revealed, archived';
+const COLS = 'id, name, type, realm, tags, body, player_summary, revealed_sections, revealed_facts, revealed, archived, fields';
 
 export function playerEntities(db: DB): PlayerEntity[] {
   const revealed = revealedIdSet(db);
@@ -389,6 +412,7 @@ export function playerSnapshot(db: DB) {
     generated_at: new Date().toISOString(),
     entities: playerEntities(db),
     realms: playerRealms(db),
+    types: playerTypes(db),
     maps: playerMaps(db),
     campaigns: playerCampaigns(db),
     factionWeb: playerFactionWeb(db, activeCampaignId(db)),

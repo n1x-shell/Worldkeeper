@@ -53,7 +53,7 @@ describe('import', () => {
     expect(s.skipped.some((x) => x.reason.startsWith('Worked example'))).toBe(true);
     expect(s.skipped.some((x) => x.id === 'COS-901' && x.reason.startsWith('Embedded copy'))).toBe(true);
     expect(s.templates).toBe(1);
-    expect((ctx.db.prepare('SELECT COUNT(*) n FROM templates').get() as { n: number }).n).toBe(1);
+    expect((ctx.db.prepare(`SELECT COUNT(*) n FROM templates WHERE origin = 'import'`).get() as { n: number }).n).toBe(1);
   });
 
   it('preserves IDs, names, aliases, raw canon text, source references and GM secrets', () => {

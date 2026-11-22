@@ -7,6 +7,7 @@ import type { DB } from '../db/connection.js';
 import { notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
 import { rankOf } from '../../../shared/standing.js';
+import { types } from './recordTypes.js';
 
 export const REGION_IDS = [
   'REG-001',
@@ -45,9 +46,20 @@ function within(db: DB, regionId: string): Set<string> {
   return ids;
 }
 
-/** The faction that holds a region: the one whose record names it as its main dominion. */
+/**
+ * The faction that holds a region: the region's own "Ruling faction" fact (its template's), or else the faction whose
+ * record names the region as its main dominion (the archive's wording).
+ */
 function holder(db: DB, regionId: string) {
-  return (db.prepare(`SELECT id, name FROM entities WHERE type = 'faction' AND body LIKE ? LIMIT 1`).get(`%Main dominion:%[${regionId}]%`) as { id: string; name: string } | undefined) ?? null;
+  const fields = (db.prepare('SELECT fields FROM entities WHERE id = ?').get(regionId) as { fields: string } | undefined)?.fields ?? '[]';
+  const fact = parseJson<[string, string][]>(fields, []).find(([k, v]) => /^ruling faction$/i.test(k) && v.trim())?.[1] ?? '';
+  const named = /\[([A-Z]{2,5}-[A-Z0-9-]+)\]/.exec(fact)?.[1];
+  const byFact = named
+    ? (db.prepare('SELECT id, name FROM entities WHERE id = ?').get(named) as { id: string; name: string } | undefined)
+    : fact
+      ? (db.prepare('SELECT id, name FROM entities WHERE lower(name) = lower(?) AND archived = 0 LIMIT 1').get(fact.trim()) as { id: string; name: string } | undefined)
+      : undefined;
+  return byFact ?? (db.prepare(`SELECT id, name FROM entities WHERE type = 'faction' AND body LIKE ? LIMIT 1`).get(`%Main dominion:%[${regionId}]%`) as { id: string; name: string } | undefined) ?? null;
 }
 
 export function regionState(db: DB, campaignId: number, regionId: string) {
@@ -57,6 +69,8 @@ export function regionState(db: DB, campaignId: number, regionId: string) {
   if (!r) throw notFound('Region');
   const ids = within(db, regionId);
   const list = [...ids];
+  const reg = types(db);
+  const typeOf = new Map((db.prepare(`SELECT id, type FROM entities WHERE id IN (${list.map(() => '?').join(',') || "''"})`).all(...list) as { id: string; type: string }[]).map((x) => [x.id, x.type]));
   const inList = `(${list.map(() => '?').join(',')})`;
   const name = db.prepare('SELECT name, type FROM entities WHERE id = ?');
   const nm = (id: string) => (name.get(id) as { name: string } | undefined)?.name ?? id;
@@ -114,7 +128,7 @@ export function regionState(db: DB, campaignId: number, regionId: string) {
   return {
     region: { id: r.id, name: r.name, type: r.type },
     holder: hold,
-    places: list.filter((id) => id !== regionId && /^(SET|LOC|VLT|BLD)-/.test(id)).length,
+    places: list.filter((id) => id !== regionId && reg.get(typeOf.get(id) ?? '')?.pin === 'site').length,
     agendas: agendas.map((a) => ({ ...a, faction: nm(a.faction_id) })),
     standing,
     changes: changes.map((c) => ({ ...c, entity: nm(c.entity_id) })),

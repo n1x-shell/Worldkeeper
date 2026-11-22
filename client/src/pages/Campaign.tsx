@@ -276,7 +276,7 @@ export function ActiveCampaign() {
           <Field label="Premise">
             <AutoTextarea minRows={3} value={c.premise} onChange={(e) => set({ premise: e.target.value })} className="font-sans" />
           </Field>
-          <EntityMultiPicker label="Active factions" value={c.active_factions} types={['faction', 'cult', 'family']} onChange={(ids) => set({ active_factions: ids })} />
+          <EntityMultiPicker label="Active factions" value={c.active_factions} types={['@group']} onChange={(ids) => set({ active_factions: ids })} />
           <div>
             <span className="label">Players</span>
             {c.players.map((p, i) => (
@@ -751,7 +751,7 @@ function WorldTies({
     <Section title="Ties to the world" className="space-y-2">
       <div className="grid gap-2 md:grid-cols-[1fr_2fr] items-end">
         <Field label="Hometown">
-          <EntityPicker value={hometown} onChange={(v) => onChange({ hometown: v })} types={['settlement', 'region', 'landmark', 'building', 'continent']} />
+          <EntityPicker value={hometown} onChange={(v) => onChange({ hometown: v })} types={['@place']} />
         </Field>
       </div>
       {ties.length > 0 && (
@@ -897,7 +897,7 @@ function QuestCard({ q: initial, onChange, highlight }: { q: Quest; onChange: ()
       </div>
       <div className="grid gap-2 md:grid-cols-2">
         <Field label="Quest giver">
-          <EntityPicker value={q.giver_id} types={['npc', 'faction', 'cult']} onChange={(id) => set({ giver_id: id })} />
+          <EntityPicker value={q.giver_id} types={['@person', '@group']} onChange={(id) => set({ giver_id: id })} />
         </Field>
         <Field label="Location">
           <EntityPicker value={q.location_id} onChange={(id) => set({ location_id: id })} />

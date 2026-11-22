@@ -1,3 +1,5 @@
+import { BUILTIN_TYPES, ID_PATTERN_SOURCE } from './recordTypes.js';
+
 /**
  * Shared domain vocabulary for The Worldkeeper.
  * Used by both the server (validation, import) and the client (labels, filters).
@@ -23,102 +25,25 @@ export type MechanicsStatus = (typeof MECHANICS_STATUSES)[number];
 /** A realm's key (see shared/realms.ts: realms are the library's own data, not a fixed list). */
 export type Realm = string;
 
-/** Normalised template types. `category_raw` always keeps the original source text. */
-export const ENTITY_TYPES = [
-  'world',
-  'continent',
-  'realm',
-  'region',
-  'nation',
-  'settlement',
-  'landmark',
-  'building',
-  'dungeon',
-  'vault',
-  'vault_key',
-  'npc',
-  'faction',
-  'cult',
-  'family',
-  'culture',
-  'people',
-  'calling',
-  'species',
-  'deity',
-  'event',
-  'cosmology',
-  'magic_system',
-  'artifact',
-  'shard',
-  'item',
-  'creature',
-  'rule',
-  'ethereal_domain',
-  'system',
-  'adventure_hook',
-  'adventure_location',
-  'index',
-  'register',
-  'redirect',
-  'custom',
-] as const;
-export type EntityType = (typeof ENTITY_TYPES)[number];
+/**
+ * Record types. The registry (shared/recordTypes.ts) is the one source: these are the built-in types, for code that has
+ * no library at hand. A library can hold more (its own, or a pack's), so a type is any string the library's registry
+ * knows; features ask the registry by trait, never by listing types here.
+ */
+export const ENTITY_TYPES = BUILTIN_TYPES.map((t) => t.key);
+export type EntityType = string;
 
-export const ENTITY_TYPE_LABELS: Record<EntityType, string> = {
-  world: 'World',
-  continent: 'Continent',
-  realm: 'Realm',
-  region: 'Region',
-  nation: 'Nation',
-  settlement: 'Settlement',
-  landmark: 'Landmark',
-  building: 'Building',
-  dungeon: 'Dungeon',
-  vault: 'Vault',
-  vault_key: 'Vault Key',
-  npc: 'NPC',
-  faction: 'Faction',
-  cult: 'Cult',
-  family: 'Family',
-  culture: 'Culture',
-  people: 'People',
-  calling: 'Calling',
-  species: 'Species',
-  deity: 'Deity',
-  event: 'Historical Event',
-  cosmology: 'Cosmology',
-  magic_system: 'Magic System',
-  artifact: 'Artifact',
-  shard: 'Crystal Shard',
-  item: 'Item',
-  creature: 'Creature',
-  rule: 'Rule',
-  ethereal_domain: 'Ethereal Domain',
-  system: 'Shared System',
-  adventure_hook: 'Adventure Hook',
-  adventure_location: 'Adventure Location',
-  index: 'Index / Guide',
-  register: 'Continuity Register',
-  redirect: 'Redirect (legacy ID)',
-  custom: 'Custom Entry',
-};
+/** The built-in types' labels (the library's registry has its own types' too). */
+export const ENTITY_TYPE_LABELS: Record<string, string> = Object.fromEntries(BUILTIN_TYPES.map((t) => [t.key, t.label]));
 
-/** Groupings used by the sidebar encyclopedia sections. */
-export const TYPE_GROUPS: Record<string, EntityType[]> = {
-  places: ['continent', 'realm', 'region', 'nation', 'settlement', 'landmark', 'building', 'dungeon', 'vault', 'ethereal_domain', 'adventure_location'],
-  regions: ['region', 'nation', 'settlement'],
-  landmarks: ['landmark', 'building', 'dungeon', 'vault', 'adventure_location'],
-  npcs: ['npc'],
-  factions: ['faction', 'cult', 'family'],
-  artifacts: ['shard', 'artifact', 'item', 'vault_key'],
-  creatures: ['creature'],
-  events: ['event'],
-  cultures: ['people', 'culture', 'species', 'calling'],
-  magic: ['magic_system', 'cosmology'],
-  pantheon: ['deity'],
-  rules: ['rule', 'system'],
-  hooks: ['adventure_hook'],
-};
+/** The Codex's browse groups, from the built-in types (the client builds them from the library's registry). */
+export const TYPE_GROUPS: Record<string, string[]> = BUILTIN_TYPES.reduce(
+  (out, t) => {
+    for (const g of t.browse) (out[g] ??= []).push(t.key);
+    return out;
+  },
+  {} as Record<string, string[]>,
+);
 
 export const RELATIONSHIP_TYPES = [
   'part_of',
@@ -190,12 +115,8 @@ export const CONDITIONS_2024 = [
   'Unconscious',
 ] as const;
 
-/** Regex for stable IDs used across the library, e.g. NPC-010, CON-001-DOM, PPL-008-009, HOOK-001-INDEX, IDX-AETH-FAI. */
-export const ID_PREFIXES = [
-  'WLD', 'CON', 'REG', 'LOC', 'SET', 'VLT', 'KEY', 'NPC', 'FAC', 'CLT', 'FAM', 'PPL', 'CAL', 'DEI',
-  'COS', 'HIS', 'SHD', 'ART', 'ITM', 'CRE', 'RUL', 'ETH', 'SYS', 'HOOK', 'DEC', 'GDE', 'IDX', 'CUS',
-] as const;
-export const ID_PATTERN_SOURCE = `(?:${ID_PREFIXES.join('|')})-[A-Z0-9]{3,6}(?:-[A-Z0-9]+)*`;
+/** Stable IDs (NPC-010, CON-001-DOM, TWN-0001): any type's prefix, see shared/recordTypes.ts. */
+export { ID_PATTERN_SOURCE };
 export const BRACKET_REF_RE = () => new RegExp(`\\[(${ID_PATTERN_SOURCE})\\]`, 'g');
 export const BARE_ID_RE = new RegExp(`^${ID_PATTERN_SOURCE}$`);
 

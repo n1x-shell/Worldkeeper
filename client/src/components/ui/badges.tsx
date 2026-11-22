@@ -1,7 +1,7 @@
 /** Badges and tags: canon status, realm, record type, reveal state, rarity and plain status. */
+import { useRecordTypes } from '../recordTypes';
 import type { ReactNode } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { ENTITY_TYPE_LABELS, type EntityType } from '@shared/domain';
 import { realmClass, useRealms } from '../realms';
 
 export type Tone = 'dim' | 'gold' | 'arcane' | 'danger' | 'ok' | 'warn' | 'belief' | 'homebrew' | 'realm';
@@ -69,7 +69,8 @@ export function RealmBadge({ realm, label }: { realm: string; label?: string }) 
 }
 
 export function TypeBadge({ type }: { type: string }) {
-  return <Badge>{ENTITY_TYPE_LABELS[type as EntityType] ?? type}</Badge>;
+  const recordTypes = useRecordTypes();
+  return <Badge>{recordTypes.label(type)}</Badge>;
 }
 
 export function VisibilityBadge({ revealed }: { revealed: boolean }) {

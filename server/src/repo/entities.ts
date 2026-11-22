@@ -3,7 +3,9 @@ import { parseJson, now } from '../lib/json.js';
 import { sha256 } from '../lib/hash.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import type { Entity, EntitySummary, Realm, EntityType, CanonStatus } from '../../../shared/domain.js';
-import { BARE_ID_RE, CANON_STATUSES, ENTITY_TYPES } from '../../../shared/domain.js';
+import { BARE_ID_RE, CANON_STATUSES } from '../../../shared/domain.js';
+import { TYPE_KEY_RE } from '../../../shared/recordTypes.js';
+import { typeExists, types } from './recordTypes.js';
 import { REALM_KEY_RE } from '../../../shared/realms.js';
 import { realmExists } from './realms.js';
 import { z } from 'zod';
@@ -230,7 +232,7 @@ export const entityInputSchema = z.object({
   name: z.string().trim().min(1).max(300),
   aliases: z.array(z.string().max(300)).max(100).default([]),
   category_raw: z.string().max(300).nullable().optional(),
-  type: z.enum(ENTITY_TYPES),
+  type: z.string().regex(TYPE_KEY_RE),
   parent_id: z.string().max(40).nullable().optional(),
   parent_raw: z.string().max(500).nullable().optional(),
   realm: z.string().regex(REALM_KEY_RE),
@@ -262,12 +264,16 @@ export type EntityPatch = z.infer<typeof entityPatchSchema>;
 
 const PLAY_STATE_KEYS = ['player_summary', 'revealed', 'revealed_sections', 'revealed_facts', 'favorite', 'archived'] as const;
 
+/**
+ * The next free ID for a new record of a type: its prefix and four digits (SET-0001). Archive IDs have three digits
+ * (SET-001), so a record made here never takes an ID an archive could bring in later.
+ */
 export function nextCustomId(db: DB, prefix = 'CUS'): string {
-  const rows = db.prepare(`SELECT id FROM entities WHERE id LIKE ?`).all(`${prefix}-%`) as { id: string }[];
+  const rows = db.prepare(`SELECT id FROM entities WHERE id LIKE ?`).all(`${prefix}-____`) as { id: string }[];
   let max = 0;
   for (const r of rows) {
-    const n = parseInt(r.id.split('-')[1], 10);
-    if (!Number.isNaN(n) && n > max) max = n;
+    const n = /^[A-Z]+-(\d{4})$/.exec(r.id)?.[1];
+    if (n && Number(n) > max) max = Number(n);
   }
   return `${prefix}-${String(max + 1).padStart(4, '0')}`;
 }
@@ -284,7 +290,8 @@ export function findSimilarNames(db: DB, name: string, excludeId?: string): Enti
 export function createEntity(db: DB, input: EntityInput, reason = 'Created'): Entity {
   const data = entityInputSchema.parse(input);
   if (!realmExists(db, data.realm)) throw badRequest(`There is no realm "${data.realm}" in this library`);
-  const id = data.id ?? nextCustomId(db);
+  if (!typeExists(db, data.type)) throw badRequest(`There is no record type "${data.type}" in this library`);
+  const id = data.id ?? nextCustomId(db, types(db).get(data.type)?.prefix ?? 'CUS');
   if (getEntityRow(db, id)) throw badRequest(`ID ${id} already exists. Stable IDs are never reused.`);
   const ts = now();
   const tx = db.transaction(() => {
@@ -342,6 +349,7 @@ export class VersionConflictError extends Error {
 export function updateEntity(db: DB, id: string, patch: EntityPatch, changeType = 'edit'): Entity {
   const p = entityPatchSchema.parse(patch) as Record<string, unknown> & EntityPatch;
   if (typeof p.realm === 'string' && !realmExists(db, p.realm)) throw badRequest(`There is no realm "${p.realm}" in this library`);
+  if (typeof p.type === 'string' && !typeExists(db, p.type)) throw badRequest(`There is no record type "${p.type}" in this library`);
   // Only apply keys the caller sent: schema defaults must never blank stored lore.
   const provided = new Set(Object.keys(patch ?? {}));
   for (const k of Object.keys(p)) if (!provided.has(k)) delete p[k];
