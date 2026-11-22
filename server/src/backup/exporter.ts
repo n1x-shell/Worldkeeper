@@ -18,6 +18,8 @@ import { BUILTIN_REGISTRY } from '../../../shared/recordTypes.js';
 import { syncBuiltinTypes, types } from '../repo/recordTypes.js';
 import { installedManifests, syncInstalledPacks } from '../packs/registry.js';
 import { normalizeRealm, normalizeType } from '../import/normalize.js';
+import { setModuleData } from '../repo/modules.js';
+import { modulesFromMechanics } from '../../../shared/modules.js';
 
 /** Tables included in a full JSON export, in dependency order. */
 const TABLES = [
@@ -67,6 +69,7 @@ const TABLES = [
   'faction_standing',
   'renown_log',
   'party_treasure',
+  'module_data',
   'handouts',
   'bastions',
   'bastion_turns',
@@ -137,6 +140,7 @@ export function importJson(db: DB, data: ReturnType<typeof exportJson>) {
     // installed packs' own realms as they define them.
     const packRealms = Object.fromEntries(installedManifests(db).flatMap((m) => m.realms.map((r) => [r.id, r] as const)));
     repairRealms(db, packRealms);
+    adoptLegacyModuleData(db, data.tables as Record<string, Record<string, unknown>[] | undefined>);
     syncInstalledPacks(db);
     syncBuiltinTypes(db); // the imported types replace the registry this library had cached
     reindexAll(db);
@@ -184,6 +188,8 @@ export function exportCampaign(db: DB, campaignId: number, uploadsDir?: string) 
     characters: db.prepare('SELECT * FROM characters WHERE campaign_id = ?').all(campaignId),
     character_pages: db.prepare('SELECT p.* FROM character_pages p JOIN characters c ON c.id = p.character_id WHERE c.campaign_id = ?').all(campaignId),
     character_changes: db.prepare('SELECT x.* FROM character_changes x JOIN characters c ON c.id = x.character_id WHERE c.campaign_id = ?').all(campaignId),
+    // Modules' data about its characters (Thinning's track and true names).
+    module_data: db.prepare(`SELECT m.* FROM module_data m JOIN characters c ON c.id = m.owner_id WHERE m.owner = 'character' AND c.campaign_id = ?`).all(campaignId),
     // Portraits travel inside the export, as pictures.
     portraits: uploadsDir
       ? Object.fromEntries(
@@ -233,6 +239,12 @@ export function importCampaign(db: DB, data: ReturnType<typeof exportCampaign>, 
         insert('character_pages', r, { character_id: id, code: `IMPORT-${id}` });
         renewCharacterCode(db, id);
       }
+    for (const r of (data.module_data ?? []) as Record<string, unknown>[])
+      if (r.owner === 'character' && charMap.has(r.owner_id as number)) insert('module_data', r, { owner_id: charMap.get(r.owner_id as number) });
+    // An export from before modules kept Thinning on the page itself.
+    adoptLegacyModuleData(db, {
+      character_pages: ((data.character_pages ?? []) as Record<string, unknown>[]).filter((r) => charMap.has(r.character_id as number)).map((r) => ({ ...r, character_id: charMap.get(r.character_id as number) })),
+    });
     for (const r of (data.character_changes ?? []) as Record<string, unknown>[])
       if (charMap.has(r.character_id as number)) insert('character_changes', r, { character_id: charMap.get(r.character_id as number) });
     // A portrait becomes a new file for the copy; without the picture, the copy has none.
@@ -299,3 +311,30 @@ export function entityExportMarkdown(db: DB, id: string) {
 }
 
 export { parseJson };
+
+/**
+ * An export from before modules (v0.4.3 and older): Thinning on character pages, fading on the party's treasure and
+ * "campaign mechanics" in the settings become the modules' data and switches.
+ */
+function adoptLegacyModuleData(db: DB, tables: Record<string, Record<string, unknown>[] | undefined>) {
+  for (const r of tables.character_pages ?? []) {
+    if (!('thinning' in r) && !('true_name' in r)) continue;
+    const t = {
+      true_name: String(r.true_name ?? ''),
+      memories: parseJson<unknown[]>(r.memories as string, []),
+      known_by: parseJson<string[]>(r.known_by as string, []),
+      thinning: Number(r.thinning ?? 0),
+      shardscarred: !!r.shardscarred,
+    };
+    if (t.true_name || t.memories.length || t.known_by.length || t.thinning || t.shardscarred) setModuleData(db, 'thinning', 'character', r.character_id as number, t);
+  }
+  for (const r of tables.party_treasure ?? [])
+    if (r.fades || r.anchored) setModuleData(db, 'fading-salvage', 'treasure', r.id as number, { fades: !!r.fades, anchored: !!r.anchored });
+  const settings = tables.settings ?? [];
+  const old = settings.find((s) => s.key === 'mechanics');
+  if (old && !settings.some((s) => s.key === 'modules')) {
+    const switches = { ...modulesFromMechanics(parseJson(old.value as string, {})), ...(tables.campaigns?.length ? { renown: true } : {}) };
+    db.prepare(`INSERT INTO settings (key, value) VALUES ('modules', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`).run(JSON.stringify(switches));
+    db.prepare(`DELETE FROM settings WHERE key = 'mechanics'`).run();
+  }
+}

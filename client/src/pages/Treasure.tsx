@@ -1,4 +1,4 @@
-import { useMechanics } from '../lib/mechanics';
+import { useModules } from '../lib/modules';
 import { useState } from 'react';
 import { Coins, Dices, Eye, EyeOff, Plus, Trash2 } from 'lucide-react';
 import { api, useApi } from '../lib/api';
@@ -53,10 +53,10 @@ export function TreasurePage() {
   const { data: chars } = useApi<{ id: number; name: string }[]>(activeCampaignId ? `/api/characters?campaign_id=${activeCampaignId}` : null);
   const [tier, setTier] = useState('1-4');
   const [regionPick, setRegion] = useState('marches');
-  const mech = useMechanics();
+  const mech = useModules();
   // The region chosen, or the first one offered (the books, when the setting's treasure is off).
   const region = opts?.regions.some((r) => r.key === regionPick) ? regionPick : (opts?.regions[0]?.key ?? regionPick);
-  const fading = mech?.fading !== false;
+  const fading = mech.has('fading-salvage');
   const [kind, setKind] = useState<'individual' | 'hoard'>('hoard');
   const [roll, setRoll] = useState<Roll | null>(null);
   const [foundAt, setFoundAt] = useState('');

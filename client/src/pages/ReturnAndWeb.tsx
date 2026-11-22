@@ -1,5 +1,5 @@
 import { useRealms } from '../components/realms';
-import { useMechanics } from '../lib/mechanics';
+import { useModules } from '../lib/modules';
 import { useRole } from '../lib/packs';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -27,8 +27,8 @@ export function ReturnPage() {
   const { data, error, setData } = useApi<ReturnData>(activeCampaignId ? `/api/return?campaign_id=${activeCampaignId}` : null);
   const [reason, setReason] = useState('');
   const [held, setHeld] = useState('');
-  const mech = useMechanics();
-  if (mech && !mech.theReturn)
+  const mech = useModules();
+  if (mech.loaded && !mech.has('the-return'))
     return (
       <Empty title="The Return is switched off">
         This library doesn&apos;t use the Return. Switch it on in <Link to="/settings">Settings, Campaign mechanics</Link>.

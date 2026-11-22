@@ -18,6 +18,8 @@ import { EntityTable } from './EntityList';
 import { Dev, useDebug } from '../components/Dev';
 import { displaySections } from '../lib/sections';
 import { useCleaners } from '../lib/packs';
+import { useModules } from '../lib/modules';
+import { moduleForPage } from '@shared/modules';
 
 /** Show a record's non-secret sections inline (used by overview pages). */
 function RecordExcerpt({ id, maxSections = 99 }: { id: string; maxSections?: number }) {
@@ -85,6 +87,7 @@ export function WorldOverview() {
 export function RealmPage() {
   const recordTypes = useRecordTypes();
   const realms = useRealms();
+  const mods = useModules();
   const { realm = 'world' } = useParams();
   const { data: list, error } = useApi<EntitySummary[]>(`/api/entities${qs({ realm })}`);
   const groups = useMemo(() => {
@@ -148,7 +151,7 @@ export function RealmPage() {
         </div>
       )}
       <div className="grid gap-3 md:grid-cols-3">
-        {(tools[realm] ?? []).map((t) => (
+        {(tools[realm] ?? []).filter((t) => !moduleForPage(t.to) || mods.has(moduleForPage(t.to)!.key)).map((t) => (
           <Link key={t.to} to={t.to} className="panel elev-1 p-4 hover:border-gold/60 block">
             <div className="flex items-center gap-2 text-gold font-display">
               {t.icon} {t.label}

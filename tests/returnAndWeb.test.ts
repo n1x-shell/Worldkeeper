@@ -1,5 +1,5 @@
 /** The Return clock shows players only omens, and the faction web shows them only public and revealed ties. */
-import { setMechanics } from '../server/src/repo/mechanics.js';
+import { setLibraryModules } from '../server/src/repo/modules.js';
 import { describe, expect, it } from 'vitest';
 import { tempContext } from './helpers';
 import { buildPlan, commitPlan } from '../server/src/import/importer';
@@ -19,14 +19,14 @@ describe('the Return', () => {
   it('moves by hand, jumps to stage 6 when an Orb forms, and gives players only omens', () => {
     const { db } = tempContext();
     const c = campaigns.create(db, { title: 'T' }) as { id: number };
-    setMechanics(db, { theReturn: true });
+    setLibraryModules(db, { 'the-return': true });
     expect(playerCampaign(db, c.id)!.omens).toEqual([]);
     setReturnStage(db, c.id, { stage: 2 });
     expect(playerCampaign(db, c.id)!.omens).toHaveLength(2);
     // Switched off, players see no omens (the clock is kept).
-    setMechanics(db, { theReturn: false });
+    setLibraryModules(db, { 'the-return': false });
     expect(playerCampaign(db, c.id)!.omens).toEqual([]);
-    setMechanics(db, { theReturn: true });
+    setLibraryModules(db, { 'the-return': true });
     expect(JSON.stringify(playerCampaign(db, c.id))).not.toMatch(/stage|Guest|teacher/i);
     expect(() => setReturnStage(db, c.id, { stage: 1 })).toThrow();
     setReturnStage(db, c.id, { orb: true });

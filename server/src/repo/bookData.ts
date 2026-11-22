@@ -9,7 +9,7 @@ import SRD_CREATURES from '../../../shared/srd/creatures.json' with { type: 'jso
 import SRD_HAZARDS from '../../../shared/srd/hazards.json' with { type: 'json' };
 import SRD_ITEMS from '../../../shared/srd/items.json' with { type: 'json' };
 import { settingPack, settingPackOn } from './settingPack.js';
-import { getMechanics } from './mechanics.js';
+import { moduleOn } from './modules.js';
 
 type DB = Database.Database;
 type J = Record<string, unknown>;
@@ -59,7 +59,7 @@ function entries(db: DB, kind: 'creature' | 'item'): J[] {
 let cache: { stamp: string; creatures: J[]; items: BookItem[] } | null = null;
 function data(db: DB) {
   const s = db.prepare(`SELECT group_concat(id || ':' || enabled || ':' || imported_at) s FROM rules_packs`).get() as { s: string | null };
-  const stamp = `${db.name}|${s.s ?? ''}|${srdOn(db)}|${settingPackOn(db)}|${getMechanics(db).thinning}`;
+  const stamp = `${db.name}|${s.s ?? ''}|${srdOn(db)}|${settingPackOn(db)}|${moduleOn(db, 'thinning')}`;
   if (cache?.stamp !== stamp) cache = { stamp, creatures: entries(db, 'creature'), items: entries(db, 'item') as unknown as BookItem[] };
   return cache;
 }

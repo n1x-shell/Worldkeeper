@@ -12,6 +12,7 @@ import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { badRequest } from '../lib/errors.js';
 import { makeCrud } from './crud.js';
+import { moduleData, moduleDataFor, moduleOn, setModuleData } from './modules.js';
 import { rollDice } from '../../../shared/play.js';
 import { worldkeeperPath } from '../packs/paths.js';
 
@@ -231,7 +232,13 @@ export function itemTables(data = treasureData()) {
 }
 
 // ---------- The party's treasure ----------
-export const partyTreasure = makeCrud({
+// Fading and anchoring belong to the fading-salvage module: kept in module_data, given with each line.
+interface Fading {
+  fades: boolean;
+  anchored: boolean;
+}
+const fadingSchema = z.object({ fades: z.boolean().optional(), anchored: z.boolean().optional() });
+const coreTreasure = makeCrud({
   table: 'party_treasure',
   schema: z.object({
     campaign_id: z.number().int(),
@@ -244,15 +251,45 @@ export const partyTreasure = makeCrud({
     holder: z.string().max(200).default(''),
     status: z.enum(['carried', 'stored', 'sold', 'spent', 'given', 'lost', 'faded']).default('carried'),
     found_at: z.string().max(300).default(''),
-    fades: z.boolean().default(false),
-    anchored: z.boolean().default(false),
     player_visible: z.boolean().default(true),
     notes: z.string().max(5000).default(''),
     session_id: z.number().int().nullable().optional(),
   }),
-  boolColumns: ['fades', 'anchored', 'player_visible'],
+  boolColumns: ['player_visible'],
   orderBy: "status != 'carried', id DESC",
 });
+const withFading = (row: Record<string, unknown>, f: Partial<Fading> | undefined) => ({ ...row, fades: !!f?.fades, anchored: !!f?.anchored });
+function saveFading(db: DB, id: number, input: unknown) {
+  const patch = fadingSchema.parse(input ?? {});
+  if (patch.fades === undefined && patch.anchored === undefined) return;
+  const next = { fades: false, anchored: false, ...moduleData<Fading>(db, 'fading-salvage', 'treasure', id), ...patch };
+  if (next.fades || next.anchored) setModuleData(db, 'fading-salvage', 'treasure', id, next);
+  else db.prepare(`DELETE FROM module_data WHERE module = 'fading-salvage' AND owner = 'treasure' AND owner_id = ?`).run(id);
+}
+export const partyTreasure: typeof coreTreasure = {
+  list(db, where = {}) {
+    const rows = coreTreasure.list(db, where);
+    const f = moduleDataFor<Fading>(
+      db,
+      'fading-salvage',
+      'treasure',
+      rows.map((r) => r.id as number),
+    );
+    return rows.map((r) => withFading(r, f.get(r.id as number)));
+  },
+  get: (db, id) => withFading(coreTreasure.get(db, id), moduleData<Fading>(db, 'fading-salvage', 'treasure', id)),
+  create(db, input) {
+    const row = coreTreasure.create(db, input);
+    saveFading(db, row.id as number, input);
+    return partyTreasure.get(db, row.id as number);
+  },
+  update(db, id, input) {
+    coreTreasure.update(db, id, input);
+    saveFading(db, id, input);
+    return partyTreasure.get(db, id);
+  },
+  remove: coreTreasure.remove,
+};
 
 function liveSessionId(db: DB, campaignId: number): number | null {
   const s = db.prepare(`SELECT id FROM sessions WHERE campaign_id = ? AND status = 'live' ORDER BY number DESC LIMIT 1`).get(campaignId) as { id: number } | undefined;
@@ -312,7 +349,7 @@ export function addRollToParty(db: DB, campaignId: number, roll: TreasureRoll, f
 export function playerTreasure(db: DB, campaignId: number) {
   const rows = db
     .prepare(
-      `SELECT id, name, kind, quantity, value_gp, rarity, entity_id, holder, status, found_at, fades, anchored FROM party_treasure WHERE campaign_id = ? AND player_visible = 1 AND status IN ('carried', 'stored') ORDER BY kind, id`,
+      `SELECT id, name, kind, quantity, value_gp, rarity, entity_id, holder, status, found_at FROM party_treasure WHERE campaign_id = ? AND player_visible = 1 AND status IN ('carried', 'stored') ORDER BY kind, id`,
     )
     .all(campaignId) as {
     id: number;
@@ -325,9 +362,19 @@ export function playerTreasure(db: DB, campaignId: number) {
     holder: string;
     status: string;
     found_at: string;
-    fades: number;
-    anchored: number;
   }[];
   const revealed = db.prepare('SELECT 1 FROM entities WHERE id = ? AND revealed = 1');
-  return rows.map((r) => ({ ...r, entity_id: r.entity_id && revealed.get(r.entity_id) ? r.entity_id : null, fades: !!r.fades && !r.anchored, anchored: !!r.anchored }));
+  // Fading shows only while its module is on for the campaign.
+  const fading = moduleOn(db, 'fading-salvage', campaignId)
+    ? moduleDataFor<Fading>(
+        db,
+        'fading-salvage',
+        'treasure',
+        rows.map((r) => r.id),
+      )
+    : new Map<number, Partial<Fading>>();
+  return rows.map((r) => {
+    const f = fading.get(r.id);
+    return { ...r, entity_id: r.entity_id && revealed.get(r.entity_id) ? r.entity_id : null, fades: !!f?.fades && !f.anchored, anchored: !!f?.anchored };
+  });
 }

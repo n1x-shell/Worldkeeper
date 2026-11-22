@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { ChevronDown, Coins, Dices, Flag, Gift, Minus, Plus, ScrollText, Shuffle, UserRound } from 'lucide-react';
 import { askText, Badge, Empty, EntityLink } from '../components/ui';
 import { api, useApi } from '../lib/api';
+import { useModules } from '../lib/modules';
 import type { Briefing } from './Briefing';
 import { Markdown } from '../components/Markdown';
 
@@ -79,12 +80,13 @@ export function ToolSection({
 }
 
 export function LiveTools({ sessionId, campaignId, onLogged }: { sessionId: number; campaignId: number; onLogged: () => void }) {
+  const mods = useModules();
   return (
     <>
       <WhosNearby sessionId={sessionId} onLogged={onLogged} />
       <QuickTables sessionId={sessionId} onLogged={onLogged} />
       <QuickTreasure sessionId={sessionId} campaignId={campaignId} onLogged={onLogged} />
-      <QuickStanding campaignId={campaignId} onLogged={onLogged} />
+      {mods.has('renown') && <QuickStanding campaignId={campaignId} onLogged={onLogged} />}
       <QuickHandouts campaignId={campaignId} onLogged={onLogged} />
     </>
   );

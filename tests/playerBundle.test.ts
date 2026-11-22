@@ -52,7 +52,7 @@ const ALLOWED = [
   /^client\/src\/components\/map\/(MapView|grouping)\.tsx?$/,
   /^client\/src\/components\/(ItemRules|CalendarView|realms|recordTypes)\.tsx$/,
   /^client\/src\/components\/realmIcons\.ts$/,
-  /^client\/src\/lib\/(mechanics|rank)\.ts$/,
+  /^client\/src\/lib\/(modules|rank)\.ts$/,
   /^client\/src\/styles\//,
 ];
 

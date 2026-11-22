@@ -1,4 +1,3 @@
-import type { Mechanics } from '../../../shared/mechanics';
 import type { Sheet } from '@shared/sheet';
 import type { RealmInfo } from '@shared/realms';
 import type { RecordTypeDef } from '@shared/recordTypes';
@@ -91,7 +90,10 @@ export interface PlayerSnapshot {
   types?: RecordTypeDef[];
   /** False when the GM turned the built-in SRD rules off. */
   rulesSrd?: boolean;
-  mechanics?: Partial<Mechanics>;
+  /** The modules on (v0.4.4 on). */
+  modules?: string[];
+  /** Before modules: the setting's "campaign mechanics". */
+  mechanics?: Record<string, boolean>;
 }
 
 /** During a live session: the running fight's turn order (no monster numbers) and the newest handout. */
@@ -102,7 +104,7 @@ export interface PLive {
 }
 
 export interface PlayerSource {
-  info(): Promise<{ appName: string; publishedAt?: string; realms?: RealmInfo[]; types?: RecordTypeDef[]; rulesSrd?: boolean; mechanics?: Partial<Mechanics> }>;
+  info(): Promise<{ appName: string; publishedAt?: string; realms?: RealmInfo[]; types?: RecordTypeDef[]; rulesSrd?: boolean; modules?: string[]; mechanics?: Record<string, boolean> }>;
   entities(): Promise<PEntity[]>;
   entity(id: string): Promise<PEntity | null>;
   search(q: string): Promise<PEntity[]>;
@@ -210,7 +212,7 @@ export function staticSource(snapshotUrl: string, uploadsBase: string): PlayerSo
   return {
     info: async () => {
       const s = await snap();
-      return { appName: s.appName ?? 'The Worldkeeper', publishedAt: s.generated_at, realms: s.realms, types: s.types, rulesSrd: s.rulesSrd !== false, mechanics: s.mechanics };
+      return { appName: s.appName ?? 'The Worldkeeper', publishedAt: s.generated_at, realms: s.realms, types: s.types, rulesSrd: s.rulesSrd !== false, modules: s.modules, mechanics: s.mechanics };
     },
     entities: async () => (await snap()).entities,
     entity: async (id) => (await snap()).entities.find((e) => e.id === id) ?? null,

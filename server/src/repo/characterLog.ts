@@ -3,6 +3,7 @@
  * when. Typing makes many saves, so changes to one thing by the same person within a few minutes are folded into
  * one entry (and dropped if they end up back where they started). The player's view leaves out the GM's own notes.
  */
+import { moduleData } from './modules.js';
 import type Database from 'better-sqlite3';
 import { GM_ONLY_SHEET_KEYS } from '../../../shared/sheet.js';
 
@@ -42,13 +43,15 @@ export function characterSnapshot(db: DB, characterId: number): Record<string, u
       }
     } else out[`sheet.${k}`] = v;
   }
-  const p = db.prepare('SELECT true_name, memories, known_by, thinning, shardscarred, notes FROM character_pages WHERE character_id = ?').get(characterId) as Record<string, unknown> | undefined;
+  const p = db.prepare('SELECT notes FROM character_pages WHERE character_id = ?').get(characterId) as { notes: string } | undefined;
   if (p) {
-    out['page.true_name'] = p.true_name;
-    out['page.memories'] = JSON.parse(p.memories as string);
-    out['page.known_by'] = JSON.parse(p.known_by as string);
-    out['page.thinning'] = p.thinning;
-    out['page.shardscarred'] = !!p.shardscarred;
+    // The Thinning module's data, kept with its own key names in the log.
+    const t = moduleData<{ true_name: string; memories: unknown[]; known_by: string[]; thinning: number; shardscarred: boolean }>(db, 'thinning', 'character', characterId);
+    out['page.true_name'] = t.true_name ?? '';
+    out['page.memories'] = t.memories ?? [];
+    out['page.known_by'] = t.known_by ?? [];
+    out['page.thinning'] = t.thinning ?? 0;
+    out['page.shardscarred'] = !!t.shardscarred;
     out['page.notes'] = p.notes;
   }
   return out;

@@ -16,7 +16,7 @@ import { deletePack, importPack, listPacks, setPackEnabled } from '../repo/rules
 import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, exportPlayerZip, importCampaign, importJson } from '../backup/exporter.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { schemaVersion } from '../db/migrations.js';
-import { getMechanics, setMechanics } from '../repo/mechanics.js';
+import { listModules, setLibraryModules } from '../repo/modules.js';
 import { importOpen5e, open5eDocuments } from '../repo/open5e.js';
 import { isDesktop, openInBrowser } from '../lib/desktop.js';
 import { handbookReveals } from '../player/handbookReveals.js';
@@ -135,14 +135,14 @@ export function libraryRoutes(ctx: AppContext) {
     }),
   );
 
-  // ---- Campaign mechanics: which of the setting's own mechanics this library uses ----
+  // ---- Modules (shared/modules.ts): which are on, for the library and for a campaign ----
   r.get(
-    '/mechanics',
-    h(() => getMechanics(ctx.db)),
+    '/modules',
+    h((req) => listModules(ctx.db, req.query.campaign_id ? Number(req.query.campaign_id) : undefined)),
   );
   r.put(
-    '/mechanics',
-    h((req) => setMechanics(ctx.db, (req.body ?? {}) as Record<string, unknown>)),
+    '/modules',
+    h((req) => setLibraryModules(ctx.db, req.body)),
   );
 
   // ---- Rules packs (the GM's own books or homebrew, for the character sheet; never published or exported) ----

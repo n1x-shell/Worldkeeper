@@ -1,4 +1,4 @@
-import { useMechanics } from '../lib/mechanics';
+import { useModules } from '../lib/modules';
 import { ItemRulesList } from '../components/ItemRules';
 import { useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -942,7 +942,7 @@ type TreasureRow = NonNullable<NonNullable<ReturnType<typeof usePlayerIndex>['ca
 export function PlayerTreasure() {
   const { campaigns } = usePlayerIndex();
   const { base } = usePlayer();
-  const mech = useMechanics();
+  const mech = useModules();
   if (!campaigns) return <Loading />;
   const all: TreasureRow[] = campaigns.flatMap((c) => (c.treasure ?? []).map((t) => ({ ...t, campaign: c.title })));
   const groups = new Map<string, TreasureRow[]>();
@@ -964,7 +964,7 @@ export function PlayerTreasure() {
             <span className="text-ink">{t.name}</span>
           )}
           {t.status === 'stored' && <Badge>stored</Badge>}
-          {t.fades && mech?.fading !== false && <span className="basis-full text-xs text-danger">Fading: learn its story to anchor it</span>}
+          {t.fades && mech.has('fading-salvage') && <span className="basis-full text-xs text-danger">Fading: learn its story to anchor it</span>}
         </span>
       ),
     },

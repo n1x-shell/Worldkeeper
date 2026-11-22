@@ -187,11 +187,16 @@ export function ThinningTab({ page, onChange, gm = false }: { page: ThinningPage
           </button>
         </form>
       </section>
-
-      <section className="space-y-2">
-        <Rule>{gm ? "The player's notes" : 'Notes'}</Rule>
-        <textarea className="input min-h-[120px] font-serif text-[16px] leading-relaxed" value={page.notes} onChange={(e) => set({ notes: e.target.value })} aria-label="Notes" />
-      </section>
     </div>
+  );
+}
+
+/** The player's own notes, on every character page (core: not part of any module). */
+export function NotesTab({ notes, onChange, gm = false }: { notes: string; onChange: (notes: string) => void; gm?: boolean }) {
+  return (
+    <section className="space-y-2">
+      <Rule>{gm ? "The player's notes" : 'Notes'}</Rule>
+      <textarea className="input min-h-[240px] font-serif text-[16px] leading-relaxed" value={notes} onChange={(e) => onChange(e.target.value)} aria-label="Notes" />
+    </section>
   );
 }

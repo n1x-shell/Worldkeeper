@@ -11,7 +11,7 @@ import { parseJson } from '../lib/json.js';
 import { standingFor } from './standing.js';
 import { BOOKS_REGION, treasureData } from './treasure.js';
 import { bookTreasure } from './bookData.js';
-import { getMechanics } from './mechanics.js';
+import { moduleOn } from './modules.js';
 import { terrainFor } from './encounters.js';
 import { comingUp } from './calendar.js';
 import { types } from './recordTypes.js';
@@ -154,7 +154,7 @@ export function sessionBriefing(db: DB, sessionId: number) {
   };
   const tData = treasureData();
   // The setting's region for the place, when its treasure is on; otherwise (or anywhere it doesn't cover) the books.
-  const worldRegion = getMechanics(db).worldTreasure ? (Object.entries(tData.regions).find(([, r]) => r.ids.some((x) => chain.some((e) => e.id === x)))?.[0] ?? null) : null;
+  const worldRegion = moduleOn(db, 'setting-treasure', c.id) ? (Object.entries(tData.regions).find(([, r]) => r.ids.some((x) => chain.some((e) => e.id === x)))?.[0] ?? null) : null;
   const treasureRegion = worldRegion ?? (bookTreasure(db).magic.length ? BOOKS_REGION : null);
 
   return {

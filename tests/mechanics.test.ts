@@ -22,21 +22,59 @@ async function withBooks(srd = false) {
   return { ctx, gm };
 }
 
-describe('campaign mechanics', () => {
-  it('start as standard D&D in a library without the setting, and as the setting in one with it', async () => {
+describe('modules', () => {
+  const on = (body: { modules: { key: string; on: boolean }[] }) => body.modules.filter((m) => m.on).map((m) => m.key);
+
+  it('are off in a library without a setting pack, and on with the pack that turns them on', async () => {
     const ctx = tempContext();
     const gm = createApp(ctx);
-    expect((await request(gm).get('/api/mechanics')).body).toEqual({ setting: false, thinning: false, theReturn: false, fading: false, worldTreasure: false });
+    expect(on((await request(gm).get('/api/modules')).body)).toEqual([]);
     // Its records alone don't make a library the setting's: its pack does.
     createEntity(ctx.db, { id: 'SYS-907', name: 'Thinning', type: 'system', realm: 'world', canon_status: 'CANON', aliases: [], tags: [], fields: [], body: 'x', notes: '' } as never);
-    expect((await request(gm).get('/api/mechanics')).body.thinning).toBe(false);
+    expect(on((await request(gm).get('/api/modules')).body)).toEqual([]);
     installPack(ctx.db, 'worldkeeper');
-    expect((await request(gm).get('/api/mechanics')).body.thinning).toBe(true);
+    expect(on((await request(gm).get('/api/modules')).body)).toEqual([
+      'thinning',
+      'the-return',
+      'fading-salvage',
+      'setting-treasure',
+      'vaults',
+      'shards',
+      'depths-explorer',
+      'quick-reference',
+      'renown',
+    ]);
     // The GM's choice sticks, and reaches the table server and the published handbook.
-    const m = (await request(gm).put('/api/mechanics').send({ thinning: false, fading: false, nonsense: true })).body;
-    expect(m).toEqual({ setting: true, thinning: false, theReturn: true, fading: false, worldTreasure: true });
-    expect((await request(createApp(new AppContext(ctx.paths, 'player'))).get('/api/player/info')).body.mechanics).toEqual(m);
-    expect(playerSnapshot(ctx.db).mechanics).toEqual(m);
+    expect((await request(gm).put('/api/modules').send({ nonsense: true })).status).toBe(400);
+    const m = on((await request(gm).put('/api/modules').send({ thinning: false, 'fading-salvage': false })).body);
+    expect(m).toEqual(['the-return', 'setting-treasure', 'vaults', 'shards', 'depths-explorer', 'quick-reference', 'renown']);
+    expect((await request(createApp(new AppContext(ctx.paths, 'player'))).get('/api/player/info')).body.modules).toEqual(m);
+    expect(playerSnapshot(ctx.db).modules).toEqual(m);
+    // null goes back to what the pack says.
+    expect(on((await request(gm).put('/api/modules').send({ thinning: null })).body)).toContain('thinning');
+  });
+
+  it('can be switched on in a blank library, and differ by campaign', async () => {
+    const ctx = tempContext();
+    const gm = createApp(ctx);
+    const a = (await request(gm).post('/api/campaigns').send({ title: 'A' })).body;
+    const b = (await request(gm).post('/api/campaigns').send({ title: 'B' })).body;
+    // Thinning in a world of one's own.
+    await request(gm).put('/api/modules').send({ thinning: true, 'the-return': true });
+    expect(on((await request(gm).get(`/api/modules?campaign_id=${a.id}`)).body)).toEqual(['thinning', 'the-return']);
+    // Campaign B has no Return; A follows the library.
+    const forB = (await request(gm).put(`/api/campaigns/${b.id}/modules`).send({ 'the-return': false })).body;
+    expect(on(forB)).toEqual(['thinning']);
+    expect(forB.modules.find((m: { key: string }) => m.key === 'the-return')).toMatchObject({ library: true, campaign: false, on: false });
+    expect(on((await request(gm).get(`/api/modules?campaign_id=${a.id}`)).body)).toEqual(['thinning', 'the-return']);
+    // A module's routes answer only where it's on; its data is kept.
+    expect((await request(gm).get(`/api/return?campaign_id=${a.id}`)).status).toBe(200);
+    const off = await request(gm).get(`/api/return?campaign_id=${b.id}`);
+    expect(off.status).toBe(400);
+    expect(off.body.error).toMatch(/switched off/);
+    expect((await request(gm).get(`/api/standing?campaign_id=${a.id}`)).status).toBe(400);
+    await request(gm).put(`/api/campaigns/${b.id}/modules`).send({ 'the-return': null });
+    expect(on((await request(gm).get(`/api/modules?campaign_id=${b.id}`)).body)).toEqual(['thinning', 'the-return']);
   });
 
   it('rolls treasure from the books when the setting’s treasure is off', async () => {
