@@ -1,9 +1,9 @@
 /**
  * Worldkeeper additions: lore written for this world on top of the imported archive.
  *
- *  - assets/lore/*.md        new records, in the archive's record format (drafts/ folders are skipped)
- *  - assets/lore/links.json  links between records (homes, origins, groups) that the archive text does not give
- *  - timeline.json files under assets/lore: rows for the World Timeline (eras the GM has set by hand are kept)
+ *  - packs/worldkeeper/lore/*.md        new records, in the archive's record format (drafts/ folders are skipped)
+ *  - packs/worldkeeper/lore/links.json  links between records (homes, origins, groups) that the archive text does not give
+ *  - timeline.json files under packs/worldkeeper/lore: rows for the World Timeline (eras the GM has set by hand are kept)
  *
  * Applying them never changes or removes archive records. Links are stored as curated links, so the GM can edit or
  * delete them in the app like any other.
@@ -23,9 +23,10 @@ import { applyMaps } from './mapAdditions.js';
 import { applyAdventures } from './adventureAdditions.js';
 import { applyTables, applyTableSpecs } from './tableAdditions.js';
 import { itemTables, treasureData } from './repo/treasure.js';
+import { worldkeeperPath } from './packs/paths.js';
 
-/** The additions' lore folder: bundled with the desktop app (WORLDKEEPER_ADDITIONS_DIR), or assets/lore in the repo. */
-export const DEFAULT_ADDITIONS_DIR = process.env.WORLDKEEPER_ADDITIONS_DIR ? path.join(process.env.WORLDKEEPER_ADDITIONS_DIR, 'lore') : path.resolve(import.meta.dirname, '../../assets/lore');
+/** The Worldkeeper pack's lore folder (packs/worldkeeper/lore, or the installed copy). */
+export const DEFAULT_ADDITIONS_DIR = worldkeeperPath('lore');
 
 /** The new lore records, as source files the importer understands. */
 export function loreFiles(dir = DEFAULT_ADDITIONS_DIR): SourceFile[] {
@@ -130,9 +131,13 @@ export function applyTimeline(db: DB, dir = DEFAULT_ADDITIONS_DIR): number {
 }
 
 /** Bring the additions into an existing library: the new records first, then the links. */
-export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?: string) {
+export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?: string, packId = 'worldkeeper') {
   const files = loreFiles(dir);
-  const imported = files.length ? commitPlan(db, files, buildPlan(db, files, 'Worldkeeper additions')) : null;
+  const plan = files.length ? buildPlan(db, files, 'Worldkeeper additions', { packId }) : null;
+  // A record of the GM's own with an ID the pack also uses: the GM's is kept, and the clash is reported.
+  const ownIds = new Set((db.prepare(`SELECT id FROM entities WHERE origin = 'user' AND pack_id IS NULL`).all() as { id: string }[]).map((r) => r.id));
+  const clashes = (plan?.entities ?? []).filter((p) => ownIds.has(p.draft.id)).map((p) => ({ id: p.draft.id, name: p.draft.name }));
+  const imported = plan ? commitPlan(db, files, plan) : null;
   // Derived links follow the current rules (they're rebuilt from each record's own text; curated links are kept).
   rebuildAllDerivedRelationships(db);
   const links = applyLinks(db, dir);
@@ -158,6 +163,7 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?:
   const adventureErrata = applyErrata(db, path.join(dir, 'errata.json'));
   return {
     records: files.length,
+    clashes,
     imported,
     links,
     rumours,

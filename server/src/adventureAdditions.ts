@@ -1,5 +1,5 @@
 /**
- * Ready-to-run adventures shipped with the Worldkeeper additions (assets/adventures/*.md), applied into the GM's
+ * Ready-to-run adventures shipped with the Worldkeeper additions (packs/worldkeeper/adventures/*.md), applied into the GM's
  * Adventures with their scenes. An adventure the library already has (by title) is left alone, so the GM's own edits
  * are never overwritten.
  *

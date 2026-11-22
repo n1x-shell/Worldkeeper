@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { api, qs, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
+import { usePacks } from '../lib/packs';
 import { Card, Check, Empty, EntityLink, ErrorBox, Field, Loading, PageHeader, Segmented, toast } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
@@ -102,6 +103,7 @@ export function RumourRow({ r, campaignId, onChange, showSource = true }: { r: R
 }
 
 export function RumoursPage() {
+  const wk = usePacks().has('worldkeeper');
   const { activeCampaignId } = useAppState();
   const [truth, setTruth] = useState<'' | Truth>('');
   const [heard, setHeard] = useState<'' | 'heard' | 'unheard'>('');
@@ -123,16 +125,18 @@ export function RumoursPage() {
         subtitle="Everything people say, from the handbook and your own. Decide what's true, and track what the party has heard."
         note="Players only ever see rumours as rumours on handbook pages. Whether a rumour is true never leaves this page."
         actions={
-          <button
-            className="btn"
-            onClick={async () => {
-              const r = await api.post<{ found: number; added: number }>('/api/rumours/sync', {});
-              toast(`Handbook rumours updated: ${r.found} found, ${r.added} new.`);
-              void reload();
-            }}
-          >
-            <RefreshCw size={14} /> Update from handbook
-          </button>
+          wk && (
+            <button
+              className="btn"
+              onClick={async () => {
+                const r = await api.post<{ found: number; added: number }>('/api/rumours/sync', {});
+                toast(`Handbook rumours updated: ${r.found} found, ${r.added} new.`);
+                void reload();
+              }}
+            >
+              <RefreshCw size={14} /> Update from handbook
+            </button>
+          )
         }
       />
       {!activeCampaignId && (

@@ -1,3 +1,4 @@
+import { role } from '../packs/registry.js';
 import { Router } from 'express';
 import type { AppContext } from '../context.js';
 import { h, intParam, listParam } from './util.js';
@@ -433,7 +434,13 @@ export function worldRoutes(ctx: AppContext) {
         recentViews: recentViews(db, 10),
         recentEdits: recentlyEdited(db, 8),
         favorites: listEntities(db, { favorite: true }).slice(0, 12),
-        mysteries: db.prepare(`SELECT id, name, type, realm FROM entities WHERE archived = 0 AND (id IN ('WLD-907','WLD-908','DEC-901') OR tags LIKE '%"cat/secret"%') ORDER BY id LIMIT 10`).all(),
+        // The pack's registers of open questions (by role), and anything tagged as a secret.
+        mysteries: (() => {
+          const ids = ['register.mysteries', 'register.futures', 'register.decisions'].map((k) => role(db, k)).filter((x): x is string => !!x);
+          return db
+            .prepare(`SELECT id, name, type, realm FROM entities WHERE archived = 0 AND (id IN (${ids.map(() => '?').join(',') || "''"}) OR tags LIKE '%"cat/secret"%') ORDER BY id LIMIT 10`)
+            .all(...ids);
+        })(),
         keyPlaces: quick(typeRegistry(db).list.filter((t) => t.pin === 'site').map((t) => t.key), 10),
         keyPeople: db.prepare(`SELECT id, name, type, realm FROM entities WHERE type = 'npc' AND archived = 0 ORDER BY favorite DESC, id LIMIT 8`).all(),
         factions: quick(typeRegistry(db).with('group'), 12),

@@ -14,6 +14,7 @@ import { collectRefs } from '../../../shared/mentions.js';
 import { loadMentionIndex } from './mentions.js';
 import { normName } from './nameMatch.js';
 import { ENTITY_TYPE_LABELS, type EntityType } from '../../../shared/domain.js';
+import { worldkeeperPath } from '../packs/paths.js';
 
 export const TRUTHS = ['true', 'false', 'partly', 'unknown'] as const;
 export type Truth = (typeof TRUTHS)[number];
@@ -158,9 +159,7 @@ export function setHeard(db: DB, id: number, campaignId: number, heard: boolean,
 
 // ------------------------------------------------------------------ sync from handbook text
 
-export const DEFAULT_PLAYER_TEXT_DIR = process.env.WORLDKEEPER_ADDITIONS_DIR
-  ? path.join(process.env.WORLDKEEPER_ADDITIONS_DIR, 'player-text')
-  : path.resolve(import.meta.dirname, '../../../assets/player-text');
+export const DEFAULT_PLAYER_TEXT_DIR = worldkeeperPath('player-text');
 
 export interface RumourSource {
   sourceId: string;
@@ -264,7 +263,7 @@ export function syncRumours(db: DB, files: { path: string; content: string }[]) 
 
 const keyOf = (r: RumourSource) => `hb:${r.sourceId}:${crypto.createHash('sha1').update(r.text).digest('hex').slice(0, 16)}`;
 
-/** Read the handbook text files (assets/player-text/*.md, drafts skipped). */
+/** Read the handbook text files (the pack's player-text/*.md, drafts skipped). */
 export function readPlayerText(dir = DEFAULT_PLAYER_TEXT_DIR): { path: string; content: string }[] {
   if (!fs.existsSync(dir)) return [];
   return fs

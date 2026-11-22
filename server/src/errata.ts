@@ -1,5 +1,5 @@
 /**
- * Errata (assets/lore/errata.json): corrections to wording in a library's records and adventures, applied by
+ * Errata (packs/worldkeeper/lore/errata.json): corrections to wording in a library's records and adventures, applied by
  * "Apply additions" and the handbook build. Each names a record (by ID) or an adventure (by title, including the
  * copies in campaigns), the old wording and the new. The new wording replaces the old wherever it appears: a record's
  * text, its fields and its player text; an adventure's notes, scenes and read-aloud text. Wording that isn't there

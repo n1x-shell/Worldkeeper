@@ -1,3 +1,4 @@
+import { findPack } from '../server/src/packs/registry.js';
 import { describe, expect, it } from 'vitest';
 import { fixtureFiles, tempContext, zipOf } from './helpers.js';
 import { readZip, safeRelativePath } from '../server/src/import/scan.js';
@@ -27,10 +28,16 @@ describe('markdown parsing', () => {
     expect(normalizeCanon('CANON, SECRET')).toEqual({ status: 'CANON', flags: ['CANON', 'SECRET'] });
     expect(normalizeCanon('CANON. The rule is [HOMEBREW].').flags).toContain('HOMEBREW');
     expect(normalizeCanon('[UNDEFINED: check source]').status).toBe('UNDEFINED');
-    expect(normalizeRealm('Aetheris (source listing); actual established domain: Ethereal Realm').realm).toBe('ethereal');
-    expect(normalizeRealm('World (both continents)').realm).toBe('world');
-    expect(normalizeType('LOC-015', 'Legacy cross-reference (NOT a second Lore site)')).toBe('redirect');
-    expect(normalizeType('CON-501', 'Continent')).toBe('realm');
+    // The setting's archive is read through its pack's import profile.
+    const pack = findPack('worldkeeper')!.manifest;
+    const known = pack.realms.map((r) => ({ id: r.id, name: r.name, kind: r.kind, parent_id: r.parent_id }));
+    expect(normalizeRealm('Aetheris (source listing); actual established domain: Ethereal Realm', known, pack.importProfile).realm).toBe('ethereal');
+    expect(normalizeRealm('World (both continents)', known, pack.importProfile).realm).toBe('world');
+    expect(normalizeType('LOC-015', 'Legacy cross-reference (NOT a second Lore site)', undefined, pack.importProfile)).toBe('redirect');
+    expect(normalizeType('CON-501', 'Continent', undefined, pack.importProfile)).toBe('realm');
+    // Without it, only the type registry: no setting wording, no ID prefixes.
+    expect(normalizeType('CON-501', 'Continent')).toBe('continent');
+    expect(normalizeType('XYZ-001', 'Something odd')).toBe('custom');
   });
 
   it('rejects unsafe archive paths', () => {

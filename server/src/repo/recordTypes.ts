@@ -130,6 +130,7 @@ const typeInput = z.object({
       person: z.boolean().optional(),
       commonNoun: z.boolean().optional(),
       intro: z.boolean().optional(),
+      uninhabited: z.boolean().optional(),
     })
     .default({}),
   aliases: z.array(z.string().max(60)).max(20).default([]),
@@ -203,6 +204,9 @@ export function deleteRecordType(db: DB, key: string) {
   db.prepare('DELETE FROM templates WHERE type = ? AND origin = ?').run(key, 'user');
   cache.delete(db);
 }
+
+/** Drop this library's cached registry (after its types change outside this module). */
+export const forgetTypes = (db: DB) => void cache.delete(db);
 
 /** Whether a type exists in this library. */
 export const typeExists = (db: DB, key: string) => !!types(db).get(key);

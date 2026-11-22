@@ -37,6 +37,7 @@ export interface EntityRow {
   revealed_sections: string;
   revealed_facts: string;
   origin: string;
+  pack_id: string | null;
   source_file: string | null;
   source_hash: string | null;
   import_content_hash: string | null;
@@ -113,6 +114,7 @@ export function rowToEntity(r: EntityRow): Entity {
     revealed_sections: parseJson(r.revealed_sections, []),
     revealed_facts: parseJson(r.revealed_facts, []),
     origin: r.origin as 'import' | 'user',
+    pack_id: r.pack_id ?? null,
     source_file: r.source_file,
     source_hash: r.source_hash,
     redirect_to: r.redirect_to,

@@ -5,6 +5,7 @@ import { ArrowRight, Columns2, ExternalLink, Eye, EyeOff, Flag, MapPin, PanelRig
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { displaySections } from '../lib/sections';
+import { useCleaners } from '../lib/packs';
 import { Markdown } from '../components/Markdown';
 import { Badge, Empty, ErrorBox, GmOnly, Loading, RealmBadge, Section, Toggle, TypeBadge, VisibilityBadge, ask } from '../components/ui';
 import { usePeek } from '../components/peek/context';
@@ -113,6 +114,7 @@ function GmCodex({
 }) {
   const recordTypes = useRecordTypes();
   const { debug } = useAppState();
+  const cleanerFor = useCleaners();
   const peek = usePeek();
   const { data } = useApi<{ entity: Entity }>(`/api/entities/${encodeURIComponent(id)}`);
   const [err, setErr] = useState<string | null>(null);
@@ -128,7 +130,7 @@ function GmCodex({
   };
   if (!e) return <Loading />;
   const discovered = exploration?.discovered.includes(id) ?? false;
-  const sections = displaySections(e.body, debug);
+  const sections = displaySections(e.body, debug, cleanerFor(e.pack_id));
   return (
     <div className="flex flex-col h-full" aria-label={e.name}>
       {/* The same header as the inspector's: badges, the name, then Open, Peek and Open beside. */}

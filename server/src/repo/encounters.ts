@@ -1,6 +1,6 @@
 /**
  * Encounters from the GM's books: groups of creatures that fit a party's level and the terrain, by the Dungeon
- * Master's Guide (2024) XP budgets; the world's regions given as terrain (assets/encounters/terrain.json); and the
+ * Master's Guide (2024) XP budgets; the world's regions given as terrain (packs/worldkeeper/encounters/terrain.json); and the
  * book creatures an encounter table's row names ("4 bandits and a bandit captain").
  */
 import fs from 'node:fs';
@@ -8,7 +8,7 @@ import path from 'node:path';
 import type Database from 'better-sqlite3';
 import { badRequest } from '../lib/errors.js';
 import { bookCreatureData } from './bookData.js';
-import { assetsPath } from '../assetsDir.js';
+import { worldkeeperPath } from '../packs/paths.js';
 
 type DB = Database.Database;
 
@@ -44,7 +44,7 @@ export function xpBudget(level: number, size: number, difficulty: Difficulty) {
   return row[DIFFICULTIES.indexOf(difficulty)] * Math.max(1, Math.min(10, Math.round(size)));
 }
 
-const TERRAIN_FILE = assetsPath('encounters', 'terrain.json');
+const TERRAIN_FILE = worldkeeperPath('encounters', 'terrain.json');
 let terrainCache: Record<string, { label: string; terrain: string[] }> | null = null;
 /** The world's regions as terrain (empty for a world that has none mapped). */
 export function regionTerrains(): Record<string, { label: string; terrain: string[] }> {

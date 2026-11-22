@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-22 · v0.4.2_
+_Last updated: 2026-11-22 · v0.4.3_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,21 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.4.3: setting packs (own-world step 3)
+
+Step 3 of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). The Worldkeeper setting is now a pack the app can add to a library or leave out; the core knows nothing about its world.
+
+- **The pack format** (`shared/packs.ts`): a folder with a `pack.json` manifest (id, name, version, description, licence, realms, record types, roles, modules, import profile, cleaning rules, handbook rules) and the pack's content folders (`lore/`, `player-text/`, `maps/`, `adventures/`, `tables/`, `treasure/`, `statblocks/`, `encounters/`, `return/`, `rules/`, `templates/`). The setting moved from `assets/` into **`packs/worldkeeper/`**; `assets/templates/` keeps only the core templates.
+- **The registry** (`server/src/packs/registry.ts`): packs bundled with the app (`packs/`, or `WORLDKEEPER_PACKS_DIR`, which the desktop app sets) and packs installed into a library's data folder (`<data>/packs/<id>`, which replaces a bundled one with the same id). Table `setting_packs` (migration 22) records which a library has. At every start an installed pack's realms, types and templates are brought up to date.
+- **Provenance:** migration 22 adds `pack_id` to records, links, timeline rows, rumours, mysteries, secrets, clues, maps, pins, shapes, adventures, random tables, templates, realms and eras, and marks an existing Aetheris library's shipped rows as the pack's (the GM's own work never is). A pack's update (`server/src/packs/content.ts`, what Apply additions did) marks everything it brings, matched by what its folder holds, so a library from before packs is adopted on its next update. Removing a pack deletes only its rows, and its realms and types where nothing of the GM's uses them; links from the GM's records to its records show in Broken references.
+- **ID clashes:** an update leaves a record of the GM's that has an ID the pack also uses as it is, and reports it (Library → Setting packs lists them). A pack's type whose prefix another type already has is skipped.
+- **Importing an archive** detects a pack's archive by its `importProfile.detect` patterns and reads it through the profile (file kinds, the locator, Category wording, ID types, realm wording, the domain records); the pack is installed with the import. Checked against the full archive and additions: 879 records, their types, realms and 4,953 links identical to v0.4.2.
+- **Library → Setting packs** lists the packs with install, update and remove, each taking a backup. `/api/setting-packs`.
+- **Pack actions need their pack:** Apply additions, the rumours and mysteries updates, the handbook match and Open Questions are refused (400) and hidden without the Worldkeeper pack; the consistency checker runs the treasure checks only with it; mechanics default to the setting's only with it.
+- **Roles, not IDs:** the manifest's `roles` name the record that plays each part (`world.overview`, `register.conflicts`, `rules.travel`, `clock.stages`, `depths.border`...), `role(db, key)` on the server and `usePacks().roles` / `useRole()` on the client; a role whose record is missing hides its part. Region state keeps the top-level regions and domains of any world (by trait, the same 19 for Aetheris), the briefing's region falls back to the place itself, a new `uninhabited` trait marks vaults, and the Style guide's examples are the library's own records. `tests/noSettingIds.test.ts` fails if app code names a setting record ID (comments and migrations aside).
+- **Cleaning and handbook rules in the pack:** the source clean-up (`shared/loreText.ts`, now `makeCleaner(rules)`) and the handbook's section rules read the manifest, and the clean-up applies only to that pack's records (records carry `pack_id`); the GM's own read as written.
+- **Tests:** `tests/settingPacks.test.ts` (a test pack installed, updated and removed; clashes; roles; a fresh library refusing the setting's actions), `tests/noSettingIds.test.ts`, and the clean-up tests run against the pack's rules.
 
 ## v0.4.2: record types and templates (own-world step 2)
 

@@ -44,7 +44,7 @@ export function CalendarPage() {
   const refresh = () => (reload(), reloadEvents());
   return (
     <div className="space-y-4">
-      <PageHeader title="Calendar" subtitle="The campaign's date, the festivals and your own events." note="One 363-day year on both continents (Calendar [SYS-901]). Click a day to add an event." />
+      <PageHeader title="Calendar" subtitle="The campaign's date, the festivals and your own events." note="One 363-day year on both continents. Click a day to add an event." />
       <Card featured className="space-y-3">
         <TodayCard date={data.date} />
         <div className="flex flex-wrap gap-1.5">

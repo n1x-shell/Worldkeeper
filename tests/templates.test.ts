@@ -96,9 +96,9 @@ describe('record templates', () => {
     const core = BUILTIN_TYPES.filter((t) => !t.traits.meta && t.key !== 'custom').map((t) => t.key);
     expect(files.map((f) => f.replace(/\.md$/, '')).sort()).toEqual(expect.arrayContaining(core));
     const lore = fs
-      .readdirSync(path.resolve(import.meta.dirname, '../assets/lore'), { recursive: true, encoding: 'utf8' })
+      .readdirSync(path.resolve(import.meta.dirname, '../packs/worldkeeper/lore'), { recursive: true, encoding: 'utf8' })
       .filter((f) => f.endsWith('.md'))
-      .map((f) => fs.readFileSync(path.resolve(import.meta.dirname, '../assets/lore', f), 'utf8'))
+      .map((f) => fs.readFileSync(path.resolve(import.meta.dirname, '../packs/worldkeeper/lore', f), 'utf8'))
       .join('\n');
     for (const f of files) {
       const t = parseTemplate(fs.readFileSync(path.join(BUILTIN_TEMPLATES_DIR, f), 'utf8'));

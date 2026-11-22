@@ -10,6 +10,7 @@ import {
 import { metaValue, type ParsedBlock } from './parseMarkdown.js';
 import { realmKey, type RealmColor, type RealmIcon, type RealmKind } from '../../../shared/realms.js';
 import { BUILTIN_REGISTRY, type TypeRegistry } from '../../../shared/recordTypes.js';
+import type { ImportProfile } from '../../../shared/packs.js';
 
 const STANDARD_KEYS = new Set([
   'id',
@@ -23,36 +24,6 @@ const STANDARD_KEYS = new Set([
   'tags',
 ]);
 
-const PREFIX_TYPES: Record<string, EntityType> = {
-  WLD: 'world',
-  CON: 'continent',
-  REG: 'region',
-  LOC: 'landmark',
-  SET: 'settlement',
-  VLT: 'vault',
-  KEY: 'vault_key',
-  NPC: 'npc',
-  FAC: 'faction',
-  CLT: 'cult',
-  FAM: 'family',
-  PPL: 'people',
-  CAL: 'calling',
-  DEI: 'deity',
-  COS: 'cosmology',
-  HIS: 'event',
-  SHD: 'shard',
-  ART: 'artifact',
-  ITM: 'item',
-  CRE: 'creature',
-  RUL: 'rule',
-  ETH: 'ethereal_domain',
-  SYS: 'system',
-  HOOK: 'adventure_hook',
-  DEC: 'register',
-  GDE: 'index',
-  IDX: 'index',
-  CUS: 'custom',
-};
 
 export function idPrefix(id: string): string {
   return id.split('-')[0];
@@ -63,115 +34,81 @@ export function isTemplatePlaceholder(value: string | null | undefined): boolean
 }
 
 /**
- * A record's type from its "Category:". The Worldkeeper archive's own wording is read first (its import profile, which
- * moves into the setting's pack in step 3); then the library's type registry (key, label, plural or alias), so a GM's
- * own types and a Markdown export read back as they were; then the archive's ID prefixes, as a last resort.
+ * A record's type from its "Category:". A setting pack's archive is read by its import profile first (its own Category
+ * wording and fixed IDs); then the library's type registry (key, label, plural or alias), so a GM's own types and a
+ * Markdown export read back as they were; then, for a pack's archive, its ID prefixes as a last resort.
  */
-export function normalizeType(id: string, categoryRaw: string | null, reg: TypeRegistry = BUILTIN_REGISTRY): EntityType {
+export function normalizeType(id: string, categoryRaw: string | null, reg: TypeRegistry = BUILTIN_REGISTRY, profile?: ImportProfile): EntityType {
   const cat = (categoryRaw ?? '').toLowerCase();
-  if (cat.includes('legacy cross-reference')) return 'redirect';
-  if (/^(index|register|guide|npc directory|travel guide|rules guide|adventure tool|campaign arcs)/.test(cat)) {
-    if (cat.startsWith('register')) return 'register';
-    if (cat.startsWith('index') || cat.startsWith('guide') || cat.startsWith('npc directory')) return 'index';
+  if (profile) {
+    if (profile.idTypes?.[id]) return profile.idTypes[id];
+    for (const r of profile.categoryRules ?? []) if (new RegExp(r.pattern).test(cat)) return r.type;
   }
-  if (cat.startsWith('world')) return 'world';
-  if (cat.startsWith('realm')) return 'realm';
-  if (cat.startsWith('continent')) return id === 'CON-501' ? 'realm' : 'continent';
-  if (cat.startsWith('building')) return 'building';
-  if (cat.startsWith('magic system')) return 'magic_system';
-  if (cat.startsWith('religion')) return 'deity';
-  if (cat.startsWith('historical')) return 'event';
-  if (cat.startsWith('ethereal group')) return 'faction';
-  if (cat.startsWith('people')) return 'people';
-  if (cat.startsWith('shared system') || cat.startsWith('shared rules') || cat.startsWith('travel guide')) return 'system';
-  if (cat.startsWith('rule')) return 'rule';
-  if (cat.startsWith('adventure')) return 'adventure_hook';
-  if (cat.startsWith('campaign arcs')) return 'adventure_hook';
   const known = reg.fromCategory(categoryRaw);
   if (known) return known;
-  const prefixType = PREFIX_TYPES[idPrefix(id)];
-  if (prefixType === 'ethereal_domain' && !cat.startsWith('ethereal domain')) return 'index';
-  if (prefixType === 'world' && id !== 'WLD-901') return 'index';
-  return prefixType ?? 'custom';
+  const byPrefix = profile?.prefixTypes?.[idPrefix(id)];
+  if (!byPrefix) return 'custom';
+  if (typeof byPrefix === 'string') return byPrefix;
+  if (byPrefix.ids && !byPrefix.ids.includes(id)) return byPrefix.else;
+  if (byPrefix.category && !new RegExp(byPrefix.category).test(cat)) return byPrefix.else;
+  return byPrefix.type;
 }
-
-/**
- * The Worldkeeper setting's realms, as its archive names them, with how they are first created in a library. (These
- * move into the setting's pack with its import profile; docs/OWN_WORLD_PLAN.md step 3.)
- */
-export const SETTING_REALMS: Record<string, { name: string; kind: RealmKind; parent_id: string | null; color: RealmColor; icon: RealmIcon; sort_order: number }> = {
-  aetheris: { name: 'Aetheris', kind: 'continent', parent_id: 'world', color: 'amber', icon: 'mountain', sort_order: 1 },
-  kaelmar: { name: 'Kaelmar', kind: 'continent', parent_id: 'world', color: 'green', icon: 'flame', sort_order: 2 },
-  ethereal: { name: 'The Ethereal Realm', kind: 'realm', parent_id: null, color: 'violet', icon: 'ghost', sort_order: 3 },
-  /** The realm The World sits in (owner decision, DEC-910). */
-  evershroud: { name: 'Evershroud', kind: 'realm', parent_id: null, color: 'slate', icon: 'moon', sort_order: 0 },
-  // The Ethereal Realm's domains (owner decision, DEC-910): the Hollow Verge, and the six deeper ones beneath it.
-  'hollow-verge': { name: 'The Hollow Verge', kind: 'domain', parent_id: 'ethereal', color: 'violet', icon: 'ghost', sort_order: 4 },
-  'fields-of-lost-realities': { name: 'The Fields of Lost Realities', kind: 'domain', parent_id: 'hollow-verge', color: 'teal', icon: 'sparkles', sort_order: 5 },
-  'ossuary-of-kings': { name: 'The Ossuary of Kings', kind: 'domain', parent_id: 'hollow-verge', color: 'slate', icon: 'skull', sort_order: 6 },
-  'silent-archive': { name: 'The Silent Archive', kind: 'domain', parent_id: 'hollow-verge', color: 'blue', icon: 'moon', sort_order: 7 },
-  'loom-of-eternity': { name: 'The Loom of Eternity', kind: 'domain', parent_id: 'hollow-verge', color: 'amber', icon: 'snowflake', sort_order: 8 },
-  'citadel-of-the-hidden': { name: 'The Citadel of the Hidden', kind: 'domain', parent_id: 'hollow-verge', color: 'rose', icon: 'castle', sort_order: 9 },
-  'black-horizon': { name: 'The Black Horizon', kind: 'domain', parent_id: 'hollow-verge', color: 'red', icon: 'compass', sort_order: 10 },
-};
-
-/**
- * The archive's record for each of the Ethereal Realm's domains. Those records, and archive records whose parent is one
- * (the domains' landmarks), belong to that domain; the setting's own additions name their domain in their realm field.
- */
-export const SETTING_DOMAIN_RECORDS: Record<string, string> = {
-  'ETH-501': 'hollow-verge',
-  'ETH-502': 'fields-of-lost-realities',
-  'ETH-503': 'ossuary-of-kings',
-  'ETH-504': 'silent-archive',
-  'ETH-505': 'loom-of-eternity',
-  'ETH-506': 'citadel-of-the-hidden',
-  'ETH-507': 'black-horizon',
-};
-
-/** Words in a realm field that don't name a realm. */
-const NOT_A_REALM = /^(both|all|any|every(where)?|multiple|various|n\/?a|none|unknown|undefined|-|—|cross[- ]realm)\b/i;
 
 export interface KnownRealm {
   id: string;
   name: string;
+  kind?: RealmKind;
+  parent_id?: string | null;
 }
 
 /**
- * A record's realm from its "Continent or realm" field. The setting's own names are understood as they always were;
- * otherwise the field is matched against the library's realms by name or id, and a name the library doesn't have yet
- * comes back as `created`, for the importer to add as a new realm.
+ * A record's realm from its "Continent or realm" field. A pack's archive is read by its import profile (the words that
+ * name its realms, and which part of the field says where a record really is); otherwise the field is matched against
+ * the library's realms by name or id. A domain named first ("The Hollow Verge (Ethereal Realm)") is the record's realm,
+ * and the realm that holds the domain is one of its realms too. A name the library doesn't have yet comes back as
+ * `created`, for the importer to add as a new realm.
  */
-export function normalizeRealm(raw: string | null, known: KnownRealm[] = []): { realm: Realm; realms: Realm[]; created?: KnownRealm } {
+export function normalizeRealm(raw: string | null, known: KnownRealm[] = [], profile?: ImportProfile): { realm: Realm; realms: Realm[]; created?: KnownRealm } {
   const r = (raw ?? '').toLowerCase();
-  const actual = /actual established domain:\s*([^;]+)/.exec(r);
+  const actual = profile?.realmFocus ? new RegExp(profile.realmFocus).exec(r) : null;
   const focus = actual ? actual[1] : r;
+  const byId = new Map(known.map((k) => [k.id, k]));
+  const named = profile?.realmNames ?? {};
   const found: Realm[] = [];
-  if (r.includes('aetheris')) found.push('aetheris');
-  if (r.includes('kaelmar')) found.push('kaelmar');
-  if (r.includes('ethereal')) found.push('ethereal');
+  for (const [word, id] of Object.entries(named)) if (r.includes(word) && !found.includes(id)) found.push(id);
   // The library's own realms, by name (with or without "The") or id.
   const bare = (s: string) => s.toLowerCase().replace(/^the\s+/, '').trim();
   for (const k of known) {
-    if (k.id === 'world' || found.includes(k.id)) continue;
+    // A domain counts only when it's named first (below): "beyond the Black Horizon" is not in it.
+    if (k.id === 'world' || k.kind === 'domain' || found.includes(k.id)) continue;
     const n = bare(k.name);
     if (n && (new RegExp(`\\b${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(r) || r.trim() === k.id)) found.push(k.id);
   }
-  let realm: Realm = 'world';
   const f = focus.trim();
-  // A domain of the setting's Ethereal Realm named first ("The Hollow Verge (Ethereal Realm)"): the record is in that
-  // domain, and still in the Ethereal Realm.
-  const domain = Object.keys(SETTING_REALMS).find((id) => SETTING_REALMS[id].kind === 'domain' && bare(f).startsWith(bare(SETTING_REALMS[id].name)));
-  if (domain) return { realm: domain, realms: [domain, 'ethereal'] };
+  // A domain named first: the record is in that domain, and in the realm that holds it.
+  const domain = known.find((k) => k.kind === 'domain' && bare(f).startsWith(bare(k.name)));
+  if (domain) {
+    let top = domain;
+    for (let i = 0; i < 10 && top.parent_id && byId.get(top.parent_id); i++) top = byId.get(top.parent_id)!;
+    return { realm: domain.id, realms: top.id === domain.id ? [domain.id] : [domain.id, top.id] };
+  }
+  let realm: Realm = 'world';
+  // The pack's named realms, as its archive writes them: one realm (a plane) named alone; a continent named first
+  // with no other continent; or a plane named first.
+  const kindOf = (id: string) => byId.get(id)?.kind;
+  const inFocus = Object.entries(named).filter(([w]) => focus.includes(w));
+  const continents = inFocus.filter(([, id]) => kindOf(id) === 'continent');
+  const planes = inFocus.filter(([, id]) => kindOf(id) !== 'continent');
+  const first = inFocus.find(([w]) => focus.startsWith(w));
   if (f.startsWith('world') || !f) realm = 'world';
-  else if (focus.includes('ethereal') && !focus.includes('aetheris') && !focus.includes('kaelmar')) realm = 'ethereal';
-  else if (focus.startsWith('aetheris') && !focus.includes('kaelmar')) realm = 'aetheris';
-  else if (focus.startsWith('kaelmar') && !focus.includes('aetheris')) realm = 'kaelmar';
-  else if (focus.startsWith('ethereal')) realm = 'ethereal';
+  else if (planes.length && !continents.length) realm = planes[0][1];
+  else if (first && kindOf(first[1]) === 'continent' && continents.length === 1) realm = first[1];
+  else if (first && kindOf(first[1]) !== 'continent') realm = first[1];
   else {
-    const own = found.find((id) => !SETTING_REALMS[id]);
+    const packIds = new Set(Object.values(named));
+    const own = found.find((id) => !packIds.has(id));
     if (own) realm = own;
-    else if (!found.length && !NOT_A_REALM.test(f)) {
+    else if (!found.length && !(profile?.notARealm ? new RegExp(profile.notARealm, 'i') : NOT_A_REALM).test(f)) {
       // A realm this library doesn't have yet: its name is the field's first part.
       const name = (raw ?? '').split(/[;(,/]/)[0].trim();
       if (name) {
@@ -183,6 +120,9 @@ export function normalizeRealm(raw: string | null, known: KnownRealm[] = []): { 
   if (!found.includes(realm) && realm !== 'world') found.unshift(realm);
   return { realm, realms: found.length ? found : ['world'] };
 }
+
+/** Wording in a realm field that names no realm ("Both", "All"). */
+const NOT_A_REALM = /^(both|all|any|every(where)?|multiple|various|n\/?a|none|unknown|undefined|-|—|cross[- ]realm)\b/i;
 
 export function normalizeCanon(raw: string | null): { status: CanonStatus; flags: string[] } {
   if (isTemplatePlaceholder(raw)) return { status: 'UNDEFINED', flags: ['UNDEFINED'] };
@@ -248,7 +188,7 @@ export interface EntityDraft {
   source_line: number;
 }
 
-export function blockToDraft(block: ParsedBlock, file: string, realms: KnownRealm[] = [], reg: TypeRegistry = BUILTIN_REGISTRY): EntityDraft {
+export function blockToDraft(block: ParsedBlock, file: string, realms: KnownRealm[] = [], reg: TypeRegistry = BUILTIN_REGISTRY, profile?: ImportProfile): EntityDraft {
   const m = block.meta;
   const id = block.id.trim();
   const name = metaValue(m, 'Name') ?? id;
@@ -257,8 +197,8 @@ export function blockToDraft(block: ParsedBlock, file: string, realms: KnownReal
   const realmRaw = metaValue(m, 'Continent or realm');
   const canonRaw = metaValue(m, 'Canon status');
   const tags = splitList(metaValue(m, 'Tags')).map((t) => t.toLowerCase());
-  const type = normalizeType(id, category, reg);
-  const { realm, realms: inRealms, created } = normalizeRealm(realmRaw, realms);
+  const type = normalizeType(id, category, reg, profile);
+  const { realm, realms: inRealms, created } = normalizeRealm(realmRaw, realms, profile);
   const { status, flags } = normalizeCanon(canonRaw);
   const aliasesRaw = metaValue(m, 'Alternate names');
   const aliases = splitList(aliasesRaw);

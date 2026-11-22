@@ -156,6 +156,8 @@ export interface Entity extends EntitySummary {
   revealed_sections: string[];
   revealed_facts: string[];
   origin: 'import' | 'user';
+  /** The setting pack the record came with (its cleaning rules apply to it); null for the GM's own. */
+  pack_id: string | null;
   source_file: string | null;
   source_hash: string | null;
   redirect_to: string | null;

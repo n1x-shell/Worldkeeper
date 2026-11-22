@@ -837,6 +837,54 @@ ALTER TABLE templates ADD COLUMN spec TEXT NOT NULL DEFAULT '{}';
 ALTER TABLE templates ADD COLUMN updated_at TEXT;
 `,
   },
+  {
+    version: 22,
+    name: 'setting packs: which packs a library has, and which pack each shipped row came from',
+    // A library that already holds the Worldkeeper setting becomes "a library with the Worldkeeper pack installed":
+    // the rows it shipped (everything not the GM's own) are marked as the pack's. Shipped maps, adventures, tables and
+    // curated links are marked by the pack's next update, which matches them against its content.
+    sql: `
+CREATE TABLE setting_packs (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  version TEXT NOT NULL DEFAULT '',
+  installed_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  updated_at TEXT
+);
+ALTER TABLE entities ADD COLUMN pack_id TEXT;
+ALTER TABLE relationships ADD COLUMN pack_id TEXT;
+ALTER TABLE timeline_rows ADD COLUMN pack_id TEXT;
+ALTER TABLE rumours ADD COLUMN pack_id TEXT;
+ALTER TABLE mysteries ADD COLUMN pack_id TEXT;
+ALTER TABLE secrets ADD COLUMN pack_id TEXT;
+ALTER TABLE clues ADD COLUMN pack_id TEXT;
+ALTER TABLE maps ADD COLUMN pack_id TEXT;
+ALTER TABLE map_markers ADD COLUMN pack_id TEXT;
+ALTER TABLE map_shapes ADD COLUMN pack_id TEXT;
+ALTER TABLE adventures ADD COLUMN pack_id TEXT;
+ALTER TABLE random_tables ADD COLUMN pack_id TEXT;
+ALTER TABLE templates ADD COLUMN pack_id TEXT;
+ALTER TABLE realms ADD COLUMN pack_id TEXT;
+ALTER TABLE eras ADD COLUMN pack_id TEXT;
+CREATE INDEX idx_entities_pack ON entities(pack_id);
+
+INSERT INTO setting_packs (id, name, version)
+  SELECT 'worldkeeper', 'The Worldkeeper setting', '0.4.2'
+  WHERE EXISTS (SELECT 1 FROM realms WHERE id IN ('aetheris','kaelmar','ethereal'));
+UPDATE entities SET pack_id = 'worldkeeper' WHERE origin <> 'user' AND EXISTS (SELECT 1 FROM setting_packs WHERE id = 'worldkeeper');
+UPDATE relationships SET pack_id = 'worldkeeper' WHERE origin <> 'user' AND EXISTS (SELECT 1 FROM setting_packs WHERE id = 'worldkeeper');
+UPDATE timeline_rows SET pack_id = 'worldkeeper' WHERE origin <> 'user' AND EXISTS (SELECT 1 FROM setting_packs WHERE id = 'worldkeeper');
+UPDATE rumours SET pack_id = 'worldkeeper' WHERE origin <> 'user' AND EXISTS (SELECT 1 FROM setting_packs WHERE id = 'worldkeeper');
+UPDATE mysteries SET pack_id = 'worldkeeper' WHERE origin <> 'user' AND EXISTS (SELECT 1 FROM setting_packs WHERE id = 'worldkeeper');
+UPDATE secrets SET pack_id = 'worldkeeper' WHERE origin <> 'user' AND EXISTS (SELECT 1 FROM setting_packs WHERE id = 'worldkeeper');
+UPDATE clues SET pack_id = 'worldkeeper' WHERE origin <> 'user' AND EXISTS (SELECT 1 FROM setting_packs WHERE id = 'worldkeeper');
+UPDATE templates SET pack_id = 'worldkeeper' WHERE origin = 'import' AND EXISTS (SELECT 1 FROM setting_packs WHERE id = 'worldkeeper');
+UPDATE eras SET pack_id = 'worldkeeper' WHERE origin <> 'user' AND EXISTS (SELECT 1 FROM setting_packs WHERE id = 'worldkeeper');
+UPDATE realms SET pack_id = 'worldkeeper' WHERE id NOT IN ('world') AND EXISTS (SELECT 1 FROM setting_packs WHERE id = 'worldkeeper')
+  AND id IN ('aetheris','kaelmar','ethereal','evershroud','hollow-verge','fields-of-lost-realities','ossuary-of-kings','silent-archive','loom-of-eternity','citadel-of-the-hidden','black-horizon');
+UPDATE record_types SET pack_id = 'worldkeeper', builtin = 0 WHERE key IN ('vault','vault_key','shard','calling','ethereal_domain');
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

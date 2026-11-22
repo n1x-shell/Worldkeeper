@@ -8,6 +8,8 @@ import { Badge, Card, CanonFlags, Empty, EntityLink, ErrorBox, GmOnly, KeyValue,
 import { Markdown } from '../components/Markdown';
 import { Dev, useDebug } from '../components/Dev';
 import { displaySections, splitSections } from '../lib/sections';
+import { useCleaners, usePacks } from '../lib/packs';
+import { useRealms } from '../components/realms';
 import type { Entity, EntitySummary, StateRow } from '../lib/types';
 
 interface SpecialRow {
@@ -15,6 +17,7 @@ interface SpecialRow {
   name: string;
   canon_status: string;
   canon_flags?: string[];
+  pack_id?: string | null;
   fields: [string, string][];
   body: string;
   campaignState: StateRow[];
@@ -96,6 +99,7 @@ function OverlayControls({ entityId, rows, fields, onChange }: { entityId: strin
 
 export function VaultsPage() {
   const debug = useDebug();
+  const cleanerFor = useCleaners();
   const { activeCampaignId } = useAppState();
   const { data, error, reload } = useApi<SpecialRow[]>(`/api/special/vaults${activeCampaignId ? `?campaign=${activeCampaignId}` : ''}`);
   const [sel, setSel] = useState<string | null>(null);
@@ -145,7 +149,7 @@ export function VaultsPage() {
                 ['Novel code', field(v, 'Novel code')],
               ]}
             />
-            {displaySections(v.body, debug).map((s, i) =>
+            {displaySections(v.body, debug, cleanerFor(v.pack_id)).map((s, i) =>
               s.secret ? (
                 <GmOnly key={i} className="my-2">
                   <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
@@ -295,9 +299,25 @@ function RegionCard({ id }: { id: string }) {
   );
 }
 
+/** The pack's records for each part of the explorer, by role (a role whose record is missing hides its part). */
+const DEPTHS_LINKS: [string, string][] = [
+  ['depths.ways', 'Ways in and out'],
+  ['depths.dangers', 'Dangers and death'],
+  ['depths.peoples', 'People and groups'],
+  ['depths.navigation', 'Navigation and map plan'],
+  ['rules.travel', 'Travel between realms'],
+  ['rules.thinning', 'Thinning and Unmaking'],
+];
+
 export function EtherealExplorer() {
+  const { roles } = usePacks();
+  const realms = useRealms();
+  const border = roles['depths.border'];
+  // The realm's own record introduces it; the continents it's reached from are the world's, with their crossing.
+  const intro = realms.list.find((r) => r.id === roles['depths.realm'])?.intro_id;
+  const continents = realms.list.filter((r) => r.kind === 'continent' && r.intro_id);
   const { data: domains } = useApi<EntitySummary[]>('/api/entities?type=ethereal_domain');
-  const { data: realm } = useApi<{ entity: Entity }>('/api/entities/CON-501');
+  const { data: realm } = useApi<{ entity: Entity }>(intro ? `/api/entities/${encodeURIComponent(intro)}` : null);
   const [sel, setSel] = useState<string | null>(null);
   const layers = useMemo(() => {
     const border: EntitySummary[] = [];
@@ -313,15 +333,8 @@ export function EtherealExplorer() {
         subtitle="A shared realm reachable from both continents. Access to the deep domains is never granted automatically: check each domain's stated requirements."
       />
       <div className="flex flex-wrap gap-2 text-sm">
-        {[
-          ['ETH-591', 'Ways in and out'],
-          ['ETH-592', 'Dangers and death'],
-          ['ETH-590', 'People and groups'],
-          ['ETH-593', 'Navigation and map plan'],
-          ['SYS-906', 'Travel between realms'],
-          ['SYS-907', 'Thinning and Unmaking'],
-        ].map(([id, l]) => (
-          <Link key={id} to={`/e/${id}`} className="btn">
+        {DEPTHS_LINKS.filter(([role]) => roles[role]).map(([role, l]) => (
+          <Link key={role} to={`/e/${roles[role]}`} className="btn">
             {l}
           </Link>
         ))}
@@ -329,22 +342,33 @@ export function EtherealExplorer() {
       <div className="grid gap-4 lg:grid-cols-[420px_1fr]">
         <div className="space-y-3">
           <Card title="Continents" className="rc-blue border-realm/40">
-            <div className="flex gap-2 text-sm">
-              <EntityLink id="CON-001">Aetheris</EntityLink> · <EntityLink id="CON-301">Kaelmar</EntityLink> · <EntityLink id="LOC-901">The Rift</EntityLink>
+            <div className="flex flex-wrap gap-2 text-sm">
+              {continents.map((c, i) => (
+                <Fragment key={c.id}>
+                  {i > 0 && ' · '}
+                  <EntityLink id={c.intro_id!}>{c.name}</EntityLink>
+                </Fragment>
+              ))}
+              {roles['depths.crossing'] && (
+                <>
+                  {' · '}
+                  <EntityLink id={roles['depths.crossing']} />
+                </>
+              )}
             </div>
           </Card>
           <div className="text-center text-dim text-xs">▼ crossing ▼</div>
           <Card title="Border layer" className="rc-violet border-realm/40">
-            {layers.border.length ? <DomainButtons list={layers.border} sel={sel} setSel={setSel} /> : <DomainButtons list={(domains ?? []).filter((d) => d.id === 'ETH-501')} sel={sel} setSel={setSel} />}
+            {layers.border.length ? <DomainButtons list={layers.border} sel={sel} setSel={setSel} /> : <DomainButtons list={(domains ?? []).filter((d) => d.id === border)} sel={sel} setSel={setSel} />}
           </Card>
           <div className="text-center text-dim text-xs flex items-center justify-center gap-1">
             <AlertTriangle size={12} /> deeper access requires conditions ▼
           </div>
           <Card title="Deep domains" className="rc-violet border-realm/50 bg-realm/5">
-            <DomainButtons list={(domains ?? []).filter((d) => d.id !== 'ETH-501' && !layers.border.includes(d))} sel={sel} setSel={setSel} />
+            <DomainButtons list={(domains ?? []).filter((d) => d.id !== border && !layers.border.includes(d))} sel={sel} setSel={setSel} />
           </Card>
         </div>
-        <Card className="min-w-0">{sel ? <DomainDetail id={sel} /> : realm ? <Markdown text={splitSections(realm.entity.body).filter((s) => !s.secret).map((s) => (s.heading ? `## ${s.heading}\n\n${s.content}` : s.content)).join('\n\n')} /> : <Loading />}</Card>
+        <Card className="min-w-0">{sel ? <DomainDetail id={sel} /> : !intro ? null : realm ? <Markdown text={splitSections(realm.entity.body).filter((s) => !s.secret).map((s) => (s.heading ? `## ${s.heading}\n\n${s.content}` : s.content)).join('\n\n')} /> : <Loading />}</Card>
       </div>
     </div>
   );
@@ -367,6 +391,7 @@ function DomainButtons({ list, sel, setSel }: { list: EntitySummary[]; sel: stri
 
 function DomainDetail({ id }: { id: string }) {
   const debug = useDebug();
+  const cleanerFor = useCleaners();
   const { data } = useApi<{ entity: Entity; relationships: { source_id: string; target_id: string; source_name: string; target_name: string; source_type: string; target_type: string }[] }>(`/api/entities/${id}`);
   if (!data) return <Loading />;
   const e = data.entity;
@@ -378,7 +403,7 @@ function DomainDetail({ id }: { id: string }) {
         {e.name}
       </Link>
       <div className="text-xs text-dim mb-2">{/deep/i.test(e.parent_raw ?? '') ? 'Deep domain' : /border/i.test(e.parent_raw ?? '') ? 'Border layer' : null}</div>
-      {displaySections(e.body, debug).map((s, i) =>
+      {displaySections(e.body, debug, cleanerFor(e.pack_id)).map((s, i) =>
         s.secret ? (
           <GmOnly key={i} className="my-2">
             <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />

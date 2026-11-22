@@ -59,6 +59,10 @@ Every kind of record (settlement, NPC, faction, deity...) knows what it is: a pl
 
 Each type has a **template**: the facts it should have (a town's population and who rules it; an NPC's pronouns, looks and manner) and its sections, each with guidance on what to write and an example from the Worldkeeper setting. Sections marked GM only are never shown to players. **New record** shows you what the template asks for and starts your record with it. Duplicate any template to make it your own and change it as you like; a change affects only new records.
 
+## Setting packs
+
+A setting is a pack you can add to your library or leave out: its realms, record types, templates, records, maps, adventures, tables and tools. **Library → Setting packs** installs, updates and removes them, taking a backup first each time. Updating brings in what's new without touching your own records; removing takes out only what the pack brought. If one of your records already has an ID the pack uses, yours is kept and the page tells you. The Worldkeeper setting is the first pack; a library without it is plain D&D, with none of its tools in the menus.
+
 ## World branches and timelines
 
 ### Aetheris
@@ -161,7 +165,7 @@ A switched-off mechanic leaves the menus, the sheets, the player view and the pu
 
 - **Character options.** The sheet and the builder list the world's peoples, classes and backgrounds first, then every other species, class, subclass and background in your rules packs. With no world pages, the books' options are the whole list.
 - **Treasure.** "From your books" rolls magic items by tier and rarity from your imported Dungeon Master's Guide, with gems and art objects for goods. When the setting's treasure is on, its regional tables come first, and their items show the rules from your books.
-- **Encounters.** Your Books → Encounters, and "Suggest from your books" in a live session, offer groups of creatures for the party's level within the Dungeon Master's Guide (2024) XP budget, in a terrain. The setting's regions have terrains (`assets/encounters/terrain.json`), so a live session suggests creatures that belong where the party is. "Put in the tracker" makes it an encounter, with HP, AC, initiative and stat blocks filled in.
+- **Encounters.** Your Books → Encounters, and "Suggest from your books" in a live session, offer groups of creatures for the party's level within the Dungeon Master's Guide (2024) XP budget, in a terrain. The setting's regions have terrains (`packs/worldkeeper/encounters/terrain.json`), so a live session suggests creatures that belong where the party is. "Put in the tracker" makes it an encounter, with HP, AC, initiative and stat blocks filled in.
 - **The setting pack.** Settings → Rules packs → The Worldkeeper setting adds the setting's own 84 creatures, 8 hazards and 34 items to any library (CC BY 4.0, off until turned on). With Thinning switched off, its few Thinning-based entries use standard-rules versions.
 - **Open content.** Settings → Rules packs → Add open content from Open5e brings in openly licensed sources (Level Up A5E, Kobold Press and others), each as its own pack with its licence.
 - **Encounter tables.** When a table row names creatures in plain words ("4 bandits and a bandit captain"), their stat blocks from your books are a click away. The setting's own creatures keep their own stat blocks.

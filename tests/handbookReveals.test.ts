@@ -73,8 +73,10 @@ describe('matching the published handbook', () => {
     expect(getEntity(a.ctx.db, 'SET-903')).toMatchObject({ revealed_sections: [], player_summary: 'Reeds and herons.' });
   });
 
-  it('has a preview and an apply route', async () => {
-    const ctx = tempContext();
+  it('has a preview and an apply route, only with the setting pack', async () => {
+    const bare = createApp(tempContext());
+    expect((await request(bare).get('/api/handbook-reveals')).status).toBe(400);
+    const ctx = tempContext({ settingRealms: true });
     const gm = createApp(ctx);
     expect((await request(gm).get('/api/handbook-reveals')).body).toEqual({ records: [], newRecords: 0, sections: 0, playerText: 0, pins: 0 });
     expect((await request(gm).post('/api/handbook-reveals')).status).toBe(200);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Archive, Check, Download, RotateCcw, Upload, AlertTriangle, X, Pencil } from 'lucide-react';
+import { packsChanged, usePacks } from '../lib/packs';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { Badge, Card, Check as CheckBox, DataTable, Empty, EntityLink, ErrorBox, Field, KeyValue, Loading, PageHeader, Segmented, Tabs, Toggle, TypeBadge, ask, askText, useToast, type Tone } from '../components/ui';
@@ -106,6 +107,8 @@ export function ImportExportPage() {
                     setPreview(null);
                     await reloadIndex();
                     await reloadMeta();
+                    // A setting's archive installs its pack (its realms, types and tools).
+                    await packsChanged();
                     void reloadRuns();
                   } catch (x) {
                     setErr(`Import failed and was rolled back: ${(x as Error).message}`);
@@ -370,6 +373,7 @@ interface Review {
 
 export function ReviewPage() {
   const debug = useDebug();
+  const { roles } = usePacks();
   const { data, reload, error } = useApi<Review>('/api/review');
   const [tab, setTab] = useState<'proposals' | 'modified' | 'proposed' | 'duplicates' | 'conflicts' | 'sources'>('proposals');
   const [diffFor, setDiffFor] = useState<string | null>(null);
@@ -505,7 +509,18 @@ export function ReviewPage() {
         <div className="space-y-2">
           <SimpleList rows={data.conflicts.map((r) => ({ id: r.id, name: r.name }))} empty="No records are marked CONFLICT." />
           <p className="text-sm">
-            See also the <EntityLink id="DEC-903">Canon Conflict Register</EntityLink> and <EntityLink id="DEC-904">Decisions Required</EntityLink>.
+            {roles['register.conflicts'] && (
+              <>
+                See also <EntityLink id={roles['register.conflicts']} />
+                {roles['register.decisions-required'] && (
+                  <>
+                    {' '}
+                    and <EntityLink id={roles['register.decisions-required']} />
+                  </>
+                )}
+                .
+              </>
+            )}
             {debug && (
               <>
                 {' '}
@@ -1011,9 +1026,10 @@ function DebugToggle() {
 
 /** Bring in the Worldkeeper additions: lore written for this world on top of the archive. */
 function AdditionsPanel({ onDone }: { onDone: (msg: string) => void }) {
-  const { data } = useApi<{ available: boolean; records: number }>('/api/additions');
+  const { data } = useApi<{ available: boolean; installed: boolean; records: number }>('/api/additions');
   const [busy, setBusy] = useState(false);
-  if (!data?.available) return null;
+  // Only in a library with the Worldkeeper pack (Library → Setting packs installs it).
+  if (!data?.available || !data.installed) return null;
   return (
     <Card className="flex flex-wrap items-center gap-3">
       <div className="flex-1 min-w-[16rem]">

@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { tempContext } from './helpers';
 import { applyTables, parseTables } from '../server/src/tableAdditions';
 
-const DIR = path.resolve(import.meta.dirname, '../assets/tables');
+const DIR = path.resolve(import.meta.dirname, '../packs/worldkeeper/tables');
 const all = fs
   .readdirSync(DIR)
   .filter((f) => f.endsWith('.md'))

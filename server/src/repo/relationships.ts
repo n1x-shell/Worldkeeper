@@ -36,10 +36,11 @@ interface Kinds {
   group: Set<string>;
   person: Set<string>;
   held: Set<string>;
+  uninhabited: Set<string>;
 }
 const kindsOf = (db: DB): Kinds => {
   const t = types(db);
-  return { place: new Set(t.with('place')), group: new Set(t.with('group')), person: new Set(t.with('person')), held: new Set(t.with('holdable')) };
+  return { place: new Set(t.with('place')), group: new Set(t.with('group')), person: new Set(t.with('person')), held: new Set(t.with('holdable')), uninhabited: new Set(t.with('uninhabited')) };
 };
 
 /** Section headings whose text is a list of people, groups or places. */
@@ -66,7 +67,7 @@ function sectionRelation(k: Kinds, heading: string, sourceType: string, targetTy
       // A place in a Family section is the family's seat, not necessarily where this person lives now.
       if (/^family/.test(h)) return ['comes_from', false];
       // Nobody lives in a sealed vault; they want it, guard it or came from it.
-      if (targetType === 'vault') return ['related_to', false];
+      if (k.uninhabited.has(targetType)) return ['related_to', false];
       return ['lives_in', false];
     }
     if (k.person.has(targetType)) return ['related_to', false];

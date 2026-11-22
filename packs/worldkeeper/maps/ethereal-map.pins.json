@@ -1,6 +1,7 @@
 {
   "name": "The Ethereal Realm",
   "image": "ethereal-map.webp",
+  "realm": "ethereal",
   "note": "A chart of the Ethereal Realm, as players know it. Pin positions are pixels from the image's top-left corner. Places are where the chart says; distances between them are not to be trusted.",
   "pins": [
     {

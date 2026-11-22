@@ -5,10 +5,12 @@
 import type Database from 'better-sqlite3';
 import { MECHANICS, SETTING_PRESET, STANDARD_PRESET, withDefaults, type Mechanics } from '../../../shared/mechanics.js';
 
+import { isInstalled } from '../packs/registry.js';
+
 type DB = Database.Database;
 
-/** Whether the library holds the Worldkeeper setting (its Thinning rule or its first region). */
-const hasSetting = (db: DB) => !!db.prepare(`SELECT 1 FROM entities WHERE id IN ('SYS-907', 'REG-001') LIMIT 1`).get();
+/** Whether the library has the Worldkeeper setting's pack (whose mechanics these are). */
+const hasSetting = (db: DB) => isInstalled(db, 'worldkeeper');
 
 export function getMechanics(db: DB): Mechanics {
   const row = db.prepare(`SELECT value FROM settings WHERE key = 'mechanics'`).get() as { value: string } | undefined;

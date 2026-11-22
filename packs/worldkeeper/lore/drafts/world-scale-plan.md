@@ -7,8 +7,8 @@
 
 Three things were made separately and never agreed:
 
-- **The painted map** (`assets/maps/world-map.webp`), whose coastlines and painted cities can't move.
-- **Our map data:** the 60 pins, 35 routes and 11 region outlines in `assets/maps/`. These are ours and can move.
+- **The painted map** (`packs/worldkeeper/maps/world-map.webp`), whose coastlines and painted cities can't move.
+- **Our map data:** the 60 pins, 35 routes and 11 region outlines in `packs/worldkeeper/maps/`. These are ours and can move.
 - **The lore's travel times and distances:** *Distances in Aetheris* [RUL-651], *Crossing the Black Tides* [RUL-652], the route labels, and the handbook's player text.
 
 RUL-651 even says so: "The world map is not drawn to scale. Route labels (travellers' times) remain the measure." Measured on the map today, only 6 of the 34 timed routes match their stated time, even within a factor of two. The worst are short hops: the Ashvale villages are "a day's walk" from Ashvale but sit 350 to 730 miles away on the map.

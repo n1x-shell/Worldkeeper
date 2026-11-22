@@ -1,11 +1,11 @@
 /**
  * Stat blocks for the world's creatures, hazards and fight-ready people (GM only), shipped with the additions in
- * assets/statblocks. They're read, not copied into the library: records stay as the archive wrote them, and each
+ * packs/worldkeeper/statblocks. They're read, not copied into the library: records stay as the archive wrote them, and each
  * record's page shows its stat block beside it. The encounter tracker uses them to fill in HP, AC and initiative.
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { assetsPath } from '../assetsDir.js';
+import { worldkeeperPath } from '../packs/paths.js';
 
 export interface StatEntry {
   name: string;
@@ -55,7 +55,7 @@ export interface StatBlock {
   open?: boolean;
 }
 
-const DIR = assetsPath('statblocks');
+const DIR = worldkeeperPath('statblocks');
 let cache: { stamp: string; data: Record<string, StatBlock> } | null = null;
 
 /** Every stat block, re-read when the files change. */

@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { loreHeading, loreText } from '../shared/loreText';
+import fs from 'node:fs';
+import { AS_WRITTEN, makeCleaner } from '../shared/loreText';
+import type { PackManifest } from '../shared/packs';
+
+// The Worldkeeper pack's cleaning rules (packs/worldkeeper/pack.json), as its records are shown.
+const manifest = JSON.parse(fs.readFileSync(new URL('../packs/worldkeeper/pack.json', import.meta.url), 'utf8')) as PackManifest;
+const clean = makeCleaner(manifest.cleaning);
+const loreText = clean.text;
+const loreHeading = clean.heading;
 
 describe('lore text clean-up (display only)', () => {
   it('drops citations, source tags and file references', () => {
@@ -43,5 +51,12 @@ describe('lore text clean-up: established-only notes', () => {
   it('drops notes about what the source establishes', () => {
     expect(loreText('Only appearance/age/species information explicitly given above is established.')).toBe('');
     expect(loreText('Human, in her sixties. Leads the Keepers.')).toBe('Human, in her sixties. Leads the Keepers.');
+  });
+  it("shows the GM's own records, and a pack without rules, as written", () => {
+    const text = 'Kaelmar was never covered by the Loom. (A: Place in the world) [UNDEFINED]';
+    expect(AS_WRITTEN.text(text)).toBe(text);
+    expect(makeCleaner(undefined)).toBe(AS_WRITTEN);
+    expect(AS_WRITTEN.editorial('Sources')).toBe(false);
+    expect(clean.editorial('Sources')).toBe(true);
   });
 });

@@ -1,5 +1,5 @@
 /**
- * Bring the Worldkeeper additions (new lore records and curated links in assets/lore/) into your own library.
+ * Bring the Worldkeeper additions (new lore records and curated links in packs/worldkeeper/lore/) into your own library.
  * Archive records are never changed or removed, and the links can be edited in the app like any others.
  * Back up first (Library → Backups), or let the app's daily backup cover you.
  *

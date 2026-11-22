@@ -1,14 +1,15 @@
 /**
  * The Return (The Return [COS-032]): a seven-stage clock the GM moves by hand. Players never see the clock, only the
- * omens and rumours of each stage it has reached (assets/return/omens.json). Forming any Orb jumps it to stage 6.
+ * omens and rumours of each stage it has reached (packs/worldkeeper/return/omens.json). Forming any Orb jumps it to stage 6.
  */
+import { role } from '../packs/registry.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { DB } from '../db/connection.js';
 import { badRequest } from '../lib/errors.js';
-import { assetsPath } from '../assetsDir.js';
+import { worldkeeperPath } from '../packs/paths.js';
 
-const OMENS = assetsPath('return', 'omens.json');
+const OMENS = worldkeeperPath('return', 'omens.json');
 
 export interface ReturnStage {
   stage: number;
@@ -24,7 +25,8 @@ export function returnStages(file = OMENS): ReturnStage[] {
 
 /** The GM's own description of each stage, from the Return's record. */
 function stageNotes(db: DB) {
-  const body = (db.prepare(`SELECT body FROM entities WHERE id = 'COS-032'`).get() as { body: string } | undefined)?.body ?? '';
+  const id = role(db, 'clock.stages');
+  const body = id ? ((db.prepare(`SELECT body FROM entities WHERE id = ?`).get(id) as { body: string } | undefined)?.body ?? '') : '';
   const notes: Record<number, string> = {};
   for (const m of body.matchAll(/^(\d)\.\s+\*\*([^*]+)\*\*\s*(.+)$/gm)) notes[Number(m[1])] = m[3].trim();
   return notes;

@@ -53,7 +53,7 @@ describe('errata', () => {
   });
 
   it('every shipped erratum names its record or adventure and changes something', () => {
-    const doc = JSON.parse(fs.readFileSync(path.resolve(import.meta.dirname, '../assets/lore/errata.json'), 'utf8')) as {
+    const doc = JSON.parse(fs.readFileSync(path.resolve(import.meta.dirname, '../packs/worldkeeper/lore/errata.json'), 'utf8')) as {
       errata: { id?: string; adventure?: string; find: string; replace: string }[];
     };
     expect(doc.errata.length).toBeGreaterThan(50);

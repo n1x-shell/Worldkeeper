@@ -8,28 +8,33 @@ import { notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
 import { rankOf } from '../../../shared/standing.js';
 import { types } from './recordTypes.js';
+import { realmIntros } from './realms.js';
 
-export const REGION_IDS = [
-  'REG-001',
-  'REG-002',
-  'REG-003',
-  'REG-004',
-  'REG-005',
-  'REG-006',
-  'REG-301',
-  'REG-302',
-  'REG-303',
-  'REG-304',
-  'REG-305',
-  'REG-306',
-  'ETH-501',
-  'ETH-502',
-  'ETH-503',
-  'ETH-504',
-  'ETH-505',
-  'ETH-506',
-  'ETH-507',
-];
+/**
+ * The regions a campaign's state is kept for: records of a region-sized type (a region, nation or domain) inside a
+ * continent, realm or domain, in the realms' order. A continent's or realm's own record isn't one (a domain's is: the
+ * domain is the region), nor is a region inside another region. A world with no continents keeps its regions in the
+ * world itself, so they count there too.
+ */
+export function regionIds(db: DB): string[] {
+  const keys = types(db).with('regionLike');
+  if (!keys.length) return [];
+  const introOf = new Map<string, string>(); // record → the kind of realm it introduces
+  const kinds = new Map((db.prepare('SELECT id, kind FROM realms').all() as { id: string; kind: string }[]).map((r) => [r.id, r.kind]));
+  for (const [realm, id] of realmIntros(db)) introOf.set(id, kinds.get(realm) ?? '');
+  const rows = db
+    .prepare(
+      `SELECT e.id, r.kind, e.parent_id, p.type parent_type FROM entities e LEFT JOIN realms r ON r.id = e.realm LEFT JOIN entities p ON p.id = e.parent_id
+       WHERE e.archived = 0 AND e.type IN (${keys.map(() => '?').join(',')}) ORDER BY COALESCE(r.sort_order, 0), e.id`,
+    )
+    .all(...keys) as { id: string; kind: string | null; parent_id: string | null; parent_type: string | null }[];
+  const regionLike = new Set(keys);
+  const regions = rows.filter(
+    (r) => (!introOf.has(r.id) || introOf.get(r.id) === 'domain') && (!r.parent_type || !regionLike.has(r.parent_type) || introOf.has(r.parent_id!)),
+  );
+  const inside = regions.filter((r) => r.kind && r.kind !== 'world');
+  return (inside.length ? inside : regions).map((r) => r.id);
+}
 
 /** Every record inside a region (its places, and what's in them), up to four levels down. */
 function within(db: DB, regionId: string): Set<string> {
@@ -148,7 +153,7 @@ export function regionState(db: DB, campaignId: number, regionId: string) {
 }
 
 export function allRegionStates(db: DB, campaignId: number) {
-  return REGION_IDS.filter((id) => db.prepare('SELECT 1 FROM entities WHERE id = ?').get(id)).map((id) => regionState(db, campaignId, id));
+  return regionIds(db).map((id) => regionState(db, campaignId, id));
 }
 
 /**

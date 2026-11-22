@@ -55,7 +55,7 @@ Items are found by the names people write: "Weapon, +1" finds "+1 Weapon", "Moon
 
 A second built-in pack, **The Worldkeeper setting**, holds the setting's own creatures and items for use in any campaign: 84 creatures and 8 hazards, and 34 items (the Aetheris and Kaelmar treasures, with their rules). It's off until you turn it on in **Settings → Rules packs**.
 
-When the **Thinning** mechanic is switched off, the few entries that use Thinning, true names or Shardscarred use standard-rules versions instead (for example, the Glass's Thinning save becomes a DC 15 Charisma save that costs a level of Exhaustion and a memory). The pack is licensed CC BY 4.0, credited "The Worldkeeper setting pack, by the Worldkeeper contributors"; see `assets/setting-pack/README.md`.
+When the **Thinning** mechanic is switched off, the few entries that use Thinning, true names or Shardscarred use standard-rules versions instead (for example, the Glass's Thinning save becomes a DC 15 Charisma save that costs a level of Exhaustion and a memory). The pack is licensed CC BY 4.0, credited "The Worldkeeper setting pack, by the Worldkeeper contributors"; see `packs/worldkeeper/rules/README.md`.
 
 ## Open content from Open5e
 

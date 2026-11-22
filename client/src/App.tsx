@@ -29,6 +29,7 @@ import { BackupsPage, BrokenPage, ConsistencyPage, HistoryPage, ImportExportPage
 import { RumoursPage } from './pages/Rumours';
 import { RealmsPage } from './pages/Realms';
 import { TemplatesPage } from './pages/Templates';
+import { SettingPacksPage } from './pages/SettingPacks';
 import { PlayerApp } from './player/PlayerApp';
 import { PublishPage } from './pages/Publish';
 import { StyleGuidePage } from './pages/StyleGuide';
@@ -88,6 +89,14 @@ export function App() {
             element={
               <Page>
                 <TemplatesPage />
+              </Page>
+            }
+          />
+          <Route
+            path="setting-packs"
+            element={
+              <Page>
+                <SettingPacksPage />
               </Page>
             }
           />
