@@ -1,4 +1,5 @@
 /** Character pages: the GM edits everything; a player, with their private code, edits only their own memories and names. */
+import { characterPage } from '../server/src/repo/characterPages.js';
 import { describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { tempContext } from './helpers.js';
@@ -107,8 +108,8 @@ describe('character pages', () => {
     const data = exportCampaign(ctx.db, camp.id);
     expect(data.character_pages).toHaveLength(1);
     const cid = importCampaign(ctx.db, data);
-    const copy = ctx.db.prepare('SELECT p.* FROM character_pages p JOIN characters c ON c.id = p.character_id WHERE c.campaign_id = ?').get(cid) as { code: string; true_name: string };
-    expect(copy.true_name).toBe('Wrenna Ashby');
+    const copy = ctx.db.prepare('SELECT p.* FROM character_pages p JOIN characters c ON c.id = p.character_id WHERE c.campaign_id = ?').get(cid) as { code: string; character_id: number };
+    expect(characterPage(ctx.db, copy.character_id).true_name).toBe('Wrenna Ashby');
     expect(copy.code).toMatch(/^[A-Z2-9]{8}$/);
     expect(JSON.stringify(playerSnapshot(ctx.db))).not.toContain('A secret memory');
   });

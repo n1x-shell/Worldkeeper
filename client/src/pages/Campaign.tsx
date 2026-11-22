@@ -1,5 +1,5 @@
 import { useRealms } from '../components/realms';
-import { useMechanics } from '../lib/mechanics';
+import { useModules } from '../lib/modules';
 import { briefingFill, type Briefing } from './Briefing';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -12,7 +12,7 @@ import { ask, askText, AutoTextarea, Badge, Card, Check as CheckBox, DataTable, 
 import { EntityMultiPicker, EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
 import { FullSheet } from '../player/sheet/FullSheet';
-import { ThinningTab } from '../player/sheet/ThinningTab';
+import { NotesTab, ThinningTab } from '../player/sheet/ThinningTab';
 import type { LogEntry } from '../player/sheet/LogTab';
 import { passive, type Sheet } from '@shared/sheet';
 
@@ -572,7 +572,7 @@ export function PartyPage() {
 }
 
 function CharacterSheet({ ch: initial, onDeleted, onEdited }: { ch: Character; onDeleted: () => void; onEdited: (c: Character) => void }) {
-  const mech = useMechanics();
+  const mech = useModules();
   const [ch, setChState] = useState(initial);
   const setCh = (f: Character | ((c: Character) => Character)) =>
     setChState((cur) => {
@@ -646,7 +646,8 @@ function CharacterSheet({ ch: initial, onDeleted, onEdited }: { ch: Character; o
         }}
         loadLog={loadLog}
         extraTabs={[
-          ...(page.data && mech?.thinning !== false ? [{ id: 'thinning', label: 'Thinning', content: <ThinningTab gm page={page.data} onChange={(t, now) => page.set(t, now)} /> }] : []),
+          ...(page.data && mech.has('thinning') ? [{ id: 'thinning', label: 'Thinning', content: <ThinningTab gm page={page.data} onChange={(t, now) => page.set(t, now)} /> }] : []),
+          ...(page.data ? [{ id: 'notes', label: 'Player notes', content: <NotesTab gm notes={page.data.notes} onChange={(notes) => page.set({ ...page.data!, notes })} /> }] : []),
           {
             id: 'gm',
             label: 'GM only',

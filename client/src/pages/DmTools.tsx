@@ -1,5 +1,5 @@
 import { CreatureLinks } from '../components/CreatureLinks';
-import { useMechanics } from '../lib/mechanics';
+import { useModules } from '../lib/modules';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowDownWideNarrow, BookOpen, ChevronLeft, ChevronRight, Dice5, Plus, Shield, Skull, Trash2, Users, Sword, Eye, EyeOff, Brain, Pin } from 'lucide-react';
@@ -564,13 +564,13 @@ export function ConditionsPage() {
 export function RulesPage() {
   const { data } = useApi<EntitySummary[]>('/api/entities?type=rule,system,magic_system');
   const [mech, setMech] = useState('');
-  const mechanics = useMechanics();
+  const mechanics = useModules();
   const rows = (data ?? []).filter((r) => !mech || r.canon_flags.includes(mech) || (mech === 'UNVERIFIED' && !r.canon_flags.some((f) => ['OFFICIAL', 'HOMEBREW'].includes(f))));
   return (
     <div className="space-y-4">
       <PageHeader
         title="Rules Reference"
-        subtitle={mechanics?.setting === false ? "Your world's own rules." : 'Setting rules: Shards, Thinning and Unmaking, glyph-work, vault keys and more.'} note="As imported. Official, homebrew and unverified mechanics are labelled. No rulebook is bundled."
+        subtitle={!mechanics.has('quick-reference') ? "Your world's own rules." : 'Setting rules: Shards, Thinning and Unmaking, glyph-work, vault keys and more.'} note="As imported. Official, homebrew and unverified mechanics are labelled. No rulebook is bundled."
         actions={
           <Link className="btn-primary" to="/new?type=rule">
             <Plus size={14} /> New rule entry

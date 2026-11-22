@@ -41,7 +41,7 @@ Re-imports preserve unchanged records and do not delete records merely because t
 ### Your rules and your kind of campaign
 
 - **Your books.** The SRD 5.2.1 is built in. To use the books you own, find the 5etools project's source repository yourself, download an archive of it as a zip, and import it in **Settings → Rules packs → Import your books from 5etools**. Tick the books you own. See [Rules packs](RULES_PACKS.md).
-- **Standard D&D or the setting.** A library without the Worldkeeper setting starts as standard D&D 2024. If you imported the setting but want a plain campaign, choose **Settings → Campaign mechanics → Standard D&D**.
+- **Standard D&D or the setting.** A library without the Worldkeeper setting starts as standard D&D 2024. If you imported the setting but want a plain campaign, switch its modules off in **Settings → Modules** (for the library, or just for one campaign).
 
 ## 3. Explore the encyclopedia
 

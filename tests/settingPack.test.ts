@@ -37,7 +37,7 @@ describe('the Worldkeeper setting pack', () => {
     expect(itemByName(ctx.db, 'Name-thread')?.text).toBe('Single use. When you fail a Charisma saving throw, you succeed instead, and the thread snaps.');
     expect(itemByName(ctx.db, 'Worldscar Key')?.text).toMatch(/DC 15 Charisma saving throw/);
     // With Thinning on, the originals.
-    await request(gm).put('/api/mechanics').send({ thinning: true });
+    await request(gm).put('/api/modules').send({ thinning: true });
     expect((await request(gm).get('/api/statblocks/wk:CRE-313')).body.traits.find((t: { name: string }) => t.name === 'Thinning Touch')).toBeTruthy();
     expect(itemByName(ctx.db, 'Worldscar Key')?.text).toMatch(/Each use costs a Thinning save/);
   });

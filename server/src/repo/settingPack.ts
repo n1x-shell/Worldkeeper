@@ -6,7 +6,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type Database from 'better-sqlite3';
-import { getMechanics } from './mechanics.js';
+import { moduleOn } from './modules.js';
 import { worldkeeperPath } from '../packs/paths.js';
 
 type DB = Database.Database;
@@ -49,10 +49,10 @@ function load() {
   return cache;
 }
 
-/** The pack's creatures and items, in their standard-rules versions when the Thinning mechanic is off. */
+/** The pack's creatures and items, in their standard-rules versions when the Thinning module is off. */
 export function settingPack(db: DB): { creatures: J[]; items: J[] } {
   const { creatures, items, standard } = load();
-  if (getMechanics(db).thinning) return { creatures, items };
+  if (moduleOn(db, 'thinning')) return { creatures, items };
   const sc = standard.creatures as Record<string, J>;
   const si = standard.items as Record<string, string>;
   return {

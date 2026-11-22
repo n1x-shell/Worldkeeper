@@ -2,7 +2,6 @@
  * Where every page sits (docs/DESIGN_OVERHAUL.md, section 5): the five workspaces and their sidebar groups, and the
  * Library menu. URLs are unchanged; tests/navigation.test.ts checks that no page lost its link.
  */
-import type { Mechanics } from '../../../shared/mechanics';
 import {
   Archive,
   Atom,
@@ -269,11 +268,6 @@ export const LIBRARY: Group = {
 
 /** Pages for developers (the source files themselves, the style guide); shown in debug mode only. */
 export const DEBUG_ONLY = new Set(['/documents', '/broken', '/style-guide']);
-/** Menu items for the setting's own mechanics, shown only while they're switched on (Settings, Campaign mechanics). */
-export const NEEDS: Record<string, keyof Mechanics> = {
-  '/quick-reference': 'setting',
-  '/campaign/return': 'theReturn',
-};
 /** Menu items for a setting pack's own pages, shown only in a library that has the pack. */
 export const NEEDS_PACK: Record<string, string> = {
   '/open-questions': 'worldkeeper',

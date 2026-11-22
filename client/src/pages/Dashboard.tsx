@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 import { useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
-import { useMechanics } from '../lib/mechanics';
+import { useModules } from '../lib/modules';
 import { usePacks } from '../lib/packs';
 import { Badge, Card, Empty, ErrorBox, Loading, TypeBadge, EntityLink } from '../components/ui';
 import { Markdown } from '../components/Markdown';
@@ -157,12 +157,12 @@ export function Dashboard() {
   const wk = usePacks().has('worldkeeper');
   const realms = useRealms();
   const { appName, debug } = useAppState();
-  const mech = useMechanics();
+  const mech = useModules();
   const { data, error, loading, reload } = useApi<Dash>('/api/dashboard');
   const a = data?.active ?? null;
   const cid = a?.campaign.id;
   const { data: overview } = useApi<Overview>(cid ? `/api/campaigns/${cid}/overview` : null);
-  const { data: clock } = useApi<ReturnClock>(cid && mech?.theReturn ? `/api/return?campaign_id=${cid}` : null);
+  const { data: clock } = useApi<ReturnClock>(cid && mech.has('the-return') ? `/api/return?campaign_id=${cid}` : null);
   const hasRecords = !!data && data.counts.entities > 0;
   const { data: questions } = useApi<{ counts: { kept: number; filled: number; todo: number } }>(hasRecords && wk ? '/api/library/open-questions' : null);
   const { data: broken } = useApi<{ references: unknown[]; danglingRelationships: unknown[] }>(hasRecords && debug ? '/api/broken' : null);

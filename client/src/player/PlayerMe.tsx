@@ -1,4 +1,4 @@
-import { useMechanics } from '../lib/mechanics';
+import { useModules } from '../lib/modules';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { KeyRound, Printer, UserRound } from 'lucide-react';
@@ -7,7 +7,7 @@ import { Loading, SaveStatus } from '../components/ui/feedback';
 import { usePlayer } from './context';
 import type { PCharacterPage } from './source';
 import { FullSheet } from './sheet/FullSheet';
-import { ThinningTab, type ThinningPage } from './sheet/ThinningTab';
+import { NotesTab, ThinningTab, type ThinningPage } from './sheet/ThinningTab';
 import { PrintSheet } from './sheet/PrintSheet';
 
 const KEY = 'wk.player.me';
@@ -120,7 +120,7 @@ function MyPage({ code }: { code: string }) {
     else timer.current = window.setTimeout(go, 800);
   };
   const loadLog = useCallback(() => source.myLog!(code), [source, code]);
-  const mech = useMechanics();
+  const mech = useModules();
 
   if (page === undefined) return <Loading label="Opening your character…" />;
   if (page === null)
@@ -180,7 +180,10 @@ function MyPage({ code }: { code: string }) {
               : undefined
           }
           loadLog={source.myLog ? loadLog : undefined}
-          extraTabs={mech?.thinning === false ? [] : [{ id: 'thinning', label: 'Thinning', content: <ThinningTab page={thinning} onChange={(t, now) => void save({ ...page, ...t }, now)} /> }]}
+          extraTabs={[
+            ...(mech.has('thinning') ? [{ id: 'thinning', label: 'Thinning', content: <ThinningTab page={thinning} onChange={(t, now) => void save({ ...page, ...t }, now)} /> }] : []),
+            { id: 'notes', label: 'Notes', content: <NotesTab notes={thinning.notes} onChange={(notes) => void save({ ...page, ...thinning, notes })} /> },
+          ]}
         />
       </div>
     </div>

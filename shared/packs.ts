@@ -5,6 +5,7 @@
  */
 import type { RealmColor, RealmIcon, RealmKind } from './realms.js';
 import type { RecordTypeDef } from './recordTypes.js';
+import type { RankLadderSpec } from './standing.js';
 
 /** A regular expression written as data (its source and flags). */
 export interface PatternSpec {
@@ -81,6 +82,8 @@ export interface PackManifest {
   /** Which record plays which part ("world.overview" → its ID). A role whose record is missing hides its part. */
   roles: Record<string, string>;
   modules: string[];
+  /** The Renown module's ladder of ranks (without one, a plain ladder). */
+  renown?: RankLadderSpec & { about?: string };
   importProfile?: ImportProfile;
   cleaning?: CleaningRules;
   handbook?: HandbookRules;

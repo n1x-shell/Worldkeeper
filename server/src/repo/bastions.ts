@@ -8,6 +8,7 @@ import type { DB } from '../db/connection.js';
 import { notFound } from '../lib/errors.js';
 import { makeCrud, zId } from './crud.js';
 import { rankOf } from '../../../shared/standing.js';
+import { ladder } from './standing.js';
 
 const facility = z.object({
   id: z.string().max(40),
@@ -97,5 +98,6 @@ export function hostStanding(db: DB, campaignId: number, factionId: string | nul
   const f = db.prepare('SELECT name FROM entities WHERE id = ?').get(factionId) as { name: string } | undefined;
   if (!f) return null;
   const renown = (db.prepare('SELECT renown FROM faction_standing WHERE campaign_id = ? AND faction_id = ?').get(campaignId, factionId) as { renown: number } | undefined)?.renown ?? 0;
-  return { name: f.name, rank: rankOf(renown), renown, welcome: renown >= 10 };
+  const L = ladder(db);
+  return { name: f.name, rank: rankOf(renown, L), renown, welcome: renown >= L.welcomeAt };
 }

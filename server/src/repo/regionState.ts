@@ -7,6 +7,7 @@ import type { DB } from '../db/connection.js';
 import { notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
 import { rankOf } from '../../../shared/standing.js';
+import { ladder } from './standing.js';
 import { types } from './recordTypes.js';
 import { realmIntros } from './realms.js';
 
@@ -94,7 +95,7 @@ export function regionState(db: DB, campaignId: number, regionId: string) {
     .all(campaignId, ...fl) as { id: number; faction_id: string; title: string; progress: number; segments: number; status: string }[];
   const standing = (
     db.prepare(`SELECT faction_id, renown FROM faction_standing WHERE campaign_id = ? AND faction_id IN ${fIn}`).all(campaignId, ...fl) as { faction_id: string; renown: number }[]
-  ).map((s) => ({ ...s, name: nm(s.faction_id), rank: rankOf(s.renown) }));
+  ).map((s) => ({ ...s, name: nm(s.faction_id), rank: rankOf(s.renown, ladder(db)) }));
 
   // What has changed there in this campaign.
   const changes = db

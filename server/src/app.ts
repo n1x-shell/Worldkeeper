@@ -7,6 +7,8 @@ import { HttpError } from './lib/errors.js';
 import { VersionConflictError } from './repo/entities.js';
 import { worldRoutes } from './routes/world.js';
 import { campaignRoutes } from './routes/campaign.js';
+import { moduleForRoute } from '../../shared/modules.js';
+import { requireModule } from './repo/modules.js';
 import { libraryRoutes } from './routes/library.js';
 import { atlasRoutes, uploadsHandler } from './routes/atlas.js';
 import { isCharacterPortrait } from './repo/portraits.js';
@@ -46,6 +48,19 @@ export function createApp(ctx: AppContext, opts: { staticDir?: string } = {}) {
   app.use('/api/player', player);
 
   if (ctx.mode === 'dm') {
+    // A module's routes answer only while it's on (for the campaign asked about, else the active one).
+    app.use('/api', (req, _res, next) => {
+      const m = moduleForRoute(req.path);
+      if (!m) return next();
+      const raw = req.query.campaign_id ?? req.query.campaign ?? (req.body as { campaign_id?: unknown } | undefined)?.campaign_id;
+      const cid = raw !== undefined && raw !== null && raw !== '' ? Number(raw) : undefined;
+      try {
+        requireModule(ctx.db, m.key, Number.isFinite(cid) ? cid : undefined);
+        next();
+      } catch (e) {
+        next(e);
+      }
+    });
     app.use('/api', worldRoutes(ctx));
     app.use('/api', campaignRoutes(ctx));
     app.use('/api', libraryRoutes(ctx));

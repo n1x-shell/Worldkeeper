@@ -1,4 +1,4 @@
-import { setMechanicsLoader } from '../lib/mechanics';
+import { modulesFromInfo, setModulesLoader } from '../lib/modules';
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { apiSource, type PlayerSource } from './source';
@@ -27,12 +27,12 @@ const Later = ({ children }: { children: ReactNode }) => <Suspense fallback={<p 
  *
  * `base` is the route prefix: '/player' inside the app, '' in the static handbook.
  */
-let mechanicsFrom: PlayerSource | null = null;
+let modulesFrom: PlayerSource | null = null;
 export function PlayerApp({ source = apiSource, base = '/player' }: { source?: PlayerSource; base?: string }) {
-  // The setting's mechanics (Thinning, the Return's omens, fading salvage) as this handbook's source has them.
-  if (mechanicsFrom !== source) {
-    mechanicsFrom = source;
-    setMechanicsLoader(() => source.info().then((i) => i.mechanics));
+  // The modules (Thinning, the Return's omens, fading salvage...) as this handbook's source has them.
+  if (modulesFrom !== source) {
+    modulesFrom = source;
+    setModulesLoader(() => source.info().then(modulesFromInfo));
   }
   const [info, setInfo] = useState<{ appName: string; publishedAt?: string; realms?: RealmInfo[]; types?: RecordTypeDef[] }>({ appName: 'The Worldkeeper' });
   useEffect(() => {

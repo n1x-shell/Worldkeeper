@@ -76,7 +76,7 @@ What the players see, on the table server or published to GitHub Pages: only wha
 | **Session tools** | Preparation, live session dashboard, initiative, dice, event log, recaps and player reveals |
 | **Character sheets and builder** | A full D&D 2024 sheet for players and the GM, with a change log, and a builder for any level from 1 to 20 |
 | **Your own books** | Rules packs from the books you own: spells, species, classes, feats, backgrounds, creatures and magic items, kept private to your library |
-| **Standard D&D or the setting** | Switch the Worldkeeper setting's own mechanics on or off; treasure and encounters can come from your books |
+| **Modules** | Thinning, the Return, Renown and the rest are modules: on with their setting pack, or switched on for your own world, per library or per campaign; treasure and encounters can come from your books |
 | **Player publishing** | Player-only server, static player handbook, optional GitHub Pages publishing |
 | **Library operations** | Previewed imports, protective merging, exports, backups and restoration |
 | **Design** | Warm Parchment or Dark Codex; five workspaces; hover cards, an inspector and split view; tablet and phone layouts for the table |
@@ -119,7 +119,7 @@ The quickest way is a copy of the **5etools** data:
 
 Spells, species, classes and subclasses, backgrounds and feats then reach the character sheets and the builder. Creatures become stat blocks for the GM, and magic items show their rules in treasure and on sheets. Only use material from books you own. What you import stays in your library: it is never part of the published handbook, a player export, a campaign export or this repository. You can also write your own packs in Markdown. See [Rules packs](docs/RULES_PACKS.md).
 
-To run a standard D&D campaign without the Worldkeeper setting's own systems, choose **Settings → Campaign mechanics → Standard D&D**. Some parts of the app (the realms, the calendar) still assume the setting's world for now; [the plan](docs/OWN_WORLD_PLAN.md) covers making them your own. See [Features](docs/FEATURES.md#a-standard-dd-campaign-or-the-worldkeeper-setting).
+To run a standard D&D campaign without the Worldkeeper setting's own systems, switch its modules off in **Settings → Modules** (a library without the setting has them off already). Some parts of the app (the calendar) still assume the setting's world for now; [the plan](docs/OWN_WORLD_PLAN.md) covers making them your own. See [Features](docs/FEATURES.md#modules-a-standard-dd-campaign-or-the-worldkeeper-setting).
 
 ## How it works
 

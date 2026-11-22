@@ -4,7 +4,8 @@
  * the current workspace's pages, collapsible to an icon rail; and the page itself. URLs are unchanged: this only
  * decides where each link sits.
  */
-import { useMechanics } from '../lib/mechanics';
+import { reloadModules, useModules } from '../lib/modules';
+import { moduleForPage } from '../../../shared/modules';
 import { usePacks } from '../lib/packs';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -13,9 +14,9 @@ import { useAppState } from '../lib/store';
 import { api } from '../lib/api';
 import { SearchPalette } from './SearchPalette';
 import { SidebarSlotContext } from './sidebarSlot';
-import { DEBUG_ONLY, FULL_BLEED, LIBRARY, NEEDS, NEEDS_PACK, WORKSPACES, matches, withRealms, workspaceFor, type Group, type Item } from './navigation';
+import { DEBUG_ONLY, FULL_BLEED, LIBRARY, NEEDS_PACK, WORKSPACES, matches, withRealms, workspaceFor, type Group, type Item } from './navigation';
 import { useRealms } from './realms';
-import { ConfirmHost, ToastHost } from './ui';
+import { ConfirmHost, Empty, ToastHost } from './ui';
 import { PeekProvider } from './peek/PeekProvider';
 import { Inspector } from './peek/Inspector';
 import { SplitView } from './peek/Beside';
@@ -56,10 +57,14 @@ const menuItem = 'flex items-center gap-2.5 px-3 py-1.5 text-sm text-ink hover:b
 
 export function Layout() {
   const { sidebarCollapsed: collapsed, setSidebarCollapsed, theme, setTheme, appName, debug, activeCampaignId, setActiveCampaignId } = useAppState();
-  const mech = useMechanics();
+  const mods = useModules();
+  // A module's switches can differ by campaign.
+  useEffect(() => void reloadModules(), [activeCampaignId]);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileNav, setMobileNav] = useState(false);
   const loc = useLocation();
+  const offModule = mods.loaded ? moduleForPage(loc.pathname) : undefined;
+  const pageOff = offModule && !mods.has(offModule.key) ? offModule : null;
   const nav = useNavigate();
   const ws = workspaceFor(loc.pathname);
   // Below 1280px the sidebar is the icon rail unless the GM opens it (for this visit).
@@ -98,7 +103,7 @@ export function Layout() {
   const toggleSidebar = () => (narrow ? setOpenNarrow(!openNarrow) : setSidebarCollapsed(!collapsed));
 
   const packs = usePacks();
-  const visible = (it: Item) => (debug || !DEBUG_ONLY.has(it.to)) && (!NEEDS[it.to] || !mech || mech[NEEDS[it.to]]) && (!NEEDS_PACK[it.to] || packs.has(NEEDS_PACK[it.to]));
+  const visible = (it: Item) => (debug || !DEBUG_ONLY.has(it.to)) && (!moduleForPage(it.to) || mods.has(moduleForPage(it.to)!.key)) && (!NEEDS_PACK[it.to] || packs.has(NEEDS_PACK[it.to]));
 
   // Campaigns, for the switcher; maps, for the Atlas sidebar; whether a session is live, for the Live tab.
   const [campaigns, setCampaigns] = useState<{ id: number; title: string }[]>([]);
@@ -383,18 +388,14 @@ export function Layout() {
           {fullBleed ? (
             <main className="flex-1 relative overflow-hidden min-w-0" id="main">
               <SplitView enabled={splitOk}>
-                <SidebarSlotContext.Provider value={slot}>
-                  <Outlet />
-                </SidebarSlotContext.Provider>
+                <SidebarSlotContext.Provider value={slot}>{pageOff ? <ModuleOff label={pageOff.label} /> : <Outlet />}</SidebarSlotContext.Provider>
               </SplitView>
             </main>
           ) : (
             <main className="flex-1 overflow-hidden min-w-0" id="main">
               <SplitView enabled={splitOk}>
                 <div className="h-full overflow-y-auto" id="main-scroll">
-                  <div className="mx-auto max-w-[1500px] p-4 md:p-6">
-                    <Outlet />
-                  </div>
+                  <div className="mx-auto max-w-[1500px] p-4 md:p-6">{pageOff ? <ModuleOff label={pageOff.label} /> : <Outlet />}</div>
                 </div>
               </SplitView>
             </main>
@@ -425,4 +426,17 @@ function markDashboardVisited() {
   } catch {
     /* preference only */
   }
+}
+
+/** A module's page while the module is off (for this campaign). */
+function ModuleOff({ label }: { label: string }) {
+  return (
+    <Empty title={`${label} is switched off`}>
+      Switch it on in{' '}
+      <NavLink to="/settings" className="text-arcane">
+        Settings → Modules
+      </NavLink>
+      . Nothing was deleted.
+    </Empty>
+  );
 }

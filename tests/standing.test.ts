@@ -10,7 +10,15 @@ import { campaigns, sessions, setActiveCampaign } from '../server/src/repo/campa
 import { updateEntity } from '../server/src/repo/entities';
 import { adjustRenown, playerStanding, setStandingOptions, standingFor, undoRenown } from '../server/src/repo/standing';
 import { playerCampaign } from '../server/src/player/projection';
-import { rankOf, nextRank, earnedRanks } from '../shared/standing';
+import fs from 'node:fs';
+import { PLAIN_LADDER, makeLadder, rankOf as rankIn, nextRank as nextIn, earnedRanks as earnedIn } from '../shared/standing';
+import type { PackManifest } from '../shared/packs';
+
+// The setting's ladder, as its pack gives it.
+const SETTING = makeLadder((JSON.parse(fs.readFileSync(new URL('../packs/worldkeeper/pack.json', import.meta.url), 'utf8')) as PackManifest).renown!);
+const rankOf = (n: number) => rankIn(n, SETTING);
+const nextRank = (n: number) => nextIn(n, SETTING);
+const earnedRanks = (n: number) => earnedIn(n, SETTING);
 
 const faction = (id: string, name: string): SourceFile => ({
   path: `Lib/${id}.md`,
@@ -22,7 +30,7 @@ const rule: SourceFile = {
 };
 
 function setup() {
-  const ctx = tempContext();
+  const ctx = tempContext({ settingRealms: true });
   const files = [faction('FAC-901', 'The Test Order'), faction('FAC-902', 'The Secret Ring'), rule];
   commitPlan(ctx.db, files, buildPlan(ctx.db, files, 'test'));
   updateEntity(ctx.db, 'FAC-901', { revealed: true, player_summary: 'An order.', revealed_sections: [], reason: 'test' });
@@ -54,6 +62,9 @@ describe('faction standing', () => {
     expect(earnedRanks(12)).toEqual(['Initiate', 'Trusted']);
     expect(earnedRanks(-4)).toEqual(['Distrusted']);
     expect(earnedRanks(1)).toEqual([]);
+    // A world without the setting's ladder gets a plain one.
+    expect([-12, -5, 0, 4, 12, 30].map((n) => rankIn(n, PLAIN_LADDER))).toEqual(['Hostile', 'Unfriendly', 'Neutral', 'Friendly', 'Honoured', 'Revered']);
+    expect(earnedIn(12, PLAIN_LADDER)).toEqual(['Friendly', 'Honoured']);
   });
 
   it('tracks Renown with its reasons, reads rank texts from the Standing record, and can undo', () => {

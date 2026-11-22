@@ -145,21 +145,23 @@ Other table tools include a DM screen, NPC quick-reference cards, faction agenda
 
 Rules reference entries use labels: `OFFICIAL`, `HOMEBREW`, `OUTSIDE 2024 CORE` or `UNVERIFIED`. Worldkeeper does not bundle purchased rulebooks or licensed monster stat blocks.
 
-## A standard D&D campaign, or the Worldkeeper setting
+## Modules: a standard D&D campaign, or the Worldkeeper setting
 
-The app ships with the Worldkeeper setting's mechanics, and runs just as well as a plain D&D 2024 campaign tool with whatever books you import.
+The app runs as a plain D&D 2024 campaign tool with whatever books you import. Optional features are **modules**: a setting pack switches on its own, and you can switch any of them on or off for your own world in **Settings → Modules**, for the whole library or for one campaign.
 
-**Settings → Campaign mechanics** has a switch for each of the setting's own mechanics, and two presets: **Standard D&D** (all off) and **The Worldkeeper setting** (all on).
-
-| Switch | What it covers |
+| Module | What it covers |
 | --- | --- |
-| The setting's pages | Aetheris, Kaelmar and the Ethereal Realm in the Codex, and the setting's quick reference |
 | Thinning, true names and memories | The Thinning tab on sheets and character pages, with true names, named memories and Shardscarred |
-| The Return | The Return's clock for the GM, and its signs and omens for players |
-| Fading salvage | Treasure from the Ethereal Realm fades unless it's anchored |
+| The Return (a clock) | A clock for the GM, with stages, omens and a jump from the setting pack; its signs and omens for players |
+| Fading salvage | Treasure from some regions fades unless it's anchored |
 | The setting's treasure | The Treasure tool's regional tables and the world's own items. Off: it rolls from your books |
+| Vaults | The sealed vaults page: keys, conditions and state per campaign |
+| Shards | The shards page: holders, locations and state per campaign |
+| Depths explorer | A realm of layered domains, from the border to the deep |
+| Quick reference | The setting's own one-page reference |
+| Renown | Faction standing, with ranks from the setting pack (or a plain ladder: Hostile, Unfriendly, Neutral, Friendly, Honoured, Revered) |
 
-A switched-off mechanic leaves the menus, the sheets, the player view and the published handbook. Nothing is deleted. A library that holds the Worldkeeper setting starts with everything on; any other library starts as standard D&D.
+A switched-off module leaves the menus, the sheets, the player view and the published handbook, and its pages and actions are refused. Nothing is deleted: its data stays, and comes back when you switch it on. A library without a setting pack starts with every module off. Your players' own notes are always on their character page, in their own tab.
 
 **From your books** (see [Rules packs](RULES_PACKS.md)):
 

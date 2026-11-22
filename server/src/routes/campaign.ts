@@ -54,10 +54,10 @@ import { allRegionStates } from '../repo/regionState.js';
 import { calendarEvents, campaignDate, comingUp, setCampaignDate } from '../repo/calendar.js';
 import { handouts, pushHandout } from '../repo/handouts.js';
 import { bastionTurns, bastions, downtime, hostStanding, takeBastionTurn } from '../repo/bastions.js';
-import { adjustRenown, setStandingOptions, standingFor, undoRenown } from '../repo/standing.js';
+import { adjustRenown, setStandingOptions, standingFor, undoRenown, ladder } from '../repo/standing.js';
 import { requirePack } from '../packs/registry.js';
 import { BOOKS_REGION, addRollToParty, catalogueFor, partyTreasure, rollTreasure, treasureData } from '../repo/treasure.js';
-import { getMechanics } from '../repo/mechanics.js';
+import { moduleOn, setCampaignModules } from '../repo/modules.js';
 import { badRequest } from '../lib/errors.js';
 import { types as typeRegistry } from '../repo/recordTypes.js';
 import { parseJson } from '../lib/json.js';
@@ -79,6 +79,11 @@ export function campaignRoutes(ctx: AppContext) {
       setActiveCampaign(ctx.db, req.body?.id == null ? null : intParam(req.body.id));
       return { id: getActiveCampaignId(ctx.db) };
     }),
+  );
+  // A campaign's own module switches (null follows the library's).
+  r.put(
+    '/campaigns/:id/modules',
+    h((req) => setCampaignModules(ctx.db, intParam(req.params.id), req.body)),
   );
   r.get(
     '/campaigns/:id/overview',
@@ -487,15 +492,15 @@ export function campaignRoutes(ctx: AppContext) {
   // Treasure: the world's own items (catalogue), the Treasure tool, and the party's treasure log.
   r.get(
     '/treasure/options',
-    h(() => {
+    h((req) => {
       const d = treasureData();
-      const m = getMechanics(ctx.db);
+      const worldTreasure = moduleOn(ctx.db, 'setting-treasure', req.query.campaign_id ? Number(req.query.campaign_id) : undefined);
       const books = bookTreasure(ctx.db);
       // The setting's regions when its treasure is on; and the books, whenever they hold magic items.
       return {
         tiers: d.tiers.map((t) => ({ key: t.key, label: t.label })),
         regions: [
-          ...(m.worldTreasure ? Object.entries(d.regions).map(([key, v]) => ({ key, label: v.label, ids: v.ids })) : []),
+          ...(worldTreasure ? Object.entries(d.regions).map(([key, v]) => ({ key, label: v.label, ids: v.ids })) : []),
           ...(books.magic.length ? [{ key: BOOKS_REGION, label: 'From the SRD and your books', ids: [] }] : []),
         ],
       };
@@ -508,15 +513,15 @@ export function campaignRoutes(ctx: AppContext) {
   r.post(
     '/treasure/roll',
     h((req) => {
-      const m = getMechanics(ctx.db);
+      const cid = req.body?.campaign_id ? Number(req.body.campaign_id) : undefined;
       const region = String(req.body?.region ?? '');
-      if (!m.worldTreasure && region !== BOOKS_REGION) throw badRequest('The setting’s treasure is switched off: roll from your books.');
+      if (!moduleOn(ctx.db, 'setting-treasure', cid) && region !== BOOKS_REGION) throw badRequest('The setting’s treasure is switched off: roll from your books.');
       return rollTreasure({
         tier: String(req.body?.tier ?? ''),
         region,
         kind: req.body?.kind === 'individual' ? 'individual' : 'hoard',
         books: region === BOOKS_REGION ? bookTreasure(ctx.db) : undefined,
-        fading: m.fading,
+        fading: moduleOn(ctx.db, 'fading-salvage', cid),
       });
     }),
   );
@@ -584,6 +589,11 @@ export function campaignRoutes(ctx: AppContext) {
   );
   // Faction standing: the party's Renown with each faction in a campaign (the active one unless named).
 
+  // The Renown ladder (the setting pack's, or the plain one), as written.
+  r.get(
+    '/standing/ladder',
+    h(() => ladder(ctx.db).spec),
+  );
   r.get(
     '/standing',
     h((req) => standingFor(ctx.db, standingCampaign(req.query.campaign_id))),

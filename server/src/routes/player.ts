@@ -9,7 +9,7 @@ import { characterIdByCode, playerCharacterPage, updatePlayerCharacterPage } fro
 import { characterLog, logged } from '../repo/characterLog.js';
 import { rulesView } from '../repo/rulesPacks.js';
 import { itemByName } from '../repo/bookData.js';
-import { getMechanics } from '../repo/mechanics.js';
+import { modulesOn } from '../repo/modules.js';
 import { removePortrait, savePortrait } from '../repo/portraits.js';
 
 /**
@@ -23,7 +23,8 @@ export function playerRoutes(ctx: AppContext) {
     h(() => ({
       mode: ctx.mode,
       appName: (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper',
-      mechanics: getMechanics(ctx.db),
+      // The modules on for the table's campaign (Thinning, the Return's omens, fading, renown...).
+      modules: [...modulesOn(ctx.db)],
       realms: playerRealms(ctx.db),
       types: playerTypes(ctx.db),
     })),

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { useMechanics } from '../lib/mechanics';
+import { useModules } from '../lib/modules';
 import type { ReactNode } from 'react';
 import { Printer } from 'lucide-react';
 import { Card, DataTable, Empty, PageHeader } from '../components/ui';
@@ -19,11 +19,11 @@ const Table = ({ head, rows, num = [] }: { head: string[]; rows: string[][]; num
 );
 
 export function QuickReferencePage() {
-  const mech = useMechanics();
-  if (mech && !mech.setting)
+  const mech = useModules();
+  if (mech.loaded && !mech.has('quick-reference'))
     return (
       <Empty title="The setting's pages are switched off">
-        This quick reference is for the Worldkeeper setting. Switch its pages on in <Link to="/settings">Settings, Campaign mechanics</Link>.
+        This quick reference is for the Worldkeeper setting. Switch the Quick reference module on in <Link to="/settings">Settings, Modules</Link>.
       </Empty>
     );
   return (

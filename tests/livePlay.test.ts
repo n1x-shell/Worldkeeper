@@ -117,7 +117,7 @@ describe('bastions', () => {
     }) as { id: number };
     expect(hostStanding(ctx.db, campaignId, 'FAC-801')).toMatchObject({ welcome: false });
     adjustRenown(ctx.db, campaignId, 'FAC-801', 10, 'Saved the chapter');
-    expect(hostStanding(ctx.db, campaignId, 'FAC-801')).toMatchObject({ rank: 'Trusted', welcome: true });
+    expect(hostStanding(ctx.db, campaignId, 'FAC-801')).toMatchObject({ rank: 'Honoured', welcome: true }); // the plain ladder: no setting pack here
     const t = takeBastionTurn(ctx.db, b.id, { event: 'A visiting smith.' });
     expect(t).toMatchObject({ number: 1, orders: [{ facility: 'Smithy', order: 'Craft' }], event: 'A visiting smith.' });
     expect((bastions.get(ctx.db, b.id) as { facilities: { order: string }[] }).facilities.every((f) => f.order === '')).toBe(true);

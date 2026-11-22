@@ -1,6 +1,7 @@
 /**
- * Character pages: each character's named memories, their true name and who knows it, and their Thinning track
- * (Thinning and Unmaking [SYS-907]). The GM sees and edits everything in the GM app. Each page has a private code;
+ * Character pages: the player's own notes (core), and, with the Thinning module, the character's named memories, their
+ * true name and who knows it, and their Thinning track, kept as that module's data (module_data), so they stay put
+ * while the module is off. The GM sees and edits everything in the GM app. Each page has a private code;
  * with it, the character's player reads and edits their own page on the table server. Players never change Thinning
  * (the GM does, after a failed save), and can never bring back a memory once it is struck: lost memories don't return.
  * Nothing here is ever part of the published handbook.
@@ -11,6 +12,7 @@ import { z } from 'zod';
 import { badRequest, notFound } from '../lib/errors.js';
 import { characterSheetSchema } from './campaigns.js';
 import { GM_ONLY_SHEET_KEYS } from '../../../shared/sheet.js';
+import { moduleData, setModuleData } from './modules.js';
 
 type DB = Database.Database;
 
@@ -43,28 +45,23 @@ export interface PlayerCharacterPage extends Omit<CharacterPage, 'character_id' 
 interface Row {
   character_id: number;
   code: string;
-  true_name: string;
-  memories: string;
-  known_by: string;
-  thinning: number;
-  shardscarred: number;
   notes: string;
   updated_at: string;
 }
+/** The Thinning module's data about a character. */
+type ThinningData = Pick<CharacterPage, 'true_name' | 'memories' | 'known_by' | 'thinning' | 'shardscarred'>;
+const NO_THINNING: ThinningData = { true_name: '', memories: [], known_by: [], thinning: 0, shardscarred: false };
 
 // No look-alike letters or digits, so a code can be read aloud across the table.
 const ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 const newCode = () => Array.from({ length: 8 }, () => ALPHABET[randomInt(ALPHABET.length)]).join('');
 const now = () => new Date().toISOString();
 
-const fromRow = (r: Row): CharacterPage => ({
+const fromRow = (db: DB, r: Row): CharacterPage => ({
   character_id: r.character_id,
   code: r.code,
-  true_name: r.true_name,
-  memories: JSON.parse(r.memories) as Memory[],
-  known_by: JSON.parse(r.known_by) as string[],
-  thinning: r.thinning,
-  shardscarred: !!r.shardscarred,
+  ...NO_THINNING,
+  ...moduleData<ThinningData>(db, 'thinning', 'character', r.character_id),
   notes: r.notes,
   updated_at: r.updated_at,
 });
@@ -84,7 +81,7 @@ export function characterPage(db: DB, characterId: number): CharacterPage {
     db.prepare('INSERT INTO character_pages (character_id, code) VALUES (?, ?)').run(characterId, freshCode(db));
     row = db.prepare('SELECT * FROM character_pages WHERE character_id = ?').get(characterId) as Row;
   }
-  return fromRow(row);
+  return fromRow(db, row);
 }
 
 /** A new private code, so an old link stops working (for a lost or shared link). */
@@ -123,16 +120,11 @@ function numbered(list: z.infer<typeof memorySchema>[], old: Memory[]): Memory[]
 }
 
 function save(db: DB, page: CharacterPage) {
-  db.prepare('UPDATE character_pages SET true_name = ?, memories = ?, known_by = ?, thinning = ?, shardscarred = ?, notes = ?, updated_at = ? WHERE character_id = ?').run(
-    page.true_name,
-    JSON.stringify(page.memories),
-    JSON.stringify(page.known_by),
-    page.thinning,
-    page.shardscarred ? 1 : 0,
-    page.notes,
-    now(),
-    page.character_id,
-  );
+  db.prepare('UPDATE character_pages SET notes = ?, updated_at = ? WHERE character_id = ?').run(page.notes, now(), page.character_id);
+  const t: ThinningData = { true_name: page.true_name, memories: page.memories, known_by: page.known_by, thinning: page.thinning, shardscarred: page.shardscarred };
+  const blank = !t.true_name && !t.memories.length && !t.known_by.length && !t.thinning && !t.shardscarred;
+  if (!blank || db.prepare(`SELECT 1 FROM module_data WHERE module = 'thinning' AND owner = 'character' AND owner_id = ?`).get(page.character_id))
+    setModuleData(db, 'thinning', 'character', page.character_id, t);
 }
 
 /** The GM's edit: anything, Thinning included. The GM can also restore a struck memory, if the table agrees. */
@@ -155,7 +147,7 @@ export function updateCharacterPage(db: DB, characterId: number, body: unknown):
 function byCode(db: DB, code: string) {
   const row = db.prepare('SELECT * FROM character_pages WHERE code = ?').get(code.trim().toUpperCase()) as Row | undefined;
   if (!row) throw notFound('Character page');
-  return fromRow(row);
+  return fromRow(db, row);
 }
 
 /** The character behind a private code. */

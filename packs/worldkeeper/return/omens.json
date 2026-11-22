@@ -1,4 +1,6 @@
 {
+ "name": "The Return",
+ "jump": { "label": "An Orb was formed", "to": 6, "hint": "Any Orb jumps the clock to stage 6" },
  "note": "What players see of the Return (The Return [COS-032]), stage by stage: an omen, and rumours that start going round. They never name the elder gods. Owner decision, November 2026.",
  "stages": [
   { "stage": 1, "title": "Signs", "omen": "The stars at the edge of the sky flicker, and bells across Aetheris and Kaelmar ring a half-beat late.", "rumours": ["Every bell in Hollow Refuge rang late last night. Nobody touched the ropes.", "Black Sun preachers say they dream of a black star."] },

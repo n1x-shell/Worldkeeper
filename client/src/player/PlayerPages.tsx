@@ -1,4 +1,4 @@
-import { useMechanics } from '../lib/mechanics';
+import { useModules } from '../lib/modules';
 import { ItemRulesList } from '../components/ItemRules';
 import { useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -866,8 +866,10 @@ export function PlayerQuests() {
   );
 }
 
-const RANK_ORDER = ['Hostile', 'Distrusted', 'Neutral', 'Initiate', 'Trusted', 'Exalted', 'Champion'];
-const rankTone = (i: number): Tone => (i < 0 ? 'dim' : i < 2 ? 'danger' : i === 2 ? 'dim' : 'gold');
+// A handbook published before ladders came from setting packs (v0.4.3 and older) had the Worldkeeper setting's.
+const OLD_LADDER = ['Hostile', 'Distrusted', 'Neutral', 'Initiate', 'Trusted', 'Exalted', 'Champion'];
+/** A rank's colour by its step from neutral: below, danger; neutral, plain; above, gold. */
+const rankTone = (step: number, found: boolean): Tone => (!found || step === 0 ? 'dim' : step < 0 ? 'danger' : 'gold');
 
 /** The party's standing with each faction the GM shares: its rank, how far to the next, and what its ranks bring. */
 export function PlayerStanding() {
@@ -886,27 +888,29 @@ export function PlayerStanding() {
       {!all.length && <Empty icon={<Scale size={22} />} title="Nobody has noticed you yet." />}
       <ul className="grid gap-4 xl:grid-cols-2">
         {all.map((f) => {
-          const at = RANK_ORDER.indexOf(f.rank);
+          const ladder = f.ladder ?? OLD_LADDER;
+          const n = ladder.indexOf(f.neutral ?? 'Neutral');
+          const at = ladder.indexOf(f.rank);
           return (
             <li key={`${f.campaign}-${f.faction_id}`} className="panel elev-1 px-5 py-4 space-y-3 min-w-0">
               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <Link to={entryHref(base, f.faction_id)} data-peek={f.faction_id} className="font-display text-lg text-ink hover:text-gold leading-snug">
                   {f.name}
                 </Link>
-                <Badge tone={rankTone(at)}>{f.rank}</Badge>
+                <Badge tone={rankTone(at - n, at >= 0)}>{f.rank}</Badge>
                 <span className="ml-auto text-sm text-dim">
                   Renown <span className="num text-ink font-medium">{f.renown}</span>
                 </span>
               </div>
               {campaigns.length > 1 && <div className="text-xs text-dim -mt-2">{f.campaign}</div>}
               <div>
-                <div className="flex gap-1" role="img" aria-label={`${f.rank}, rank ${at + 1} of ${RANK_ORDER.length}`}>
-                  {RANK_ORDER.map((r, i) => (
-                    <span key={r} title={r} className={`h-2 flex-1 rounded-sm ${i === at ? (i < 2 ? 'bg-danger' : 'bg-gold') : i < at && i > 2 ? 'bg-gold/45' : 'bg-line'}`} />
+                <div className="flex gap-1" role="img" aria-label={`${f.rank}, rank ${at + 1} of ${ladder.length}`}>
+                  {ladder.map((r, i) => (
+                    <span key={r} title={r} className={`h-2 flex-1 rounded-sm ${i === at ? (i < n ? 'bg-danger' : 'bg-gold') : i < at && i > n ? 'bg-gold/45' : 'bg-line'}`} />
                   ))}
                 </div>
                 <div className="hidden sm:flex gap-1 mt-1 text-[10px] uppercase tracking-wider text-dim" aria-hidden>
-                  {RANK_ORDER.map((r, i) => (
+                  {ladder.map((r, i) => (
                     <span key={r} className={`flex-1 text-center truncate ${i === at ? 'text-gold font-medium' : ''}`}>
                       {r}
                     </span>
@@ -942,7 +946,7 @@ type TreasureRow = NonNullable<NonNullable<ReturnType<typeof usePlayerIndex>['ca
 export function PlayerTreasure() {
   const { campaigns } = usePlayerIndex();
   const { base } = usePlayer();
-  const mech = useMechanics();
+  const mech = useModules();
   if (!campaigns) return <Loading />;
   const all: TreasureRow[] = campaigns.flatMap((c) => (c.treasure ?? []).map((t) => ({ ...t, campaign: c.title })));
   const groups = new Map<string, TreasureRow[]>();
@@ -964,7 +968,7 @@ export function PlayerTreasure() {
             <span className="text-ink">{t.name}</span>
           )}
           {t.status === 'stored' && <Badge>stored</Badge>}
-          {t.fades && mech?.fading !== false && <span className="basis-full text-xs text-danger">Fading: learn its story to anchor it</span>}
+          {t.fades && mech.has('fading-salvage') && <span className="basis-full text-xs text-danger">Fading: learn its story to anchor it</span>}
         </span>
       ),
     },

@@ -885,6 +885,83 @@ UPDATE realms SET pack_id = 'worldkeeper' WHERE id NOT IN ('world') AND EXISTS (
 UPDATE record_types SET pack_id = 'worldkeeper', builtin = 0 WHERE key IN ('vault','vault_key','shard','calling','ethereal_domain');
 `,
   },
+  {
+    version: 23,
+    name: 'modules: switches per library and per campaign; module data out of the core tables (Thinning, fading)',
+    sql: `
+-- A campaign's own module switches (JSON, only those it sets differently from the library).
+ALTER TABLE campaigns ADD COLUMN modules TEXT;
+
+-- A module's data about a character or a treasure (Thinning's track and true names; fading and anchoring).
+CREATE TABLE module_data (
+  module TEXT NOT NULL,
+  owner TEXT NOT NULL CHECK (owner IN ('character', 'treasure')),
+  owner_id INTEGER NOT NULL,
+  data TEXT NOT NULL DEFAULT '{}',
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  PRIMARY KEY (module, owner, owner_id)
+);
+CREATE TRIGGER module_data_character_gone AFTER DELETE ON characters BEGIN
+  DELETE FROM module_data WHERE owner = 'character' AND owner_id = OLD.id;
+END;
+CREATE TRIGGER module_data_treasure_gone AFTER DELETE ON party_treasure BEGIN
+  DELETE FROM module_data WHERE owner = 'treasure' AND owner_id = OLD.id;
+END;
+
+INSERT INTO module_data (module, owner, owner_id, data, updated_at)
+  SELECT 'thinning', 'character', character_id,
+    json_object('true_name', true_name, 'memories', json(memories), 'known_by', json(known_by), 'thinning', thinning,
+      'shardscarred', CASE WHEN shardscarred THEN json('true') ELSE json('false') END),
+    updated_at
+  FROM character_pages
+  WHERE true_name <> '' OR memories <> '[]' OR known_by <> '[]' OR thinning <> 0 OR shardscarred <> 0;
+CREATE TABLE character_pages_core (
+  character_id INTEGER PRIMARY KEY REFERENCES characters(id) ON DELETE CASCADE,
+  code TEXT NOT NULL UNIQUE,
+  notes TEXT NOT NULL DEFAULT '',
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+INSERT INTO character_pages_core (character_id, code, notes, updated_at) SELECT character_id, code, notes, updated_at FROM character_pages;
+DROP TABLE character_pages;
+ALTER TABLE character_pages_core RENAME TO character_pages;
+
+INSERT INTO module_data (module, owner, owner_id, data)
+  SELECT 'fading-salvage', 'treasure', id,
+    json_object('fades', CASE WHEN fades THEN json('true') ELSE json('false') END, 'anchored', CASE WHEN anchored THEN json('true') ELSE json('false') END)
+  FROM party_treasure WHERE fades <> 0 OR anchored <> 0;
+ALTER TABLE party_treasure DROP COLUMN fades;
+ALTER TABLE party_treasure DROP COLUMN anchored;
+
+-- The clock's stages come from its pack: no fixed number.
+CREATE TABLE return_clock_any (
+  campaign_id INTEGER PRIMARY KEY REFERENCES campaigns(id) ON DELETE CASCADE,
+  stage INTEGER NOT NULL DEFAULT 0 CHECK (stage >= 0),
+  held_until TEXT NOT NULL DEFAULT '',
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+INSERT INTO return_clock_any SELECT campaign_id, stage, held_until, updated_at FROM return_clock;
+DROP TABLE return_clock;
+ALTER TABLE return_clock_any RENAME TO return_clock;
+
+-- The campaign mechanics a library chose (v0.4.0 to v0.4.3) become its module switches.
+INSERT INTO settings (key, value)
+  SELECT 'modules', json_object(
+    'thinning', CASE WHEN json_extract(value, '$.thinning') THEN json('true') ELSE json('false') END,
+    'the-return', CASE WHEN json_extract(value, '$.theReturn') THEN json('true') ELSE json('false') END,
+    'fading-salvage', CASE WHEN json_extract(value, '$.fading') THEN json('true') ELSE json('false') END,
+    'setting-treasure', CASE WHEN json_extract(value, '$.worldTreasure') THEN json('true') ELSE json('false') END,
+    'vaults', CASE WHEN json_extract(value, '$.setting') THEN json('true') ELSE json('false') END,
+    'shards', CASE WHEN json_extract(value, '$.setting') THEN json('true') ELSE json('false') END,
+    'depths-explorer', CASE WHEN json_extract(value, '$.setting') THEN json('true') ELSE json('false') END,
+    'quick-reference', CASE WHEN json_extract(value, '$.setting') THEN json('true') ELSE json('false') END)
+  FROM settings WHERE key = 'mechanics'
+  ON CONFLICT(key) DO NOTHING;
+DELETE FROM settings WHERE key = 'mechanics';
+-- Faction standing was always there: a library with campaigns keeps it.
+INSERT INTO settings (key, value) SELECT 'modules', '{}' WHERE EXISTS (SELECT 1 FROM campaigns) ON CONFLICT(key) DO NOTHING;
+UPDATE settings SET value = json_set(value, '$.renown', json('true')) WHERE key = 'modules' AND EXISTS (SELECT 1 FROM campaigns);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {
