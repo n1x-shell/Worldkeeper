@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Download, ExternalLink, Eye, Globe, KeyRound, Send, Check } from 'lucide-react';
 import { api, useApi } from '../lib/api';
+import { usePacks } from '../lib/packs';
 import { Card, Confirm, ErrorBox, Field, Loading, PageHeader } from '../components/ui';
 import { Dev } from '../components/Dev';
 
@@ -35,6 +36,7 @@ interface Status {
 const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n === 1 ? one : many}`;
 
 export function PublishPage() {
+  const wk = usePacks().has('worldkeeper');
   const { data, error, reload, setData } = useApi<Status>('/api/publish');
   const [repo, setRepo] = useState('');
   const [branch, setBranch] = useState('gh-pages');
@@ -121,7 +123,7 @@ export function PublishPage() {
         )}
       </Card>
 
-      <MatchHandbook />
+      {wk && <MatchHandbook />}
 
       <Card title="Connect GitHub" icon={<KeyRound size={14} />} className="space-y-3">
         <ol className="text-sm list-decimal pl-5 space-y-1 text-dim">

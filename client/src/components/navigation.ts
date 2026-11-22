@@ -14,6 +14,7 @@ import {
   Clock,
   Compass,
   LayoutTemplate,
+  Package,
   Settings2,
   Crown,
   Dice5,
@@ -253,6 +254,7 @@ export const LIBRARY: Group = {
     { to: '/publish', label: 'Publish for Players', icon: Globe2 },
     { to: '/import', label: 'Import and Export', icon: Upload },
     { to: '/templates', label: 'Templates', icon: LayoutTemplate },
+    { to: '/setting-packs', label: 'Setting Packs', icon: Package },
     { to: '/review', label: 'Canon Review', icon: KeyRound },
     { to: '/consistency', label: 'Consistency Check', icon: ListChecks },
     { to: '/open-questions', label: 'Open Questions', icon: CircleHelp },
@@ -271,6 +273,10 @@ export const DEBUG_ONLY = new Set(['/documents', '/broken', '/style-guide']);
 export const NEEDS: Record<string, keyof Mechanics> = {
   '/quick-reference': 'setting',
   '/campaign/return': 'theReturn',
+};
+/** Menu items for a setting pack's own pages, shown only in a library that has the pack. */
+export const NEEDS_PACK: Record<string, string> = {
+  '/open-questions': 'worldkeeper',
 };
 /** Pages with no menu item of their own, by the workspace they belong to. */
 const FALLBACK: [RegExp, WorkspaceId | 'library'][] = [

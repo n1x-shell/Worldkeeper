@@ -29,6 +29,7 @@ import {
 import { useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { useMechanics } from '../lib/mechanics';
+import { usePacks } from '../lib/packs';
 import { Badge, Card, Empty, ErrorBox, Loading, TypeBadge, EntityLink } from '../components/ui';
 import { Markdown } from '../components/Markdown';
 import type { EntitySummary } from '../lib/types';
@@ -153,6 +154,7 @@ function partyLevel(chars: Overview['characters'] | undefined) {
 }
 
 export function Dashboard() {
+  const wk = usePacks().has('worldkeeper');
   const realms = useRealms();
   const { appName, debug } = useAppState();
   const mech = useMechanics();
@@ -162,7 +164,7 @@ export function Dashboard() {
   const { data: overview } = useApi<Overview>(cid ? `/api/campaigns/${cid}/overview` : null);
   const { data: clock } = useApi<ReturnClock>(cid && mech?.theReturn ? `/api/return?campaign_id=${cid}` : null);
   const hasRecords = !!data && data.counts.entities > 0;
-  const { data: questions } = useApi<{ counts: { kept: number; filled: number; todo: number } }>(hasRecords ? '/api/library/open-questions' : null);
+  const { data: questions } = useApi<{ counts: { kept: number; filled: number; todo: number } }>(hasRecords && wk ? '/api/library/open-questions' : null);
   const { data: broken } = useApi<{ references: unknown[]; danglingRelationships: unknown[] }>(hasRecords && debug ? '/api/broken' : null);
 
   if (loading && !data) return <Loading />;
@@ -440,14 +442,16 @@ export function Dashboard() {
               </span>
             </StateTile>
           )}
-          <StateTile
-            to="/open-questions"
-            icon={<CircleHelp size={14} />}
-            label="Open questions"
-            value={openQ ?? '…'}
-            tone={openQ ? 'warn' : 'ink'}
-            hint={questions ? `${questions.counts.filled + questions.counts.kept} answered or kept open` : 'Gaps in the lore to decide'}
-          />
+          {wk && (
+            <StateTile
+              to="/open-questions"
+              icon={<CircleHelp size={14} />}
+              label="Open questions"
+              value={openQ ?? '…'}
+              tone={openQ ? 'warn' : 'ink'}
+              hint={questions ? `${questions.counts.filled + questions.counts.kept} answered or kept open` : 'Gaps in the lore to decide'}
+            />
+          )}
           <StateTile
             to="/review"
             icon={<BadgeCheck size={14} />}

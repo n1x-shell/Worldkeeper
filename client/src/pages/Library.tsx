@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Archive, Check, Download, RotateCcw, Upload, AlertTriangle, X, Pencil } from 'lucide-react';
+import { packsChanged } from '../lib/packs';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { Badge, Card, Check as CheckBox, DataTable, Empty, EntityLink, ErrorBox, Field, KeyValue, Loading, PageHeader, Segmented, Tabs, Toggle, TypeBadge, ask, askText, useToast, type Tone } from '../components/ui';
@@ -106,6 +107,8 @@ export function ImportExportPage() {
                     setPreview(null);
                     await reloadIndex();
                     await reloadMeta();
+                    // A setting's archive installs its pack (its realms, types and tools).
+                    await packsChanged();
                     void reloadRuns();
                   } catch (x) {
                     setErr(`Import failed and was rolled back: ${(x as Error).message}`);
@@ -1011,9 +1014,10 @@ function DebugToggle() {
 
 /** Bring in the Worldkeeper additions: lore written for this world on top of the archive. */
 function AdditionsPanel({ onDone }: { onDone: (msg: string) => void }) {
-  const { data } = useApi<{ available: boolean; records: number }>('/api/additions');
+  const { data } = useApi<{ available: boolean; installed: boolean; records: number }>('/api/additions');
   const [busy, setBusy] = useState(false);
-  if (!data?.available) return null;
+  // Only in a library with the Worldkeeper pack (Library → Setting packs installs it).
+  if (!data?.available || !data.installed) return null;
   return (
     <Card className="flex flex-wrap items-center gap-3">
       <div className="flex-1 min-w-[16rem]">

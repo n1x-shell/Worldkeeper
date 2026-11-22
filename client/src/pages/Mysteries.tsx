@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ChevronDown, ChevronRight, Plus, RefreshCw, Trash2 } from 'lucide-react';
 import { api, qs, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
+import { usePacks } from '../lib/packs';
 import type { EntitySummary } from '../lib/types';
 import { AutoTextarea, Card, Check, Empty, EntityLink, ErrorBox, Field, GmOnly, Loading, PageHeader, Segmented, toast } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
@@ -258,6 +259,7 @@ function MysteryCard({ m, campaignId, onChange }: { m: Mystery; campaignId: numb
 }
 
 export function MysteriesPage() {
+  const wk = usePacks().has('worldkeeper');
   const { activeCampaignId } = useAppState();
   const { data, error, reload } = useApi<Mystery[]>(`/api/mysteries${qs({ campaign_id: activeCampaignId ?? undefined })}`);
   const { data: flagged } = useApi<EntitySummary[]>('/api/entities?canon=SECRET');
@@ -270,16 +272,18 @@ export function MysteriesPage() {
         subtitle="The campaign's big questions, the secrets that answer them, and the clues that lead there."
         note="None of this is ever visible to players. Clues can be rumours, people who know, places, items or anything you write."
         actions={
-          <button
-            className="btn"
-            onClick={async () => {
-              const r = await api.post<{ mysteries: { secrets: number; clues: number; unmatched: string[] } }>('/api/mysteries/sync', {});
-              toast(`Updated: ${r.mysteries.secrets} secrets, ${r.mysteries.clues} clues${r.mysteries.unmatched.length ? `, ${r.mysteries.unmatched.length} rumour clues not found` : ''}.`);
-              void reload();
-            }}
-          >
-            <RefreshCw size={14} /> Update from drafts
-          </button>
+          wk && (
+            <button
+              className="btn"
+              onClick={async () => {
+                const r = await api.post<{ mysteries: { secrets: number; clues: number; unmatched: string[] } }>('/api/mysteries/sync', {});
+                toast(`Updated: ${r.mysteries.secrets} secrets, ${r.mysteries.clues} clues${r.mysteries.unmatched.length ? `, ${r.mysteries.unmatched.length} rumour clues not found` : ''}.`);
+                void reload();
+              }}
+            >
+              <RefreshCw size={14} /> Update from drafts
+            </button>
+          )
         }
       />
       {!activeCampaignId && (

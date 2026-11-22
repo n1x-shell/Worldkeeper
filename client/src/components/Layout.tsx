@@ -5,6 +5,7 @@
  * decides where each link sits.
  */
 import { useMechanics } from '../lib/mechanics';
+import { usePacks } from '../lib/packs';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { BookMarked, Check, ChevronDown, ChevronsLeft, ChevronsRight, Compass, Eye, Map as MapIcon, MapPinned, Menu, Moon, Search, Settings, Sun, X } from 'lucide-react';
@@ -12,7 +13,7 @@ import { useAppState } from '../lib/store';
 import { api } from '../lib/api';
 import { SearchPalette } from './SearchPalette';
 import { SidebarSlotContext } from './sidebarSlot';
-import { DEBUG_ONLY, FULL_BLEED, LIBRARY, NEEDS, WORKSPACES, matches, withRealms, workspaceFor, type Group, type Item } from './navigation';
+import { DEBUG_ONLY, FULL_BLEED, LIBRARY, NEEDS, NEEDS_PACK, WORKSPACES, matches, withRealms, workspaceFor, type Group, type Item } from './navigation';
 import { useRealms } from './realms';
 import { ConfirmHost, ToastHost } from './ui';
 import { PeekProvider } from './peek/PeekProvider';
@@ -96,7 +97,8 @@ export function Layout() {
   const slot = fullBleed && wide && !compact ? slotEl : null;
   const toggleSidebar = () => (narrow ? setOpenNarrow(!openNarrow) : setSidebarCollapsed(!collapsed));
 
-  const visible = (it: Item) => (debug || !DEBUG_ONLY.has(it.to)) && (!NEEDS[it.to] || !mech || mech[NEEDS[it.to]]);
+  const packs = usePacks();
+  const visible = (it: Item) => (debug || !DEBUG_ONLY.has(it.to)) && (!NEEDS[it.to] || !mech || mech[NEEDS[it.to]]) && (!NEEDS_PACK[it.to] || packs.has(NEEDS_PACK[it.to]));
 
   // Campaigns, for the switcher; maps, for the Atlas sidebar; whether a session is live, for the Live tab.
   const [campaigns, setCampaigns] = useState<{ id: number; title: string }[]>([]);
