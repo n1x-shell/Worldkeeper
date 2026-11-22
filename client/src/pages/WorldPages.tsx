@@ -387,7 +387,7 @@ function EraManager({ eras, onChange }: { eras: Era[]; onChange: () => void }) {
   };
   return (
     <Card title="Eras" className="space-y-2">
-      <p className="text-xs text-dim">Rename, reorder or add eras. Aetheris and Kaelmar keep their own chronologies, so the order is only for display.</p>
+      <p className="text-xs text-dim">Rename, reorder or add eras. Realms can keep their own chronologies, so the order is only for display.</p>
       {err && <ErrorBox error={err} />}
       {eras.map((e, i) => (
         <div key={e.key} className="flex items-center gap-2">

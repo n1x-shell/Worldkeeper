@@ -253,8 +253,15 @@ export function ShardsPage() {
 }
 
 export function DominionsPage() {
-  const { data: regions } = useApi<EntitySummary[]>('/api/entities?realm=aetheris&type=region');
-  const { data: factions } = useApi<EntitySummary[]>('/api/entities?realm=aetheris&type=faction,cult');
+  const setting = usePacks().has('worldkeeper');
+  const { data: regions } = useApi<EntitySummary[]>(setting ? '/api/entities?realm=aetheris&type=region' : null);
+  const { data: factions } = useApi<EntitySummary[]>(setting ? '/api/entities?realm=aetheris&type=faction,cult' : null);
+  if (!setting)
+    return (
+      <Empty title="The dominions are the Worldkeeper setting's" action={<Link className="btn" to="/browse/regions">Regions and settlements</Link>}>
+        Your own world's regions and settlements are under Regions and Settlements.
+      </Empty>
+    );
   return (
     <div className="space-y-4">
       <PageHeader title="Dominions, Factions and Enclaves" subtitle="Aetheris after the Cycle: the five dominions side by side, the Hollow Marches between them." />

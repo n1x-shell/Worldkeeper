@@ -30,7 +30,8 @@ try {
   const entities = await (await fetch(`${base}/api/meta`)).json();
   if (entities.entities === 0) {
     if (!archive) throw new Error('Library is empty; set WORLDKEEPER_TEST_ARCHIVE');
-    await expectText('Your world is waiting');
+    // A fresh library opens on Start your world; this run brings in an archive instead.
+    await expectText('How would you like to start?');
     await page.goto(`${base}/import`);
     await page.setInputFiles('input[type=file]', archive);
     await page.getByRole('button', { name: 'Preview import' }).click();
@@ -326,7 +327,7 @@ try {
   const advanced = (await api('GET', `/api/entities/${page.url().split('/e/')[1]}`)).entity;
   if (advanced.name !== 'E2E Ashford' || advanced.parent_id !== region.id || !advanced.body.startsWith('# E2E Ashford')) throw new Error(`advanced town: ${advanced.name} ${advanced.parent_id}`);
   if (advanced.fields.map(([k]) => k).join() !== guided.fields.map(([k]) => k).join()) throw new Error('the two towns have different facts');
-  await page.getByRole('button', { name: 'New record' }).click();
+  await page.locator('header button[aria-label="New record"]').click();
   await page.getByRole('group', { name: 'Places' }).waitFor();
   if ((await page.getByText('Recently used').count()) < 1) throw new Error('no recently used types in the New menu');
   await shot(page, '20-new-menu');

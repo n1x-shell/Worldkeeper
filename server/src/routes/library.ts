@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { canonReview } from '../repo/entities.js';
+import { finishSetup, gettingStarted, removeTutorial, setupState, skipSetup, updateGettingStarted } from '../repo/setup.js';
 import { consistencyReport } from '../repo/consistency.js';
 import { openQuestions } from '../repo/openQuestions.js';
 import multer from 'multer';
@@ -308,6 +309,35 @@ export function libraryRoutes(ctx: AppContext) {
       }
       return restore(fs.readFileSync(full));
     }),
+  );
+
+  // ---- The first run (docs/OWN_WORLD_PLAN.md §2.6, §2.7) ----
+  r.get(
+    '/setup',
+    h(() => setupState(ctx.db)),
+  );
+  r.post(
+    '/setup/skip',
+    h(() => skipSetup(ctx.db)),
+  );
+  r.post(
+    '/setup/finish',
+    h((req) => finishSetup(ctx.db, req.body)),
+  );
+  r.delete(
+    '/setup/tutorial',
+    h(() => {
+      const backup = createBackup(ctx.db, ctx.paths, 'pre-remove-tutorial');
+      return { ...removeTutorial(ctx.db), backup: backup.file };
+    }),
+  );
+  r.get(
+    '/getting-started',
+    h(() => gettingStarted(ctx.db)),
+  );
+  r.put(
+    '/getting-started',
+    h((req) => updateGettingStarted(ctx.db, req.body)),
   );
 
   // ---- Settings & meta ----

@@ -679,7 +679,7 @@ const QUESTION_LABEL: Record<QuestionStatus, string> = { todo: 'Still to do', fi
 const QUESTION_TONE: Record<QuestionStatus, Tone> = { todo: 'gold', filled: 'ok', kept: 'arcane' };
 
 export function OpenQuestionsPage() {
-  const { data } = useApi<{ questions: OpenQuestion[]; counts: Record<QuestionStatus, number> }>('/api/library/open-questions');
+  const { data, error } = useApi<{ questions: OpenQuestion[]; counts: Record<QuestionStatus, number> }>('/api/library/open-questions');
   const [tab, setTab] = useState<QuestionStatus | 'all'>('todo');
   const [q, setQ] = useState('');
   const needle = q.trim().toLowerCase();
@@ -696,7 +696,11 @@ export function OpenQuestionsPage() {
         subtitle="Everything the library leaves undefined, and where each one stands."
         note="A report only: nothing is changed. Some questions are open on purpose (the world's mysteries). Some have been answered by Worldkeeper's additions, linked here. The rest are still to do. The Undefined Lore Register lists the subjects the archive left open deliberately."
       />
-      {!data ? (
+      {error ? (
+        <Empty title="Open Questions come with the Worldkeeper setting" action={<Link className="btn" to="/setting-packs">Setting packs</Link>}>
+          They track what the setting's archive leaves undefined. Install the setting in Library → Setting packs to use them.
+        </Empty>
+      ) : !data ? (
         <Loading />
       ) : (
         <>

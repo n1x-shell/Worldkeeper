@@ -102,7 +102,7 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
               }
             }}
             className="flex-1 bg-transparent py-3 text-base outline-none"
-            placeholder="Mara Venn, Black Sun, vault key…"
+            placeholder="People, places, lore…"
             aria-label="Search query"
           />
           <kbd className="text-[10px] text-dim border border-line rounded px-1">Esc</kbd>
