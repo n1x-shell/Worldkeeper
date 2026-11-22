@@ -1,6 +1,6 @@
 /**
  * Encounters from the GM's books: groups of creatures that fit a party's level and the terrain, by the Dungeon
- * Master's Guide (2024) XP budgets; the world's regions given as terrain (assets/encounters/terrain.json); and the
+ * Master's Guide (2024) XP budgets; the world's regions given as terrain (packs/worldkeeper/encounters/terrain.json); and the
  * book creatures an encounter table's row names ("4 bandits and a bandit captain").
  */
 import fs from 'node:fs';

@@ -1,6 +1,6 @@
 /**
  * Stat blocks for the world's creatures, hazards and fight-ready people (GM only), shipped with the additions in
- * assets/statblocks. They're read, not copied into the library: records stay as the archive wrote them, and each
+ * packs/worldkeeper/statblocks. They're read, not copied into the library: records stay as the archive wrote them, and each
  * record's page shows its stat block beside it. The encounter tracker uses them to fill in HP, AC and initiative.
  */
 import fs from 'node:fs';

@@ -4,7 +4,7 @@
  *
  *  - every record the archive tags for players (Tags: vis/player), with only its safe sections: never GM-only
  *    sections, editorial notes about the source, DM-facing advice, bookkeeping, or anything secret elsewhere in the lore;
- *  - the DM-written player text in assets/player-text/*.md: each "## Name" section is that record's player text.
+ *  - the DM-written player text in packs/worldkeeper/player-text/*.md: each "## Name" section is that record's player text.
  *
  * The build starts from a fresh library ("fresh"). In the GM's own library ("match") it only ever adds: a revealed
  * section stays revealed, and existing player text is kept.

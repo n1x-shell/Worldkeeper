@@ -1,5 +1,5 @@
 /**
- * Random encounter tables shipped with the Worldkeeper additions (assets/tables/*.md), added to the GM's Random Tables.
+ * Random encounter tables shipped with the Worldkeeper additions (packs/worldkeeper/tables/*.md), added to the GM's Random Tables.
  * A table the library already has (by name) is left alone, so the GM's own edits are kept.
  *
  * File format: "# Table name", an optional "Region: ID" line, then numbered entries ("1. …"). Lines before the first

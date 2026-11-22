@@ -5,15 +5,15 @@
  *
  *   npx tsx scripts/build-player-tagged-handbook.ts <fresh data dir> <archive.zip> <output dir>
  *
- * Maps in assets/maps/ (each <name>.pins.json with its image, and an optional <name>.routes.json) are added as player-visible maps.
+ * Maps in packs/worldkeeper/maps/ (each <name>.pins.json with its image, and an optional <name>.routes.json) are added as player-visible maps.
  * Pins link only to records that end up revealed; the others are left off.
  *
- * DM-written player text in assets/player-text/*.md is published too: each "## Name" section becomes the player
+ * DM-written player text in packs/worldkeeper/player-text/*.md is published too: each "## Name" section becomes the player
  * text of the record with that name (only that text is shown, never the record's own sections). When several records
  * share a name, add the kind: "## Kaelholm (Settlement)".
  *
- * New lore records in assets/lore/ (archive format) are imported alongside the archive. Drafts folders are skipped
- * everywhere: assets/player-text/drafts/ and assets/lore/drafts/ hold material awaiting review.
+ * New lore records in packs/worldkeeper/lore/ (archive format) are imported alongside the archive. Drafts folders are skipped
+ * everywhere: packs/worldkeeper/player-text/drafts/ and packs/worldkeeper/lore/drafts/ hold material awaiting review.
  *
  * Sections are left out when they are GM-only, editorial notes about the source, DM-facing advice, bookkeeping,
  * or mention something that is secret elsewhere in the lore (listed below). Review the output before publishing.
@@ -32,12 +32,12 @@ import { applyErrata } from '../server/src/errata.js';
 
 const [dataDir, archive, outDir] = process.argv.slice(2);
 const ctx = new AppContext(resolvePaths(dataDir));
-// New lore records written for this world (assets/lore/, same format as the archive's records) are imported with
-// the archive, then the curated links in assets/lore/links.json. Drafts folders are left out.
+// New lore records written for this world (packs/worldkeeper/lore/, same format as the archive's records) are imported with
+// the archive, then the curated links in packs/worldkeeper/lore/links.json. Drafts folders are left out.
 const files = [...readSource(archive), ...loreFiles()];
 commitPlan(ctx.db, files, buildPlan(ctx.db, files, path.basename(archive)));
 const linked = applyLinks(ctx.db);
-// Corrections to the archive's own wording (assets/lore/errata.json), before anything is revealed.
+// Corrections to the archive's own wording (packs/worldkeeper/lore/errata.json), before anything is revealed.
 const fixed = applyErrata(ctx.db, path.resolve(import.meta.dirname, '../packs/worldkeeper/lore/errata.json'));
 console.log(`errata: ${fixed.records} records corrected`);
 console.log(`links: ${linked.added} added${linked.skipped.length ? `, ${linked.skipped.length} skipped` : ''}`);
@@ -45,7 +45,7 @@ console.log(`links: ${linked.added} added${linked.skipped.length ? `, ${linked.s
 // the app's "Match the published handbook" action uses (server/src/player/handbookReveals.ts).
 const reveals = handbookReveals(ctx.db, { mode: 'fresh', apply: true, log: (m) => console.log(m) });
 console.log(`revealed: ${reveals.newRecords} records, ${reveals.sections} sections, ${reveals.playerText} with player text`);
-// Maps: every map in assets/maps, with its pins, routes and region outlines (only revealed places).
+// Maps: every map in packs/worldkeeper/maps, with its pins, routes and region outlines (only revealed places).
 for (const r of applyMaps(ctx.db, ctx.paths.uploadsDir, path.resolve(import.meta.dirname, '../packs/worldkeeper/maps'), { onlyRevealed: true }))
   console.log(`${r.name}: ${r.pins} pins, ${r.routes} routes, ${r.regions} regions`);
 

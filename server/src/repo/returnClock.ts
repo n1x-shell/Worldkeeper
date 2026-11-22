@@ -1,6 +1,6 @@
 /**
  * The Return (The Return [COS-032]): a seven-stage clock the GM moves by hand. Players never see the clock, only the
- * omens and rumours of each stage it has reached (assets/return/omens.json). Forming any Orb jumps it to stage 6.
+ * omens and rumours of each stage it has reached (packs/worldkeeper/return/omens.json). Forming any Orb jumps it to stage 6.
  */
 import { role } from '../packs/registry.js';
 import fs from 'node:fs';
