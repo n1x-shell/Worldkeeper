@@ -70,3 +70,25 @@ describe('migration 23 (modules)', () => {
     expect(librarySwitches(db)).toEqual({});
   });
 });
+
+describe('module data in exports', () => {
+  it('travels in a full JSON export, and a blank library can run Thinning', async () => {
+    const { tempContext } = await import('./helpers.js');
+    const { createApp } = await import('../server/src/app.js');
+    const { exportJson, importJson } = await import('../server/src/backup/exporter.js');
+    const request = (await import('supertest')).default;
+    const ctx = tempContext();
+    const gm = createApp(ctx);
+    await request(gm).put('/api/modules').send({ thinning: true });
+    const camp = (await request(gm).post('/api/campaigns').send({ title: 'Mine' })).body;
+    const ch = (await request(gm).post('/api/characters').send({ campaign_id: camp.id, name: 'Ash' })).body;
+    const page = (await request(gm).patch(`/api/characters/${ch.id}/page`).send({ true_name: 'Ashen', thinning: 1, notes: 'n' })).body;
+    expect(page).toMatchObject({ true_name: 'Ashen', thinning: 1, notes: 'n' });
+    const data = exportJson(ctx.db);
+    expect(data.tables.module_data).toHaveLength(1);
+    const other = tempContext();
+    importJson(other.db, data);
+    expect(characterPage(other.db, ch.id)).toMatchObject({ true_name: 'Ashen', thinning: 1, notes: 'n' });
+    expect(librarySwitches(other.db)).toEqual({ thinning: true });
+  });
+});

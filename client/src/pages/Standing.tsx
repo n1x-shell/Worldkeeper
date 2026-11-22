@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Minus, Plus, Undo2 } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
@@ -6,7 +6,9 @@ import { Markdown } from '../components/Markdown';
 import { Badge, Card, Check, Empty, EntityLink, ErrorBox, Loading, PageHeader, Section, Toggle, type Tone } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { NeedCampaign } from './Campaign';
-import { RANKS, earnedRanks, type RankName } from '../../../shared/standing';
+import { PLAIN_LADDER, earnedRanks, makeLadder, rankStep, type RankLadder, type RankLadderSpec } from '../../../shared/standing';
+
+type RankName = string;
 
 /**
  * Faction standing for the active campaign: the party's Renown with each faction, its rank, what the ranks bring, and
@@ -28,29 +30,27 @@ interface Row {
   log: { id: number; delta: number; reason: string; session_id: number | null; created_at: string }[];
 }
 
-const RANK_TONE: Record<RankName, Tone> = {
-  Hostile: 'danger',
-  Distrusted: 'danger',
-  Neutral: 'dim',
-  Initiate: 'gold',
-  Trusted: 'gold',
-  Exalted: 'gold',
-  Champion: 'gold',
+/** A rank's colour: below neutral, danger; neutral, plain; above, gold. */
+const rankTone = (name: RankName, l: RankLadder): Tone => {
+  const s = rankStep(name, l);
+  return s < 0 ? 'danger' : s === 0 ? 'dim' : 'gold';
 };
-/** The rank's mark on the ladder. */
-const RANK_BAR: Record<RankName, string> = {
-  Hostile: 'bg-danger',
-  Distrusted: 'bg-danger/40',
-  Neutral: 'bg-line',
-  Initiate: 'bg-gold/30',
-  Trusted: 'bg-gold/50',
-  Exalted: 'bg-gold/75',
-  Champion: 'bg-gold',
+/** The rank's mark on the ladder: stronger the further from neutral. */
+const rankBar = (name: RankName, l: RankLadder): string => {
+  const s = rankStep(name, l);
+  if (s === 0) return 'bg-line';
+  if (s < 0) return s <= -2 ? 'bg-danger' : 'bg-danger/40';
+  const top = l.ranks.length - 1 - l.ranks.findIndex((r) => r.name === l.neutral);
+  const f = s / Math.max(1, top);
+  return f >= 1 ? 'bg-gold' : f >= 0.66 ? 'bg-gold/75' : f >= 0.33 ? 'bg-gold/50' : 'bg-gold/30';
 };
 
 export function StandingPage() {
   const { activeCampaignId } = useAppState();
   const { data, error, reload, setData } = useApi<Row[]>(activeCampaignId ? `/api/standing?campaign_id=${activeCampaignId}` : null);
+  // The setting pack's ladder of ranks, or the plain one.
+  const { data: spec } = useApi<RankLadderSpec>(activeCampaignId ? `/api/standing/ladder?campaign_id=${activeCampaignId}` : null);
+  const ladder = useMemo(() => (spec ? makeLadder(spec) : PLAIN_LADDER), [spec]);
   const [open, setOpen] = useState<string | null>(null);
   const [adding, setAdding] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
@@ -66,7 +66,7 @@ export function StandingPage() {
       <PageHeader
         title="Faction Standing"
         subtitle="The party's Renown with each faction, and what each rank brings."
-        note="Ranks follow Aetheris Allegiance and Pacing: Hostile -10, Distrusted -3, Neutral 0, Initiate 3, Trusted 10, Exalted 25, Champion 50. Edit what a rank brings in the faction's Standing record."
+        note={`Ranks: ${ladder.ranks.map((k) => `${k.name} ${Number.isFinite(k.from) ? k.from : `${k.to} or less`}`).join(', ')}. Your setting pack sets the ladder; edit what a rank brings in the faction's Standing record.`}
       />
       <div className="flex flex-wrap items-end gap-2">
         <div className="w-72">
@@ -93,6 +93,7 @@ export function StandingPage() {
       <ul className="space-y-2">
         {list.map((r) => (
           <StandingCard
+            ladder={ladder}
             key={r.faction_id}
             row={r}
             campaignId={activeCampaignId}
@@ -107,7 +108,22 @@ export function StandingPage() {
   );
 }
 
-function StandingCard({ row: r, campaignId, open, onToggle, onChange }: { row: Row; campaignId: number; open: boolean; onToggle: () => void; onChange: (r: Row) => void; onReload: () => void }) {
+function StandingCard({
+  row: r,
+  ladder,
+  campaignId,
+  open,
+  onToggle,
+  onChange,
+}: {
+  row: Row;
+  ladder: RankLadder;
+  campaignId: number;
+  open: boolean;
+  onToggle: () => void;
+  onChange: (r: Row) => void;
+  onReload: () => void;
+}) {
   const [reason, setReason] = useState('');
   const [err, setErr] = useState<string | null>(null);
   const adjust = async (delta: number) => {
@@ -119,7 +135,7 @@ function StandingCard({ row: r, campaignId, open, onToggle, onChange }: { row: R
       setErr((x as Error).message);
     }
   };
-  const earned = new Set(earnedRanks(r.renown));
+  const earned = new Set(earnedRanks(r.renown, ladder));
   return (
     <li>
       <Card flush>
@@ -137,7 +153,7 @@ function StandingCard({ row: r, campaignId, open, onToggle, onChange }: { row: R
               {!r.revealed ? ' · not yet known to players' : !r.player_visible ? ' · hidden from players' : ''}
             </div>
           </button>
-          <Badge tone={RANK_TONE[r.rank]}>{r.rank}</Badge>
+          <Badge tone={rankTone(r.rank, ladder)}>{r.rank}</Badge>
           <div className="flex items-center gap-1">
             {[-2, -1].map((d) => (
               <button key={d} className="btn-ghost text-xs px-2" onClick={() => adjust(d)} title={`${d} Renown`}>
@@ -153,8 +169,8 @@ function StandingCard({ row: r, campaignId, open, onToggle, onChange }: { row: R
         </div>
         {/* Where the party sits on the ladder. */}
         <div className="flex gap-0.5 px-3 pb-2" aria-hidden>
-          {RANKS.map((k) => (
-            <span key={k.name} title={k.name} className={`h-1.5 flex-1 rounded-full ${k.name === r.rank ? RANK_BAR[k.name] : 'bg-line/60'}`} />
+          {ladder.ranks.map((k) => (
+            <span key={k.name} title={k.name} className={`h-1.5 flex-1 rounded-full ${k.name === r.rank ? rankBar(k.name, ladder) : 'bg-line/60'}`} />
           ))}
         </div>
         {open && (
@@ -165,15 +181,17 @@ function StandingCard({ row: r, campaignId, open, onToggle, onChange }: { row: R
                   <Markdown text={r.values} />
                 </Section>
               )}
-              {RANKS.filter((k) => r.ranks[k.name]).map((k) => (
-                <div key={k.name} className={`rounded-md border px-3 py-2 ${k.name === r.rank ? 'border-gold/60' : earned.has(k.name) ? 'border-gold/25' : 'border-line opacity-70'}`}>
-                  <div className="text-xs uppercase tracking-widest text-dim">
-                    {k.name} {Number.isFinite(k.from) ? `(${k.from}${Number.isFinite(k.to) ? ` to ${k.to}` : '+'})` : '(-10 or less)'}
-                    {k.name === r.rank ? ' · now' : ''}
+              {ladder.ranks
+                .filter((k) => r.ranks[k.name])
+                .map((k) => (
+                  <div key={k.name} className={`rounded-md border px-3 py-2 ${k.name === r.rank ? 'border-gold/60' : earned.has(k.name) ? 'border-gold/25' : 'border-line opacity-70'}`}>
+                    <div className="text-xs uppercase tracking-widest text-dim">
+                      {k.name} {Number.isFinite(k.from) ? `(${k.from}${Number.isFinite(k.to) ? ` to ${k.to}` : '+'})` : `(${k.to} or less)`}
+                      {k.name === r.rank ? ' · now' : ''}
+                    </div>
+                    <Markdown text={r.ranks[k.name]!} />
                   </div>
-                  <Markdown text={r.ranks[k.name]!} />
-                </div>
-              ))}
+                ))}
               {!r.rule_id && (
                 <Empty compact title="No Standing record for this faction yet">
                   Its ranks bring nothing written down. Add a rule record with a Faction field to describe them.

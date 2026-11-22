@@ -932,6 +932,17 @@ INSERT INTO module_data (module, owner, owner_id, data)
 ALTER TABLE party_treasure DROP COLUMN fades;
 ALTER TABLE party_treasure DROP COLUMN anchored;
 
+-- The clock's stages come from its pack: no fixed number.
+CREATE TABLE return_clock_any (
+  campaign_id INTEGER PRIMARY KEY REFERENCES campaigns(id) ON DELETE CASCADE,
+  stage INTEGER NOT NULL DEFAULT 0 CHECK (stage >= 0),
+  held_until TEXT NOT NULL DEFAULT '',
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+INSERT INTO return_clock_any SELECT campaign_id, stage, held_until, updated_at FROM return_clock;
+DROP TABLE return_clock;
+ALTER TABLE return_clock_any RENAME TO return_clock;
+
 -- The campaign mechanics a library chose (v0.4.0 to v0.4.3) become its module switches.
 INSERT INTO settings (key, value)
   SELECT 'modules', json_object(

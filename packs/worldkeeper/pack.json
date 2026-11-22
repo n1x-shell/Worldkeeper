@@ -211,6 +211,19 @@
     "depths.navigation": "ETH-593",
     "depths.crossing": "LOC-901"
   },
+  "renown": {
+    "about": "Faction standing ranks, from the setting's Allegiance and Pacing rule.",
+    "ranks": [
+      { "name": "Hostile", "from": null },
+      { "name": "Distrusted", "from": -9 },
+      { "name": "Neutral", "from": -2 },
+      { "name": "Initiate", "from": 3 },
+      { "name": "Trusted", "from": 10 },
+      { "name": "Exalted", "from": 25 },
+      { "name": "Champion", "from": 50 }
+    ],
+    "welcomeAt": 10
+  },
   "modules": ["thinning", "the-return", "fading-salvage", "setting-treasure", "vaults", "shards", "depths-explorer", "quick-reference", "renown"],
   "importProfile": {
     "about": "How this setting's own archive reads: its folder layout, the wording of its Category and realm fields, and its ID prefixes. Applied to an import that looks like this archive, and to this pack's own content.",

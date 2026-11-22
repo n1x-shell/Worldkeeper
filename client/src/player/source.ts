@@ -66,7 +66,16 @@ export interface PCampaign {
   /** Omens of something coming: one for each stage the GM has reached. */
   omens?: { omen: string; rumours: string[] }[];
   /** The party's standing with factions (only ones the GM shares), and what its ranks bring. */
-  standing?: { faction_id: string; name: string; renown: number; rank: string; next: { name: string; at: number } | null; earned: { rank: string; text: string }[] }[];
+  standing?: {
+    faction_id: string;
+    name: string;
+    renown: number;
+    rank: string;
+    next: { name: string; at: number } | null;
+    ladder?: string[];
+    neutral?: string;
+    earned: { rank: string; text: string }[];
+  }[];
 }
 /** A tie in the faction web: allied or opposed. */
 export interface PTie {

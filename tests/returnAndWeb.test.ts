@@ -17,7 +17,7 @@ const fac = (id: string, name: string): SourceFile => ({
 
 describe('the Return', () => {
   it('moves by hand, jumps to stage 6 when an Orb forms, and gives players only omens', () => {
-    const { db } = tempContext();
+    const { db } = tempContext({ settingRealms: true });
     const c = campaigns.create(db, { title: 'T' }) as { id: number };
     setLibraryModules(db, { 'the-return': true });
     expect(playerCampaign(db, c.id)!.omens).toEqual([]);

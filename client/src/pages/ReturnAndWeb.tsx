@@ -11,6 +11,9 @@ import { Markdown } from '../components/Markdown';
 import { WebDiagram } from '../player/WebAndOmens';
 
 interface ReturnData {
+  /** The clock's name and its jump, from the setting pack. */
+  name: string;
+  jump: { label: string; to: number; hint?: string } | null;
   stage: number;
   heldUntil: string;
   stages: { stage: number; title: string; gm: string; omen: string; rumours: string[] }[];
@@ -18,8 +21,9 @@ interface ReturnData {
 }
 
 /**
- * The Return: a seven-stage clock only the GM sees (The Return [COS-032]). Each stage it reaches shows its omen and
- * rumours to the players, on their Signs and Omens page. Forming any Orb jumps it to stage 6.
+ * The clock module (the setting's Return): a clock only the GM sees, whose stages come from the setting pack. Each
+ * stage it reaches shows its omen and rumours to the players, on their Signs and Omens page. The pack's jump (for the
+ * Return, forming any Orb) moves it straight to a stage.
  */
 export function ReturnPage() {
   const { activeCampaignId } = useAppState();
@@ -43,14 +47,14 @@ export function ReturnPage() {
   };
   return (
     <div className="space-y-4 max-w-4xl">
-      <PageHeader title="The Return" subtitle="A clock only you see. Each stage it reaches shows its omen to the players, on their Signs and Omens page." />
+      <PageHeader title={data.name} subtitle="A clock only you see. Each stage it reaches shows its omen to the players, on their Signs and Omens page." />
       {stagesRecord && (
         <p className="text-sm text-dim">
           What moves it, what holds it and what each stage means: <EntityLink id={stagesRecord} />.
         </p>
       )}
       <Card featured className="space-y-3">
-        <div className="flex items-center gap-1" aria-label={`Stage ${data.stage} of 7`}>
+        <div className="flex items-center gap-1" aria-label={`Stage ${data.stage} of ${data.stages.length}`}>
           {data.stages.map((s) => (
             <div key={s.stage} title={s.title} className={`flex-1 h-3 rounded ${s.stage <= data.stage ? 'bg-danger/80' : 'bg-raised border border-line'}`} />
           ))}
@@ -61,12 +65,14 @@ export function ReturnPage() {
             <button className="btn" disabled={data.stage <= 0 || !reason.trim()} title="Going back needs a reason" onClick={() => void move({ stage: data.stage - 1 })}>
               <Minus size={14} /> Back
             </button>
-            <button className="btn" disabled={data.stage >= 7} onClick={() => void move({ stage: data.stage + 1 })}>
+            <button className="btn" disabled={data.stage >= data.stages.length} onClick={() => void move({ stage: data.stage + 1 })}>
               <Plus size={14} /> Advance
             </button>
-            <button className="btn" disabled={data.stage >= 6} onClick={() => void move({ orb: true })} title="Any Orb jumps the clock to stage 6">
-              An Orb was formed
-            </button>
+            {data.jump && (
+              <button className="btn" disabled={data.stage >= data.jump.to} onClick={() => void move({ orb: true })} title={data.jump.hint}>
+                {data.jump.label}
+              </button>
+            )}
           </div>
         </div>
         <div className="grid gap-2 sm:grid-cols-2">

@@ -54,7 +54,7 @@ import { allRegionStates } from '../repo/regionState.js';
 import { calendarEvents, campaignDate, comingUp, setCampaignDate } from '../repo/calendar.js';
 import { handouts, pushHandout } from '../repo/handouts.js';
 import { bastionTurns, bastions, downtime, hostStanding, takeBastionTurn } from '../repo/bastions.js';
-import { adjustRenown, setStandingOptions, standingFor, undoRenown } from '../repo/standing.js';
+import { adjustRenown, setStandingOptions, standingFor, undoRenown, ladder } from '../repo/standing.js';
 import { requirePack } from '../packs/registry.js';
 import { BOOKS_REGION, addRollToParty, catalogueFor, partyTreasure, rollTreasure, treasureData } from '../repo/treasure.js';
 import { moduleOn, setCampaignModules } from '../repo/modules.js';
@@ -589,6 +589,11 @@ export function campaignRoutes(ctx: AppContext) {
   );
   // Faction standing: the party's Renown with each faction in a campaign (the active one unless named).
 
+  // The Renown ladder (the setting pack's, or the plain one), as written.
+  r.get(
+    '/standing/ladder',
+    h(() => ladder(ctx.db).spec),
+  );
   r.get(
     '/standing',
     h((req) => standingFor(ctx.db, standingCampaign(req.query.campaign_id))),

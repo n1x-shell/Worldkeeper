@@ -6,7 +6,16 @@
 import type { DB } from '../db/connection.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
-import { RANKS, earnedRanks, nextRank, rankOf, type RankName } from '../../../shared/standing.js';
+import { PLAIN_LADDER, earnedRanks, makeLadder, nextRank, rankOf, type RankLadder } from '../../../shared/standing.js';
+import { installedManifests } from '../packs/registry.js';
+
+type RankName = string;
+
+/** The Renown ladder: an installed setting pack's, else the plain one. */
+export function ladder(db: DB): RankLadder {
+  const spec = installedManifests(db).find((m) => m.renown?.ranks?.length)?.renown;
+  return spec ? makeLadder(spec) : PLAIN_LADDER;
+}
 
 export interface StandingRow {
   faction_id: string;
@@ -27,6 +36,7 @@ export interface StandingRow {
 
 /** Each faction's "Standing with…" record: faction id -> record id, values and rank texts. */
 export function standingRules(db: DB) {
+  const L = ladder(db);
   const out = new Map<string, { rule_id: string; values: string; ranks: Partial<Record<RankName, string>> }>();
   const rows = db.prepare(`SELECT id, fields, body FROM entities WHERE type = 'rule' AND archived = 0 AND fields LIKE '%"Faction"%'`).all() as { id: string; fields: string; body: string }[];
   for (const r of rows) {
@@ -40,7 +50,7 @@ export function standingRules(db: DB) {
       sections.set(part.slice(0, nl).trim().toLowerCase(), part.slice(nl + 1).trim());
     }
     const ranks: Partial<Record<RankName, string>> = {};
-    for (const { name } of RANKS) {
+    for (const { name } of L.ranks) {
       const t = sections.get(name.toLowerCase());
       if (t) ranks[name] = t;
     }
@@ -62,6 +72,7 @@ function checkCampaign(db: DB, campaignId: number) {
 export function standingFor(db: DB, campaignId: number): StandingRow[] {
   const active = checkCampaign(db, campaignId);
   const rules = standingRules(db);
+  const L = ladder(db);
   const rows = new Map(
     (
       db.prepare('SELECT faction_id, renown, player_visible, notes FROM faction_standing WHERE campaign_id = ?').all(campaignId) as {
@@ -88,8 +99,8 @@ export function standingFor(db: DB, campaignId: number): StandingRow[] {
       type: e.type,
       revealed: !!e.revealed,
       renown,
-      rank: rankOf(renown),
-      next: nextRank(renown),
+      rank: rankOf(renown, L),
+      next: nextRank(renown, L),
       player_visible: s ? !!s.player_visible : true,
       notes: s?.notes ?? '',
       rule_id: rule?.rule_id ?? null,
@@ -123,7 +134,8 @@ export function adjustRenown(db: DB, campaignId: number, factionId: string, delt
     ).run(campaignId, factionId, after);
     db.prepare('INSERT INTO renown_log (campaign_id, faction_id, delta, reason, session_id) VALUES (?, ?, ?, ?, ?)').run(campaignId, factionId, delta, reason.trim().slice(0, 500), sessionId);
     if (sessionId != null) {
-      const rankNote = rankOf(after) !== rankOf(before) ? ` Now ${rankOf(after)}.` : '';
+      const L = ladder(db);
+      const rankNote = rankOf(after, L) !== rankOf(before, L) ? ` Now ${rankOf(after, L)}.` : '';
       db.prepare(`INSERT INTO session_log (session_id, kind, text, entity_id) VALUES (?, 'standing', ?, ?)`).run(
         sessionId,
         `Standing with ${f.name}: ${delta > 0 ? '+' : ''}${delta}${reason.trim() ? ` (${reason.trim()})` : ''}.${rankNote}`,
@@ -160,15 +172,19 @@ export function setStandingOptions(db: DB, campaignId: number, factionId: string
  */
 export function playerStanding(db: DB, campaignId: number | null) {
   if (campaignId == null) return [];
+  const L = ladder(db);
   return standingFor(db, campaignId)
-    .filter((r) => r.revealed && r.player_visible && r.rank !== 'Neutral')
+    .filter((r) => r.revealed && r.player_visible && r.rank !== L.neutral)
     .map((r) => ({
       faction_id: r.faction_id,
       name: r.name,
       renown: r.renown,
       rank: r.rank,
       next: r.next,
-      earned: earnedRanks(r.renown)
+      // The ladder's ranks, lowest first, and which is neutral (for the player's view of where they stand).
+      ladder: L.ranks.map((k) => k.name),
+      neutral: L.neutral,
+      earned: earnedRanks(r.renown, L)
         .filter((k) => r.ranks[k])
         .map((k) => ({ rank: k, text: r.ranks[k]! })),
     }));
