@@ -24,6 +24,8 @@ export function AutoTextarea(props: {
   className?: string;
   autoFocus?: boolean;
   'aria-label'?: string;
+  /** The full editor's view when it opens: Write, Split or Preview. */
+  startMode?: 'write' | 'split' | 'preview';
 }) {
   const { value = '', onChange, onBlur, onKeyDown, placeholder, minRows = 3, links = true, full = false, className = '', autoFocus } = props;
   const text = String(value ?? '');
@@ -61,6 +63,7 @@ export function AutoTextarea(props: {
           full={full}
           label={props['aria-label']}
           autoFocus={autoFocus}
+          startMode={props.startMode}
           className={className.replace(/\b(input|font-mono|font-sans|text-sm|text-\[\d+px\]|min-h-\d+)\b/g, '').trim()}
         />
       </Suspense>

@@ -238,7 +238,8 @@ export const entityInputSchema = z.object({
   parent_id: z.string().max(40).nullable().optional(),
   parent_raw: z.string().max(500).nullable().optional(),
   realm: z.string().regex(REALM_KEY_RE),
-  canon_status: z.enum(CANON_STATUSES),
+  /** Left out: Canon for your own world, Proposed where new records go through Canon Review (canonReview). */
+  canon_status: z.enum(CANON_STATUSES).optional(),
   canon_flags: z.array(z.string().max(40)).max(20).optional(),
   canon_raw: z.string().max(500).nullable().optional(),
   source_raw: z.string().max(2000).nullable().optional(),
@@ -288,9 +289,26 @@ export function findSimilarNames(db: DB, name: string, excludeId?: string): Enti
   return rows.filter((r) => r.id !== excludeId).map((r) => toSummary(rowToEntity(r)));
 }
 
-/** Create a user-authored record. New records default to PROPOSED unless the DM sets otherwise. */
+/**
+ * Whether new records go through Canon Review (docs/OWN_WORLD_PLAN.md §2.5, Settings → Canon). The GM's choice when
+ * made; otherwise yes for a library built from an imported archive, which protects the source, and no for your own
+ * world, where new records are Canon at once.
+ */
+export function canonReview(db: DB): boolean {
+  const v = (db.prepare(`SELECT value FROM settings WHERE key = 'canon_review'`).get() as { value: string } | undefined)?.value;
+  if (v === 'on' || v === 'off') return v === 'on';
+  return !!db.prepare(`SELECT 1 FROM import_runs WHERE status = 'completed' LIMIT 1`).get();
+}
+
+/** Create a user-authored record. Without a canon status, it is Canon or Proposed as canonReview says. */
 export function createEntity(db: DB, input: EntityInput, reason = 'Created'): Entity {
-  const data = entityInputSchema.parse(input);
+  const parsed = entityInputSchema.parse(input);
+  const canon_status = parsed.canon_status ?? (canonReview(db) ? 'PROPOSED' : 'CANON');
+  const data = {
+    ...parsed,
+    canon_status,
+    tags: parsed.tags.some((t) => t.startsWith('status/')) ? parsed.tags : [...parsed.tags, `status/${canon_status.toLowerCase()}`],
+  };
   if (!realmExists(db, data.realm)) throw badRequest(`There is no realm "${data.realm}" in this library`);
   if (!typeExists(db, data.type)) throw badRequest(`There is no record type "${data.type}" in this library`);
   const id = data.id ?? nextCustomId(db, types(db).get(data.type)?.prefix ?? 'CUS');

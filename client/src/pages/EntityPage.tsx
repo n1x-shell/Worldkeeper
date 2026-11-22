@@ -15,6 +15,7 @@ import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary, RelationshipView, StateRow } from '../lib/types';
 import { displaySections, splitSections, type Section } from '../lib/sections';
 import { AS_WRITTEN, type Cleaner } from '@shared/loreText';
+import { addHere } from '@shared/newRecord';
 import { useCleaners } from '../lib/packs';
 import { RumoursPanel } from './Rumours';
 import { SecretsPanel } from './Mysteries';
@@ -86,6 +87,7 @@ export function EntityPage() {
   const nav = useNavigate();
   const { reloadIndex, debug } = useAppState();
   const cleanerFor = useCleaners();
+  const recordTypes = useRecordTypes();
   const { data, error, loading, reload, setData } = useApi<Detail>(`/api/entities/${encodeURIComponent(id)}`);
   const [tab, setTab] = useState<Tab>('record');
   const { toast, node: toastNode } = useToast();
@@ -186,6 +188,13 @@ export function EntityPage() {
             >
               <Star size={15} fill={e.favorite ? 'currentColor' : 'none'} className={e.favorite ? 'text-gold' : ''} />
             </button>
+            {addHere(e.type, (t) => recordTypes.offered.some((x) => x.key === t))
+              .slice(0, 1)
+              .map((a) => (
+                <Link key={a.type} className="btn" to={addHereUrl(a.type, e)} title={`A new ${recordTypes.label(a.type).toLowerCase()} inside ${e.name}`}>
+                  <Plus size={14} /> <span className="hidden sm:inline">{a.label}</span>
+                </Link>
+              ))}
             <button className="btn-primary" onClick={() => setTab('edit')}>
               <Pencil size={14} /> Edit
             </button>
@@ -606,6 +615,9 @@ function DetailGroup({ title, count, action, children }: { title: string; count?
   );
 }
 
+/** A new record inside this one, its parent and realm filled in (docs/OWN_WORLD_PLAN.md §2.4). */
+const addHereUrl = (type: string, e: { id: string; realm: string }) => `/new?type=${encodeURIComponent(type)}&parent=${encodeURIComponent(e.id)}&realm=${encodeURIComponent(e.realm)}`;
+
 function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; revisions: Revision[] | undefined; inInspector: boolean; onTab: (t: Tab) => void }) {
   const recordTypes = useRecordTypes();
   const e = data.entity;
@@ -711,6 +723,15 @@ function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; 
               </div>
             )}
           </dl>
+        )}
+        {addHere(e.type, (t) => recordTypes.offered.some((x) => x.key === t)).length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1">
+            {addHere(e.type, (t) => recordTypes.offered.some((x) => x.key === t)).map((a) => (
+              <Link key={a.type} className="btn-ghost !px-1.5 text-xs" to={addHereUrl(a.type, e)}>
+                <Plus size={12} /> {a.label}
+              </Link>
+            ))}
+          </div>
         )}
       </DetailGroup>
       <DetailGroup title="Mentioned in" count={mentionedIn.length || undefined}>

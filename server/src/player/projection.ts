@@ -9,6 +9,7 @@
  *  - Aliases, sources, notes, fields, canon flags, GM sections and unrevealed records are never included.
  *  - References inside revealed text to unrevealed records are reduced to plain names-free placeholders.
  */
+import { stripComments } from '../../../shared/newRecord.js';
 import { publishedRuleEntries } from '../repo/rulesPacks.js';
 import { playerOmens } from '../repo/returnClock.js';
 import { moduleOn, modulesOn } from '../repo/modules.js';
@@ -77,7 +78,8 @@ function revealedIdSet(db: DB): Set<string> {
  * references to unrevealed records keep only the words the DM wrote (never an ID or a link).
  */
 function scrubRefs(text: string, revealed: Set<string>, index: MentionIndex): string {
-  return parseRefs(text, index)
+  // Notes to the GM in comments (a skipped section's guidance, shared/newRecord.ts) never reach players.
+  return parseRefs(stripComments(text), index)
     .map((s) => {
       if (s.kind === 'text') return s.text;
       if (s.kind === 'link') return revealed.has(s.id) ? `[${s.label}](/player/e/${encodeURIComponent(s.id)})` : s.label;

@@ -284,6 +284,55 @@ try {
   await api('DELETE', `/api/adventures/${adv.id}`);
   step('Markdown editor: toolbar, GM-only section, Split preview and outline on a record; a scene and a handout save');
 
+  // ---- v0.4.8: New ▸ anything, a town both ways ----
+  const region = (await api('GET', '/api/entities?type=region')).find((r) => !r.archived);
+  await page.goto(`${base}/e/${region.id}`);
+  await page.getByRole('link', { name: 'Add a settlement here' }).first().click();
+  await page.getByLabel('Name', { exact: true }).fill('E2E Millford');
+  await page.getByLabel('Population').fill('about 400');
+  await page.getByRole('button', { name: /^Next/ }).click();
+  const firstSection = page.locator('.cm-content').first();
+  await firstSection.waitFor();
+  await firstSection.click();
+  await page.keyboard.type('The road dips into a green valley.');
+  await page.getByRole('button', { name: /^Next/ }).click();
+  await page.getByRole('button', { name: /Skip for now/ }).click();
+  await page.locator('ol[aria-label="Steps"] button').last().click();
+  await expectText('What players will see');
+  await shot(page, '18-new-guided-review');
+  await page.getByRole('button', { name: /Create record/ }).click();
+  await page.waitForURL(/\/e\//);
+  const guided = (await api('GET', `/api/entities/${page.url().split('/e/')[1]}`)).entity;
+  // An imported archive keeps Canon Review: new records start Proposed, inside the region they were added to.
+  if (guided.canon_status !== 'PROPOSED' || guided.parent_id !== region.id || guided.realm !== region.realm) throw new Error(`guided town: ${guided.canon_status} ${guided.parent_id} ${guided.realm}`);
+  if (!guided.body.includes('green valley') || !guided.body.includes('<!-- To write:')) throw new Error('guided town body');
+  await page.locator('.wk-todo').first().waitFor({ timeout: 8000 });
+  await page.goto(`${base}/new?type=settlement`);
+  await page.getByRole('radio', { name: 'Advanced' }).click();
+  const draft = editor('Record (Markdown)');
+  await draft.waitFor();
+  await page.getByLabel('Preview').waitFor();
+  await draft.click();
+  await page.keyboard.press('Control+Home');
+  await page.keyboard.press('End');
+  await page.keyboard.type('E2E Ashford');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('End');
+  await page.keyboard.type(region.name);
+  await shot(page, '19-new-advanced');
+  await page.getByRole('button', { name: /Create record/ }).click();
+  await page.waitForURL(/\/e\//);
+  const advanced = (await api('GET', `/api/entities/${page.url().split('/e/')[1]}`)).entity;
+  if (advanced.name !== 'E2E Ashford' || advanced.parent_id !== region.id || !advanced.body.startsWith('# E2E Ashford')) throw new Error(`advanced town: ${advanced.name} ${advanced.parent_id}`);
+  if (advanced.fields.map(([k]) => k).join() !== guided.fields.map(([k]) => k).join()) throw new Error('the two towns have different facts');
+  await page.getByRole('button', { name: 'New record' }).click();
+  await page.getByRole('group', { name: 'Places' }).waitFor();
+  if ((await page.getByText('Recently used').count()) < 1) throw new Error('no recently used types in the New menu');
+  await shot(page, '20-new-menu');
+  await page.keyboard.press('Escape');
+  step('New ▸ anything: a town made guided (Add a settlement here) and advanced, Proposed in an imported archive; New menu with recent types');
+
   // Atlas page loads
   await page.goto(`${base}/atlas`);
   await expectText('World Atlas');

@@ -15,7 +15,8 @@ import { ErrorBoundary } from './components/ui';
 import { Dashboard } from './pages/Dashboard';
 import { EntityList } from './pages/EntityList';
 import { EntityPage } from './pages/EntityPage';
-import { DocumentsPage, NewEntity, RealmPage, SearchPage, TimelinePage, WorldOverview } from './pages/WorldPages';
+import { NewRecord } from './pages/NewRecord';
+import { DocumentsPage, RealmPage, SearchPage, TimelinePage, WorldOverview } from './pages/WorldPages';
 import { MysteriesPage } from './pages/Mysteries';
 import { AtlasExplorer } from './pages/AtlasExplorer';
 import { AtlasPage } from './pages/Atlas';
@@ -160,7 +161,7 @@ export function App() {
             path="new"
             element={
               <Page>
-                <NewEntity />
+                <NewRecord />
               </Page>
             }
           />

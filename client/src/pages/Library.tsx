@@ -977,6 +977,7 @@ export function SettingsPage() {
           Save settings
         </button>
       </Card>
+      <CanonPanel settings={data} onChange={async () => (await reload(), await reloadMeta())} />
       <ModulesPanel />
       <RulesPacksPanel />
       <DebugToggle />
@@ -996,6 +997,46 @@ export function SettingsPage() {
         </Card>
       </Dev>
     </div>
+  );
+}
+
+/**
+ * Settings → Canon (docs/OWN_WORLD_PLAN.md §2.5): whether new records go through Canon Review. Off for your own world,
+ * where new records are Canon at once; on for a library built from an imported archive, which protects the source.
+ */
+function CanonPanel({ settings, onChange }: { settings: Record<string, string> | undefined; onChange: () => Promise<unknown> }) {
+  const { canonReview } = useAppState();
+  const chosen = settings?.canon_review === 'on' || settings?.canon_review === 'off';
+  return (
+    <Card title="Canon" className="space-y-2">
+      <Toggle
+        className="flex"
+        checked={canonReview}
+        onChange={async (v) => {
+          await api.put('/api/settings', { canon_review: v ? 'on' : 'off' });
+          await onChange();
+        }}
+      >
+        Approve new records in Canon Review
+      </Toggle>
+      <p className="text-xs text-dim">
+        {canonReview
+          ? 'New records start as Proposed, and wait for you in Canon Review. This protects an imported archive from changes you have not approved.'
+          : 'New records are Canon at once. You can still make one Proposed, for an idea you are not sure of yet.'}
+        {!chosen && ' This follows where your library came from (an imported archive, or a world of your own) until you choose.'}
+      </p>
+      {chosen && (
+        <button
+          className="btn-ghost text-xs"
+          onClick={async () => {
+            await api.put('/api/settings', { canon_review: 'auto' });
+            await onChange();
+          }}
+        >
+          Follow where the library came from
+        </button>
+      )}
+    </Card>
   );
 }
 

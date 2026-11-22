@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-22 · v0.4.7_
+_Last updated: 2026-11-22 · v0.4.8_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,19 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.4.8: New ▸ anything (own-world step 8)
+
+Step 8 of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md).
+
+- **The New menu** in the top bar (`NewMenu` in `client/src/components/Layout.tsx`): every type the library offers, grouped as the Codex is (Places, People, Myth and history, Things, Rules and adventures; anything else under Other), with the types this device made recently first (`wk.new.recent`, `client/src/lib/recentTypes.ts`). `shared/newRecord.ts` `newMenu`, `noteRecentType`.
+- **Add … here:** a place's page offers what belongs inside it (`addHere`: a settlement or landmark in a region, an NPC who lives in a settlement or a building in it, a member of a faction, and so on), in its header and under Connections, opening `/new?type=&parent=&realm=` with the parent and realm filled in and the facts that name the place (Home, Region, Found in…) filled from it (`factsFromParent`).
+- **The New record page** (`client/src/pages/NewRecord.tsx`, replacing `NewEntity`), Guided or Advanced, remembered per device (`wk.new.mode`):
+  - **Guided:** the basics (name, type, where it is, realm, canon status, the template, and the type's facts as inputs: Danger and Wealth from their scales, Terrain suggesting the twelve terrains, and pickers from the rules packs in use for a creature's stat block, which also fills Challenge, an NPC's species and class, a people's species rules, and an item to start from, which fills rarity, attunement and kind; `client/src/components/RulesPickers.tsx`); one step per section with its guidance, example, the full editor and **Skip for now**, GM-only sections marked; and a review (the record as it will read, its links and broken links, what players can be shown and what they never see, what's still to write). Create opens the record.
+  - **Advanced:** the template as Markdown in the full editor, opening in Split (`startMode`), with the header in the library's own record format (`Name`, `Category`, `Parent`, `Continent or Realm`, `Canon Status`, then the facts; `draftMarkdown`), read back on Create (`parseDraft`; the type through `fromCategory`, the realm by name or id, the parent by name, `@[Name]` or `[ID]`). What's written in Guided carries over when you switch.
+  - Both make the same record (`buildRecord`): a skipped section stays as its heading with the template's guidance in a comment, `<!-- To write: … -->` (`toWrite`). The record page shows it as a quiet "To write" note; other comments don't show; and every text players get drops comments (`stripComments` in the projection's `scrubRefs`).
+- **Canon for your own world** (§2.5): `canonReview(db)` decides a new record's status when none is given: the GM's choice (`settings.canon_review` on or off, **Settings → Canon → Approve new records in Canon Review**), else on for a library with a completed archive import and off otherwise. Off, new records are Canon at once (still Proposed when chosen); on, they start Proposed with a Canon Review proposal, as before. `/api/meta` gives `canonReview`; the status tag is added when the caller sends none.
+- **Tests:** `tests/newRecord.test.ts` (the New menu's groups and recent types; Add … here; making a town both ways, guided and advanced, giving the same record, Canon at once in one's own world, with players never seeing the notes or the GM-only section; Proposed in an imported archive and by choice, back to automatic). The E2E makes a town both ways from a region's **Add a settlement here** in the imported archive (Proposed, inside the region) and checks the New menu's recent types.
 
 ## v0.4.7: the editor (own-world step 7)
 

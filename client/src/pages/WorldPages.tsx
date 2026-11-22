@@ -1,18 +1,14 @@
 import { useRecordTypes } from '../components/recordTypes';
 import { RealmIconOf, realmClass, useRealms } from '../components/realms';
-import { ORIGIN_LABEL, TemplatePreview, type ClientTemplate } from '../components/TemplatePreview';
-import { recordFromTemplate } from '@shared/templates';
 import { REALM_KIND_LABELS } from '@shared/realms';
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { Gem, KeyRound, Ghost, Plus, Map as MapIcon, Network } from 'lucide-react';
-import { CANON_STATUSES, type EntityType } from '@shared/domain';
+import { CANON_STATUSES } from '@shared/domain';
 import { api, qs, useApi } from '../lib/api';
-import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary } from '../lib/types';
-import { Badge, CanonBadge, Card, Empty, EntityLink, ErrorBox, Field, Loading, PageHeader, RealmBadge, Segmented, Toggle, TypeBadge } from '../components/ui';
+import { Badge, CanonBadge, Card, Empty, ErrorBox, Field, Loading, PageHeader, RealmBadge, Segmented, Toggle, TypeBadge } from '../components/ui';
 import { Markdown } from '../components/Markdown';
-import { EntityPicker } from '../components/EntityPicker';
 import { Snippet, hitPath, type Hit } from '../components/SearchPalette';
 import { EntityTable } from './EntityList';
 import { Dev, useDebug } from '../components/Dev';
@@ -177,138 +173,6 @@ export function RealmPage() {
         ))}
       </div>
       {list && <EntityTable rows={list.filter((e) => !type || e.type === type)} showRealm={false} />}
-    </div>
-  );
-}
-
-export function NewEntity() {
-  const recordTypes = useRecordTypes();
-  const realms = useRealms();
-  const [sp] = useSearchParams();
-  const nav = useNavigate();
-  const { reloadIndex } = useAppState();
-  const { data: templates } = useApi<ClientTemplate[]>('/api/templates');
-  const [templateId, setTemplateId] = useState('');
-  const [form, setForm] = useState({
-    name: '',
-    type: (sp.get('type') as EntityType) || 'custom',
-    realm: sp.get('realm') || 'world',
-    canon_status: 'PROPOSED',
-    parent_id: null as string | null,
-    source_raw: 'DM entry (The Worldkeeper)',
-  });
-  const [similar, setSimilar] = useState<EntitySummary[]>([]);
-  const [err, setErr] = useState<string | null>(null);
-  useEffect(() => {
-    if (form.name.trim().length < 3) return setSimilar([]);
-    const t = setTimeout(async () => setSimilar(await api.get(`/api/entities/similar${qs({ name: form.name })}`)), 250);
-    return () => clearTimeout(t);
-  }, [form.name]);
-  // The type's templates, yours first, then the built-in one, then your archive's.
-  const forType = (templates ?? []).filter((t) => t.type === form.type);
-  const template = forType.find((t) => t.id === templateId) ?? forType[0];
-  const debug = useDebug();
-  return (
-    <div className="max-w-3xl space-y-4">
-      <PageHeader title="New record" subtitle="New records start as proposed until you approve them in Canon Review." />
-      {err && <ErrorBox error={err} />}
-      <Card className="grid gap-3 md:grid-cols-2">
-        <Field label="Name">
-          <input className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} autoFocus />
-        </Field>
-        <Field label="Type">
-          <select className="input" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as EntityType })}>
-            {recordTypes.offered.map((x) => x.key).map((t) => (
-              <option key={t} value={t}>
-                {recordTypes.label(t)}
-              </option>
-            ))}
-          </select>
-        </Field>
-        <Field label="Realm">
-          <select className="input" value={form.realm} onChange={(e) => setForm({ ...form, realm: e.target.value })}>
-            {realms.list
-              .filter((r) => !r.archived)
-              .map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.name}
-                </option>
-              ))}
-          </select>
-        </Field>
-        <Field label="Canon status">
-          <select className="input" value={form.canon_status} onChange={(e) => setForm({ ...form, canon_status: e.target.value })}>
-            {CANON_STATUSES.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
-        </Field>
-        <Field label="Parent">
-          <EntityPicker value={form.parent_id} onChange={(p) => setForm({ ...form, parent_id: p })} />
-        </Field>
-        <Field label="Source">
-          <input className="input" value={form.source_raw} onChange={(e) => setForm({ ...form, source_raw: e.target.value })} />
-        </Field>
-      </Card>
-      {template && (
-        <Card
-          title={
-            <span className="flex flex-wrap items-center gap-2">
-              What it asks for
-              {forType.length > 1 ? (
-                <select className="input w-auto py-0.5 text-xs font-sans normal-case tracking-normal" value={template.id} onChange={(e) => setTemplateId(e.target.value)} aria-label="Template">
-                  {forType.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.name} ({ORIGIN_LABEL[t.origin].toLowerCase()})
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <span className="text-xs text-dim font-sans normal-case tracking-normal">{ORIGIN_LABEL[template.origin]} template</span>
-              )}
-            </span>
-          }
-        >
-          <TemplatePreview template={template} />
-          <p className="text-xs text-dim mt-3">The record starts with these facts and sections, empty, for you to fill in.</p>
-        </Card>
-      )}
-      {similar.length > 0 && (
-        <Card className="border-warn/50 text-sm">
-          <div className="text-warn mb-1">Already in your library? Link to one of these instead of creating a duplicate:</div>
-          <ul>
-            {similar.slice(0, 8).map((s) => (
-              <li key={s.id}>
-                <EntityLink id={s.id}>{s.name}</EntityLink> <TypeBadge type={s.type} />
-              </li>
-            ))}
-          </ul>
-        </Card>
-      )}
-      <button
-        className="btn-primary"
-        disabled={!form.name.trim()}
-        onClick={async () => {
-          try {
-            const { fields, body } = recordFromTemplate(template ?? { facts: [], sections: [] }, form.name.trim());
-            const e = await api.post<Entity>('/api/entities', {
-              ...form,
-              category_raw: recordTypes.label(form.type),
-              aliases: [],
-              tags: [`realm/${form.realm}`, `status/${form.canon_status.toLowerCase()}`, 'vis/gm'],
-              fields,
-              body,
-              notes: '',
-            });
-            await reloadIndex();
-            nav(`/e/${e.id}`);
-          } catch (x) {
-            setErr((x as Error).message);
-          }
-        }}
-      >
-        <Plus size={14} /> Create record
-      </button>
     </div>
   );
 }

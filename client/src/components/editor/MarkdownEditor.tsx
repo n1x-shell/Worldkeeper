@@ -40,6 +40,8 @@ export interface MarkdownEditorProps {
   label?: string;
   className?: string;
   autoFocus?: boolean;
+  /** Open in this view whatever this device last used (the GM's later choice is still remembered). */
+  startMode?: EditorMode;
 }
 
 /** The headings of a text, for the outline. */
@@ -49,12 +51,12 @@ const outlineOf = (text: string) =>
     return m ? [{ line: i + 1, depth: m[1].length, title: m[2] }] : [];
   });
 
-export function MarkdownEditor({ value, onChange, onBlur, placeholder, minRows = 3, full = false, links = true, label, className = '', autoFocus }: MarkdownEditorProps) {
+export function MarkdownEditor({ value, onChange, onBlur, placeholder, minRows = 3, full = false, links = true, label, className = '', autoFocus, startMode }: MarkdownEditorProps) {
   const host = useRef<HTMLDivElement>(null);
   const view = useRef<EditorView | null>(null);
   const { index, mentions } = useAppState();
   const recordTypes = useRecordTypes();
-  const [mode, setModeState] = useState<EditorMode>(() => (full ? readMode() : 'write'));
+  const [mode, setModeState] = useState<EditorMode>(() => (full ? (startMode ?? readMode()) : 'write'));
   const [fullscreen, setFullscreen] = useState(false);
   const [showOutline, setShowOutline] = useState(true);
 
