@@ -5,6 +5,7 @@
 import type { DB } from '../db/connection.js';
 import { parseJson } from '../lib/json.js';
 import { treasureData } from './treasure.js';
+import { rulesView } from './rulesPacks.js';
 import { types } from './recordTypes.js';
 import { isInstalled } from '../packs/registry.js';
 
@@ -123,7 +124,6 @@ export function consistencyReport(db: DB): { checked: number; problems: Problem[
 
 type Add = (check: string, severity: Problem['severity'], message: string, list: string[]) => void;
 
-export const CLASS_NAMES = ['Artificer', 'Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard'];
 const TITLE_WORDS = new Set(
   'the of old sister brother captain elder lady lord master keeper magistrate grand archivist reeve warden chief mother father little major high goodwife headwoman thane deputy sergeant herd speaker miller healer scribe harbourmaster justicar archon general mistress magister inquisitor grandmaster king queen prophet first last one who forge drum duel gate griffon storm ice door hold vault bone ember choir courier crew herd-leader herd-mother sister-captain duel-marshal griffon-master drum-sergeant forge-mother rootwarden mask-warden archive-warden gate-warden storm-watcher courier-captain bone-singer vault-seeker ice-watcher hold-warden door-reader lightkeeper gravedigger deacon ember-broker choir-sister knight-commander scout-captain chief-wright well-warden anchor-master sanctuary-keeper siege-engineer archivist-elder'.split(
     ' ',
@@ -138,6 +138,8 @@ function personRow(summary: string) {
 
 /** 8-9. People: the page agrees with the record, the class is a class, and nobody shares a surname by accident. */
 function peopleChecks(db: DB, add: Add) {
+  // The classes the rules packs in use know (the SRD's, the GM's books', a setting's); none checked without any.
+  const classes = new Set(Object.keys(rulesView(db).classes));
   const npcs = db.prepare(`SELECT id, name, body, fields, player_summary, revealed FROM entities WHERE type = 'npc' AND archived = 0`).all() as {
     id: string;
     name: string;
@@ -152,7 +154,7 @@ function peopleChecks(db: DB, add: Add) {
       if (n.revealed && /\| People \| Calling \|/.test(n.player_summary)) add('People pages without a class', 'warning', `${n.name}'s page still has the old People / Calling table.`, [n.id]);
       continue;
     }
-    if (row.cls !== 'Unknown' && !CLASS_NAMES.includes(row.cls)) add('People pages with a class that isn’t a class', 'warning', `${n.name}'s page gives the class as "${row.cls}".`, [n.id]);
+    if (classes.size && row.cls !== 'Unknown' && !classes.has(row.cls)) add('People pages with a class that isn’t a class', 'warning', `${n.name}'s page gives the class as "${row.cls}".`, [n.id]);
     const field = (k: string) =>
       parseJson<[string, string][]>(n.fields, [])
         .find(([key]) => key.toLowerCase() === k)?.[1]

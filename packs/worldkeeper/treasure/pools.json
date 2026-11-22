@@ -1,11 +1,5 @@
 {
   "note": "What the Treasure tool rolls from. Amounts follow the Dungeon Master's Guide (2024) by tier, with about half its magic items (Treasure [RUL-620]). Item names are from the DMG 2024, Xanathar's Guide to Everything (XGE), Tasha's Cauldron of Everything (TCE) and Spelljammer: Adventures in Space (SJ), with a few from Waterdeep: Dungeon of the Mad Mage (WDMM), Ghosts of Saltmarsh (GoS), The Book of Many Things (BMT) and Acquisitions Incorporated (AI); Star Map has no rules in any of them. The world's own items come from the catalogue.",
-  "tiers": [
-    { "key": "1-4", "label": "Levels 1 to 4", "individual": { "dice": "3d6", "mult": 1, "coin": "gp" }, "hoard": { "dice": "2d4", "mult": 100, "coin": "gp" }, "items": { "dice": "1d3-1", "rarities": { "common": 3, "uncommon": 2 } } },
-    { "key": "5-10", "label": "Levels 5 to 10", "individual": { "dice": "2d8", "mult": 10, "coin": "gp" }, "hoard": { "dice": "8d10", "mult": 100, "coin": "gp" }, "items": { "dice": "1d2", "rarities": { "uncommon": 3, "rare": 2 } } },
-    { "key": "11-16", "label": "Levels 11 to 16", "individual": { "dice": "2d10", "mult": 10, "coin": "pp" }, "hoard": { "dice": "8d8", "mult": 1000, "coin": "gp" }, "items": { "dice": "1d3", "rarities": { "rare": 3, "very rare": 2 } } },
-    { "key": "17-20", "label": "Levels 17 to 20", "individual": { "dice": "2d8", "mult": 100, "coin": "pp" }, "hoard": { "dice": "6d10", "mult": 10000, "coin": "gp" }, "items": { "dice": "1d3", "rarities": { "very rare": 3, "legendary": 1 } } }
-  ],
   "regions": {
     "marches": { "label": "The Hollow Marches", "ids": ["REG-001", "SET-001"], "pools": ["marches"], "coins": "Coins of a dozen kingdoms, some of which nobody remembers." },
     "order": { "label": "The Radiant Ascendancy", "ids": ["REG-002"], "pools": ["order"], "coins": "Golden sun-marks of the Order." },

@@ -4,6 +4,7 @@ import { fakeFivetools } from './fakeFivetools.js';
 import { describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { tempContext } from './helpers.js';
+import { setSettingPack } from '../server/src/repo/settingPack.js';
 import { createApp } from '../server/src/app.js';
 import { AppContext } from '../server/src/context.js';
 import { createEntity } from '../server/src/repo/entities.js';
@@ -86,6 +87,8 @@ describe('importing from 5etools', () => {
 
   it('brings in creatures as stat blocks and items with their rules, for the GM, the tracker, treasure and sheets', async () => {
     const ctx = tempContext({ settingRealms: true });
+    // Counted without the setting's own rules pack (installing the setting switches it on).
+    setSettingPack(ctx.db, false);
     const gm = createApp(ctx);
     // The books alone (the built-in SRD's creatures and items are tested in mechanics.test.ts).
     await request(gm).patch('/api/rules/packs/srd').send({ enabled: false });
@@ -99,7 +102,8 @@ describe('importing from 5etools', () => {
     // A creature is a stat block in the app's own shape.
     const index = (await request(gm).get('/api/statblocks')).body as { id: string; name: string; book?: boolean }[];
     expect(index.find((s) => s.book)).toMatchObject({ id: 'book:xmm:priest', name: 'Priest', cr: '2', ac: 13, hp: 20, init: 4 });
-    expect(index.some((s) => !s.book)).toBe(true);
+    // The setting's own cards are its rules pack's, which is off here.
+    expect(index.some((s) => !s.book)).toBe(false);
     const priest = (await request(gm).get('/api/statblocks/book:xmm:priest')).body;
     expect(priest).toMatchObject({
       meta: 'Medium Humanoid (Cleric), Neutral',
@@ -120,7 +124,9 @@ describe('importing from 5etools', () => {
       { name: 'Spellcasting', text: 'The priest casts:\nAt will: Light\n1/Day each: Bless' },
     ]);
     // An NPC card built on the Priest carries the book's block.
+    await request(gm).patch('/api/rules/packs/worldkeeper').send({ enabled: true });
     expect((await request(gm).get('/api/statblocks/NPC-304')).body.baseBlock).toMatchObject({ name: 'Priest', ac: 13 });
+    await request(gm).patch('/api/rules/packs/worldkeeper').send({ enabled: false });
 
     // Items, by the names treasure and sheets use.
     const names = ['Arcane Focus (dagger)', 'Potion of Zapping', 'Weapon, +1', 'Flame Tongue Longsword', '2 Daggers', 'Ring of Zap (XDMG)', 'Nothing Real'];

@@ -56,6 +56,6 @@ export function peekEntity(db: DB, id: string) {
     facts,
     sections,
     links,
-    hasStatBlock: !!statblockFor(e.id),
+    hasStatBlock: !!statblockFor(db, e.id),
   };
 }

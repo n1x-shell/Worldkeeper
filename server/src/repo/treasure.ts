@@ -12,6 +12,9 @@ import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { badRequest } from '../lib/errors.js';
 import { makeCrud } from './crud.js';
+import { TREASURE_TIERS, type TreasureTier } from '../../../shared/treasureTiers.js';
+import type { Wealth } from '../../../shared/places.js';
+import { placeProfile } from './places.js';
 import { moduleData, moduleDataFor, moduleOn, setModuleData } from './modules.js';
 import { rollDice } from '../../../shared/play.js';
 import { worldkeeperPath } from '../packs/paths.js';
@@ -37,13 +40,7 @@ export interface CatalogueArtifact {
   holder: string;
   leads: string[];
 }
-interface Tier {
-  key: string;
-  label: string;
-  individual: { dice: string; mult: number; coin: string };
-  hoard: { dice: string; mult: number; coin: string };
-  items: { dice: string; rarities: Partial<Record<Rarity, number>> };
-}
+type Tier = TreasureTier;
 interface Region {
   label: string;
   ids: string[];
@@ -66,14 +63,15 @@ let cache: { dir: string; stamp: string; data: TreasureData } | null = null;
 /** The catalogue and pools, re-read when the files change. */
 export function treasureData(dir = DEFAULT_TREASURE_DIR): TreasureData {
   const files = ['catalogue.json', 'pools.json'].map((f) => path.join(dir, f));
-  if (!files.every((f) => fs.existsSync(f))) return { catalogue: { items: {}, artifacts: {} }, tiers: [], regions: {}, pools: {}, goods: {}, hooks: {} };
+  // The tiers are the rules' (shared/treasureTiers.ts); everything else is a setting pack's.
+  if (!files.every((f) => fs.existsSync(f))) return { catalogue: { items: {}, artifacts: {} }, tiers: TREASURE_TIERS, regions: {}, pools: {}, goods: {}, hooks: {} };
   const stamp = files.map((f) => fs.statSync(f).mtimeMs).join('|');
   if (cache && cache.dir === dir && cache.stamp === stamp) return cache.data;
   const catalogue = JSON.parse(fs.readFileSync(files[0], 'utf8'));
   const pools = JSON.parse(fs.readFileSync(files[1], 'utf8'));
   const data: TreasureData = {
     catalogue: { items: catalogue.items, artifacts: catalogue.artifacts },
-    tiers: pools.tiers,
+    tiers: TREASURE_TIERS,
     regions: pools.regions,
     pools: pools.pools,
     goods: pools.goods,
@@ -136,12 +134,27 @@ export const BOOKS_REGION = 'books';
  * Roll individual treasure or a hoard for a tier and region. With `books` and the region BOOKS_REGION, the magic items,
  * gems and art come from the GM's books instead of the setting's tables. `fading` false means nothing fades.
  */
-export function rollTreasure(opts: { tier: string; region: string; kind: 'individual' | 'hoard'; rng?: () => number; data?: TreasureData; books?: BookTreasure; fading?: boolean }): TreasureRoll {
+export function rollTreasure(opts: {
+  tier: string;
+  region: string;
+  kind: 'individual' | 'hoard';
+  rng?: () => number;
+  data?: TreasureData;
+  books?: BookTreasure;
+  fading?: boolean;
+  /** For a roll from the books at a place: its name and wealth (poor halves the coin and takes an item away; rich doubles the coin and adds one). */
+  place?: { label: string; wealth: Wealth };
+}): TreasureRoll {
   const data = opts.data ?? treasureData();
   const rng = opts.rng ?? Math.random;
   const tier = data.tiers.find((t) => t.key === opts.tier);
   const fromBooks = opts.region === BOOKS_REGION;
-  const region: TreasureData['regions'][string] | undefined = fromBooks ? { label: 'From the SRD and your books', ids: [], pools: [], coins: '', barter: 0 } : data.regions[opts.region];
+  const region: TreasureData['regions'][string] | undefined = fromBooks
+    ? { label: opts.place?.label ?? 'From the SRD and your books', ids: [], pools: [], coins: '', barter: 0 }
+    : data.regions[opts.region];
+  const wealth = fromBooks ? (opts.place?.wealth ?? 'modest') : 'modest';
+  const coinScale = wealth === 'poor' ? 0.5 : wealth === 'rich' ? 2 : 1;
+  const itemShift = wealth === 'poor' ? -1 : wealth === 'rich' ? 1 : 0;
   if (!tier) throw badRequest('Unknown tier');
   if (!region) throw badRequest('Unknown region');
   const tierNo = data.tiers.indexOf(tier) + 1;
@@ -160,7 +173,7 @@ export function rollTreasure(opts: { tier: string; region: string; kind: 'indivi
     fades,
   };
   const spec = opts.kind === 'individual' ? tier.individual : tier.hoard;
-  const value = Math.max(0, rollDice(spec.dice, rng).total) * spec.mult;
+  const value = Math.round(Math.max(0, rollDice(spec.dice, rng).total) * spec.mult * coinScale);
   // Barter country keeps most of its worth in goods; elsewhere a hoard is mostly coin.
   const goodsShare = opts.kind === 'hoard' ? Math.max(region.barter ?? 0, 0.3) : (region.barter ?? 0) / 2;
   let goodsValue = Math.round(value * goodsShare * TO_GP[spec.coin]);
@@ -180,7 +193,7 @@ export function rollTreasure(opts: { tier: string; region: string; kind: 'indivi
   }
   // Magic items, hoards only: about half the DMG's, and half of those the world's own where any fit.
   if (opts.kind === 'hoard') {
-    const n = Math.max(0, rollDice(tier.items.dice, rng).total);
+    const n = Math.max(0, rollDice(tier.items.dice, rng).total + itemShift);
     const taken = new Set<string>();
     for (let i = 0; i < n; i++) {
       const rarity = weighted(tier.items.rarities, rng);
@@ -377,4 +390,26 @@ export function playerTreasure(db: DB, campaignId: number) {
     const f = fading.get(r.id);
     return { ...r, entity_id: r.entity_id && revealed.get(r.entity_id) ? r.entity_id : null, fades: !!f?.fades && !f.anchored, anchored: !!f?.anchored };
   });
+}
+
+/**
+ * Where treasure at a place comes from: the setting pack's region that holds it (or a place it sits in), when the
+ * setting's treasure is on; otherwise the GM's books, scaled by the place's wealth.
+ */
+export function treasureSourceFor(db: DB, placeId: string, settingTreasure: boolean): { region: string; place?: { label: string; wealth: Wealth } } {
+  const chain: string[] = [];
+  const get = db.prepare('SELECT id, name, parent_id FROM entities WHERE id = ?');
+  let name = placeId;
+  for (let cur: string | null = placeId, guard = 0; cur && guard < 8; guard++) {
+    const r = get.get(cur) as { id: string; name: string; parent_id: string | null } | undefined;
+    if (!r) break;
+    if (!chain.length) name = r.name;
+    chain.push(r.id);
+    cur = r.parent_id;
+  }
+  if (settingTreasure) {
+    const hit = Object.entries(treasureData().regions).find(([, r]) => r.ids.some((x) => chain.includes(x)));
+    if (hit) return { region: hit[0] };
+  }
+  return { region: BOOKS_REGION, place: { label: name, wealth: placeProfile(db, placeId).wealth } };
 }

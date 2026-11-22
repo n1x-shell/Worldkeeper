@@ -74,6 +74,7 @@ const TABLES = [
   'faction_ties_revealed',
   'party_treasure',
   'module_data',
+  'statblocks',
   'handouts',
   'bastions',
   'bastion_turns',

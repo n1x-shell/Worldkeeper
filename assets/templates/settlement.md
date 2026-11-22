@@ -12,6 +12,8 @@ A place where people live together: a village, town or city. Use a Building for 
 - **What people say**: Give the one rumour every visitor hears first. Example: Nobody owns Cinderwell. Nobody fights there. (Cinderwell)
 - **Region**: Name the region or nation it belongs to. Example: The Hollow Marches (Hollow Refuge)
 - **Terrain**: List the kinds of ground in and around it, such as urban, forest or coastal. Example: urban, grassland (Hollow Refuge)
+- **Danger**: Say how safe travel is, as safe, risky or deadly; with the party's level this sets how hard its encounters are. Example: risky
+- **Wealth**: Say how well off it is, as poor, modest or rich; this weights the treasure found there. Example: modest
 
 ## A first look
 

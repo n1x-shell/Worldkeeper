@@ -101,8 +101,38 @@ describe('modules', () => {
     expect(urban.ideas.flatMap((i) => i.creatures.map((c) => c.name))).toContain('Priest');
     expect(urban.ideas.every((i) => i.xp <= i.budget)).toBe(true);
     expect(suggestEncounters(ctx.db, { level: 4, terrain: ['arctic'] }).ideas).toEqual([]);
-    // A region of the world, as its terrain.
-    expect((await request(gm).get('/api/books/encounters').query({ level: 4, region: 'SET-001' })).body.terrain).toEqual(['urban', 'grassland']);
+    // A place of the GM's own, by its Terrain fact; a place inside it inherits it.
+    createEntity(ctx.db, {
+      id: 'REG-0001',
+      name: 'The Downs',
+      type: 'region',
+      realm: 'world',
+      canon_status: 'CANON',
+      aliases: [],
+      tags: [],
+      fields: [
+        ['Terrain', 'Rolling downs and farmland'],
+        ['Danger', 'Deadly at night'],
+      ],
+      body: 'x',
+      notes: '',
+    } as never);
+    createEntity(ctx.db, {
+      id: 'SET-0001',
+      name: 'Millford',
+      type: 'settlement',
+      realm: 'world',
+      parent_id: 'REG-0001',
+      canon_status: 'CANON',
+      aliases: [],
+      tags: [],
+      fields: [],
+      body: 'x',
+      notes: '',
+    } as never);
+    const here = (await request(gm).get('/api/books/encounters').query({ level: 4, region: 'SET-0001' })).body;
+    expect(here.terrain).toEqual(['grassland', 'hill']);
+    expect(here.budget).toBe(xpBudget(4, 4, 'high'));
     expect(creatureMentions(ctx.db, '**Fight.** 3 priests and a Legion Scout [CRE-006] at the gate.')).toEqual([{ id: 'book:xmm:priest', name: 'Priest' }]);
     expect(creatureMentions(ctx.db, '**Sign.** A priest left a candle.')).toEqual([]);
   });
@@ -120,8 +150,12 @@ describe('modules', () => {
     // Every SRD stat block's modifiers fit its scores.
     const all = (await request(gm).get('/api/statblocks')).body as { id: string }[];
     expect(all.filter((s) => s.id.startsWith('srd:')).length).toBeGreaterThan(330);
-    // An NPC card built on the Priest carries it, with no books imported.
+    // An NPC card built on the Priest carries it, with no books imported (with the setting's rules pack on).
+    await request(gm).patch('/api/rules/packs/worldkeeper').send({ enabled: true });
     expect((await request(gm).get('/api/statblocks/NPC-304')).body.baseBlock).toMatchObject({ name: 'Priest', source: 'SRD 5.2.1' });
+    await request(gm).patch('/api/rules/packs/worldkeeper').send({ enabled: false });
+    // Without it, the setting's cards don't show.
+    expect((await request(gm).get('/api/statblocks/NPC-304')).body.name).toBeUndefined();
     const items = (
       await request(createApp(new AppContext(ctx.paths, 'player')))
         .get('/api/player/items')
@@ -139,7 +173,9 @@ describe('modules', () => {
     await request(gm)
       .post('/api/rules/5etools/import')
       .send({ token: scan.token, books: ['XMM'] });
+    await request(gm).patch('/api/rules/packs/worldkeeper').send({ enabled: true });
     expect((await request(gm).get('/api/statblocks/NPC-304')).body.baseBlock.source).toBe('Monster Manual (2025) p. 7');
+    await request(gm).patch('/api/rules/packs/worldkeeper').send({ enabled: false });
     await request(gm).patch('/api/rules/packs/srd').send({ enabled: false });
     expect((await request(gm).get('/api/books')).body).toEqual({ creatures: 1, items: 0 });
   });

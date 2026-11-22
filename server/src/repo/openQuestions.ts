@@ -10,7 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type Database from 'better-sqlite3';
 import { splitSections } from '../import/parseMarkdown.js';
-import { statblockFor } from './statblocks.js';
+import { statblocks } from './statblocks.js';
 import { worldkeeperPath } from '../packs/paths.js';
 
 export type QuestionStatus = 'kept' | 'filled' | 'todo';
@@ -103,7 +103,7 @@ function autoStatus(q: OpenQuestion, r: Row, pinned: Database.Statement) {
     return;
   }
   if (r.type === 'npc' && /Unspecified fields|Appearance and voice|Not established/i.test(q.section)) {
-    const sb = statblockFor(r.id);
+    const sb = statblocks()[r.id];
     // Looks and pronouns from the handbook page, or GM-only looks on the card.
     const looks = (/\*\*Looks\.\*\*/.test(summary) && /\| Pronouns \|/.test(summary)) || !!sb?.looks;
     const card = !!sb;

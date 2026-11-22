@@ -1,4 +1,8 @@
-import { creatureMentions, regionTerrains, suggestEncounters, terrainFor, TERRAINS, type Difficulty } from '../repo/encounters.js';
+import { creatureMentions, suggestEncounters, TERRAINS, type Difficulty } from '../repo/encounters.js';
+import { placeProfile, placesWithTerrain, regionPlaces } from '../repo/places.js';
+import { copyTable, generateEncounterTable } from '../repo/tables.js';
+import { partyLevel } from '../repo/journey.js';
+import { difficultyFor } from '../../../shared/places.js';
 import { Router } from 'express';
 import type { AppContext } from '../context.js';
 import { characterLog, logged } from '../repo/characterLog.js';
@@ -57,14 +61,14 @@ import { handouts, pushHandout } from '../repo/handouts.js';
 import { bastionTurns, bastions, downtime, hostStanding, takeBastionTurn } from '../repo/bastions.js';
 import { adjustRenown, setStandingOptions, standingFor, undoRenown, ladder } from '../repo/standing.js';
 import { requirePack } from '../packs/registry.js';
-import { BOOKS_REGION, addRollToParty, catalogueFor, partyTreasure, rollTreasure, treasureData } from '../repo/treasure.js';
+import { BOOKS_REGION, addRollToParty, catalogueFor, partyTreasure, rollTreasure, treasureData, treasureSourceFor } from '../repo/treasure.js';
 import { moduleOn, setCampaignModules } from '../repo/modules.js';
 import { badRequest } from '../lib/errors.js';
 import { types as typeRegistry } from '../repo/recordTypes.js';
 import { parseJson } from '../lib/json.js';
 import { returnClock, setReturnStage } from '../repo/returnClock.js';
 import { factionWeb, revealTie } from '../repo/factionWeb.js';
-import { statblockFor, statblockIndex } from '../repo/statblocks.js';
+import { deleteLibraryStatblock, setLibraryStatblock, statblockFor, statblockIndex } from '../repo/statblocks.js';
 import { bookCounts, bookCreature, bookTreasure, bookCreatureIndex, bookCreatures, bookItems, creatureByName, itemByName, requireBookCreature } from '../repo/bookData.js';
 import { characterPage, renewCharacterCode, updateCharacterPage } from '../repo/characterPages.js';
 
@@ -159,15 +163,27 @@ export function campaignRoutes(ctx: AppContext) {
   // ("base") carries that block too, when the GM's books have it.
   r.get(
     '/statblocks',
-    h(() => [...statblockIndex(), ...bookCreatureIndex(ctx.db)]),
+    h(() => [...statblockIndex(ctx.db), ...bookCreatureIndex(ctx.db)]),
   );
   r.get(
     '/statblocks/:id',
     h((req) => {
       const id = String(req.params.id);
       if (/^(book|srd|wk|open5e):/.test(id)) return bookCreature(ctx.db, id);
-      const s = statblockFor(id);
+      const s = statblockFor(ctx.db, id);
       return s?.base ? { ...s, baseBlock: creatureByName(ctx.db, s.base) } : s;
+    }),
+  );
+  // The GM's own stat block for a record of theirs: a book block and its changes.
+  r.put(
+    '/statblocks/:id',
+    h((req) => setLibraryStatblock(ctx.db, String(req.params.id), req.body)),
+  );
+  r.delete(
+    '/statblocks/:id',
+    h((req) => {
+      deleteLibraryStatblock(ctx.db, String(req.params.id));
+      return { ok: true };
     }),
   );
   // The GM's books: creatures and items to browse, and an item's rules by the name it goes by.
@@ -191,14 +207,16 @@ export function campaignRoutes(ctx: AppContext) {
   r.get(
     '/books/encounters',
     h((req) => {
+      // A place gives its terrain, and its danger the difficulty unless one is asked for.
       const region = String(req.query.region ?? '');
-      const terrain = region ? terrainFor([region]) : (listParam(req.query.terrain) ?? []);
+      const profile = region ? placeProfile(ctx.db, region) : null;
+      const terrain = profile ? profile.terrain : (listParam(req.query.terrain) ?? []);
       return {
         terrain,
         ...suggestEncounters(ctx.db, {
           level: Number(req.query.level ?? 1),
           size: Number(req.query.size ?? 4),
-          difficulty: String(req.query.difficulty ?? 'moderate') as Difficulty,
+          difficulty: (req.query.difficulty ? String(req.query.difficulty) : profile ? difficultyFor(profile.danger) : 'moderate') as Difficulty,
           terrain,
         }),
       };
@@ -208,9 +226,8 @@ export function campaignRoutes(ctx: AppContext) {
     '/books/terrains',
     h(() => ({
       terrains: TERRAINS,
-      regions: Object.entries(regionTerrains())
-        .filter(([id]) => ctx.db.prepare('SELECT 1 FROM entities WHERE id = ?').get(id))
-        .map(([id, v]) => ({ id, ...v })),
+      // Every region-sized place with a terrain (its own fact, a place it's in, or its setting pack's).
+      regions: placesWithTerrain(ctx.db).map((p) => ({ id: p.id, label: p.label, terrain: p.terrain, danger: p.danger, wealth: p.wealth })),
     })),
   );
   r.get(
@@ -399,7 +416,21 @@ export function campaignRoutes(ctx: AppContext) {
       return { ...r, creatures: creatureMentions(ctx.db, r.result ?? '') };
     }),
   );
-  mountCrud(r, ctx, '/random-tables', randomTables);
+  // The party's level (the average of its player characters), for tables and encounters.
+  r.get(
+    '/campaigns/:id/party-level',
+    h((req) => ({ level: partyLevel(ctx.db, intParam(req.params.id)) })),
+  );
+  // A place's encounter table, generated (or regenerated) from the rules packs for a level; any table copied to edit.
+  r.post(
+    '/regions/:id/encounter-table',
+    h((req) => generateEncounterTable(ctx.db, String(req.params.id), Number(req.body?.level ?? 1))),
+  );
+  r.post(
+    '/random-tables/:id/copy',
+    h((req) => copyTable(ctx.db, intParam(req.params.id))),
+  );
+  mountCrud(r, ctx, '/random-tables', randomTables, ['region_id', 'kind']);
 
   r.post(
     '/dice/roll',
@@ -504,6 +535,8 @@ export function campaignRoutes(ctx: AppContext) {
           ...(worldTreasure ? Object.entries(d.regions).map(([key, v]) => ({ key, label: v.label, ids: v.ids })) : []),
           ...(books.magic.length ? [{ key: BOOKS_REGION, label: 'From the SRD and your books', ids: [] }] : []),
         ],
+        // Any region-sized place: the setting's pools where its pack covers it, else the books by the place's wealth.
+        places: books.magic.length || worldTreasure ? regionPlaces(ctx.db).map((p) => ({ id: p.id, label: p.label, wealth: p.wealth })) : [],
       };
     }),
   );
@@ -515,13 +548,16 @@ export function campaignRoutes(ctx: AppContext) {
     '/treasure/roll',
     h((req) => {
       const cid = req.body?.campaign_id ? Number(req.body.campaign_id) : undefined;
-      const region = String(req.body?.region ?? '');
+      // A place picks its own source (the setting's region that holds it, or the books by its wealth).
+      const src = req.body?.place ? treasureSourceFor(ctx.db, String(req.body.place), moduleOn(ctx.db, 'setting-treasure', cid)) : null;
+      const region = src?.region ?? String(req.body?.region ?? '');
       if (!moduleOn(ctx.db, 'setting-treasure', cid) && region !== BOOKS_REGION) throw badRequest('The setting’s treasure is switched off: roll from your books.');
       return rollTreasure({
         tier: String(req.body?.tier ?? ''),
         region,
         kind: req.body?.kind === 'individual' ? 'individual' : 'hoard',
         books: region === BOOKS_REGION ? bookTreasure(ctx.db) : undefined,
+        place: src?.place,
         fading: moduleOn(ctx.db, 'fading-salvage', cid),
       });
     }),

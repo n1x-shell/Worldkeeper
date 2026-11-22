@@ -12,7 +12,7 @@ import { buildPlan, commitPlan, listImportRuns, summarisePlan, type ImportPlan }
 import { backupPath, createBackup, listBackups, stageRestore } from '../backup/backup.js';
 import { DEFAULT_ADDITIONS_DIR, loreFiles } from '../additions.js';
 import { chosenBooks, importFivetools, scanFivetools } from '../repo/fivetools.js';
-import { deletePack, importPack, listPacks, setPackEnabled } from '../repo/rulesPacks.js';
+import { deletePack, importPack, listPacks, setPackEnabled, setPackPublished } from '../repo/rulesPacks.js';
 import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, exportPlayerZip, importCampaign, importJson } from '../backup/exporter.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { schemaVersion } from '../db/migrations.js';
@@ -202,7 +202,9 @@ export function libraryRoutes(ctx: AppContext) {
   );
   r.patch(
     '/rules/packs/:id',
-    h((req) => setPackEnabled(ctx.db, String(req.params.id), !!req.body?.enabled)),
+    h((req) =>
+      req.body?.publish !== undefined ? setPackPublished(ctx.db, String(req.params.id), !!req.body.publish) : setPackEnabled(ctx.db, String(req.params.id), !!req.body?.enabled),
+    ),
   );
   r.delete(
     '/rules/packs/:id',

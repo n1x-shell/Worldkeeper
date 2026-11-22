@@ -45,6 +45,11 @@ export function applyTables(db: DB, dir: string): string[] {
   return applyTableSpecs(db, specs);
 }
 
+const band = (name: string) => {
+  const m = /levels?\s+(\d+)\s*(?:to|-|–)\s*(\d+)/i.exec(name);
+  return m ? { level_min: Number(m[1]), level_max: Number(m[2]) } : {};
+};
+
 /** Add tables the library doesn't have yet (by name). */
 export function applyTableSpecs(db: DB, specs: TableSpec[]): string[] {
   const have = db.prepare('SELECT 1 FROM random_tables WHERE name = ?');
@@ -56,6 +61,9 @@ export function applyTableSpecs(db: DB, specs: TableSpec[]): string[] {
       die: `d${t.entries.length}`,
       entries: t.entries.map((text) => ({ weight: 1, text })),
       source: `Worldkeeper additions${t.region ? ` (${t.region})` : ''}`,
+      region_id: t.region,
+      kind: /^Encounters/i.test(t.name) ? 'encounter' : /^Treasure/i.test(t.name) ? 'treasure' : 'other',
+      ...band(t.name),
     });
     added.push(t.name);
   }

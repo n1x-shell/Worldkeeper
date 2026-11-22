@@ -9,7 +9,8 @@ import type { SourceFile } from '../server/src/import/scan';
 import { campaigns, characters, randomTables } from '../server/src/repo/campaigns';
 import { maps, markers, shapes } from '../server/src/repo/maps';
 import { campaignDate } from '../server/src/repo/calendar';
-import { encounterTableFor, journey, partyLevel, regionAt } from '../server/src/repo/journey';
+import { journey, partyLevel, regionAt } from '../server/src/repo/journey';
+import { encounterTableFor } from '../server/src/repo/tables';
 import { formatMiles, milesBetween, niceMiles, pathMiles, travelDays } from '../shared/travel';
 
 const rec = (id: string, name: string, category: string, parent = 'None'): SourceFile => ({

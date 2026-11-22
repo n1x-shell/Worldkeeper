@@ -9,6 +9,7 @@
  *  - Aliases, sources, notes, fields, canon flags, GM sections and unrevealed records are never included.
  *  - References inside revealed text to unrevealed records are reduced to plain names-free placeholders.
  */
+import { publishedRuleEntries } from '../repo/rulesPacks.js';
 import { playerOmens } from '../repo/returnClock.js';
 import { moduleOn, modulesOn } from '../repo/modules.js';
 import { playerFactionWeb } from '../repo/factionWeb.js';
@@ -421,6 +422,8 @@ export function playerSnapshot(db: DB) {
     // Whether the published handbook's builder may use the SRD rules it ships with (the GM can turn the SRD off).
     // The GM's own rules packs are never published.
     rulesSrd: (db.prepare(`SELECT value FROM settings WHERE key = 'rules_srd'`).get() as { value: string } | undefined)?.value !== 'off',
+    // Openly licensed rules packs the GM publishes: their options join the SRD in the handbook's builder.
+    openRules: publishedRuleEntries(db),
     // Which modules the handbook shows (Thinning, the Return's omens, fading salvage, renown...).
     modules: [...modulesOn(db)],
   };

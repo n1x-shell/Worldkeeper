@@ -13,6 +13,8 @@ A land defined by who rules it: a kingdom, dominion, empire or free state. Use a
 - **Leaders**: Name the people in charge now. Example: Warlord Garron Kael and General Orana Volkash (The Tyrant's Dominion)
 - **Emblem**: Describe the sign on its banners and coins. Example: a crimson blade or a clenched fist (The Tyrant's Dominion)
 - **Terrain**: List the kinds of ground found there, such as mountain, hill or urban. Example: mountain, hill, urban (The Tyrant's Dominion)
+- **Danger**: Say how safe travel is, as safe, risky or deadly; with the party's level this sets how hard its encounters are. Example: risky
+- **Wealth**: Say how well off it is, as poor, modest or rich; this weights the treasure found there. Example: modest
 
 ## A first look
 

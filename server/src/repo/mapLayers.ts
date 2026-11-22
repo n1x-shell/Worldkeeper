@@ -7,7 +7,8 @@
 import type { DB } from '../db/connection.js';
 import { parseJson } from '../lib/json.js';
 import { notFound } from '../lib/errors.js';
-import { regionTerrains } from './encounters.js';
+import { placeProfile } from './places.js';
+import { tablesFor } from './tables.js';
 import { regionState } from './regionState.js';
 import { types } from './recordTypes.js';
 
@@ -136,9 +137,7 @@ export function regionPanel(db: DB, regionId: string, campaignId: number | null)
     .map((id) => name.get(id) as { id: string; name: string; type: string } | undefined)
     .filter((e): e is { id: string; name: string; type: string } => !!e && types(db).get(e.type)?.pin === 'site')
     .sort((a, b) => a.name.localeCompare(b.name));
-  const tables = (db.prepare(`SELECT id, name, die FROM random_tables WHERE source LIKE ?`).all(`%(${regionId})%`) as { id: number; name: string; die: string }[]).sort((a, b) =>
-    a.name.localeCompare(b.name, undefined, { numeric: true }),
-  );
+  const tables = tablesFor(db, regionId);
   let state: ReturnType<typeof regionState> | null = null;
   if (campaignId) {
     try {
@@ -147,5 +146,6 @@ export function regionPanel(db: DB, regionId: string, campaignId: number | null)
       state = null;
     }
   }
-  return { region: r, terrain: regionTerrains()[regionId] ?? null, tables, places, state };
+  const profile = placeProfile(db, regionId);
+  return { region: r, terrain: profile.terrain.length ? { label: r.name, terrain: profile.terrain } : null, profile, tables, places, state };
 }

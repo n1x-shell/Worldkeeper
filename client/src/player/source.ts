@@ -104,6 +104,8 @@ export interface PlayerSnapshot {
   types?: RecordTypeDef[];
   /** False when the GM turned the built-in SRD rules off. */
   rulesSrd?: boolean;
+  /** Openly licensed rules the GM publishes, to join the SRD in the builder. */
+  openRules?: { kind: string; name: string; cls: string; data: Record<string, unknown>; source: string }[];
   /** The modules on (v0.4.4 on). */
   modules?: string[];
   /** Before modules: the setting's "campaign mechanics". */
@@ -118,7 +120,16 @@ export interface PLive {
 }
 
 export interface PlayerSource {
-  info(): Promise<{ appName: string; publishedAt?: string; realms?: RealmInfo[]; types?: RecordTypeDef[]; rulesSrd?: boolean; modules?: string[]; mechanics?: Record<string, boolean> }>;
+  info(): Promise<{
+    appName: string;
+    publishedAt?: string;
+    realms?: RealmInfo[];
+    types?: RecordTypeDef[];
+    rulesSrd?: boolean;
+    openRules?: PlayerSnapshot['openRules'];
+    modules?: string[];
+    mechanics?: Record<string, boolean>;
+  }>;
   entities(): Promise<PEntity[]>;
   entity(id: string): Promise<PEntity | null>;
   search(q: string): Promise<PEntity[]>;
@@ -226,7 +237,16 @@ export function staticSource(snapshotUrl: string, uploadsBase: string): PlayerSo
   return {
     info: async () => {
       const s = await snap();
-      return { appName: s.appName ?? 'The Worldkeeper', publishedAt: s.generated_at, realms: s.realms, types: s.types, rulesSrd: s.rulesSrd !== false, modules: s.modules, mechanics: s.mechanics };
+      return {
+        appName: s.appName ?? 'The Worldkeeper',
+        publishedAt: s.generated_at,
+        realms: s.realms,
+        types: s.types,
+        rulesSrd: s.rulesSrd !== false,
+        openRules: s.openRules,
+        modules: s.modules,
+        mechanics: s.mechanics,
+      };
     },
     entities: async () => (await snap()).entities,
     entity: async (id) => (await snap()).entities.find((e) => e.id === id) ?? null,

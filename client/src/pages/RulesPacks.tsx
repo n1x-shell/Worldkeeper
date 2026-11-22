@@ -17,6 +17,9 @@ interface Pack {
   builtin: boolean;
   imported_at: string | null;
   counts: Record<string, number>;
+  /** Openly licensed, so it can be published to players; and whether it is. */
+  open?: boolean;
+  publish?: boolean;
 }
 
 const KINDS: [string, string][] = [
@@ -48,8 +51,8 @@ export function RulesPacksPanel() {
       <p className="text-sm text-dim">
         The rules the character sheets and the builder use: spells, species, class and subclass features, backgrounds and feats. Packs from your books also bring creatures (in Your Books, the
         encounter tracker and NPC cards; only you see them) and items (their rules show in treasure and on sheets). Import a pack made from your own books, or your homebrew, as a zip of Markdown
-        files. Packs stay in this library: they reach your sheets and your table server, never the published handbook, a player export or a campaign export. Where packs overlap, the newest wins, and
-        any pack wins over the SRD.
+        files. Packs stay in this library: they reach your sheets and your table server, never a player export or a campaign export, and never the published handbook unless a pack is openly licensed
+        (CC BY, OGL, CC0, ORC) and you choose Publish to players. Where packs overlap, the newest wins, and any pack wins over the SRD.
       </p>
       <ul className="divide-y divide-line/60">
         {(data ?? []).map((p) => (
@@ -76,6 +79,15 @@ export function RulesPacksPanel() {
                 </span>
               </span>
             </Check>
+            {p.open && p.enabled && (
+              <Check
+                checked={!!p.publish}
+                label={`Publish ${p.name} to players`}
+                onChange={async (v) => changed(await api.patch<Pack[]>(`/api/rules/packs/${encodeURIComponent(p.id)}`, { publish: v }))}
+              >
+                <span className="text-xs">Publish to players</span>
+              </Check>
+            )}
             {!p.builtin && (
               <button
                 className="btn-ghost"

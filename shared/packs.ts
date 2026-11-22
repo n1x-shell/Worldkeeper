@@ -82,6 +82,8 @@ export interface PackManifest {
   /** Which record plays which part ("world.overview" → its ID). A role whose record is missing hides its part. */
   roles: Record<string, string>;
   modules: string[];
+  /** The rules pack it brings (its creatures, hazards and items), switched on when the setting is installed. */
+  rulesPack?: string;
   /** The pack's calendar (a file in the pack, shared/calendar.ts), and the worlds that use it. */
   calendar?: { file: string; worlds: string[] };
   /** The Renown module's ladder of ranks (without one, a plain ladder). */
