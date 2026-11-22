@@ -826,6 +826,17 @@ CREATE TABLE record_types (
 );
 `,
   },
+  {
+    version: 21,
+    name: "templates with guidance: each template's facts and sections, with what to write, an example and who it's for",
+    // Built-in templates (assets/templates) are written at every start by syncBuiltinTemplates; the archive's stay as
+    // imported; the GM's own are origin 'user'.
+    sql: `
+ALTER TABLE templates ADD COLUMN description TEXT NOT NULL DEFAULT '';
+ALTER TABLE templates ADD COLUMN spec TEXT NOT NULL DEFAULT '{}';
+ALTER TABLE templates ADD COLUMN updated_at TEXT;
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

@@ -1,5 +1,7 @@
 import { useRecordTypes } from '../components/recordTypes';
 import { RealmIconOf, realmClass, useRealms } from '../components/realms';
+import { ORIGIN_LABEL, TemplatePreview, type ClientTemplate } from '../components/TemplatePreview';
+import { recordFromTemplate } from '@shared/templates';
 import { REALM_KIND_LABELS } from '@shared/realms';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
@@ -180,7 +182,8 @@ export function NewEntity() {
   const [sp] = useSearchParams();
   const nav = useNavigate();
   const { reloadIndex } = useAppState();
-  const { data: templates } = useApi<{ id: string; name: string; type: string; fields: string[]; sections: string[] }[]>('/api/templates');
+  const { data: templates } = useApi<ClientTemplate[]>('/api/templates');
+  const [templateId, setTemplateId] = useState('');
   const [form, setForm] = useState({
     name: '',
     type: (sp.get('type') as EntityType) || 'custom',
@@ -196,7 +199,9 @@ export function NewEntity() {
     const t = setTimeout(async () => setSimilar(await api.get(`/api/entities/similar${qs({ name: form.name })}`)), 250);
     return () => clearTimeout(t);
   }, [form.name]);
-  const template = templates?.find((t) => t.type === form.type);
+  // The type's templates, yours first, then the built-in one, then your archive's.
+  const forType = (templates ?? []).filter((t) => t.type === form.type);
+  const template = forType.find((t) => t.id === templateId) ?? forType[0];
   const debug = useDebug();
   return (
     <div className="max-w-3xl space-y-4">
@@ -240,10 +245,28 @@ export function NewEntity() {
           <input className="input" value={form.source_raw} onChange={(e) => setForm({ ...form, source_raw: e.target.value })} />
         </Field>
       </Card>
-      {template && debug && (
-        <p className="text-sm text-dim">
-          Using the library template <strong>{template.name}</strong>: {template.fields.length} fields and {template.sections.length} sections will be added, all marked UNDEFINED.
-        </p>
+      {template && (
+        <Card
+          title={
+            <span className="flex flex-wrap items-center gap-2">
+              What a {recordTypes.label(form.type).toLowerCase()} asks for
+              {forType.length > 1 ? (
+                <select className="input w-auto py-0.5 text-xs font-sans" value={template.id} onChange={(e) => setTemplateId(e.target.value)} aria-label="Template">
+                  {forType.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name} ({ORIGIN_LABEL[t.origin].toLowerCase()})
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <span className="text-xs text-dim font-sans normal-case tracking-normal">{ORIGIN_LABEL[template.origin]} template</span>
+              )}
+            </span>
+          }
+        >
+          <TemplatePreview template={template} />
+          <p className="text-xs text-dim mt-3">The record starts with these facts and sections, empty, for you to fill in.</p>
+        </Card>
       )}
       {similar.length > 0 && (
         <Card className="border-warn/50 text-sm">
@@ -262,9 +285,7 @@ export function NewEntity() {
         disabled={!form.name.trim()}
         onClick={async () => {
           try {
-            const std = new Set(['id', 'name', 'alternate names', 'category', 'parent', 'continent or realm', 'canon status', 'source', 'tags']);
-            const fields = (template?.fields ?? []).filter((f) => !std.has(f.toLowerCase())).map((f) => [f, 'UNDEFINED']);
-            const body = `# ${form.name}\n\n${(template?.sections ?? ['Overview']).map((s) => `## ${s}\n\nUNDEFINED`).join('\n\n')}\n`;
+            const { fields, body } = recordFromTemplate(template ?? { facts: [], sections: [] }, form.name.trim());
             const e = await api.post<Entity>('/api/entities', {
               ...form,
               category_raw: recordTypes.label(form.type),

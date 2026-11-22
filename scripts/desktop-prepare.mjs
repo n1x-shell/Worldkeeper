@@ -35,7 +35,8 @@ fs.cpSync(path.join(root, 'dist-player'), path.join(out, 'player-site'), { recur
 // The Worldkeeper additions (new lore records, links, rumour text, mysteries) for Library > Worldkeeper additions.
 fs.rmSync(path.join(out, 'additions'), { recursive: true, force: true });
 // Also the data the server reads at run time: stat blocks, the Return's omens, encounter terrains, the setting pack.
-for (const dir of ['lore', 'player-text', 'maps', 'adventures', 'tables', 'treasure', 'statblocks', 'return', 'encounters', 'setting-pack'])
+// And the built-in record templates.
+for (const dir of ['lore', 'player-text', 'maps', 'adventures', 'tables', 'treasure', 'statblocks', 'return', 'encounters', 'setting-pack', 'templates'])
   fs.cpSync(path.join(root, 'assets', dir), path.join(out, 'additions', dir), { recursive: true, filter: (src) => !src.split(path.sep).includes('drafts') });
 
 // 2. Server bundle (everything except the native driver)

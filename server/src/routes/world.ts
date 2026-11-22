@@ -29,6 +29,7 @@ import { peekEntity } from '../repo/peek.js';
 import { createRealm, deleteRealm, getRealm, listRealms, realmExists, reorderRealms, updateRealm } from '../repo/realms.js';
 import { timelineRealms } from '../import/importer.js';
 import { createRecordType, deleteRecordType, listRecordTypes, updateRecordType } from '../repo/recordTypes.js';
+import { createTemplate, deleteTemplate, duplicateTemplate, listTemplates, updateTemplate } from '../repo/templates.js';
 import { TYPE_GROUPS } from '../../../shared/domain.js';
 import { revealDuringPlay } from '../repo/reveal.js';
 import { createEra, listEras, setRowEra, updateEra } from '../repo/eras.js';
@@ -314,15 +315,29 @@ export function worldRoutes(ctx: AppContext) {
       return d;
     }),
   );
+  // Templates: the built-in ones, the archive's, and the GM's own (Library → Templates).
   r.get(
     '/templates',
-    h(() =>
-      (ctx.db.prepare('SELECT * FROM templates ORDER BY name').all() as { fields: string; sections: string }[]).map((t) => ({
-        ...t,
-        fields: parseJson(t.fields, []),
-        sections: parseJson(t.sections, []),
-      })),
-    ),
+    h(() => listTemplates(ctx.db)),
+  );
+  r.post(
+    '/templates',
+    h((req) => createTemplate(ctx.db, req.body)),
+  );
+  r.post(
+    '/templates/:id/duplicate',
+    h((req) => duplicateTemplate(ctx.db, String(req.params.id))),
+  );
+  r.put(
+    '/templates/:id',
+    h((req) => updateTemplate(ctx.db, String(req.params.id), req.body)),
+  );
+  r.delete(
+    '/templates/:id',
+    h((req) => {
+      deleteTemplate(ctx.db, String(req.params.id));
+      return { ok: true };
+    }),
   );
 
   // Canon review
