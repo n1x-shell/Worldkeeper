@@ -5,11 +5,13 @@
 import type { DB } from '../db/connection.js';
 import { notFound } from '../lib/errors.js';
 import { generateNames } from '../../../shared/names.js';
+import { types } from './recordTypes.js';
 
 const COMMON = /Common names[.:]*\**\s*([^\n]+)/i;
 
 export function namePeoples(db: DB) {
-  const rows = db.prepare(`SELECT id, name, body, player_summary FROM entities WHERE type IN ('people', 'species') AND archived = 0 ORDER BY name`).all() as {
+  const folk = types(db).with('folk');
+  const rows = db.prepare(`SELECT id, name, body, player_summary FROM entities WHERE type IN (${folk.map(() => '?').join(',') || "''"}) AND archived = 0 ORDER BY name`).all(...folk) as {
     id: string;
     name: string;
     body: string;

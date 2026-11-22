@@ -4,6 +4,7 @@
  * points at exactly one record, so nothing is linked on a guess.
  */
 import type { DB } from '../db/connection.js';
+import { types as typeRegistry } from './recordTypes.js';
 
 /** Titles that the source sometimes writes before a name and sometimes leaves off. */
 const TITLES =
@@ -43,12 +44,14 @@ export interface NameIndex {
 }
 
 /** Kinds whose names are often ordinary words ("Guardian", "Warrior"); they are only found in lists, not prose. */
-const GENERIC_TYPES = new Set(['creature', 'calling', 'people', 'item', 'rule', 'system', 'species', 'culture']);
 
 export function loadNameIndex(db: DB): NameIndex {
+  const reg = typeRegistry(db);
+  const GENERIC_TYPES = new Set(reg.with('commonNoun'));
   const rows = db
-    .prepare(`SELECT id, name, type, aliases FROM entities WHERE archived = 0 AND type NOT IN ('index','register','redirect')`)
-    .all() as { id: string; name: string; type: string; aliases: string }[];
+    .prepare(`SELECT id, name, type, aliases FROM entities WHERE archived = 0`)
+    .all()
+    .filter((r) => !reg.get((r as { type: string }).type)?.traits.meta) as { id: string; name: string; type: string; aliases: string }[];
   const byName = new Map<string, Set<string>>();
   const types = new Map<string, string>();
   for (const r of rows) {

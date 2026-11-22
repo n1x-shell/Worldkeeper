@@ -34,6 +34,7 @@ import { revealDuringPlay } from '../repo/reveal.js';
 import { createEra, listEras, setRowEra, updateEra } from '../repo/eras.js';
 import { getProfile, influenceMatrix, saveProfile } from '../repo/profiles.js';
 import { makeNames, namePeoples } from '../repo/names.js';
+import { types as typeRegistry } from '../repo/recordTypes.js';
 
 export function worldRoutes(ctx: AppContext) {
   const r = Router();
@@ -418,9 +419,9 @@ export function worldRoutes(ctx: AppContext) {
         recentEdits: recentlyEdited(db, 8),
         favorites: listEntities(db, { favorite: true }).slice(0, 12),
         mysteries: db.prepare(`SELECT id, name, type, realm FROM entities WHERE archived = 0 AND (id IN ('WLD-907','WLD-908','DEC-901') OR tags LIKE '%"cat/secret"%') ORDER BY id LIMIT 10`).all(),
-        keyPlaces: quick(['settlement', 'vault', 'ethereal_domain'], 10),
+        keyPlaces: quick(typeRegistry(db).list.filter((t) => t.pin === 'site').map((t) => t.key), 10),
         keyPeople: db.prepare(`SELECT id, name, type, realm FROM entities WHERE type = 'npc' AND archived = 0 ORDER BY favorite DESC, id LIMIT 8`).all(),
-        factions: quick(['faction', 'cult'], 12),
+        factions: quick(typeRegistry(db).with('group'), 12),
         importRuns: db.prepare(`SELECT id, source_name, status, started_at FROM import_runs ORDER BY id DESC LIMIT 3`).all(),
         typeGroups: TYPE_GROUPS,
       };

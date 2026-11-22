@@ -7,6 +7,7 @@ import type { DB } from '../db/connection.js';
 import { notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
 import { rankOf } from '../../../shared/standing.js';
+import { types } from './recordTypes.js';
 
 export const REGION_IDS = [
   'REG-001',
@@ -57,6 +58,8 @@ export function regionState(db: DB, campaignId: number, regionId: string) {
   if (!r) throw notFound('Region');
   const ids = within(db, regionId);
   const list = [...ids];
+  const reg = types(db);
+  const typeOf = new Map((db.prepare(`SELECT id, type FROM entities WHERE id IN (${list.map(() => '?').join(',') || "''"})`).all(...list) as { id: string; type: string }[]).map((x) => [x.id, x.type]));
   const inList = `(${list.map(() => '?').join(',')})`;
   const name = db.prepare('SELECT name, type FROM entities WHERE id = ?');
   const nm = (id: string) => (name.get(id) as { name: string } | undefined)?.name ?? id;
@@ -114,7 +117,7 @@ export function regionState(db: DB, campaignId: number, regionId: string) {
   return {
     region: { id: r.id, name: r.name, type: r.type },
     holder: hold,
-    places: list.filter((id) => id !== regionId && /^(SET|LOC|VLT|BLD)-/.test(id)).length,
+    places: list.filter((id) => id !== regionId && reg.get(typeOf.get(id) ?? '')?.pin === 'site').length,
     agendas: agendas.map((a) => ({ ...a, faction: nm(a.faction_id) })),
     standing,
     changes: changes.map((c) => ({ ...c, entity: nm(c.entity_id) })),

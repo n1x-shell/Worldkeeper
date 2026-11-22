@@ -28,6 +28,7 @@ import { splitSections } from '../import/parseMarkdown.js';
 import { parseRefs, type MentionIndex } from '../../../shared/mentions.js';
 import { loadMentionIndex } from '../repo/mentions.js';
 import { playerExploration } from '../repo/exploration.js';
+import { types } from '../repo/recordTypes.js';
 
 export interface PlayerEntity {
   id: string;
@@ -83,8 +84,6 @@ function scrubRefs(text: string, revealed: Set<string>, index: MentionIndex): st
 }
 
 /** Kinds of record whose names are ordinary words too often to link from prose. */
-const NO_AUTOLINK = new Set(['creature', 'calling', 'people', 'item', 'rule', 'system', 'species', 'culture', 'index', 'register', 'redirect', 'adventure_hook']);
-const PLACE_TYPES = new Set(['world', 'continent', 'realm', 'region', 'nation', 'settlement', 'landmark', 'building', 'vault', 'ethereal_domain']);
 interface Lexicon {
   re: RegExp | null;
   byName: Map<string, string>;
@@ -92,6 +91,10 @@ interface Lexicon {
 
 /** Names of revealed records, as they are written in prose (no leading "The", no nickname or bracketed note; a god by the name before the comma). */
 function buildLexicon(db: DB): Lexicon {
+  const reg = types(db);
+  // Not linked from prose: ordinary-word names, bookkeeping and adventure hooks. A shared name goes to the place.
+  const NO_AUTOLINK = new Set(reg.list.filter((t) => t.traits.commonNoun || t.traits.meta || t.category === 'adventure').map((t) => t.key));
+  const PLACE_TYPES = new Set(reg.with('place'));
   const rows = db.prepare(`SELECT id, name, type FROM entities WHERE revealed = 1 AND archived = 0`).all() as { id: string; name: string; type: string }[];
   const groups = new Map<string, { id: string; type: string }[]>();
   for (const r of rows) {
@@ -237,7 +240,8 @@ export function playerRealms(db: DB): Omit<RealmInfo, 'records'>[] {
 
 /** The continent of every place record, for working out where a people is found. */
 function placeRealms(db: DB) {
-  const rows = db.prepare(`SELECT id, realm FROM entities WHERE type IN ('continent','region','nation','settlement','landmark','building','dungeon','vault') AND archived = 0`).all() as {
+  const P = types(db).with('place');
+  const rows = db.prepare(`SELECT id, realm FROM entities WHERE type IN (${P.map(() => '?').join(',') || "''"}) AND archived = 0`).all(...P) as {
     id: string;
     realm: string;
   }[];

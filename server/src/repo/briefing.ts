@@ -14,6 +14,7 @@ import { bookTreasure } from './bookData.js';
 import { getMechanics } from './mechanics.js';
 import { terrainFor } from './encounters.js';
 import { comingUp } from './calendar.js';
+import { types } from './recordTypes.js';
 
 interface Ent {
   id: string;
@@ -41,9 +42,12 @@ export function sessionBriefing(db: DB, sessionId: number) {
 
   // The chain of places it sits in (settlement, region, continent), and the region it belongs to.
   const chain: Ent[] = [];
-  const PLACE = /^(SET|LOC|REG|ETH|CON|VLT|BLD)-/;
-  for (let e = here, guard = 0; e && guard < 8 && PLACE.test(e.id) && !chain.some((x) => x.id === e!.id); e = get(e.parent_id), guard++) chain.push(e);
-  const region = chain.find((e) => /^(REG|ETH)-/.test(e.id)) ?? chain.find((e) => e.id === 'SET-301');
+  const reg = types(db);
+  const isPlace = (e: Ent) => !!reg.get(e.type)?.traits.place;
+  // A region-sized place below the continent or world level: a region, nation or domain (not the whole continent).
+  const isRegion = (e: Ent) => !!reg.get(e.type)?.traits.regionLike && !reg.get(e.type)?.traits.intro;
+  for (let e = here, guard = 0; e && guard < 8 && isPlace(e) && !chain.some((x) => x.id === e!.id); e = get(e.parent_id), guard++) chain.push(e);
+  const region = chain.find(isRegion) ?? chain.find((e) => e.id === 'SET-301');
 
   // Places nearby: what the location contains, and its siblings within the same parent.
   // Ids that count as "here": the place, the place it's in, and what's nearby (not the whole continent).

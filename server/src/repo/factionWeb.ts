@@ -4,6 +4,7 @@
  * already names the other in its "Who opposes them" line; any other tie players see only once the GM reveals it.
  */
 import type { DB } from '../db/connection.js';
+import { types } from './recordTypes.js';
 
 export interface Tie {
   a: string;
@@ -27,7 +28,8 @@ interface Group {
 const key = (a: string, b: string) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 
 export function factionGroups(db: DB) {
-  return db.prepare(`SELECT id, name, type, realm, revealed, player_summary FROM entities WHERE type IN ('faction', 'cult') AND archived = 0 ORDER BY name`).all() as Group[];
+  const G = types(db).with('group');
+  return db.prepare(`SELECT id, name, type, realm, revealed, player_summary FROM entities WHERE type IN (${G.map(() => '?').join(',') || "''"}) AND archived = 0 ORDER BY name`).all(...G) as Group[];
 }
 
 /** Ties every player already knows: the handbook's "Who opposes them" lines. */

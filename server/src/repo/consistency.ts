@@ -5,6 +5,7 @@
 import type { DB } from '../db/connection.js';
 import { parseJson } from '../lib/json.js';
 import { treasureData } from './treasure.js';
+import { types } from './recordTypes.js';
 
 export interface Problem {
   check: string;
@@ -112,7 +113,7 @@ export function consistencyReport(db: DB): { checked: number; problems: Problem[
       add('Revealed but empty', 'warning', `${e.name} is revealed to players, but they'd see nothing on its page.`, [e.id]);
 
   peopleChecks(db, add);
-  lootChecks(add, ids, new Map(all.map((e) => [e.id, e.type])));
+  lootChecks(add, ids, new Map(all.map((e) => [e.id, e.type])), new Set(types(db).with('holdable')));
   leakChecks(db, add);
 
   return { checked: all.length, problems: out.sort((a, b) => (a.severity === b.severity ? a.check.localeCompare(b.check) : a.severity === 'error' ? -1 : 1)) };
@@ -190,13 +191,13 @@ function peopleChecks(db: DB, add: Add) {
 }
 
 /** 10. Treasure: the catalogue and pools point at real records, pools and rarities. */
-function lootChecks(add: Add, ids: Set<string>, typeOf: Map<string, string>) {
+function lootChecks(add: Add, ids: Set<string>, typeOf: Map<string, string>, holdable: Set<string>) {
   const data = treasureData();
   const rarities = ['common', 'uncommon', 'rare', 'very rare', 'legendary', 'artifact'];
   const tierRarities: Record<number, string[]> = { 1: ['common', 'uncommon'], 2: ['uncommon', 'rare'], 3: ['rare', 'very rare'], 4: ['very rare', 'legendary'] };
   for (const [id, it] of Object.entries(data.catalogue.items)) {
     if (!ids.has(id)) add('Treasure that points at missing records', 'error', `The treasure catalogue lists ${id}, which doesn't exist.`, []);
-    else if (!['item', 'artifact', 'shard', 'vault_key'].includes(typeOf.get(id) ?? ''))
+    else if (!holdable.has(typeOf.get(id) ?? ''))
       add('Treasure that points at missing records', 'warning', `The treasure catalogue lists ${id}, which isn't an item.`, [id]);
     if (!rarities.includes(it.rarity)) add('Treasure with a bad rarity', 'error', `${id} has the rarity "${it.rarity}".`, [id]);
     else if (tierRarities[it.tier] && !tierRarities[it.tier].includes(it.rarity)) add('Treasure with a bad rarity', 'warning', `${id} is ${it.rarity}, which is unusual at tier ${it.tier}.`, [id]);

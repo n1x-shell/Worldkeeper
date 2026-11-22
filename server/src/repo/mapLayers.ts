@@ -9,12 +9,10 @@ import { parseJson } from '../lib/json.js';
 import { notFound } from '../lib/errors.js';
 import { regionTerrains } from './encounters.js';
 import { regionState } from './regionState.js';
+import { types } from './recordTypes.js';
 
 /** Record types that are places (what an adventure or a quest can happen at). */
-const PLACE_TYPES = ['world', 'continent', 'realm', 'region', 'nation', 'settlement', 'landmark', 'building', 'dungeon', 'vault', 'ethereal_domain', 'adventure_location'];
-const PLACE_IN = `(${PLACE_TYPES.map((t) => `'${t}'`).join(',')})`;
 /** Places worth listing inside a region (not the region's own sub-regions). */
-const LISTED = new Set(['settlement', 'landmark', 'building', 'dungeon', 'vault', 'ethereal_domain', 'adventure_location']);
 
 export type LayerId = 'quests' | 'adventures' | 'people' | 'encounters';
 export interface LayerItem {
@@ -81,7 +79,8 @@ export function campaignLayers(db: DB, campaignId: number, mapId: number): Layer
     add('quests', q.location_id, { id: `quest:${q.id}`, label: q.title, href: '/campaign/quests', hint: `${q.status}${q.player_visible ? '' : ', hidden from players'}` });
 
   // The places in the campaign's adventures (not finished or shelved) and their scenes.
-  const isPlace = db.prepare(`SELECT 1 FROM entities WHERE id = ? AND type IN ${PLACE_IN}`);
+  const places = types(db).with('place');
+  const isPlace = db.prepare(`SELECT 1 FROM entities WHERE id = ? AND type IN (${places.map(() => '?').join(',') || "''"})`);
   for (const a of db.prepare(`SELECT id, title, status, linked_ids FROM adventures WHERE campaign_id = ? AND status NOT IN ('completed', 'shelved')`).all(campaignId) as {
     id: number;
     title: string;
@@ -90,7 +89,7 @@ export function campaignLayers(db: DB, campaignId: number, mapId: number): Layer
   }[]) {
     const ids = new Set(parseJson<string[]>(a.linked_ids, []));
     for (const s of db.prepare('SELECT linked_ids FROM scenes WHERE adventure_id = ?').all(a.id) as { linked_ids: string }[]) for (const id of parseJson<string[]>(s.linked_ids, [])) ids.add(id);
-    for (const id of ids) if (isPlace.get(id)) add('adventures', id, { id: `adventure:${a.id}`, label: a.title, href: `/adventure/${a.id}`, hint: a.status });
+    for (const id of ids) if (isPlace.get(id, ...places)) add('adventures', id, { id: `adventure:${a.id}`, label: a.title, href: `/adventure/${a.id}`, hint: a.status });
   }
 
   // Where people live or are found.
@@ -135,7 +134,7 @@ export function regionPanel(db: DB, regionId: string, campaignId: number | null)
   const name = db.prepare(`SELECT id, name, type FROM entities WHERE id = ? AND archived = 0`);
   const places = ids
     .map((id) => name.get(id) as { id: string; name: string; type: string } | undefined)
-    .filter((e): e is { id: string; name: string; type: string } => !!e && LISTED.has(e.type))
+    .filter((e): e is { id: string; name: string; type: string } => !!e && types(db).get(e.type)?.pin === 'site')
     .sort((a, b) => a.name.localeCompare(b.name));
   const tables = (db.prepare(`SELECT id, name, die FROM random_tables WHERE source LIKE ?`).all(`%(${regionId})%`) as { id: number; name: string; die: string }[]).sort((a, b) =>
     a.name.localeCompare(b.name, undefined, { numeric: true }),

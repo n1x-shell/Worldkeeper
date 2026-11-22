@@ -6,6 +6,7 @@ import { collectRefs, type MentionIndex } from '../../../shared/mentions.js';
 import { loadMentionIndex } from './mentions.js';
 import { listItems, loadNameIndex, type NameIndex } from './nameMatch.js';
 import { badRequest, notFound } from '../lib/errors.js';
+import { types } from './recordTypes.js';
 
 interface RelRow {
   id: number;
@@ -29,44 +30,52 @@ const FIELD_RELATIONS: { match: RegExp; type: Relationship['type']; reverse: boo
   { match: /^region$/i, type: 'part_of', reverse: false },
 ];
 
-const PLACE_TYPES = new Set(['continent', 'realm', 'region', 'nation', 'settlement', 'landmark', 'building', 'dungeon', 'vault', 'ethereal_domain', 'adventure_location', 'world']);
-const GROUP_TYPES = new Set(['faction', 'cult', 'family']);
+/** The library's places, groups, people and holdable things (from its type registry). */
+interface Kinds {
+  place: Set<string>;
+  group: Set<string>;
+  person: Set<string>;
+  held: Set<string>;
+}
+const kindsOf = (db: DB): Kinds => {
+  const t = types(db);
+  return { place: new Set(t.with('place')), group: new Set(t.with('group')), person: new Set(t.with('person')), held: new Set(t.with('holdable')) };
+};
 
 /** Section headings whose text is a list of people, groups or places. */
 const LIST_SECTION =
   /^(?:associated groups|known relationships and locations|associated people and places|known figures|approved leader|leaders?|leadership|family|members?|canon location|location|closest interested party|held by|holder|bearer)\b/i;
-const HELD_TYPES = new Set(['shard', 'artifact', 'item', 'vault_key']);
 
 /**
  * What a name in a list section means, given who wrote it and what it names.
  * Returns [type, reverse]: reverse means the named record is the source (e.g. a faction's "Leaders" list gives
  * "NPC leads faction").
  */
-function sectionRelation(heading: string, sourceType: string, targetType: string): [Relationship['type'], boolean] | null {
+function sectionRelation(k: Kinds, heading: string, sourceType: string, targetType: string): [Relationship['type'], boolean] | null {
   const h = heading.toLowerCase();
-  if (HELD_TYPES.has(sourceType)) {
+  if (k.held.has(sourceType)) {
     // Where a treasure lies, who holds it, and who is after it.
-    if (/location/.test(h) && PLACE_TYPES.has(targetType)) return ['contains', true];
-    if (/interested/.test(h) && (GROUP_TYPES.has(targetType) || targetType === 'npc')) return ['seeks', true];
-    if (/held|holder|bearer/.test(h) && (GROUP_TYPES.has(targetType) || targetType === 'npc')) return ['controls', true];
+    if (/location/.test(h) && k.place.has(targetType)) return ['contains', true];
+    if (/interested/.test(h) && (k.group.has(targetType) || k.person.has(targetType))) return ['seeks', true];
+    if (/held|holder|bearer/.test(h) && (k.group.has(targetType) || k.person.has(targetType))) return ['controls', true];
     return null;
   }
-  if (sourceType === 'npc') {
-    if (GROUP_TYPES.has(targetType)) return ['member_of', false];
-    if (PLACE_TYPES.has(targetType)) {
+  if (k.person.has(sourceType)) {
+    if (k.group.has(targetType)) return ['member_of', false];
+    if (k.place.has(targetType)) {
       // A place in a Family section is the family's seat, not necessarily where this person lives now.
       if (/^family/.test(h)) return ['comes_from', false];
       // Nobody lives in a sealed vault; they want it, guard it or came from it.
       if (targetType === 'vault') return ['related_to', false];
       return ['lives_in', false];
     }
-    if (targetType === 'npc') return ['related_to', false];
+    if (k.person.has(targetType)) return ['related_to', false];
     return null;
   }
-  if (GROUP_TYPES.has(sourceType)) {
-    if (targetType === 'npc') return /leader|leadership/.test(h) ? ['leads', true] : ['member_of', true];
-    if (PLACE_TYPES.has(targetType)) return ['related_to', false];
-    if (GROUP_TYPES.has(targetType)) return ['related_to', false];
+  if (k.group.has(sourceType)) {
+    if (k.person.has(targetType)) return /leader|leadership/.test(h) ? ['leads', true] : ['member_of', true];
+    if (k.place.has(targetType)) return ['related_to', false];
+    if (k.group.has(targetType)) return ['related_to', false];
   }
   return null;
 }
@@ -121,6 +130,7 @@ export function rebuildDerivedRelationships(db: DB, id: string, index: MentionIn
   }
   // Lists written in plain names ("Associated groups: Celestial Order", "Known figures: Hadrek, Sister Kallisa").
   const nameIndex = names ?? loadNameIndex(db);
+  const kinds = kindsOf(db);
   {
     let heading = '';
     const sections = new Map<string, string[]>();
@@ -144,7 +154,7 @@ export function rebuildDerivedRelationships(db: DB, id: string, index: MentionIn
       for (const t of nameIndex.scan(text)) targets.add(t);
       for (const t of targets) {
         if (t === id) continue;
-        const rel = sectionRelation(sec, row.type, nameIndex.typeOf(t) ?? '');
+        const rel = sectionRelation(kinds, sec, row.type, nameIndex.typeOf(t) ?? '');
         if (!rel) continue;
         const [s, d] = rel[1] ? [t, id] : [id, t];
         insert.run(s, d, rel[0], 1, sec, 'import-field', `field:${id}:section:${sec}`);
