@@ -184,6 +184,7 @@ export function Layout() {
         className={({ isActive }) =>
           `flex items-center gap-2.5 mx-2 px-2 py-1.5 rounded-md text-[13px] transition-colors ${compact ? 'justify-center' : ''} ${isActive ? 'bg-gold/10 text-gold font-medium' : 'text-ink/80 hover:bg-raised hover:text-ink'}`
         }
+        style={!compact && it.depth ? { paddingLeft: 8 + it.depth * 16 } : undefined}
       >
         <span className="shrink-0 opacity-90">
           <it.icon size={I} />

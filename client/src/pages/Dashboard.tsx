@@ -387,7 +387,7 @@ export function Dashboard() {
       {/* The realms. */}
       <section aria-labelledby="dash-realms">
         <h2 id="dash-realms" className="title-rule text-lg mb-3">
-          Realms
+          Worlds &amp; Realms
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {realmCards.map((r) => {

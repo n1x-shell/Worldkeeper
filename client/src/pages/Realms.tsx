@@ -18,10 +18,11 @@ import { Empty, Loading } from '../components/ui/feedback';
 
 type Draft = { id?: string; name: string; kind: RealmKind; parent_id: string | null; color: RealmColor; icon: RealmIcon; description: string };
 
-const blank = (list: RealmInfo[]): Draft => ({
+/** A new world, continent (inside the first world) or plane (on its own, beside the worlds). */
+const blank = (list: RealmInfo[], kind: RealmKind = list.length ? 'continent' : 'world'): Draft => ({
   name: '',
-  kind: list.length ? 'continent' : 'world',
-  parent_id: list.find((r) => r.kind === 'world' && !r.archived)?.id ?? null,
+  kind,
+  parent_id: kind === 'continent' || kind === 'region_group' ? (list.find((r) => r.kind === 'world' && !r.archived)?.id ?? null) : null,
   // The next colour nobody uses yet.
   color: REALM_COLORS.find((c) => !list.some((r) => r.color === c)) ?? 'slate',
   icon: 'compass',
@@ -69,12 +70,20 @@ export function RealmsPage() {
   return (
     <div className="space-y-5 max-w-4xl">
       <PageHeader
-        title="Realms"
-        subtitle="The worlds, continents, planes and regions your records belong to. Each gets a page, a colour and a place in the sidebar."
+        title="Worlds & Realms"
+        subtitle="Your worlds, the continents inside them, and the planes beside them. Every record belongs to one; each gets a page, a colour and a place in the sidebar."
         actions={
-          <button className="btn-primary" onClick={() => setEditing(blank(realms.list))}>
-            <Plus size={14} /> New realm
-          </button>
+          <>
+            <button className="btn-primary" onClick={() => setEditing(blank(realms.list, 'continent'))}>
+              <Plus size={14} /> Add a continent
+            </button>
+            <button className="btn" onClick={() => setEditing(blank(realms.list, 'plane'))}>
+              <Plus size={14} /> Add a plane
+            </button>
+            <button className="btn" onClick={() => setEditing(blank(realms.list, 'world'))}>
+              <Plus size={14} /> Add a world
+            </button>
+          </>
         }
       />
       {archivedN > 0 && (
@@ -100,7 +109,9 @@ export function RealmsPage() {
               const siblings = realms.list.filter((x) => x.parent_id === r.parent_id);
               const at = siblings.findIndex((x) => x.id === r.id);
               return (
-                <li key={r.id} className={`${realmClass(r)} flex flex-wrap items-center gap-3 px-4 py-3 ${r.archived ? 'opacity-60' : ''}`} style={{ paddingLeft: 16 + depth(r) * 24 }}>
+                <li key={r.id} className={`${realmClass(r)} relative flex flex-wrap items-center gap-3 px-4 py-3 ${r.archived ? 'opacity-60' : ''}`} style={{ paddingLeft: 16 + depth(r) * 32 }}>
+                  {/* What it's inside: a branch from its parent's line. */}
+                  {depth(r) > 0 && <span aria-hidden className="absolute top-0 bottom-1/2 border-l-2 border-b-2 border-line rounded-bl-md w-3" style={{ left: 16 + (depth(r) - 1) * 32 + 9 }} />}
                   <span className="text-realm shrink-0">
                     <RealmIconOf realm={r} size={20} />
                   </span>
@@ -109,7 +120,8 @@ export function RealmsPage() {
                       <Link to={`/realm/${r.id}`} className="font-display text-[17px] text-realm hover:underline">
                         {r.name}
                       </Link>
-                      <span className="text-xs text-dim">{REALM_KIND_LABELS[r.kind]}</span>
+                      <Badge tone="realm">{REALM_KIND_LABELS[r.kind]}</Badge>
+                      {r.parent_id && <span className="text-xs text-dim">in {realms.name(r.parent_id)}</span>}
                       {r.archived && <Badge>Archived</Badge>}
                     </div>
                     <div className="text-xs text-dim mt-0.5">
@@ -186,7 +198,7 @@ function RealmEditor({ draft, realms, onClose, onSave }: { draft: Draft; realms:
   };
   return (
     <Modal
-      title={d.id ? `Edit ${draft.name}` : 'New realm'}
+      title={d.id ? `Edit ${draft.name}` : `New ${REALM_KIND_LABELS[draft.kind].toLowerCase()}`}
       onClose={onClose}
       footer={
         <>
@@ -194,7 +206,7 @@ function RealmEditor({ draft, realms, onClose, onSave }: { draft: Draft; realms:
             Cancel
           </button>
           <button className="btn-primary" disabled={!d.name.trim() || busy} onClick={() => void save()}>
-            {d.id ? 'Save' : 'Add realm'}
+            {d.id ? 'Save' : `Add ${REALM_KIND_LABELS[d.kind].toLowerCase()}`}
           </button>
         </>
       }

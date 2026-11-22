@@ -1,6 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { UserRound, Printer,
+import {
+  UserRound,
+  Printer,
   BookOpen,
   ChevronsLeft,
   ChevronsRight,
@@ -72,7 +74,7 @@ const write = (k: string, v: string) => {
   }
 };
 
-type Item = { to: string; label: string; icon: ReactNode; end?: boolean };
+type Item = { to: string; label: string; icon: ReactNode; end?: boolean; depth?: number };
 type Workspace = { id: PlayerWorkspace; label: string; icon: ReactNode; to: string; items: Item[] };
 
 /**
@@ -98,6 +100,13 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
   const types = new Set((entities ?? []).map((e) => e.type));
   const realmsUsed = new Set((entities ?? []).flatMap((e) => [e.realm, ...(e.realms ?? [])]));
   const realms = useRealms();
+  // The realms with entries, each nested under what holds it (Aetheris and Kaelmar under The World).
+  const shownRealms = realms.list.filter((r) => !r.archived && realmsUsed.has(r.id));
+  const realmDepth = (r: (typeof shownRealms)[number], n = 0): number => {
+    const p = r.parent_id ? shownRealms.find((x) => x.id === r.parent_id) : undefined;
+    return p && n < 8 ? 1 + realmDepth(p, n + 1) : 0;
+  };
+  const realmItems: Item[] = shownRealms.map((r) => ({ to: `${base}/realm/${r.id}`, label: r.name, icon: <RealmIconOf realm={r} size={I} />, depth: realmDepth(r) }));
   const groups = [...PLAYER_GROUPS, OTHER_GROUP].filter((g) =>
     g === OTHER_GROUP ? (entities ?? []).some((e) => !PLAYER_GROUPS.some((p) => p.types.includes(e.type))) : g.types.some((t) => types.has(t)),
   );
@@ -117,10 +126,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
       label: 'World',
       icon: <Home size={I} />,
       to: base || '/',
-      items: [
-        { to: base || '/', label: 'Home', icon: <Home size={I} />, end: true },
-        ...realms.list.filter((r) => !r.archived && realmsUsed.has(r.id)).map((r) => ({ to: `${base}/realm/${r.id}`, label: r.name, icon: <RealmIconOf realm={r} size={I} /> })),
-      ],
+      items: [{ to: base || '/', label: 'Home', icon: <Home size={I} />, end: true }, ...realmItems],
     },
     {
       id: 'records',
@@ -211,6 +217,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
           isActive ? 'bg-gold/10 text-gold' : 'text-ink/80 hover:bg-raised hover:text-ink'
         }`
       }
+      style={!compact && it.depth ? { paddingLeft: 8 + it.depth * 16 } : undefined}
     >
       <span className="shrink-0 opacity-90">{it.icon}</span>
       {!compact && <span className="truncate">{it.label}</span>}

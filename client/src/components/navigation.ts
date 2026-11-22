@@ -61,7 +61,16 @@ import {
 import type { RealmIcon } from '../../../shared/realms';
 import { REALM_ICON_COMPONENTS } from './realmIcons';
 
-export type Item = { to: string; label: string; icon: LucideIcon; /** Opens in a new tab (outside the GM shell). */ external?: boolean };
+/** The sidebar group that lists the library's worlds, continents and planes. */
+export const REALMS_GROUP = 'Worlds & Realms';
+
+export type Item = {
+  to: string;
+  label: string;
+  icon: LucideIcon;
+  /** Opens in a new tab (outside the GM shell). */ external?: boolean;
+  /** How far it's nested (a continent inside its world). */ depth?: number;
+};
 export type Group = { title: string; items: Item[] };
 export type WorkspaceId = 'codex' | 'campaign' | 'characters' | 'atlas' | 'live';
 export type Workspace = { id: WorkspaceId; label: string; icon: LucideIcon; home: string; groups: Group[] };
@@ -86,9 +95,9 @@ export const WORKSPACES: Workspace[] = [
         ],
       },
       {
-        // Filled from the library's realms (withRealms), then Manage realms.
-        title: 'Realms',
-        items: [{ to: '/realms', label: 'Manage realms', icon: Settings2 }],
+        // Filled from the library's realms (withRealms), nested, then the page to manage them.
+        title: REALMS_GROUP,
+        items: [{ to: '/realms', label: 'Manage worlds & realms', icon: Settings2 }],
       },
       {
         title: 'Records',
@@ -287,8 +296,17 @@ export function workspaceFor(path: string): WorkspaceId | 'library' {
 /** Pages that fill the main view edge to edge, with no page margins (the map explorer). */
 export const FULL_BLEED = /^\/atlas\/explore(\/|$)/;
 
-/** The Realms group with a page for each of the library's realms (not archived ones), before Manage realms. */
-export function withRealms(g: Group, realms: { id: string; name: string; icon: RealmIcon; archived: boolean }[]): Group {
-  if (g.title !== 'Realms') return g;
-  return { ...g, items: [...realms.filter((r) => !r.archived).map((r) => ({ to: `/realm/${r.id}`, label: r.name, icon: REALM_ICON_COMPONENTS[r.icon] ?? Compass })), ...g.items] };
+/**
+ * The Worlds & Realms group: a page for each of the library's realms (not archived ones), each nested under what holds
+ * it (Aetheris and Kaelmar under The World), before the page that manages them. `realms` comes in tree order.
+ */
+export function withRealms(g: Group, realms: { id: string; name: string; icon: RealmIcon; archived: boolean; parent_id?: string | null }[]): Group {
+  if (g.title !== REALMS_GROUP) return g;
+  const byId = new Map(realms.map((r) => [r.id, r]));
+  const depth = (r: (typeof realms)[number], seen = 0): number => {
+    const p = r.parent_id ? byId.get(r.parent_id) : undefined;
+    return p && !p.archived && seen < 8 ? 1 + depth(p, seen + 1) : 0;
+  };
+  const items = realms.filter((r) => !r.archived).map((r) => ({ to: `/realm/${r.id}`, label: r.name, icon: REALM_ICON_COMPONENTS[r.icon] ?? Compass, depth: depth(r) }));
+  return { ...g, items: [...items, ...g.items] };
 }

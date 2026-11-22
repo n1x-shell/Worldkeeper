@@ -373,7 +373,7 @@ export function PlayerHome() {
       {realms.length > 0 && (
         <section aria-labelledby="home-realms">
           <h2 id="home-realms" className="title-rule text-lg mb-3">
-            Realms
+            Worlds &amp; Realms
           </h2>
           <div className={`grid gap-4 sm:grid-cols-2 ${realms.length >= 4 ? 'xl:grid-cols-4' : 'xl:grid-cols-3'}`}>
             {realms.map((r) => {

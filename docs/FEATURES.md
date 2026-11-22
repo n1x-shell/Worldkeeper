@@ -49,9 +49,9 @@ Global search (`Ctrl+K`) covers names, aliases, stable IDs, tags, full text, ori
 
 Relationships include Lives in, Leads, Member of, Allied with, Opposes, Controls and Seeks. Source-derived relationships can come from parent fields, leaders and cross-references, while others are curated. An interactive graph displays a focused neighborhood with filters for depth, entity type, continent, era, canon status and relationship type.
 
-## Realms
+## Worlds & Realms
 
-Your world's realms are yours to define: worlds, continents, planes and region groups, nested inside each other, each with a name, colour, icon and one-line description (**Codex → Realms**). Every realm gets a page and a place in the sidebar; records, maps and timeline events belong to one, and a campaign is set in a world. Rename a realm and everything follows; archive one to hide it without touching its records. The Worldkeeper setting's Aetheris, Kaelmar and the Ethereal Realm are realms like any other. Players only ever see realms that hold something you've revealed.
+Your worlds, the continents inside them and the planes beside them are yours to define (**Codex → Worlds & Realms**), each with a name, colour, icon and one-line description; region groups can sit inside a continent. Every one gets a page and a place in the sidebar, nested under what holds it; records, maps and timeline events belong to one, and a campaign is set in a world. Rename a realm and everything follows; archive one to hide it without touching its records. In the Worldkeeper setting, Aetheris and Kaelmar are continents of The World and the Ethereal Realm is a plane beside it, all built the same way. Players only ever see realms that hold something you've revealed.
 
 ## World branches and timelines
 
