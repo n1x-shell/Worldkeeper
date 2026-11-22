@@ -90,7 +90,7 @@ export function parseTemplate(md: string): TemplateSpec {
       else if (e) section.example = { source: (e[1] ?? '').trim(), text: e[2].trim().replace(/^["“]|["”]$/g, '') };
       continue;
     }
-    if (seenTitle && line && !/^[A-Z][\w ]*:\s/.test(line)) desc.push(line);
+    if (seenTitle && line && !/^(template for|name):/i.test(line)) desc.push(line);
   }
   spec.description = desc.join(' ');
   return spec;
