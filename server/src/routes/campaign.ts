@@ -68,7 +68,7 @@ import { types as typeRegistry } from '../repo/recordTypes.js';
 import { parseJson } from '../lib/json.js';
 import { returnClock, setReturnStage } from '../repo/returnClock.js';
 import { factionWeb, revealTie } from '../repo/factionWeb.js';
-import { statblockFor, statblockIndex } from '../repo/statblocks.js';
+import { deleteLibraryStatblock, setLibraryStatblock, statblockFor, statblockIndex } from '../repo/statblocks.js';
 import { bookCounts, bookCreature, bookTreasure, bookCreatureIndex, bookCreatures, bookItems, creatureByName, itemByName, requireBookCreature } from '../repo/bookData.js';
 import { characterPage, renewCharacterCode, updateCharacterPage } from '../repo/characterPages.js';
 
@@ -163,15 +163,27 @@ export function campaignRoutes(ctx: AppContext) {
   // ("base") carries that block too, when the GM's books have it.
   r.get(
     '/statblocks',
-    h(() => [...statblockIndex(), ...bookCreatureIndex(ctx.db)]),
+    h(() => [...statblockIndex(ctx.db), ...bookCreatureIndex(ctx.db)]),
   );
   r.get(
     '/statblocks/:id',
     h((req) => {
       const id = String(req.params.id);
       if (/^(book|srd|wk|open5e):/.test(id)) return bookCreature(ctx.db, id);
-      const s = statblockFor(id);
+      const s = statblockFor(ctx.db, id);
       return s?.base ? { ...s, baseBlock: creatureByName(ctx.db, s.base) } : s;
+    }),
+  );
+  // The GM's own stat block for a record of theirs: a book block and its changes.
+  r.put(
+    '/statblocks/:id',
+    h((req) => setLibraryStatblock(ctx.db, String(req.params.id), req.body)),
+  );
+  r.delete(
+    '/statblocks/:id',
+    h((req) => {
+      deleteLibraryStatblock(ctx.db, String(req.params.id));
+      return { ok: true };
     }),
   );
   // The GM's books: creatures and items to browse, and an item's rules by the name it goes by.

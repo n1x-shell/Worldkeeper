@@ -11,9 +11,12 @@ import { setRulesFallback } from './sheet/options';
 import '../styles/index.css';
 
 const source = staticSource('data/player.json', 'uploads/');
-// The builder uses the SRD rules bundled with the handbook, unless the GM turned them off. The GM's own rules packs
-// are never published.
-setRulesFallback(async () => (await source.info()).rulesSrd !== false);
+// The builder uses the SRD rules bundled with the handbook, unless the GM turned them off, and any openly licensed
+// rules the GM chose to publish. The GM's other rules packs are never published.
+setRulesFallback(
+  async () => (await source.info()).rulesSrd !== false,
+  async () => (await source.info()).openRules ?? [],
+);
 
 // Keep the handbook on the device for use with no signal (see public/sw.js). Each visit tops up the saved copy.
 if ('serviceWorker' in navigator && location.protocol !== 'file:') {

@@ -67,3 +67,53 @@ describe('treasure for any place', () => {
     expect(await total('REG-0001')).toBeGreaterThan((await total('REG-0002')) * 2);
   });
 });
+
+describe('rules in the library', () => {
+  it('gives a GM’s own NPC a stat block from the SRD, kept in the library', async () => {
+    const ctx = tempContext();
+    tempDb = ctx.db;
+    place('NPC-0001', 'Captain Vey', 'npc', []);
+    const gm = createApp(ctx);
+    expect((await request(gm).put('/api/statblocks/NPC-0001').send({ changes: '' })).status).toBe(400);
+    const sb = (await request(gm).put('/api/statblocks/NPC-0001').send({ base: 'Priest', changes: 'Carries a halberd.', ac: 15 })).body;
+    expect(sb).toMatchObject({ id: 'NPC-0001', name: 'Captain Vey', base: 'Priest', own: true, ac: 15 });
+    expect((await request(gm).get('/api/statblocks/NPC-0001')).body.baseBlock).toMatchObject({ name: 'Priest', source: 'SRD 5.2.1' });
+    expect((await request(gm).get('/api/statblocks')).body.find((s: { id: string }) => s.id === 'NPC-0001')).toMatchObject({ name: 'Captain Vey', ac: 15 });
+    await request(gm).delete('/api/statblocks/NPC-0001');
+    expect((await request(gm).get('/api/statblocks/NPC-0001')).body.name).toBeUndefined();
+  });
+
+  it('switches the setting’s rules pack on with the setting, and off without it', async () => {
+    const { installPack, uninstallPack } = await import('../server/src/packs/registry.js');
+    const { settingPackOn } = await import('../server/src/repo/settingPack.js');
+    const ctx = tempContext();
+    expect(settingPackOn(ctx.db)).toBe(false);
+    installPack(ctx.db, 'worldkeeper');
+    expect(settingPackOn(ctx.db)).toBe(true);
+    uninstallPack(ctx.db, 'worldkeeper');
+    expect(settingPackOn(ctx.db)).toBe(false);
+  });
+
+  it('publishes an openly licensed rules pack to players, and never one that isn’t', async () => {
+    const AdmZip = (await import('adm-zip')).default;
+    const { playerSnapshot } = await import('../server/src/player/projection.js');
+    const pack = (source: string, name: string) => {
+      const zip = new AdmZip();
+      zip.addFile('pack.md', Buffer.from(`Pack: ${name}\nSource: ${source}\n`));
+      zip.addFile('feats/open.md', Buffer.from(`Kind: feat\nName: ${name} Feat\nCategory: Origin\n\nA feat.`));
+      return zip.toBuffer();
+    };
+    const ctx = tempContext();
+    const gm = createApp(ctx);
+    const open = (await request(gm).post('/api/rules/packs').attach('pack', pack('Kobold Press, CC BY 4.0', 'Open Things'), 'p.zip')).body.pack;
+    const shut = (await request(gm).post('/api/rules/packs').attach('pack', pack('My own books', 'Shut Things'), 'p.zip')).body.pack;
+    expect(playerSnapshot(ctx.db).openRules).toEqual([]);
+    const list = (await request(gm).patch(`/api/rules/packs/${open.id}`).send({ publish: true })).body;
+    expect(list.find((p: { id: string }) => p.id === open.id)).toMatchObject({ open: true, publish: true });
+    expect((await request(gm).patch(`/api/rules/packs/${shut.id}`).send({ publish: true })).status).toBe(400);
+    expect(playerSnapshot(ctx.db).openRules.map((r: { name: string }) => r.name)).toEqual(['Open Things Feat']);
+    // Turned off, it isn't published either.
+    await request(gm).patch(`/api/rules/packs/${open.id}`).send({ enabled: false });
+    expect(playerSnapshot(ctx.db).openRules).toEqual([]);
+  });
+});

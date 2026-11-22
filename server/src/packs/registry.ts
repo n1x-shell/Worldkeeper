@@ -151,7 +151,11 @@ export function syncInstalledPacks(db: DB) {
 export function installPack(db: DB, id: string): PackManifest {
   const found = findPack(id);
   if (!found) throw notFound('Setting pack');
-  if (!isInstalled(db, id)) db.prepare('INSERT INTO setting_packs (id, name, version) VALUES (?, ?, ?)').run(id, found.manifest.name, found.manifest.version);
+  if (!isInstalled(db, id)) {
+    db.prepare('INSERT INTO setting_packs (id, name, version) VALUES (?, ?, ?)').run(id, found.manifest.name, found.manifest.version);
+    // A setting brings its own rules (creatures, hazards, items): on with it, unless the GM had already chosen.
+    if (found.manifest.rulesPack === 'worldkeeper') db.prepare(`INSERT INTO settings (key, value) VALUES ('rules_worldkeeper', 'on') ON CONFLICT(key) DO NOTHING`).run();
+  }
   syncPackDefinitions(db, found.manifest, found.dir);
   return found.manifest;
 }
@@ -190,6 +194,8 @@ export function uninstallPack(db: DB, id: string) {
     for (const t of db.prepare('SELECT key FROM record_types WHERE pack_id = ?').all(id) as { key: string }[]) {
       if (!db.prepare('SELECT 1 FROM entities WHERE type = ? LIMIT 1').get(t.key)) db.prepare('DELETE FROM record_types WHERE key = ?').run(t.key);
     }
+    // Its rules pack goes off with it.
+    if (findPack(id)?.manifest.rulesPack === 'worldkeeper') db.prepare(`INSERT INTO settings (key, value) VALUES ('rules_worldkeeper', 'off') ON CONFLICT(key) DO UPDATE SET value = 'off'`).run();
     // Its calendar: a world that used it goes back to the default (realms.calendar_id is set to null).
     db.prepare('DELETE FROM calendars WHERE pack_id = ?').run(id);
     db.prepare('DELETE FROM setting_packs WHERE id = ?').run(id);

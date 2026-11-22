@@ -29,7 +29,14 @@ export interface PackSummary {
   builtin: boolean;
   imported_at: string | null;
   counts: Record<string, number>;
+  /** Under an open licence (CC BY, OGL, CC0, ORC), so it may be published to players. */
+  open?: boolean;
+  /** Published: its rules go into the players' handbook. */
+  publish?: boolean;
 }
+
+/** A pack whose source names an open licence. */
+export const isOpenSource = (source: string) => /\b(CC[- ]?BY|CC0|OGL|ORC)\b/i.test(source);
 
 /** One Markdown entry: "Key: value" lines, a blank line, then the text (with "## " headings for features or traits). */
 export function parseEntry(md: string, fallbackKind?: string) {
@@ -202,7 +209,7 @@ export function listPacks(db: DB): PackSummary[] {
     },
   };
   const wk: PackSummary = { ...SETTING_PACK, enabled: settingPackOn(db), builtin: true, imported_at: null, counts: settingPackCounts() };
-  const rows = db.prepare('SELECT * FROM rules_packs ORDER BY imported_at').all() as { id: string; name: string; source: string; enabled: number; imported_at: string }[];
+  const rows = db.prepare('SELECT * FROM rules_packs ORDER BY imported_at').all() as { id: string; name: string; source: string; enabled: number; imported_at: string; publish?: number }[];
   const counts = db.prepare('SELECT kind, COUNT(*) n FROM rules_entries WHERE pack_id = ? GROUP BY kind');
   return [
     srd,
@@ -215,6 +222,8 @@ export function listPacks(db: DB): PackSummary[] {
       builtin: false,
       imported_at: r.imported_at,
       counts: Object.fromEntries((counts.all(r.id) as { kind: string; n: number }[]).map((c) => [c.kind, c.n])),
+      open: isOpenSource(r.source),
+      publish: !!r.publish,
     })),
   ];
 }
@@ -224,6 +233,32 @@ export function setPackEnabled(db: DB, id: string, enabled: boolean) {
   else if (id === SETTING_PACK.id) setSettingPack(db, enabled);
   else if (!db.prepare('UPDATE rules_packs SET enabled = ? WHERE id = ?').run(enabled ? 1 : 0, id).changes) throw notFound('Rules pack');
   return listPacks(db);
+}
+
+/** Publish an openly licensed pack's rules to the players' handbook (or stop). Only open packs can be published. */
+export function setPackPublished(db: DB, id: string, publish: boolean) {
+  const r = db.prepare('SELECT source FROM rules_packs WHERE id = ?').get(id) as { source: string } | undefined;
+  if (!r) throw notFound('Rules pack');
+  if (publish && !isOpenSource(r.source)) throw badRequest('Only openly licensed rules (CC BY, OGL, CC0, ORC) can be published to players.');
+  db.prepare('UPDATE rules_packs SET publish = ? WHERE id = ?').run(publish ? 1 : 0, id);
+  return listPacks(db);
+}
+
+/** The rules of the packs the GM publishes (in use, and openly licensed), for the players' handbook. */
+export function publishedRuleEntries(db: DB): { kind: RuleKind; name: string; cls: string; data: Record<string, unknown>; source: string }[] {
+  try {
+    const packs = (db.prepare('SELECT id, name, source FROM rules_packs WHERE enabled = 1 AND publish = 1 ORDER BY imported_at').all() as { id: string; name: string; source: string }[]).filter((p) =>
+      isOpenSource(p.source),
+    );
+    const rows = db.prepare('SELECT kind, name, cls, data FROM rules_entries WHERE pack_id = ?');
+    return packs.flatMap((p) =>
+      (rows.all(p.id) as { kind: RuleKind; name: string; cls: string; data: string }[])
+        .filter((r) => ['spell', 'species', 'class', 'subclass', 'background', 'feat'].includes(r.kind))
+        .map((r) => ({ ...r, data: JSON.parse(r.data) as Record<string, unknown>, source: p.source || p.name })),
+    );
+  } catch {
+    return [];
+  }
 }
 
 export function deletePack(db: DB, id: string) {

@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import type { PEntity } from '../source';
 import { CLASSES } from '../../../../shared/rules2024';
 import { rulesSpeciesName, type SrdText, type WorldBackground } from './srd';
-import { byName, emptyRulesView, srdRulesView } from '../../../../shared/rulesView';
+import { addRule, byName, emptyRulesView, srdRulesView, type RuleKind } from '../../../../shared/rulesView';
 import { handbookTypesWith } from '../categories';
 
 export * from './srd';
@@ -161,8 +161,13 @@ async function bundledSrd(): Promise<SrdText> {
   return srdRulesView(t.default, sp.default);
 }
 /** For the published handbook: what to use when there's no server (the bundled SRD, unless the GM turned it off). */
-export function setRulesFallback(srd: () => Promise<boolean>) {
-  fallback = async () => ((await srd()) ? bundledSrd() : emptyRulesView(false));
+export function setRulesFallback(srd: () => Promise<boolean>, open: () => Promise<{ kind: string; name: string; cls: string; data: Record<string, unknown>; source: string }[]> = async () => []) {
+  fallback = async () => {
+    const view = (await srd()) ? await bundledSrd() : emptyRulesView(false);
+    // Openly licensed rules the GM published join (and win over) the SRD.
+    for (const r of await open()) addRule(view, r.kind as RuleKind, r.name, r.cls, r.data, r.source);
+    return view;
+  };
 }
 /** The rules in use: from the GM's server (the SRD and imported packs), or the bundled SRD in the published handbook. */
 export const loadRulesText = () =>

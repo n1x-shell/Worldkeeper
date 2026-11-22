@@ -998,6 +998,22 @@ UPDATE random_tables SET kind = 'treasure' WHERE name LIKE 'Treasure%';
 CREATE INDEX idx_random_tables_region ON random_tables(region_id);
 `,
   },
+  {
+    version: 26,
+    name: "stat blocks in the library: the GM's own, for their own creatures and people",
+    sql: `
+CREATE TABLE statblocks (
+  entity_id TEXT PRIMARY KEY REFERENCES entities(id) ON DELETE CASCADE,
+  data TEXT NOT NULL,
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+-- An openly licensed rules pack the GM chooses to publish goes into the players' handbook.
+ALTER TABLE rules_packs ADD COLUMN publish INTEGER NOT NULL DEFAULT 0;
+-- The setting's stat blocks now come with its rules pack: a library with the setting that never chose keeps them.
+INSERT INTO settings (key, value) SELECT 'rules_worldkeeper', 'on' WHERE EXISTS (SELECT 1 FROM setting_packs WHERE id = 'worldkeeper')
+  ON CONFLICT(key) DO NOTHING;
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

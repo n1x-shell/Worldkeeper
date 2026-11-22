@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import { Swords } from 'lucide-react';
-import { useApi } from '../lib/api';
-import { Card, Empty, GmOnly } from './ui';
+import { api, useApi } from '../lib/api';
+import { Card, Empty, ErrorBox, Field, GmOnly, Modal } from './ui';
 
 interface Entry {
   name: string;
@@ -257,13 +258,90 @@ export function StatBlockById({ id }: { id: string }) {
   return <StatBlock s={data} />;
 }
 
-/** On a record's page (GM): its stat block, if it has one. */
+/** On a record's page (GM): its stat block, or a way to give it one from the books (kept in the library). */
 export function StatBlockPanel({ entityId }: { entityId: string }) {
-  const { data } = useApi<StatBlockData | null>(`/api/statblocks/${encodeURIComponent(entityId)}`);
-  if (!data) return null;
+  const { data, reload } = useApi<(StatBlockData & { own?: boolean }) | null>(`/api/statblocks/${encodeURIComponent(entityId)}`);
+  const [editing, setEditing] = useState(false);
+  if (data === undefined) return null;
+  const has = !!data && !!data.name;
   return (
-    <Card title={data.kind === 'hazard' ? 'Hazard' : 'Stat block'} icon={<Swords size={15} className="text-gold" />} actions={<span className="text-xs text-dim">GM only</span>}>
-      <StatBlock s={data} />
+    <Card
+      title={has && data!.kind === 'hazard' ? 'Hazard' : 'Stat block'}
+      icon={<Swords size={15} className="text-gold" />}
+      actions={
+        <span className="flex items-center gap-2 text-xs text-dim">
+          GM only
+          {(!has || data!.own) && (
+            <button className="btn-ghost text-xs py-0.5" onClick={() => setEditing(true)}>
+              {has ? 'Change' : 'Give it a stat block'}
+            </button>
+          )}
+        </span>
+      }
+    >
+      {has ? <StatBlock s={data!} /> : <p className="text-sm text-dim">None yet. Use a stat block from your rules packs, with what's different about this one.</p>}
+      {editing && (
+        <OwnStatBlock
+          entityId={entityId}
+          current={has && data!.own ? data! : null}
+          onClose={() => setEditing(false)}
+          onSaved={() => {
+            setEditing(false);
+            reload();
+          }}
+        />
+      )}
     </Card>
+  );
+}
+
+function OwnStatBlock({ entityId, current, onClose, onSaved }: { entityId: string; current: StatBlockData | null; onClose: () => void; onSaved: () => void }) {
+  const [base, setBase] = useState(current?.base ?? '');
+  const [changes, setChanges] = useState(current?.changes ?? '');
+  const [tactics, setTactics] = useState(current?.tactics ?? '');
+  const [err, setErr] = useState<string | null>(null);
+  const { data: options } = useApi<{ id: string; name: string; cr?: string | null }[]>(`/api/books/creatures?q=${encodeURIComponent(base)}&limit=40`);
+  return (
+    <Modal title="Its stat block" onClose={onClose}>
+      <div className="space-y-3">
+        {err && <ErrorBox error={err} />}
+        <Field label="Uses the stat block of" hint="A creature from the SRD or your books.">
+          <input className="input" list={`sb-${entityId}`} value={base} onChange={(e) => setBase(e.target.value)} placeholder="Bandit Captain" />
+          <datalist id={`sb-${entityId}`}>
+            {(options ?? []).map((o) => (
+              <option key={o.id} value={o.name}>
+                {o.cr ? `CR ${o.cr}` : ''}
+              </option>
+            ))}
+          </datalist>
+        </Field>
+        <Field label="With these changes">
+          <textarea className="input" rows={3} value={changes} onChange={(e) => setChanges(e.target.value)} placeholder="Wields a halberd (reach); speaks Elvish." />
+        </Field>
+        <Field label="How it fights">
+          <textarea className="input" rows={2} value={tactics} onChange={(e) => setTactics(e.target.value)} />
+        </Field>
+        <div className="flex gap-2">
+          <button
+            className="btn-primary"
+            onClick={async () => {
+              try {
+                await api.put(`/api/statblocks/${encodeURIComponent(entityId)}`, { base: base || undefined, changes, tactics });
+                onSaved();
+              } catch (x) {
+                setErr((x as Error).message);
+              }
+            }}
+          >
+            Save
+          </button>
+          {current && (
+            <button className="btn" onClick={async () => (await api.del(`/api/statblocks/${encodeURIComponent(entityId)}`), onSaved())}>
+              Remove
+            </button>
+          )}
+        </div>
+      </div>
+    </Modal>
   );
 }
