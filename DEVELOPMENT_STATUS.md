@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-22 · v0.4.1_
+_Last updated: 2026-11-22 · v0.4.2_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,17 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.4.2: record types and templates (own-world step 2)
+
+Step 2 of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md).
+
+- **The record-type registry** (`shared/recordTypes.ts`; table `record_types`, migration 20; `/api/record-types`): every kind of record with its label, plural, ID prefix, icon, pin kind (an area or a site), category, Codex browse groups, handbook group and traits (`place`, `regionLike`, `holdable`, `group`, `folk`, `person`, `commonNoun`, `intro`, `meta`). The built-ins are written into the library at every start; the GM can add their own (Library → Templates → New record type). The setting's own types (vault, vault key, shard, calling, Ethereal domain) are marked with its pack and offered for new records only where the library uses them. The handbook gets only the types its revealed records use.
+- **Nothing names types any more.** Server and client ask the registry by trait: relationships read from lists, map pins and layers, the region panel, the session briefing's chain of places (it used ID prefixes), State of the World's place count (ID prefixes), the dashboard's key places and factions, the faction web and stance matrix (families now take part, as groups), autolinking, name matching, consistency checks, intro records, the name generator, the Codex's browse pages, the graph's groups, every record picker (`types={['@place']}`, `@group`, `@person`), New record and the editor's type list, and the handbook's groups. `ENTITY_TYPES`, `ENTITY_TYPE_LABELS` and `TYPE_GROUPS` are derived from the built-ins for code with no library at hand. `tests/recordTypes.test.ts` fails if a list of type names is written into app code again.
+- **IDs:** any type's prefix links (`[A-Z]{2,5}-…`, checked against the whole archive: no false matches). New records get their type's prefix with four digits (`SET-0001`, `TAV-0001`), which an archive's three-digit IDs never take; `CUS-` is only for the Custom type now.
+- **Import and export:** the importer reads `Category:` through the registry (after the setting's own import rules, which move into its pack in step 3); on the real archive this changes one record, LOC-042 The Radiant Expanse, which says `Category: Region` and is now a region. The Markdown export writes the original Category and realm when they still read back as the record's type and realm, and otherwise the type's label and the realm's name, so an export re-imports with every record's type and realm, the GM's own and changed ones included. JSON exports carry the types table.
+- **Templates with guidance** (`shared/templates.ts`, `assets/templates/*.md`; migration 21; `/api/templates`): each template lists its type's facts and sections, each with guidance, an example quoted from the setting's records, and whether it is GM only (`(GM only)` on the heading, which the reveal rules already honour). Built-in templates are written at every start; the archive's stay as imported; the GM's own come first. **Library → Templates** shows every type and its templates; duplicate any to make it your own, then edit it in Markdown with a live preview. **New record** shows what the template asks for and starts the record with its facts and sections.
+- **Facts features read first:** a region's *Ruling faction* (State of the World), a people's *Common names* (the name generator) and *Found in* (the handbook's continents for a people) are read before the prose they used to be parsed from. Tests in `tests/facts.test.ts`.
 
 ## v0.4.1: realms as data (own-world step 1)
 

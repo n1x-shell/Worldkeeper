@@ -53,6 +53,12 @@ Relationships include Lives in, Leads, Member of, Allied with, Opposes, Controls
 
 Your cosmos is yours to define (**Codex → Worlds & Realms**): realms (planes of existence) hold worlds or domains, worlds hold continents, continents can hold region groups, and domains can hold deeper domains. The app keeps that nesting. Each has a name, colour, icon and one-line description, a page, and a place in the sidebar under what holds it; records, maps and timeline events belong to one, and a campaign is set in a world. Rename a realm and everything follows; archive one to hide it without touching its records. In the Worldkeeper setting, The World sits in the realm of Evershroud with Aetheris and Kaelmar as its continents, and the Ethereal Realm is a realm beside Evershroud, holding the Hollow Verge with its six deeper domains beneath it, all built the same way. Players only ever see realms that hold something you've revealed.
 
+## Record types and templates
+
+Every kind of record (settlement, NPC, faction, deity...) knows what it is: a place, a group, a person, something you can carry. The app uses that, not a fixed list, so a type you add yourself works everywhere a built-in one does: on maps, in pickers, on the handbook. Add your own in **Library → Templates** (a Tavern, a Starship), with its own ID prefix.
+
+Each type has a **template**: the facts it should have (a town's population and who rules it; an NPC's pronouns, looks and manner) and its sections, each with guidance on what to write and an example from the Worldkeeper setting. Sections marked GM only are never shown to players. **New record** shows you what the template asks for and starts your record with it. Duplicate any template to make it your own and change it as you like; a change affects only new records.
+
 ## World branches and timelines
 
 ### Aetheris
