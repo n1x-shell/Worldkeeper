@@ -11,7 +11,7 @@ const make = (id: string, name: string, body: string, fields: [string, string][]
 
 describe('Quick-Peek', () => {
   it('summarises a record without its title or secrets, with facts and links, and is not counted as a visit', async () => {
-    const ctx = tempContext();
+    const ctx = tempContext({ settingRealms: true });
     createEntity(
       ctx.db,
       make('NPC-801', 'Testa Venn', '# Testa Venn\n\n## Overview\nKeeps the inn. Knows everyone.\n\n## Secrets (GM only)\nShe is the thirteenth heir.', [

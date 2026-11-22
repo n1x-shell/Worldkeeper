@@ -762,6 +762,8 @@ UPDATE timeline_rows SET realm_ids = '[' || rtrim(
     (CASE WHEN lower(realm_label) LIKE '%kaelmar%' OR lower(realm_label) LIKE '%both%' THEN '"kaelmar",' ELSE '' END) ||
     (CASE WHEN lower(realm_label) LIKE '%ethereal%' THEN '"ethereal",' ELSE '' END) ||
     (CASE WHEN lower(realm_label) LIKE '%world%' THEN '"world",' ELSE '' END), ',') || ']';
+-- Only realms the library has (a "Both" row in a library without Kaelmar names just Aetheris).
+UPDATE timeline_rows SET realm_ids = (SELECT json_group_array(value) FROM json_each(timeline_rows.realm_ids) WHERE value IN (SELECT id FROM realms));
 
 ALTER TABLE campaigns ADD COLUMN world_id TEXT REFERENCES realms(id) ON DELETE SET NULL;
 UPDATE campaigns SET world_id = 'world';

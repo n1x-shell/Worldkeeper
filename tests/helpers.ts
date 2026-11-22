@@ -9,10 +9,15 @@ import AdmZip from 'adm-zip';
 import { resolvePaths } from '../server/src/config.js';
 import { AppContext } from '../server/src/context.js';
 import type { SourceFile } from '../server/src/import/scan.js';
+import { ensureRealm } from '../server/src/repo/realms.js';
+import { SETTING_REALMS } from '../server/src/import/normalize.js';
 
-export function tempContext(): AppContext {
+/** A fresh, empty library. `settingRealms` adds the Worldkeeper setting's realms, for tests that write its records. */
+export function tempContext(opts: { settingRealms?: boolean } = {}): AppContext {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wk-test-'));
-  return new AppContext(resolvePaths(dir));
+  const ctx = new AppContext(resolvePaths(dir));
+  if (opts.settingRealms) for (const [id, r] of Object.entries(SETTING_REALMS)) ensureRealm(ctx.db, id, r);
+  return ctx;
 }
 
 const header = (id: string, name: string, extra: Record<string, string> = {}, o: Partial<Record<string, string>> = {}) =>

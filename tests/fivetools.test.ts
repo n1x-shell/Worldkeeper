@@ -18,7 +18,7 @@ describe('importing from 5etools', () => {
   });
 
   it('takes only your books, prefers the newest printing, and adds older species only when the world names them', async () => {
-    const ctx = tempContext();
+    const ctx = tempContext({ settingRealms: true });
     createEntity(ctx.db, {
       name: 'Old Folk',
       type: 'people',
@@ -85,7 +85,7 @@ describe('importing from 5etools', () => {
   });
 
   it('brings in creatures as stat blocks and items with their rules, for the GM, the tracker, treasure and sheets', async () => {
-    const ctx = tempContext();
+    const ctx = tempContext({ settingRealms: true });
     const gm = createApp(ctx);
     // The books alone (the built-in SRD's creatures and items are tested in mechanics.test.ts).
     await request(gm).patch('/api/rules/packs/srd').send({ enabled: false });
@@ -146,7 +146,7 @@ describe('importing from 5etools', () => {
   });
 
   it('takes only the books you choose', async () => {
-    const ctx = tempContext();
+    const ctx = tempContext({ settingRealms: true });
     const gm = createApp(ctx);
     const scan = (await request(gm).post('/api/rules/5etools/scan').attach('data', fakeFivetools(), 'f.zip')).body;
     // Only the 2014 book: its Testling, not the 2024 one, and no 2024 spells.
@@ -169,6 +169,6 @@ describe('importing from 5etools', () => {
   it('refuses a zip that isn’t 5etools', async () => {
     const z = new AdmZip();
     z.addFile('readme.txt', Buffer.from('hi'));
-    expect((await request(createApp(tempContext())).post('/api/rules/5etools/scan').attach('data', z.toBuffer(), 'x.zip')).status).toBe(400);
+    expect((await request(createApp(tempContext({ settingRealms: true }))).post('/api/rules/5etools/scan').attach('data', z.toBuffer(), 'x.zip')).status).toBe(400);
   });
 });

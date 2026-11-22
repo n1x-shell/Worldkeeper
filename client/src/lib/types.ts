@@ -28,6 +28,8 @@ export interface Campaign {
   players: { name: string; contact: string }[];
   active_factions: string[];
   notes: string;
+  /** The world it's set in (a realm of kind World). */
+  world_id: string | null;
   updated_at: string;
 }
 

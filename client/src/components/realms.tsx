@@ -3,25 +3,11 @@
  * it is safe in the player bundle. The GM app provides them from /api/realms, the handbook from the player info.
  */
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
-import { Castle, Compass, Crown, Flame, Ghost, Globe2, Moon, Mountain, Skull, Snowflake, Sparkles, Sun, Trees, Waves, type LucideIcon } from 'lucide-react';
-import { DEFAULT_REALM, sortRealms, type RealmIcon, type RealmInfo } from '@shared/realms';
+import { Compass } from 'lucide-react';
+import { REALM_ICON_COMPONENTS } from './realmIcons';
 
-export const REALM_ICON_COMPONENTS: Record<RealmIcon, LucideIcon> = {
-  globe: Globe2,
-  mountain: Mountain,
-  flame: Flame,
-  ghost: Ghost,
-  trees: Trees,
-  waves: Waves,
-  castle: Castle,
-  sun: Sun,
-  moon: Moon,
-  snowflake: Snowflake,
-  sparkles: Sparkles,
-  compass: Compass,
-  skull: Skull,
-  crown: Crown,
-};
+export { REALM_ICON_COMPONENTS };
+import { DEFAULT_REALM, sortRealms, type RealmInfo } from '@shared/realms';
 
 export interface Realms {
   /** Every realm, in reading order (archived ones only when asked for). */

@@ -20,7 +20,7 @@ const rec = (id: string, type: string, body: string, player_summary?: string) =>
 
 describe('open questions', () => {
   it('sorts each UNDEFINED by the rules, then the automatic checks, and skips notes about the library', () => {
-    const { db } = tempContext();
+    const { db } = tempContext({ settingRealms: true });
     createEntity(db, rec('SHD-012', 'shard', '## Established\nIts identity, location and powers are UNDEFINED.\n\n## Other\nNothing open here.') as never);
     createEntity(db, rec('LOC-902', 'landmark', '## Open questions [UNDEFINED]\n\n- Its width in kilometres.\n- Islands, if any.') as never);
     createEntity(

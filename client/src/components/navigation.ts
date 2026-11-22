@@ -58,8 +58,8 @@ import {
   Waypoints,
   type LucideIcon,
 } from 'lucide-react';
-import type { RealmIcon } from '@shared/realms';
-import { REALM_ICON_COMPONENTS } from './realms';
+import type { RealmIcon } from '../../../shared/realms';
+import { REALM_ICON_COMPONENTS } from './realmIcons';
 
 export type Item = { to: string; label: string; icon: LucideIcon; /** Opens in a new tab (outside the GM shell). */ external?: boolean };
 export type Group = { title: string; items: Item[] };

@@ -58,7 +58,7 @@ describe('mention parsing', () => {
 
 describe('mentions in the library', () => {
   function seeded() {
-    const ctx = tempContext();
+    const ctx = tempContext({ settingRealms: true });
     const files = readZip(zipOf(fixtureFiles()));
     commitPlan(ctx.db, files, buildPlan(ctx.db, files, 'f'));
     return ctx;

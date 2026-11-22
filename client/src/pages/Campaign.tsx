@@ -1,3 +1,4 @@
+import { useRealms } from '../components/realms';
 import { useMechanics } from '../lib/mechanics';
 import { briefingFill, type Briefing } from './Briefing';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -206,6 +207,7 @@ export function CampaignsPage() {
 
 // ------------------------------------------------------------------ active campaign overview
 export function ActiveCampaign() {
+  const realms = useRealms();
   const { data, error, reload, activeCampaignId } = useActiveOverview();
   const auto = useAutosave((c: Partial<Campaign>) => api.patch(`/api/campaigns/${activeCampaignId}`, c));
   const [c, setC] = useState<Campaign | null>(null);
@@ -215,10 +217,11 @@ export function ActiveCampaign() {
   if (!activeCampaignId) return <NeedCampaign />;
   if (error) return <ErrorBox error={error} />;
   if (!data || !c) return <Loading />;
+  const worlds = realms.list.filter((r) => r.kind === 'world' && (!r.archived || r.id === c.world_id));
   const set = (p: Partial<Campaign>) => {
     const n = { ...c, ...p };
     setC(n);
-    auto.schedule({ title: n.title, premise: n.premise, starting_location_id: n.starting_location_id, starting_date: n.starting_date, current_date: n.current_date, status: n.status, players: n.players, active_factions: n.active_factions, notes: n.notes });
+    auto.schedule({ title: n.title, world_id: n.world_id, premise: n.premise, starting_location_id: n.starting_location_id, starting_date: n.starting_date, current_date: n.current_date, status: n.status, players: n.players, active_factions: n.active_factions, notes: n.notes });
   };
   return (
     <div className="space-y-4">
@@ -258,6 +261,17 @@ export function ActiveCampaign() {
             <Field label="Starting location">
               <EntityPicker value={c.starting_location_id} onChange={(id) => set({ starting_location_id: id })} />
             </Field>
+            {worlds.length > 1 && (
+              <Field label="World" hint="The world this campaign is set in.">
+                <select className="input" value={c.world_id ?? ''} onChange={(e) => set({ world_id: e.target.value || null })}>
+                  {worlds.map((w) => (
+                    <option key={w.id} value={w.id}>
+                      {w.name}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            )}
           </div>
           <Field label="Premise">
             <AutoTextarea minRows={3} value={c.premise} onChange={(e) => set({ premise: e.target.value })} className="font-sans" />
