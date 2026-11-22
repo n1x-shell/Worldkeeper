@@ -70,7 +70,7 @@ export function StandingPage() {
       />
       <div className="flex flex-wrap items-end gap-2">
         <div className="w-72">
-          <EntityPicker value={adding} types={['faction', 'cult', 'family']} onChange={setAdding} placeholder="Track another faction…" />
+          <EntityPicker value={adding} types={['@group']} onChange={setAdding} placeholder="Track another faction…" />
         </div>
         {adding && (
           <button

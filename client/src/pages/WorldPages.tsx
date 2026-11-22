@@ -1,9 +1,10 @@
+import { useRecordTypes } from '../components/recordTypes';
 import { RealmIconOf, realmClass, useRealms } from '../components/realms';
 import { REALM_KIND_LABELS } from '@shared/realms';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Gem, KeyRound, Ghost, Plus, Map as MapIcon, Network } from 'lucide-react';
-import { CANON_STATUSES, ENTITY_TYPES, ENTITY_TYPE_LABELS, type EntityType } from '@shared/domain';
+import { CANON_STATUSES, type EntityType } from '@shared/domain';
 import { api, qs, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary } from '../lib/types';
@@ -78,6 +79,7 @@ export function WorldOverview() {
 }
 
 export function RealmPage() {
+  const recordTypes = useRecordTypes();
   const realms = useRealms();
   const { realm = 'world' } = useParams();
   const { data: list, error } = useApi<EntitySummary[]>(`/api/entities${qs({ realm })}`);
@@ -163,7 +165,7 @@ export function RealmPage() {
         </button>
         {groups.map(([t, arr]) => (
           <button key={t} className={`chip ${type === t ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setType(t)}>
-            {ENTITY_TYPE_LABELS[t as EntityType] ?? t} (<span className="num">{arr.length}</span>)
+            {recordTypes.label(t)} (<span className="num">{arr.length}</span>)
           </button>
         ))}
       </div>
@@ -173,6 +175,7 @@ export function RealmPage() {
 }
 
 export function NewEntity() {
+  const recordTypes = useRecordTypes();
   const realms = useRealms();
   const [sp] = useSearchParams();
   const nav = useNavigate();
@@ -205,9 +208,9 @@ export function NewEntity() {
         </Field>
         <Field label="Template type">
           <select className="input" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as EntityType })}>
-            {ENTITY_TYPES.filter((t) => t !== 'redirect').map((t) => (
+            {recordTypes.offered.map((x) => x.key).map((t) => (
               <option key={t} value={t}>
-                {ENTITY_TYPE_LABELS[t]}
+                {recordTypes.label(t)}
               </option>
             ))}
           </select>
@@ -264,7 +267,7 @@ export function NewEntity() {
             const body = `# ${form.name}\n\n${(template?.sections ?? ['Overview']).map((s) => `## ${s}\n\nUNDEFINED`).join('\n\n')}\n`;
             const e = await api.post<Entity>('/api/entities', {
               ...form,
-              category_raw: ENTITY_TYPE_LABELS[form.type],
+              category_raw: recordTypes.label(form.type),
               aliases: [],
               tags: [`realm/${form.realm}`, `status/${form.canon_status.toLowerCase()}`, 'vis/gm'],
               fields,
@@ -561,6 +564,7 @@ function EventList({ eras = [] }: { eras?: string[] }) {
 }
 
 export function SearchPage() {
+  const recordTypes = useRecordTypes();
   const realms = useRealms();
   const [sp, setSp] = useSearchParams();
   const [q, setQ] = useState(sp.get('q') ?? sp.get('tag') ?? '');
@@ -604,9 +608,12 @@ export function SearchPage() {
         </select>
         <select className="input w-auto" value={type} onChange={(e) => setType(e.target.value)} aria-label="Type">
           <option value="">All types</option>
-          {ENTITY_TYPES.map((t) => (
+          {recordTypes.list
+            .filter((x) => !x.traits.meta)
+            .map((x) => x.key)
+            .map((t) => (
             <option key={t} value={t}>
-              {ENTITY_TYPE_LABELS[t]}
+              {recordTypes.label(t)}
             </option>
           ))}
         </select>

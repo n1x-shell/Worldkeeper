@@ -1,3 +1,4 @@
+import { useRecordTypes } from '../components/recordTypes';
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -20,8 +21,6 @@ import {
 } from 'lucide-react';
 import {
   CANON_STATUSES,
-  ENTITY_TYPES,
-  ENTITY_TYPE_LABELS,
   RELATIONSHIP_LABELS,
   RELATIONSHIP_TYPES,
   relationshipLabel,
@@ -549,9 +548,10 @@ function useActiveSection(anchors: string[]) {
 }
 
 function AtAGlance({ entity: e, debug, fieldMap, wide }: { entity: Entity; debug: boolean; fieldMap: [string, string][]; wide: boolean }) {
+  const recordTypes = useRecordTypes();
   const realms = useRealms();
   const facts: [string, string][] = [
-    ...(debug ? ([['Category', e.category_raw ?? ENTITY_TYPE_LABELS[e.type]], ['Realm', e.realm_raw ?? realms.name(e.realm)], ['Canon status', e.canon_raw ?? e.canon_status]] as [string, string][]) : []),
+    ...(debug ? ([['Category', e.category_raw ?? recordTypes.label(e.type)], ['Realm', e.realm_raw ?? realms.name(e.realm)], ['Canon status', e.canon_raw ?? e.canon_status]] as [string, string][]) : []),
     ...fieldMap,
     ...(debug ? ([['Source', e.source_raw ?? 'UNDEFINED']] as [string, string][]) : []),
   ];
@@ -605,7 +605,6 @@ const when = (iso: string) => {
 const CHANGE_LABELS: Record<string, string> = { import: 'Imported', edit: 'Edited', revert: 'Restored', create: 'Created', archive: 'Archived', review: 'Reviewed' };
 /** Reasons that name source files are technical details, shown only in debug mode. */
 const technical = (reason: string) => /[\\/]|\.(md|json|zip)\b/.test(reason);
-const typeLabel = (t: string | null) => (t && t in ENTITY_TYPE_LABELS ? ENTITY_TYPE_LABELS[t as EntityType] : '');
 
 function DetailGroup({ title, count, action, children }: { title: string; count?: number; action?: ReactNode; children: ReactNode }) {
   return (
@@ -621,6 +620,7 @@ function DetailGroup({ title, count, action, children }: { title: string; count?
 }
 
 function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; revisions: Revision[] | undefined; inInspector: boolean; onTab: (t: Tab) => void }) {
+  const recordTypes = useRecordTypes();
   const e = data.entity;
   const debug = useDebug();
   const [allChildren, setAllChildren] = useState(false);
@@ -635,7 +635,7 @@ function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; 
       const other = out ? r.target_id : r.source_id;
       if (other === e.id) continue;
       if (r.type === 'references') {
-        if (!out) mentioned.set(other, { id: other, name: r.source_name ?? other, type: typeLabel(r.source_type) });
+        if (!out) mentioned.set(other, { id: other, name: r.source_name ?? other, type: r.source_type ? recordTypes.label(r.source_type) : '' });
         continue;
       }
       // The parent and the children are listed on their own.
@@ -715,7 +715,7 @@ function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; 
                         <EntityLink id={c.id} className="min-w-0 truncate">
                           {c.name}
                         </EntityLink>
-                        <span className="ml-auto shrink-0 text-[11px] text-dim">{ENTITY_TYPE_LABELS[c.type]}</span>
+                        <span className="ml-auto shrink-0 text-[11px] text-dim">{recordTypes.label(c.type)}</span>
                       </li>
                     ))}
                   </ul>
@@ -783,6 +783,7 @@ function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; 
 
 // ------------------------------------------------------------------ Editor
 export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSaved: (e: Entity) => void; onDone: () => void }) {
+  const recordTypes = useRecordTypes();
   const realms = useRealms();
   const [draft, setDraft] = useState(entity);
   const [reason, setReason] = useState('');
@@ -872,9 +873,9 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
           )}
           <Field label="Type">
             <select className="input" value={draft.type} onChange={(e) => update({ type: e.target.value as Entity['type'] })}>
-              {ENTITY_TYPES.map((t) => (
+              {[...recordTypes.offered.map((t) => t.key), ...(recordTypes.offered.some((t) => t.key === draft.type) ? [] : [draft.type])].map((t) => (
                 <option key={t} value={t}>
-                  {ENTITY_TYPE_LABELS[t]}
+                  {recordTypes.label(t)}
                 </option>
               ))}
             </select>

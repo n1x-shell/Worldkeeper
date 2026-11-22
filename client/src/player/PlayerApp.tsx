@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { apiSource, type PlayerSource } from './source';
 import { PlayerProvider } from './context';
+import { setHandbookTypes } from './categories';
 import { RealmsProvider } from '../components/realms';
 import { RecordTypesProvider } from '../components/recordTypes';
 import type { RecordTypeDef } from '@shared/recordTypes';
@@ -36,6 +37,7 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
   const [info, setInfo] = useState<{ appName: string; publishedAt?: string; realms?: RealmInfo[]; types?: RecordTypeDef[] }>({ appName: 'The Worldkeeper' });
   useEffect(() => {
     void source.info().then((i) => {
+      setHandbookTypes(i.types);
       setInfo(i);
       document.title = `${i.appName} · Player Handbook`;
     });

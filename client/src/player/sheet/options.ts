@@ -8,6 +8,7 @@ import type { PEntity } from '../source';
 import { CLASSES } from '../../../../shared/rules2024';
 import { rulesSpeciesName, type SrdText, type WorldBackground } from './srd';
 import { byName, emptyRulesView, srdRulesView } from '../../../../shared/rulesView';
+import { handbookTypesWith } from '../categories';
 
 export * from './srd';
 
@@ -38,7 +39,7 @@ export interface PeopleOption {
 }
 export function peoplesFrom(entities: PEntity[]): PeopleOption[] {
   return entities
-    .filter((e) => ['people', 'species', 'culture'].includes(e.type))
+    .filter((e) => handbookTypesWith('folk').includes(e.type))
     .map((e) => {
       const atTable = plain(/\*\*At the table\.\*\*\s*([^\n]+)/.exec(e.summary ?? '')?.[1] ?? '');
       const rules = rulesSpeciesName(atTable);

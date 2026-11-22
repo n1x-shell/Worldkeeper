@@ -1,3 +1,4 @@
+import { useRecordTypes } from '../components/recordTypes';
 import { useMemo } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import ReactMarkdown, { defaultUrlTransform } from 'react-markdown';
@@ -80,6 +81,7 @@ function Codex({ id, fallback, onClose, onPlace, pinned }: { id: string; fallbac
 }
 
 export function MapExplorer() {
+  const recordTypes = useRecordTypes();
   const { id } = useParams();
   const [sp, setSp] = useSearchParams();
   const { source, base } = usePlayer();
@@ -93,7 +95,7 @@ export function MapExplorer() {
       m
         ? m.markers.map((mk) => {
             const e = mk.entity_id ? byId.get(mk.entity_id) : undefined;
-            return { ...mk, kind: kindOf(e?.type), typeLabel: e?.typeLabel };
+            return { ...mk, kind: kindOf(e?.type, recordTypes), typeLabel: e?.typeLabel };
           })
         : [],
     [m, byId],

@@ -1,8 +1,18 @@
 import { useMemo, useRef, useState } from 'react';
 import { X } from 'lucide-react';
-import { ENTITY_TYPE_LABELS, type EntityType } from '@shared/domain';
 import { useAppState } from '../lib/store';
+import { useRecordTypes } from './recordTypes';
+import type { TypeTraits } from '@shared/recordTypes';
 import { Badge } from './ui';
+
+/**
+ * Expand a picker's `types`: type keys, or traits written "@place", "@group", "@person", "@holdable", "@folk"... (any
+ * type with that trait in this library's registry, a pack's or the GM's own included).
+ */
+export function useTypeFilter(types: string[] | undefined): Set<string> | null {
+  const reg = useRecordTypes();
+  return useMemo(() => (types ? new Set(types.flatMap((t) => (t.startsWith('@') ? reg.with(t.slice(1) as keyof TypeTraits) : [t]))) : null), [types, reg]);
+}
 
 /** Accessible combobox to choose a record from the index by name, alias-free ID or partial name. */
 export function EntityPicker({
@@ -18,20 +28,22 @@ export function EntityPicker({
   placeholder?: string;
   allowClear?: boolean;
 }) {
+  const recordTypes = useRecordTypes();
   const { index, debug } = useAppState();
   const [q, setQ] = useState('');
   const [open, setOpen] = useState(false);
   const [hi, setHi] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const allowed = useTypeFilter(types);
   const results = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    const all = [...index.values()].filter((e) => e.type !== 'redirect' && (!types || types.includes(e.type)));
+    const all = [...index.values()].filter((e) => e.type !== 'redirect' && (!allowed || allowed.has(e.type)));
     if (!needle) return all.slice(0, 30);
     return all
       .filter((e) => e.name.toLowerCase().includes(needle) || e.id.toLowerCase().includes(needle))
       .sort((a, b) => Number(!a.name.toLowerCase().startsWith(needle)) - Number(!b.name.toLowerCase().startsWith(needle)))
       .slice(0, 30);
-  }, [q, index, types]);
+  }, [q, index, allowed]);
   const selected = value ? index.get(value) : null;
 
   if (value && !open)
@@ -92,7 +104,7 @@ export function EntityPicker({
             >
               <span className="truncate">{e.name}</span>
               <span className="text-xs text-dim shrink-0">
-                {ENTITY_TYPE_LABELS[e.type as EntityType] ?? e.type}
+                {recordTypes.label(e.type)}
                 {debug && ` · ${e.id}`}
               </span>
             </li>

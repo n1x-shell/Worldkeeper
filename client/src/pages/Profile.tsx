@@ -258,7 +258,7 @@ function FieldEditor({
         <div className="space-y-1.5">
           {rows.map((r, i) => (
             <div key={i} className="grid grid-cols-[1fr_120px_1fr_auto] gap-1 items-center">
-              <EntityPicker value={r.region || null} types={['continent', 'realm', 'region', 'nation', 'settlement', 'landmark', 'ethereal_domain']} onChange={(id) => upd(i, { region: id ?? '' })} />
+              <EntityPicker value={r.region || null} types={['@place']} onChange={(id) => upd(i, { region: id ?? '' })} />
               <select className="input" value={r.level} onChange={(e) => upd(i, { level: e.target.value })} aria-label="Influence level">
                 {INFLUENCE_LEVELS.map((l) => (
                   <option key={l}>{l}</option>

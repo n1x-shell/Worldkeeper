@@ -140,7 +140,7 @@ function BastionCard({ b: init, level, onDelete }: { b: Bastion; level: number; 
           <input className="input" value={b.owner} onChange={(e) => set({ owner: e.target.value })} placeholder="The party" />
         </Field>
         <Field label="Where">
-          <EntityPicker value={b.location_id} types={['settlement', 'landmark', 'building', 'region', 'vault']} onChange={(id) => set({ location_id: id })} />
+          <EntityPicker value={b.location_id} types={['@place']} onChange={(id) => set({ location_id: id })} />
         </Field>
         <Field
           label="In whose camp"

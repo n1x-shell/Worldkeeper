@@ -26,8 +26,9 @@ export interface ProfileField {
   refTypes?: string[];
 }
 
-const PLACE_TYPES = ['continent', 'realm', 'region', 'nation', 'settlement', 'landmark', 'building', 'dungeon', 'vault', 'ethereal_domain', 'adventure_location'];
-const GROUP_TYPES = ['faction', 'cult', 'family'];
+// Pickers take traits ("@place": any type with that trait in the library's registry).
+const PLACE_TYPES = ['@place'];
+const GROUP_TYPES = ['@group'];
 
 export const NPC_PROFILE: ProfileField[] = [
   { key: 'pronouns', label: 'Pronouns', type: 'short', scope: 'world', source: { fields: '^pronouns?$' } },
@@ -60,8 +61,8 @@ export const FACTION_PROFILE: ProfileField[] = [
   { key: 'leaders', label: 'Leaders', type: 'refs', scope: 'world', refTypes: ['npc'], source: { fields: '^(leaders?|leadership|rulers or keepers|keeper)$', sections: 'leader' }, relationships: ['leads'] },
   { key: 'headquarters', label: 'Headquarters', type: 'ref', scope: 'world', refTypes: PLACE_TYPES, source: { fields: '^(seat|headquarters|base)$', sections: 'seat|headquarters|stronghold' } },
   { key: 'resources', label: 'Resources', type: 'text', scope: 'world', source: { sections: 'resource|assets|strength|influence and' } },
-  { key: 'allies', label: 'Allies', type: 'refs', scope: 'world', refTypes: [...GROUP_TYPES, 'npc'], source: { sections: 'all(y|ies)' }, relationships: ['allied_with'] },
-  { key: 'rivals', label: 'Rivals', type: 'refs', scope: 'world', refTypes: [...GROUP_TYPES, 'npc'], source: { sections: 'tension|rival|enem|oppos' }, relationships: ['opposes'] },
+  { key: 'allies', label: 'Allies', type: 'refs', scope: 'world', refTypes: [...GROUP_TYPES, '@person'], source: { sections: 'all(y|ies)' }, relationships: ['allied_with'] },
+  { key: 'rivals', label: 'Rivals', type: 'refs', scope: 'world', refTypes: [...GROUP_TYPES, '@person'], source: { sections: 'tension|rival|enem|oppos' }, relationships: ['opposes'] },
   { key: 'goals', label: 'Goals', type: 'text', scope: 'world', source: { sections: '^(aim|goals?|purpose|agenda)' } },
   { key: 'secrets', label: 'Secrets', type: 'text', scope: 'world', secret: true, source: { sections: 'secret|gm' } },
   // Campaign scope

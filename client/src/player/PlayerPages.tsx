@@ -34,7 +34,7 @@ import {
 import { usePlayer, usePlayerIndex } from './context';
 import { usePlayerData, type PEntity } from './source';
 import { SpeciesBuilder } from './SpeciesBuilder';
-import { OTHER_GROUP, PLAYER_GROUPS, groupOf, linkedIds, previewText } from './categories';
+import { OTHER_GROUP, PLAYER_GROUPS, groupOf, handbookTypesWith, linkedIds, previewText } from './categories';
 import { Badge, RarityTag, RealmBadge, type Tone } from '../components/ui/badges';
 import { realmStyle, useRealms } from '../components/realms';
 import { REALM_KIND_LABELS } from '@shared/realms';
@@ -238,7 +238,7 @@ export function PlayerHome() {
     .filter((r) => !r.archived && r.kind !== 'domain' && r.kind !== 'region_group')
     .map((r) => {
       const here = entities.filter((e) => inRealm(e, r.id));
-      const intro = here.find((e) => e.realm === r.id && ['continent', 'realm', 'world'].includes(e.type));
+      const intro = here.find((e) => e.realm === r.id && handbookTypesWith('intro').includes(e.type));
       return { realm: r, key: r.id, label: r.name, n: here.length, line: intro ? previewText(intro.summary || '') : '' };
     })
     .filter((r) => r.n);
@@ -548,7 +548,7 @@ export function PlayerRealm() {
   if (!entities) return <Loading />;
   const label = info.name;
   const here = entities.filter((e) => inRealm(e, realm));
-  const intro = here.find((e) => e.type === 'continent' || e.type === 'realm' || e.type === 'world');
+  const intro = here.find((e) => handbookTypesWith('intro').includes(e.type));
   const groups = [...PLAYER_GROUPS, OTHER_GROUP].map((g) => ({ g, list: here.filter((e) => e !== intro && groupOf(e.type).key === g.key).sort(byName) })).filter((x) => x.list.length);
   const on = kind.realm === realm && groups.some((x) => x.g.key === kind.key) ? kind.key : '';
   const s = realmStyle(info);

@@ -1,5 +1,5 @@
+import { useRecordTypes } from './recordTypes';
 import { useCallback, useMemo, useRef, useState, type RefObject } from 'react';
-import { ENTITY_TYPE_LABELS, type EntityType } from '@shared/domain';
 import { useAppState } from '../lib/store';
 import type { EntitySummary } from '../lib/types';
 import { rankRecords } from '../lib/rank';
@@ -57,6 +57,7 @@ export function replaceRange(el: HTMLTextAreaElement, start: number, end: number
 }
 
 export function useLinkSuggest(ref: RefObject<HTMLTextAreaElement | null>, enabled = true) {
+  const recordTypes = useRecordTypes();
   const { index, mentions, debug } = useAppState();
   const [state, setState] = useState<{ start: number; query: string; top: number; left: number } | null>(null);
   const dismissed = useRef<number | null>(null);
@@ -134,7 +135,7 @@ export function useLinkSuggest(ref: RefObject<HTMLTextAreaElement | null>, enabl
           >
             <span className="truncate font-sans">{e.name}</span>
             <span className="text-[11px] text-dim shrink-0 font-sans">
-              {ENTITY_TYPE_LABELS[e.type as EntityType] ?? e.type}
+              {recordTypes.label(e.type)}
               {debug && ` · ${e.id}`}
             </span>
           </li>

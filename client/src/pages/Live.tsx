@@ -1,8 +1,8 @@
+import { useRecordTypes } from '../components/recordTypes';
 import { LiveTools, ToolSection } from './LiveTools';
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BookOpen, CalendarDays, Check, Dices, Eye, Flag, Globe2, Map as MapIcon, MapPin, Pin, Plus, ScrollText, Square, Swords } from 'lucide-react';
-import { ENTITY_TYPE_LABELS, type EntityType } from '@shared/domain';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Campaign, Session, StateRow } from '../lib/types';
@@ -532,6 +532,7 @@ function ReadAloud({ text }: { text: string }) {
 
 /** Records as buttons that open them in the Record pane. */
 function RecordChips({ ids, onPick, label, active }: { ids: string[]; onPick: (id: string) => void; label: string; active?: string | null }) {
+  const recordTypes = useRecordTypes();
   const { index } = useAppState();
   return (
     <div>
@@ -549,7 +550,7 @@ function RecordChips({ ids, onPick, label, active }: { ids: string[]; onPick: (i
               onClick={() => onPick(id)}
             >
               {e?.name ?? id}
-              {e && <span className="text-[10px] uppercase tracking-wider text-dim">{ENTITY_TYPE_LABELS[e.type as EntityType] ?? e.type}</span>}
+              {e && <span className="text-[10px] uppercase tracking-wider text-dim">{recordTypes.label(e.type)}</span>}
             </button>
           );
         })}
@@ -601,6 +602,7 @@ interface Exploration {
 
 /** The party's map, read-only: where the party is, the campaign's layers, and a peek at any pin. */
 function LiveMap() {
+  const recordTypes = useRecordTypes();
   const peek = usePeek();
   const nav = useNavigate();
   const { data: maps, error } = useApi<MapRow[]>('/api/maps');
@@ -637,8 +639,8 @@ function LiveMap() {
         y: mk.y,
         entity_id: mk.entity_id,
         child_map_id: mk.child_map_id,
-        kind: kindOf(mk.entity_type ?? undefined),
-        typeLabel: mk.entity_type ? (ENTITY_TYPE_LABELS[mk.entity_type as EntityType] ?? mk.entity_type) : undefined,
+        kind: kindOf(mk.entity_type ?? undefined, recordTypes),
+        typeLabel: mk.entity_type ? recordTypes.label(mk.entity_type) : undefined,
         hidden: mk.hidden,
       })),
     [data],
