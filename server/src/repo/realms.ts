@@ -35,7 +35,10 @@ export function listRealms(db: DB, opts: { counts?: boolean; includeArchived?: b
   const rows = (db.prepare('SELECT * FROM realms').all() as Row[]).map(toRealm).filter((r) => opts.includeArchived || !r.archived);
   if (opts.counts) {
     const counts = new Map(
-      (db.prepare(`SELECT realm, COUNT(*) n FROM entities WHERE archived = 0 AND type NOT IN ('redirect','index','register') GROUP BY realm`).all() as { realm: string; n: number }[]).map((r) => [r.realm, r.n]),
+      (db.prepare(`SELECT realm, COUNT(*) n FROM entities WHERE archived = 0 AND type NOT IN ('redirect','index','register') GROUP BY realm`).all() as { realm: string; n: number }[]).map((r) => [
+        r.realm,
+        r.n,
+      ]),
     );
     for (const r of rows) r.records = counts.get(r.id) ?? 0;
   }
@@ -165,5 +168,6 @@ export function repairRealms(db: DB, known: Record<string, Partial<Omit<RealmInf
       `SELECT realm AS id FROM entities UNION SELECT value FROM entities, json_each(entities.realms) UNION SELECT realm_id FROM maps WHERE realm_id IS NOT NULL UNION SELECT world_id FROM campaigns WHERE world_id IS NOT NULL`,
     )
     .all() as { id: string }[];
-  for (const { id } of used) if (id && !realmExists(db, id)) ensureRealm(db, id, known[id] ?? { name: id.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()), kind: 'continent', parent_id: DEFAULT_REALM });
+  for (const { id } of used)
+    if (id && !realmExists(db, id)) ensureRealm(db, id, known[id] ?? { name: id.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()), kind: 'continent', parent_id: DEFAULT_REALM });
 }

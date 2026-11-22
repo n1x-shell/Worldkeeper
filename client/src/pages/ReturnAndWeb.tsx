@@ -153,13 +153,7 @@ export function FactionWebPage() {
         Ties come from the factions' links (allied with, opposes): change them on each faction's page. Players see it under <Link to="/player/factions-web">Faction Web</Link>.
       </p>
       <div className="flex flex-wrap items-center gap-2">
-        <Segmented
-          size="sm"
-          label="Realm"
-          value={realm}
-          onChange={(k) => (setRealm(k), setFocus(null))}
-          options={realmsHere.map((r) => ({ value: r.id, label: r.name }))}
-        />
+        <Segmented size="sm" label="Realm" value={realm} onChange={(k) => (setRealm(k), setFocus(null))} options={realmsHere.map((r) => ({ value: r.id, label: r.name }))} />
         {focus && (
           <button className="btn-ghost text-xs" onClick={() => setFocus(null)}>
             Show all

@@ -471,7 +471,11 @@ export function PlayerBrowse() {
   const inGroup = useMemo(() => (entities ?? []).filter((e) => !g || groupOf(e.type).key === g.key), [entities, g]);
   const realmList = useRealms();
   const realmsHere = useMemo(
-    () => realmList.list.filter((r) => !r.archived).map((r) => ({ key: r.id, label: r.name, n: inGroup.filter((e) => inRealm(e, r.id)).length })).filter((r) => r.n),
+    () =>
+      realmList.list
+        .filter((r) => !r.archived)
+        .map((r) => ({ key: r.id, label: r.name, n: inGroup.filter((e) => inRealm(e, r.id)).length }))
+        .filter((r) => r.n),
     [inGroup, realmList],
   );
   const realm = pick.group === group && realmsHere.some((r) => r.key === pick.realm) ? pick.realm : '';

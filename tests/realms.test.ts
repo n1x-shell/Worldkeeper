@@ -102,11 +102,16 @@ describe('realms', () => {
       createEntity(ctx.db, rec('PPL-001', 'Fenfolk', 'people', 'world'));
       createEntity(ctx.db, rec('SET-001', 'Grimhold', 'settlement', 'ostmark'));
       ctx.db.prepare(`UPDATE entities SET revealed = 1`).run();
+      // A realm with nothing revealed in it stays unnamed to players: not listed, and no people is found there.
+      await request(app).post('/api/realms').send({ name: 'The Hidden Isle', kind: 'continent', parent_id: 'world' });
+      createEntity(ctx.db, rec('SET-002', 'Secret Port', 'settlement', 'hidden-isle'));
       const info = (await request(app).get('/api/player/info')).body as { realms: { id: string; name: string }[] };
       expect(info.realms.map((r) => r.name)).toEqual(['The World', 'Ostmark']);
       const snap = playerSnapshot(ctx.db);
       expect(snap.entities.find((e) => e.id === 'SET-001')).toMatchObject({ realm: 'ostmark', realmLabel: 'Ostmark' });
       expect(snap.entities.find((e) => e.id === 'PPL-001')?.realms).toContain('ostmark');
+      expect(snap.entities.find((e) => e.id === 'PPL-001')?.realms).not.toContain('hidden-isle');
+      expect(JSON.stringify(snap)).not.toMatch(/Hidden Isle|hidden-isle/);
     })();
   });
 

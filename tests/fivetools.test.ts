@@ -169,6 +169,12 @@ describe('importing from 5etools', () => {
   it('refuses a zip that isn’t 5etools', async () => {
     const z = new AdmZip();
     z.addFile('readme.txt', Buffer.from('hi'));
-    expect((await request(createApp(tempContext({ settingRealms: true }))).post('/api/rules/5etools/scan').attach('data', z.toBuffer(), 'x.zip')).status).toBe(400);
+    expect(
+      (
+        await request(createApp(tempContext({ settingRealms: true })))
+          .post('/api/rules/5etools/scan')
+          .attach('data', z.toBuffer(), 'x.zip')
+      ).status,
+    ).toBe(400);
   });
 });

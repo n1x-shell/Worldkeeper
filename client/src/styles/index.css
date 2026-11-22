@@ -92,15 +92,33 @@
 }
 
 /* A realm's colour: put rc-<colour> on an element, then use text-realm, border-realm/50, bg-realm/10 inside it. */
-.rc-blue { --rc: var(--rc-blue); }
-.rc-amber { --rc: var(--rc-amber); }
-.rc-green { --rc: var(--rc-green); }
-.rc-violet { --rc: var(--rc-violet); }
-.rc-red { --rc: var(--rc-red); }
-.rc-teal { --rc: var(--rc-teal); }
-.rc-rose { --rc: var(--rc-rose); }
-.rc-slate { --rc: var(--rc-slate); }
-:root { --rc: var(--rc-slate); }
+.rc-blue {
+  --rc: var(--rc-blue);
+}
+.rc-amber {
+  --rc: var(--rc-amber);
+}
+.rc-green {
+  --rc: var(--rc-green);
+}
+.rc-violet {
+  --rc: var(--rc-violet);
+}
+.rc-red {
+  --rc: var(--rc-red);
+}
+.rc-teal {
+  --rc: var(--rc-teal);
+}
+.rc-rose {
+  --rc: var(--rc-rose);
+}
+.rc-slate {
+  --rc: var(--rc-slate);
+}
+:root {
+  --rc: var(--rc-slate);
+}
 
 html,
 body,

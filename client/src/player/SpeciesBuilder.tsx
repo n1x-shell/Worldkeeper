@@ -19,7 +19,6 @@ const TABS = [
   { key: 'classes', label: 'Classes', types: ['calling'] },
 ] as const;
 
-
 /** The thirteen classes. Other calling records are the world's names for them. */
 const CLASS_NAMES = new Set(['Artificer', 'Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard']);
 const isClass = (e: PEntity) => e.type === 'calling' && CLASS_NAMES.has(e.name);

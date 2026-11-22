@@ -183,7 +183,7 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, realmsInfo:
   if (placeRealm && (r.type === 'people' || r.type === 'calling')) {
     for (const m of [out.summary, ...out.sections.map((x) => x.content)].join('\n').matchAll(/\/player\/e\/([A-Z]{2,5}-\d{3,4})/g)) {
       const realm = placeRealm.get(m[1]);
-      if (realm && realmsInfo.byId.get(realm)?.kind === 'continent') realms.add(realm);
+      if (realm && realmsInfo.continents.some((c) => c.id === realm)) realms.add(realm);
     }
     out.realms = [...realms];
   }
@@ -196,19 +196,33 @@ interface RealmContext {
   continents: (RealmInfo & { nameRe: RegExp })[];
 }
 const esc = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+/**
+ * The realms players may know of: those their revealed records are in, and what holds them (a continent's world).
+ * A realm the GM has made but revealed nothing in stays unnamed, in the handbook and in every list.
+ */
+function visibleRealmIds(db: DB, list: RealmInfo[]): Set<string> {
+  const byId = new Map(list.map((r) => [r.id, r]));
+  const out = new Set<string>();
+  for (const { realm } of db.prepare('SELECT DISTINCT realm FROM entities WHERE revealed = 1 AND archived = 0').all() as { realm: string }[]) {
+    for (let r = byId.get(realm); r && !out.has(r.id); r = r.parent_id ? byId.get(r.parent_id) : undefined) out.add(r.id);
+  }
+  return out;
+}
+
 function realmContext(db: DB): RealmContext {
   const list = listRealms(db, { includeArchived: true });
+  const visible = visibleRealmIds(db, list);
   return {
     byId: new Map(list.map((r) => [r.id, r])),
-    continents: list
-      .filter((r) => r.kind === 'continent')
-      .map((r) => ({ ...r, nameRe: new RegExp(`\\b${esc(r.name.replace(/^the\s+/i, ''))}\\b`) })),
+    continents: list.filter((r) => r.kind === 'continent' && visible.has(r.id)).map((r) => ({ ...r, nameRe: new RegExp(`\\b${esc(r.name.replace(/^the\s+/i, ''))}\\b`) })),
   };
 }
 
-/** The realms players see: every unarchived realm, without record counts. */
+/** The realms players see: unarchived ones their revealed records are in (and what holds those), without counts. */
 export function playerRealms(db: DB): Omit<RealmInfo, 'records'>[] {
-  return listRealms(db).map(({ records: _r, ...rest }) => rest);
+  const list = listRealms(db);
+  const visible = visibleRealmIds(db, list);
+  return list.filter((r) => visible.has(r.id)).map(({ records: _r, ...rest }) => rest);
 }
 
 /** The continent of every place record, for working out where a people is found. */
