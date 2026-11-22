@@ -84,7 +84,12 @@ describe('making a town both ways', () => {
 
     // Advanced: the template's Markdown with the header filled in, written in the editor, read back.
     const md = draftMarkdown({ name: 'Ashford', category: 'Settlement', realm: 'The World', parent: 'The Downs', canon: 'CANON' }, town, facts, written);
-    expect(md.split('\n').slice(0, 5)).toEqual(['Name: Ashford', 'Category: Settlement', 'Parent: The Downs', 'Continent or Realm: The World', 'Canon Status: CANON']);
+    expect(
+      md
+        .split('\n')
+        .slice(0, 5)
+        .map((l) => l.trimEnd()),
+    ).toEqual(['Name: Ashford', 'Category: Settlement', 'Parent: The Downs', 'Continent or Realm: The World', 'Canon Status: CANON']);
     const d = parseDraft(md.replace('Population: about 400', 'Population: about 900'));
     expect(d.header).toMatchObject({ name: 'Ashford', category: 'Settlement', parent: 'The Downs', realm: 'The World', canon: 'CANON' });
     expect(d.fields.map(([k]) => k)).toEqual(town.facts.map((f) => f.name));

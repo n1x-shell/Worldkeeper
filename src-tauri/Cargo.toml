@@ -1,6 +1,6 @@
 [package]
 name = "worldkeeper"
-version = "0.4.9"
+version = "0.5.0"
 description = "The Worldkeeper: local-first world encyclopedia and D&D campaign manager"
 edition = "2021"
 publish = false

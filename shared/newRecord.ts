@@ -145,7 +145,8 @@ export function draftMarkdown(h: DraftHeader, template: Pick<TemplateSpec, 'fact
     ...template.facts.map((f) => `${f.name}: ${facts[f.name] ?? ''}`),
   ];
   const { body } = buildRecord(h.name || 'New record', template, {}, sections ?? sectionDrafts(template));
-  return `${head.join('\n')}\n\n${body}`;
+  // Each header line ends in a Markdown line break (two spaces), so the preview shows one fact to a line.
+  return `${head.map((l) => `${l}  `).join('\n')}\n\n${body}`;
 }
 
 const HEADER_LINE = /^([A-Z][A-Za-z0-9 ,/()'’-]{0,60}?):[ \t]?(.*)$/;
