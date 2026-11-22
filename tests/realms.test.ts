@@ -43,7 +43,26 @@ describe('realms', () => {
     db.prepare(`INSERT INTO timeline_rows (sort_order, time_label, event, realm_label) VALUES (1, 'Year 1', 'A', 'Aetheris'), (2, 'Year 2', 'B', 'Both'), (3, 'Year 3', 'C', 'World')`).run();
     migrate(db);
     // No Kaelmar records, so no Kaelmar. The World sits in the realm of Evershroud; the Ethereal Realm is a realm beside it.
-    expect(sortRealms(listRealms(db)).map((r) => r.id)).toEqual(['evershroud', 'world', 'aetheris', 'ethereal']);
+    expect(sortRealms(listRealms(db)).map((r) => r.id)).toEqual([
+      'evershroud',
+      'world',
+      'aetheris',
+      'ethereal',
+      'hollow-verge',
+      'fields-of-lost-realities',
+      'ossuary-of-kings',
+      'silent-archive',
+      'loom-of-eternity',
+      'citadel-of-the-hidden',
+      'black-horizon',
+    ]);
+    // The Hollow Verge is a domain of the Ethereal Realm; the six deeper domains sit beneath it.
+    expect(listRealms(db).find((r) => r.id === 'hollow-verge')).toMatchObject({ kind: 'domain', parent_id: 'ethereal' });
+    expect(
+      listRealms(db)
+        .filter((r) => r.parent_id === 'hollow-verge')
+        .map((r) => r.kind),
+    ).toEqual(Array(6).fill('domain'));
     expect(listRealms(db).find((r) => r.id === 'world')).toMatchObject({ kind: 'world', parent_id: 'evershroud' });
     expect(listRealms(db).find((r) => r.id === 'ethereal')).toMatchObject({ kind: 'realm', parent_id: null });
     expect(listRealms(db).find((r) => r.id === 'aetheris')).toMatchObject({ name: 'Aetheris', kind: 'continent', parent_id: 'world', color: 'amber' });
@@ -116,6 +135,10 @@ describe('realms', () => {
     expect((await post({ name: 'Ostmark', kind: 'continent', parent_id: 'world' })).status).toBe(200);
     expect((await post({ name: 'Pocket', kind: 'world', parent_id: 'ostmark' })).status).toBe(400);
     expect((await post({ name: 'The Marches', kind: 'region_group', parent_id: 'ostmark' })).status).toBe(200);
+    // A domain sits in a realm or another domain, never in a world.
+    expect((await post({ name: 'The Drowned Court', kind: 'domain', parent_id: 'astral-sea' })).status).toBe(200);
+    expect((await post({ name: 'The Deep Court', kind: 'domain', parent_id: 'drowned-court' })).status).toBe(200);
+    expect((await post({ name: 'Misplaced', kind: 'domain', parent_id: 'world' })).status).toBe(400);
     // Making Ostmark a world of its own would strand The Marches (a region group) inside a world.
     const res = await request(app).patch('/api/realms/ostmark').send({ kind: 'world', parent_id: 'astral-sea' });
     expect(res.status).toBe(400);

@@ -97,6 +97,14 @@ export const SETTING_REALMS: Record<string, { name: string; kind: RealmKind; par
   ethereal: { name: 'The Ethereal Realm', kind: 'realm', parent_id: null, color: 'violet', icon: 'ghost', sort_order: 3 },
   /** The realm The World sits in (owner decision, DEC-910). */
   evershroud: { name: 'Evershroud', kind: 'realm', parent_id: null, color: 'slate', icon: 'moon', sort_order: 0 },
+  // The Ethereal Realm's domains (owner decision, DEC-910): the Hollow Verge, and the six deeper ones beneath it.
+  'hollow-verge': { name: 'The Hollow Verge', kind: 'domain', parent_id: 'ethereal', color: 'violet', icon: 'ghost', sort_order: 4 },
+  'fields-of-lost-realities': { name: 'The Fields of Lost Realities', kind: 'domain', parent_id: 'hollow-verge', color: 'teal', icon: 'sparkles', sort_order: 5 },
+  'ossuary-of-kings': { name: 'The Ossuary of Kings', kind: 'domain', parent_id: 'hollow-verge', color: 'slate', icon: 'skull', sort_order: 6 },
+  'silent-archive': { name: 'The Silent Archive', kind: 'domain', parent_id: 'hollow-verge', color: 'blue', icon: 'moon', sort_order: 7 },
+  'loom-of-eternity': { name: 'The Loom of Eternity', kind: 'domain', parent_id: 'hollow-verge', color: 'amber', icon: 'snowflake', sort_order: 8 },
+  'citadel-of-the-hidden': { name: 'The Citadel of the Hidden', kind: 'domain', parent_id: 'hollow-verge', color: 'rose', icon: 'castle', sort_order: 9 },
+  'black-horizon': { name: 'The Black Horizon', kind: 'domain', parent_id: 'hollow-verge', color: 'red', icon: 'compass', sort_order: 10 },
 };
 
 /** Words in a realm field that don't name a realm. */

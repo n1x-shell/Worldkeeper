@@ -727,12 +727,13 @@ CREATE TABLE rules_entries (
     name: "realms as data: the library's realms, worlds and continents; maps, timeline rows and campaigns belong to them",
     // Every library starts with "The World". The Worldkeeper setting's realms become rows only where the library already
     // uses them, with the ids its records already carry, so nothing about them changes: Aetheris and Kaelmar are
-    // continents of The World, which sits in the realm of Evershroud; the Ethereal Realm is a realm beside it.
+    // continents of The World, which sits in the realm of Evershroud; the Ethereal Realm is a realm beside it, holding
+    // the Hollow Verge with its six deeper domains.
     sql: `
 CREATE TABLE realms (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
-  kind TEXT NOT NULL DEFAULT 'world' CHECK (kind IN ('realm','world','continent','region_group')),
+  kind TEXT NOT NULL DEFAULT 'world' CHECK (kind IN ('realm','world','continent','domain','region_group')),
   parent_id TEXT REFERENCES realms(id) ON DELETE SET NULL,
   color TEXT NOT NULL DEFAULT 'blue',
   icon TEXT NOT NULL DEFAULT 'globe',
@@ -755,6 +756,21 @@ INSERT INTO realms (id, name, kind, color, icon, sort_order)
   SELECT 'evershroud', 'Evershroud', 'realm', 'slate', 'moon', 0
   WHERE EXISTS (SELECT 1 FROM realms WHERE id IN ('aetheris','kaelmar','ethereal'));
 UPDATE realms SET parent_id = 'evershroud' WHERE id = 'world' AND EXISTS (SELECT 1 FROM realms WHERE id = 'evershroud');
+-- The Ethereal Realm's domains: the Hollow Verge (the border layer), with the six deeper domains beneath it.
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'hollow-verge', 'The Hollow Verge', 'domain', 'ethereal', 'violet', 'ghost', 4 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'fields-of-lost-realities', 'The Fields of Lost Realities', 'domain', 'hollow-verge', 'teal', 'sparkles', 5 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'ossuary-of-kings', 'The Ossuary of Kings', 'domain', 'hollow-verge', 'slate', 'skull', 6 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'silent-archive', 'The Silent Archive', 'domain', 'hollow-verge', 'blue', 'moon', 7 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'loom-of-eternity', 'The Loom of Eternity', 'domain', 'hollow-verge', 'amber', 'snowflake', 8 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'citadel-of-the-hidden', 'The Citadel of the Hidden', 'domain', 'hollow-verge', 'rose', 'castle', 9 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'black-horizon', 'The Black Horizon', 'domain', 'hollow-verge', 'red', 'compass', 10 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
 
 ALTER TABLE maps ADD COLUMN realm_id TEXT REFERENCES realms(id) ON DELETE SET NULL;
 UPDATE maps SET realm_id = CASE

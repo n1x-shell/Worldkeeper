@@ -43,6 +43,7 @@ const PLACEHOLDER: Record<RealmKind, string> = {
   realm: 'e.g. The Feywild',
   world: 'e.g. Second Sun',
   continent: 'e.g. The Sunken Isles',
+  domain: 'e.g. The Drowned Court',
   region_group: 'e.g. The Northern Marches',
 };
 
@@ -90,7 +91,7 @@ export function RealmsPage() {
     <div className="space-y-5 max-w-4xl">
       <PageHeader
         title="Worlds & Realms"
-        subtitle="Realms hold worlds, worlds hold continents, and continents can hold region groups. Every record belongs to one of them; each gets a page, a colour and a place in the sidebar."
+        subtitle="Realms hold worlds or domains, worlds hold continents, continents can hold region groups, and domains can hold deeper domains. Every record belongs to one of them; each gets a page, a colour and a place in the sidebar."
         actions={
           <>
             <button className="btn-primary" onClick={() => setEditing(blank(realms.list, 'continent'))}>
@@ -98,6 +99,9 @@ export function RealmsPage() {
             </button>
             <button className="btn" onClick={() => setEditing(blank(realms.list, 'world'))}>
               <Plus size={14} /> Add a world
+            </button>
+            <button className="btn" onClick={() => setEditing(blank(realms.list, 'domain'))}>
+              <Plus size={14} /> Add a domain
             </button>
             <button className="btn" onClick={() => setEditing(blank(realms.list, 'realm'))}>
               <Plus size={14} /> Add a realm
@@ -272,7 +276,7 @@ function RealmEditor({ draft, realms, onClose, onSave }: { draft: Draft; realms:
             ))}
           </select>
         </Field>
-        <Field label="Inside" hint="A realm is top level; a world sits in a realm (or on its own); a continent in a world; a region group in a continent.">
+        <Field label="Inside" hint="A realm is top level; a world sits in a realm (or on its own); a continent in a world; a domain in a realm or another domain; a region group in a continent.">
           <select className="input" value={d.parent_id ?? ''} onChange={(e) => set({ parent_id: e.target.value || null })}>
             {topOk && <option value="">Nothing (top level)</option>}
             {!topOk && !parents.length && <option value="">Add a {d.kind === 'continent' ? 'world' : 'continent'} first</option>}

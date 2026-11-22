@@ -4,15 +4,17 @@
  */
 
 /**
- * The kinds, outermost first: a realm (a plane of existence, such as Evershroud or the Ethereal Realm) holds worlds; a
- * world holds continents; a continent holds region groups.
+ * The kinds, outermost first: a realm (a plane of existence, such as Evershroud or the Ethereal Realm) holds worlds or
+ * domains; a world holds continents; a continent holds region groups. A domain (a region of a realm with no world, such
+ * as the Ethereal Realm's Hollow Verge) can hold further domains.
  */
-export const REALM_KINDS = ['realm', 'world', 'continent', 'region_group'] as const;
+export const REALM_KINDS = ['realm', 'world', 'continent', 'domain', 'region_group'] as const;
 export type RealmKind = (typeof REALM_KINDS)[number];
 export const REALM_KIND_LABELS: Record<RealmKind, string> = {
   realm: 'Realm',
   world: 'World',
   continent: 'Continent',
+  domain: 'Domain',
   region_group: 'Region group',
 };
 
@@ -21,6 +23,7 @@ export const REALM_PARENT_KINDS: Record<RealmKind, (RealmKind | null)[]> = {
   realm: [null],
   world: ['realm', null],
   continent: ['world'],
+  domain: ['realm', 'domain'],
   region_group: ['continent'],
 };
 

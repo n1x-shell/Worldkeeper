@@ -64,10 +64,23 @@ export function WorldOverview() {
 
 /** The record that introduces a realm: its world, continent or realm record (the setting's are named outright). */
 const ROOT_TYPES = ['world', 'continent', 'realm'];
-const SETTING_ROOT: Record<string, string> = { aetheris: 'CON-001', kaelmar: 'CON-301', ethereal: 'CON-501' };
+const SETTING_ROOT: Record<string, string> = {
+  aetheris: 'CON-001',
+  kaelmar: 'CON-301',
+  ethereal: 'CON-501',
+  // The Ethereal Realm's domains: each opens with its own record (their records stay in the Ethereal Realm).
+  'hollow-verge': 'ETH-501',
+  'fields-of-lost-realities': 'ETH-502',
+  'ossuary-of-kings': 'ETH-503',
+  'silent-archive': 'ETH-504',
+  'loom-of-eternity': 'ETH-505',
+  'citadel-of-the-hidden': 'ETH-506',
+  'black-horizon': 'ETH-507',
+};
 
 export function RealmPage() {
   const realms = useRealms();
+  const { index } = useAppState();
   const { realm = 'world' } = useParams();
   const { data: list, error } = useApi<EntitySummary[]>(`/api/entities${qs({ realm })}`);
   const groups = useMemo(() => {
@@ -94,7 +107,7 @@ export function RealmPage() {
   };
   const info = realms.get(realm);
   const root =
-    (SETTING_ROOT[realm] && list?.some((e) => e.id === SETTING_ROOT[realm]) ? SETTING_ROOT[realm] : undefined) ??
+    (SETTING_ROOT[realm] && (list?.some((e) => e.id === SETTING_ROOT[realm]) || index.has(SETTING_ROOT[realm])) ? SETTING_ROOT[realm] : undefined) ??
     [...(list ?? [])].filter((e) => ROOT_TYPES.includes(e.type)).sort((a, b) => ROOT_TYPES.indexOf(a.type) - ROOT_TYPES.indexOf(b.type))[0]?.id;
   const inside = realms.list.filter((r) => r.parent_id === info.id && !r.archived);
   const parent = info.parent_id ? realms.get(info.parent_id) : null;

@@ -75,7 +75,7 @@ const realmPatch = z.object({
   archived: z.boolean().optional(),
 });
 
-const KIND_NAME: Record<RealmKind, string> = { realm: 'a realm', world: 'a world', continent: 'a continent', region_group: 'a region group' };
+const KIND_NAME: Record<RealmKind, string> = { realm: 'a realm', world: 'a world', continent: 'a continent', domain: 'a domain', region_group: 'a region group' };
 const kindOf = (db: DB, id: string) => (db.prepare('SELECT kind FROM realms WHERE id = ?').get(id) as { kind: RealmKind } | undefined)?.kind;
 
 /**
