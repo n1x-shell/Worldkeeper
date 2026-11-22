@@ -9,6 +9,7 @@ import {
 } from '../../../shared/domain.js';
 import { metaValue, type ParsedBlock } from './parseMarkdown.js';
 import { realmKey, type RealmColor, type RealmIcon, type RealmKind } from '../../../shared/realms.js';
+import { BUILTIN_REGISTRY, type TypeRegistry } from '../../../shared/recordTypes.js';
 
 const STANDARD_KEYS = new Set([
   'id',
@@ -61,7 +62,12 @@ export function isTemplatePlaceholder(value: string | null | undefined): boolean
   return !value || /^\[?UNDEFINED/i.test(value.trim());
 }
 
-export function normalizeType(id: string, categoryRaw: string | null): EntityType {
+/**
+ * A record's type from its "Category:". The Worldkeeper archive's own wording is read first (its import profile, which
+ * moves into the setting's pack in step 3); then the library's type registry (key, label, plural or alias), so a GM's
+ * own types and a Markdown export read back as they were; then the archive's ID prefixes, as a last resort.
+ */
+export function normalizeType(id: string, categoryRaw: string | null, reg: TypeRegistry = BUILTIN_REGISTRY): EntityType {
   const cat = (categoryRaw ?? '').toLowerCase();
   if (cat.includes('legacy cross-reference')) return 'redirect';
   if (/^(index|register|guide|npc directory|travel guide|rules guide|adventure tool|campaign arcs)/.test(cat)) {
@@ -81,6 +87,8 @@ export function normalizeType(id: string, categoryRaw: string | null): EntityTyp
   if (cat.startsWith('rule')) return 'rule';
   if (cat.startsWith('adventure')) return 'adventure_hook';
   if (cat.startsWith('campaign arcs')) return 'adventure_hook';
+  const known = reg.fromCategory(categoryRaw);
+  if (known) return known;
   const prefixType = PREFIX_TYPES[idPrefix(id)];
   if (prefixType === 'ethereal_domain' && !cat.startsWith('ethereal domain')) return 'index';
   if (prefixType === 'world' && id !== 'WLD-901') return 'index';
@@ -240,7 +248,7 @@ export interface EntityDraft {
   source_line: number;
 }
 
-export function blockToDraft(block: ParsedBlock, file: string, realms: KnownRealm[] = []): EntityDraft {
+export function blockToDraft(block: ParsedBlock, file: string, realms: KnownRealm[] = [], reg: TypeRegistry = BUILTIN_REGISTRY): EntityDraft {
   const m = block.meta;
   const id = block.id.trim();
   const name = metaValue(m, 'Name') ?? id;
@@ -249,7 +257,7 @@ export function blockToDraft(block: ParsedBlock, file: string, realms: KnownReal
   const realmRaw = metaValue(m, 'Continent or realm');
   const canonRaw = metaValue(m, 'Canon status');
   const tags = splitList(metaValue(m, 'Tags')).map((t) => t.toLowerCase());
-  const type = normalizeType(id, category);
+  const type = normalizeType(id, category, reg);
   const { realm, realms: inRealms, created } = normalizeRealm(realmRaw, realms);
   const { status, flags } = normalizeCanon(canonRaw);
   const aliasesRaw = metaValue(m, 'Alternate names');

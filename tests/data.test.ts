@@ -81,7 +81,7 @@ describe('editing and persistence', () => {
     const ctx = seeded();
     const d = duplicateAsDraft(ctx.db, 'LOC-002');
     expect(d.canon_status).toBe('PROPOSED');
-    expect(d.id).toMatch(/^CUS-\d{4}$/);
+    expect(d.id).toMatch(/^LOC-\d{4}$/); // its type's prefix, with four digits (archive IDs have three)
     expect(getEntity(ctx.db, 'LOC-002').canon_status).toBe('CANON');
     const p = listProposals(ctx.db).find((x) => x.entity_id === d.id)!;
     decideProposal(ctx.db, p.id, 'approved', 'ok');

@@ -138,7 +138,13 @@ const typeInput = z.object({
 /** A type of the GM's own (Library → Templates). Its key comes from its label; its prefix must be free. */
 export function createRecordType(db: DB, input: unknown): RecordTypeInfo {
   const d = typeInput.parse(input);
-  const key = d.key ?? d.label.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40);
+  const key =
+    d.key ??
+    d.label
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '')
+      .slice(0, 40);
   if (!TYPE_KEY_RE.test(key)) throw badRequest('Give the type a name that starts with a letter');
   if (db.prepare('SELECT 1 FROM record_types WHERE key = ?').get(key)) throw badRequest(`There is already a type called "${key}"`);
   const owner = db.prepare('SELECT label FROM record_types WHERE prefix = ?').get(d.prefix) as { label: string } | undefined;

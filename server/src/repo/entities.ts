@@ -5,7 +5,7 @@ import { badRequest, notFound } from '../lib/errors.js';
 import type { Entity, EntitySummary, Realm, EntityType, CanonStatus } from '../../../shared/domain.js';
 import { BARE_ID_RE, CANON_STATUSES } from '../../../shared/domain.js';
 import { TYPE_KEY_RE } from '../../../shared/recordTypes.js';
-import { typeExists } from './recordTypes.js';
+import { typeExists, types } from './recordTypes.js';
 import { REALM_KEY_RE } from '../../../shared/realms.js';
 import { realmExists } from './realms.js';
 import { z } from 'zod';
@@ -264,12 +264,16 @@ export type EntityPatch = z.infer<typeof entityPatchSchema>;
 
 const PLAY_STATE_KEYS = ['player_summary', 'revealed', 'revealed_sections', 'revealed_facts', 'favorite', 'archived'] as const;
 
+/**
+ * The next free ID for a new record of a type: its prefix and four digits (SET-0001). Archive IDs have three digits
+ * (SET-001), so a record made here never takes an ID an archive could bring in later.
+ */
 export function nextCustomId(db: DB, prefix = 'CUS'): string {
-  const rows = db.prepare(`SELECT id FROM entities WHERE id LIKE ?`).all(`${prefix}-%`) as { id: string }[];
+  const rows = db.prepare(`SELECT id FROM entities WHERE id LIKE ?`).all(`${prefix}-____`) as { id: string }[];
   let max = 0;
   for (const r of rows) {
-    const n = parseInt(r.id.split('-')[1], 10);
-    if (!Number.isNaN(n) && n > max) max = n;
+    const n = /^[A-Z]+-(\d{4})$/.exec(r.id)?.[1];
+    if (n && Number(n) > max) max = Number(n);
   }
   return `${prefix}-${String(max + 1).padStart(4, '0')}`;
 }
@@ -287,7 +291,7 @@ export function createEntity(db: DB, input: EntityInput, reason = 'Created'): En
   const data = entityInputSchema.parse(input);
   if (!realmExists(db, data.realm)) throw badRequest(`There is no realm "${data.realm}" in this library`);
   if (!typeExists(db, data.type)) throw badRequest(`There is no record type "${data.type}" in this library`);
-  const id = data.id ?? nextCustomId(db);
+  const id = data.id ?? nextCustomId(db, types(db).get(data.type)?.prefix ?? 'CUS');
   if (getEntityRow(db, id)) throw badRequest(`ID ${id} already exists. Stable IDs are never reused.`);
   const ts = now();
   const tx = db.transaction(() => {

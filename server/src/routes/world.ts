@@ -175,7 +175,7 @@ export function worldRoutes(ctx: AppContext) {
       const e = getEntity(ctx.db, String(req.params.id));
       res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
       res.setHeader('Content-Disposition', `attachment; filename="${e.id}.md"`);
-      res.send(entityToMarkdown(e));
+      res.send(entityToMarkdown(e, ctx.db));
     }),
   );
 
