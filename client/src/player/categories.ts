@@ -24,13 +24,6 @@ export function groupOf(type: string): PlayerGroup {
   return PLAYER_GROUPS.find((g) => g.types.includes(type)) ?? OTHER_GROUP;
 }
 
-export const PLAYER_REALMS: { key: string; label: string }[] = [
-  { key: 'aetheris', label: 'Aetheris' },
-  { key: 'kaelmar', label: 'Kaelmar' },
-  { key: 'ethereal', label: 'Ethereal Realm' },
-  { key: 'world', label: 'The Wider World' },
-];
-
 /** Entries linked from text (the projection writes links to revealed entries as /player/e/ID). */
 export function linkedIds(text: string): string[] {
   const out: string[] = [];

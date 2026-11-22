@@ -328,19 +328,19 @@ export function EtherealExplorer() {
       </div>
       <div className="grid gap-4 lg:grid-cols-[420px_1fr]">
         <div className="space-y-3">
-          <Card title="Continents" className="border-realm-world/40">
+          <Card title="Continents" className="rc-blue border-realm/40">
             <div className="flex gap-2 text-sm">
               <EntityLink id="CON-001">Aetheris</EntityLink> · <EntityLink id="CON-301">Kaelmar</EntityLink> · <EntityLink id="LOC-901">The Rift</EntityLink>
             </div>
           </Card>
           <div className="text-center text-dim text-xs">▼ crossing ▼</div>
-          <Card title="Border layer" className="border-realm-ethereal/40">
+          <Card title="Border layer" className="rc-violet border-realm/40">
             {layers.border.length ? <DomainButtons list={layers.border} sel={sel} setSel={setSel} /> : <DomainButtons list={(domains ?? []).filter((d) => d.id === 'ETH-501')} sel={sel} setSel={setSel} />}
           </Card>
           <div className="text-center text-dim text-xs flex items-center justify-center gap-1">
             <AlertTriangle size={12} /> deeper access requires conditions ▼
           </div>
-          <Card title="Deep domains" className="border-realm-ethereal/50 bg-realm-ethereal/5">
+          <Card title="Deep domains" className="rc-violet border-realm/50 bg-realm/5">
             <DomainButtons list={(domains ?? []).filter((d) => d.id !== 'ETH-501' && !layers.border.includes(d))} sel={sel} setSel={setSel} />
           </Card>
         </div>
@@ -354,7 +354,7 @@ function DomainButtons({ list, sel, setSel }: { list: EntitySummary[]; sel: stri
   return (
     <div className="grid gap-1.5">
       {list.map((d) => (
-        <button key={d.id} onClick={() => setSel(d.id)} className={`text-left px-3 py-2 rounded-md border ${sel === d.id ? 'border-gold text-gold bg-gold/10' : 'border-line hover:border-realm-ethereal/60'}`}>
+        <button key={d.id} onClick={() => setSel(d.id)} className={`text-left px-3 py-2 rounded-md border ${sel === d.id ? 'border-gold text-gold bg-gold/10' : 'rc-violet border-line hover:border-realm/60'}`}>
           <div className="font-display text-sm">{d.name}</div>
           <Dev>
             <div className="text-[11px] text-dim">{d.id}</div>
@@ -384,7 +384,7 @@ function DomainDetail({ id }: { id: string }) {
             <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
           </GmOnly>
         ) : (
-          <div key={i} className={/access/i.test(s.heading) ? 'border border-realm-ethereal/30 rounded px-3 my-2 bg-realm-ethereal/5' : ''}>
+          <div key={i} className={/access/i.test(s.heading) ? 'rc-violet border border-realm/30 rounded px-3 my-2 bg-realm/5' : ''}>
             <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
           </div>
         ),

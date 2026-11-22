@@ -13,6 +13,7 @@ import {
   CircleHelp,
   Clock,
   Compass,
+  Settings2,
   Crown,
   Dice5,
   Drama,
@@ -21,10 +22,8 @@ import {
   Feather,
   FileWarning,
   Flag,
-  Flame,
   Gavel,
   Gem,
-  Ghost,
   Gift,
   Globe2,
   HeartPulse,
@@ -38,7 +37,6 @@ import {
   Map as MapIcon,
   MapPinned,
   MessageCircleQuestion,
-  Mountain,
   Network,
   NotebookPen,
   Palette,
@@ -60,6 +58,8 @@ import {
   Waypoints,
   type LucideIcon,
 } from 'lucide-react';
+import type { RealmIcon } from '@shared/realms';
+import { REALM_ICON_COMPONENTS } from './realms';
 
 export type Item = { to: string; label: string; icon: LucideIcon; /** Opens in a new tab (outside the GM shell). */ external?: boolean };
 export type Group = { title: string; items: Item[] };
@@ -86,12 +86,9 @@ export const WORKSPACES: Workspace[] = [
         ],
       },
       {
+        // Filled from the library's realms (withRealms), then Manage realms.
         title: 'Realms',
-        items: [
-          { to: '/realm/aetheris', label: 'Aetheris', icon: Mountain },
-          { to: '/realm/kaelmar', label: 'Kaelmar', icon: Flame },
-          { to: '/realm/ethereal', label: 'Ethereal Realm', icon: Ghost },
-        ],
+        items: [{ to: '/realms', label: 'Manage realms', icon: Settings2 }],
       },
       {
         title: 'Records',
@@ -261,9 +258,6 @@ export const LIBRARY: Group = {
 export const DEBUG_ONLY = new Set(['/documents', '/broken', '/style-guide']);
 /** Menu items for the setting's own mechanics, shown only while they're switched on (Settings, Campaign mechanics). */
 export const NEEDS: Record<string, keyof Mechanics> = {
-  '/realm/aetheris': 'setting',
-  '/realm/kaelmar': 'setting',
-  '/realm/ethereal': 'setting',
   '/quick-reference': 'setting',
   '/campaign/return': 'theReturn',
 };
@@ -292,3 +286,9 @@ export function workspaceFor(path: string): WorkspaceId | 'library' {
 
 /** Pages that fill the main view edge to edge, with no page margins (the map explorer). */
 export const FULL_BLEED = /^\/atlas\/explore(\/|$)/;
+
+/** The Realms group with a page for each of the library's realms (not archived ones), before Manage realms. */
+export function withRealms(g: Group, realms: { id: string; name: string; icon: RealmIcon; archived: boolean }[]): Group {
+  if (g.title !== 'Realms') return g;
+  return { ...g, items: [...realms.filter((r) => !r.archived).map((r) => ({ to: `/realm/${r.id}`, label: r.name, icon: REALM_ICON_COMPONENTS[r.icon] ?? Compass })), ...g.items] };
+}

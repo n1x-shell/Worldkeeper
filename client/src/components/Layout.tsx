@@ -12,7 +12,8 @@ import { useAppState } from '../lib/store';
 import { api } from '../lib/api';
 import { SearchPalette } from './SearchPalette';
 import { SidebarSlotContext } from './sidebarSlot';
-import { DEBUG_ONLY, FULL_BLEED, LIBRARY, NEEDS, WORKSPACES, matches, workspaceFor, type Group, type Item } from './navigation';
+import { DEBUG_ONLY, FULL_BLEED, LIBRARY, NEEDS, WORKSPACES, matches, withRealms, workspaceFor, type Group, type Item } from './navigation';
+import { useRealms } from './realms';
 import { ConfirmHost, ToastHost } from './ui';
 import { PeekProvider } from './peek/PeekProvider';
 import { Inspector } from './peek/Inspector';
@@ -150,13 +151,14 @@ export function Layout() {
     return () => window.removeEventListener('keydown', onKey);
   });
 
+  const realms = useRealms();
   const current = WORKSPACES.find((w) => w.id === ws);
   const groups: Group[] = useMemo(() => {
     if (ws === 'library') return [LIBRARY];
-    const gs = current?.groups ?? [];
+    const gs = (current?.groups ?? []).map((g) => withRealms(g, realms.list));
     if (ws !== 'atlas' || !maps.length) return gs;
     return [{ title: 'Maps', items: maps.map((m) => ({ to: `/atlas/explore/${m.id}`, label: m.name, icon: MapPinned })) }, ...gs];
-  }, [ws, current, maps]);
+  }, [ws, current, maps, realms]);
 
   const link = (it: Item, compact: boolean) =>
     it.external ? (
@@ -199,7 +201,7 @@ export function Layout() {
         </div>
       )}
       <div className="flex-1 overflow-y-auto py-2">
-        {(all ? [...WORKSPACES.map((w) => ({ title: w.label, items: w.groups.flatMap((g) => g.items) })), LIBRARY] : groups).map((g) => {
+        {(all ? [...WORKSPACES.map((w) => ({ title: w.label, items: w.groups.flatMap((g) => withRealms(g, realms.list).items) })), LIBRARY] : groups).map((g) => {
           const items = g.items.filter(visible);
           if (!items.length) return null;
           return (
