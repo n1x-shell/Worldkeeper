@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-22 · v0.4.5_
+_Last updated: 2026-11-22 · v0.4.6_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,19 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.4.6: rules for any world (own-world step 6)
+
+Step 6 of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md).
+
+- **Places' facts** (`shared/places.ts`, `server/src/repo/places.ts`): Terrain (the twelve environments creatures use, read from plain words: "rolling downs and farmland" is grassland and hill), Danger (safe, risky, deadly) and Wealth (poor, modest, rich), from the place's own facts, else the places it sits in, else (terrain only) an installed setting pack's `encounters/terrain.json`. Danger defaults to risky, wealth to modest. The region, nation, settlement and landmark templates ask for them. `placeProfile(db, id)`, `regionPlaces`, `placesWithTerrain`; `difficultyFor(danger)`.
+- **Treasure tiers in the rules layer** (`shared/treasureTiers.ts`); the setting's `pools.json` keeps only its regions, pools, goods and hooks.
+- **Random tables** (migration 25) have `region_id`, `level_min`/`level_max`, `kind` (encounter, treasure, other) and `auto`, read from the old source text and names (`adoptTableBands` at start, and on save). `server/src/repo/tables.ts`: `tablesFor` (hand-made first), `encounterTableFor` (with `generate`), `generateEncounterTable` (eight rows from the rules packs in use, by terrain, danger and level band, regenerated in place), `copyTable`. The briefing, the region panel and journeys use them; a journey that rolls where there's no table gets one. `POST /api/regions/:id/encounter-table`, `POST /api/random-tables/:id/copy`, `GET /api/campaigns/:id/party-level`.
+- **Treasure for any place:** `treasureSourceFor` picks the setting pack's region that holds a place (when the setting's treasure is on), else the books with the place's wealth (`rollTreasure` `place`: poor halves the coin and takes an item away, rich doubles the coin and adds one). The Treasure tool lists every region-sized place.
+- **Stat blocks in the library** (migration 26, table `statblocks`): the GM's own block for a record (a book block, its changes, tactics and numbers), `PUT`/`DELETE /api/statblocks/:id`, shown first; the setting pack's cards only while its rules pack is on. `pack.json` `rulesPack` switches that rules pack on at install (an existing Aetheris library that never chose keeps it on) and off at uninstall.
+- **Open rules for players:** `rules_packs.publish`; a pack whose source names an open licence can be published (`PATCH /api/rules/packs/:id { publish }`), and the snapshot's `openRules` join the bundled SRD in the handbook's builder.
+- **Consistency** reads classes from the rules packs in use.
+- **Tests:** `tests/rulesAnyWorld.test.ts` (a region of one's own with the SRD alone: its profile, a generated table, regenerate, copy, a generated table on travel; treasure by wealth; an own stat block; the setting's rules pack; publishing open rules), and the encounter test reads a place's facts.
 
 ## v0.4.5: the calendar as data (own-world step 5)
 
