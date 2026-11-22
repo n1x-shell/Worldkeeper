@@ -23,6 +23,8 @@ interface AppState {
   /** Show technical details (IDs, files, sources, how-it-works notes). Off for normal DM/player use. */
   debug: boolean;
   debugForced: boolean;
+  /** New records go through Canon Review (Settings → Canon); otherwise they are Canon at once. */
+  canonReview: boolean;
   setDebug: (v: boolean) => Promise<void>;
   /** Resolves @[Name] mentions and `[ID]` references to records. */
   mentions: MentionIndex;
@@ -61,6 +63,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [entityCount, setEntityCount] = useState(0);
   const [debug, setDebugState] = useState(false);
   const [debugForced, setDebugForced] = useState(false);
+  const [canonReview, setCanonReview] = useState(false);
   const [realms, setRealms] = useState<RealmInfo[] | undefined>(undefined);
   const [recordTypes, setRecordTypes] = useState<ClientRecordType[] | undefined>(undefined);
   const mentions = useMemo(() => new MentionIndex([...index.values()].map((e) => ({ id: e.id, name: e.name, type: e.type, aliases: e.aliases, redirect_to: e.redirect_to }))), [index]);
@@ -78,12 +81,13 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setIndexLoaded(true);
   }, []);
   const reloadMeta = useCallback(async () => {
-    const m = await api.get<{ appName: string; entities: number; debug: boolean; debugForced: boolean; desktop?: boolean }>('/api/meta');
+    const m = await api.get<{ appName: string; entities: number; debug: boolean; debugForced: boolean; canonReview?: boolean; desktop?: boolean }>('/api/meta');
     // In the desktop app, links meant for a new tab (Player View, GitHub) open in the system browser.
     if (m.desktop) openNewTabsInBrowser();
     setAppName(m.appName);
     setDebugState(!!m.debug);
     setDebugForced(!!m.debugForced);
+    setCanonReview(!!m.canonReview);
     setEntityCount(m.entities);
     document.title = m.appName;
     const a = await api.get<{ id: number | null }>('/api/campaigns/active');
@@ -130,6 +134,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       entityCount,
       debug,
       debugForced,
+      canonReview,
       setDebug: async (v: boolean) => {
         await api.put('/api/settings', { debug: v ? 'true' : 'false' });
         setDebugState(v || debugForced);
@@ -140,7 +145,25 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       recordTypes: recordTypes ?? [],
       reloadTypes,
     }),
-    [appName, theme, sidebarCollapsed, activeCampaignId, index, indexLoaded, reloadIndex, reloadMeta, entityCount, debug, debugForced, mentions, realms, reloadRealms, recordTypes, reloadTypes],
+    [
+      appName,
+      theme,
+      sidebarCollapsed,
+      activeCampaignId,
+      index,
+      indexLoaded,
+      reloadIndex,
+      reloadMeta,
+      entityCount,
+      debug,
+      debugForced,
+      canonReview,
+      mentions,
+      realms,
+      reloadRealms,
+      recordTypes,
+      reloadTypes,
+    ],
   );
   return (
     <Ctx.Provider value={value}>

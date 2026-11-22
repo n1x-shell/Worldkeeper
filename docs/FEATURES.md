@@ -57,7 +57,20 @@ Your cosmos is yours to define (**Codex → Worlds & Realms**): realms (planes o
 
 Every kind of record (settlement, NPC, faction, deity...) knows what it is: a place, a group, a person, something you can carry. The app uses that, not a fixed list, so a type you add yourself works everywhere a built-in one does: on maps, in pickers, on the handbook. Add your own in **Library → Templates** (a Tavern, a Starship), with its own ID prefix.
 
-Each type has a **template**: the facts it should have (a town's population and who rules it; an NPC's pronouns, looks and manner) and its sections, each with guidance on what to write and an example from the Worldkeeper setting. Sections marked GM only are never shown to players. **New record** shows you what the template asks for and starts your record with it. Duplicate any template to make it your own and change it as you like; a change affects only new records.
+Each type has a **template**: the facts it should have (a town's population and who rules it; an NPC's pronouns, looks and manner) and its sections, each with guidance on what to write and an example from the Worldkeeper setting. Sections marked GM only are never shown to players. Duplicate any template to make it your own and change it as you like; a change affects only new records.
+
+## Making a record
+
+**New** in the top bar opens every kind of record, grouped the way the Codex is (places, people, myth and history, things, rules and adventures), with the ones you made recently first. A place's page also offers what belongs inside it: **Add a settlement here** on a region, **Add an NPC who lives here** on a settlement, with where it is already filled in.
+
+Make it **Guided** or **Advanced**; the app remembers which you prefer.
+
+- **Guided** walks through the type's template. First the basics: its name, where it is, and its facts as proper inputs, with the stat blocks, items, species and classes in your rules to pick from (choosing a stat block fills in the challenge; choosing an item fills its rarity and attunement). Then one step per section, with what to write, an example, and the editor; **Skip for now** leaves it for later. GM-only sections are marked. Last, a review: the record as it will read, what it links to, and what players can be shown. Create, and it opens on its page.
+- **Advanced** opens the template as Markdown in the editor, side by side with the preview, its header filled in: write it, then **Create**.
+
+Either way you get the same record. A section you skipped stays as its heading with the guidance under it, shown on the record page as **To write** so you can see what's left; players never see it.
+
+**Canon.** In a world of your own, new records are Canon at once; you can still mark one Proposed while you're unsure of it. A library built from an imported archive keeps **Canon Review**: new records start Proposed until you approve them, which protects the source. Change it in **Settings → Canon → Approve new records in Canon Review**.
 
 ## Setting packs
 

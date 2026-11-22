@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { canonReview } from '../repo/entities.js';
 import { consistencyReport } from '../repo/consistency.js';
 import { openQuestions } from '../repo/openQuestions.js';
 import multer from 'multer';
@@ -317,11 +318,16 @@ export function libraryRoutes(ctx: AppContext) {
   r.put(
     '/settings',
     h((req) => {
-      const allowed = ['app_name', 'world_date', 'default_realm', 'player_note', 'debug'];
+      const allowed = ['app_name', 'world_date', 'default_realm', 'player_note', 'debug', 'canon_review'];
       const body = (req.body ?? {}) as Record<string, unknown>;
       const up = ctx.db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value');
       for (const [k, v] of Object.entries(body)) {
         if (!allowed.includes(k)) continue;
+        // Canon Review: on, off, or anything else to go back to what the library's origin says.
+        if (k === 'canon_review' && v !== 'on' && v !== 'off') {
+          ctx.db.prepare(`DELETE FROM settings WHERE key = 'canon_review'`).run();
+          continue;
+        }
         up.run(k, String(v).slice(0, 2000));
       }
       return Object.fromEntries((ctx.db.prepare('SELECT key, value FROM settings').all() as { key: string; value: string }[]).map((s) => [s.key, s.value]));
@@ -338,6 +344,8 @@ export function libraryRoutes(ctx: AppContext) {
       /** Technical details (IDs, files, sources, how-it-works notes) are shown only in debug mode. */
       debug: debugEnabled(ctx),
       debugForced: process.env.WORLDKEEPER_DEBUG === '1' || process.env.WORLDKEEPER_DEBUG === 'true',
+      /** New records go through Canon Review (Settings → Canon); otherwise they are Canon at once. */
+      canonReview: canonReview(ctx.db),
       /** Running inside the desktop app: links meant for a new tab open in the system browser (see lib/desktop.ts). */
       desktop: isDesktop(),
     })),

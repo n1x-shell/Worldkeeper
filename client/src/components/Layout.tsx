@@ -9,7 +9,10 @@ import { moduleForPage } from '../../../shared/modules';
 import { usePacks } from '../lib/packs';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { BookMarked, Check, ChevronDown, ChevronsLeft, ChevronsRight, Compass, Eye, Map as MapIcon, MapPinned, Menu, Moon, Search, Settings, Sun, X } from 'lucide-react';
+import { BookMarked, Check, ChevronDown, ChevronsLeft, ChevronsRight, Compass, Eye, Map as MapIcon, MapPinned, Menu, Moon, Plus, Search, Settings, Sun, X } from 'lucide-react';
+import { newMenu } from '@shared/newRecord';
+import { useRecordTypes } from './recordTypes';
+import { recentTypes } from '../lib/recentTypes';
 import { useAppState } from '../lib/store';
 import { api } from '../lib/api';
 import { SearchPalette } from './SearchPalette';
@@ -54,6 +57,73 @@ function Dropdown({ button, label, children, align = 'right', active }: { button
 }
 
 const menuItem = 'flex items-center gap-2.5 px-3 py-1.5 text-sm text-ink hover:bg-raised hover:text-gold w-full text-left';
+
+/** New ▸ anything (docs/OWN_WORLD_PLAN.md §2.4): every record type, grouped as the Codex is, recently used first. */
+function NewMenu() {
+  const recordTypes = useRecordTypes();
+  const nav = useNavigate();
+  const [recent, setRecent] = useState<string[]>([]);
+  const menu = newMenu(recordTypes.offered, recent);
+  const item = (close: () => void, key: string, label: string) => (
+    <button
+      key={key}
+      role="menuitem"
+      className="block w-full truncate rounded px-2 py-1 text-left text-sm text-ink hover:bg-raised hover:text-gold"
+      onClick={() => {
+        close();
+        nav(`/new?type=${encodeURIComponent(key)}`);
+      }}
+    >
+      {label}
+    </button>
+  );
+  return (
+    <div onMouseDownCapture={() => setRecent(recentTypes())}>
+      <Dropdown
+        label="New record"
+        align="right"
+        button={
+          <span className="flex items-center gap-1">
+            <Plus size={16} /> <span className="hidden lg:inline text-sm">New</span>
+          </span>
+        }
+      >
+        {(close) => (
+          <div className="w-[min(92vw,560px)] max-h-[75vh] overflow-auto px-2 py-1">
+            {menu.recent.length > 0 && (
+              <div className="mb-2">
+                <div className="px-2 pt-1 pb-0.5 text-[10px] uppercase tracking-[0.2em] text-dim">Recently used</div>
+                <div className="flex flex-wrap gap-1 px-1">
+                  {menu.recent.map((t) => (
+                    <button
+                      key={t.key}
+                      role="menuitem"
+                      className="rounded-md border border-line px-2 py-0.5 text-sm hover:border-gold/60 hover:text-gold"
+                      onClick={() => {
+                        close();
+                        nav(`/new?type=${encodeURIComponent(t.key)}`);
+                      }}
+                    >
+                      {t.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-2 gap-y-2">
+              {menu.groups.map((g) => (
+                <div key={g.key} role="group" aria-label={g.title}>
+                  <div className="px-2 pt-1 pb-0.5 text-[10px] uppercase tracking-[0.2em] text-dim">{g.title}</div>
+                  {g.types.map((t) => item(close, t.key, t.label))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </Dropdown>
+    </div>
+  );
+}
 
 export function Layout() {
   const { sidebarCollapsed: collapsed, setSidebarCollapsed, theme, setTheme, appName, debug, activeCampaignId, setActiveCampaignId } = useAppState();
@@ -277,6 +347,7 @@ export function Layout() {
             <kbd className="ml-auto hidden xl:inline whitespace-nowrap text-[10px] border border-line rounded px-1">Ctrl K</kbd>
           </button>
           <div className="ml-auto flex items-center gap-1">
+            <NewMenu />
             <Dropdown
               label="Active campaign"
               align="right"

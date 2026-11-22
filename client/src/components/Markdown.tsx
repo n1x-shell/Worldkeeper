@@ -14,9 +14,11 @@ const escLabel = (s: string) => s.replace(/([\\[\]])/g, '\\$1');
  */
 export function Markdown({ text, className = 'prose-lore' }: { text: string; className?: string }) {
   const { index, indexLoaded, mentions, debug } = useAppState();
+  // A section still to write shows its guidance as a quiet note (shared/newRecord.ts); other comments don't show.
+  const shown = text.includes('<!--') ? text.replace(/<!--\s*To write:\s*([\s\S]*?)\s*-->/g, (_m, g: string) => `[${escLabel(g)}](wktodo:)`).replace(/<!--[\s\S]*?-->/g, '') : text;
   const linked = !indexLoaded
-    ? text
-    : parseRefs(text, mentions)
+    ? shown
+    : parseRefs(shown, mentions)
         .map((s) => {
           if (s.kind === 'text') return s.text;
           if (s.kind === 'link') return `[${escLabel(s.label)}](wk:${s.id})${debug ? ` [\`${s.id}\`](wk:${s.id})` : ''}`;
@@ -29,9 +31,15 @@ export function Markdown({ text, className = 'prose-lore' }: { text: string; cla
     <div className={className}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        urlTransform={(url) => (url.startsWith('wk:') || url.startsWith('wkbroken:') ? url : defaultUrlTransform(url))}
+        urlTransform={(url) => (url.startsWith('wk:') || url.startsWith('wkbroken:') || url === 'wktodo:' ? url : defaultUrlTransform(url))}
         components={{
           a: ({ href, children }) => {
+            if (href === 'wktodo:')
+              return (
+                <span className="wk-todo block text-sm text-dim italic border-l-2 border-gold/40 pl-2" title="Still to write: the template's guidance, for you only">
+                  To write: {children}
+                </span>
+              );
             if (href?.startsWith('wkbroken:')) {
               const why = href.slice(9);
               return (
