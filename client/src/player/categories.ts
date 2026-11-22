@@ -1,4 +1,4 @@
-import { BUILTIN_REGISTRY, makeTypeRegistry, type RecordTypeDef, type TypeRegistry } from '@shared/recordTypes';
+import { BUILTIN_REGISTRY, makeTypeRegistry, type RecordTypeDef, type TypeRegistry } from '../../../shared/recordTypes';
 
 /** Player-facing grouping of entries. Only groups that contain revealed entries are ever shown. */
 export interface PlayerGroup {
