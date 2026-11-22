@@ -16,6 +16,7 @@ import { Dashboard } from './pages/Dashboard';
 import { EntityList } from './pages/EntityList';
 import { EntityPage } from './pages/EntityPage';
 import { NewRecord } from './pages/NewRecord';
+import { StartWorld } from './pages/StartWorld';
 import { DocumentsPage, RealmPage, SearchPage, TimelinePage, WorldOverview } from './pages/WorldPages';
 import { MysteriesPage } from './pages/Mysteries';
 import { AtlasExplorer } from './pages/AtlasExplorer';
@@ -56,6 +57,14 @@ export function App() {
             element={
               <Page>
                 <Dashboard />
+              </Page>
+            }
+          />
+          <Route
+            path="start"
+            element={
+              <Page>
+                <StartWorld />
               </Page>
             }
           />

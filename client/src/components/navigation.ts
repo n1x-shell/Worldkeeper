@@ -71,6 +71,8 @@ export type Item = {
   icon: LucideIcon;
   /** Opens in a new tab (outside the GM shell). */ external?: boolean;
   /** How far it's nested (a continent inside its world). */ depth?: number;
+  /** Its name where a setting pack is installed: [pack, label]. */
+  packLabel?: [string, string];
 };
 export type Group = { title: string; items: Item[] };
 export type WorkspaceId = 'codex' | 'campaign' | 'characters' | 'atlas' | 'live';
@@ -108,7 +110,7 @@ export const WORKSPACES: Workspace[] = [
           { to: '/browse/landmarks', label: 'Landmarks and Buildings', icon: Landmark },
           { to: '/browse/npcs', label: 'NPCs', icon: UserSquare2 },
           { to: '/browse/factions', label: 'Factions and Cults', icon: Flag },
-          { to: '/browse/artifacts', label: 'Shards and Artifacts', icon: Gem },
+          { to: '/browse/artifacts', label: 'Artifacts and Items', icon: Gem, packLabel: ['worldkeeper', 'Shards and Artifacts'] },
           { to: '/browse/creatures', label: 'Creatures', icon: Skull },
           { to: '/browse/events', label: 'Historical Events', icon: ScrollText },
         ],

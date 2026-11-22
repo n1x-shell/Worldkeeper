@@ -1,6 +1,7 @@
 import { realmClass, realmStyle, useRealms } from '../components/realms';
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { GettingStarted } from '../components/GettingStarted';
 import {
   ArrowRight,
   BadgeCheck,
@@ -19,6 +20,7 @@ import {
   Mountain,
   NotebookPen,
   Play,
+  Plus,
   Search,
   Star,
   Trees,
@@ -159,6 +161,8 @@ export function Dashboard() {
   const { appName, debug } = useAppState();
   const mech = useModules();
   const { data, error, loading, reload } = useApi<Dash>('/api/dashboard');
+  // A fresh library opens on Start your world (docs/OWN_WORLD_PLAN.md §2.6).
+  const { data: setup } = useApi<{ needed: boolean }>('/api/setup');
   const a = data?.active ?? null;
   const cid = a?.campaign.id;
   const { data: overview } = useApi<Overview>(cid ? `/api/campaigns/${cid}/overview` : null);
@@ -167,7 +171,8 @@ export function Dashboard() {
   const { data: questions } = useApi<{ counts: { kept: number; filled: number; todo: number } }>(hasRecords && wk ? '/api/library/open-questions' : null);
   const { data: broken } = useApi<{ references: unknown[]; danglingRelationships: unknown[] }>(hasRecords && debug ? '/api/broken' : null);
 
-  if (loading && !data) return <Loading />;
+  if (setup?.needed) return <Navigate to="/start" replace />;
+  if ((loading && !data) || !setup) return <Loading />;
   if (error) return <ErrorBox error={error} onRetry={reload} />;
   if (!data) return null;
 
@@ -179,31 +184,19 @@ export function Dashboard() {
           <h1 className="mt-3 text-2xl sm:text-3xl text-ink">Your world is waiting</h1>
           <div className="mx-auto mt-3 h-0.5 w-24 bg-gradient-to-r from-transparent via-gold to-transparent" aria-hidden />
           <p className="prose-lore mx-auto mt-4 max-w-[52ch] text-[17px] text-ink/90">
-            The library is empty. Import your world archive (a ZIP of the Markdown encyclopedia) to populate the encyclopedia, timeline and branches. Nothing is invented: only your source files are
-            used.
+            Nothing here yet. Start your world in a few steps, make your first record, or bring in a world you already have: an archive of Markdown files, or a backup.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
-            <Link to="/import" className="btn-primary text-base px-4 py-2">
-              <Upload size={16} /> Import world archive
+            <Link to="/start" className="btn-primary text-base px-4 py-2">
+              <Compass size={16} /> Start your world
             </Link>
-            <Link to="/campaigns" className="btn text-base px-4 py-2">
-              <Compass size={16} /> Campaigns
+            <Link to="/new?type=region" className="btn text-base px-4 py-2">
+              <Plus size={16} /> New record
+            </Link>
+            <Link to="/import" className="btn text-base px-4 py-2">
+              <Upload size={16} /> Import an archive
             </Link>
           </div>
-          <ol className="mt-8 grid gap-3 text-left sm:grid-cols-3 text-sm">
-            {[
-              ['Import', 'Choose the archive and preview what it holds, broken references included.'],
-              ['Confirm', 'The records, links and source files go into this library.'],
-              ['Explore', 'Realms, the atlas, the timeline and every record, ready to peek.'],
-            ].map(([t, d], i) => (
-              <li key={t} className="rounded-md border border-line bg-raised/60 p-3">
-                <div className="font-display text-gold">
-                  <span className="num">{i + 1}</span>. {t}
-                </div>
-                <div className="text-dim mt-1 text-xs">{d}</div>
-              </li>
-            ))}
-          </ol>
         </div>
       </div>
     );
@@ -257,6 +250,8 @@ export function Dashboard() {
           </div>
         </div>
       </header>
+
+      <GettingStarted />
 
       {/* The active campaign, and where the GM left off. */}
       <div className="grid gap-4 lg:grid-cols-3">

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Copy, RefreshCw } from 'lucide-react';
 import { useApi } from '../lib/api';
 import { Empty, Loading, PageHeader } from '../components/ui';
@@ -19,6 +20,22 @@ export function NamesPage() {
     setCopied(n);
   };
   if (!peoples) return <Loading />;
+  if (!peoples.length)
+    return (
+      <div className="space-y-4 max-w-3xl">
+        <PageHeader title="Name Generator" subtitle="New names in a people's style. Nobody in the world already has any of these first names or surnames." />
+        <Empty
+          title="No peoples with names yet"
+          action={
+            <Link className="btn-primary" to="/new?type=people">
+              New people
+            </Link>
+          }
+        >
+          Give a People or Species record its <b>Common names</b> (eight or so) and the generator makes new ones in that style.
+        </Empty>
+      </div>
+    );
   return (
     <div className="space-y-4 max-w-3xl">
       <PageHeader title="Name Generator" subtitle="New names in a people's style. Nobody in the world already has any of these first names or surnames." />

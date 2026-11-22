@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-22 · v0.4.8_
+_Last updated: 2026-11-22 · v0.4.9_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,20 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.4.9: the first run (own-world step 9)
+
+Step 9 of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md).
+
+- **Start your world** (`client/src/pages/StartWorld.tsx`, `/start`): the dashboard sends a fresh library there (`GET /api/setup` `needed`: no records, campaigns, setting pack or completed import, and the wizard neither finished nor skipped). Welcome offers **Build my own world**, **Play in the Worldkeeper setting**, **Restore a backup** and **Skip** (`POST /api/setup/skip`).
+  - Own world: the world's name and pitch (the `world` realm's name and description), the app's name, the calendar (a preset with the starting year and the year's name, written as the world's calendar) or "decide later", and the shape (one continent, several, a world and another plane, or empty; rows renamed, added or removed).
+  - The setting: your archive, if given, through the importer (`/api/import/preview`, `/commit`), then the pack (`/api/setting-packs/worldkeeper/install`), and what was installed.
+  - Both: rules (the SRD always; books and open content in Settings; the setting's rules pack, which can be unticked) and modules (from `/api/modules`: the setting's on, all off for your own world), a first campaign (a place to pick, a town made for you or none; party names become blank characters), an optional map (uploaded as the world's map), and Finish with a summary.
+- **`POST /api/setup/finish`** (`server/src/repo/setup.ts` `finishSetup`, one transaction, zod-checked plan): the app name; Canon Review off for your own world and on for the setting (§2.5); the world's name and pitch, its realms (parents before children), its calendar; the modules; the campaign (active), its town from the Settlement template with each section's guidance waiting ("make a town for me" makes it directly rather than opening the guided creation, so the wizard ends in one step), its characters; and the records that teach. Records already there at Finish are counted, so the checklist can tell when the GM makes one.
+- **Records that teach** (`makeTutorial`, own world, ticked by default; §2.7): Start Here (what records, realms and campaigns are, and six things to try), an inn in the town (or a sample town, Millbrook, if the wizard made none), an NPC who keeps it with a GM-only secret, a faction allied with her, and a landmark, pinned in the middle of the map when one was uploaded. Tagged `tutorial`, Canon, never revealed, with IDs of their own (`<PREFIX>-TUT1`), so removing them never frees an ID the GM's records could take. `DELETE /api/setup/tutorial` (after a backup) deletes them with everything that names them, read from the schema's foreign keys (deleted, or cleared where the column may be empty), plus their links, history, pins, search entries and children's parent; the GM's town and campaign stay.
+- **Getting started** (`client/src/components/GettingStarted.tsx`, `GET`/`PUT /api/getting-started`): the dashboard card after the wizard, worked out from the library (Start Here opened, a record of one's own made, a section revealed, a map added, a session planned) or ticked by hand (peeking), with Remove the tutorial records (confirmed) and Hide.
+- **Empty states and the setting's copy:** the Name Generator says how to give a people names instead of loading forever; Open Questions and the Dominions page say they come with the setting; the empty dashboard offers Start your world, New record and Import; the search box, the record source hint and the eras note no longer name the setting; the sidebar's "Shards and Artifacts" is "Artifacts and Items" without the setting (`packLabel` on nav items). A page-by-page scan of an own-world library and an empty one finds no endless loading and no setting names outside the setting's own pages, Templates' examples and Settings.
+- **Tests:** `tests/setup.test.ts` (own world end to end through the API: realms, calendar, modules, campaign, town, party, the records that teach and their links, players seeing none of them, Getting started following along, removing them; the setting path; not offered to a library with records; skipping; a bad plan makes nothing). `scripts/e2e-first-run.mjs` (`npm run e2e:first-run -- <url> own|setting`): a fresh install in a real browser, either way, Next, Next, Finish. The smoke E2E now meets the wizard on its fresh library before importing.
 
 ## v0.4.8: New ▸ anything (own-world step 8)
 

@@ -173,6 +173,7 @@ export function Layout() {
   const toggleSidebar = () => (narrow ? setOpenNarrow(!openNarrow) : setSidebarCollapsed(!collapsed));
 
   const packs = usePacks();
+  const labelOf = (it: Item) => (it.packLabel && packs.has(it.packLabel[0]) ? it.packLabel[1] : it.label);
   const visible = (it: Item) => (debug || !DEBUG_ONLY.has(it.to)) && (!moduleForPage(it.to) || mods.has(moduleForPage(it.to)!.key)) && (!NEEDS_PACK[it.to] || packs.has(NEEDS_PACK[it.to]));
 
   // Campaigns, for the switcher; maps, for the Atlas sidebar; whether a session is live, for the Live tab.
@@ -244,20 +245,20 @@ export function Layout() {
         href={it.to}
         target="_blank"
         rel="noreferrer"
-        title={compact ? it.label : undefined}
+        title={compact ? labelOf(it) : undefined}
         className={`flex items-center gap-2.5 mx-2 px-2 py-1.5 rounded-md text-[13px] text-ink/80 hover:bg-raised hover:text-ink ${compact ? 'justify-center' : ''}`}
       >
         <span className="shrink-0 opacity-90">
           <it.icon size={I} />
         </span>
-        {!compact && <span className="truncate">{it.label}</span>}
+        {!compact && <span className="truncate">{labelOf(it)}</span>}
       </a>
     ) : (
       <NavLink
         key={it.to}
         to={it.to}
         end={it.to === '/' || it.to === '/campaign' || it.to === '/tracker' || it.to === '/atlas' || it.to === '/atlas/explore'}
-        title={compact ? it.label : undefined}
+        title={compact ? labelOf(it) : undefined}
         className={({ isActive }) =>
           `flex items-center gap-2.5 mx-2 px-2 py-1.5 rounded-md text-[13px] transition-colors ${compact ? 'justify-center' : ''} ${isActive ? 'bg-gold/10 text-gold font-medium' : 'text-ink/80 hover:bg-raised hover:text-ink'}`
         }
@@ -266,7 +267,7 @@ export function Layout() {
         <span className="shrink-0 opacity-90">
           <it.icon size={I} />
         </span>
-        {!compact && <span className="truncate">{it.label}</span>}
+        {!compact && <span className="truncate">{labelOf(it)}</span>}
       </NavLink>
     );
 

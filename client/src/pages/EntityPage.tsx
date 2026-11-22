@@ -929,7 +929,7 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
         {debug && (
           <div className="grid gap-3 md:grid-cols-2 mt-3">
             <Field label="Source references">
-              <input className="input" value={draft.source_raw ?? ''} onChange={(e) => update({ source_raw: e.target.value })} placeholder="e.g. Kaelmar_Setting_Bible.md: Factions; or DM decision" />
+              <input className="input" value={draft.source_raw ?? ''} onChange={(e) => update({ source_raw: e.target.value })} placeholder="e.g. My notes, session 3; or a book and page" />
             </Field>
             <Field label="Tags (comma separated)">
               <input className="input" value={draft.tags.join(', ')} onChange={(e) => update({ tags: e.target.value.split(',').map((t) => t.trim().toLowerCase()).filter(Boolean) })} />
