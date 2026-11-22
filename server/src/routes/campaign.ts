@@ -52,6 +52,7 @@ import { nearbyPeople, sessionBriefing } from '../repo/briefing.js';
 import { partyExport } from '../player/partyExport.js';
 import { allRegionStates } from '../repo/regionState.js';
 import { calendarEvents, campaignDate, comingUp, setCampaignDate } from '../repo/calendar.js';
+import { campaignCalendar, campaignDates, listCalendars, setWorldCalendar, writeCampaignDate } from '../repo/calendars.js';
 import { handouts, pushHandout } from '../repo/handouts.js';
 import { bastionTurns, bastions, downtime, hostStanding, takeBastionTurn } from '../repo/bastions.js';
 import { adjustRenown, setStandingOptions, standingFor, undoRenown, ladder } from '../repo/standing.js';
@@ -556,8 +557,22 @@ export function campaignRoutes(ctx: AppContext) {
     '/calendar',
     h((req) => {
       const id = standingCampaign(req.query.campaign_id);
-      return { date: campaignDate(ctx.db, id), coming: comingUp(ctx.db, id, Number(req.query.days) || 30) };
+      return { def: campaignCalendar(ctx.db, id), date: campaignDate(ctx.db, id), start: campaignDates(ctx.db, id).start, coming: comingUp(ctx.db, id, Number(req.query.days) || 30) };
     }),
+  );
+  // Each world's calendar: a setting pack's, a preset, or the GM's own.
+  r.get(
+    '/calendars',
+    h(() => listCalendars(ctx.db)),
+  );
+  r.put(
+    '/calendars/:worldId',
+    h((req) => setWorldCalendar(ctx.db, String(req.params.worldId), req.body)),
+  );
+  // A campaign's starting date (its current date moves with /calendar/date).
+  r.put(
+    '/calendar/start',
+    h((req) => ({ text: writeCampaignDate(ctx.db, standingCampaign(req.body?.campaign_id), 'start', req.body?.date) })),
   );
   r.post(
     '/calendar/date',

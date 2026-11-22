@@ -4,7 +4,15 @@ import { tempContext } from './helpers';
 import { buildPlan, commitPlan } from '../server/src/import/importer';
 import type { SourceFile } from '../server/src/import/scan';
 import { campaigns, sessions, setActiveCampaign } from '../server/src/repo/campaigns';
-import { YEAR_DAYS, addDays, dayOfYear, formatDate, moonPhase, MOONS, parseDate } from '../shared/calendar';
+import fs from 'node:fs';
+import * as C from '../shared/calendar';
+import { campaignDates, setWorldCalendar } from '../server/src/repo/calendars';
+
+// The setting's calendar, as its pack gives it.
+const SETTING = JSON.parse(fs.readFileSync(new URL('../packs/worldkeeper/calendar.json', import.meta.url), 'utf8')) as C.CalendarDef;
+const dayOfYear = (m: number, d: number) => C.dayOfYear(SETTING, m, d);
+const formatDate = (d: C.WDate) => C.formatDate(SETTING, d);
+const parseDate = (t: string) => C.parseDate(SETTING, t);
 import { calendarEvents, comingUp, setCampaignDate } from '../server/src/repo/calendar';
 import { travel } from '../server/src/repo/exploration';
 import { maps, markers } from '../server/src/repo/maps';
@@ -20,15 +28,39 @@ const rec = (id: string, name: string, category: string, parent = 'None', extra 
 
 describe('calendar', () => {
   it('turns every day of the year into a date and back', () => {
-    for (let d = 1; d <= YEAR_DAYS; d++) expect(parseDate(formatDate({ year: 300, day: d }))).toEqual({ year: 300, day: d });
+    expect(C.yearDays(SETTING)).toBe(363);
+    for (let d = 1; d <= C.yearDays(SETTING); d++) expect(parseDate(formatDate({ year: 300, day: d }))).toEqual({ year: 300, day: d });
     expect(formatDate({ year: 300, day: 333 })).toBe('Evernight Festival, 300 AB (Year 31 Unbound)');
     expect(parseDate("Winter's Dusk 4, Year 31 Unbound")).toEqual({ year: 300, day: dayOfYear(11, 4) });
-    expect(addDays({ year: 300, day: 363 }, 1)).toEqual({ year: 301, day: 1 });
-    expect(moonPhase({ year: 1, day: 1 }, MOONS[0]).dark).toBe(true);
+    expect(C.addDays(SETTING, { year: 300, day: 363 }, 1)).toEqual({ year: 301, day: 1 });
+    expect(C.moonPhase(SETTING, { year: 1, day: 1 }, SETTING.moons![0]).dark).toBe(true);
+    // The presets: twelve months of thirty days, and like ours.
+    expect(C.yearDays(C.TWELVE_THIRTY)).toBe(360);
+    expect(C.formatDate(C.TWELVE_THIRTY, { year: 12, day: 31 })).toBe('Second Month 1, Year 12');
+    expect(C.yearDays(C.LIKE_OURS)).toBe(365);
+    expect(C.parseDate(C.LIKE_OURS, 'February 28, Year 1247')).toEqual({ year: 1247, day: 59 });
+    expect(C.dayName(C.LIKE_OURS, 60)).toBe('March 1');
+  });
+
+  it('gives a new world twelve months of thirty days, or the calendar its GM chooses', () => {
+    const { db } = tempContext();
+    const c = campaigns.create(db, { title: 'Mine' }) as { id: number };
+    expect(campaignDates(db, c.id).date).toEqual({ year: 1, day: 1 });
+    expect(setCampaignDate(db, c.id, { days: 365 }).text).toBe('First Month 6, Year 2');
+    setWorldCalendar(db, 'world', { preset: 'like-ours' });
+    // The same year and day, read through the new calendar.
+    expect(setCampaignDate(db, c.id, { days: 0 }).text).toBe('January 6, Year 2');
+    expect(() => calendarEvents.create(db, { campaign_id: c.id, day: 366, title: 'Nope' })).toThrow();
+    // A calendar of its own.
+    setWorldCalendar(db, 'world', {
+      def: { name: 'Two moons', months: [{ name: 'Light', days: 50 }, { name: 'Dark', days: 50 }], weekdays: ['Up', 'Down'], eras: [{ format: '{y} AR' }], startYear: 1247 },
+    });
+    expect(setCampaignDate(db, c.id, { date: { year: 1247, day: 60 } }).text).toBe('Dark 10, 1247 AR');
+    expect(() => setWorldCalendar(db, 'world', { def: { name: 'Bad', months: [], weekdays: [], eras: [] } })).toThrow();
   });
 
   it('moves the campaign date, logs it in play, and shows festivals and shared events coming', () => {
-    const { db } = tempContext();
+    const { db } = tempContext({ settingRealms: true });
     const c = campaigns.create(db, { title: 'Test', current_date: 'Old Winds 25, 300 AB' }) as { id: number };
     const s = sessions.create(db, { campaign_id: c.id, number: 1, title: 'One' }) as { id: number };
     sessions.update(db, s.id, { status: 'live' });

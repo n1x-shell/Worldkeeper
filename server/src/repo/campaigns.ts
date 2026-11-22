@@ -1,3 +1,4 @@
+import { syncCampaignDateText } from './calendars.js';
 import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { makeCrud, zId, zText } from './crud.js';
@@ -15,8 +16,9 @@ export const campaigns = makeCrud({
     title: z.string().trim().min(1).max(300),
     premise: zText().default(''),
     starting_location_id: zId,
-    starting_date: z.string().max(200).default('300 AB / Year 31 Unbound'),
-    current_date: z.string().max(200).default('300 AB / Year 31 Unbound'),
+    // Text dates as written (kept in step with date_year/date_day, which the calendar pages use; see calendars.ts).
+    starting_date: z.string().max(200).default(''),
+    current_date: z.string().max(200).default(''),
     status: z.enum(['planning', 'active', 'paused', 'completed', 'archived']).default('planning'),
     players: z.array(z.object({ name: z.string().max(200), contact: z.string().max(300).default('') })).max(50).default([]),
     active_factions: z.array(z.string().max(40)).max(200).default([]),
@@ -26,6 +28,8 @@ export const campaigns = makeCrud({
   }),
   jsonColumns: ['players', 'active_factions'],
   orderBy: 'updated_at DESC',
+  // A date written as text (a new campaign, an edit, an import) is read through the campaign's calendar.
+  onChange: (db, row) => syncCampaignDateText(db, row.id as number),
 });
 
 /** A character's 2024 sheet. Also checks what a player saves on the table server (see characterPages.ts). */

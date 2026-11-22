@@ -25,6 +25,7 @@ import { modulesFromMechanics } from '../../../shared/modules.js';
 const TABLES = [
   'settings',
   'setting_packs',
+  'calendars',
   'realms',
   'record_types',
   'entities',

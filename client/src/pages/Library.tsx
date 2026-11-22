@@ -938,7 +938,7 @@ export function SettingsPage() {
     document.documentElement.classList.toggle('no-texture', !on);
   };
   useEffect(() => {
-    if (data) setForm({ app_name: data.app_name ?? 'The Worldkeeper', world_date: data.world_date ?? '300 AB / Year 31 Unbound' });
+    if (data) setForm({ app_name: data.app_name ?? 'The Worldkeeper' });
   }, [data]);
   return (
     <div className="space-y-4 max-w-2xl">
@@ -946,9 +946,6 @@ export function SettingsPage() {
       <Card className="space-y-3">
         <Field label="Application name (working title)">
           <input className="input" value={form.app_name ?? ''} onChange={(e) => setForm({ ...form, app_name: e.target.value })} />
-        </Field>
-        <Field label="Default world date" hint="Campaigns keep their own current date.">
-          <input className="input" value={form.world_date ?? ''} onChange={(e) => setForm({ ...form, world_date: e.target.value })} />
         </Field>
         <div>
           <span className="label">Theme</span>

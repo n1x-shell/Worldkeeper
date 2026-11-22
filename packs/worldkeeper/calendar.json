@@ -1,0 +1,182 @@
+{
+  "name": "The calendar of Aetheris and Kaelmar",
+  "about": "One 363-day year on both continents: twelve 30-day months in four seasons, three festival days outside the months, and seven-day weeks. Kaelmar counts After Bloom (AB); Aetheris counts Unbound years from the broken Cycle (Unbound = AB − 269). Holy days are from Faith in Practice; the moons from The Moons.",
+  "months": [
+    {
+      "name": "Spring Dawn",
+      "days": 30,
+      "season": "Spring"
+    },
+    {
+      "name": "First Seed",
+      "days": 30,
+      "season": "Spring"
+    },
+    {
+      "name": "Monsoon",
+      "days": 30,
+      "season": "Spring"
+    },
+    {
+      "name": "Midnight Sun",
+      "days": 30,
+      "season": "Summer"
+    },
+    {
+      "name": "Dry Wind",
+      "days": 30,
+      "season": "Summer"
+    },
+    {
+      "name": "Harvest",
+      "days": 30,
+      "season": "Summer"
+    },
+    {
+      "name": "Fall",
+      "days": 30,
+      "season": "Autumn"
+    },
+    {
+      "name": "Last Seed",
+      "days": 30,
+      "season": "Autumn"
+    },
+    {
+      "name": "Old Winds",
+      "days": 30,
+      "season": "Autumn"
+    },
+    {
+      "name": "Snowfall",
+      "days": 30,
+      "season": "Winter"
+    },
+    {
+      "name": "Evernight",
+      "days": 30,
+      "season": "Winter"
+    },
+    {
+      "name": "Winter's Dusk",
+      "days": 30,
+      "season": "Winter"
+    }
+  ],
+  "extraDays": [
+    {
+      "name": "Spring Equinox",
+      "after": -1,
+      "season": "Spring"
+    },
+    {
+      "name": "Autumn Equinox",
+      "after": 5,
+      "season": "Autumn"
+    },
+    {
+      "name": "Evernight Festival",
+      "after": 10,
+      "season": "Winter"
+    }
+  ],
+  "weekdays": ["First-day", "Second-day", "Third-day", "Fourth-day", "Fifth-day", "Sixth-day", "Rest-day"],
+  "moons": [
+    {
+      "name": "The Lamp",
+      "cycle": 30,
+      "offset": 0,
+      "look": "large and white"
+    },
+    {
+      "name": "The Wanderer",
+      "cycle": 49,
+      "offset": 11,
+      "look": "small and red"
+    }
+  ],
+  "eras": [
+    {
+      "format": "{y} AB"
+    },
+    {
+      "format": "Year {y} Unbound",
+      "offset": 269
+    }
+  ],
+  "startYear": 300,
+  "festivals": [
+    {
+      "name": "First Light",
+      "extra": "Spring Equinox",
+      "god": "Solenne",
+      "what": "New Year's Day. Lamps are put out the night before and relit at dawn from a neighbour's. Feuds are supposed to end."
+    },
+    {
+      "name": "Bloom Eve",
+      "extra": "Spring Equinox",
+      "where": "Kaelmar",
+      "what": "The night before, Kaelmar remembers the Shrouding. Families sit up with the doors shut, and open them together at dawn."
+    },
+    {
+      "name": "First Morning",
+      "month": "Spring Dawn",
+      "day": 1,
+      "where": "Aetheris",
+      "what": "Nobody sleeps the night before. At dawn, people go outside to check the world is still there."
+    },
+    {
+      "name": "Seedwake",
+      "month": "First Seed",
+      "day": 1,
+      "god": "Orrowen",
+      "what": "The first seed is sung into the ground."
+    },
+    {
+      "name": "The Sundering",
+      "month": "Monsoon",
+      "day": 1,
+      "god": "Maruun",
+      "what": "The Drowned Saints mourn the sea's god at the docks. Everyone else stays home."
+    },
+    {
+      "name": "Midsummer and the Red Games",
+      "month": "Midnight Sun",
+      "day": 15,
+      "god": "Karrath",
+      "what": "Bonfires everywhere; the great tournament in Varkhaal's Great Arena."
+    },
+    {
+      "name": "The Long Watch",
+      "month": "Dry Wind",
+      "day": 20,
+      "god": "Ithiel",
+      "what": "A night of counting stars. Children learn to steer by them."
+    },
+    {
+      "name": "Harvest Home",
+      "month": "Harvest",
+      "day": 30,
+      "god": "Orrowen",
+      "what": "The last sheaf is left in the field."
+    },
+    {
+      "name": "Naming Day",
+      "extra": "Autumn Equinox",
+      "god": "Sephane",
+      "what": "The year's dead are named and carved on the Name Stones."
+    },
+    {
+      "name": "Masking Night",
+      "month": "Old Winds",
+      "day": 30,
+      "god": "Ellun",
+      "what": "Masks in the street, and nothing done behind one counts. A week long in Noctis."
+    },
+    {
+      "name": "Evernight",
+      "extra": "Evernight Festival",
+      "what": "The longest night. Every household keeps a light burning till dawn, and nobody travels. In Ashvale, the keeping song is sung at the stones all night."
+    }
+  ]
+}

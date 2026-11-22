@@ -16,6 +16,7 @@ import { playerStanding } from '../repo/standing.js';
 import { playerTreasure } from '../repo/treasure.js';
 import { playerHandouts } from '../repo/handouts.js';
 import { campaignDate, comingUp } from '../repo/calendar.js';
+import { campaignCalendar } from '../repo/calendars.js';
 import { playerRegions } from '../repo/regionState.js';
 import type { DB } from '../db/connection.js';
 import { SECRET_HEADING_RE, ENTITY_TYPE_LABELS, type EntityType } from '../../../shared/domain.js';
@@ -380,7 +381,8 @@ export function playerCampaign(db: DB, campaignId: number) {
     })),
     // The party's standing with the factions it has dealt with, and what the ranks it has reached bring.
     // The campaign's date, and what's coming in the next 60 days (festivals, and events the GM shares).
-    calendar: { date: campaignDate(db, c.id), coming: comingUp(db, c.id, 60, true) },
+    // The world's calendar goes with it, so the players' calendar reads like the GM's.
+    calendar: { def: campaignCalendar(db, c.id), date: campaignDate(db, c.id), coming: comingUp(db, c.id, 60, true) },
     // Each known region: what the party has seen and heard there.
     regions: playerRegions(db, c.id),
     // Handouts the GM has given the players.
