@@ -70,10 +70,13 @@ export function placeProfile(db: DB, id: string): PlaceProfile {
   return p;
 }
 
-/** The region-sized places that have (or inherit) a terrain: the choices for encounters by region. */
-export function placesWithTerrain(db: DB) {
+/** Every region-sized place, with its profile: the choices for encounters and treasure by place. */
+export function regionPlaces(db: DB) {
   const keys = types(db).with('regionLike');
   if (!keys.length) return [];
   const rows = db.prepare(`SELECT id, name FROM entities WHERE archived = 0 AND type IN (${keys.map(() => '?').join(',')}) ORDER BY name`).all(...keys) as { id: string; name: string }[];
-  return rows.map((r) => ({ id: r.id, label: r.name, ...placeProfile(db, r.id) })).filter((r) => r.terrain.length);
+  return rows.map((r) => ({ id: r.id, label: r.name, ...placeProfile(db, r.id) }));
 }
+
+/** The region-sized places that have (or inherit) a terrain: the choices for encounters by region. */
+export const placesWithTerrain = (db: DB) => regionPlaces(db).filter((r) => r.terrain.length);

@@ -1,5 +1,5 @@
 import { creatureMentions, suggestEncounters, TERRAINS, type Difficulty } from '../repo/encounters.js';
-import { placeProfile, placesWithTerrain } from '../repo/places.js';
+import { placeProfile, placesWithTerrain, regionPlaces } from '../repo/places.js';
 import { copyTable, generateEncounterTable } from '../repo/tables.js';
 import { partyLevel } from '../repo/journey.js';
 import { difficultyFor } from '../../../shared/places.js';
@@ -61,7 +61,7 @@ import { handouts, pushHandout } from '../repo/handouts.js';
 import { bastionTurns, bastions, downtime, hostStanding, takeBastionTurn } from '../repo/bastions.js';
 import { adjustRenown, setStandingOptions, standingFor, undoRenown, ladder } from '../repo/standing.js';
 import { requirePack } from '../packs/registry.js';
-import { BOOKS_REGION, addRollToParty, catalogueFor, partyTreasure, rollTreasure, treasureData } from '../repo/treasure.js';
+import { BOOKS_REGION, addRollToParty, catalogueFor, partyTreasure, rollTreasure, treasureData, treasureSourceFor } from '../repo/treasure.js';
 import { moduleOn, setCampaignModules } from '../repo/modules.js';
 import { badRequest } from '../lib/errors.js';
 import { types as typeRegistry } from '../repo/recordTypes.js';
@@ -523,6 +523,8 @@ export function campaignRoutes(ctx: AppContext) {
           ...(worldTreasure ? Object.entries(d.regions).map(([key, v]) => ({ key, label: v.label, ids: v.ids })) : []),
           ...(books.magic.length ? [{ key: BOOKS_REGION, label: 'From the SRD and your books', ids: [] }] : []),
         ],
+        // Any region-sized place: the setting's pools where its pack covers it, else the books by the place's wealth.
+        places: books.magic.length || worldTreasure ? regionPlaces(ctx.db).map((p) => ({ id: p.id, label: p.label, wealth: p.wealth })) : [],
       };
     }),
   );
@@ -534,13 +536,16 @@ export function campaignRoutes(ctx: AppContext) {
     '/treasure/roll',
     h((req) => {
       const cid = req.body?.campaign_id ? Number(req.body.campaign_id) : undefined;
-      const region = String(req.body?.region ?? '');
+      // A place picks its own source (the setting's region that holds it, or the books by its wealth).
+      const src = req.body?.place ? treasureSourceFor(ctx.db, String(req.body.place), moduleOn(ctx.db, 'setting-treasure', cid)) : null;
+      const region = src?.region ?? String(req.body?.region ?? '');
       if (!moduleOn(ctx.db, 'setting-treasure', cid) && region !== BOOKS_REGION) throw badRequest('The setting’s treasure is switched off: roll from your books.');
       return rollTreasure({
         tier: String(req.body?.tier ?? ''),
         region,
         kind: req.body?.kind === 'individual' ? 'individual' : 'hoard',
         books: region === BOOKS_REGION ? bookTreasure(ctx.db) : undefined,
+        place: src?.place,
         fading: moduleOn(ctx.db, 'fading-salvage', cid),
       });
     }),

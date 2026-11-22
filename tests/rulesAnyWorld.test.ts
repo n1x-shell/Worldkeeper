@@ -41,3 +41,29 @@ describe('rules for any world', () => {
     expect((await request(gm).get('/api/regions/REG-0001/panel')).body.profile).toMatchObject({ terrain: ['forest', 'hill'], danger: 'deadly' });
   });
 });
+
+describe('treasure for any place', () => {
+  it('rolls from the SRD at a place of the GM’s own, scaled by its wealth', async () => {
+    const ctx = tempContext();
+    tempDb = ctx.db;
+    place('REG-0001', 'The Goldfields', 'region', [['Wealth', 'Rich']]);
+    place('REG-0002', 'The Mire', 'region', [['Wealth', 'Poor']]);
+    const gm = createApp(ctx);
+    const opts = (await request(gm).get('/api/treasure/options')).body;
+    expect(opts.tiers.map((t: { key: string }) => t.key)).toEqual(['1-4', '5-10', '11-16', '17-20']);
+    expect(opts.places).toEqual([
+      { id: 'REG-0001', label: 'The Goldfields', wealth: 'rich' },
+      { id: 'REG-0002', label: 'The Mire', wealth: 'poor' },
+    ]);
+    const total = async (p: string) => {
+      let n = 0;
+      for (let i = 0; i < 30; i++) {
+        const r = (await request(gm).post('/api/treasure/roll').send({ tier: '5-10', place: p, kind: 'hoard' })).body;
+        expect(r.region_label).toBe(p === 'REG-0001' ? 'The Goldfields' : 'The Mire');
+        n += r.coins.amount;
+      }
+      return n;
+    };
+    expect(await total('REG-0001')).toBeGreaterThan((await total('REG-0002')) * 2);
+  });
+});

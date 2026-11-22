@@ -15,6 +15,8 @@ import { ItemRulesList } from '../components/ItemRules';
 interface Options {
   tiers: { key: string; label: string }[];
   regions: { key: string; label: string }[];
+  /** Places of the world: the setting's pools where its pack covers them, else the books by the place's wealth. */
+  places?: { id: string; label: string; wealth: string }[];
 }
 interface Roll {
   tier_label: string;
@@ -52,10 +54,10 @@ export function TreasurePage() {
   const { data: rows, error, reload } = useApi<Row[]>(activeCampaignId ? `/api/party-treasure?campaign_id=${activeCampaignId}` : null);
   const { data: chars } = useApi<{ id: number; name: string }[]>(activeCampaignId ? `/api/characters?campaign_id=${activeCampaignId}` : null);
   const [tier, setTier] = useState('1-4');
-  const [regionPick, setRegion] = useState('marches');
+  const [regionPick, setRegion] = useState('');
   const mech = useModules();
   // The region chosen, or the first one offered (the books, when the setting's treasure is off).
-  const region = opts?.regions.some((r) => r.key === regionPick) ? regionPick : (opts?.regions[0]?.key ?? regionPick);
+  const region = opts?.regions.some((r) => r.key === regionPick) || regionPick.startsWith('place:') ? regionPick : (opts?.regions[0]?.key ?? regionPick);
   const fading = mech.has('fading-salvage');
   const [kind, setKind] = useState<'individual' | 'hoard'>('hoard');
   const [roll, setRoll] = useState<Roll | null>(null);
@@ -68,7 +70,7 @@ export function TreasurePage() {
   const doRoll = async () => {
     try {
       setErr(null);
-      setRoll(await api.post<Roll>('/api/treasure/roll', { tier, region, kind }));
+      setRoll(await api.post<Roll>('/api/treasure/roll', region.startsWith('place:') ? { tier, place: region.slice(6), kind } : { tier, region, kind }));
     } catch (x) {
       setErr((x as Error).message);
     }
@@ -113,6 +115,15 @@ export function TreasurePage() {
                   {r.label}
                 </option>
               ))}
+              {!!opts.places?.length && (
+                <optgroup label="Places in your world">
+                  {opts.places.map((p) => (
+                    <option key={p.id} value={`place:${p.id}`}>
+                      {p.label} ({p.wealth})
+                    </option>
+                  ))}
+                </optgroup>
+              )}
             </select>
           </Field>
           <Segmented
