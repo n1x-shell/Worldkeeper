@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-22 · v0.4.3_
+_Last updated: 2026-11-22 · v0.4.4_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,18 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.4.4: modules (own-world step 4)
+
+Step 4 of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). The setting's systems are modules any world can switch on.
+
+- **The registry** (`shared/modules.ts`): Thinning, the Return (a clock), fading salvage, the setting's treasure, vaults, shards, the depths explorer, Quick Reference and Renown, each with its pages, the API routes it owns, its sheet tabs, its handbook parts and where its data lives. `Campaign mechanics` (`shared/mechanics.ts`, `/api/mechanics`) is gone.
+- **Switches** (`server/src/repo/modules.ts`): a module is on if the campaign says so (`campaigns.modules`), else the library (`settings.modules`), else if an installed setting pack lists it in its `modules`; otherwise off. `/api/modules` (GET, PUT; null goes back to the default) and `PUT /api/campaigns/:id/modules`. **Settings → Modules** has a switch per module and, with a campaign active, "As the library / On / Off" for it.
+- **Off means off:** a module's routes are refused (400, "switched off") by a check in `app.ts`; its pages leave the menus and show a notice; its realm-page tools, sheet tabs and Live panels hide; the table server and the handbook get only the modules on (`modules` in `/api/player/info` and the snapshot; handbooks published with `mechanics` are read as modules). Nothing is deleted.
+- **Module data out of the core tables** (migration 23): Thinning's true name, memories, who knows it, track and Shardscarred move from `character_pages` to `module_data` (module `thinning`, owner `character`), and fading and anchoring from `party_treasure` (module `fading-salvage`, owner `treasure`); triggers remove a module's data with its character or treasure. The APIs give the same fields as before. Players' notes stay core, in a **Notes** tab of their own. Saved mechanics become module switches, and a library with campaigns keeps Renown on. Full and campaign exports carry `module_data`; older exports are adopted.
+- **Pack-defined parts:** Renown's ladder comes from `pack.json` `renown` (the setting's: Hostile to Champion), else a plain ladder (Hostile, Unfriendly, Neutral, Friendly, Honoured, Revered); the clock's name, stages and jump come from the pack's `return/omens.json`, and the clock no longer fixes its stages at 0 to 7. Full exports now include the clock and revealed faction ties.
+- **Tests:** `tests/mechanics.test.ts` (defaults from packs, library and campaign switches, routes refused while off), `tests/modulesMigration.test.ts` (a v0.4.3 library's Thinning, fading and mechanics after migration; export round trip in a blank library with Thinning on), the standing tests on both ladders.
+- **Not yet:** the Dominions page and the realm pages' Bloom link still name the setting's realms; the calendar is the next step.
 
 ## v0.4.3: setting packs (own-world step 3)
 

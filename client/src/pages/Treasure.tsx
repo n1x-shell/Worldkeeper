@@ -130,7 +130,7 @@ export function TreasurePage() {
         </div>
         {!opts.regions.length && (
           <p className="text-sm text-dim">
-            Nothing to roll from yet: import your books (with a Dungeon Master&apos;s Guide) in Settings, Rules packs, or switch the setting&apos;s treasure on in Settings, Campaign mechanics.
+            Nothing to roll from yet: import your books (with a Dungeon Master&apos;s Guide) in Settings, Rules packs, or switch the setting&apos;s treasure on in Settings, Modules.
           </p>
         )}
         {err && <p className="text-danger text-sm">{err}</p>}

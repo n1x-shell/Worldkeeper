@@ -1,4 +1,4 @@
-/** Campaign mechanics switches, and a standard D&D campaign run from the GM's books: treasure, encounters, options. */
+/** Module switches, and a standard D&D campaign run from the GM's books: treasure, encounters, options. */
 import { describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { tempContext } from './helpers.js';

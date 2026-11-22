@@ -35,7 +35,7 @@ export function ReturnPage() {
   if (mech.loaded && !mech.has('the-return'))
     return (
       <Empty title="The Return is switched off">
-        This library doesn&apos;t use the Return. Switch it on in <Link to="/settings">Settings, Campaign mechanics</Link>.
+        This library doesn&apos;t use the Return. Switch it on in <Link to="/settings">Settings, Modules</Link>.
       </Empty>
     );
   if (!activeCampaignId) return <Empty title="No active campaign">Choose a campaign first.</Empty>;

@@ -23,7 +23,7 @@ export function QuickReferencePage() {
   if (mech.loaded && !mech.has('quick-reference'))
     return (
       <Empty title="The setting's pages are switched off">
-        This quick reference is for the Worldkeeper setting. Switch its pages on in <Link to="/settings">Settings, Campaign mechanics</Link>.
+        This quick reference is for the Worldkeeper setting. Switch the Quick reference module on in <Link to="/settings">Settings, Modules</Link>.
       </Empty>
     );
   return (
