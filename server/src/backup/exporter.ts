@@ -12,10 +12,13 @@ import { reindexAll } from '../repo/search.js';
 import { badRequest } from '../lib/errors.js';
 import { portraitDataUrl, savePortrait } from '../repo/portraits.js';
 import type { Entity } from '../../../shared/domain.js';
+import { repairRealms } from '../repo/realms.js';
+import { SETTING_REALMS } from '../import/normalize.js';
 
 /** Tables included in a full JSON export, in dependency order. */
 const TABLES = [
   'settings',
+  'realms',
   'entities',
   'entity_revisions',
   'relationships',
@@ -113,6 +116,8 @@ export function importJson(db: DB, data: ReturnType<typeof exportJson>) {
         );
       }
     }
+    // An export from before realms were data names its realms only on records: make sure each exists.
+    repairRealms(db, SETTING_REALMS);
     reindexAll(db);
   });
   tx();

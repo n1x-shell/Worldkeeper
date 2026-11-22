@@ -722,6 +722,51 @@ CREATE TABLE rules_entries (
     name: 'maps: their scale (miles across), for distances and travel times',
     sql: `ALTER TABLE maps ADD COLUMN scale_miles REAL;`,
   },
+  {
+    version: 19,
+    name: "realms as data: the library's worlds, continents and planes; maps, timeline rows and campaigns belong to them",
+    // Every library starts with "The World". The Worldkeeper setting's three other realms become rows only where the
+    // library already uses them, with the ids its records already carry, so nothing about them changes.
+    sql: `
+CREATE TABLE realms (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  kind TEXT NOT NULL DEFAULT 'world' CHECK (kind IN ('world','continent','plane','region_group')),
+  parent_id TEXT REFERENCES realms(id) ON DELETE SET NULL,
+  color TEXT NOT NULL DEFAULT 'blue',
+  icon TEXT NOT NULL DEFAULT 'globe',
+  description TEXT NOT NULL DEFAULT '',
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  archived INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+INSERT INTO realms (id, name, kind, color, icon, sort_order) VALUES ('world', 'The World', 'world', 'blue', 'globe', 0);
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'aetheris', 'Aetheris', 'continent', 'world', 'amber', 'mountain', 1
+  WHERE EXISTS (SELECT 1 FROM entities WHERE realm = 'aetheris' OR realms LIKE '%"aetheris"%');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'kaelmar', 'Kaelmar', 'continent', 'world', 'green', 'flame', 2
+  WHERE EXISTS (SELECT 1 FROM entities WHERE realm = 'kaelmar' OR realms LIKE '%"kaelmar"%');
+INSERT INTO realms (id, name, kind, color, icon, sort_order)
+  SELECT 'ethereal', 'The Ethereal Realm', 'plane', 'violet', 'ghost', 3
+  WHERE EXISTS (SELECT 1 FROM entities WHERE realm = 'ethereal' OR realms LIKE '%"ethereal"%');
+
+ALTER TABLE maps ADD COLUMN realm_id TEXT REFERENCES realms(id) ON DELETE SET NULL;
+UPDATE maps SET realm_id = CASE
+  WHEN lower(name) LIKE '%ethereal%' AND EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal') THEN 'ethereal'
+  ELSE 'world' END;
+
+ALTER TABLE timeline_rows ADD COLUMN realm_ids TEXT NOT NULL DEFAULT '[]';
+UPDATE timeline_rows SET realm_ids = '[' || rtrim(
+    (CASE WHEN lower(realm_label) LIKE '%aetheris%' OR lower(realm_label) LIKE '%both%' THEN '"aetheris",' ELSE '' END) ||
+    (CASE WHEN lower(realm_label) LIKE '%kaelmar%' OR lower(realm_label) LIKE '%both%' THEN '"kaelmar",' ELSE '' END) ||
+    (CASE WHEN lower(realm_label) LIKE '%ethereal%' THEN '"ethereal",' ELSE '' END) ||
+    (CASE WHEN lower(realm_label) LIKE '%world%' THEN '"world",' ELSE '' END), ',') || ']';
+
+ALTER TABLE campaigns ADD COLUMN world_id TEXT REFERENCES realms(id) ON DELETE SET NULL;
+UPDATE campaigns SET world_id = 'world';
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

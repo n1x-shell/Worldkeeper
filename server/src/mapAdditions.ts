@@ -15,6 +15,8 @@ import path from 'node:path';
 import type { DB } from './db/connection.js';
 import { maps, markers, shapes } from './repo/maps.js';
 import { imageSize } from './routes/atlas.js';
+import { ensureRealm } from './repo/realms.js';
+import { SETTING_REALMS } from './import/normalize.js';
 
 interface PinsSpec {
   name: string;
@@ -92,6 +94,8 @@ export function applyMaps(db: DB, uploadsDir: string, mapsDir: string, opts: { o
           player_visible: true,
           layers,
           scale_miles: spec.scale_miles ?? null,
+          // The setting's maps: the Ethereal Realm's chart, and the world (moves to the setting's pack, step 3).
+          realm_id: /ethereal/i.test(spec.name) ? ensureRealm(db, 'ethereal', SETTING_REALMS.ethereal) : 'world',
         }) as { id: number }
       ).id;
       created = true;

@@ -26,6 +26,7 @@ import { decideProposal } from '../repo/campaigns.js';
 import { splitSections } from '../import/parseMarkdown.js';
 import { isSecretHeading } from '../player/projection.js';
 import { peekEntity } from '../repo/peek.js';
+import { createRealm, deleteRealm, listRealms, reorderRealms, updateRealm } from '../repo/realms.js';
 import { TYPE_GROUPS } from '../../../shared/domain.js';
 import { revealDuringPlay } from '../repo/reveal.js';
 import { createEra, listEras, setRowEra, updateEra } from '../repo/eras.js';
@@ -94,6 +95,30 @@ export function worldRoutes(ctx: AppContext) {
         sections,
         baseline: e.modified_since_import ? baselineFor(ctx.db, id) : null,
       };
+    }),
+  );
+  // Realms: the library's worlds, continents and planes (docs/OWN_WORLD_PLAN.md §2.1).
+  r.get(
+    '/realms',
+    h((req) => listRealms(ctx.db, { counts: true, includeArchived: req.query.archived === '1' })),
+  );
+  r.post(
+    '/realms',
+    h((req) => createRealm(ctx.db, req.body)),
+  );
+  r.post(
+    '/realms/order',
+    h((req) => reorderRealms(ctx.db, Array.isArray(req.body?.ids) ? (req.body.ids as unknown[]).map(String) : [])),
+  );
+  r.patch(
+    '/realms/:id',
+    h((req) => updateRealm(ctx.db, String(req.params.id), req.body)),
+  );
+  r.delete(
+    '/realms/:id',
+    h((req) => {
+      deleteRealm(ctx.db, String(req.params.id));
+      return { ok: true };
     }),
   );
   // A record at a glance (hover cards, the inspector, split view). Not counted as a visit.

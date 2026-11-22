@@ -1,0 +1,169 @@
+/**
+ * Realms (docs/OWN_WORLD_PLAN.md §2.1): the library's worlds, continents, planes and region groups. Records, maps,
+ * timeline rows and campaigns name their realm by its id. The ids are stable: renaming a realm never changes it.
+ */
+import { z } from 'zod';
+import type { DB } from '../db/connection.js';
+import { badRequest, notFound } from '../lib/errors.js';
+import { DEFAULT_REALM, REALM_COLORS, REALM_ICONS, REALM_KEY_RE, REALM_KINDS, realmKey, sortRealms, type RealmInfo } from '../../../shared/realms.js';
+
+interface Row {
+  id: string;
+  name: string;
+  kind: RealmInfo['kind'];
+  parent_id: string | null;
+  color: string;
+  icon: string;
+  description: string;
+  sort_order: number;
+  archived: number;
+}
+const toRealm = (r: Row): RealmInfo => ({
+  id: r.id,
+  name: r.name,
+  kind: r.kind,
+  parent_id: r.parent_id,
+  color: (REALM_COLORS as readonly string[]).includes(r.color) ? (r.color as RealmInfo['color']) : 'blue',
+  icon: (REALM_ICONS as readonly string[]).includes(r.icon) ? (r.icon as RealmInfo['icon']) : 'globe',
+  description: r.description,
+  sort_order: r.sort_order,
+  archived: !!r.archived,
+});
+
+/** Every realm, in reading order. With `counts`, how many (unarchived) records each holds. */
+export function listRealms(db: DB, opts: { counts?: boolean; includeArchived?: boolean } = {}): RealmInfo[] {
+  const rows = (db.prepare('SELECT * FROM realms').all() as Row[]).map(toRealm).filter((r) => opts.includeArchived || !r.archived);
+  if (opts.counts) {
+    const counts = new Map(
+      (db.prepare(`SELECT realm, COUNT(*) n FROM entities WHERE archived = 0 AND type NOT IN ('redirect','index','register') GROUP BY realm`).all() as { realm: string; n: number }[]).map((r) => [r.realm, r.n]),
+    );
+    for (const r of rows) r.records = counts.get(r.id) ?? 0;
+  }
+  return sortRealms(rows);
+}
+
+export function getRealm(db: DB, id: string): RealmInfo {
+  const r = db.prepare('SELECT * FROM realms WHERE id = ?').get(id) as Row | undefined;
+  if (!r) throw notFound('Realm');
+  return toRealm(r);
+}
+
+export const realmExists = (db: DB, id: string) => !!db.prepare('SELECT 1 FROM realms WHERE id = ?').get(id);
+
+const realmInput = z.object({
+  id: z.string().regex(REALM_KEY_RE, 'Use lower-case letters, digits and hyphens').optional(),
+  name: z.string().trim().min(1).max(80),
+  kind: z.enum(REALM_KINDS).default('continent'),
+  parent_id: z.string().nullable().optional(),
+  color: z.enum(REALM_COLORS).default('blue'),
+  icon: z.enum(REALM_ICONS).default('globe'),
+  description: z.string().max(400).default(''),
+  sort_order: z.number().int().optional(),
+});
+const realmPatch = realmInput.partial().omit({ id: true }).extend({ archived: z.boolean().optional() });
+
+function checkParent(db: DB, id: string | null, parent: string | null | undefined) {
+  if (!parent) return;
+  if (!realmExists(db, parent)) throw badRequest('That parent realm does not exist');
+  // No cycles: walk up from the parent.
+  for (let p: string | null = parent, guard = 0; p && guard < 50; guard++) {
+    if (p === id) throw badRequest('A realm cannot sit inside itself');
+    p = (db.prepare('SELECT parent_id FROM realms WHERE id = ?').get(p) as { parent_id: string | null } | undefined)?.parent_id ?? null;
+  }
+}
+
+/** A free id from a name: "aetheris", or "aetheris-2" if taken. */
+function freeId(db: DB, wanted: string) {
+  let id = wanted;
+  for (let n = 2; realmExists(db, id); n++) id = `${wanted}-${n}`;
+  return id;
+}
+
+export function createRealm(db: DB, input: unknown): RealmInfo {
+  const d = realmInput.parse(input);
+  const id = d.id ? d.id : freeId(db, realmKey(d.name));
+  if (d.id && realmExists(db, id)) throw badRequest(`A realm with the id "${id}" already exists`);
+  checkParent(db, id, d.parent_id);
+  const order = d.sort_order ?? ((db.prepare('SELECT MAX(sort_order) m FROM realms').get() as { m: number | null }).m ?? 0) + 1;
+  db.prepare('INSERT INTO realms (id, name, kind, parent_id, color, icon, description, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
+    id,
+    d.name,
+    d.kind,
+    d.parent_id ?? null,
+    d.color,
+    d.icon,
+    d.description,
+    order,
+  );
+  return getRealm(db, id);
+}
+
+export function updateRealm(db: DB, id: string, input: unknown): RealmInfo {
+  getRealm(db, id);
+  const d = realmPatch.parse(input);
+  if (d.parent_id !== undefined) checkParent(db, id, d.parent_id);
+  const sets: string[] = [];
+  const vals: unknown[] = [];
+  for (const [k, v] of Object.entries(d)) {
+    if (v === undefined) continue;
+    sets.push(`${k} = ?`);
+    vals.push(k === 'archived' ? (v ? 1 : 0) : v);
+  }
+  if (sets.length) db.prepare(`UPDATE realms SET ${sets.join(', ')} WHERE id = ?`).run(...vals, id);
+  return getRealm(db, id);
+}
+
+/** Put the realms in this order (ids not listed keep their place after them). */
+export function reorderRealms(db: DB, ids: string[]): RealmInfo[] {
+  const set = db.prepare('UPDATE realms SET sort_order = ? WHERE id = ?');
+  db.transaction(() => ids.forEach((id, i) => set.run(i, id)))();
+  return listRealms(db, { counts: true });
+}
+
+/** Delete an empty realm. One with records, maps or campaigns must be emptied (or archived) instead. */
+export function deleteRealm(db: DB, id: string) {
+  getRealm(db, id);
+  if (id === DEFAULT_REALM) throw badRequest('The World is where records without a realm live; rename it instead of deleting it');
+  const used =
+    (db.prepare('SELECT COUNT(*) n FROM entities WHERE realm = ?').get(id) as { n: number }).n +
+    (db.prepare('SELECT COUNT(*) n FROM maps WHERE realm_id = ?').get(id) as { n: number }).n +
+    (db.prepare('SELECT COUNT(*) n FROM campaigns WHERE world_id = ?').get(id) as { n: number }).n;
+  if (used) throw badRequest('This realm still has records, maps or campaigns. Move them to another realm, or archive the realm instead.');
+  db.transaction(() => {
+    db.prepare('UPDATE realms SET parent_id = NULL WHERE parent_id = ?').run(id);
+    db.prepare('DELETE FROM realms WHERE id = ?').run(id);
+  })();
+}
+
+/**
+ * Make sure a realm exists, creating it with these defaults if not (the importer uses this for the realms an archive
+ * names). Returns its id.
+ */
+export function ensureRealm(db: DB, id: string, defaults: Partial<Omit<RealmInfo, 'id' | 'records'>> & { name: string }): string {
+  if (realmExists(db, id)) return id;
+  const order = ((db.prepare('SELECT MAX(sort_order) m FROM realms').get() as { m: number | null }).m ?? 0) + 1;
+  db.prepare('INSERT INTO realms (id, name, kind, parent_id, color, icon, description, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
+    id,
+    defaults.name,
+    defaults.kind ?? 'continent',
+    defaults.parent_id && realmExists(db, defaults.parent_id) ? defaults.parent_id : null,
+    defaults.color ?? 'blue',
+    defaults.icon ?? 'globe',
+    defaults.description ?? '',
+    defaults.sort_order ?? order,
+  );
+  return id;
+}
+
+/**
+ * Make sure every realm a record, map or campaign names exists: known ones (the setting's) with their defaults, others
+ * under their id as name. For data from before realms were their own table.
+ */
+export function repairRealms(db: DB, known: Record<string, Partial<Omit<RealmInfo, 'id' | 'records'>> & { name: string }> = {}) {
+  const used = db
+    .prepare(
+      `SELECT realm AS id FROM entities UNION SELECT value FROM entities, json_each(entities.realms) UNION SELECT realm_id FROM maps WHERE realm_id IS NOT NULL UNION SELECT world_id FROM campaigns WHERE world_id IS NOT NULL`,
+    )
+    .all() as { id: string }[];
+  for (const { id } of used) if (id && !realmExists(db, id)) ensureRealm(db, id, known[id] ?? { name: id.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()), kind: 'continent', parent_id: DEFAULT_REALM });
+}

@@ -6,6 +6,7 @@ import { parseJson, now } from '../lib/json.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { acceptAsBaseline, getEntity, updateEntity } from './entities.js';
 import { loadMentionIndex } from './mentions.js';
+import { REALM_KEY_RE } from '../../../shared/realms.js';
 
 // ---------- Campaigns ----------
 export const campaigns = makeCrud({
@@ -20,6 +21,8 @@ export const campaigns = makeCrud({
     players: z.array(z.object({ name: z.string().max(200), contact: z.string().max(300).default('') })).max(50).default([]),
     active_factions: z.array(z.string().max(40)).max(200).default([]),
     notes: zText().default(''),
+    /** The world the campaign is set in (a realm of kind World). */
+    world_id: z.string().regex(REALM_KEY_RE).nullable().default('world'),
   }),
   jsonColumns: ['players', 'active_factions'],
   orderBy: 'updated_at DESC',
