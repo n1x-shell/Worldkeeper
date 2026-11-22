@@ -55,6 +55,7 @@ import { calendarEvents, campaignDate, comingUp, setCampaignDate } from '../repo
 import { handouts, pushHandout } from '../repo/handouts.js';
 import { bastionTurns, bastions, downtime, hostStanding, takeBastionTurn } from '../repo/bastions.js';
 import { adjustRenown, setStandingOptions, standingFor, undoRenown } from '../repo/standing.js';
+import { requirePack } from '../packs/registry.js';
 import { BOOKS_REGION, addRollToParty, catalogueFor, partyTreasure, rollTreasure, treasureData } from '../repo/treasure.js';
 import { getMechanics } from '../repo/mechanics.js';
 import { badRequest } from '../lib/errors.js';
@@ -326,7 +327,10 @@ export function campaignRoutes(ctx: AppContext) {
   );
   r.post(
     '/mysteries/sync',
-    h(() => ({ rumours: syncRumours(ctx.db, readPlayerText()), mysteries: syncMysteries(ctx.db) })),
+    h(() => {
+      requirePack(ctx.db, 'worldkeeper');
+      return { rumours: syncRumours(ctx.db, readPlayerText()), mysteries: syncMysteries(ctx.db) };
+    }),
   );
   r.patch(
     '/mysteries/:id',
@@ -362,7 +366,10 @@ export function campaignRoutes(ctx: AppContext) {
   );
   r.post(
     '/rumours/sync',
-    h(() => syncRumours(ctx.db, readPlayerText())),
+    h(() => {
+      requirePack(ctx.db, 'worldkeeper');
+      return syncRumours(ctx.db, readPlayerText());
+    }),
   );
   r.patch(
     '/rumours/:id',

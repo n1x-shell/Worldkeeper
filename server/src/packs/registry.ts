@@ -219,5 +219,5 @@ export function roles(db: DB): Record<string, string> {
 
 /** Whether a pack's own action (its update, its handbook match...) may run here: only with the pack installed. */
 export function requirePack(db: DB, id: string) {
-  if (!isInstalled(db, id)) throw badRequest(`This needs the ${findPack(id)?.manifest.name ?? id} pack, which this library doesn't have. Install it in Library → Setting packs.`);
+  if (!isInstalled(db, id)) throw badRequest(`This needs the setting pack "${findPack(id)?.manifest.name ?? id}", which this library doesn't have. Install it in Library → Setting packs.`);
 }

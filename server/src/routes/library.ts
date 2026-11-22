@@ -10,7 +10,7 @@ import { h, intParam } from './util.js';
 import { readZip, type SourceFile } from '../import/scan.js';
 import { buildPlan, commitPlan, listImportRuns, summarisePlan, type ImportPlan } from '../import/importer.js';
 import { backupPath, createBackup, listBackups, stageRestore } from '../backup/backup.js';
-import { DEFAULT_ADDITIONS_DIR, applyAdditions, loreFiles } from '../additions.js';
+import { DEFAULT_ADDITIONS_DIR, loreFiles } from '../additions.js';
 import { chosenBooks, importFivetools, scanFivetools } from '../repo/fivetools.js';
 import { deletePack, importPack, listPacks, setPackEnabled } from '../repo/rulesPacks.js';
 import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, exportPlayerZip, importCampaign, importJson } from '../backup/exporter.js';
@@ -20,6 +20,8 @@ import { getMechanics, setMechanics } from '../repo/mechanics.js';
 import { importOpen5e, open5eDocuments } from '../repo/open5e.js';
 import { isDesktop, openInBrowser } from '../lib/desktop.js';
 import { handbookReveals } from '../player/handbookReveals.js';
+import { installPack, isInstalled, listPacks as listSettingPacks, requirePack, roles, uninstallPack } from '../packs/registry.js';
+import { updatePack } from '../packs/content.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 300 * 1024 * 1024, files: 1 } });
 
@@ -40,7 +42,13 @@ export function libraryRoutes(ctx: AppContext) {
   // The consistency checker: a report of things that don't agree. Changes nothing.
   r.get('/library/consistency', h(() => consistencyReport(ctx.db)));
   // Open questions: every UNDEFINED in the library, and whether it's kept open, filled by an addition or still to do.
-  r.get('/library/open-questions', h(() => openQuestions(ctx.db)));
+  r.get(
+    '/library/open-questions',
+    h(() => {
+      requirePack(ctx.db, 'worldkeeper');
+      return openQuestions(ctx.db);
+    }),
+  );
   const staging = new Map<string, Staged>();
   const sweep = () => {
     for (const [k, v] of staging) if (Date.now() - v.created > 60 * 60 * 1000) staging.delete(k);
@@ -206,16 +214,49 @@ export function libraryRoutes(ctx: AppContext) {
     '/backups',
     h(() => listBackups(ctx.paths)),
   );
-  // Worldkeeper additions: new lore records, links, rumours and mysteries shipped with the app.
+  // Setting packs (packs/<id>): the ones the app can install, and this library's. Each change takes a backup first.
+  r.get(
+    '/setting-packs',
+    h(() => ({ packs: listSettingPacks(ctx.db), roles: roles(ctx.db) })),
+  );
+  r.post(
+    '/setting-packs/:id/install',
+    h((req) => {
+      const id = String(req.params.id);
+      const backup = createBackup(ctx.db, ctx.paths, `pre-install-${id}`);
+      installPack(ctx.db, id);
+      return { backup: backup.file, ...updatePack(ctx.db, id, ctx.paths.uploadsDir) };
+    }),
+  );
+  r.post(
+    '/setting-packs/:id/update',
+    h((req) => {
+      const id = String(req.params.id);
+      requirePack(ctx.db, id);
+      const backup = createBackup(ctx.db, ctx.paths, `pre-update-${id}`);
+      return { backup: backup.file, ...updatePack(ctx.db, id, ctx.paths.uploadsDir) };
+    }),
+  );
+  r.delete(
+    '/setting-packs/:id',
+    h((req) => {
+      const id = String(req.params.id);
+      requirePack(ctx.db, id);
+      const backup = createBackup(ctx.db, ctx.paths, `pre-uninstall-${id}`);
+      return { backup: backup.file, removed: uninstallPack(ctx.db, id) };
+    }),
+  );
+  // The Worldkeeper pack's update, as "Apply additions" (only in a library that has the pack).
   r.get(
     '/additions',
-    h(() => ({ available: fs.existsSync(DEFAULT_ADDITIONS_DIR), records: loreFiles().length })),
+    h(() => ({ available: fs.existsSync(DEFAULT_ADDITIONS_DIR), installed: isInstalled(ctx.db, 'worldkeeper'), records: loreFiles().length })),
   );
   r.post(
     '/additions/apply',
     h(() => {
+      requirePack(ctx.db, 'worldkeeper');
       const backup = createBackup(ctx.db, ctx.paths, 'pre-additions');
-      return { backup: backup.file, ...applyAdditions(ctx.db, undefined, ctx.paths.uploadsDir) };
+      return { backup: backup.file, ...updatePack(ctx.db, 'worldkeeper', ctx.paths.uploadsDir) };
     }),
   );
   r.post(
@@ -302,11 +343,15 @@ export function libraryRoutes(ctx: AppContext) {
   // Match the published Player Handbook: reveal what it shows (preview with GET, apply with POST). Only ever adds.
   r.get(
     '/handbook-reveals',
-    h(() => handbookReveals(ctx.db, { mode: 'match', apply: false })),
+    h(() => {
+      requirePack(ctx.db, 'worldkeeper');
+      return handbookReveals(ctx.db, { mode: 'match', apply: false });
+    }),
   );
   r.post(
     '/handbook-reveals',
     h(() => {
+      requirePack(ctx.db, 'worldkeeper');
       createBackup(ctx.db, ctx.paths, 'pre-handbook-match');
       return handbookReveals(ctx.db, { mode: 'match', apply: true });
     }),

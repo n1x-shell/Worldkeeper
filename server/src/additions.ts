@@ -131,9 +131,13 @@ export function applyTimeline(db: DB, dir = DEFAULT_ADDITIONS_DIR): number {
 }
 
 /** Bring the additions into an existing library: the new records first, then the links. */
-export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?: string) {
+export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?: string, packId = 'worldkeeper') {
   const files = loreFiles(dir);
-  const imported = files.length ? commitPlan(db, files, buildPlan(db, files, 'Worldkeeper additions')) : null;
+  const plan = files.length ? buildPlan(db, files, 'Worldkeeper additions', { packId }) : null;
+  // A record of the GM's own with an ID the pack also uses: the GM's is kept, and the clash is reported.
+  const ownIds = new Set((db.prepare(`SELECT id FROM entities WHERE origin = 'user' AND pack_id IS NULL`).all() as { id: string }[]).map((r) => r.id));
+  const clashes = (plan?.entities ?? []).filter((p) => ownIds.has(p.draft.id)).map((p) => ({ id: p.draft.id, name: p.draft.name }));
+  const imported = plan ? commitPlan(db, files, plan) : null;
   // Derived links follow the current rules (they're rebuilt from each record's own text; curated links are kept).
   rebuildAllDerivedRelationships(db);
   const links = applyLinks(db, dir);
@@ -159,6 +163,7 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?:
   const adventureErrata = applyErrata(db, path.join(dir, 'errata.json'));
   return {
     records: files.length,
+    clashes,
     imported,
     links,
     rumours,

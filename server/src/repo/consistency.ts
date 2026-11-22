@@ -6,6 +6,7 @@ import type { DB } from '../db/connection.js';
 import { parseJson } from '../lib/json.js';
 import { treasureData } from './treasure.js';
 import { types } from './recordTypes.js';
+import { isInstalled } from '../packs/registry.js';
 
 export interface Problem {
   check: string;
@@ -113,7 +114,8 @@ export function consistencyReport(db: DB): { checked: number; problems: Problem[
       add('Revealed but empty', 'warning', `${e.name} is revealed to players, but they'd see nothing on its page.`, [e.id]);
 
   peopleChecks(db, add);
-  lootChecks(add, ids, new Map(all.map((e) => [e.id, e.type])), new Set(types(db).with('holdable')));
+  // The treasure catalogue is the Worldkeeper pack's: checked only with it.
+  if (isInstalled(db, 'worldkeeper')) lootChecks(add, ids, new Map(all.map((e) => [e.id, e.type])), new Set(types(db).with('holdable')));
   leakChecks(db, add);
 
   return { checked: all.length, problems: out.sort((a, b) => (a.severity === b.severity ? a.check.localeCompare(b.check) : a.severity === 'error' ? -1 : 1)) };
