@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-21 · v0.4.0_
+_Last updated: 2026-11-22 · v0.4.1_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,18 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.4.1: realms as data (own-world step 1)
+
+The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are no longer four names in the code; each library holds its own.
+
+- **The `realms` table** (migration 19): id, name, kind (world, continent, plane, region group), parent, colour, icon, description, order and archived. Every library starts with "The World". The setting's three others (Aetheris, Kaelmar, the Ethereal Realm) become rows only where a library already uses them, with the same ids, so records, links and published handbooks don't change. Maps get `realm_id`, timeline rows `realm_ids` (read from their old label), campaigns `world_id`.
+- **Codex → Realms** (`client/src/pages/Realms.tsx`): add, rename, nest, colour, icon, reorder among siblings, archive, and delete when empty. The World can't be deleted, and nor can a realm still holding records, maps or campaigns (`server/src/repo/realms.ts`, `/api/realms`).
+- **Everything reads the library's realms:** the sidebar's Realms group, badges and colours (`rc-<colour>` classes and the `realm` Tailwind colour, eight colours checked for AA in both themes), the record editor, New record, lists, search, the graph, the dashboard's realm cards (built per realm on the server), realm pages (kind, parent, description, what's inside), the Timeline's realm filter, Faction Web, the stance matrix, the Atlas (a realm per map) and the campaign (a world, when there's more than one).
+- **The handbook** gets realms from `/api/player/info` or the published snapshot (`RealmsProvider` in `client/src/components/realms.tsx`, player-safe). It only names realms that hold a revealed record (and what contains those): a realm the GM made and revealed nothing in is never listed, and no people is "found" there.
+- **Import:** an archive naming a realm the library lacks creates it (a continent in The World, with the next free colour), and the setting's names keep their ids and look. JSON export and import carry realms; an export from before them gets its realms back from its records.
+- Records must name a realm that exists (400 otherwise).
+- Tests: `tests/realms.test.ts` (the migration on an older library and an empty one, CRUD and its limits, import creating a realm, the handbook's realms, export and import). Tests that write setting records into an empty library now add the setting's realms first (`tempContext({ settingRealms: true })`).
 
 ## v0.4.0 "Illuminated"
 
