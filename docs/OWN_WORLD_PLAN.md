@@ -3,6 +3,13 @@
 **Status:** approved direction (owner answers in §4, 22 November 2026). Nothing here is built yet.
 **Goal:** someone who opens a fresh Worldkeeper with no archive to import can click **Next, Next, Finish** and have their own world: named realms, a first campaign and a few records that teach them the system. From then on, every kind of record has a template, a guided way to fill it in, and a modern Markdown editor for anyone who'd rather write it themselves.
 
+**The principle: one foundation.** The app is a framework: realms, record types, templates, records, maps, campaigns, the editor, guided creation and optional modules. The Worldkeeper setting is **content on that framework**, packaged as a **setting pack**. It has no special place in the app's code. A GM's own world and the Worldkeeper setting are built the same way, stored the same way and edited the same way. The only difference is where the content came from:
+
+- a world you make is written by you, starting from the wizard;
+- the setting's world arrives in its pack.
+
+Anything the setting can do, a world of your own can do too: add realms, use the setting's record types, or switch on one of its modules (§2.0).
+
 ## 1. Where we are today
 
 What already helps:
@@ -19,8 +26,48 @@ What stands in the way:
 3. **Record types mix the generic and the setting's own.** The list includes vaults, vault keys, shards, callings and Ethereal domains alongside towns and NPCs.
 4. **New records start as `PROPOSED`.** That suits guarding an imported canon. In your own world, it makes you approve your own writing in Canon Review.
 5. **There are no guided paths.** Writing a good town or NPC means knowing what the Aetheris records look like.
+6. **The setting is partly built into the code**, rather than sitting on top of it like any other world:
+   - the four realms, and the importer that maps the archive onto exactly those four;
+   - State of the World, which works from a fixed list of 19 Aetheris, Kaelmar and Ethereal region IDs;
+   - the Vaults, Shards, Dominions and Ethereal explorer pages, and parts of the World Overview and dashboard, which look up specific record IDs (such as `ETH-591` or `WLD-907`);
+   - its systems (Thinning, the Return, fading salvage, the setting's treasure), which are switches in Settings and not part of the setting itself.
 
 ## 2. The ideas
+
+### 2.0 Setting packs and modules
+
+A **setting pack** is a folder in one format, which anyone could write. It holds:
+
+- its **realms** (§2.1);
+- any **record types** it adds to the core ones, each with its own template (§2.2);
+- its **templates**;
+- its **content**: records in the archive Markdown format, maps with their pins and routes, adventures, encounter and treasure tables, stat blocks and player text;
+- the **modules** it turns on;
+- its **roles**: which of its records plays which part, e.g. "the overview of the world is `WLD-901`", or "the travel rules are `SYS-906`".
+
+**The Worldkeeper setting is the first pack.** Its content is what the archive and Apply additions supply today. Its realms are _The World_, _Aetheris_, _Kaelmar_ and _The Ethereal Realm_. It adds five record types: vault, vault key, shard, calling and Ethereal domain. It turns on these modules:
+
+- Thinning;
+- the Return;
+- fading salvage and the setting's treasure;
+- vaults and shards;
+- the Ethereal depths explorer.
+
+**Modules** are optional features. They live in the app's code but know nothing about Aetheris. Each declares:
+
+- its settings;
+- its pages and where they sit in the navigation;
+- what it adds to character sheets and the player handbook.
+
+A module finds its records by **type, tag or role**, never by ID. For example, the vaults page lists records of type vault, and the Ethereal explorer lists the realm marked as the _depths_ in its pack. So Settings → Campaign mechanics becomes **Settings → Modules**. A GM with their own world can switch on Thinning, or a Return-style clock, if they want.
+
+The app's generic pages stop naming setting records:
+
+- **State of the World** covers every region and nation in the library.
+- The **World Overview** shows each realm's overview record, found by role.
+- The **Dominions** page becomes a generic **Nations** view of any continent.
+
+**A world of your own** is the same thing with no pack. Realms come from the wizard, the core record types and templates are there, and no modules are on unless you turn them on.
 
 ### 2.1 Realms become data
 
@@ -57,7 +104,7 @@ The generic set covers:
 - **Things:** Artifact, Magic item, Creature.
 - **Rules and adventures:** Rule or custom, Adventure hook, Adventure location.
 
-The setting's own types (vault, vault key, shard, calling, Ethereal domain) keep their templates, but appear only while the setting is switched on.
+Record types a pack adds (for the setting: vault, vault key, shard, calling, Ethereal domain) come with the pack's own templates. They appear in New and the Codex while that pack, or a module that uses them, is in the library.
 
 Templates ship as Markdown in the archive format (`assets/templates/*.md`), so the archive import, the exporter and people writing by hand all read the same thing. **Library → Templates** lists them and lets the GM edit, duplicate or add their own. A changed template affects only new records; existing records are left alone.
 
@@ -101,10 +148,13 @@ This is one switch, **Settings → Canon → Approve new records in Canon Review
 
 A fresh library opens on **Start your world** instead of the empty dashboard. Each step can be skipped, and anything it creates can be changed later.
 
-1. **Welcome.** "What would you like to do?"
-   - **Make my own world** (this wizard).
-   - **Play in the Worldkeeper setting** (the archive import and Apply additions).
-   - **Restore a backup.**
+1. **Welcome.** "How would you like to start?"
+   - **Build my own world.**
+   - **Play in the Worldkeeper setting.**
+   - **Restore a backup** (leaves the wizard).
+
+   Both ways continue through the same wizard and end with the same kind of library. **Build my own world** goes through steps 2 to 4. **The Worldkeeper setting** installs the setting's pack instead: its realms, record types, templates, content and modules, from the bundled pack plus the GM's copy of the archive. It then shows what was installed and joins at step 4.
+
 2. **Your world.** The world's name, a one-line pitch, and the name the app goes by. Optionally, the calendar: the year and its name ("1247 AR"), or "I'll decide later".
 3. **Its shape.** Pick a starting shape, then rename or add rows. The choices are previews, not commitments:
    - _One continent_: a world with one continent.
@@ -121,7 +171,7 @@ A fresh library opens on **Start your world** instead of the empty dashboard. Ea
 6. **A map (optional).** Upload an image for the world. You can place pins later in the Atlas.
 7. **Finish.** A summary of what will be created, then **Create my world**. It opens on the dashboard, with a **Getting started** checklist card.
 
-Inside the GM app, **Library → Start a new world** runs the same wizard for a second world in another library. Adding a realm to the same library is §2.1's **New realm**.
+A finished library can always grow: **New realm** (§2.1) adds another world or plane, and **Library → Setting packs** can install a pack into a world you started yourself. The pack's realms and content then sit beside your own.
 
 ### 2.7 Records that teach
 
@@ -137,27 +187,29 @@ The dashboard's **Getting started** card follows that checklist and has **Remove
 
 ### 2.8 What changes for the Worldkeeper setting
 
-Nothing is lost:
+**For people playing it, nothing.** An existing library becomes "a library with the Worldkeeper pack installed" when it updates. It keeps:
 
-- The archive keeps its realms, colours and records.
-- **Apply additions** and the published handbook work as before.
-- The setting's own record types and pages stay, shown while the setting is on.
-- Archive libraries keep Canon Review on.
+- its realms, colours and records;
+- **Apply additions** (now the pack's update);
+- the published handbook;
+- every page;
+- Canon Review.
 
-The setting simply becomes one way to start, next to **Make my own world**.
+**Under the hood, everything that was special about the setting becomes one of three things:** pack data (realms, types, templates, roles, content), a module (Thinning, the Return, vaults and shards, the Ethereal explorer, the setting's treasure), or a generic page. After step 3, a test checks that the app's code names no record ID of the setting outside the pack.
 
 ## 3. Delivery plan
 
 Each step is its own PR with screenshots, merged on the owner's OK. As before, the release comes last.
 
-| Step | What                                                                                                                                                                                                                                                                                                                                     | You review                                           |
-| ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| 1    | **Realms as data:** the `realms` table and migration (the setting's four become rows, ids unchanged), the API, Codex → Realms (new, edit, recolour, reorder), and everything that reads realms reading the library instead of the code: sidebar, badges, colours, filters, dashboard, handbook. No visible change for existing libraries | A new realm appearing everywhere; Aetheris unchanged |
-| 2    | **Templates:** the built-in set in `assets/templates/`, loaded into the library (without overwriting the GM's own), Library → Templates (view, edit, duplicate, new), setting-only types shown only with the setting on                                                                                                                  | The templates for a town, an NPC and a faction       |
-| 3    | **The editor:** CodeMirror with Write/Preview/Split, toolbar, `@` links, GM-only sections and an outline, used for every long text in the app                                                                                                                                                                                            | Editing a record, a scene and a handout              |
-| 4    | **New ▸ anything:** the New menu, contextual "Add … here", Guided and Advanced creation, and the Canon setting for your own world                                                                                                                                                                                                        | Making a town both ways                              |
-| 5    | **The first-run wizard and the starter records:** Start your world, the shapes, the first campaign and town, the optional map, the tutorial records and the Getting started checklist                                                                                                                                                    | A fresh install, Next, Next, Finish                  |
-| 6    | **Docs, screenshots and a release** (v0.5): Quick Start rewritten around both ways to begin                                                                                                                                                                                                                                              | The release                                          |
+| Step | What                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | You review                                                                        |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| 1    | **Realms as data:** the `realms` table and migration (the setting's four become rows, ids unchanged), the API, Codex → Realms (new, edit, recolour, reorder), and everything that reads realms reading the library instead of the code: sidebar, badges, colours, filters, dashboard, handbook. No visible change for existing libraries                                                                                                                                    | A new realm appearing everywhere; Aetheris unchanged                              |
+| 2    | **Record types and templates:** the core types and their built-in templates in `assets/templates/`, record types a pack can add, Library → Templates (view, edit, duplicate, new)                                                                                                                                                                                                                                                                                           | The templates for a town, an NPC and a faction                                    |
+| 3    | **The setting as a pack:** the pack format and its manifest (realms, types, templates, content, modules, roles); the Worldkeeper setting moved into it; modules for Thinning, the Return, fading salvage and treasure, vaults and shards, and the Ethereal explorer; Settings → Modules; State of the World, the World Overview and Nations made generic; no setting record IDs left in app code (with a test); existing libraries migrated to "Worldkeeper pack installed" | An existing Aetheris library unchanged; a blank library with Thinning switched on |
+| 4    | **The editor:** CodeMirror with Write/Preview/Split, toolbar, `@` links, GM-only sections and an outline, used for every long text in the app                                                                                                                                                                                                                                                                                                                               | Editing a record, a scene and a handout                                           |
+| 5    | **New ▸ anything:** the New menu, contextual "Add … here", Guided and Advanced creation, and the Canon setting for your own world                                                                                                                                                                                                                                                                                                                                           | Making a town both ways                                                           |
+| 6    | **The first-run wizard and the starter records:** the choice between your own world and the Worldkeeper setting on one path, the shapes, the first campaign and town, the optional map, the tutorial records and the Getting started checklist; Library → Setting packs                                                                                                                                                                                                     | A fresh install both ways: Next, Next, Finish                                     |
+| 7    | **Docs, screenshots and a release** (v0.5): Quick Start rewritten around both ways to begin, and a guide to writing a setting pack                                                                                                                                                                                                                                                                                                                                          | The release                                                                       |
 
 **Tests at each step:**
 
@@ -165,7 +217,9 @@ Each step is its own PR with screenshots, merged on the owner's OK. As before, t
 - templates round-tripping through import and export;
 - the editor's autosave and conflict protection;
 - creation in both modes;
-- the wizard end to end in the E2E smoke, with a fresh library to a finished world;
+- the setting pack installing into a fresh library, and an existing setting library migrating to it with no change to its records, maps or handbook;
+- no setting record IDs in app code;
+- the wizard end to end in the E2E smoke, both ways, from a fresh library to a finished world;
 - the bundle guard, so the player side still carries no GM code.
 
 ## 4. Owner answers (22 November 2026)
@@ -178,4 +232,6 @@ Each step is its own PR with screenshots, merged on the owner's OK. As before, t
 Decided by default, unless the owner says otherwise:
 
 - **Realm kinds:** World, Continent, Plane and Region group.
-- **Setting-only record types** (vault, vault key, shard, calling, Ethereal domain): hidden from New and the Codex while the setting is off. Existing records of those types still show.
+- **Pack record types** (for the setting: vault, vault key, shard, calling, Ethereal domain): shown while their pack or module is in the library, hidden otherwise. Existing records of those types always show.
+
+Added on 22 November 2026, at the owner's request: **one foundation.** The Worldkeeper setting is built on the same model as a world of your own: a setting pack of realms, record types, templates, content and roles, plus modules for its systems. The first run offers both ways to start in one wizard (§2.0, §2.6, §2.8, step 3).
