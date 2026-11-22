@@ -6,21 +6,29 @@ import type { DB } from '../db/connection.js';
 import { notFound } from '../lib/errors.js';
 import { generateNames } from '../../../shared/names.js';
 import { types } from './recordTypes.js';
+import { parseJson } from '../lib/json.js';
 
 const COMMON = /Common names[.:]*\**\s*([^\n]+)/i;
 
 export function namePeoples(db: DB) {
   const folk = types(db).with('folk');
-  const rows = db.prepare(`SELECT id, name, body, player_summary FROM entities WHERE type IN (${folk.map(() => '?').join(',') || "''"}) AND archived = 0 ORDER BY name`).all(...folk) as {
+  const rows = db.prepare(`SELECT id, name, body, player_summary, fields FROM entities WHERE type IN (${folk.map(() => '?').join(',') || "''"}) AND archived = 0 ORDER BY name`).all(...folk) as {
     id: string;
     name: string;
     body: string;
     player_summary: string;
+    fields: string;
   }[];
   return rows
-    .map((r) => ({ id: r.id, name: r.name, seeds: seedsOf(`${r.body}\n${r.player_summary}`) }))
+    .map((r) => ({ id: r.id, name: r.name, seeds: seedsOf(`${commonNamesFact(r.fields)}\n${r.body}\n${r.player_summary}`) }))
     .filter((r) => r.seeds.length)
     .map(({ id, name, seeds }) => ({ id, name, seeds: seeds.length }));
+}
+
+/** The record's "Common names" fact (its template's), read before its prose. */
+function commonNamesFact(fields: string): string {
+  const f = parseJson<[string, string][]>(fields, []).find(([k, v]) => /^common names$/i.test(k) && v.trim());
+  return f ? `Common names: ${f[1]}` : '';
 }
 
 function seedsOf(text: string) {
@@ -41,8 +49,8 @@ export function usedNameWords(db: DB) {
 }
 
 export function makeNames(db: DB, peopleId: string, count = 12, seed?: number) {
-  const r = db.prepare(`SELECT name, body, player_summary FROM entities WHERE id = ?`).get(peopleId) as { name: string; body: string; player_summary: string } | undefined;
+  const r = db.prepare(`SELECT name, body, player_summary, fields FROM entities WHERE id = ?`).get(peopleId) as { name: string; body: string; player_summary: string; fields: string } | undefined;
   if (!r) throw notFound('People');
-  const seeds = seedsOf(`${r.body}\n${r.player_summary}`);
+  const seeds = seedsOf(`${commonNamesFact(r.fields)}\n${r.body}\n${r.player_summary}`);
   return { people: r.name, names: generateNames({ seeds, people: r.name, used: usedNameWords(db), count, seed }) };
 }

@@ -46,9 +46,20 @@ function within(db: DB, regionId: string): Set<string> {
   return ids;
 }
 
-/** The faction that holds a region: the one whose record names it as its main dominion. */
+/**
+ * The faction that holds a region: the region's own "Ruling faction" fact (its template's), or else the faction whose
+ * record names the region as its main dominion (the archive's wording).
+ */
 function holder(db: DB, regionId: string) {
-  return (db.prepare(`SELECT id, name FROM entities WHERE type = 'faction' AND body LIKE ? LIMIT 1`).get(`%Main dominion:%[${regionId}]%`) as { id: string; name: string } | undefined) ?? null;
+  const fields = (db.prepare('SELECT fields FROM entities WHERE id = ?').get(regionId) as { fields: string } | undefined)?.fields ?? '[]';
+  const fact = parseJson<[string, string][]>(fields, []).find(([k, v]) => /^ruling faction$/i.test(k) && v.trim())?.[1] ?? '';
+  const named = /\[([A-Z]{2,5}-[A-Z0-9-]+)\]/.exec(fact)?.[1];
+  const byFact = named
+    ? (db.prepare('SELECT id, name FROM entities WHERE id = ?').get(named) as { id: string; name: string } | undefined)
+    : fact
+      ? (db.prepare('SELECT id, name FROM entities WHERE lower(name) = lower(?) AND archived = 0 LIMIT 1').get(fact.trim()) as { id: string; name: string } | undefined)
+      : undefined;
+  return byFact ?? (db.prepare(`SELECT id, name FROM entities WHERE type = 'faction' AND body LIKE ? LIMIT 1`).get(`%Main dominion:%[${regionId}]%`) as { id: string; name: string } | undefined) ?? null;
 }
 
 export function regionState(db: DB, campaignId: number, regionId: string) {

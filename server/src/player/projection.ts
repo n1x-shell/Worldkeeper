@@ -58,6 +58,8 @@ interface Row {
   revealed_facts: string;
   revealed: number;
   archived: number;
+  /** Read for structured facts only (a people's "Found in"); never sent to players. */
+  fields?: string;
 }
 
 export function isSecretHeading(heading: string) {
@@ -159,7 +161,11 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, realmsInfo:
   const linked = new Set<string>();
   // Peoples and callings belong wherever their player-visible text says they're found (never from GM text).
   const realms = new Set<string>([r.realm]);
-  if (r.type === 'people' || r.type === 'calling') {
+  // A people's "Found in" fact (its template's) says where it lives; without one, it's read from the player text.
+  const foundIn = realmsInfo.folk.has(r.type) ? (parseJson<[string, string][]>(r.fields ?? '[]', []).find(([k, v]) => /^found in$/i.test(k) && v.trim())?.[1] ?? '') : '';
+  if (foundIn) {
+    for (const c of realmsInfo.continents) if (c.nameRe.test(foundIn) || foundIn.toLowerCase().includes(c.id)) realms.add(c.id);
+  } else if (realmsInfo.folk.has(r.type)) {
     // A people of a world is found on its continents; and on any continent its player text names.
     const own = realmsInfo.byId.get(r.realm);
     if (own?.kind === 'world') realmsInfo.continents.filter((c) => c.parent_id === own.id || !c.parent_id).forEach((c) => realms.add(c.id));
@@ -185,7 +191,7 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, realmsInfo:
       : sections,
   };
   // A people found in a named place of a continent (the Radiant Expanse, the Deepwood) is found on that continent.
-  if (placeRealm && (r.type === 'people' || r.type === 'calling')) {
+  if (placeRealm && !foundIn && realmsInfo.folk.has(r.type)) {
     for (const m of [out.summary, ...out.sections.map((x) => x.content)].join('\n').matchAll(/\/player\/e\/([A-Z]{2,5}-\d{3,4})/g)) {
       const realm = placeRealm.get(m[1]);
       if (realm && realmsInfo.continents.some((c) => c.id === realm)) realms.add(realm);
@@ -199,6 +205,8 @@ interface RealmContext {
   byId: Map<string, RealmInfo>;
   /** Continents, with a pattern for their name in text. */
   continents: (RealmInfo & { nameRe: RegExp })[];
+  /** Peoples, species, cultures and callings (the registry's folk), whose continents are worked out. */
+  folk: Set<string>;
 }
 const esc = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 /**
@@ -220,6 +228,7 @@ function realmContext(db: DB): RealmContext {
   return {
     byId: new Map(list.map((r) => [r.id, r])),
     continents: list.filter((r) => r.kind === 'continent' && visible.has(r.id)).map((r) => ({ ...r, nameRe: new RegExp(`\\b${esc(r.name.replace(/^the\s+/i, ''))}\\b`) })),
+    folk: new Set(types(db).of('folk')),
   };
 }
 
@@ -248,7 +257,7 @@ function placeRealms(db: DB) {
   return new Map(rows.map((x) => [x.id, x.realm]));
 }
 
-const COLS = 'id, name, type, realm, tags, body, player_summary, revealed_sections, revealed_facts, revealed, archived';
+const COLS = 'id, name, type, realm, tags, body, player_summary, revealed_sections, revealed_facts, revealed, archived, fields';
 
 export function playerEntities(db: DB): PlayerEntity[] {
   const revealed = revealedIdSet(db);
