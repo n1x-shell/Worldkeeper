@@ -7,7 +7,7 @@
 import type { DB } from '../db/connection.js';
 import { parseJson } from '../lib/json.js';
 import { notFound } from '../lib/errors.js';
-import { regionTerrains } from './encounters.js';
+import { placeProfile } from './places.js';
 import { regionState } from './regionState.js';
 import { types } from './recordTypes.js';
 
@@ -147,5 +147,6 @@ export function regionPanel(db: DB, regionId: string, campaignId: number | null)
       state = null;
     }
   }
-  return { region: r, terrain: regionTerrains()[regionId] ?? null, tables, places, state };
+  const profile = placeProfile(db, regionId);
+  return { region: r, terrain: profile.terrain.length ? { label: r.name, terrain: profile.terrain } : null, profile, tables, places, state };
 }

@@ -1,14 +1,11 @@
 /**
  * Encounters from the GM's books: groups of creatures that fit a party's level and the terrain, by the Dungeon
- * Master's Guide (2024) XP budgets; the world's regions given as terrain (packs/worldkeeper/encounters/terrain.json); and the
+ * Master's Guide (2024) XP budgets, in a place's terrain (places.ts); and the
  * book creatures an encounter table's row names ("4 bandits and a bandit captain").
  */
-import fs from 'node:fs';
-import path from 'node:path';
 import type Database from 'better-sqlite3';
 import { badRequest } from '../lib/errors.js';
 import { bookCreatureData } from './bookData.js';
-import { worldkeeperPath } from '../packs/paths.js';
 
 type DB = Database.Database;
 
@@ -37,22 +34,12 @@ const BUDGET: [number, number, number][] = [
 ];
 export const DIFFICULTIES = ['low', 'moderate', 'high'] as const;
 export type Difficulty = (typeof DIFFICULTIES)[number];
-export const TERRAINS = ['arctic', 'coastal', 'desert', 'forest', 'grassland', 'hill', 'mountain', 'swamp', 'underdark', 'underwater', 'urban', 'planar'] as const;
+export { TERRAINS } from '../../../shared/places.js';
 
 export function xpBudget(level: number, size: number, difficulty: Difficulty) {
   const row = BUDGET[Math.max(1, Math.min(20, Math.round(level))) - 1];
   return row[DIFFICULTIES.indexOf(difficulty)] * Math.max(1, Math.min(10, Math.round(size)));
 }
-
-const TERRAIN_FILE = worldkeeperPath('encounters', 'terrain.json');
-let terrainCache: Record<string, { label: string; terrain: string[] }> | null = null;
-/** The world's regions as terrain (empty for a world that has none mapped). */
-export function regionTerrains(): Record<string, { label: string; terrain: string[] }> {
-  if (!terrainCache) terrainCache = fs.existsSync(TERRAIN_FILE) ? (JSON.parse(fs.readFileSync(TERRAIN_FILE, 'utf8')).regions as Record<string, { label: string; terrain: string[] }>) : {};
-  return terrainCache;
-}
-/** The terrain of the first place in a chain (a place, then what it's in) that has one. */
-export const terrainFor = (ids: string[]) => ids.map((id) => regionTerrains()[id]?.terrain).find(Boolean) ?? [];
 
 export interface EncounterIdea {
   label: string;

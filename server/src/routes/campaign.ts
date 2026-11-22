@@ -1,4 +1,6 @@
-import { creatureMentions, regionTerrains, suggestEncounters, terrainFor, TERRAINS, type Difficulty } from '../repo/encounters.js';
+import { creatureMentions, suggestEncounters, TERRAINS, type Difficulty } from '../repo/encounters.js';
+import { placeProfile, placesWithTerrain } from '../repo/places.js';
+import { difficultyFor } from '../../../shared/places.js';
 import { Router } from 'express';
 import type { AppContext } from '../context.js';
 import { characterLog, logged } from '../repo/characterLog.js';
@@ -191,14 +193,16 @@ export function campaignRoutes(ctx: AppContext) {
   r.get(
     '/books/encounters',
     h((req) => {
+      // A place gives its terrain, and its danger the difficulty unless one is asked for.
       const region = String(req.query.region ?? '');
-      const terrain = region ? terrainFor([region]) : (listParam(req.query.terrain) ?? []);
+      const profile = region ? placeProfile(ctx.db, region) : null;
+      const terrain = profile ? profile.terrain : (listParam(req.query.terrain) ?? []);
       return {
         terrain,
         ...suggestEncounters(ctx.db, {
           level: Number(req.query.level ?? 1),
           size: Number(req.query.size ?? 4),
-          difficulty: String(req.query.difficulty ?? 'moderate') as Difficulty,
+          difficulty: (req.query.difficulty ? String(req.query.difficulty) : profile ? difficultyFor(profile.danger) : 'moderate') as Difficulty,
           terrain,
         }),
       };
@@ -208,9 +212,8 @@ export function campaignRoutes(ctx: AppContext) {
     '/books/terrains',
     h(() => ({
       terrains: TERRAINS,
-      regions: Object.entries(regionTerrains())
-        .filter(([id]) => ctx.db.prepare('SELECT 1 FROM entities WHERE id = ?').get(id))
-        .map(([id, v]) => ({ id, ...v })),
+      // Every region-sized place with a terrain (its own fact, a place it's in, or its setting pack's).
+      regions: placesWithTerrain(ctx.db).map((p) => ({ id: p.id, label: p.label, terrain: p.terrain, danger: p.danger, wealth: p.wealth })),
     })),
   );
   r.get(

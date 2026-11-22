@@ -11,6 +11,7 @@ A stretch of country with its own character, such as a forest, a range of hills 
 - **Compass position**: Say where it lies within its continent or realm. Example: east (The Eastern Deepwood)
 - **Terrain**: List the kinds of ground found there, such as forest, hill, coastal or swamp. Example: forest (The Eastern Deepwood)
 - **Danger**: Say how safe travel is, from safe through risky to deadly. Example: from watched, usually safe to openly hostile (The Hollow Marches)
+- **Wealth**: Say how well off it is, as poor, modest or rich; this weights the treasure found there. Example: modest
 - **Main places**: Name the settlements and landmarks worth a visit. Example: Thornhaven and the Survey Garden (The Eastern Deepwood)
 
 ## A first look

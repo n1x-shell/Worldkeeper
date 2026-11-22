@@ -10,6 +10,7 @@ A single notable site out in the world: a ruin, battlefield, forest, crossing or
 - **Where**: Name the region it lies in. Example: the Hollow Marches (Wither's Hollow)
 - **Terrain**: Give the kind of ground, such as forest, hill or underdark. Example: forest (Wither's Hollow)
 - **Danger**: Say how safe it is to visit, from safe through risky to deadly. Example: watched, and usually safe (The Crossroads of Fate)
+- **Wealth**: Say how well off it is, as poor, modest or rich; this weights the treasure found there. Example: modest
 
 ## A first look
 

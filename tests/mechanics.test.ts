@@ -101,8 +101,12 @@ describe('modules', () => {
     expect(urban.ideas.flatMap((i) => i.creatures.map((c) => c.name))).toContain('Priest');
     expect(urban.ideas.every((i) => i.xp <= i.budget)).toBe(true);
     expect(suggestEncounters(ctx.db, { level: 4, terrain: ['arctic'] }).ideas).toEqual([]);
-    // A region of the world, as its terrain.
-    expect((await request(gm).get('/api/books/encounters').query({ level: 4, region: 'SET-001' })).body.terrain).toEqual(['urban', 'grassland']);
+    // A place of the GM's own, by its Terrain fact; a place inside it inherits it.
+    createEntity(ctx.db, { id: 'REG-0001', name: 'The Downs', type: 'region', realm: 'world', canon_status: 'CANON', aliases: [], tags: [], fields: [['Terrain', 'Rolling downs and farmland'], ['Danger', 'Deadly at night']], body: 'x', notes: '' } as never);
+    createEntity(ctx.db, { id: 'SET-0001', name: 'Millford', type: 'settlement', realm: 'world', parent_id: 'REG-0001', canon_status: 'CANON', aliases: [], tags: [], fields: [], body: 'x', notes: '' } as never);
+    const here = (await request(gm).get('/api/books/encounters').query({ level: 4, region: 'SET-0001' })).body;
+    expect(here.terrain).toEqual(['grassland', 'hill']);
+    expect(here.budget).toBe(xpBudget(4, 4, 'high'));
     expect(creatureMentions(ctx.db, '**Fight.** 3 priests and a Legion Scout [CRE-006] at the gate.')).toEqual([{ id: 'book:xmm:priest', name: 'Priest' }]);
     expect(creatureMentions(ctx.db, '**Sign.** A priest left a candle.')).toEqual([]);
   });

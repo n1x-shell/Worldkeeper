@@ -12,6 +12,7 @@ import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { badRequest } from '../lib/errors.js';
 import { makeCrud } from './crud.js';
+import { TREASURE_TIERS, type TreasureTier } from '../../../shared/treasureTiers.js';
 import { moduleData, moduleDataFor, moduleOn, setModuleData } from './modules.js';
 import { rollDice } from '../../../shared/play.js';
 import { worldkeeperPath } from '../packs/paths.js';
@@ -37,13 +38,7 @@ export interface CatalogueArtifact {
   holder: string;
   leads: string[];
 }
-interface Tier {
-  key: string;
-  label: string;
-  individual: { dice: string; mult: number; coin: string };
-  hoard: { dice: string; mult: number; coin: string };
-  items: { dice: string; rarities: Partial<Record<Rarity, number>> };
-}
+type Tier = TreasureTier;
 interface Region {
   label: string;
   ids: string[];
@@ -66,14 +61,15 @@ let cache: { dir: string; stamp: string; data: TreasureData } | null = null;
 /** The catalogue and pools, re-read when the files change. */
 export function treasureData(dir = DEFAULT_TREASURE_DIR): TreasureData {
   const files = ['catalogue.json', 'pools.json'].map((f) => path.join(dir, f));
-  if (!files.every((f) => fs.existsSync(f))) return { catalogue: { items: {}, artifacts: {} }, tiers: [], regions: {}, pools: {}, goods: {}, hooks: {} };
+  // The tiers are the rules' (shared/treasureTiers.ts); everything else is a setting pack's.
+  if (!files.every((f) => fs.existsSync(f))) return { catalogue: { items: {}, artifacts: {} }, tiers: TREASURE_TIERS, regions: {}, pools: {}, goods: {}, hooks: {} };
   const stamp = files.map((f) => fs.statSync(f).mtimeMs).join('|');
   if (cache && cache.dir === dir && cache.stamp === stamp) return cache.data;
   const catalogue = JSON.parse(fs.readFileSync(files[0], 'utf8'));
   const pools = JSON.parse(fs.readFileSync(files[1], 'utf8'));
   const data: TreasureData = {
     catalogue: { items: catalogue.items, artifacts: catalogue.artifacts },
-    tiers: pools.tiers,
+    tiers: TREASURE_TIERS,
     regions: pools.regions,
     pools: pools.pools,
     goods: pools.goods,
