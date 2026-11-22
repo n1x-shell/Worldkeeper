@@ -11,6 +11,7 @@ import { loadNameIndex } from '../repo/nameMatch.js';
 import { loadMentionIndex } from '../repo/mentions.js';
 import { reindexAll } from '../repo/search.js';
 import { deriveTimelineEras, eraVocabularyFromText, seedEras } from '../repo/eras.js';
+import { ensureSettingRealm } from './settingRealms.js';
 
 export type DocKind =
   | 'bible'
@@ -329,7 +330,7 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
     let nextColor = (db.prepare('SELECT COUNT(*) n FROM realms').get() as { n: number }).n;
     const realmFor = (id: string, created?: { id: string; name: string }) => {
       if (realmExists(db, id)) return id;
-      if (SETTING_REALMS[id]) return ensureRealm(db, id, SETTING_REALMS[id]);
+      if (SETTING_REALMS[id]) return ensureSettingRealm(db, id);
       if (created && created.id === id) return ensureRealm(db, id, { name: created.name, kind: 'continent', parent_id: 'world', color: palette[nextColor++ % palette.length], icon: 'compass' });
       return 'world';
     };

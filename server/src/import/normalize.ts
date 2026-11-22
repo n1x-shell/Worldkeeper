@@ -94,7 +94,9 @@ export function normalizeType(id: string, categoryRaw: string | null): EntityTyp
 export const SETTING_REALMS: Record<string, { name: string; kind: RealmKind; parent_id: string | null; color: RealmColor; icon: RealmIcon; sort_order: number }> = {
   aetheris: { name: 'Aetheris', kind: 'continent', parent_id: 'world', color: 'amber', icon: 'mountain', sort_order: 1 },
   kaelmar: { name: 'Kaelmar', kind: 'continent', parent_id: 'world', color: 'green', icon: 'flame', sort_order: 2 },
-  ethereal: { name: 'The Ethereal Realm', kind: 'plane', parent_id: null, color: 'violet', icon: 'ghost', sort_order: 3 },
+  ethereal: { name: 'The Ethereal Realm', kind: 'realm', parent_id: null, color: 'violet', icon: 'ghost', sort_order: 3 },
+  /** The realm The World sits in (owner decision, DEC-910). */
+  evershroud: { name: 'Evershroud', kind: 'realm', parent_id: null, color: 'slate', icon: 'moon', sort_order: 0 },
 };
 
 /** Words in a realm field that don't name a realm. */

@@ -42,7 +42,10 @@ describe('realms', () => {
     db.prepare(`INSERT INTO maps (name) VALUES ('The Ethereal Realm'), ('The World Map')`).run();
     db.prepare(`INSERT INTO timeline_rows (sort_order, time_label, event, realm_label) VALUES (1, 'Year 1', 'A', 'Aetheris'), (2, 'Year 2', 'B', 'Both'), (3, 'Year 3', 'C', 'World')`).run();
     migrate(db);
-    expect(sortRealms(listRealms(db)).map((r) => r.id)).toEqual(['world', 'aetheris', 'ethereal']); // no Kaelmar records, so no Kaelmar
+    // No Kaelmar records, so no Kaelmar. The World sits in the realm of Evershroud; the Ethereal Realm is a realm beside it.
+    expect(sortRealms(listRealms(db)).map((r) => r.id)).toEqual(['evershroud', 'world', 'aetheris', 'ethereal']);
+    expect(listRealms(db).find((r) => r.id === 'world')).toMatchObject({ kind: 'world', parent_id: 'evershroud' });
+    expect(listRealms(db).find((r) => r.id === 'ethereal')).toMatchObject({ kind: 'realm', parent_id: null });
     expect(listRealms(db).find((r) => r.id === 'aetheris')).toMatchObject({ name: 'Aetheris', kind: 'continent', parent_id: 'world', color: 'amber' });
     expect((db.prepare('SELECT name, realm_id FROM maps ORDER BY id').all() as { realm_id: string }[]).map((m) => m.realm_id)).toEqual(['ethereal', 'world']);
     const rows = db.prepare('SELECT realm_ids FROM timeline_rows ORDER BY sort_order').all() as { realm_ids: string }[];
@@ -89,9 +92,34 @@ describe('realms', () => {
     expect((await request(app).delete('/api/realms/sunken-isles')).status).toBe(400);
     expect((await request(app).delete('/api/realms/world')).status).toBe(400);
     await request(app).patch('/api/realms/sunken-isles').send({ archived: true });
+    // An edit changes only what it names.
+    expect(listRealms(ctx.db, { includeArchived: true }).find((r) => r.id === 'sunken-isles')).toMatchObject({ archived: true, color: 'teal', icon: 'waves', kind: 'continent' });
     expect((await request(app).get('/api/realms')).body.map((r: { id: string }) => r.id)).not.toContain('sunken-isles');
     expect((await request(app).get('/api/realms?archived=1')).body.map((r: { id: string }) => r.id)).toContain('sunken-isles');
     expect((await request(app).delete(`/api/realms/${reef.id}`)).status).toBe(200);
+  });
+
+  it('nest as realm, world, continent, region group, and a realm can hold several worlds', async () => {
+    const app = createApp(tempContext());
+    const post = (b: object) => request(app).post('/api/realms').send(b);
+    expect((await post({ name: 'The Astral Sea', kind: 'realm' })).status).toBe(200);
+    expect((await post({ name: 'Second Sun', kind: 'world', parent_id: 'astral-sea' })).status).toBe(200);
+    expect((await request(app).patch('/api/realms/world').send({ parent_id: 'astral-sea' })).status).toBe(200);
+    const worlds = ((await request(app).get('/api/realms')).body as { id: string; kind: string; parent_id: string }[]).filter((r) => r.parent_id === 'astral-sea');
+    expect(worlds.map((r) => r.kind)).toEqual(['world', 'world']);
+    // A realm still holding worlds can't be deleted.
+    expect((await request(app).delete('/api/realms/astral-sea')).status).toBe(400);
+    // A continent needs a world; a realm is always top level; a world can't go inside a continent.
+    expect((await post({ name: 'Floating', kind: 'continent' })).status).toBe(400);
+    expect((await post({ name: 'Floating', kind: 'continent', parent_id: 'astral-sea' })).status).toBe(400);
+    expect((await post({ name: 'Inner', kind: 'realm', parent_id: 'astral-sea' })).status).toBe(400);
+    expect((await post({ name: 'Ostmark', kind: 'continent', parent_id: 'world' })).status).toBe(200);
+    expect((await post({ name: 'Pocket', kind: 'world', parent_id: 'ostmark' })).status).toBe(400);
+    expect((await post({ name: 'The Marches', kind: 'region_group', parent_id: 'ostmark' })).status).toBe(200);
+    // Making Ostmark a world of its own would strand The Marches (a region group) inside a world.
+    const res = await request(app).patch('/api/realms/ostmark').send({ kind: 'world', parent_id: 'astral-sea' });
+    expect(res.status).toBe(400);
+    expect(res.body.error ?? res.text).toMatch(/The Marches/);
   });
 
   it('reach the handbook by name, and a people of a world is found on its continents', () => {

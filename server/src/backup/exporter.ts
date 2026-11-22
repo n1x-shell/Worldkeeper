@@ -14,6 +14,7 @@ import { portraitDataUrl, savePortrait } from '../repo/portraits.js';
 import type { Entity } from '../../../shared/domain.js';
 import { repairRealms } from '../repo/realms.js';
 import { SETTING_REALMS } from '../import/normalize.js';
+import { placeSettingWorld } from '../import/settingRealms.js';
 
 /** Tables included in a full JSON export, in dependency order. */
 const TABLES = [
@@ -105,6 +106,8 @@ export function importJson(db: DB, data: ReturnType<typeof exportJson>) {
   const n = (db.prepare('SELECT COUNT(*) n FROM entities').get() as { n: number }).n + (db.prepare('SELECT COUNT(*) n FROM campaigns').get() as { n: number }).n;
   if (n > 0) throw badRequest('JSON import requires an empty library. Restore a backup archive to replace existing data.');
   const tx = db.transaction(() => {
+    // Rows reference each other within a table (The World sits in Evershroud, exported after it): check keys at the end.
+    db.pragma('defer_foreign_keys = ON');
     for (const t of TABLES) {
       const rows = (data.tables[t] ?? []) as Record<string, unknown>[];
       if (!rows.length) continue;
@@ -118,6 +121,7 @@ export function importJson(db: DB, data: ReturnType<typeof exportJson>) {
     }
     // An export from before realms were data names its realms only on records: make sure each exists.
     repairRealms(db, SETTING_REALMS);
+    placeSettingWorld(db);
     reindexAll(db);
   });
   tx();

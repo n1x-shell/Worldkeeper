@@ -724,14 +724,15 @@ CREATE TABLE rules_entries (
   },
   {
     version: 19,
-    name: "realms as data: the library's worlds, continents and planes; maps, timeline rows and campaigns belong to them",
-    // Every library starts with "The World". The Worldkeeper setting's three other realms become rows only where the
-    // library already uses them, with the ids its records already carry, so nothing about them changes.
+    name: "realms as data: the library's realms, worlds and continents; maps, timeline rows and campaigns belong to them",
+    // Every library starts with "The World". The Worldkeeper setting's realms become rows only where the library already
+    // uses them, with the ids its records already carry, so nothing about them changes: Aetheris and Kaelmar are
+    // continents of The World, which sits in the realm of Evershroud; the Ethereal Realm is a realm beside it.
     sql: `
 CREATE TABLE realms (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
-  kind TEXT NOT NULL DEFAULT 'world' CHECK (kind IN ('world','continent','plane','region_group')),
+  kind TEXT NOT NULL DEFAULT 'world' CHECK (kind IN ('realm','world','continent','region_group')),
   parent_id TEXT REFERENCES realms(id) ON DELETE SET NULL,
   color TEXT NOT NULL DEFAULT 'blue',
   icon TEXT NOT NULL DEFAULT 'globe',
@@ -748,8 +749,12 @@ INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
   SELECT 'kaelmar', 'Kaelmar', 'continent', 'world', 'green', 'flame', 2
   WHERE EXISTS (SELECT 1 FROM entities WHERE realm = 'kaelmar' OR realms LIKE '%"kaelmar"%');
 INSERT INTO realms (id, name, kind, color, icon, sort_order)
-  SELECT 'ethereal', 'The Ethereal Realm', 'plane', 'violet', 'ghost', 3
+  SELECT 'ethereal', 'The Ethereal Realm', 'realm', 'violet', 'ghost', 3
   WHERE EXISTS (SELECT 1 FROM entities WHERE realm = 'ethereal' OR realms LIKE '%"ethereal"%');
+INSERT INTO realms (id, name, kind, color, icon, sort_order)
+  SELECT 'evershroud', 'Evershroud', 'realm', 'slate', 'moon', 0
+  WHERE EXISTS (SELECT 1 FROM realms WHERE id IN ('aetheris','kaelmar','ethereal'));
+UPDATE realms SET parent_id = 'evershroud' WHERE id = 'world' AND EXISTS (SELECT 1 FROM realms WHERE id = 'evershroud');
 
 ALTER TABLE maps ADD COLUMN realm_id TEXT REFERENCES realms(id) ON DELETE SET NULL;
 UPDATE maps SET realm_id = CASE

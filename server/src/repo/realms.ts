@@ -5,7 +5,7 @@
 import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { badRequest, notFound } from '../lib/errors.js';
-import { DEFAULT_REALM, REALM_COLORS, REALM_ICONS, REALM_KEY_RE, REALM_KINDS, realmKey, sortRealms, type RealmInfo } from '../../../shared/realms.js';
+import { DEFAULT_REALM, REALM_COLORS, REALM_ICONS, REALM_KEY_RE, REALM_KINDS, REALM_PARENT_KINDS, canSitIn, realmKey, sortRealms, type RealmInfo, type RealmKind } from '../../../shared/realms.js';
 
 interface Row {
   id: string;
@@ -63,7 +63,39 @@ const realmInput = z.object({
   description: z.string().max(400).default(''),
   sort_order: z.number().int().optional(),
 });
-const realmPatch = realmInput.partial().omit({ id: true }).extend({ archived: z.boolean().optional() });
+// No defaults here: an edit changes only what it names (a default would reset the colour on every archive).
+const realmPatch = z.object({
+  name: z.string().trim().min(1).max(80).optional(),
+  kind: z.enum(REALM_KINDS).optional(),
+  parent_id: z.string().nullable().optional(),
+  color: z.enum(REALM_COLORS).optional(),
+  icon: z.enum(REALM_ICONS).optional(),
+  description: z.string().max(400).optional(),
+  sort_order: z.number().int().optional(),
+  archived: z.boolean().optional(),
+});
+
+const KIND_NAME: Record<RealmKind, string> = { realm: 'a realm', world: 'a world', continent: 'a continent', region_group: 'a region group' };
+const kindOf = (db: DB, id: string) => (db.prepare('SELECT kind FROM realms WHERE id = ?').get(id) as { kind: RealmKind } | undefined)?.kind;
+
+/**
+ * What can sit inside what (shared/realms.ts REALM_PARENT_KINDS): a realm at the top, a world in a realm (or the top),
+ * a continent in a world, a region group in a continent. Checked for the realm itself and for what's already inside it.
+ */
+function checkPlacement(db: DB, id: string | null, kind: RealmKind, parent: string | null | undefined) {
+  const parentKind = parent ? (kindOf(db, parent) ?? null) : null;
+  if (!canSitIn(kind, parentKind)) {
+    const where = REALM_PARENT_KINDS[kind].filter((k): k is RealmKind => !!k).map((k) => KIND_NAME[k]);
+    const top = REALM_PARENT_KINDS[kind].includes(null);
+    throw badRequest(
+      `${KIND_NAME[kind][0].toUpperCase()}${KIND_NAME[kind].slice(1)} ${top && !where.length ? 'is always top level' : `goes inside ${where.join(' or ')}${top ? ', or at the top level' : ''}`}`,
+    );
+  }
+  if (!id) return;
+  for (const c of db.prepare('SELECT name, kind FROM realms WHERE parent_id = ?').all(id) as { name: string; kind: RealmKind }[]) {
+    if (!canSitIn(c.kind, kind)) throw badRequest(`${c.name} is inside it and can't sit inside ${KIND_NAME[kind]}: move it first`);
+  }
+}
 
 function checkParent(db: DB, id: string | null, parent: string | null | undefined) {
   if (!parent) return;
@@ -87,6 +119,7 @@ export function createRealm(db: DB, input: unknown): RealmInfo {
   const id = d.id ? d.id : freeId(db, realmKey(d.name));
   if (d.id && realmExists(db, id)) throw badRequest(`A realm with the id "${id}" already exists`);
   checkParent(db, id, d.parent_id);
+  checkPlacement(db, null, d.kind, d.parent_id);
   const order = d.sort_order ?? ((db.prepare('SELECT MAX(sort_order) m FROM realms').get() as { m: number | null }).m ?? 0) + 1;
   db.prepare('INSERT INTO realms (id, name, kind, parent_id, color, icon, description, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(
     id,
@@ -104,7 +137,9 @@ export function createRealm(db: DB, input: unknown): RealmInfo {
 export function updateRealm(db: DB, id: string, input: unknown): RealmInfo {
   getRealm(db, id);
   const d = realmPatch.parse(input);
+  const was = getRealm(db, id);
   if (d.parent_id !== undefined) checkParent(db, id, d.parent_id);
+  if (d.kind !== undefined || d.parent_id !== undefined) checkPlacement(db, id, d.kind ?? was.kind, d.parent_id !== undefined ? d.parent_id : was.parent_id);
   const sets: string[] = [];
   const vals: unknown[] = [];
   for (const [k, v] of Object.entries(d)) {
@@ -132,6 +167,8 @@ export function deleteRealm(db: DB, id: string) {
     (db.prepare('SELECT COUNT(*) n FROM maps WHERE realm_id = ?').get(id) as { n: number }).n +
     (db.prepare('SELECT COUNT(*) n FROM campaigns WHERE world_id = ?').get(id) as { n: number }).n;
   if (used) throw badRequest('This realm still has records, maps or campaigns. Move them to another realm, or archive the realm instead.');
+  const inside = db.prepare('SELECT name FROM realms WHERE parent_id = ?').all(id) as { name: string }[];
+  if (inside.length) throw badRequest(`${inside.map((r) => r.name).join(', ')} ${inside.length === 1 ? 'is' : 'are'} inside it. Move or delete ${inside.length === 1 ? 'it' : 'them'} first.`);
   db.transaction(() => {
     db.prepare('UPDATE realms SET parent_id = NULL WHERE parent_id = ?').run(id);
     db.prepare('DELETE FROM realms WHERE id = ?').run(id);

@@ -3,14 +3,29 @@
  * own; the Worldkeeper setting's four (the World, Aetheris, Kaelmar and the Ethereal Realm) are rows like any other.
  */
 
-export const REALM_KINDS = ['world', 'continent', 'plane', 'region_group'] as const;
+/**
+ * The kinds, outermost first: a realm (a plane of existence, such as Evershroud or the Ethereal Realm) holds worlds; a
+ * world holds continents; a continent holds region groups.
+ */
+export const REALM_KINDS = ['realm', 'world', 'continent', 'region_group'] as const;
 export type RealmKind = (typeof REALM_KINDS)[number];
 export const REALM_KIND_LABELS: Record<RealmKind, string> = {
+  realm: 'Realm',
   world: 'World',
   continent: 'Continent',
-  plane: 'Plane',
   region_group: 'Region group',
 };
+
+/** What each kind may sit inside (null: the top level). A realm is always top level; a world may stand on its own. */
+export const REALM_PARENT_KINDS: Record<RealmKind, (RealmKind | null)[]> = {
+  realm: [null],
+  world: ['realm', null],
+  continent: ['world'],
+  region_group: ['continent'],
+};
+
+/** Whether a `kind` may sit inside a parent of `parentKind` (null: at the top level). */
+export const canSitIn = (kind: RealmKind, parentKind: RealmKind | null) => REALM_PARENT_KINDS[kind].includes(parentKind);
 
 /** The realm colours, each defined for both themes in the stylesheet (`--rc-<key>`) and checked for AA contrast. */
 export const REALM_COLORS = ['blue', 'amber', 'green', 'violet', 'red', 'teal', 'rose', 'slate'] as const;

@@ -5,7 +5,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Archive, ArchiveRestore, ArrowDown, ArrowUp, Pencil, Plus, Trash2 } from 'lucide-react';
-import { REALM_COLORS, REALM_ICONS, REALM_KINDS, REALM_KIND_LABELS, type RealmColor, type RealmIcon, type RealmInfo, type RealmKind } from '@shared/realms';
+import { REALM_COLORS, REALM_ICONS, REALM_KINDS, REALM_KIND_LABELS, REALM_PARENT_KINDS, canSitIn, type RealmColor, type RealmIcon, type RealmInfo, type RealmKind } from '@shared/realms';
 import { api } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { REALM_ICON_COMPONENTS, RealmIconOf, realmClass, useRealms } from '../components/realms';
@@ -18,16 +18,33 @@ import { Empty, Loading } from '../components/ui/feedback';
 
 type Draft = { id?: string; name: string; kind: RealmKind; parent_id: string | null; color: RealmColor; icon: RealmIcon; description: string };
 
-/** A new world, continent (inside the first world) or plane (on its own, beside the worlds). */
+/** Where a new one goes by default: the first open place of the kind it sits in (or the top level). */
+const defaultParent = (list: RealmInfo[], kind: RealmKind) => {
+  for (const pk of REALM_PARENT_KINDS[kind]) {
+    if (pk === null) return null;
+    const p = list.find((r) => r.kind === pk && !r.archived);
+    if (p) return p.id;
+  }
+  return null;
+};
+
+/** A new realm (top level), world (in the first realm), continent (in the first world) or region group. */
 const blank = (list: RealmInfo[], kind: RealmKind = list.length ? 'continent' : 'world'): Draft => ({
   name: '',
   kind,
-  parent_id: kind === 'continent' || kind === 'region_group' ? (list.find((r) => r.kind === 'world' && !r.archived)?.id ?? null) : null,
+  parent_id: defaultParent(list, kind),
   // The next colour nobody uses yet.
   color: REALM_COLORS.find((c) => !list.some((r) => r.color === c)) ?? 'slate',
   icon: 'compass',
   description: '',
 });
+
+const PLACEHOLDER: Record<RealmKind, string> = {
+  realm: 'e.g. The Feywild',
+  world: 'e.g. Second Sun',
+  continent: 'e.g. The Sunken Isles',
+  region_group: 'e.g. The Northern Marches',
+};
 
 const message = (e: unknown) => (e instanceof Error ? e.message : String(e));
 
@@ -38,6 +55,8 @@ export function RealmsPage() {
   const [editing, setEditing] = useState<Draft | null>(null);
   const list = realms.list.filter((r) => showArchived || !r.archived);
   const depth = (r: RealmInfo): number => (r.parent_id && r.parent_id !== r.id ? 1 + depth(realms.get(r.parent_id)) : 0);
+  /** What sits directly inside a realm (its worlds, a world's continents). */
+  const held = (r: RealmInfo) => realms.list.filter((x) => x.parent_id === r.id && (showArchived || !x.archived));
   const archivedN = realms.list.filter((r) => r.archived).length;
 
   const run = async (f: () => Promise<unknown>, done?: string) => {
@@ -71,17 +90,17 @@ export function RealmsPage() {
     <div className="space-y-5 max-w-4xl">
       <PageHeader
         title="Worlds & Realms"
-        subtitle="Your worlds, the continents inside them, and the planes beside them. Every record belongs to one; each gets a page, a colour and a place in the sidebar."
+        subtitle="Realms hold worlds, worlds hold continents, and continents can hold region groups. Every record belongs to one of them; each gets a page, a colour and a place in the sidebar."
         actions={
           <>
             <button className="btn-primary" onClick={() => setEditing(blank(realms.list, 'continent'))}>
               <Plus size={14} /> Add a continent
             </button>
-            <button className="btn" onClick={() => setEditing(blank(realms.list, 'plane'))}>
-              <Plus size={14} /> Add a plane
-            </button>
             <button className="btn" onClick={() => setEditing(blank(realms.list, 'world'))}>
               <Plus size={14} /> Add a world
+            </button>
+            <button className="btn" onClick={() => setEditing(blank(realms.list, 'realm'))}>
+              <Plus size={14} /> Add a realm
             </button>
           </>
         }
@@ -125,7 +144,17 @@ export function RealmsPage() {
                       {r.archived && <Badge>Archived</Badge>}
                     </div>
                     <div className="text-xs text-dim mt-0.5">
+                      {held(r).length > 0 && (
+                        <span>
+                          Holds{' '}
+                          {held(r)
+                            .map((x) => x.name)
+                            .join(', ')}{' '}
+                          ·{' '}
+                        </span>
+                      )}
                       <span className="num text-ink">{(r.records ?? 0).toLocaleString('en')}</span> {r.records === 1 ? 'record' : 'records'}
+                      {held(r).length > 0 && ' of its own'}
                       {r.description && <span> · {r.description}</span>}
                     </div>
                   </div>
@@ -149,7 +178,7 @@ export function RealmsPage() {
                         {r.archived ? <ArchiveRestore size={14} /> : <Archive size={14} />}
                       </button>
                     )}
-                    {r.id !== 'world' && !r.records && (
+                    {r.id !== 'world' && !r.records && !held(r).length && (
                       <button className="btn-ghost px-1.5 text-danger" onClick={() => void remove(r)} title="Delete" aria-label={`Delete ${r.name}`}>
                         <Trash2 size={14} />
                       </button>
@@ -190,7 +219,9 @@ function RealmEditor({ draft, realms, onClose, onSave }: { draft: Draft; realms:
   const set = (p: Partial<Draft>) => setD({ ...d, ...p });
   // A realm can sit inside any other except itself and what's inside it.
   const inside = (id: string): boolean => realms.some((r) => r.parent_id === d.id && (r.id === id || inside(r.id)));
-  const parents = realms.filter((r) => r.id !== d.id && !(d.id && inside(r.id)) && !r.archived);
+  // Only places this kind can sit in (a continent in a world, a world in a realm...).
+  const parents = realms.filter((r) => r.id !== d.id && !(d.id && inside(r.id)) && !r.archived && canSitIn(d.kind, r.kind));
+  const topOk = canSitIn(d.kind, null);
   const save = async () => {
     setBusy(true);
     await onSave({ ...d, name: d.name.trim() });
@@ -213,10 +244,27 @@ function RealmEditor({ draft, realms, onClose, onSave }: { draft: Draft; realms:
     >
       <div className="grid gap-3 sm:grid-cols-2">
         <Field label="Name">
-          <input className="input" value={d.name} onChange={(e) => set({ name: e.target.value })} autoFocus placeholder="e.g. The Sunken Isles" />
+          <input className="input" value={d.name} onChange={(e) => set({ name: e.target.value })} autoFocus placeholder={PLACEHOLDER[d.kind]} />
         </Field>
         <Field label="Kind">
-          <select className="input" value={d.kind} onChange={(e) => set({ kind: e.target.value as RealmKind })}>
+          <select
+            className="input"
+            value={d.kind}
+            onChange={(e) => {
+              const kind = e.target.value as RealmKind;
+              // Keep its place if that still fits the new kind; otherwise the first place that does.
+              const keep = d.parent_id ? canSitIn(kind, realms.find((r) => r.id === d.parent_id)?.kind ?? null) : canSitIn(kind, null);
+              set({
+                kind,
+                parent_id: keep
+                  ? d.parent_id
+                  : defaultParent(
+                      realms.filter((r) => r.id !== d.id),
+                      kind,
+                    ),
+              });
+            }}
+          >
             {REALM_KINDS.map((k) => (
               <option key={k} value={k}>
                 {REALM_KIND_LABELS[k]}
@@ -224,9 +272,10 @@ function RealmEditor({ draft, realms, onClose, onSave }: { draft: Draft; realms:
             ))}
           </select>
         </Field>
-        <Field label="Inside" hint="A continent inside its world, a region group inside its continent.">
+        <Field label="Inside" hint="A realm is top level; a world sits in a realm (or on its own); a continent in a world; a region group in a continent.">
           <select className="input" value={d.parent_id ?? ''} onChange={(e) => set({ parent_id: e.target.value || null })}>
-            <option value="">Nothing (top level)</option>
+            {topOk && <option value="">Nothing (top level)</option>}
+            {!topOk && !parents.length && <option value="">Add a {d.kind === 'continent' ? 'world' : 'continent'} first</option>}
             {parents.map((r) => (
               <option key={r.id} value={r.id}>
                 {r.name}

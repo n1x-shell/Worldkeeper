@@ -51,7 +51,7 @@ Relationships include Lives in, Leads, Member of, Allied with, Opposes, Controls
 
 ## Worlds & Realms
 
-Your worlds, the continents inside them and the planes beside them are yours to define (**Codex → Worlds & Realms**), each with a name, colour, icon and one-line description; region groups can sit inside a continent. Every one gets a page and a place in the sidebar, nested under what holds it; records, maps and timeline events belong to one, and a campaign is set in a world. Rename a realm and everything follows; archive one to hide it without touching its records. In the Worldkeeper setting, Aetheris and Kaelmar are continents of The World and the Ethereal Realm is a plane beside it, all built the same way. Players only ever see realms that hold something you've revealed.
+Your cosmos is yours to define (**Codex → Worlds & Realms**): realms (planes of existence) hold one or more worlds, worlds hold continents, and continents can hold region groups. The app keeps that nesting. Each has a name, colour, icon and one-line description, a page, and a place in the sidebar under what holds it; records, maps and timeline events belong to one, and a campaign is set in a world. Rename a realm and everything follows; archive one to hide it without touching its records. In the Worldkeeper setting, The World sits in the realm of Evershroud with Aetheris and Kaelmar as its continents, and the Ethereal Realm is a realm beside Evershroud, all built the same way. Players only ever see realms that hold something you've revealed.
 
 ## World branches and timelines
 
