@@ -22,12 +22,7 @@ export default {
         warn: 'rgb(var(--warn) / <alpha-value>)',
         belief: 'rgb(var(--belief) / <alpha-value>)',
         homebrew: 'rgb(var(--homebrew) / <alpha-value>)',
-        realm: {
-          aetheris: 'rgb(var(--realm-aetheris) / <alpha-value>)',
-          kaelmar: 'rgb(var(--realm-kaelmar) / <alpha-value>)',
-          ethereal: 'rgb(var(--realm-ethereal) / <alpha-value>)',
-          world: 'rgb(var(--realm-world) / <alpha-value>)',
-        },
+        realm: 'rgb(var(--rc) / <alpha-value>)',
       },
       // The type scale (px): 12, 13, 14 (UI base), 16 (lore base), 18, 22, 28, 36. "ui" is the 13px step.
       fontSize: { ui: ['13px', '1.35'] },

@@ -12,7 +12,8 @@ import { useAppState } from '../lib/store';
 import { api } from '../lib/api';
 import { SearchPalette } from './SearchPalette';
 import { SidebarSlotContext } from './sidebarSlot';
-import { DEBUG_ONLY, FULL_BLEED, LIBRARY, NEEDS, WORKSPACES, matches, workspaceFor, type Group, type Item } from './navigation';
+import { DEBUG_ONLY, FULL_BLEED, LIBRARY, NEEDS, WORKSPACES, matches, withRealms, workspaceFor, type Group, type Item } from './navigation';
+import { useRealms } from './realms';
 import { ConfirmHost, ToastHost } from './ui';
 import { PeekProvider } from './peek/PeekProvider';
 import { Inspector } from './peek/Inspector';
@@ -150,13 +151,14 @@ export function Layout() {
     return () => window.removeEventListener('keydown', onKey);
   });
 
+  const realms = useRealms();
   const current = WORKSPACES.find((w) => w.id === ws);
   const groups: Group[] = useMemo(() => {
     if (ws === 'library') return [LIBRARY];
-    const gs = current?.groups ?? [];
+    const gs = (current?.groups ?? []).map((g) => withRealms(g, realms.list));
     if (ws !== 'atlas' || !maps.length) return gs;
     return [{ title: 'Maps', items: maps.map((m) => ({ to: `/atlas/explore/${m.id}`, label: m.name, icon: MapPinned })) }, ...gs];
-  }, [ws, current, maps]);
+  }, [ws, current, maps, realms]);
 
   const link = (it: Item, compact: boolean) =>
     it.external ? (
@@ -182,6 +184,7 @@ export function Layout() {
         className={({ isActive }) =>
           `flex items-center gap-2.5 mx-2 px-2 py-1.5 rounded-md text-[13px] transition-colors ${compact ? 'justify-center' : ''} ${isActive ? 'bg-gold/10 text-gold font-medium' : 'text-ink/80 hover:bg-raised hover:text-ink'}`
         }
+        style={!compact && it.depth ? { paddingLeft: 8 + it.depth * 16 } : undefined}
       >
         <span className="shrink-0 opacity-90">
           <it.icon size={I} />
@@ -199,7 +202,7 @@ export function Layout() {
         </div>
       )}
       <div className="flex-1 overflow-y-auto py-2">
-        {(all ? [...WORKSPACES.map((w) => ({ title: w.label, items: w.groups.flatMap((g) => g.items) })), LIBRARY] : groups).map((g) => {
+        {(all ? [...WORKSPACES.map((w) => ({ title: w.label, items: w.groups.flatMap((g) => withRealms(g, realms.list).items) })), LIBRARY] : groups).map((g) => {
           const items = g.items.filter(visible);
           if (!items.length) return null;
           return (

@@ -49,6 +49,10 @@ Global search (`Ctrl+K`) covers names, aliases, stable IDs, tags, full text, ori
 
 Relationships include Lives in, Leads, Member of, Allied with, Opposes, Controls and Seeks. Source-derived relationships can come from parent fields, leaders and cross-references, while others are curated. An interactive graph displays a focused neighborhood with filters for depth, entity type, continent, era, canon status and relationship type.
 
+## Worlds & Realms
+
+Your cosmos is yours to define (**Codex → Worlds & Realms**): realms (planes of existence) hold worlds or domains, worlds hold continents, continents can hold region groups, and domains can hold deeper domains. The app keeps that nesting. Each has a name, colour, icon and one-line description, a page, and a place in the sidebar under what holds it; records, maps and timeline events belong to one, and a campaign is set in a world. Rename a realm and everything follows; archive one to hide it without touching its records. In the Worldkeeper setting, The World sits in the realm of Evershroud with Aetheris and Kaelmar as its continents, and the Ethereal Realm is a realm beside Evershroud, holding the Hollow Verge with its six deeper domains beneath it, all built the same way. Players only ever see realms that hold something you've revealed.
+
 ## World branches and timelines
 
 ### Aetheris

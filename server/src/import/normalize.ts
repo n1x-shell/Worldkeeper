@@ -8,6 +8,7 @@ import {
   type Realm,
 } from '../../../shared/domain.js';
 import { metaValue, type ParsedBlock } from './parseMarkdown.js';
+import { realmKey, type RealmColor, type RealmIcon, type RealmKind } from '../../../shared/realms.js';
 
 const STANDARD_KEYS = new Set([
   'id',
@@ -86,7 +87,54 @@ export function normalizeType(id: string, categoryRaw: string | null): EntityTyp
   return prefixType ?? 'custom';
 }
 
-export function normalizeRealm(raw: string | null): { realm: Realm; realms: Realm[] } {
+/**
+ * The Worldkeeper setting's realms, as its archive names them, with how they are first created in a library. (These
+ * move into the setting's pack with its import profile; docs/OWN_WORLD_PLAN.md step 3.)
+ */
+export const SETTING_REALMS: Record<string, { name: string; kind: RealmKind; parent_id: string | null; color: RealmColor; icon: RealmIcon; sort_order: number }> = {
+  aetheris: { name: 'Aetheris', kind: 'continent', parent_id: 'world', color: 'amber', icon: 'mountain', sort_order: 1 },
+  kaelmar: { name: 'Kaelmar', kind: 'continent', parent_id: 'world', color: 'green', icon: 'flame', sort_order: 2 },
+  ethereal: { name: 'The Ethereal Realm', kind: 'realm', parent_id: null, color: 'violet', icon: 'ghost', sort_order: 3 },
+  /** The realm The World sits in (owner decision, DEC-910). */
+  evershroud: { name: 'Evershroud', kind: 'realm', parent_id: null, color: 'slate', icon: 'moon', sort_order: 0 },
+  // The Ethereal Realm's domains (owner decision, DEC-910): the Hollow Verge, and the six deeper ones beneath it.
+  'hollow-verge': { name: 'The Hollow Verge', kind: 'domain', parent_id: 'ethereal', color: 'violet', icon: 'ghost', sort_order: 4 },
+  'fields-of-lost-realities': { name: 'The Fields of Lost Realities', kind: 'domain', parent_id: 'hollow-verge', color: 'teal', icon: 'sparkles', sort_order: 5 },
+  'ossuary-of-kings': { name: 'The Ossuary of Kings', kind: 'domain', parent_id: 'hollow-verge', color: 'slate', icon: 'skull', sort_order: 6 },
+  'silent-archive': { name: 'The Silent Archive', kind: 'domain', parent_id: 'hollow-verge', color: 'blue', icon: 'moon', sort_order: 7 },
+  'loom-of-eternity': { name: 'The Loom of Eternity', kind: 'domain', parent_id: 'hollow-verge', color: 'amber', icon: 'snowflake', sort_order: 8 },
+  'citadel-of-the-hidden': { name: 'The Citadel of the Hidden', kind: 'domain', parent_id: 'hollow-verge', color: 'rose', icon: 'castle', sort_order: 9 },
+  'black-horizon': { name: 'The Black Horizon', kind: 'domain', parent_id: 'hollow-verge', color: 'red', icon: 'compass', sort_order: 10 },
+};
+
+/**
+ * The archive's record for each of the Ethereal Realm's domains. Those records, and archive records whose parent is one
+ * (the domains' landmarks), belong to that domain; the setting's own additions name their domain in their realm field.
+ */
+export const SETTING_DOMAIN_RECORDS: Record<string, string> = {
+  'ETH-501': 'hollow-verge',
+  'ETH-502': 'fields-of-lost-realities',
+  'ETH-503': 'ossuary-of-kings',
+  'ETH-504': 'silent-archive',
+  'ETH-505': 'loom-of-eternity',
+  'ETH-506': 'citadel-of-the-hidden',
+  'ETH-507': 'black-horizon',
+};
+
+/** Words in a realm field that don't name a realm. */
+const NOT_A_REALM = /^(both|all|any|every(where)?|multiple|various|n\/?a|none|unknown|undefined|-|—|cross[- ]realm)\b/i;
+
+export interface KnownRealm {
+  id: string;
+  name: string;
+}
+
+/**
+ * A record's realm from its "Continent or realm" field. The setting's own names are understood as they always were;
+ * otherwise the field is matched against the library's realms by name or id, and a name the library doesn't have yet
+ * comes back as `created`, for the importer to add as a new realm.
+ */
+export function normalizeRealm(raw: string | null, known: KnownRealm[] = []): { realm: Realm; realms: Realm[]; created?: KnownRealm } {
   const r = (raw ?? '').toLowerCase();
   const actual = /actual established domain:\s*([^;]+)/.exec(r);
   const focus = actual ? actual[1] : r;
@@ -94,13 +142,36 @@ export function normalizeRealm(raw: string | null): { realm: Realm; realms: Real
   if (r.includes('aetheris')) found.push('aetheris');
   if (r.includes('kaelmar')) found.push('kaelmar');
   if (r.includes('ethereal')) found.push('ethereal');
+  // The library's own realms, by name (with or without "The") or id.
+  const bare = (s: string) => s.toLowerCase().replace(/^the\s+/, '').trim();
+  for (const k of known) {
+    if (k.id === 'world' || found.includes(k.id)) continue;
+    const n = bare(k.name);
+    if (n && (new RegExp(`\\b${n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(r) || r.trim() === k.id)) found.push(k.id);
+  }
   let realm: Realm = 'world';
-  if (focus.trim().startsWith('world') || !focus.trim()) realm = 'world';
+  const f = focus.trim();
+  // A domain of the setting's Ethereal Realm named first ("The Hollow Verge (Ethereal Realm)"): the record is in that
+  // domain, and still in the Ethereal Realm.
+  const domain = Object.keys(SETTING_REALMS).find((id) => SETTING_REALMS[id].kind === 'domain' && bare(f).startsWith(bare(SETTING_REALMS[id].name)));
+  if (domain) return { realm: domain, realms: [domain, 'ethereal'] };
+  if (f.startsWith('world') || !f) realm = 'world';
   else if (focus.includes('ethereal') && !focus.includes('aetheris') && !focus.includes('kaelmar')) realm = 'ethereal';
   else if (focus.startsWith('aetheris') && !focus.includes('kaelmar')) realm = 'aetheris';
   else if (focus.startsWith('kaelmar') && !focus.includes('aetheris')) realm = 'kaelmar';
   else if (focus.startsWith('ethereal')) realm = 'ethereal';
-  else realm = 'world';
+  else {
+    const own = found.find((id) => !SETTING_REALMS[id]);
+    if (own) realm = own;
+    else if (!found.length && !NOT_A_REALM.test(f)) {
+      // A realm this library doesn't have yet: its name is the field's first part.
+      const name = (raw ?? '').split(/[;(,/]/)[0].trim();
+      if (name) {
+        const id = realmKey(name);
+        return { realm: id, realms: [id], created: { id, name } };
+      }
+    }
+  }
   if (!found.includes(realm) && realm !== 'world') found.unshift(realm);
   return { realm, realms: found.length ? found : ['world'] };
 }
@@ -154,6 +225,8 @@ export interface EntityDraft {
   realm_raw: string | null;
   realm: Realm;
   realms: Realm[];
+  /** A realm the library doesn't have yet, named in this record's realm field (the importer creates it). */
+  newRealm?: KnownRealm;
   canon_raw: string | null;
   canon_status: CanonStatus;
   canon_flags: string[];
@@ -167,7 +240,7 @@ export interface EntityDraft {
   source_line: number;
 }
 
-export function blockToDraft(block: ParsedBlock, file: string): EntityDraft {
+export function blockToDraft(block: ParsedBlock, file: string, realms: KnownRealm[] = []): EntityDraft {
   const m = block.meta;
   const id = block.id.trim();
   const name = metaValue(m, 'Name') ?? id;
@@ -177,7 +250,7 @@ export function blockToDraft(block: ParsedBlock, file: string): EntityDraft {
   const canonRaw = metaValue(m, 'Canon status');
   const tags = splitList(metaValue(m, 'Tags')).map((t) => t.toLowerCase());
   const type = normalizeType(id, category);
-  const { realm, realms } = normalizeRealm(realmRaw);
+  const { realm, realms: inRealms, created } = normalizeRealm(realmRaw, realms);
   const { status, flags } = normalizeCanon(canonRaw);
   const aliasesRaw = metaValue(m, 'Alternate names');
   const aliases = splitList(aliasesRaw);
@@ -194,7 +267,8 @@ export function blockToDraft(block: ParsedBlock, file: string): EntityDraft {
     parent_id: parentRefs[parentRefs.length - 1] ?? null,
     realm_raw: realmRaw,
     realm,
-    realms,
+    realms: inRealms,
+    newRealm: created,
     canon_raw: canonRaw,
     canon_status: status,
     canon_flags: flags,

@@ -2,7 +2,8 @@ import type { DB } from '../db/connection.js';
 import { sha256 } from '../lib/hash.js';
 import { now, parseJson } from '../lib/json.js';
 import { parseMarkdownFile, parsePipeTable, splitSections, type ParsedFile } from './parseMarkdown.js';
-import { blockToDraft, extractRefs, ID_RE_STRICT, isTemplatePlaceholder, type EntityDraft } from './normalize.js';
+import { blockToDraft, extractRefs, ID_RE_STRICT, isTemplatePlaceholder, normalizeRealm, SETTING_DOMAIN_RECORDS, SETTING_REALMS, type EntityDraft } from './normalize.js';
+import { ensureRealm, listRealms, realmExists } from '../repo/realms.js';
 import type { SourceFile } from './scan.js';
 import { contentHash, getEntity, rowToEntity, saveRevision, type EntityRow } from '../repo/entities.js';
 import { rebuildDerivedRelationships } from '../repo/relationships.js';
@@ -10,6 +11,7 @@ import { loadNameIndex } from '../repo/nameMatch.js';
 import { loadMentionIndex } from '../repo/mentions.js';
 import { reindexAll } from '../repo/search.js';
 import { deriveTimelineEras, eraVocabularyFromText, seedEras } from '../repo/eras.js';
+import { ensureSettingRealm } from './settingRealms.js';
 
 export type DocKind =
   | 'bible'
@@ -80,6 +82,7 @@ function readLocator(files: SourceFile[]): Map<string, string> {
 }
 
 export function buildPlan(db: DB, files: SourceFile[], sourceName: string): ImportPlan {
+  const knownRealms = listRealms(db, { includeArchived: true }).map((r) => ({ id: r.id, name: r.name }));
   const plan: ImportPlan = {
     sourceName,
     generatedAt: now(),
@@ -127,7 +130,7 @@ export function buildPlan(db: DB, files: SourceFile[], sourceName: string): Impo
         plan.skipped.push({ id: b.id || '(none)', file: f.path, line: b.startLine, reason: 'Block has no valid stable ID' });
         return;
       }
-      const draft = blockToDraft(b, f.path);
+      const draft = blockToDraft(b, f.path, knownRealms);
       const list = candidates.get(b.id) ?? [];
       list.push({ draft, standalone: i === 0, kind });
       candidates.set(b.id, list);
@@ -322,8 +325,25 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
        WHERE id=@id`,
     );
     const touched: string[] = [];
+    // The realms these records name: the setting's own, or new ones this archive brings.
+    const palette = ['teal', 'rose', 'red', 'slate', 'amber', 'green', 'violet', 'blue'] as const;
+    let nextColor = (db.prepare('SELECT COUNT(*) n FROM realms').get() as { n: number }).n;
+    const realmFor = (id: string, created?: { id: string; name: string }) => {
+      if (realmExists(db, id)) return id;
+      if (SETTING_REALMS[id]) return ensureSettingRealm(db, id);
+      if (created && created.id === id) return ensureRealm(db, id, { name: created.name, kind: 'continent', parent_id: 'world', color: palette[nextColor++ % palette.length], icon: 'compass' });
+      return 'world';
+    };
     for (const p of plan.entities) {
       const d = p.draft;
+      // An archive record of the Ethereal Realm that is a domain's record, or sits in one, belongs to that domain.
+      const inDomain = d.realm === 'ethereal' ? (SETTING_DOMAIN_RECORDS[d.id] ?? (d.parent_id ? SETTING_DOMAIN_RECORDS[d.parent_id] : undefined)) : undefined;
+      if (inDomain) {
+        d.realm = inDomain;
+        d.realms = [inDomain, ...d.realms.filter((x) => x !== inDomain)];
+      }
+      d.realm = realmFor(d.realm, d.newRealm);
+      d.realms = [...new Set(d.realms.map((x) => realmFor(x, d.newRealm)))];
       const params = {
         ...d,
         aliases: JSON.stringify(d.aliases),
@@ -377,12 +397,12 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
       );
       db.prepare(`DELETE FROM timeline_rows WHERE origin = 'import'`).run();
       const ins = db.prepare(
-        `INSERT INTO timeline_rows (sort_order, time_label, event, realm_label, source, access, entity_ids, origin, era, era_origin) VALUES (?, ?, ?, ?, ?, ?, ?, 'import', ?, ?)`,
+        `INSERT INTO timeline_rows (sort_order, time_label, event, realm_label, realm_ids, source, access, entity_ids, origin, era, era_origin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'import', ?, ?)`,
       );
       for (const r of parseTimeline(timeline.content)) {
         const key = `${r.time_label}\u0000${r.event}`;
         const userEra = kept.has(key) ? kept.get(key)! : undefined;
-        ins.run(r.sort_order, r.time_label, r.event, r.realm_label, r.source, r.access, JSON.stringify(r.entity_ids), userEra ?? null, userEra !== undefined ? 'user' : null);
+        ins.run(r.sort_order, r.time_label, r.event, r.realm_label, JSON.stringify(timelineRealms(db, r.realm_label)), r.source, r.access, JSON.stringify(r.entity_ids), userEra ?? null, userEra !== undefined ? 'user' : null);
         result.timelineRows++;
       }
     }
@@ -476,4 +496,13 @@ export function listImportRuns(db: DB) {
     ...r,
     report: parseJson(r.report, {}),
   }));
+}
+
+/** A timeline row's realms from its free-text realm column ("Aetheris", "Both", "World"…), among the library's realms. */
+export function timelineRealms(db: DB, label: string): string[] {
+  const known = listRealms(db, { includeArchived: true });
+  const l = label.toLowerCase();
+  if (/\bboth\b/.test(l)) return known.filter((r) => r.kind === 'continent').map((r) => r.id);
+  const { realms } = normalizeRealm(label, known.map((r) => ({ id: r.id, name: r.name })));
+  return realms.filter((id) => known.some((r) => r.id === id));
 }

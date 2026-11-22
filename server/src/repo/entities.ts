@@ -3,7 +3,9 @@ import { parseJson, now } from '../lib/json.js';
 import { sha256 } from '../lib/hash.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import type { Entity, EntitySummary, Realm, EntityType, CanonStatus } from '../../../shared/domain.js';
-import { BARE_ID_RE, CANON_STATUSES, ENTITY_TYPES, REALMS } from '../../../shared/domain.js';
+import { BARE_ID_RE, CANON_STATUSES, ENTITY_TYPES } from '../../../shared/domain.js';
+import { REALM_KEY_RE } from '../../../shared/realms.js';
+import { realmExists } from './realms.js';
 import { z } from 'zod';
 import { reindexEntity } from './search.js';
 import { rebuildDerivedRelationships } from './relationships.js';
@@ -231,7 +233,7 @@ export const entityInputSchema = z.object({
   type: z.enum(ENTITY_TYPES),
   parent_id: z.string().max(40).nullable().optional(),
   parent_raw: z.string().max(500).nullable().optional(),
-  realm: z.enum(REALMS),
+  realm: z.string().regex(REALM_KEY_RE),
   canon_status: z.enum(CANON_STATUSES),
   canon_flags: z.array(z.string().max(40)).max(20).optional(),
   canon_raw: z.string().max(500).nullable().optional(),
@@ -281,6 +283,7 @@ export function findSimilarNames(db: DB, name: string, excludeId?: string): Enti
 /** Create a user-authored record. New records default to PROPOSED unless the DM sets otherwise. */
 export function createEntity(db: DB, input: EntityInput, reason = 'Created'): Entity {
   const data = entityInputSchema.parse(input);
+  if (!realmExists(db, data.realm)) throw badRequest(`There is no realm "${data.realm}" in this library`);
   const id = data.id ?? nextCustomId(db);
   if (getEntityRow(db, id)) throw badRequest(`ID ${id} already exists. Stable IDs are never reused.`);
   const ts = now();
@@ -338,6 +341,7 @@ export class VersionConflictError extends Error {
  */
 export function updateEntity(db: DB, id: string, patch: EntityPatch, changeType = 'edit'): Entity {
   const p = entityPatchSchema.parse(patch) as Record<string, unknown> & EntityPatch;
+  if (typeof p.realm === 'string' && !realmExists(db, p.realm)) throw badRequest(`There is no realm "${p.realm}" in this library`);
   // Only apply keys the caller sent: schema defaults must never blank stored lore.
   const provided = new Set(Object.keys(patch ?? {}));
   for (const k of Object.keys(p)) if (!provided.has(k)) delete p[k];

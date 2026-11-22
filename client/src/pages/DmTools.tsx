@@ -13,7 +13,6 @@ import { EntityPicker } from '../components/EntityPicker';
 import { StatBlockById } from '../components/StatBlock';
 import { Markdown } from '../components/Markdown';
 import { Dev } from '../components/Dev';
-import { REALM_LABELS, type Realm } from '@shared/domain';
 import { displaySections } from '../lib/sections';
 import type { Character } from './Campaign';
 import { ProfileSummary, type ProfileResponse } from './Profile';
@@ -21,6 +20,7 @@ import { StanceMatrix } from './Rumours';
 import { profileKindFor } from '@shared/profiles';
 import { INFLUENCE_LEVELS } from '@shared/profiles';
 import { usePeek } from '../components/peek/context';
+import { useRealms } from '../components/realms';
 
 // ------------------------------------------------------------------ Encounter tracker (used standalone and in live mode)
 interface Encounter {
@@ -596,6 +596,7 @@ export function RulesPage() {
 
 // ------------------------------------------------------------------ NPC quick reference
 export function NpcCard({ id }: { id: string }) {
+  const realms = useRealms();
   const { activeCampaignId } = useAppState();
   const { data } = useApi<{ entity: Entity }>(`/api/entities/${encodeURIComponent(id)}`);
   const isProfiled = data ? profileKindFor(data.entity.type) !== null : false;
@@ -621,7 +622,7 @@ export function NpcCard({ id }: { id: string }) {
             {e.name}
           </Link>
           <div className="text-[11px] text-dim">
-            {REALM_LABELS[e.realm as Realm] ?? e.realm}
+            {realms.name(e.realm)}
             <Dev> · {e.id}</Dev>
           </div>
         </div>

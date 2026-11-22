@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-21 · v0.4.0_
+_Last updated: 2026-11-22 · v0.4.1_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,20 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.4.1: realms as data (own-world step 1)
+
+The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are no longer four names in the code; each library holds its own.
+
+- **The `realms` table** (migration 19): id, name, kind (realm, world, continent, domain, region group, nested in that order and enforced by `checkPlacement` in `server/src/repo/realms.ts`: a realm is top level and may hold several worlds, a world sits in a realm or stands alone, a domain in a realm or another domain), parent, colour, icon, description, order and archived. Every library starts with "The World". The setting's others become rows only where a library already uses them, with the same ids: Aetheris and Kaelmar (continents of The World), the realm of Evershroud holding The World, the Ethereal Realm (a realm beside it), and its domains: the Hollow Verge, with the six deeper domains beneath it (owner decisions in DEC-910). Records follow the same pattern as Aetheris and Kaelmar: each belongs to its most specific place. The setting's additions name their domain first in their realm field (`Continent or realm: The Hollow Verge (Ethereal Realm)`, 65 files in `assets/lore`); archive records are placed by their domain's record (`SETTING_DOMAIN_RECORDS`: the ETH records and their landmarks); migration 19 moves existing libraries' 81 records. They keep the Ethereal Realm in their `realms`, so its lists and the handbook still find them; the dashboard folds domains into the Ethereal Realm's card. Realm-wide records (cosmology, rules, factions, peoples, people with no place given) stay in the Ethereal Realm. Each domain's page opens with its ETH record, so records, links and published handbooks don't change. Maps get `realm_id`, timeline rows `realm_ids` (read from their old label), campaigns `world_id`.
+- **Codex → Worlds & Realms** (`client/src/pages/Realms.tsx`): a tree (each realm, world and continent drawn inside what holds it) with Add a continent, Add a world, Add a domain and Add a realm, and an Inside picker offering only valid places; rename, nest, colour, icon, reorder among siblings, archive, and delete when empty. The World can't be deleted, and nor can a realm still holding records, maps or campaigns (`server/src/repo/realms.ts`, `/api/realms`).
+- **Everything reads the library's realms:** the sidebar's Worlds & Realms group (nested, in the GM app and the handbook), badges and colours (`rc-<colour>` classes and the `realm` Tailwind colour, eight colours checked for AA in both themes), the record editor, New record, lists, search, the graph, the dashboard's realm cards (built per realm on the server), realm pages (kind, parent, description, what's inside), the Timeline's realm filter, Faction Web, the stance matrix, the Atlas (a realm per map) and the campaign (a world, when there's more than one).
+- **The handbook** gets realms from `/api/player/info` or the published snapshot (`RealmsProvider` in `client/src/components/realms.tsx`, player-safe). It only names realms that hold a revealed record (and what contains those): a realm the GM made and revealed nothing in is never listed, and no people is "found" there.
+- **Import:** an archive naming a realm the library lacks creates it (a continent in The World, with the next free colour), and the setting's names keep their ids and look. JSON export and import carry realms; an export from before them gets its realms back from its records.
+- Records must name a realm that exists (400 otherwise).
+- **No realm is written into the app's code** outside the setting's own files (`normalize.ts`, `settingRealms.ts`, the importer's domain rule, `mapAdditions.ts`, migration 19); `tests/realms.test.ts` fails if one appears. Each realm is introduced by its own record, found by type and name (`realmIntros`, `intro_id` on `/api/realms`), so the realm pages, the dashboard, World Overview (now every world with its continents, then the realms beside them) and the graph's starting record need no record ids.
+- **Still hard-wired, by plan:** the setting's record ids in its own features (the region list in `regionState.ts`, the Return clock's COS-032, the setting check in `mechanics.ts`, the dashboard's mysteries, the briefing's Kaelholm case, the Special pages, a handbook reveal rule). Step 3 replaces them with roles from the setting pack, and step 4 makes those features modules.
+- Tests: `tests/realms.test.ts` (the migration on an older library and an empty one, CRUD and its limits, import creating a realm, the handbook's realms, export and import). Tests that write setting records into an empty library now add the setting's realms first (`tempContext({ settingRealms: true })`).
 
 ## v0.4.0 "Illuminated"
 

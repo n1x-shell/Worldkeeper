@@ -5,12 +5,7 @@ import type { PTie } from './source';
 import { Eclipse, Network } from 'lucide-react';
 import { Card } from '../components/ui/surfaces';
 import { Empty, Loading } from '../components/ui/feedback';
-
-const REALMS = [
-  { key: 'aetheris', label: 'Aetheris' },
-  { key: 'kaelmar', label: 'Kaelmar' },
-  { key: 'ethereal', label: 'The Ethereal Realm' },
-];
+import { useRealms } from '../components/realms';
 
 /**
  * A page title in the handbook's style (the same as PlayerPages' PlayerPageTitle). Kept here so the GM app, which
@@ -34,7 +29,9 @@ function PageTitle({ eyebrow, icon, title, subtitle }: { eyebrow: string; icon: 
 export function PlayerFactionWeb() {
   const { factionWeb } = usePlayerIndex();
   const { base } = usePlayer();
-  const realmsHere = REALMS.filter((r) => (factionWeb ?? []).some((t) => t.aRealm === r.key || t.bRealm === r.key));
+  const realmsHere = useRealms()
+    .list.map((r) => ({ key: r.id, label: r.name }))
+    .filter((r) => (factionWeb ?? []).some((t) => t.aRealm === r.key || t.bRealm === r.key));
   const [realm, setRealm] = useState('');
   const shown = realm || realmsHere[0]?.key || '';
   const ties = useMemo(() => (factionWeb ?? []).filter((t) => t.aRealm === shown || t.bRealm === shown), [factionWeb, shown]);

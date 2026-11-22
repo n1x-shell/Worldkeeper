@@ -1,9 +1,10 @@
 /** Badges and tags: canon status, realm, record type, reveal state, rarity and plain status. */
 import type { ReactNode } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-import { ENTITY_TYPE_LABELS, REALM_LABELS, type EntityType, type Realm } from '@shared/domain';
+import { ENTITY_TYPE_LABELS, type EntityType } from '@shared/domain';
+import { realmClass, useRealms } from '../realms';
 
-export type Tone = 'dim' | 'gold' | 'arcane' | 'danger' | 'ok' | 'warn' | 'belief' | 'homebrew' | 'aetheris' | 'kaelmar' | 'ethereal' | 'world';
+export type Tone = 'dim' | 'gold' | 'arcane' | 'danger' | 'ok' | 'warn' | 'belief' | 'homebrew' | 'realm';
 
 const TONES: Record<Tone, string> = {
   dim: 'border-line text-dim',
@@ -14,10 +15,8 @@ const TONES: Record<Tone, string> = {
   warn: 'border-warn/50 text-warn bg-warn/10',
   belief: 'border-belief/50 text-belief bg-belief/10',
   homebrew: 'border-homebrew/50 text-homebrew bg-homebrew/10',
-  aetheris: 'border-realm-aetheris/50 text-realm-aetheris',
-  kaelmar: 'border-realm-kaelmar/50 text-realm-kaelmar',
-  ethereal: 'border-realm-ethereal/50 text-realm-ethereal',
-  world: 'border-realm-world/50 text-realm-world',
+  /** In a realm's colour: give the badge its realm's class (realmClass) too. */
+  realm: 'border-realm/50 text-realm',
 };
 
 /** A small rounded label. Use a tone, never a raw colour. */
@@ -59,9 +58,14 @@ export function CanonFlags({ status, flags }: { status: string; flags: string[] 
   );
 }
 
-const REALMS = new Set<Tone>(['aetheris', 'kaelmar', 'ethereal', 'world']);
-export function RealmBadge({ realm }: { realm: string }) {
-  return <Badge tone={REALMS.has(realm as Tone) ? (realm as Tone) : 'dim'}>{REALM_LABELS[realm as Realm] ?? realm}</Badge>;
+/** A realm, in its colour, by its name in this library (or `label`, e.g. a handbook entry's own realm label). */
+export function RealmBadge({ realm, label }: { realm: string; label?: string }) {
+  const r = useRealms().get(realm);
+  return (
+    <Badge tone="realm" className={realmClass(r)}>
+      {label ?? r.name}
+    </Badge>
+  );
 }
 
 export function TypeBadge({ type }: { type: string }) {

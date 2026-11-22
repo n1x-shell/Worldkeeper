@@ -26,6 +26,8 @@ import { decideProposal } from '../repo/campaigns.js';
 import { splitSections } from '../import/parseMarkdown.js';
 import { isSecretHeading } from '../player/projection.js';
 import { peekEntity } from '../repo/peek.js';
+import { createRealm, deleteRealm, getRealm, listRealms, realmExists, reorderRealms, updateRealm } from '../repo/realms.js';
+import { timelineRealms } from '../import/importer.js';
 import { TYPE_GROUPS } from '../../../shared/domain.js';
 import { revealDuringPlay } from '../repo/reveal.js';
 import { createEra, listEras, setRowEra, updateEra } from '../repo/eras.js';
@@ -94,6 +96,30 @@ export function worldRoutes(ctx: AppContext) {
         sections,
         baseline: e.modified_since_import ? baselineFor(ctx.db, id) : null,
       };
+    }),
+  );
+  // Realms: the library's worlds, continents and planes (docs/OWN_WORLD_PLAN.md §2.1).
+  r.get(
+    '/realms',
+    h((req) => listRealms(ctx.db, { counts: true, includeArchived: req.query.archived === '1' })),
+  );
+  r.post(
+    '/realms',
+    h((req) => createRealm(ctx.db, req.body)),
+  );
+  r.post(
+    '/realms/order',
+    h((req) => reorderRealms(ctx.db, Array.isArray(req.body?.ids) ? (req.body.ids as unknown[]).map(String) : [])),
+  );
+  r.patch(
+    '/realms/:id',
+    h((req) => updateRealm(ctx.db, String(req.params.id), req.body)),
+  );
+  r.delete(
+    '/realms/:id',
+    h((req) => {
+      deleteRealm(ctx.db, String(req.params.id));
+      return { ok: true };
     }),
   );
   // A record at a glance (hover cards, the inspector, split view). Not counted as a visit.
@@ -231,9 +257,10 @@ export function worldRoutes(ctx: AppContext) {
   r.get(
     '/timeline',
     h(() =>
-      (ctx.db.prepare('SELECT * FROM timeline_rows ORDER BY sort_order, id').all() as { entity_ids: string }[]).map((t) => ({
+      (ctx.db.prepare('SELECT * FROM timeline_rows ORDER BY sort_order, id').all() as { entity_ids: string; realm_ids: string | null }[]).map((t) => ({
         ...t,
         entity_ids: parseJson(t.entity_ids, []),
+        realm_ids: parseJson(t.realm_ids ?? '[]', []),
       })),
     ),
   );
@@ -243,9 +270,13 @@ export function worldRoutes(ctx: AppContext) {
       const b = req.body ?? {};
       if (!b.time_label || !b.event) throw badRequest('Time and event are required');
       const max = (ctx.db.prepare('SELECT MAX(sort_order) m FROM timeline_rows').get() as { m: number | null }).m ?? 0;
+      // The realms it belongs to: as picked (each must exist), or read from the label.
+      const picked = Array.isArray(b.realm_ids) ? (b.realm_ids as unknown[]).map(String).filter((id) => realmExists(ctx.db, id)) : null;
+      const label = String(b.realm_label ?? '') || (picked ?? []).map((id) => getRealm(ctx.db, id)?.name ?? id).join(', ');
+      const realmIds = picked ?? timelineRealms(ctx.db, label);
       ctx.db
-        .prepare(`INSERT INTO timeline_rows (sort_order, time_label, event, realm_label, source, access, entity_ids, origin) VALUES (?, ?, ?, ?, ?, ?, ?, 'user')`)
-        .run(Number(b.sort_order ?? max + 1), String(b.time_label), String(b.event), String(b.realm_label ?? ''), String(b.source ?? 'DM'), String(b.access ?? 'PROPOSED'), '[]');
+        .prepare(`INSERT INTO timeline_rows (sort_order, time_label, event, realm_label, realm_ids, source, access, entity_ids, origin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'user')`)
+        .run(Number(b.sort_order ?? max + 1), String(b.time_label), String(b.event), label, JSON.stringify(realmIds), String(b.source ?? 'DM'), String(b.access ?? 'PROPOSED'), '[]');
       return { ok: true };
     }),
   );
@@ -322,18 +353,31 @@ export function worldRoutes(ctx: AppContext) {
               .all(activeId),
           }
         : null;
-      const branches = ['CON-001', 'CON-301', 'CON-501'].map((id) => {
-        const e = db.prepare('SELECT id, name, realm, body FROM entities WHERE id = ?').get(id) as { id: string; name: string; realm: string; body: string } | undefined;
-        if (!e) return null;
-        const first = splitSections(e.body).find((s) => s.heading && s.content && !isSecretHeading(s.heading));
-        return {
-          id: e.id,
-          name: e.name,
-          realm: e.realm,
-          excerpt: first ? first.content.slice(0, 420) : '',
-          count: count(`SELECT COUNT(*) n FROM entities WHERE realm = ? AND archived = 0 AND type NOT IN ('redirect','index','register')`, e.realm),
-        };
-      });
+      // One card per realm that holds records: its introducing record (world, continent or realm), or its description.
+      // Domains and region groups count towards the realm, world or continent that holds them, not cards of their own.
+      const allRealms = listRealms(db, { counts: true });
+      const folded = (r: { id: string }): string[] => [
+        r.id,
+        ...allRealms.filter((c) => c.parent_id === r.id && (c.kind === 'domain' || c.kind === 'region_group')).flatMap(folded),
+      ];
+      const branches = allRealms
+        .filter((r) => r.kind !== 'domain' && r.kind !== 'region_group')
+        .map((r) => ({ ...r, ids: folded(r) }))
+        .filter((r) => allRealms.some((x) => r.ids.includes(x.id) && (x.records ?? 0) > 0))
+        .map((r) => {
+          const intro = (r.intro_id ? db.prepare('SELECT id, name, realm, body FROM entities WHERE id = ?').get(r.intro_id) : undefined) as { id: string; name: string; realm: string; body: string } | undefined;
+          const first = intro ? splitSections(intro.body).find((x) => x.heading && x.content && !isSecretHeading(x.heading)) : undefined;
+          return {
+            id: intro?.id ?? null,
+            name: r.name,
+            realm: r.id,
+            excerpt: r.description || (first ? first.content.slice(0, 420) : ''),
+            count: count(
+              `SELECT COUNT(*) n FROM entities WHERE realm IN (${r.ids.map(() => '?').join(',')}) AND archived = 0 AND type NOT IN ('redirect','index','register')`,
+              ...r.ids,
+            ),
+          };
+        });
       const quick = (types: string[], limit = 8) =>
         db.prepare(`SELECT id, name, type, realm FROM entities WHERE type IN (${types.map(() => '?').join(',')}) AND archived = 0 ORDER BY favorite DESC, id LIMIT ?`).all(...types, limit);
       return {
@@ -347,7 +391,7 @@ export function worldRoutes(ctx: AppContext) {
         },
         byRealm,
         byType,
-        branches: branches.filter(Boolean),
+        branches,
         active,
         recentViews: recentViews(db, 10),
         recentEdits: recentlyEdited(db, 8),

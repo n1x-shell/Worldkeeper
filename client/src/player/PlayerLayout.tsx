@@ -1,6 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { UserRound, Printer,
+import {
+  UserRound,
+  Printer,
   BookOpen,
   ChevronsLeft,
   ChevronsRight,
@@ -35,7 +37,8 @@ import { UserRound, Printer,
   X,
 } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
-import { PLAYER_GROUPS, PLAYER_REALMS, OTHER_GROUP, playerWorkspaceFor, type PlayerWorkspace } from './categories';
+import { RealmIconOf, useRealms } from '../components/realms';
+import { PLAYER_GROUPS, OTHER_GROUP, playerWorkspaceFor, type PlayerWorkspace } from './categories';
 import { PlayerLiveCard } from './LivePlay';
 import { ConfirmHost, ToastHost } from '../components/ui/overlays';
 import { PlayerHoverCards } from './PlayerPeek';
@@ -55,12 +58,6 @@ const GROUP_ICONS: Record<string, ReactNode> = {
   creatures: <Skull size={I} />,
   other: <Library size={I} />,
 };
-const REALM_ICONS: Record<string, ReactNode> = {
-  aetheris: <Mountain size={I} />,
-  kaelmar: <Flame size={I} />,
-  ethereal: <Ghost size={I} />,
-  world: <Globe2 size={I} />,
-};
 
 const read = (k: string, d: string) => {
   try {
@@ -77,7 +74,7 @@ const write = (k: string, v: string) => {
   }
 };
 
-type Item = { to: string; label: string; icon: ReactNode; end?: boolean };
+type Item = { to: string; label: string; icon: ReactNode; end?: boolean; depth?: number };
 type Workspace = { id: PlayerWorkspace; label: string; icon: ReactNode; to: string; items: Item[] };
 
 /**
@@ -101,7 +98,15 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
   }, [theme]);
 
   const types = new Set((entities ?? []).map((e) => e.type));
-  const realms = new Set((entities ?? []).map((e) => e.realm));
+  const realmsUsed = new Set((entities ?? []).flatMap((e) => [e.realm, ...(e.realms ?? [])]));
+  const realms = useRealms();
+  // The realms with entries, each nested under what holds it (Aetheris and Kaelmar under The World).
+  const shownRealms = realms.list.filter((r) => !r.archived && realmsUsed.has(r.id));
+  const realmDepth = (r: (typeof shownRealms)[number], n = 0): number => {
+    const p = r.parent_id ? shownRealms.find((x) => x.id === r.parent_id) : undefined;
+    return p && n < 8 ? 1 + realmDepth(p, n + 1) : 0;
+  };
+  const realmItems: Item[] = shownRealms.map((r) => ({ to: `${base}/realm/${r.id}`, label: r.name, icon: <RealmIconOf realm={r} size={I} />, depth: realmDepth(r) }));
   const groups = [...PLAYER_GROUPS, OTHER_GROUP].filter((g) =>
     g === OTHER_GROUP ? (entities ?? []).some((e) => !PLAYER_GROUPS.some((p) => p.types.includes(e.type))) : g.types.some((t) => types.has(t)),
   );
@@ -121,10 +126,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
       label: 'World',
       icon: <Home size={I} />,
       to: base || '/',
-      items: [
-        { to: base || '/', label: 'Home', icon: <Home size={I} />, end: true },
-        ...PLAYER_REALMS.filter((r) => realms.has(r.key)).map((r) => ({ to: `${base}/realm/${r.key}`, label: r.label, icon: REALM_ICONS[r.key] })),
-      ],
+      items: [{ to: base || '/', label: 'Home', icon: <Home size={I} />, end: true }, ...realmItems],
     },
     {
       id: 'records',
@@ -215,6 +217,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
           isActive ? 'bg-gold/10 text-gold' : 'text-ink/80 hover:bg-raised hover:text-ink'
         }`
       }
+      style={!compact && it.depth ? { paddingLeft: 8 + it.depth * 16 } : undefined}
     >
       <span className="shrink-0 opacity-90">{it.icon}</span>
       {!compact && <span className="truncate">{it.label}</span>}

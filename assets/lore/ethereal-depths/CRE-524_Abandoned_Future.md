@@ -3,7 +3,7 @@ Name: Abandoned Future
 Alternate names: None recorded
 Category: Creature
 Parent: Bestiary (Ethereal Realm)
-Continent or realm: Ethereal Realm
+Continent or realm: The Citadel of the Hidden (Ethereal Realm)
 Canon status: CANON
 Source: Worldkeeper additions (the Ethereal Realm's depths, GM decision, 2026)
 Tags: realm/ethereal, cat/creature, status/canon, vis/gm

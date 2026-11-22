@@ -3,7 +3,7 @@
  * home in a workspace or the Library menu, and every route belongs to the right workspace.
  */
 import { describe, expect, it } from 'vitest';
-import { LIBRARY, WORKSPACES, workspaceFor } from '../client/src/components/navigation';
+import { LIBRARY, WORKSPACES, withRealms, workspaceFor } from '../client/src/components/navigation';
 
 // The 66 links of the sidebar before the overhaul (v0.3.7), plus the style guide added then.
 const OLD =
@@ -11,7 +11,13 @@ const OLD =
     ' ',
   );
 
-const all = [...WORKSPACES.flatMap((w) => w.groups.flatMap((g) => g.items)), ...LIBRARY.items].map((i) => i.to);
+// The Realms group lists the library's realms: here, the setting's.
+const SETTING = [
+  { id: 'aetheris', name: 'Aetheris', icon: 'mountain', archived: false },
+  { id: 'kaelmar', name: 'Kaelmar', icon: 'flame', archived: false },
+  { id: 'ethereal', name: 'The Ethereal Realm', icon: 'ghost', archived: false },
+] as const;
+const all = [...WORKSPACES.flatMap((w) => w.groups.flatMap((g) => withRealms(g, [...SETTING]).items)), ...LIBRARY.items].map((i) => i.to);
 
 describe('navigation', () => {
   it('keeps every old link, once', () => {

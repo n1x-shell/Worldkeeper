@@ -3,7 +3,7 @@ Name: Ixh-Nomereth, the Reader Below
 Alternate names: The Reader; the Last Library (to scholars)
 Category: Deity
 Parent: The Elder Gods [COS-030]
-Continent or realm: Ethereal Realm
+Continent or realm: The Silent Archive (Ethereal Realm)
 Canon status: CANON
 Source: Worldkeeper additions (the elder gods, owner decision, November 2026)
 Tags: realm/ethereal, cat/deity, status/canon, vis/gm

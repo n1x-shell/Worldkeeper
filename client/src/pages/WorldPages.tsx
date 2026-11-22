@@ -1,7 +1,9 @@
+import { RealmIconOf, realmClass, useRealms } from '../components/realms';
+import { REALM_KIND_LABELS } from '@shared/realms';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Gem, KeyRound, Ghost, Plus, Map as MapIcon, Network } from 'lucide-react';
-import { CANON_STATUSES, ENTITY_TYPES, ENTITY_TYPE_LABELS, REALMS, REALM_LABELS, type EntityType, type Realm } from '@shared/domain';
+import { CANON_STATUSES, ENTITY_TYPES, ENTITY_TYPE_LABELS, type EntityType } from '@shared/domain';
 import { api, qs, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary } from '../lib/types';
@@ -32,38 +34,52 @@ function RecordExcerpt({ id, maxSections = 99 }: { id: string; maxSections?: num
   );
 }
 
+/**
+ * Every world with its continents, then the realms beside them, each introduced by its own record. Built from the
+ * library's realms, so it fits any world (the Worldkeeper setting's or your own).
+ */
+/** The kind of record that introduces each kind of realm. */
+const INTRO_TYPE: Record<string, string> = { realm: 'realm', world: 'world', continent: 'continent', domain: 'ethereal_domain', region_group: 'region' };
+
 export function WorldOverview() {
+  const realms = useRealms();
+  const live = realms.list.filter((r) => !r.archived);
+  const worlds = live.filter((r) => r.kind === 'world');
+  const inside = (id: string) => live.filter((r) => r.parent_id === id && r.kind === 'continent');
+  // Realms that aren't just a frame around the worlds: ones with an introducing record of their own.
+  const others = live.filter((r) => r.kind === 'realm' && r.intro_id);
+  const card = (r: (typeof live)[number], featured = false) => (
+    <Card key={r.id} featured={featured} className={realmClass(r)}>
+      <RealmBadge realm={r.id} />
+      {r.intro_id ? (
+        <RecordExcerpt id={r.intro_id} maxSections={featured ? undefined : 2} />
+      ) : (
+        <p className="text-sm text-dim mt-2">
+          {r.description || 'No record introduces it yet.'}{' '}
+          <Link className="text-arcane hover:text-gold" to={`/new${qs({ type: INTRO_TYPE[r.kind], realm: r.id })}`}>
+            Write its record
+          </Link>
+        </p>
+      )}
+    </Card>
+  );
   return (
     <div className="space-y-5">
-      <PageHeader title="World Overview" subtitle="One world, three branches." />
-      <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
-        <Card featured>
-          <RecordExcerpt id="WLD-901" />
-        </Card>
-        <Card featured>
-          <RecordExcerpt id="WLD-906" />
-        </Card>
-      </div>
-      <div className="grid gap-4 md:grid-cols-3">
-        {[
-          ['CON-001', 'aetheris'],
-          ['CON-301', 'kaelmar'],
-          ['CON-501', 'ethereal'],
-        ].map(([id, realm]) => (
-          <Card key={id}>
-            <RealmBadge realm={realm} />
-            <RecordExcerpt id={id} maxSections={2} />
-          </Card>
-        ))}
-      </div>
+      <PageHeader title="World Overview" subtitle={[...worlds, ...others].map((r) => r.name).join(', ') || undefined} />
+      {worlds.map((w) => (
+        <div key={w.id} className="space-y-4">
+          {card(w, true)}
+          {inside(w.id).length > 0 && <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{inside(w.id).map((c) => card(c))}</div>}
+        </div>
+      ))}
+      {others.length > 0 && <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{others.map((r) => card(r))}</div>}
     </div>
   );
 }
 
-const REALM_ROOT: Record<string, string> = { aetheris: 'CON-001', kaelmar: 'CON-301', ethereal: 'CON-501' };
-
 export function RealmPage() {
-  const { realm = 'aetheris' } = useParams();
+  const realms = useRealms();
+  const { realm = 'world' } = useParams();
   const { data: list, error } = useApi<EntitySummary[]>(`/api/entities${qs({ realm })}`);
   const groups = useMemo(() => {
     const g = new Map<string, EntitySummary[]>();
@@ -87,12 +103,19 @@ export function RealmPage() {
     ],
     ethereal: [{ to: '/ethereal/explorer', label: 'Realm Explorer', icon: <Ghost size={16} />, text: 'Border and deep domains, access, crossings, inhabitants and hazards.' }],
   };
-  const root = REALM_ROOT[realm];
+  const info = realms.get(realm);
+  const root = info.intro_id ?? undefined;
+  const inside = realms.list.filter((r) => r.parent_id === info.id && !r.archived);
+  const parent = info.parent_id ? realms.get(info.parent_id) : null;
   return (
     <div className="space-y-5">
       <PageHeader
-        title={REALM_LABELS[realm as Realm] ?? realm}
-        subtitle={list ? `${list.length} records` : undefined}
+        title={
+          <span className={`${realmClass(info)} inline-flex items-center gap-2`}>
+            <RealmIconOf realm={info} size={22} className="text-realm" /> {info.name}
+          </span>
+        }
+        subtitle={[REALM_KIND_LABELS[info.kind], parent ? `in ${parent.name}` : '', list ? `${list.length} records` : ''].filter(Boolean).join(' · ') || undefined}
         actions={
           <>
             <Link className="btn" to="/atlas">
@@ -107,6 +130,17 @@ export function RealmPage() {
         }
       />
       {error && <ErrorBox error={error} />}
+      {info.description && <p className="prose-lore max-w-[72ch] text-[16px] text-ink/90">{info.description}</p>}
+      {inside.length > 0 && (
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-xs uppercase tracking-wider text-dim mr-1">Within</span>
+          {inside.map((r) => (
+            <Link key={r.id} to={`/realm/${r.id}`} className={`${realmClass(r)} chip border-realm/50 text-realm hover:bg-realm/10`}>
+              <RealmIconOf realm={r} size={11} /> {r.name}
+            </Link>
+          ))}
+        </div>
+      )}
       <div className="grid gap-3 md:grid-cols-3">
         {(tools[realm] ?? []).map((t) => (
           <Link key={t.to} to={t.to} className="panel elev-1 p-4 hover:border-gold/60 block">
@@ -139,6 +173,7 @@ export function RealmPage() {
 }
 
 export function NewEntity() {
+  const realms = useRealms();
   const [sp] = useSearchParams();
   const nav = useNavigate();
   const { reloadIndex } = useAppState();
@@ -146,7 +181,7 @@ export function NewEntity() {
   const [form, setForm] = useState({
     name: '',
     type: (sp.get('type') as EntityType) || 'custom',
-    realm: (sp.get('realm') as Realm) || 'world',
+    realm: sp.get('realm') || 'world',
     canon_status: 'PROPOSED',
     parent_id: null as string | null,
     source_raw: 'DM entry (The Worldkeeper)',
@@ -178,12 +213,14 @@ export function NewEntity() {
           </select>
         </Field>
         <Field label="Realm">
-          <select className="input" value={form.realm} onChange={(e) => setForm({ ...form, realm: e.target.value as Realm })}>
-            {REALMS.map((r) => (
-              <option key={r} value={r}>
-                {REALM_LABELS[r]}
-              </option>
-            ))}
+          <select className="input" value={form.realm} onChange={(e) => setForm({ ...form, realm: e.target.value })}>
+            {realms.list
+              .filter((r) => !r.archived)
+              .map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.name}
+                </option>
+              ))}
           </select>
         </Field>
         <Field label="Canon status">
@@ -252,6 +289,8 @@ interface TimelineRow {
   time_label: string;
   event: string;
   realm_label: string;
+  /** The realms it belongs to (the library's ids). */
+  realm_ids: string[];
   source: string;
   access: string;
   entity_ids: string[];
@@ -268,6 +307,7 @@ interface Era {
 }
 
 export function TimelinePage() {
+  const realms = useRealms();
   const { data, error, reload } = useApi<TimelineRow[]>('/api/timeline');
   const { data: eras, reload: reloadEras } = useApi<Era[]>('/api/eras');
   const [sp, setSp] = useSearchParams();
@@ -283,11 +323,13 @@ export function TimelinePage() {
   const toggleEra = (k: string) => setParam('era', (eraFilter.includes(k) ? eraFilter.filter((x) => x !== k) : [...eraFilter, k]).join(','));
   const [adding, setAdding] = useState(false);
   const [managing, setManaging] = useState(false);
-  const [form, setForm] = useState({ time_label: '', event: '', realm_label: '', access: 'PROPOSED' });
+  const [form, setForm] = useState({ time_label: '', event: '', realm_id: '', access: 'PROPOSED' });
   const eraName = (k: string | null) => (k ? eras?.find((e) => e.key === k)?.name ?? k : 'No era assigned');
   const rows = (data ?? []).filter(
-    (r) => (!realm || r.realm_label.toLowerCase().includes(realm)) && (!eraFilter.length || eraFilter.includes(r.era ?? '__none')),
+    (r) => (!realm || r.realm_ids.includes(realm)) && (!eraFilter.length || eraFilter.includes(r.era ?? '__none')),
   );
+  // The realms the timeline uses, for the filter.
+  const timelineRealms = realms.list.filter((x) => (data ?? []).some((r) => r.realm_ids.includes(x.id)));
   const counts = new Map<string, number>();
   for (const r of data ?? []) counts.set(r.era ?? '__none', (counts.get(r.era ?? '__none') ?? 0) + 1);
   const groups: [string | null, TimelineRow[]][] = grouped
@@ -326,7 +368,16 @@ export function TimelinePage() {
             <input className="input" value={form.event} onChange={(e) => setForm({ ...form, event: e.target.value })} />
           </Field>
           <Field label="Realm">
-            <input className="input" value={form.realm_label} onChange={(e) => setForm({ ...form, realm_label: e.target.value })} />
+            <select className="input" value={form.realm_id} onChange={(e) => setForm({ ...form, realm_id: e.target.value })}>
+              <option value="">Everywhere</option>
+              {realms.list
+                .filter((r) => !r.archived)
+                .map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name}
+                  </option>
+                ))}
+            </select>
           </Field>
           <Field label="Status">
             <select className="input" value={form.access} onChange={(e) => setForm({ ...form, access: e.target.value })}>
@@ -338,7 +389,7 @@ export function TimelinePage() {
           <button
             className="btn-primary"
             onClick={async () => {
-              await api.post('/api/timeline', form);
+              await api.post('/api/timeline', { time_label: form.time_label, event: form.event, access: form.access, realm_ids: form.realm_id ? [form.realm_id] : [] });
               setAdding(false);
               void reload();
             }}
@@ -369,7 +420,7 @@ export function TimelinePage() {
             label="Filter by realm"
             value={realm}
             onChange={(r) => setParam('realm', r)}
-            options={['', 'aetheris', 'kaelmar', 'world', 'both'].map((r) => ({ value: r, label: <span className="capitalize">{r || 'All'}</span> }))}
+            options={[{ value: '', label: 'All' }, ...timelineRealms.map((r) => ({ value: r.id, label: r.name }))]}
           />
           <Toggle checked={grouped} onChange={(v) => setParam('group', v ? '1' : '')} className="ml-3 text-dim">
             Group by era
@@ -391,7 +442,7 @@ export function TimelinePage() {
                   <Card>
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-display text-gold text-sm">{r.time_label}</span>
-                      <Badge>{r.realm_label}</Badge>
+                      {r.realm_ids.length ? r.realm_ids.map((id) => <RealmBadge key={id} realm={id} />) : r.realm_label && <Badge>{r.realm_label}</Badge>}
                       {/SECRET/i.test(r.access) && <CanonBadge status="SECRET" />}
                       {r.origin === 'user' && <CanonBadge status="PROPOSED" />}
                       <select
@@ -510,6 +561,7 @@ function EventList({ eras = [] }: { eras?: string[] }) {
 }
 
 export function SearchPage() {
+  const realms = useRealms();
   const [sp, setSp] = useSearchParams();
   const [q, setQ] = useState(sp.get('q') ?? sp.get('tag') ?? '');
   const [realm, setRealm] = useState('');
@@ -544,9 +596,9 @@ export function SearchPage() {
         </select>
         <select className="input w-auto" value={realm} onChange={(e) => setRealm(e.target.value)} aria-label="Realm">
           <option value="">All realms</option>
-          {REALMS.map((r) => (
-            <option key={r} value={r}>
-              {REALM_LABELS[r]}
+          {realms.list.map((r) => (
+            <option key={r.id} value={r.id}>
+              {r.name}
             </option>
           ))}
         </select>

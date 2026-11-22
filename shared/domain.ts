@@ -20,15 +20,8 @@ export type CanonFlag = (typeof CANON_FLAGS)[number];
 export const MECHANICS_STATUSES = ['OFFICIAL', 'HOMEBREW', 'OUTSIDE 2024 CORE', 'UNVERIFIED'] as const;
 export type MechanicsStatus = (typeof MECHANICS_STATUSES)[number];
 
-export const REALMS = ['world', 'aetheris', 'kaelmar', 'ethereal'] as const;
-export type Realm = (typeof REALMS)[number];
-
-export const REALM_LABELS: Record<Realm, string> = {
-  world: 'World',
-  aetheris: 'Aetheris',
-  kaelmar: 'Kaelmar',
-  ethereal: 'Ethereal Realm',
-};
+/** A realm's key (see shared/realms.ts: realms are the library's own data, not a fixed list). */
+export type Realm = string;
 
 /** Normalised template types. `category_raw` always keeps the original source text. */
 export const ENTITY_TYPES = [

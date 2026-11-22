@@ -1,3 +1,4 @@
+import { useRealms } from '../components/realms';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import L from 'leaflet';
@@ -23,6 +24,7 @@ interface MapRow {
   height: number;
   layers: string[];
   player_visible: boolean;
+  realm_id: string | null;
 }
 interface MarkerRow {
   id: number;
@@ -407,6 +409,7 @@ function MapSettings({
   onDeleted: () => void;
   onDeleteShape: (id: number) => void;
 }) {
+  const realms = useRealms();
   const m = detail.map;
   const layers = [...new Set([...m.layers, ...detail.markers.map((x) => x.layer), ...detail.shapes.map((s) => s.layer)])];
   const [err, setErr] = useState<string | null>(null);
@@ -440,6 +443,25 @@ function MapSettings({
       >
         Visible in player view
       </Toggle>
+      <Field label="Realm" hint="The world, continent or plane it shows.">
+        <select
+          className="input"
+          value={m.realm_id ?? ''}
+          onChange={async (e) => {
+            await api.patch(`/api/maps/${m.id}`, { realm_id: e.target.value || null });
+            onChange();
+          }}
+        >
+          <option value="">None</option>
+          {realms.list
+            .filter((r) => !r.archived || r.id === m.realm_id)
+            .map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.name}
+              </option>
+            ))}
+        </select>
+      </Field>
       <div>
         <div className="label flex items-center gap-1">
           <Layers size={12} /> Layers

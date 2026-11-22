@@ -40,11 +40,16 @@
   --r-very-rare: 116 56 148;
   --r-legendary: 146 82 8;
   --r-artifact: 156 40 34;
-  /* Realms and canon labels */
-  --realm-aetheris: 136 82 10;
-  --realm-kaelmar: 30 104 68;
-  --realm-ethereal: 104 60 150;
-  --realm-world: 30 88 138;
+  /* Realm palette (shared/realms.ts REALM_COLORS): a realm's colour sets --rc, used as text-realm, border-realm, bg-realm */
+  --rc-blue: 30 88 138;
+  --rc-amber: 136 82 10;
+  --rc-green: 30 104 68;
+  --rc-violet: 104 60 150;
+  --rc-red: 150 50 40;
+  --rc-teal: 16 98 108;
+  --rc-rose: 150 40 92;
+  --rc-slate: 72 80 96;
+  /* Canon labels */
   --belief: 20 104 100;
   --homebrew: 146 40 108;
   --shadow: 92 66 30;
@@ -72,14 +77,47 @@
   --r-very-rare: 192 152 236;
   --r-legendary: 234 168 80;
   --r-artifact: 240 124 112;
-  --realm-aetheris: 236 184 92;
-  --realm-kaelmar: 110 200 150;
-  --realm-ethereal: 190 160 240;
-  --realm-world: 120 186 232;
+  --rc-blue: 120 186 232;
+  --rc-amber: 236 184 92;
+  --rc-green: 110 200 150;
+  --rc-violet: 190 160 240;
+  --rc-red: 236 132 118;
+  --rc-teal: 100 200 204;
+  --rc-rose: 236 142 184;
+  --rc-slate: 172 182 200;
   --belief: 96 200 190;
   --homebrew: 232 128 200;
   --shadow: 0 0 0;
   color-scheme: dark;
+}
+
+/* A realm's colour: put rc-<colour> on an element, then use text-realm, border-realm/50, bg-realm/10 inside it. */
+.rc-blue {
+  --rc: var(--rc-blue);
+}
+.rc-amber {
+  --rc: var(--rc-amber);
+}
+.rc-green {
+  --rc: var(--rc-green);
+}
+.rc-violet {
+  --rc: var(--rc-violet);
+}
+.rc-red {
+  --rc: var(--rc-red);
+}
+.rc-teal {
+  --rc: var(--rc-teal);
+}
+.rc-rose {
+  --rc: var(--rc-rose);
+}
+.rc-slate {
+  --rc: var(--rc-slate);
+}
+:root {
+  --rc: var(--rc-slate);
 }
 
 html,

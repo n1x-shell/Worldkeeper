@@ -1,3 +1,4 @@
+import { useRealms } from '../components/realms';
 import { useMechanics } from '../lib/mechanics';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -129,13 +130,17 @@ interface Group {
  * them" line) players always see; reveal any other tie when the party learns it.
  */
 export function FactionWebPage() {
+  const realms = useRealms();
   const { activeCampaignId } = useAppState();
   const { data, error, setData } = useApi<{ groups: Group[]; ties: Tie[] }>(`/api/faction-web${activeCampaignId ? `?campaign_id=${activeCampaignId}` : ''}`);
-  const [realm, setRealm] = useState('aetheris');
+  const [picked, setRealm] = useState('');
   const [focus, setFocus] = useState<string | null>(null);
   const realmOf = useMemo(() => new Map((data?.groups ?? []).map((g) => [g.id, g.realm])), [data]);
   if (error) return <ErrorBox error={error} />;
   if (!data) return <Loading />;
+  // The realms that have ties, in the library's order; the first one until another is picked.
+  const realmsHere = realms.list.filter((r) => data.ties.some((t) => realmOf.get(t.a) === r.id || realmOf.get(t.b) === r.id));
+  const realm = realmsHere.some((r) => r.id === picked) ? picked : (realmsHere[0]?.id ?? '');
   const ties = data.ties.filter((t) => (realmOf.get(t.a) === realm || realmOf.get(t.b) === realm) && (!focus || t.a === focus || t.b === focus));
   const reveal = async (t: Tie, on: boolean) => {
     if (!activeCampaignId) return;
@@ -148,17 +153,7 @@ export function FactionWebPage() {
         Ties come from the factions' links (allied with, opposes): change them on each faction's page. Players see it under <Link to="/player/factions-web">Faction Web</Link>.
       </p>
       <div className="flex flex-wrap items-center gap-2">
-        <Segmented
-          size="sm"
-          label="Realm"
-          value={realm}
-          onChange={(k) => (setRealm(k), setFocus(null))}
-          options={[
-            { value: 'aetheris', label: 'Aetheris' },
-            { value: 'kaelmar', label: 'Kaelmar' },
-            { value: 'ethereal', label: 'The Ethereal Realm' },
-          ]}
-        />
+        <Segmented size="sm" label="Realm" value={realm} onChange={(k) => (setRealm(k), setFocus(null))} options={realmsHere.map((r) => ({ value: r.id, label: r.name }))} />
         {focus && (
           <button className="btn-ghost text-xs" onClick={() => setFocus(null)}>
             Show all

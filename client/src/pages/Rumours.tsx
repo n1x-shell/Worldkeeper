@@ -1,3 +1,4 @@
+import { useRealms } from '../components/realms';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, RefreshCw, Trash2 } from 'lucide-react';
@@ -236,10 +237,9 @@ const STANCE_STYLE: Record<string, string> = {
   Rival: 'bg-gold/30',
   'At war': 'bg-danger/50',
 };
-const REALM_NAMES: Record<string, string> = { aetheris: 'Aetheris', kaelmar: 'Kaelmar', ethereal: 'The Ethereal Realm', world: 'The World' };
-
 /** How factions and cults feel about each other, one grid per realm. */
 export function StanceMatrix() {
+  const realmInfo = useRealms();
   const { data } = useApi<Stances>('/api/faction-stances');
   const [pick, setPick] = useState<{ a: string; b: string; label: string; description: string } | null>(null);
   if (!data) return null;
@@ -268,7 +268,7 @@ export function StanceMatrix() {
         if (gs.length < 2) return null;
         return (
           <div key={realm} className="overflow-x-auto">
-            <div className="text-sm font-display text-gold mb-1">{REALM_NAMES[realm] ?? realm}</div>
+            <div className="text-sm font-display text-gold mb-1">{realmInfo.name(realm)}</div>
             <table className="text-xs border-collapse">
               <thead>
                 <tr>

@@ -722,6 +722,84 @@ CREATE TABLE rules_entries (
     name: 'maps: their scale (miles across), for distances and travel times',
     sql: `ALTER TABLE maps ADD COLUMN scale_miles REAL;`,
   },
+  {
+    version: 19,
+    name: "realms as data: the library's realms, worlds and continents; maps, timeline rows and campaigns belong to them",
+    // Every library starts with "The World". The Worldkeeper setting's realms become rows only where the library already
+    // uses them, with the ids its records already carry, so nothing about them changes: Aetheris and Kaelmar are
+    // continents of The World, which sits in the realm of Evershroud; the Ethereal Realm is a realm beside it, holding
+    // the Hollow Verge with its six deeper domains.
+    sql: `
+CREATE TABLE realms (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  kind TEXT NOT NULL DEFAULT 'world' CHECK (kind IN ('realm','world','continent','domain','region_group')),
+  parent_id TEXT REFERENCES realms(id) ON DELETE SET NULL,
+  color TEXT NOT NULL DEFAULT 'blue',
+  icon TEXT NOT NULL DEFAULT 'globe',
+  description TEXT NOT NULL DEFAULT '',
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  archived INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+INSERT INTO realms (id, name, kind, color, icon, sort_order) VALUES ('world', 'The World', 'world', 'blue', 'globe', 0);
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'aetheris', 'Aetheris', 'continent', 'world', 'amber', 'mountain', 1
+  WHERE EXISTS (SELECT 1 FROM entities WHERE realm = 'aetheris' OR realms LIKE '%"aetheris"%');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'kaelmar', 'Kaelmar', 'continent', 'world', 'green', 'flame', 2
+  WHERE EXISTS (SELECT 1 FROM entities WHERE realm = 'kaelmar' OR realms LIKE '%"kaelmar"%');
+INSERT INTO realms (id, name, kind, color, icon, sort_order)
+  SELECT 'ethereal', 'The Ethereal Realm', 'realm', 'violet', 'ghost', 3
+  WHERE EXISTS (SELECT 1 FROM entities WHERE realm = 'ethereal' OR realms LIKE '%"ethereal"%');
+INSERT INTO realms (id, name, kind, color, icon, sort_order)
+  SELECT 'evershroud', 'Evershroud', 'realm', 'slate', 'moon', 0
+  WHERE EXISTS (SELECT 1 FROM realms WHERE id IN ('aetheris','kaelmar','ethereal'));
+UPDATE realms SET parent_id = 'evershroud' WHERE id = 'world' AND EXISTS (SELECT 1 FROM realms WHERE id = 'evershroud');
+-- The Ethereal Realm's domains: the Hollow Verge (the border layer), with the six deeper domains beneath it.
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'hollow-verge', 'The Hollow Verge', 'domain', 'ethereal', 'violet', 'ghost', 4 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'fields-of-lost-realities', 'The Fields of Lost Realities', 'domain', 'hollow-verge', 'teal', 'sparkles', 5 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'ossuary-of-kings', 'The Ossuary of Kings', 'domain', 'hollow-verge', 'slate', 'skull', 6 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'silent-archive', 'The Silent Archive', 'domain', 'hollow-verge', 'blue', 'moon', 7 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'loom-of-eternity', 'The Loom of Eternity', 'domain', 'hollow-verge', 'amber', 'snowflake', 8 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'citadel-of-the-hidden', 'The Citadel of the Hidden', 'domain', 'hollow-verge', 'rose', 'castle', 9 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
+INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
+  SELECT 'black-horizon', 'The Black Horizon', 'domain', 'hollow-verge', 'red', 'compass', 10 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
+
+-- The Ethereal Realm's records that sit in a domain (by their own text: where they live, sleep or stand, or the depth
+-- a creature is met at) belong to that domain, and stay in the Ethereal Realm too.
+UPDATE entities SET realm = 'hollow-verge', realms = '["hollow-verge","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'hollow-verge') AND id IN ('CRE-501', 'CRE-502', 'CRE-503', 'CRE-504', 'CRE-505', 'DEI-911', 'ETH-501', 'LOC-506', 'NPC-371', 'NPC-372', 'NPC-373', 'NPC-374', 'NPC-375', 'NPC-376', 'NPC-392', 'NPC-393', 'NPC-394', 'NPC-400', 'NPC-403', 'NPC-404', 'RUL-632', 'RUL-643');
+UPDATE entities SET realm = 'fields-of-lost-realities', realms = '["fields-of-lost-realities","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'fields-of-lost-realities') AND id IN ('CRE-506', 'CRE-507', 'CRE-508', 'CRE-509', 'CRE-510', 'CRE-511', 'DEI-912', 'ETH-502', 'LOC-501', 'LOC-502', 'NPC-391', 'NPC-399', 'NPC-401', 'NPC-402', 'NPC-464');
+UPDATE entities SET realm = 'ossuary-of-kings', realms = '["ossuary-of-kings","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'ossuary-of-kings') AND id IN ('CRE-512', 'CRE-513', 'CRE-514', 'DEI-913', 'ETH-503', 'LOC-503', 'LOC-504', 'NPC-389', 'NPC-390', 'NPC-395', 'NPC-396');
+UPDATE entities SET realm = 'silent-archive', realms = '["silent-archive","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'silent-archive') AND id IN ('CRE-515', 'CRE-516', 'CRE-517', 'CRE-518', 'DEI-914', 'ETH-504');
+UPDATE entities SET realm = 'loom-of-eternity', realms = '["loom-of-eternity","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'loom-of-eternity') AND id IN ('CRE-519', 'CRE-520', 'CRE-521', 'CRE-522', 'CRE-533', 'ETH-505');
+UPDATE entities SET realm = 'citadel-of-the-hidden', realms = '["citadel-of-the-hidden","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'citadel-of-the-hidden') AND id IN ('CRE-523', 'CRE-524', 'ETH-506', 'LOC-505', 'NPC-466');
+UPDATE entities SET realm = 'black-horizon', realms = '["black-horizon","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'black-horizon') AND id IN ('CRE-525', 'CRE-526', 'CRE-527', 'CRE-528', 'CRE-529', 'CRE-530', 'CRE-531', 'CRE-532', 'ETH-507', 'LOC-507', 'LOC-508', 'LOC-509', 'NPC-397', 'NPC-398', 'NPC-465', 'NPC-902');
+
+ALTER TABLE maps ADD COLUMN realm_id TEXT REFERENCES realms(id) ON DELETE SET NULL;
+UPDATE maps SET realm_id = CASE
+  WHEN lower(name) LIKE '%ethereal%' AND EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal') THEN 'ethereal'
+  ELSE 'world' END;
+
+ALTER TABLE timeline_rows ADD COLUMN realm_ids TEXT NOT NULL DEFAULT '[]';
+UPDATE timeline_rows SET realm_ids = '[' || rtrim(
+    (CASE WHEN lower(realm_label) LIKE '%aetheris%' OR lower(realm_label) LIKE '%both%' THEN '"aetheris",' ELSE '' END) ||
+    (CASE WHEN lower(realm_label) LIKE '%kaelmar%' OR lower(realm_label) LIKE '%both%' THEN '"kaelmar",' ELSE '' END) ||
+    (CASE WHEN lower(realm_label) LIKE '%ethereal%' THEN '"ethereal",' ELSE '' END) ||
+    (CASE WHEN lower(realm_label) LIKE '%world%' THEN '"world",' ELSE '' END), ',') || ']';
+-- Only realms the library has (a "Both" row in a library without Kaelmar names just Aetheris).
+UPDATE timeline_rows SET realm_ids = (SELECT json_group_array(value) FROM json_each(timeline_rows.realm_ids) WHERE value IN (SELECT id FROM realms));
+
+ALTER TABLE campaigns ADD COLUMN world_id TEXT REFERENCES realms(id) ON DELETE SET NULL;
+UPDATE campaigns SET world_id = 'world';
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

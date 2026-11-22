@@ -6,7 +6,7 @@ import { BookOpen, Map as MapIcon, Radio, X } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
 import { usePlayerData, type PEntity, type PMap } from './source';
 import { MapView, kindOf } from '../components/map/MapView';
-import { Badge } from '../components/ui/badges';
+import { Badge, RealmBadge } from '../components/ui/badges';
 import { Empty, Loading } from '../components/ui/feedback';
 import { useSidebarSlot } from '../components/sidebarSlot';
 
@@ -57,7 +57,7 @@ function Codex({ id, fallback, onClose, onPlace, pinned }: { id: string; fallbac
           <h2 className="illuminated font-display text-[22px] text-ink leading-tight break-words">{e.name}</h2>
           <div className="flex flex-wrap gap-1 mt-2">
             <Badge>{e.typeLabel}</Badge>
-            <Badge tone={['aetheris', 'kaelmar', 'ethereal', 'world'].includes(e.realm) ? (e.realm as 'world') : 'dim'}>{e.realmLabel}</Badge>
+            <RealmBadge realm={e.realm} label={e.realmLabel} />
           </div>
         </div>
         <button type="button" onClick={onClose} className="btn-ghost min-h-[40px] min-w-[40px] justify-center" aria-label="Close">

@@ -34,8 +34,10 @@ import {
 import { usePlayer, usePlayerIndex } from './context';
 import { usePlayerData, type PEntity } from './source';
 import { SpeciesBuilder } from './SpeciesBuilder';
-import { OTHER_GROUP, PLAYER_GROUPS, PLAYER_REALMS, groupOf, linkedIds, previewText } from './categories';
-import { Badge, RarityTag, type Tone } from '../components/ui/badges';
+import { OTHER_GROUP, PLAYER_GROUPS, groupOf, linkedIds, previewText } from './categories';
+import { Badge, RarityTag, RealmBadge, type Tone } from '../components/ui/badges';
+import { realmStyle, useRealms } from '../components/realms';
+import { REALM_KIND_LABELS } from '@shared/realms';
 import { Card } from '../components/ui/surfaces';
 import { DataTable, type Column } from '../components/ui/data';
 import { Empty, Loading } from '../components/ui/feedback';
@@ -117,16 +119,6 @@ export function PlayerPageTitle({
   );
 }
 
-const REALM_TONES = new Set(['aetheris', 'kaelmar', 'ethereal', 'world']);
-const realmTone = (r: string): Tone => (REALM_TONES.has(r) ? (r as Tone) : 'dim');
-
-const REALM_STYLE: Record<string, { text: string; rule: string; wash: string; ring: string; icon: ReactNode }> = {
-  aetheris: { text: 'text-realm-aetheris', rule: 'bg-realm-aetheris', wash: 'from-realm-aetheris/[0.14]', ring: 'hover:border-realm-aetheris/60', icon: <Mountain size={18} /> },
-  kaelmar: { text: 'text-realm-kaelmar', rule: 'bg-realm-kaelmar', wash: 'from-realm-kaelmar/[0.14]', ring: 'hover:border-realm-kaelmar/60', icon: <Flame size={18} /> },
-  ethereal: { text: 'text-realm-ethereal', rule: 'bg-realm-ethereal', wash: 'from-realm-ethereal/[0.14]', ring: 'hover:border-realm-ethereal/60', icon: <Ghost size={18} /> },
-  world: { text: 'text-realm-world', rule: 'bg-realm-world', wash: 'from-realm-world/[0.14]', ring: 'hover:border-realm-world/60', icon: <Globe2 size={18} /> },
-};
-
 const GROUP_ICONS: Record<string, ReactNode> = {
   places: <Landmark size={18} />,
   people: <UserSquare2 size={18} />,
@@ -179,7 +171,7 @@ function EntryCard({ e, realm = true }: { e: PEntity; realm?: boolean }) {
       <span className="font-display text-[15px] leading-snug text-ink group-hover:text-gold break-words">{e.name}</span>
       <span className="flex flex-wrap gap-1">
         <Badge>{e.typeLabel}</Badge>
-        {realm && <Badge tone={realmTone(e.realm)}>{e.realmLabel}</Badge>}
+        {realm && <RealmBadge realm={e.realm} label={e.realmLabel} />}
       </span>
       {preview && <span className="text-[13px] leading-snug text-ink/80 line-clamp-2">{preview}</span>}
     </Link>
@@ -227,6 +219,7 @@ export function PlayerHome() {
   const nav = useNavigate();
   const { entities, campaigns, maps } = usePlayerIndex();
   const { data: info } = usePlayerData(() => source.info(), 'info');
+  const realmList = useRealms();
   const [q, setQ] = useState('');
   if (!entities) return <Loading label="Opening the handbook…" />;
   if (!entities.length)
@@ -240,11 +233,15 @@ export function PlayerHome() {
         </div>
       </div>
     );
-  const realms = PLAYER_REALMS.map((r) => {
-    const here = entities.filter((e) => inRealm(e, r.key));
-    const intro = here.find((e) => e.realm === r.key && ['continent', 'realm', 'world'].includes(e.type));
-    return { ...r, n: here.length, line: intro ? previewText(intro.summary || '') : '' };
-  }).filter((r) => r.n);
+  // A card for each realm, world and continent; a domain's entries count towards the realm that holds it.
+  const realms = realmList.list
+    .filter((r) => !r.archived && r.kind !== 'domain' && r.kind !== 'region_group')
+    .map((r) => {
+      const here = entities.filter((e) => inRealm(e, r.id));
+      const intro = here.find((e) => e.realm === r.id && ['continent', 'realm', 'world'].includes(e.type));
+      return { realm: r, key: r.id, label: r.name, n: here.length, line: intro ? previewText(intro.summary || '') : '' };
+    })
+    .filter((r) => r.n);
   const kinds = [...PLAYER_GROUPS, OTHER_GROUP].map((g) => ({ g, n: entities.filter((e) => groupOf(e.type).key === g.key).length })).filter((x) => x.n);
   const quests = (campaigns ?? []).flatMap((c) => c.quests.filter((x) => OPEN_QUEST.includes(x.status)));
   const recaps = (campaigns ?? []).flatMap((c) => c.recaps).sort((a, b) => b.number - a.number);
@@ -378,16 +375,16 @@ export function PlayerHome() {
       {realms.length > 0 && (
         <section aria-labelledby="home-realms">
           <h2 id="home-realms" className="title-rule text-lg mb-3">
-            Realms
+            Worlds &amp; Realms
           </h2>
           <div className={`grid gap-4 sm:grid-cols-2 ${realms.length >= 4 ? 'xl:grid-cols-4' : 'xl:grid-cols-3'}`}>
             {realms.map((r) => {
-              const s = REALM_STYLE[r.key] ?? REALM_STYLE.world;
+              const s = realmStyle(r.realm);
               return (
                 <Link
                   key={r.key}
                   to={`${base}/realm/${r.key}`}
-                  className={`group panel elev-1 relative overflow-hidden flex flex-col bg-gradient-to-b ${s.wash} to-transparent ${s.ring} transition-colors`}
+                  className={`${s.cls} group panel elev-1 relative overflow-hidden flex flex-col bg-gradient-to-b ${s.wash} to-transparent ${s.ring} transition-colors`}
                 >
                   <span className={`absolute inset-x-0 top-0 h-1 ${s.rule}`} aria-hidden />
                   <div className="flex items-start gap-3 px-4 pt-5">
@@ -474,7 +471,15 @@ export function PlayerBrowse() {
   const setRealm = (realm: string) => setPick({ group, realm });
   const g = group === 'all' ? null : [...PLAYER_GROUPS, OTHER_GROUP].find((x) => x.key === group);
   const inGroup = useMemo(() => (entities ?? []).filter((e) => !g || groupOf(e.type).key === g.key), [entities, g]);
-  const realmsHere = useMemo(() => PLAYER_REALMS.map((r) => ({ ...r, n: inGroup.filter((e) => inRealm(e, r.key)).length })).filter((r) => r.n), [inGroup]);
+  const realmList = useRealms();
+  const realmsHere = useMemo(
+    () =>
+      realmList.list
+        .filter((r) => !r.archived)
+        .map((r) => ({ key: r.id, label: r.name, n: inGroup.filter((e) => inRealm(e, r.id)).length }))
+        .filter((r) => r.n),
+    [inGroup, realmList],
+  );
   const realm = pick.group === group && realmsHere.some((r) => r.key === pick.realm) ? pick.realm : '';
   const list = useMemo(() => inGroup.filter((e) => (!realm || inRealm(e, realm)) && matches(e, q)).sort(byName), [inGroup, realm, q]);
   if (!entities) return <Loading />;
@@ -539,24 +544,25 @@ export function PlayerRealm() {
   const { entities } = usePlayerIndex();
   const { base } = usePlayer();
   const [kind, setKind] = useState({ realm: '', key: '' });
+  const info = useRealms().get(realm);
   if (!entities) return <Loading />;
-  const label = PLAYER_REALMS.find((r) => r.key === realm)?.label ?? realm;
+  const label = info.name;
   const here = entities.filter((e) => inRealm(e, realm));
   const intro = here.find((e) => e.type === 'continent' || e.type === 'realm' || e.type === 'world');
   const groups = [...PLAYER_GROUPS, OTHER_GROUP].map((g) => ({ g, list: here.filter((e) => e !== intro && groupOf(e.type).key === g.key).sort(byName) })).filter((x) => x.list.length);
   const on = kind.realm === realm && groups.some((x) => x.g.key === kind.key) ? kind.key : '';
-  const s = REALM_STYLE[realm] ?? REALM_STYLE.world;
+  const s = realmStyle(info);
   return (
     <div className="space-y-6">
       <PlayerPageTitle
-        eyebrow="Realm"
-        icon={<span className={s.text}>{s.icon}</span>}
+        eyebrow={REALM_KIND_LABELS[info.kind]}
+        icon={<span className={`${s.cls} ${s.text}`}>{s.icon}</span>}
         title={label}
         subtitle={<span className="num">{plural(here.length, 'entry', 'entries')} your party knows of</span>}
         featured
       />
       {intro && (
-        <Card className={`relative overflow-hidden bg-gradient-to-b ${s.wash} to-transparent px-5 py-5 sm:px-7`}>
+        <Card className={`${s.cls} relative overflow-hidden bg-gradient-to-b ${s.wash} to-transparent px-5 py-5 sm:px-7`}>
           <span className={`absolute inset-x-0 top-0 h-1 ${s.rule}`} aria-hidden />
           <div className="max-w-[72ch]">{intro.summary ? <Md text={intro.summary} className="prose-lore text-[17px]" /> : intro.sections?.[0] && <Md text={intro.sections[0].content} />}</div>
           <Link to={entryHref(base, intro.id)} data-peek={intro.id} className="mt-3 inline-flex items-center gap-1 text-sm text-arcane hover:text-gold">
@@ -600,6 +606,7 @@ export function PlayerEntry() {
   const { source, base } = usePlayer();
   const { byId, maps, entities } = usePlayerIndex();
   const { data, error } = usePlayerData<PEntity | null>(() => source.entity(id), id);
+  const realmList = useRealms();
   if (error || data === null)
     return (
       <Empty
@@ -625,7 +632,7 @@ export function PlayerEntry() {
   const pinMap = maps?.find((mp) => mp.markers.some((mk) => mk.entity_id === data.id));
   const onMap = pinMap ? { map: pinMap.id, name: pinMap.name } : null;
   const realms = data.realms?.length ? data.realms : [data.realm];
-  const realmLabel = (r: string) => (r === data.realm ? data.realmLabel : (PLAYER_REALMS.find((x) => x.key === r)?.label ?? r));
+  const realmLabel = (r: string) => (r === data.realm ? data.realmLabel : realmList.name(r));
   const sections = data.sections ?? [];
   const mapButton = onMap && (
     <Link to={`${base}/maps/${onMap.map}?place=${encodeURIComponent(data.id)}`} className="btn-primary min-h-[40px] justify-center">
@@ -666,9 +673,7 @@ export function PlayerEntry() {
             <div className="flex flex-wrap items-center gap-1.5 mt-3">
               <Badge>{data.typeLabel}</Badge>
               {realms.map((r) => (
-                <Badge key={r} tone={realmTone(r)}>
-                  {realmLabel(r)}
-                </Badge>
+                <RealmBadge key={r} realm={r} label={realmLabel(r)} />
               ))}
             </div>
           </div>

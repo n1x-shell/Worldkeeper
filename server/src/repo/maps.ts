@@ -3,6 +3,7 @@ import type { DB } from '../db/connection.js';
 import { makeCrud, zId } from './crud.js';
 import { parseJson } from '../lib/json.js';
 import { TYPE_GROUPS } from '../../../shared/domain.js';
+import { REALM_KEY_RE } from '../../../shared/realms.js';
 
 export const maps = makeCrud({
   table: 'maps',
@@ -18,6 +19,8 @@ export const maps = makeCrud({
     player_visible: z.boolean().default(false),
     /** How many miles the map's image is across (its width): distances, the ruler and travel times use it. */
     scale_miles: z.number().positive().max(1000000).nullable().optional(),
+    /** The realm the map shows (a world, continent or plane). */
+    realm_id: z.string().regex(REALM_KEY_RE).nullable().optional(),
   }),
   jsonColumns: ['layers'],
   boolColumns: ['player_visible'],

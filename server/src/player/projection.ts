@@ -18,7 +18,9 @@ import { playerHandouts } from '../repo/handouts.js';
 import { campaignDate, comingUp } from '../repo/calendar.js';
 import { playerRegions } from '../repo/regionState.js';
 import type { DB } from '../db/connection.js';
-import { SECRET_HEADING_RE, ENTITY_TYPE_LABELS, REALM_LABELS, type EntityType, type Realm } from '../../../shared/domain.js';
+import { SECRET_HEADING_RE, ENTITY_TYPE_LABELS, type EntityType } from '../../../shared/domain.js';
+import { listRealms } from '../repo/realms.js';
+import type { RealmInfo } from '../../../shared/realms.js';
 import { parseJson } from '../lib/json.js';
 import { splitSections } from '../import/parseMarkdown.js';
 import { parseRefs, type MentionIndex } from '../../../shared/mentions.js';
@@ -141,7 +143,7 @@ function autoLinkLine(md: string, selfId: string, lex: Lexicon, linked: Set<stri
     .join('');
 }
 
-function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexicon, placeRealm?: Map<string, string>): PlayerEntity {
+function project(r: Row, revealed: Set<string>, index: MentionIndex, realmsInfo: RealmContext, lex?: Lexicon, placeRealm?: Map<string, string>): PlayerEntity {
   const wanted = new Set(parseJson<string[]>(r.revealed_sections, []));
   const sections = splitSections(r.body)
     .filter((s) => s.heading && wanted.has(s.heading) && !isSecretHeading(s.heading))
@@ -153,10 +155,11 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexic
   // Peoples and callings belong wherever their player-visible text says they're found (never from GM text).
   const realms = new Set<string>([r.realm]);
   if (r.type === 'people' || r.type === 'calling') {
-    if (r.realm === 'world') ['aetheris', 'kaelmar'].forEach((x) => realms.add(x));
+    // A people of a world is found on its continents; and on any continent its player text names.
+    const own = realmsInfo.byId.get(r.realm);
+    if (own?.kind === 'world') realmsInfo.continents.filter((c) => c.parent_id === own.id || !c.parent_id).forEach((c) => realms.add(c.id));
     const text = [r.player_summary, ...sections.map((s) => `${s.heading}\n${s.content}`)].join('\n');
-    if (/\bKaelmar\b/.test(text)) realms.add('kaelmar');
-    if (/\bAetheris\b/.test(text)) realms.add('aetheris');
+    for (const c of realmsInfo.continents) if (c.nameRe.test(text)) realms.add(c.id);
   }
   const out: PlayerEntity = {
     id: r.id,
@@ -164,7 +167,7 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexic
     type: r.type,
     typeLabel: ENTITY_TYPE_LABELS[r.type as EntityType] ?? r.type,
     realm: r.realm,
-    realmLabel: REALM_LABELS[r.realm as Realm] ?? r.realm,
+    realmLabel: realmsInfo.byId.get(r.realm)?.name ?? r.realm,
     realms: [...realms],
     ...(parseJson<string[]>(r.tags ?? '[]', []).includes('origin/bloom') ? { bloom: true } : {}),
     summary: lex ? autoLink(scrubRefs(r.player_summary, revealed, index), r.id, lex, linked) : scrubRefs(r.player_summary, revealed, index),
@@ -180,11 +183,46 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, lex?: Lexic
   if (placeRealm && (r.type === 'people' || r.type === 'calling')) {
     for (const m of [out.summary, ...out.sections.map((x) => x.content)].join('\n').matchAll(/\/player\/e\/([A-Z]{2,5}-\d{3,4})/g)) {
       const realm = placeRealm.get(m[1]);
-      if (realm === 'aetheris' || realm === 'kaelmar') realms.add(realm);
+      if (realm && realmsInfo.continents.some((c) => c.id === realm)) realms.add(realm);
     }
     out.realms = [...realms];
   }
   return out;
+}
+
+interface RealmContext {
+  byId: Map<string, RealmInfo>;
+  /** Continents, with a pattern for their name in text. */
+  continents: (RealmInfo & { nameRe: RegExp })[];
+}
+const esc = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+/**
+ * The realms players may know of: those their revealed records are in, and what holds them (a continent's world).
+ * A realm the GM has made but revealed nothing in stays unnamed, in the handbook and in every list.
+ */
+function visibleRealmIds(db: DB, list: RealmInfo[]): Set<string> {
+  const byId = new Map(list.map((r) => [r.id, r]));
+  const out = new Set<string>();
+  for (const { realm } of db.prepare('SELECT DISTINCT realm FROM entities WHERE revealed = 1 AND archived = 0').all() as { realm: string }[]) {
+    for (let r = byId.get(realm); r && !out.has(r.id); r = r.parent_id ? byId.get(r.parent_id) : undefined) out.add(r.id);
+  }
+  return out;
+}
+
+function realmContext(db: DB): RealmContext {
+  const list = listRealms(db, { includeArchived: true });
+  const visible = visibleRealmIds(db, list);
+  return {
+    byId: new Map(list.map((r) => [r.id, r])),
+    continents: list.filter((r) => r.kind === 'continent' && visible.has(r.id)).map((r) => ({ ...r, nameRe: new RegExp(`\\b${esc(r.name.replace(/^the\s+/i, ''))}\\b`) })),
+  };
+}
+
+/** The realms players see: unarchived ones their revealed records are in (and what holds those), without counts. */
+export function playerRealms(db: DB): Omit<RealmInfo, 'records'>[] {
+  const list = listRealms(db);
+  const visible = visibleRealmIds(db, list);
+  return list.filter((r) => visible.has(r.id)).map(({ records: _r, ...rest }) => rest);
 }
 
 /** The continent of every place record, for working out where a people is found. */
@@ -203,12 +241,13 @@ export function playerEntities(db: DB): PlayerEntity[] {
   const index = loadMentionIndex(db);
   const lex = buildLexicon(db);
   const places = placeRealms(db);
-  return (db.prepare(`SELECT ${COLS} FROM entities WHERE revealed = 1 AND archived = 0 ORDER BY name`).all() as Row[]).map((r) => project(r, revealed, index, lex, places));
+  const rc = realmContext(db);
+  return (db.prepare(`SELECT ${COLS} FROM entities WHERE revealed = 1 AND archived = 0 ORDER BY name`).all() as Row[]).map((r) => project(r, revealed, index, rc, lex, places));
 }
 
 export function playerEntity(db: DB, id: string): PlayerEntity | null {
   const r = db.prepare(`SELECT ${COLS} FROM entities WHERE id = ? AND revealed = 1 AND archived = 0`).get(id) as Row | undefined;
-  return r ? project(r, revealedIdSet(db), loadMentionIndex(db), buildLexicon(db), placeRealms(db)) : null;
+  return r ? project(r, revealedIdSet(db), loadMentionIndex(db), realmContext(db), buildLexicon(db), placeRealms(db)) : null;
 }
 
 export function playerSearch(db: DB, q: string): PlayerEntity[] {
@@ -349,6 +388,7 @@ export function playerSnapshot(db: DB) {
     appName: (db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper',
     generated_at: new Date().toISOString(),
     entities: playerEntities(db),
+    realms: playerRealms(db),
     maps: playerMaps(db),
     campaigns: playerCampaigns(db),
     factionWeb: playerFactionWeb(db, activeCampaignId(db)),

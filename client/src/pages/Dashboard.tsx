@@ -1,3 +1,4 @@
+import { realmClass, realmStyle, useRealms } from '../components/realms';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -48,7 +49,7 @@ interface Dash {
   worldDate: string | null;
   counts: { entities: number; relationships: number; documents: number; campaigns: number; pendingReview: number };
   byRealm: { realm: string; n: number }[];
-  branches: { id: string; name: string; realm: string; excerpt: string; count: number }[];
+  branches: { id: string | null; name: string; realm: string; excerpt: string; count: number }[];
   active: null | {
     campaign: { id: number; title: string; current_date: string; status: string; premise?: string };
     lastSession: SessionRow | null;
@@ -74,31 +75,18 @@ interface ReturnClock {
   stages: { stage: number; title: string }[];
 }
 
-/** The realms' colours and art, as literal class names (so Tailwind keeps them). */
-const REALM_STYLE: Record<string, { text: string; rule: string; wash: string; ring: string; icon: ReactNode }> = {
-  aetheris: { text: 'text-realm-aetheris', rule: 'bg-realm-aetheris', wash: 'from-realm-aetheris/[0.14]', ring: 'hover:border-realm-aetheris/60', icon: <Mountain size={18} /> },
-  kaelmar: { text: 'text-realm-kaelmar', rule: 'bg-realm-kaelmar', wash: 'from-realm-kaelmar/[0.14]', ring: 'hover:border-realm-kaelmar/60', icon: <Trees size={18} /> },
-  ethereal: { text: 'text-realm-ethereal', rule: 'bg-realm-ethereal', wash: 'from-realm-ethereal/[0.14]', ring: 'hover:border-realm-ethereal/60', icon: <Ghost size={18} /> },
-  world: { text: 'text-realm-world', rule: 'bg-realm-world', wash: 'from-realm-world/[0.14]', ring: 'hover:border-realm-world/60', icon: <Globe2 size={18} /> },
-};
-const REALM_DOT: Record<string, string> = {
-  aetheris: 'bg-realm-aetheris',
-  kaelmar: 'bg-realm-kaelmar',
-  ethereal: 'bg-realm-ethereal',
-  world: 'bg-realm-world',
-};
-
 /** Opens the search palette (the layout listens for Ctrl K). */
 const openSearch = () => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
 
 /** Record links, each peekable (hover for the card, middle-click for the inspector). */
 function RecordList({ rows, empty, limit }: { rows: Row[]; empty: string; limit?: number }) {
+  const realms = useRealms();
   if (!rows.length) return <Empty compact title={empty} />;
   return (
     <ul className="-mx-1.5">
       {rows.slice(0, limit).map((r) => (
         <li key={r.id} className="flex items-center gap-2 rounded px-1.5 py-1 text-sm hover:bg-raised/70">
-          <span className={`h-1.5 w-1.5 rounded-full shrink-0 ${REALM_DOT[r.realm] ?? 'bg-line'}`} aria-hidden />
+          <span className={`h-1.5 w-1.5 rounded-full shrink-0 bg-realm ${realmClass(realms.get(r.realm))}`} aria-hidden />
           <EntityLink id={r.id} className="min-w-0 truncate">
             {r.name}
           </EntityLink>
@@ -165,6 +153,7 @@ function partyLevel(chars: Overview['characters'] | undefined) {
 }
 
 export function Dashboard() {
+  const realms = useRealms();
   const { appName, debug } = useAppState();
   const mech = useMechanics();
   const { data, error, loading, reload } = useApi<Dash>('/api/dashboard');
@@ -219,13 +208,13 @@ export function Dashboard() {
 
   const party = partyLevel(overview?.characters);
   const date = a?.campaign.current_date || data.worldDate || 'UNDEFINED';
-  const realmCount = (r: string) => data.byRealm?.find((x) => x.realm === r)?.n ?? 0;
-  const realms = [
-    ...data.branches.map((b) => ({ key: b.realm, name: b.name, to: `/realm/${b.realm}`, count: b.count, excerpt: b.excerpt })),
-    ...(realmCount('world')
-      ? [{ key: 'world', name: 'The world', to: '/world', count: realmCount('world'), excerpt: 'What spans every realm: the cosmology, the pantheon, the peoples, magic, and the timeline.' }]
-      : []),
-  ];
+  const realmCards = data.branches.map((b) => ({
+    key: b.realm,
+    name: b.name,
+    to: `/realm/${b.realm}`,
+    count: b.count,
+    excerpt: b.excerpt || (b.realm === 'world' ? 'What spans every realm: the cosmology, the pantheon, the peoples, magic, and the timeline.' : ''),
+  }));
   const openQ = questions?.counts.todo;
   const brokenN = broken ? broken.references.length + broken.danglingRelationships.length : undefined;
   const stage = clock ? clock.stages.find((s) => s.stage === clock.stage) : undefined;
@@ -398,13 +387,13 @@ export function Dashboard() {
       {/* The realms. */}
       <section aria-labelledby="dash-realms">
         <h2 id="dash-realms" className="title-rule text-lg mb-3">
-          Realms
+          Worlds &amp; Realms
         </h2>
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {realms.map((r) => {
-            const s = REALM_STYLE[r.key] ?? REALM_STYLE.world;
+          {realmCards.map((r) => {
+            const s = realmStyle(realms.get(r.key));
             return (
-              <Link key={r.key} to={r.to} className={`group panel elev-1 relative overflow-hidden flex flex-col bg-gradient-to-b ${s.wash} to-transparent ${s.ring} transition-colors`}>
+              <Link key={r.key} to={r.to} className={`${s.cls} group panel elev-1 relative overflow-hidden flex flex-col bg-gradient-to-b ${s.wash} to-transparent ${s.ring} transition-colors`}>
                 <span className={`absolute inset-x-0 top-0 h-1 ${s.rule}`} aria-hidden />
                 <div className="flex items-start gap-3 px-4 pt-5">
                   <span className={`mt-0.5 shrink-0 ${s.text}`} aria-hidden>

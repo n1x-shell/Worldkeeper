@@ -13,6 +13,7 @@ import {
   CircleHelp,
   Clock,
   Compass,
+  Settings2,
   Crown,
   Dice5,
   Drama,
@@ -21,10 +22,8 @@ import {
   Feather,
   FileWarning,
   Flag,
-  Flame,
   Gavel,
   Gem,
-  Ghost,
   Gift,
   Globe2,
   HeartPulse,
@@ -38,7 +37,6 @@ import {
   Map as MapIcon,
   MapPinned,
   MessageCircleQuestion,
-  Mountain,
   Network,
   NotebookPen,
   Palette,
@@ -60,8 +58,19 @@ import {
   Waypoints,
   type LucideIcon,
 } from 'lucide-react';
+import type { RealmIcon } from '../../../shared/realms';
+import { REALM_ICON_COMPONENTS } from './realmIcons';
 
-export type Item = { to: string; label: string; icon: LucideIcon; /** Opens in a new tab (outside the GM shell). */ external?: boolean };
+/** The sidebar group that lists the library's worlds, continents and planes. */
+export const REALMS_GROUP = 'Worlds & Realms';
+
+export type Item = {
+  to: string;
+  label: string;
+  icon: LucideIcon;
+  /** Opens in a new tab (outside the GM shell). */ external?: boolean;
+  /** How far it's nested (a continent inside its world). */ depth?: number;
+};
 export type Group = { title: string; items: Item[] };
 export type WorkspaceId = 'codex' | 'campaign' | 'characters' | 'atlas' | 'live';
 export type Workspace = { id: WorkspaceId; label: string; icon: LucideIcon; home: string; groups: Group[] };
@@ -86,12 +95,9 @@ export const WORKSPACES: Workspace[] = [
         ],
       },
       {
-        title: 'Realms',
-        items: [
-          { to: '/realm/aetheris', label: 'Aetheris', icon: Mountain },
-          { to: '/realm/kaelmar', label: 'Kaelmar', icon: Flame },
-          { to: '/realm/ethereal', label: 'Ethereal Realm', icon: Ghost },
-        ],
+        // Filled from the library's realms (withRealms), nested, then the page to manage them.
+        title: REALMS_GROUP,
+        items: [{ to: '/realms', label: 'Manage worlds & realms', icon: Settings2 }],
       },
       {
         title: 'Records',
@@ -261,9 +267,6 @@ export const LIBRARY: Group = {
 export const DEBUG_ONLY = new Set(['/documents', '/broken', '/style-guide']);
 /** Menu items for the setting's own mechanics, shown only while they're switched on (Settings, Campaign mechanics). */
 export const NEEDS: Record<string, keyof Mechanics> = {
-  '/realm/aetheris': 'setting',
-  '/realm/kaelmar': 'setting',
-  '/realm/ethereal': 'setting',
   '/quick-reference': 'setting',
   '/campaign/return': 'theReturn',
 };
@@ -292,3 +295,18 @@ export function workspaceFor(path: string): WorkspaceId | 'library' {
 
 /** Pages that fill the main view edge to edge, with no page margins (the map explorer). */
 export const FULL_BLEED = /^\/atlas\/explore(\/|$)/;
+
+/**
+ * The Worlds & Realms group: a page for each of the library's realms (not archived ones), each nested under what holds
+ * it (Aetheris and Kaelmar under The World), before the page that manages them. `realms` comes in tree order.
+ */
+export function withRealms(g: Group, realms: { id: string; name: string; icon: RealmIcon; archived: boolean; parent_id?: string | null }[]): Group {
+  if (g.title !== REALMS_GROUP) return g;
+  const byId = new Map(realms.map((r) => [r.id, r]));
+  const depth = (r: (typeof realms)[number], seen = 0): number => {
+    const p = r.parent_id ? byId.get(r.parent_id) : undefined;
+    return p && !p.archived && seen < 8 ? 1 + depth(p, seen + 1) : 0;
+  };
+  const items = realms.filter((r) => !r.archived).map((r) => ({ to: `/realm/${r.id}`, label: r.name, icon: REALM_ICON_COMPONENTS[r.icon] ?? Compass, depth: depth(r) }));
+  return { ...g, items: [...items, ...g.items] };
+}

@@ -7,6 +7,7 @@ import { Md } from './PlayerPages';
 import { Badge, RealmBadge } from '../components/ui/badges';
 import { Tabs } from '../components/ui/inputs';
 import { Empty, Loading } from '../components/ui/feedback';
+import { realmClass, useRealms } from '../components/realms';
 
 /**
  * Species and Classes, laid out like a character builder: pick from the list on the left, read everything about it on
@@ -17,12 +18,6 @@ const TABS = [
   { key: 'species', label: 'Species', types: ['people', 'species', 'culture'] },
   { key: 'classes', label: 'Classes', types: ['calling'] },
 ] as const;
-
-const CONTINENTS = [
-  { key: 'aetheris', label: 'Aetheris', dot: 'bg-realm-aetheris' },
-  { key: 'kaelmar', label: 'Kaelmar', dot: 'bg-realm-kaelmar' },
-  { key: 'ethereal', label: 'Ethereal Realm', dot: 'bg-realm-ethereal' },
-];
 
 /** The thirteen classes. Other calling records are the world's names for them. */
 const CLASS_NAMES = new Set(['Artificer', 'Barbarian', 'Bard', 'Cleric', 'Druid', 'Fighter', 'Monk', 'Paladin', 'Ranger', 'Rogue', 'Sorcerer', 'Warlock', 'Wizard']);
@@ -40,10 +35,16 @@ const knownAs = (e: PEntity) => {
 };
 
 const sortName = (n: string) => n.replace(/^["'“‘\s]+/, '');
-const where = (e: PEntity) => CONTINENTS.filter((c) => e.realm === c.key || e.realms?.includes(c.key));
+/** The continents and planes a people or calling is found in, in the library's order, each with its colour dot. */
+function useWhere() {
+  const realms = useRealms();
+  const places = realms.list.filter((r) => r.kind !== 'world' && !r.archived).map((r) => ({ key: r.id, label: r.name, dot: `${realmClass(r)} bg-realm` }));
+  return { places, where: (e: PEntity) => places.filter((c) => e.realm === c.key || !!e.realms?.includes(c.key)) };
+}
 
 export function SpeciesBuilder({ entities }: { entities: PEntity[] }) {
   const { base } = usePlayer();
+  const { places: CONTINENTS, where } = useWhere();
   const [params, setParams] = useSearchParams();
   // ?tab=callings is the older link to the same tab.
   const tabKey = params.get('tab') === 'callings' ? 'classes' : params.get('tab');
@@ -153,7 +154,7 @@ export function SpeciesBuilder({ entities }: { entities: PEntity[] }) {
             </div>
           )}
           <div className="flex flex-wrap gap-3 text-xs text-dim px-1">
-            {CONTINENTS.filter((c) => c.key !== 'ethereal' || list.some((e) => where(e).includes(c))).map((c) => (
+            {CONTINENTS.filter((c) => list.some((e) => where(e).some((x) => x.key === c.key))).map((c) => (
               <span key={c.key} className="inline-flex items-center gap-1.5">
                 <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} /> {c.label}
               </span>
@@ -177,6 +178,7 @@ export function SpeciesBuilder({ entities }: { entities: PEntity[] }) {
 function Detail({ entry, onBack }: { entry: PEntity; onBack: () => void }) {
   const { source, base } = usePlayer();
   const { byId } = usePlayerIndex();
+  const { where } = useWhere();
   // The index may hold only the summary; the full entry has every section.
   const { data } = usePlayerData<PEntity | null>(() => source.entity(entry.id), entry.id);
   const e = { ...entry, ...(data ?? {}), realms: entry.realms, bloom: entry.bloom ?? data?.bloom };

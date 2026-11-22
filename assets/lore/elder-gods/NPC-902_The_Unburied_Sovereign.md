@@ -3,7 +3,7 @@ Name: The Unburied Sovereign
 Alternate names: The Occupant of the Nameless Sepulcher; the Last Ruler
 Category: NPC
 Parent: People and Organizations (Ethereal Realm)
-Continent or realm: Ethereal Realm
+Continent or realm: The Black Horizon (Ethereal Realm)
 Canon status: CANON
 Source: Worldkeeper additions (the elder gods, owner decision, November 2026)
 Tags: realm/ethereal, cat/npc, status/canon, vis/gm

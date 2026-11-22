@@ -3,7 +3,7 @@ Name: Q'orrumath, the Keeper of Endings
 Alternate names: The Hoarder (to salvagers)
 Category: Deity
 Parent: The Elder Gods [COS-030]
-Continent or realm: Ethereal Realm
+Continent or realm: The Fields of Lost Realities (Ethereal Realm)
 Canon status: CANON
 Source: Worldkeeper additions (the elder gods, owner decision, November 2026)
 Tags: realm/ethereal, cat/deity, status/canon, vis/gm

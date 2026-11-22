@@ -11,7 +11,7 @@ import { creatureMentions, suggestEncounters, xpBudget } from '../server/src/rep
 import { itemNameCandidates } from '../server/src/repo/bookData.js';
 
 async function withBooks(srd = false) {
-  const ctx = tempContext();
+  const ctx = tempContext({ settingRealms: true });
   const gm = createApp(ctx);
   if (!srd) await request(gm).patch('/api/rules/packs/srd').send({ enabled: false });
   const scan = (await request(gm).post('/api/rules/5etools/scan').attach('data', fakeFivetools(), 'f.zip')).body;
@@ -23,7 +23,7 @@ async function withBooks(srd = false) {
 
 describe('campaign mechanics', () => {
   it('start as standard D&D in a library without the setting, and as the setting in one with it', async () => {
-    const ctx = tempContext();
+    const ctx = tempContext({ settingRealms: true });
     const gm = createApp(ctx);
     expect((await request(gm).get('/api/mechanics')).body).toEqual({ setting: false, thinning: false, theReturn: false, fading: false, worldTreasure: false });
     createEntity(ctx.db, { id: 'SYS-907', name: 'Thinning', type: 'system', realm: 'aetheris', canon_status: 'CANON', aliases: [], tags: [], fields: [], body: 'x', notes: '' } as never);
@@ -66,7 +66,7 @@ describe('campaign mechanics', () => {
   });
 
   it('has the SRD 5.2.1’s creatures, items and hazards built in, with books winning where they overlap', async () => {
-    const ctx = tempContext();
+    const ctx = tempContext({ settingRealms: true });
     const gm = createApp(ctx);
     const counts = (await request(gm).get('/api/books')).body;
     expect(counts.creatures).toBeGreaterThan(330);
