@@ -41,8 +41,29 @@ export function listRealms(db: DB, opts: { counts?: boolean; includeArchived?: b
       ]),
     );
     for (const r of rows) r.records = counts.get(r.id) ?? 0;
+    const intros = realmIntros(db);
+    for (const r of rows) r.intro_id = intros.get(r.id) ?? null;
   }
   return sortRealms(rows);
+}
+
+/** Record types that introduce a realm: its own world, continent, realm or domain record. */
+const INTRO_TYPES = ['world', 'continent', 'realm', 'ethereal_domain'];
+
+/**
+ * Each realm's introducing record: a record in it of an introducing type, the one named like the realm first (Aetheris's
+ * is its continent record, the Hollow Verge's its domain record). No record ids are written into the app.
+ */
+export function realmIntros(db: DB): Map<string, string> {
+  const realms = new Map((db.prepare('SELECT id, name FROM realms').all() as { id: string; name: string }[]).map((r) => [r.id, r.name]));
+  const bare = (s: string) => s.toLowerCase().replace(/^the\s+/, '').trim();
+  const out = new Map<string, string>();
+  const rows = db
+    .prepare(`SELECT id, name, type, realm FROM entities WHERE archived = 0 AND type IN (${INTRO_TYPES.map(() => '?').join(',')}) ORDER BY id`)
+    .all(...INTRO_TYPES) as { id: string; name: string; type: string; realm: string }[];
+  const rank = (r: (typeof rows)[number]) => (bare(r.name) === bare(realms.get(r.realm) ?? '') ? 0 : 1) * 10 + INTRO_TYPES.indexOf(r.type);
+  for (const r of [...rows].sort((a, b) => rank(a) - rank(b))) if (realms.has(r.realm) && !out.has(r.realm)) out.set(r.realm, r.id);
+  return out;
 }
 
 export function getRealm(db: DB, id: string): RealmInfo {
@@ -107,7 +128,7 @@ function checkParent(db: DB, id: string | null, parent: string | null | undefine
   }
 }
 
-/** A free id from a name: "aetheris", or "aetheris-2" if taken. */
+/** A free id from a name: "ostmark", or "ostmark-2" if taken. */
 function freeId(db: DB, wanted: string) {
   let id = wanted;
   for (let n = 2; realmExists(db, id); n++) id = `${wanted}-${n}`;

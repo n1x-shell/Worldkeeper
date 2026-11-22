@@ -39,7 +39,7 @@ export const REALM_ICONS = ['globe', 'mountain', 'flame', 'ghost', 'trees', 'wav
 export type RealmIcon = (typeof REALM_ICONS)[number];
 
 export interface RealmInfo {
-  /** Stable key, as stored on records (e.g. "aetheris"). */
+  /** Stable key, as stored on records (e.g. "sunken-isles"). */
   id: string;
   name: string;
   kind: RealmKind;
@@ -51,6 +51,8 @@ export interface RealmInfo {
   archived: boolean;
   /** How many records belong to it (GM API only). */
   records?: number;
+  /** The record that introduces it: its own world, continent, realm or domain record (GM API only). */
+  intro_id?: string | null;
 }
 
 /** The realm every library starts with, and every record defaults to. */

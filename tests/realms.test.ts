@@ -8,7 +8,10 @@ import { readZip } from '../server/src/import/scan.js';
 import { buildPlan, commitPlan } from '../server/src/import/importer.js';
 import { createApp } from '../server/src/app.js';
 import { createEntity } from '../server/src/repo/entities.js';
-import { listRealms } from '../server/src/repo/realms.js';
+import { listRealms, realmIntros } from '../server/src/repo/realms.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { execSync } from 'node:child_process';
 import { exportJson, importJson } from '../server/src/backup/exporter.js';
 import { playerSnapshot } from '../server/src/player/projection.js';
 import { realmKey, sortRealms } from '../shared/realms.js';
@@ -182,6 +185,23 @@ describe('realms', () => {
         domains.some((d) => v.startsWith(d)),
         v,
       ).toBe(true);
+  });
+
+  it('are introduced by their own record, found by type and name rather than by id', () => {
+    const { db } = importFiles();
+    const intros = realmIntros(db);
+    expect(intros.get('aetheris')).toBe('CON-001');
+    expect(intros.get('world')).toBe('WLD-901');
+  });
+
+  it("are never written into the app's code: only the setting's own files name the setting's realms", () => {
+    const root = path.resolve(import.meta.dirname, '..');
+    const allowed = new Set(['server/src/import/normalize.ts', 'server/src/import/settingRealms.ts', 'server/src/import/importer.ts', 'server/src/mapAdditions.ts', 'server/src/db/migrations.ts']);
+    const files = execSync('git ls-files client/src server/src shared', { cwd: root, encoding: 'utf8' })
+      .split('\n')
+      .filter((f) => /\.(ts|tsx)$/.test(f) && !allowed.has(f));
+    const offenders = files.filter((f) => /['"](aetheris|kaelmar|ethereal|evershroud|hollow-verge)['"]/.test(fs.readFileSync(path.join(root, f), 'utf8')));
+    expect(offenders).toEqual([]);
   });
 
   it('reach the handbook by name, and a people of a world is found on its continents', () => {

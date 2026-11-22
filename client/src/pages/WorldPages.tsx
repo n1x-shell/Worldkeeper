@@ -34,53 +34,51 @@ function RecordExcerpt({ id, maxSections = 99 }: { id: string; maxSections?: num
   );
 }
 
+/**
+ * Every world with its continents, then the realms beside them, each introduced by its own record. Built from the
+ * library's realms, so it fits any world (the Worldkeeper setting's or your own).
+ */
+/** The kind of record that introduces each kind of realm. */
+const INTRO_TYPE: Record<string, string> = { realm: 'realm', world: 'world', continent: 'continent', domain: 'ethereal_domain', region_group: 'region' };
+
 export function WorldOverview() {
+  const realms = useRealms();
+  const live = realms.list.filter((r) => !r.archived);
+  const worlds = live.filter((r) => r.kind === 'world');
+  const inside = (id: string) => live.filter((r) => r.parent_id === id && r.kind === 'continent');
+  // Realms that aren't just a frame around the worlds: ones with an introducing record of their own.
+  const others = live.filter((r) => r.kind === 'realm' && r.intro_id);
+  const card = (r: (typeof live)[number], featured = false) => (
+    <Card key={r.id} featured={featured} className={realmClass(r)}>
+      <RealmBadge realm={r.id} />
+      {r.intro_id ? (
+        <RecordExcerpt id={r.intro_id} maxSections={featured ? undefined : 2} />
+      ) : (
+        <p className="text-sm text-dim mt-2">
+          {r.description || 'No record introduces it yet.'}{' '}
+          <Link className="text-arcane hover:text-gold" to={`/new${qs({ type: INTRO_TYPE[r.kind], realm: r.id })}`}>
+            Write its record
+          </Link>
+        </p>
+      )}
+    </Card>
+  );
   return (
     <div className="space-y-5">
-      <PageHeader title="World Overview" subtitle="One world, three branches." />
-      <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
-        <Card featured>
-          <RecordExcerpt id="WLD-901" />
-        </Card>
-        <Card featured>
-          <RecordExcerpt id="WLD-906" />
-        </Card>
-      </div>
-      <div className="grid gap-4 md:grid-cols-3">
-        {[
-          ['CON-001', 'aetheris'],
-          ['CON-301', 'kaelmar'],
-          ['CON-501', 'ethereal'],
-        ].map(([id, realm]) => (
-          <Card key={id}>
-            <RealmBadge realm={realm} />
-            <RecordExcerpt id={id} maxSections={2} />
-          </Card>
-        ))}
-      </div>
+      <PageHeader title="World Overview" subtitle={[...worlds, ...others].map((r) => r.name).join(', ') || undefined} />
+      {worlds.map((w) => (
+        <div key={w.id} className="space-y-4">
+          {card(w, true)}
+          {inside(w.id).length > 0 && <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{inside(w.id).map((c) => card(c))}</div>}
+        </div>
+      ))}
+      {others.length > 0 && <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">{others.map((r) => card(r))}</div>}
     </div>
   );
 }
 
-/** The record that introduces a realm: its world, continent or realm record (the setting's are named outright). */
-const ROOT_TYPES = ['world', 'continent', 'realm'];
-const SETTING_ROOT: Record<string, string> = {
-  aetheris: 'CON-001',
-  kaelmar: 'CON-301',
-  ethereal: 'CON-501',
-  // The Ethereal Realm's domains: each opens with its own record (their records stay in the Ethereal Realm).
-  'hollow-verge': 'ETH-501',
-  'fields-of-lost-realities': 'ETH-502',
-  'ossuary-of-kings': 'ETH-503',
-  'silent-archive': 'ETH-504',
-  'loom-of-eternity': 'ETH-505',
-  'citadel-of-the-hidden': 'ETH-506',
-  'black-horizon': 'ETH-507',
-};
-
 export function RealmPage() {
   const realms = useRealms();
-  const { index } = useAppState();
   const { realm = 'world' } = useParams();
   const { data: list, error } = useApi<EntitySummary[]>(`/api/entities${qs({ realm })}`);
   const groups = useMemo(() => {
@@ -106,9 +104,7 @@ export function RealmPage() {
     ethereal: [{ to: '/ethereal/explorer', label: 'Realm Explorer', icon: <Ghost size={16} />, text: 'Border and deep domains, access, crossings, inhabitants and hazards.' }],
   };
   const info = realms.get(realm);
-  const root =
-    (SETTING_ROOT[realm] && (list?.some((e) => e.id === SETTING_ROOT[realm]) || index.has(SETTING_ROOT[realm])) ? SETTING_ROOT[realm] : undefined) ??
-    [...(list ?? [])].filter((e) => ROOT_TYPES.includes(e.type)).sort((a, b) => ROOT_TYPES.indexOf(a.type) - ROOT_TYPES.indexOf(b.type))[0]?.id;
+  const root = info.intro_id ?? undefined;
   const inside = realms.list.filter((r) => r.parent_id === info.id && !r.archived);
   const parent = info.parent_id ? realms.get(info.parent_id) : null;
   return (

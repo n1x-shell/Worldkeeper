@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ReactFlow, Background, Controls, MarkerType, type Edge, type Node } from '@xyflow/react';
 import { CANON_STATUSES, ENTITY_TYPE_LABELS, RELATIONSHIP_LABELS, RELATIONSHIP_TYPES, type EntityType, type RelationshipType } from '@shared/domain';
 import { qs, useApi } from '../lib/api';
-import { Card, Check, ErrorBox, Loading, PageHeader } from '../components/ui';
+import { Card, Check, Empty, ErrorBox, Loading, PageHeader } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { useAppState } from '../lib/store';
 import type { Relationship } from '../lib/types';
@@ -122,18 +122,19 @@ function layout(d: GraphData, debug: boolean, pal: Palette, realmColor: (id: str
 export function GraphPage() {
   const [sp, setSp] = useSearchParams();
   const nav = useNavigate();
-  const focus = sp.get('focus') ?? 'CON-301';
+  const realms = useRealms();
+  // Without a record picked, start from the first world's own record.
+  const focus = sp.get('focus') ?? realms.list.find((r) => r.kind === 'world' && r.intro_id)?.intro_id ?? '';
   const [depth, setDepth] = useState(1);
   const [refs, setRefs] = useState(true);
   const [group, setGroup] = useState('');
   const [realm, setRealm] = useState('');
-  const realms = useRealms();
   const [canon, setCanon] = useState('');
   const [rel, setRel] = useState('');
   const [era, setEra] = useState('');
   const { data: eras } = useApi<{ key: string; name: string }[]>('/api/eras');
   const url = `/api/graph${qs({ focus, depth, refs: refs ? undefined : '0', types: group ? TYPE_GROUPS[group] : undefined, realms: realm, canon, rel, eras: era })}`;
-  const { data, error, loading } = useApi<GraphData>(url);
+  const { data, error, loading } = useApi<GraphData>(focus ? url : null);
   const { debug, theme } = useAppState();
   const pal = usePalette(theme);
   const flow = useMemo(() => (data ? layout(data, debug, pal, (id) => realms.get(id).color) : null), [data, debug, pal, realms]);
@@ -229,6 +230,8 @@ export function GraphPage() {
             <Background gap={24} color={pal.line} />
             <Controls />
           </ReactFlow>
+        ) : !focus ? (
+          <Empty title="Pick a record to start from">Open any record and choose Graph, or add your world's own record first.</Empty>
         ) : null}
       </Card>
     </div>

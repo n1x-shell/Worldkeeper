@@ -354,7 +354,6 @@ export function worldRoutes(ctx: AppContext) {
           }
         : null;
       // One card per realm that holds records: its introducing record (world, continent or realm), or its description.
-      const SETTING_ROOT: Record<string, string> = { aetheris: 'CON-001', kaelmar: 'CON-301', ethereal: 'CON-501' };
       // Domains and region groups count towards the realm, world or continent that holds them, not cards of their own.
       const allRealms = listRealms(db, { counts: true });
       const folded = (r: { id: string }): string[] => [
@@ -366,12 +365,7 @@ export function worldRoutes(ctx: AppContext) {
         .map((r) => ({ ...r, ids: folded(r) }))
         .filter((r) => allRealms.some((x) => r.ids.includes(x.id) && (x.records ?? 0) > 0))
         .map((r) => {
-          const intro = (db.prepare('SELECT id, name, realm, body FROM entities WHERE id = ? AND realm = ?').get(SETTING_ROOT[r.id] ?? '', r.id) ??
-            db
-              .prepare(
-                `SELECT id, name, realm, body FROM entities WHERE realm = ? AND archived = 0 AND type IN ('world','continent','realm') ORDER BY CASE type WHEN 'world' THEN 0 WHEN 'continent' THEN 1 ELSE 2 END, id LIMIT 1`,
-              )
-              .get(r.id)) as { id: string; name: string; realm: string; body: string } | undefined;
+          const intro = (r.intro_id ? db.prepare('SELECT id, name, realm, body FROM entities WHERE id = ?').get(r.intro_id) : undefined) as { id: string; name: string; realm: string; body: string } | undefined;
           const first = intro ? splitSections(intro.body).find((x) => x.heading && x.content && !isSecretHeading(x.heading)) : undefined;
           return {
             id: intro?.id ?? null,
