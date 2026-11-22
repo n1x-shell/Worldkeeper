@@ -12,7 +12,7 @@ import { DiceRoller, EncounterTracker, type CombatStatus } from './DmTools';
 import { NeedCampaign, useActiveOverview, type Quest } from './Campaign';
 import { Markdown } from '../components/Markdown';
 import { useDebug } from '../components/Dev';
-import { isEditorial } from '../lib/sections';
+import { useCleaners } from '../lib/packs';
 import { usePeek } from '../components/peek/context';
 import { RecordPeek } from '../components/peek/RecordPeek';
 import { MapView, kindOf, type MapLayerSpot, type ViewPin } from '../components/map/MapView';
@@ -821,12 +821,14 @@ interface RevealEntity {
   revealed_sections: string[];
   revealed_facts: string[];
   canon_flags: string[];
+  pack_id: string | null;
 }
 
 /** Reveal information to players without leaving live mode. Every reveal is logged to the session. */
 function RevealPanel({ sessionId, onRevealed }: { sessionId: number; onRevealed: () => void }) {
   const debug = useDebug();
   const [id, setId] = useState<string | null>(null);
+  const cleanerFor = useCleaners();
   const { data, reload } = useApi<{ entity: RevealEntity; sections: { heading: string; secret: boolean }[] }>(id ? `/api/entities/${encodeURIComponent(id)}` : null);
   const [fact, setFact] = useState('');
   const [msg, setMsg] = useState<string | null>(null);
@@ -866,7 +868,7 @@ function RevealPanel({ sessionId, onRevealed }: { sessionId: number; onRevealed:
           {e.canon_flags.includes('SECRET') && <div className="text-[11px] text-warn">Contains secrets: check a section before revealing it.</div>}
           <div className="flex flex-wrap gap-1.5">
             {data!.sections
-              .filter((s) => s.heading && (debug || !isEditorial(s.heading)))
+              .filter((s) => s.heading && (debug || !cleanerFor(e.pack_id).editorial(s.heading)))
               .map((s) => {
                 const shown = e.revealed_sections.includes(s.heading);
                 return (

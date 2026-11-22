@@ -130,6 +130,7 @@ const typeInput = z.object({
       person: z.boolean().optional(),
       commonNoun: z.boolean().optional(),
       intro: z.boolean().optional(),
+      uninhabited: z.boolean().optional(),
     })
     .default({}),
   aliases: z.array(z.string().max(60)).max(20).default([]),

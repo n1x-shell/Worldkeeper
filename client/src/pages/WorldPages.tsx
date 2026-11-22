@@ -17,14 +17,16 @@ import { Snippet, hitPath, type Hit } from '../components/SearchPalette';
 import { EntityTable } from './EntityList';
 import { Dev, useDebug } from '../components/Dev';
 import { displaySections } from '../lib/sections';
+import { useCleaners } from '../lib/packs';
 
 /** Show a record's non-secret sections inline (used by overview pages). */
 function RecordExcerpt({ id, maxSections = 99 }: { id: string; maxSections?: number }) {
   const debug = useDebug();
+  const cleanerFor = useCleaners();
   const { data, error } = useApi<{ entity: Entity }>(`/api/entities/${id}`);
   if (error) return <Empty compact title="Not in the library yet." />;
   if (!data) return <Loading />;
-  const secs = displaySections(data.entity.body, debug).filter((s) => !s.secret).slice(0, maxSections);
+  const secs = displaySections(data.entity.body, debug, cleanerFor(data.entity.pack_id)).filter((s) => !s.secret).slice(0, maxSections);
   return (
     <div>
       {secs.map((s, i) => (

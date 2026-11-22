@@ -2,7 +2,7 @@
  * The style guide (docs/DESIGN_OVERHAUL.md, step 1): every design token and the shared pieces, in the current theme,
  * with each text colour's contrast measured live. Use the switch at the top to compare Warm Parchment and Dark Codex.
  */
-import { useEffect, useState, type ReactNode } from 'react';
+import { Fragment, useEffect, useState, type ReactNode } from 'react';
 import { Moon, Sun, Sword, Shield, Plus, Trash2 } from 'lucide-react';
 import { useAppState } from '../lib/store';
 import {
@@ -94,7 +94,11 @@ function GuideSection({ title, children }: { title: string; children: ReactNode 
 }
 
 export function StyleGuidePage() {
-  const { theme, setTheme } = useAppState();
+  const { theme, setTheme, index } = useAppState();
+  // Two of the library's own records, for the examples.
+  const examples = [...index.values()].filter((e) => !e.archived).slice(0, 2);
+  // A creature of the library's, for the stat block.
+  const statExample = [...index.values()].find((e) => !e.archived && e.type === 'creature');
   // Re-measure after the theme changes (the variables come from the stylesheet).
   const [tick, setTick] = useState(0);
   useEffect(() => {
@@ -238,9 +242,11 @@ export function StyleGuidePage() {
             </Empty>
           </Card>
         </div>
-        <div className="max-w-xl">
-          <StatBlockById id="CRE-029" />
-        </div>
+        {statExample && (
+          <div className="max-w-xl">
+            <StatBlockById id={statExample.id} />
+          </div>
+        )}
       </GuideSection>
 
       <GuideSection title="Feedback">
@@ -300,9 +306,15 @@ export function StyleGuidePage() {
 
       <GuideSection title="Quick-Peek">
         <p className="text-sm text-dim">
-          Hover a record link for its card: <EntityLink id="SET-001" />, <EntityLink id="NPC-010" />. From the card, <strong>Peek</strong> opens it in the inspector (or middle-click the link),{' '}
-          <strong>Open beside</strong> splits the page, and <strong>Pin</strong> keeps a stat block in the inspector until the live session ends. <kbd className="chip border-line">]</kbd> toggles the
-          inspector. On a tablet, tap once for the card and again to open; a long press peeks.
+          Hover a record link for its card{examples.length ? ': ' : ''}
+          {examples.map((e, i) => (
+            <Fragment key={e.id}>
+              {i > 0 && ', '}
+              <EntityLink id={e.id} />
+            </Fragment>
+          ))}
+          . From the card, <strong>Peek</strong> opens it in the inspector (or middle-click the link), <strong>Open beside</strong> splits the page, and <strong>Pin</strong> keeps a stat block in the
+          inspector until the live session ends. <kbd className="chip border-line">]</kbd> toggles the inspector. On a tablet, tap once for the card and again to open; a long press peeks.
         </p>
       </GuideSection>
 

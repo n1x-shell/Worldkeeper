@@ -419,8 +419,9 @@ export function campaignRoutes(ctx: AppContext) {
     '/special/vaults',
     h((req) => {
       const cid = req.query.campaign ? Number(req.query.campaign) : getActiveCampaignId(ctx.db);
-      const vaults = ctx.db.prepare(`SELECT id, name, fields, body, canon_status FROM entities WHERE type = 'vault' ORDER BY id`).all() as {
+      const vaults = ctx.db.prepare(`SELECT id, name, fields, body, canon_status, pack_id FROM entities WHERE type = 'vault' ORDER BY id`).all() as {
         id: string;
+        pack_id: string | null;
         name: string;
         fields: string;
         body: string;
@@ -443,7 +444,7 @@ export function campaignRoutes(ctx: AppContext) {
              WHERE (r.source_id = ? OR r.target_id = ?) AND e.type IN ('faction','cult','npc','adventure_hook','vault_key','landmark','settlement','region')`,
           )
           .all(v.id, v.id, v.id);
-        return { id: v.id, name: v.name, canon_status: v.canon_status, fields, body: v.body, campaignState: state, related };
+        return { id: v.id, name: v.name, canon_status: v.canon_status, pack_id: v.pack_id, fields, body: v.body, campaignState: state, related };
       });
     }),
   );
@@ -451,8 +452,9 @@ export function campaignRoutes(ctx: AppContext) {
     '/special/shards',
     h((req) => {
       const cid = req.query.campaign ? Number(req.query.campaign) : getActiveCampaignId(ctx.db);
-      const shards = ctx.db.prepare(`SELECT id, name, fields, body, canon_status, canon_flags FROM entities WHERE type = 'shard' ORDER BY id`).all() as {
+      const shards = ctx.db.prepare(`SELECT id, name, fields, body, canon_status, canon_flags, pack_id FROM entities WHERE type = 'shard' ORDER BY id`).all() as {
         id: string;
+        pack_id: string | null;
         name: string;
         fields: string;
         body: string;
@@ -463,6 +465,7 @@ export function campaignRoutes(ctx: AppContext) {
         id: s.id,
         name: s.name,
         canon_status: s.canon_status,
+        pack_id: s.pack_id,
         canon_flags: parseJson(s.canon_flags, []),
         fields: parseJson(s.fields, []),
         body: s.body,

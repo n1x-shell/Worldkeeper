@@ -6,12 +6,13 @@ import { fakeFivetools } from './fakeFivetools.js';
 import { createApp } from '../server/src/app.js';
 import { AppContext } from '../server/src/context.js';
 import { createEntity } from '../server/src/repo/entities.js';
+import { installPack } from '../server/src/packs/registry.js';
 import { playerSnapshot } from '../server/src/player/projection.js';
 import { creatureMentions, suggestEncounters, xpBudget } from '../server/src/repo/encounters.js';
 import { itemNameCandidates } from '../server/src/repo/bookData.js';
 
 async function withBooks(srd = false) {
-  const ctx = tempContext({ settingRealms: true });
+  const ctx = tempContext();
   const gm = createApp(ctx);
   if (!srd) await request(gm).patch('/api/rules/packs/srd').send({ enabled: false });
   const scan = (await request(gm).post('/api/rules/5etools/scan').attach('data', fakeFivetools(), 'f.zip')).body;
@@ -23,10 +24,13 @@ async function withBooks(srd = false) {
 
 describe('campaign mechanics', () => {
   it('start as standard D&D in a library without the setting, and as the setting in one with it', async () => {
-    const ctx = tempContext({ settingRealms: true });
+    const ctx = tempContext();
     const gm = createApp(ctx);
     expect((await request(gm).get('/api/mechanics')).body).toEqual({ setting: false, thinning: false, theReturn: false, fading: false, worldTreasure: false });
-    createEntity(ctx.db, { id: 'SYS-907', name: 'Thinning', type: 'system', realm: 'aetheris', canon_status: 'CANON', aliases: [], tags: [], fields: [], body: 'x', notes: '' } as never);
+    // Its records alone don't make a library the setting's: its pack does.
+    createEntity(ctx.db, { id: 'SYS-907', name: 'Thinning', type: 'system', realm: 'world', canon_status: 'CANON', aliases: [], tags: [], fields: [], body: 'x', notes: '' } as never);
+    expect((await request(gm).get('/api/mechanics')).body.thinning).toBe(false);
+    installPack(ctx.db, 'worldkeeper');
     expect((await request(gm).get('/api/mechanics')).body.thinning).toBe(true);
     // The GM's choice sticks, and reaches the table server and the published handbook.
     const m = (await request(gm).put('/api/mechanics').send({ thinning: false, fading: false, nonsense: true })).body;

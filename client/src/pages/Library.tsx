@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Archive, Check, Download, RotateCcw, Upload, AlertTriangle, X, Pencil } from 'lucide-react';
-import { packsChanged } from '../lib/packs';
+import { packsChanged, usePacks } from '../lib/packs';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { Badge, Card, Check as CheckBox, DataTable, Empty, EntityLink, ErrorBox, Field, KeyValue, Loading, PageHeader, Segmented, Tabs, Toggle, TypeBadge, ask, askText, useToast, type Tone } from '../components/ui';
@@ -373,6 +373,7 @@ interface Review {
 
 export function ReviewPage() {
   const debug = useDebug();
+  const { roles } = usePacks();
   const { data, reload, error } = useApi<Review>('/api/review');
   const [tab, setTab] = useState<'proposals' | 'modified' | 'proposed' | 'duplicates' | 'conflicts' | 'sources'>('proposals');
   const [diffFor, setDiffFor] = useState<string | null>(null);
@@ -508,7 +509,18 @@ export function ReviewPage() {
         <div className="space-y-2">
           <SimpleList rows={data.conflicts.map((r) => ({ id: r.id, name: r.name }))} empty="No records are marked CONFLICT." />
           <p className="text-sm">
-            See also the <EntityLink id="DEC-903">Canon Conflict Register</EntityLink> and <EntityLink id="DEC-904">Decisions Required</EntityLink>.
+            {roles['register.conflicts'] && (
+              <>
+                See also <EntityLink id={roles['register.conflicts']} />
+                {roles['register.decisions-required'] && (
+                  <>
+                    {' '}
+                    and <EntityLink id={roles['register.decisions-required']} />
+                  </>
+                )}
+                .
+              </>
+            )}
             {debug && (
               <>
                 {' '}

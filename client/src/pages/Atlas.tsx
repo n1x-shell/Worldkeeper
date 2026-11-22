@@ -10,6 +10,7 @@ import { Card, Check, Empty, EntityLink, ErrorBox, Field, Loading, Modal, PageHe
 import { EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
 import { displaySections } from '../lib/sections';
+import { useCleaners } from '../lib/packs';
 import { useDebug } from '../components/Dev';
 import type { Entity } from '../lib/types';
 
@@ -528,7 +529,8 @@ function MarkerPanel({ marker, maps, onClose, onChange }: { marker: MarkerRow; m
   const nav = useNavigate();
   const save = (p: Partial<MarkerRow>) => api.patch(`/api/markers/${marker.id}`, p).then(onChange);
   const debug = useDebug();
-  const overview = data ? displaySections(data.entity.body, debug).find((s) => s.content && !s.secret) : null;
+  const cleanerFor = useCleaners();
+  const overview = data ? displaySections(data.entity.body, debug, cleanerFor(data.entity.pack_id)).find((s) => s.content && !s.secret) : null;
   return (
     <Card
       title="Marker"

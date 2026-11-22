@@ -1,5 +1,6 @@
 import { useRealms } from '../components/realms';
 import { useMechanics } from '../lib/mechanics';
+import { useRole } from '../lib/packs';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Minus, Plus } from 'lucide-react';
@@ -22,6 +23,7 @@ interface ReturnData {
  */
 export function ReturnPage() {
   const { activeCampaignId } = useAppState();
+  const stagesRecord = useRole('clock.stages');
   const { data, error, setData } = useApi<ReturnData>(activeCampaignId ? `/api/return?campaign_id=${activeCampaignId}` : null);
   const [reason, setReason] = useState('');
   const [held, setHeld] = useState('');
@@ -42,9 +44,11 @@ export function ReturnPage() {
   return (
     <div className="space-y-4 max-w-4xl">
       <PageHeader title="The Return" subtitle="A clock only you see. Each stage it reaches shows its omen to the players, on their Signs and Omens page." />
-      <p className="text-sm text-dim">
-        What moves it, what holds it and what each stage means: <EntityLink id="COS-032" />.
-      </p>
+      {stagesRecord && (
+        <p className="text-sm text-dim">
+          What moves it, what holds it and what each stage means: <EntityLink id={stagesRecord} />.
+        </p>
+      )}
       <Card featured className="space-y-3">
         <div className="flex items-center gap-1" aria-label={`Stage ${data.stage} of 7`}>
           {data.stages.map((s) => (

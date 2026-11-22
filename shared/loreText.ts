@@ -1,92 +1,90 @@
 /**
  * Display-only clean-up of imported source text, so records read as lore.
  *
- * The imported library carries notes about where its text came from: citations like "(A: Geography)", tags like
- * "[SOURCE-PROVIDED]", file names, "as described by the cards", and sentences about rulebooks or what is undefined.
- * Outside debug mode these are hidden. The stored record is never changed, and secrecy markers ([SECRET], GM only)
- * are always kept, because the GM needs them.
+ * A setting's archive can carry notes about where its text came from: citations, tags like "[SOURCE-PROVIDED]",
+ * file names, sentences about rulebooks or what is undefined. Its pack says how to spot them (pack.json "cleaning"),
+ * and outside debug mode they're hidden on that pack's records only; the GM's own records are shown as written. The
+ * stored record is never changed, and secrecy markers ([SECRET], GM only) are always kept, because the GM needs them.
  */
+import { compile, type CleaningRules } from './packs.js';
 
-/** Bracket tags that are about the source, not the world. [SECRET] and GM-only markers are not in this list. */
-export const SOURCE_TAG = /\s*\[(?:SOURCE[- ]PROVIDED[^\]]*|OPTIONAL[^\]]*|OUTSIDE[^\]]*|HOMEBREW[^\]]*|NEW|PROPOSED[^\]]*|UNDEFINED[^\]]*|INFERENCE[^\]]*|BELIEF[^\]]*|EXTRAPOLATED[^\]]*|CANON[^\]]*|DERIVED[^\]]*|OFFICIAL[^\]]*|v\d+[^\]]*)\]/gi;
-
-/** Short citations to the setting bibles: "(A: Geography)", "(K: Peoples and creatures; A: Everyday life)". */
-export const CITATION = /\s*\((?:[AKW]\s*:[^()]*)\)|\s*\([^()]*\[[A-Z]{3}-\d{3}\][^()]*\)/g;
-
-/** Phrases that point at the source inside an otherwise good sentence. */
-export const SOURCE_PHRASES: [RegExp, string][] = [
-  [/\s+as described by the cards/gi, ''],
-  [/\s+from the source\b/gi, ''],
-  [/\s+in the (?:novel|cards|bible|setting bible)\b/gi, ''],
-  [/,?\s+called [^,.]+ in the novel/gi, ''],
-  [/What the cards say/g, 'What is told'],
-  [/\b[Tt]he (\d+ AB) novel\b/g, '$1'],
-  [/\s+appear in (?:the )?(?:\w+ )?character cards as /gi, ' are '],
-  [/,?\s*but the (?:bibles?|books|cards|source) (?:do|does) not say so/gi, ''],
-  [/\bThe source (?:proposes|suggests) representing /g, 'Represent '],
-  [/\bThe source suggests this route for /g, 'This route suits '],
-];
-
-/** A sentence that is about the source, the rules books or the editing of the library, not about the world. */
-export const META_SENTENCE =
-  /\.md\b|Setting[_ ]Bible|\bthe bible\b|\bthe source (?:proposes|suggests|gives|says|states)\b|\bsetting-facing\b|official character class|\brulebooks?\b|character-build interpretation|\bverif(?:y|ied)\b|\bUNDEFINED\b|\bSee [A-Z]{3,4}-\d{3}|\bno (?:additional|further) [^.]* (?:assumed|assigned)\b|\bdo not (?:assign|place|create|invent)\b|\bowner decision\b|\bstated (?:flexible )?convention\b|\bTome\b|\bLore entries\b|\bstandalone page\b|\bnot a replacement for\b|\bauthoritative\b|\brule reference\b|\bthe (?:cards|bibles|books|Lorebook|GM Lorebook)\b|\b(?:cards|books|bibles|Lorebook)'s?\s|`[^`]*\/[^`]*`|\b[A-Z]{3}-\d{3}[\u2013-]\d{3}\b|\bsee (?:the )?[^.]*\b[A-Z]{3}-\d{3}\b|\bbibles?\b|\bcharacter cards?\b|\bno [^.]*\bis established\b|\bonly [^.]*\bis established\b|\bonly the pressures apparent\b/i;
-
-/** Whole-section headings that only describe the source (shown in debug mode only). */
-export const SOURCE_ONLY_HEADING = /^(?:undefined|shared-world relationship|cross-entry role link.*|position and map use|limit of the record)$/i;
-
-function cleanSentences(line: string): string {
-  // Keep list markers and quote markers; split the rest into sentences.
-  const m = /^(\s*(?:[-*]|\d+\.|>)\s+)?(.*)$/.exec(line)!;
-  const lead = m[1] ?? '';
-  const sentences = m[2].split(/(?<=[.!?])\s+(?=[A-Z*_"'(\[])/);
-  const kept = sentences.filter((s) => !META_SENTENCE.test(s));
-  if (!kept.length) return '';
-  return lead + kept.join(' ');
+export interface Cleaner {
+  /** Clean a block of Markdown text for display. */
+  text: (md: string) => string;
+  /** Clean one heading: source tags and "from the source" go; secrecy markers stay. */
+  heading: (h: string) => string;
+  /** A section of notes about the source itself (shown in debug mode only). */
+  editorial: (heading: string) => boolean;
+  /** A section whose heading only describes the source (shown in debug mode only). */
+  sourceOnly: (heading: string) => boolean;
 }
 
-function cleanTableRow(line: string): string {
-  return line
-    .split('|')
-    .map((cell) => {
-      if (!cell.trim()) return cell;
-      const kept = cell
-        .trim()
-        .split(/(?<=[.!?])\s+(?=[A-Z])/)
-        .filter((s) => !META_SENTENCE.test(s))
-        .join(' ');
-      return ` ${kept} `;
-    })
-    .join('|');
-}
+/** Shows text as written (a record of the GM's own, or a pack with no cleaning rules). */
+export const AS_WRITTEN: Cleaner = { text: (md) => md, heading: (h) => h, editorial: () => false, sourceOnly: () => false };
 
-/** Clean one heading: source tags and "from the source" go; secrecy markers stay. */
-export function loreHeading(heading: string): string {
-  let h = heading.replace(SOURCE_TAG, '');
-  for (const [re, to] of SOURCE_PHRASES) h = h.replace(re, to);
-  return h.trim() || heading;
-}
+export function makeCleaner(rules: CleaningRules | undefined | null): Cleaner {
+  if (!rules) return AS_WRITTEN;
+  const tag = compile(rules.sourceTag, 'g');
+  const citation = compile(rules.citation, 'g');
+  const phrases = (rules.sourcePhrases ?? []).map((p) => [compile(p, 'g')!, p.to] as const);
+  const meta = compile(rules.metaSentence);
+  const sourceOnly = compile(rules.sourceOnlyHeading);
+  const editorial = compile(rules.editorialHeading);
+  const isMeta = (s: string) => !!meta?.test(s);
 
-/** Clean a block of markdown text for display. */
-export function loreText(md: string): string {
-  const out: string[] = [];
-  for (const raw of md.split('\n')) {
-    let line = raw.replace(SOURCE_TAG, '').replace(CITATION, '');
-    for (const [re, to] of SOURCE_PHRASES) line = line.replace(re, to);
-    if (/^\s*\|/.test(line)) {
-      // Table rows: drop a mapping column header word but keep the table shape.
-      out.push(cleanTableRow(line));
-      continue;
-    }
-    if (!line.trim()) {
-      out.push(line);
-      continue;
-    }
-    const cleaned = cleanSentences(line);
-    // A line that was only source notes disappears entirely.
-    if (cleaned.trim() || !raw.trim()) out.push(cleaned);
-  }
-  return out
-    .join('\n')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
+  const cleanSentences = (line: string) => {
+    // Keep list markers and quote markers; split the rest into sentences.
+    const m = /^(\s*(?:[-*]|\d+\.|>)\s+)?(.*)$/.exec(line)!;
+    const lead = m[1] ?? '';
+    const kept = m[2].split(/(?<=[.!?])\s+(?=[A-Z*_"'(\[])/).filter((s) => !isMeta(s));
+    return kept.length ? lead + kept.join(' ') : '';
+  };
+  const cleanTableRow = (line: string) =>
+    line
+      .split('|')
+      .map((cell) =>
+        cell.trim()
+          ? ` ${cell
+              .trim()
+              .split(/(?<=[.!?])\s+(?=[A-Z])/)
+              .filter((s) => !isMeta(s))
+              .join(' ')} `
+          : cell,
+      )
+      .join('|');
+  const strip = (s: string) => {
+    let out = tag ? s.replace(tag, '') : s;
+    for (const [re, to] of phrases) out = out.replace(re, to);
+    return out;
+  };
+
+  return {
+    heading: (h) => strip(h).trim() || h,
+    text: (md) => {
+      const out: string[] = [];
+      for (const raw of md.split('\n')) {
+        let line = tag ? raw.replace(tag, '') : raw;
+        if (citation) line = line.replace(citation, '');
+        for (const [re, to] of phrases) line = line.replace(re, to);
+        if (/^\s*\|/.test(line)) {
+          // Table rows keep the table's shape.
+          out.push(cleanTableRow(line));
+          continue;
+        }
+        if (!line.trim()) {
+          out.push(line);
+          continue;
+        }
+        const cleaned = cleanSentences(line);
+        // A line that was only source notes disappears entirely.
+        if (cleaned.trim() || !raw.trim()) out.push(cleaned);
+      }
+      return out
+        .join('\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    },
+    editorial: (h) => !!editorial?.test(h.trim()),
+    sourceOnly: (h) => !!sourceOnly?.test(h.trim()),
+  };
 }

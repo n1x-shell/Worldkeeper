@@ -17,33 +17,47 @@ import { splitSections } from '../import/parseMarkdown.js';
 import { isSecretHeading } from './projection.js';
 import { ENTITY_TYPE_LABELS, type EntityType } from '../../../shared/domain.js';
 import { worldkeeperPath } from '../packs/paths.js';
+import { findPack } from '../packs/registry.js';
+import { compile, type HandbookRules } from '../../../shared/packs.js';
 
 type DB = Database.Database;
 
-// Same rule as the app's display filter for editorial notes about the source.
-export const EDITORIAL =
-  /^(sources?|references|unspecified fields|tome implementation|review notes|limits( of the source)?|record boundaries|source boundary|use and verification|missing facts|limitations|open questions|unknowns|amsel entry (rule|notes)|use in amsel|status)(\s*\[[^\]]*\])?$/i;
-// DM-facing sections (table advice, campaign bookkeeping, notes about the source).
-export const DM_FACING =
-  /^(use in play|connections and use|verification boundary|cross-entry role link.*|mechanics note|provenance note|related documents|related|undefined|notes|campaign use|adventure material|attitude toward the party.*|established limits|other possibilities|boundaries)$/i;
-// Bookkeeping for the DM and editors: placeholders and instructions about the source, not lore.
-const BOOKKEEPING = (text: string) =>
-  text.trim() === 'UNDEFINED' || /do not (assign|place|create|turn|invent)|without (approval|an owner decision)|\bAmsel\b|belongs? in Tome|owner decision/i.test(text);
-// Each sealed vault's purpose is secret (vault records are SECRET): sections that name one stay out.
-export const VAULTS = /\b(Seed Vault|Mirewell|Arborhold|Cradlehorn|Cinderlock|Anvilreach|Rimeholt|Deepcall|Saltgate|Greyhall|Watchbarrow|Glassmere|Hollowbell)\b/;
-/** Something secret elsewhere in the lore. The myths entry is exempt for the Hidden Ones (a myth players know). */
-export const isSpoiler = (id: string, text: string) =>
-  VAULTS.test(text) ||
-  BOOKKEEPING(text.split('\n').slice(1).join('\n')) ||
-  /Forgotten One|thirteenth (shard|crystal)|Root Core|Seventh Ward|\[SECRET|GM only/i.test(text) ||
-  (id !== 'COS-910' && /Hidden Ones/.test(text));
+/** A pack's handbook rules (pack.json "handbook"), compiled: which sections of its records are safe for players. */
+export interface CompiledHandbookRules {
+  editorial: RegExp | null;
+  dmFacing: RegExp | null;
+  bookkeeping: RegExp | null;
+  spoilers: RegExp[];
+  exceptions: { re: RegExp; exceptIn: string }[];
+}
+export function compileHandbookRules(h: HandbookRules | undefined): CompiledHandbookRules {
+  return {
+    editorial: compile(h?.editorialHeading),
+    dmFacing: compile(h?.dmFacingHeading),
+    bookkeeping: compile(h?.bookkeeping),
+    spoilers: (h?.spoilers ?? []).map((p) => compile(p)!),
+    exceptions: (h?.spoilerExceptions ?? []).map((p) => ({ re: compile(p)!, exceptIn: p.exceptIn })),
+  };
+}
+/** The handbook's rules: the Worldkeeper pack's, whose published handbook this matches. */
+const rules = (() => {
+  let c: CompiledHandbookRules | null = null;
+  return () => (c ??= compileHandbookRules(findPack('worldkeeper')?.manifest.handbook));
+})();
+
+/** Something secret elsewhere in the lore (or bookkeeping for the DM). A rule's exception names the record it doesn't apply to. */
+export function isSpoiler(id: string, text: string, r = rules()) {
+  const body = text.split('\n').slice(1).join('\n');
+  return r.spoilers.some((re) => re.test(text)) || (!!r.bookkeeping && (body.trim() === 'UNDEFINED' || r.bookkeeping.test(body))) || r.exceptions.some((x) => x.exceptIn !== id && x.re.test(text));
+}
 
 /** The sections of a record the handbook shows. */
-export function safeSections(id: string, body: string): string[] {
+export function safeSections(id: string, body: string, r = rules()): string[] {
   return splitSections(body)
-    .filter(
-      (s) => s.heading && s.content.trim() && !isSecretHeading(s.heading) && !EDITORIAL.test(s.heading.trim()) && !DM_FACING.test(s.heading.trim()) && !isSpoiler(id, s.heading + '\n' + s.content),
-    )
+    .filter((s) => {
+      const h = s.heading?.trim() ?? '';
+      return h && s.content.trim() && !isSecretHeading(h) && !r.editorial?.test(h) && !r.dmFacing?.test(h) && !isSpoiler(id, s.heading + '\n' + s.content, r);
+    })
     .map((s) => s.heading);
 }
 

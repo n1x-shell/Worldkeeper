@@ -2,6 +2,7 @@
  * The Return (The Return [COS-032]): a seven-stage clock the GM moves by hand. Players never see the clock, only the
  * omens and rumours of each stage it has reached (assets/return/omens.json). Forming any Orb jumps it to stage 6.
  */
+import { role } from '../packs/registry.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { DB } from '../db/connection.js';
@@ -24,7 +25,8 @@ export function returnStages(file = OMENS): ReturnStage[] {
 
 /** The GM's own description of each stage, from the Return's record. */
 function stageNotes(db: DB) {
-  const body = (db.prepare(`SELECT body FROM entities WHERE id = 'COS-032'`).get() as { body: string } | undefined)?.body ?? '';
+  const id = role(db, 'clock.stages');
+  const body = id ? ((db.prepare(`SELECT body FROM entities WHERE id = ?`).get(id) as { body: string } | undefined)?.body ?? '') : '';
   const notes: Record<number, string> = {};
   for (const m of body.matchAll(/^(\d)\.\s+\*\*([^*]+)\*\*\s*(.+)$/gm)) notes[Number(m[1])] = m[3].trim();
   return notes;

@@ -47,7 +47,8 @@ export function sessionBriefing(db: DB, sessionId: number) {
   // A region-sized place below the continent or world level: a region, nation or domain (not the whole continent).
   const isRegion = (e: Ent) => !!reg.get(e.type)?.traits.regionLike && !reg.get(e.type)?.traits.intro;
   for (let e = here, guard = 0; e && guard < 8 && isPlace(e) && !chain.some((x) => x.id === e!.id); e = get(e.parent_id), guard++) chain.push(e);
-  const region = chain.find(isRegion) ?? chain.find((e) => e.id === 'SET-301');
+  // A place with no region above it (a town straight under its continent) is its own region.
+  const region = chain.find(isRegion) ?? chain.find((e) => e.id !== here?.id && !reg.get(e.type)?.traits.intro) ?? chain[0];
 
   // Places nearby: what the location contains, and its siblings within the same parent.
   // Ids that count as "here": the place, the place it's in, and what's nearby (not the whole continent).

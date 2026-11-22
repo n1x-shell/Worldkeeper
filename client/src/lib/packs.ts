@@ -3,7 +3,8 @@
  * (its update, its handbook match, its rumours and mysteries...) show only with that pack, and pages find the records
  * that play a part ("rules.calendar", "world.overview") by role, never by ID.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { AS_WRITTEN, makeCleaner, type Cleaner } from '../../../shared/loreText';
 import type { PackInfo } from '../../../shared/packs';
 
 export interface PacksState {
@@ -54,3 +55,22 @@ export function usePacks(): PacksState & { loaded: boolean; has: (id: string) =>
 
 /** The record that plays a part, if an installed pack gives it one. */
 export const useRole = (key: string): string | null => usePacks().roles[key] ?? null;
+
+const cleaners = new Map<string, Cleaner>();
+/**
+ * How records read outside debug mode: `const cleanerFor = useCleaners()`, then `cleanerFor(e.pack_id)` gives the
+ * record's pack's cleaning rules, or shows it as written (the GM's own records, or a pack without rules).
+ */
+export function useCleaners(): (packId: string | null | undefined) => Cleaner {
+  const { packs } = usePacks();
+  return useMemo(() => {
+    const rules = new Map(packs.map((p) => [p.id, p.cleaning]));
+    return (packId) => {
+      const r = packId ? rules.get(packId) : undefined;
+      if (!packId || !r) return AS_WRITTEN;
+      let c = cleaners.get(packId);
+      if (!c) cleaners.set(packId, (c = makeCleaner(r)));
+      return c;
+    };
+  }, [packs]);
+}

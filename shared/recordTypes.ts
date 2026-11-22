@@ -25,6 +25,8 @@ export interface TypeTraits {
   intro?: boolean;
   /** Bookkeeping, not lore: indexes, registers and redirects (left out of New, browse lists and the handbook). */
   meta?: boolean;
+  /** A place nobody lives in (a sealed vault): people named with it want it, guard it or came from it. */
+  uninhabited?: boolean;
 }
 
 /** How a type shows on a map: an area (regions, continents) or a site (towns, landmarks), or not at all. */

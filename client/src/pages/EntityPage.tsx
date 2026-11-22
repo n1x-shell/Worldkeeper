@@ -30,8 +30,9 @@ import {
 import { api, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary, RelationshipView, StateRow } from '../lib/types';
-import { displaySections, isEditorial, splitSections, type Section } from '../lib/sections';
-import { loreText } from '@shared/loreText';
+import { displaySections, splitSections, type Section } from '../lib/sections';
+import { AS_WRITTEN, type Cleaner } from '@shared/loreText';
+import { useCleaners } from '../lib/packs';
 import { RumoursPanel } from './Rumours';
 import { SecretsPanel } from './Mysteries';
 import { PartyTiesPanel } from './Campaign';
@@ -101,6 +102,7 @@ export function EntityPage() {
   const { id = '' } = useParams();
   const nav = useNavigate();
   const { reloadIndex, debug } = useAppState();
+  const cleanerFor = useCleaners();
   const { data, error, loading, reload, setData } = useApi<Detail>(`/api/entities/${encodeURIComponent(id)}`);
   const [tab, setTab] = useState<Tab>('record');
   const { toast, node: toastNode } = useToast();
@@ -139,8 +141,9 @@ export function EntityPage() {
     }
   };
 
-  // Outside debug mode, fields the source left undefined are not facts about the world, so they are not shown.
-  const fieldMap = debug ? e.fields : e.fields.filter(([, v]) => !/^\s*UNDEFINED\b/i.test(v)).map(([k, v]) => [k, loreText(v)] as [string, string]);
+  // Outside debug mode, a pack's fields its source left undefined are not facts about the world, so they are not shown.
+  const clean = cleanerFor(e.pack_id);
+  const fieldMap = debug || clean === AS_WRITTEN ? e.fields : e.fields.filter(([, v]) => !/^\s*UNDEFINED\b/i.test(v)).map(([k, v]) => [k, clean.text(v)] as [string, string]);
   const profileKind = profileKindFor(e.type);
   const details = <RecordDetails data={data} revisions={revisions.data} inInspector={inspector.inInspector} onTab={setTab} />;
   return (
@@ -405,8 +408,8 @@ const slug = (s: string) =>
     .slice(0, 48);
 
 /** Sections as read on the page: the title the text repeats is dropped, and the GM-only note leaves the heading (the label says it). */
-function readingSections(body: string, debug: boolean, name: string): (Section & { anchor: string })[] {
-  const list = displaySections(body, debug).map((s, i) => {
+function readingSections(body: string, debug: boolean, name: string, clean: Cleaner): (Section & { anchor: string })[] {
+  const list = displaySections(body, debug, clean).map((s, i) => {
     let content = s.content;
     if (i === 0 && !s.heading) {
       const m = /^\s*#\s+(.+?)\s*(\n|$)/.exec(content);
@@ -433,7 +436,8 @@ function RecordTab({
 }) {
   const e = data.entity;
   const [ref, w] = useWidth<HTMLDivElement>();
-  const sections = useMemo(() => readingSections(e.body, debug, e.name), [e.body, debug, e.name]);
+  const clean = useCleaners()(e.pack_id);
+  const sections = useMemo(() => readingSections(e.body, debug, e.name, clean), [e.body, debug, e.name, clean]);
   const toc = sections.filter((s) => s.heading);
   const withNotes = !!e.notes.trim();
   const layout = w >= 1120 && toc.length >= 3 ? 'three' : w >= 840 ? 'two' : 'one';
@@ -1134,6 +1138,7 @@ function RelationshipsTab({ entityId, rels, onChange }: { entityId: string; rels
 const ON_PAPER = '[&_h2]:!text-parchink [&_h2]:!border-parchink/20 [&_strong]:!text-parchink [&_a]:!text-parchlink [&_blockquote]:!text-parchink/80 [&_table]:!border-parchink/25 [&_th]:!border-parchink/25 [&_td]:!border-parchink/25 [&_th]:!bg-parchink/10 [&_th]:!text-parchink';
 function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { heading: string; secret: boolean }[]; onPatch: (b: Record<string, unknown>, m?: string) => Promise<void> }) {
   const debug = useDebug();
+  const clean = useCleaners()(entity.pack_id);
   const [summary, setSummary] = useState(entity.player_summary);
   const [fact, setFact] = useState('');
   const { data: preview, reload } = useApi<{ name: string; summary: string; facts: string[]; sections: { heading: string; content: string }[] } | null>(
@@ -1168,7 +1173,7 @@ function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { 
           <div className="label">Reveal sections</div>
           <ul className="space-y-1 text-sm">
             {sections
-              .filter((s) => s.heading && (debug || !isEditorial(s.heading)))
+              .filter((s) => s.heading && (debug || !clean.editorial(s.heading)))
               .map((s) => (
                 <li key={s.heading}>
                   <Check

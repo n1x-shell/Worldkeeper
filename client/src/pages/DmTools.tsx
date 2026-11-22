@@ -14,6 +14,7 @@ import { StatBlockById } from '../components/StatBlock';
 import { Markdown } from '../components/Markdown';
 import { Dev } from '../components/Dev';
 import { displaySections } from '../lib/sections';
+import { useCleaners } from '../lib/packs';
 import type { Character } from './Campaign';
 import { ProfileSummary, type ProfileResponse } from './Profile';
 import { StanceMatrix } from './Rumours';
@@ -597,6 +598,7 @@ export function RulesPage() {
 // ------------------------------------------------------------------ NPC quick reference
 export function NpcCard({ id }: { id: string }) {
   const realms = useRealms();
+  const cleanerFor = useCleaners();
   const { activeCampaignId } = useAppState();
   const { data } = useApi<{ entity: Entity }>(`/api/entities/${encodeURIComponent(id)}`);
   const isProfiled = data ? profileKindFor(data.entity.type) !== null : false;
@@ -637,7 +639,7 @@ export function NpcCard({ id }: { id: string }) {
           )}
         </>
       ) : (
-        <Markdown text={displaySections(e.body, false).find((s) => s.content && !s.secret)?.content.slice(0, 300) ?? ''} className="prose-lore text-[14px]" />
+        <Markdown text={displaySections(e.body, false, cleanerFor(e.pack_id)).find((s) => s.content && !s.secret)?.content.slice(0, 300) ?? ''} className="prose-lore text-[14px]" />
       )}
       {e.notes && <div className="text-xs text-dim italic line-clamp-3">{e.notes}</div>}
     </Card>

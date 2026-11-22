@@ -126,7 +126,8 @@
       "browse": ["places", "landmarks"],
       "handbook": "places",
       "traits": {
-        "place": true
+        "place": true,
+        "uninhabited": true
       }
     },
     {
@@ -207,7 +208,8 @@
     "depths.peoples": "ETH-590",
     "depths.ways": "ETH-591",
     "depths.dangers": "ETH-592",
-    "depths.navigation": "ETH-593"
+    "depths.navigation": "ETH-593",
+    "depths.crossing": "LOC-901"
   },
   "modules": ["thinning", "the-return", "fading-salvage", "setting-treasure", "vaults", "shards", "depths-explorer", "quick-reference"],
   "importProfile": {
