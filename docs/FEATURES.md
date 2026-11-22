@@ -17,6 +17,19 @@ In your own world the wizard can add a few **records that teach**, ticked by def
 
 Pages with nothing to show say so and point the way: the Name Generator asks for a people's common names, the setting's own pages (the dominions, Open Questions) say they come with the setting.
 
+## Starting out
+
+A fresh library opens on **Start your world**. Choose how to begin; every step can be skipped and everything it makes can be changed later.
+
+- **Build my own world:** your world's name, a line about it and the name the app goes by; the calendar now (the months, the year it starts and the year's name, as in "1247 AR") or later; and its shape: one continent, several, a world and another plane, or nothing yet, each renamed or added to as you like.
+- **Play in the Worldkeeper setting:** installs the setting (its realms, records, rules and modules), with your copy of its archive if you have one, and shows what came in.
+
+Both ways then go through the same steps: **rules** (the SRD is always on; import your books or open content now or later; the setting's rules and modules, any of which you can untick), **a first campaign** (its name, where it starts, a place you pick or a town made for you, and the party's names, each a blank character ready for the builder), **a map** of the world if you have one, and **Finish**, which shows what will be made. **Restore a backup** is on the first page too.
+
+In your own world the wizard can add a few **records that teach**, ticked by default: **Start Here**, an inn in your town, an NPC who keeps it with a GM-only secret, a faction allied with her and a landmark (pinned on your map, if you added one). They're real records, linked together and never shown to players unless you reveal them. The dashboard's **Getting started** card follows what you've tried (reading Start Here, peeking at a link, making a record, revealing a section, adding a map, planning a session) and has **Remove the tutorial records** for when you're done; a backup is made first, and your own records and town stay.
+
+Pages with nothing to show say so and point the way: the Name Generator asks for a people's common names, the setting's own pages (the dominions, Open Questions) say they come with the setting.
+
 ## Finding your way
 
 The top bar holds the five workspaces: **Codex** (the world and its records), **Campaign** (the active campaign, its prep and the state of the world), **Characters** (the party, the builder and reference), **Atlas** (the full map view; its sidebar holds the map switcher and the map's legend and tools, and Manage maps) and **Live** (running the session; a red dot shows while a session is live). The sidebar lists only the current workspace's pages, and collapses to an icon rail (`[`); below 1280px wide it starts as the rail. Search (`Ctrl+K`), the active campaign (switch it from its menu), Player View, the theme and the **Library** menu (the gear: import and export, Canon Review, backups, Settings and the other maintenance pages) are on the right. The app opens on the active campaign's overview when there is one; the app mark always goes to the World Dashboard.
