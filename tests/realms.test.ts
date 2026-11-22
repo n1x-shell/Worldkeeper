@@ -12,6 +12,8 @@ import { listRealms } from '../server/src/repo/realms.js';
 import { exportJson, importJson } from '../server/src/backup/exporter.js';
 import { playerSnapshot } from '../server/src/player/projection.js';
 import { realmKey, sortRealms } from '../shared/realms.js';
+import { normalizeRealm, SETTING_REALMS } from '../server/src/import/normalize.js';
+import { loreFiles } from '../server/src/additions.js';
 
 const rec = (id: string, name: string, type: string, realm: string, body = '## Overview\nText.') =>
   ({ id, name, type, realm, canon_status: 'CANON', aliases: [], tags: [], fields: [], body, notes: '' }) as never;
@@ -38,7 +40,9 @@ describe('realms', () => {
       db.exec(m.sql);
       db.prepare('INSERT INTO schema_migrations (version, name) VALUES (?, ?)').run(m.version, m.name);
     }
-    db.prepare(`INSERT INTO entities (id, name, type, realm) VALUES ('CON-001', 'Aetheris', 'continent', 'aetheris'), ('ETH-001', 'A Domain', 'ethereal_domain', 'ethereal')`).run();
+    db.prepare(
+      `INSERT INTO entities (id, name, type, realm) VALUES ('CON-001', 'Aetheris', 'continent', 'aetheris'), ('ETH-001', 'A Domain', 'ethereal_domain', 'ethereal'), ('NPC-371', 'Keeper Lantern', 'npc', 'ethereal'), ('CRE-530', 'The Horizon Leviathan', 'creature', 'ethereal'), ('COS-030', 'The Elder Gods', 'cosmology', 'ethereal')`,
+    ).run();
     db.prepare(`INSERT INTO maps (name) VALUES ('The Ethereal Realm'), ('The World Map')`).run();
     db.prepare(`INSERT INTO timeline_rows (sort_order, time_label, event, realm_label) VALUES (1, 'Year 1', 'A', 'Aetheris'), (2, 'Year 2', 'B', 'Both'), (3, 'Year 3', 'C', 'World')`).run();
     migrate(db);
@@ -63,6 +67,11 @@ describe('realms', () => {
         .filter((r) => r.parent_id === 'hollow-verge')
         .map((r) => r.kind),
     ).toEqual(Array(6).fill('domain'));
+    // Records that sit in a domain move into it (and stay in the Ethereal Realm); realm-wide ones stay where they are.
+    const where = (id: string) => db.prepare('SELECT realm, realms FROM entities WHERE id = ?').get(id) as { realm: string; realms: string };
+    expect(where('NPC-371')).toEqual({ realm: 'hollow-verge', realms: '["hollow-verge","ethereal"]' });
+    expect(where('CRE-530').realm).toBe('black-horizon');
+    expect(where('COS-030').realm).toBe('ethereal');
     expect(listRealms(db).find((r) => r.id === 'world')).toMatchObject({ kind: 'world', parent_id: 'evershroud' });
     expect(listRealms(db).find((r) => r.id === 'ethereal')).toMatchObject({ kind: 'realm', parent_id: null });
     expect(listRealms(db).find((r) => r.id === 'aetheris')).toMatchObject({ name: 'Aetheris', kind: 'continent', parent_id: 'world', color: 'amber' });
@@ -143,6 +152,36 @@ describe('realms', () => {
     const res = await request(app).patch('/api/realms/ostmark').send({ kind: 'world', parent_id: 'astral-sea' });
     expect(res.status).toBe(400);
     expect(res.body.error ?? res.text).toMatch(/The Marches/);
+  });
+
+  it("put the Ethereal Realm's records in their domains: named first in the realm field, or by their domain's record", () => {
+    expect(normalizeRealm('The Hollow Verge (Ethereal Realm)')).toEqual({ realm: 'hollow-verge', realms: ['hollow-verge', 'ethereal'] });
+    expect(normalizeRealm('Ethereal Realm, beyond the Black Horizon').realm).toBe('ethereal'); // beyond it is not in it
+    const head = (id: string, name: string, category: string, parent: string) =>
+      `ID: ${id}\nName: ${name}\nAlternate names: None\nCategory: ${category}\nParent: ${parent}\nContinent or realm: Ethereal Realm\nCanon status: CANON\nSource: Test\nTags: realm/ethereal\n\n# ${name}\n\n## Overview\nText.\n`;
+    const { db } = importFiles([
+      ...fixtureFiles(),
+      { path: 'Lib/03_Ethereal/ETH-503_Ossuary.md', content: head('ETH-503', 'The Ossuary of Kings', 'Ethereal domain', 'The Ethereal Realm [CON-501]') },
+      { path: 'Lib/03_Ethereal/LOC-503_Throne.md', content: head('LOC-503', 'The Fractured Throne', 'Landmark', 'The Ossuary of Kings [ETH-503]') },
+      { path: 'Lib/03_Ethereal/FAC-501_Breakers.md', content: head('FAC-501', 'Cycle Breakers', 'Faction', 'The Ethereal Realm [CON-501]') },
+    ]);
+    const realmOf = (id: string) => (db.prepare('SELECT realm FROM entities WHERE id = ?').get(id) as { realm: string }).realm;
+    expect([realmOf('ETH-503'), realmOf('LOC-503'), realmOf('FAC-501')]).toEqual(['ossuary-of-kings', 'ossuary-of-kings', 'ethereal']);
+    expect(listRealms(db).find((r) => r.id === 'ossuary-of-kings')).toMatchObject({ parent_id: 'hollow-verge' });
+  });
+
+  it("are named correctly in the setting's own records: a domain first, then the Ethereal Realm", () => {
+    const domains = Object.values(SETTING_REALMS)
+      .filter((r) => r.kind === 'domain')
+      .map((r) => r.name);
+    const fields = loreFiles().flatMap((f) => [...f.content.matchAll(/^Continent or realm: (.+)$/gm)].map((m) => m[1]));
+    const inDomain = fields.filter((v) => v.endsWith('(Ethereal Realm)'));
+    expect(inDomain.length).toBeGreaterThan(60);
+    for (const v of inDomain)
+      expect(
+        domains.some((d) => v.startsWith(d)),
+        v,
+      ).toBe(true);
   });
 
   it('reach the handbook by name, and a people of a world is found on its continents', () => {

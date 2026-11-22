@@ -3,7 +3,7 @@ Name: The Baker
 Alternate names: None recorded
 Category: NPC
 Parent: People and Organizations (Ethereal Realm)
-Continent or realm: Ethereal Realm
+Continent or realm: The Fields of Lost Realities (Ethereal Realm)
 Canon status: CANON
 Source: Worldkeeper additions (residents of landmarks, vaults and buildings, owner decision, November 2026)
 Tags: realm/ethereal, cat/npc, status/canon, vis/gm

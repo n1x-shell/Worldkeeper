@@ -3,7 +3,7 @@ Name: Gauge
 Alternate names: None recorded
 Category: NPC
 Parent: People and Organizations (Ethereal Realm)
-Continent or realm: Ethereal Realm
+Continent or realm: The Hollow Verge (Ethereal Realm)
 Canon status: CANON
 Source: Worldkeeper additions (people of the Ethereal Realm's new species, owner decision, November 2026)
 Tags: realm/ethereal, cat/npc, status/canon, vis/gm

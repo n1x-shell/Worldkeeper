@@ -37,6 +37,7 @@ import { SpeciesBuilder } from './SpeciesBuilder';
 import { OTHER_GROUP, PLAYER_GROUPS, groupOf, linkedIds, previewText } from './categories';
 import { Badge, RarityTag, RealmBadge, type Tone } from '../components/ui/badges';
 import { realmStyle, useRealms } from '../components/realms';
+import { REALM_KIND_LABELS } from '@shared/realms';
 import { Card } from '../components/ui/surfaces';
 import { DataTable, type Column } from '../components/ui/data';
 import { Empty, Loading } from '../components/ui/feedback';
@@ -232,8 +233,9 @@ export function PlayerHome() {
         </div>
       </div>
     );
+  // A card for each realm, world and continent; a domain's entries count towards the realm that holds it.
   const realms = realmList.list
-    .filter((r) => !r.archived)
+    .filter((r) => !r.archived && r.kind !== 'domain' && r.kind !== 'region_group')
     .map((r) => {
       const here = entities.filter((e) => inRealm(e, r.id));
       const intro = here.find((e) => e.realm === r.id && ['continent', 'realm', 'world'].includes(e.type));
@@ -553,7 +555,7 @@ export function PlayerRealm() {
   return (
     <div className="space-y-6">
       <PlayerPageTitle
-        eyebrow="Realm"
+        eyebrow={REALM_KIND_LABELS[info.kind]}
         icon={<span className={`${s.cls} ${s.text}`}>{s.icon}</span>}
         title={label}
         subtitle={<span className="num">{plural(here.length, 'entry', 'entries')} your party knows of</span>}

@@ -107,6 +107,20 @@ export const SETTING_REALMS: Record<string, { name: string; kind: RealmKind; par
   'black-horizon': { name: 'The Black Horizon', kind: 'domain', parent_id: 'hollow-verge', color: 'red', icon: 'compass', sort_order: 10 },
 };
 
+/**
+ * The archive's record for each of the Ethereal Realm's domains. Those records, and archive records whose parent is one
+ * (the domains' landmarks), belong to that domain; the setting's own additions name their domain in their realm field.
+ */
+export const SETTING_DOMAIN_RECORDS: Record<string, string> = {
+  'ETH-501': 'hollow-verge',
+  'ETH-502': 'fields-of-lost-realities',
+  'ETH-503': 'ossuary-of-kings',
+  'ETH-504': 'silent-archive',
+  'ETH-505': 'loom-of-eternity',
+  'ETH-506': 'citadel-of-the-hidden',
+  'ETH-507': 'black-horizon',
+};
+
 /** Words in a realm field that don't name a realm. */
 const NOT_A_REALM = /^(both|all|any|every(where)?|multiple|various|n\/?a|none|unknown|undefined|-|—|cross[- ]realm)\b/i;
 
@@ -137,6 +151,10 @@ export function normalizeRealm(raw: string | null, known: KnownRealm[] = []): { 
   }
   let realm: Realm = 'world';
   const f = focus.trim();
+  // A domain of the setting's Ethereal Realm named first ("The Hollow Verge (Ethereal Realm)"): the record is in that
+  // domain, and still in the Ethereal Realm.
+  const domain = Object.keys(SETTING_REALMS).find((id) => SETTING_REALMS[id].kind === 'domain' && bare(f).startsWith(bare(SETTING_REALMS[id].name)));
+  if (domain) return { realm: domain, realms: [domain, 'ethereal'] };
   if (f.startsWith('world') || !f) realm = 'world';
   else if (focus.includes('ethereal') && !focus.includes('aetheris') && !focus.includes('kaelmar')) realm = 'ethereal';
   else if (focus.startsWith('aetheris') && !focus.includes('kaelmar')) realm = 'aetheris';

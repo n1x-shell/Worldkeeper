@@ -3,7 +3,7 @@ Name: Lemmy Carrow
 Alternate names: The Lamplighter; the dead man at the Crooked Nail
 Category: NPC
 Parent: People and Organizations (Ethereal Realm)
-Continent or realm: Ethereal Realm
+Continent or realm: The Hollow Verge (Ethereal Realm)
 Canon status: CANON
 Source: Worldkeeper additions (opening adventures, GM decision, 2026)
 Tags: realm/ethereal, realm/aetheris, realm/kaelmar, cat/npc, status/canon, vis/gm

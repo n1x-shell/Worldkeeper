@@ -22,6 +22,9 @@ export function placeSettingWorld(db: DB) {
 
 /** Make sure one of the setting's realms exists, with its place in the setting. Returns its id. */
 export function ensureSettingRealm(db: DB, id: string): string {
+  // What holds it first (the Hollow Verge before the domains beneath it), so it lands in its place.
+  const parent = SETTING_REALMS[id].parent_id;
+  if (parent && SETTING_REALMS[parent]) ensureSettingRealm(db, parent);
   ensureRealm(db, id, SETTING_REALMS[id]);
   placeSettingWorld(db);
   return id;

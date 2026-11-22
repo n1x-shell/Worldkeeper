@@ -355,8 +355,16 @@ export function worldRoutes(ctx: AppContext) {
         : null;
       // One card per realm that holds records: its introducing record (world, continent or realm), or its description.
       const SETTING_ROOT: Record<string, string> = { aetheris: 'CON-001', kaelmar: 'CON-301', ethereal: 'CON-501' };
-      const branches = listRealms(db, { counts: true })
-        .filter((r) => (r.records ?? 0) > 0)
+      // Domains and region groups count towards the realm, world or continent that holds them, not cards of their own.
+      const allRealms = listRealms(db, { counts: true });
+      const folded = (r: { id: string }): string[] => [
+        r.id,
+        ...allRealms.filter((c) => c.parent_id === r.id && (c.kind === 'domain' || c.kind === 'region_group')).flatMap(folded),
+      ];
+      const branches = allRealms
+        .filter((r) => r.kind !== 'domain' && r.kind !== 'region_group')
+        .map((r) => ({ ...r, ids: folded(r) }))
+        .filter((r) => allRealms.some((x) => r.ids.includes(x.id) && (x.records ?? 0) > 0))
         .map((r) => {
           const intro = (db.prepare('SELECT id, name, realm, body FROM entities WHERE id = ? AND realm = ?').get(SETTING_ROOT[r.id] ?? '', r.id) ??
             db
@@ -370,7 +378,10 @@ export function worldRoutes(ctx: AppContext) {
             name: r.name,
             realm: r.id,
             excerpt: r.description || (first ? first.content.slice(0, 420) : ''),
-            count: count(`SELECT COUNT(*) n FROM entities WHERE realm = ? AND archived = 0 AND type NOT IN ('redirect','index','register')`, r.id),
+            count: count(
+              `SELECT COUNT(*) n FROM entities WHERE realm IN (${r.ids.map(() => '?').join(',')}) AND archived = 0 AND type NOT IN ('redirect','index','register')`,
+              ...r.ids,
+            ),
           };
         });
       const quick = (types: string[], limit = 8) =>

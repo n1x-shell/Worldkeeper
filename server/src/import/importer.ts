@@ -2,7 +2,7 @@ import type { DB } from '../db/connection.js';
 import { sha256 } from '../lib/hash.js';
 import { now, parseJson } from '../lib/json.js';
 import { parseMarkdownFile, parsePipeTable, splitSections, type ParsedFile } from './parseMarkdown.js';
-import { blockToDraft, extractRefs, ID_RE_STRICT, isTemplatePlaceholder, normalizeRealm, SETTING_REALMS, type EntityDraft } from './normalize.js';
+import { blockToDraft, extractRefs, ID_RE_STRICT, isTemplatePlaceholder, normalizeRealm, SETTING_DOMAIN_RECORDS, SETTING_REALMS, type EntityDraft } from './normalize.js';
 import { ensureRealm, listRealms, realmExists } from '../repo/realms.js';
 import type { SourceFile } from './scan.js';
 import { contentHash, getEntity, rowToEntity, saveRevision, type EntityRow } from '../repo/entities.js';
@@ -336,6 +336,12 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
     };
     for (const p of plan.entities) {
       const d = p.draft;
+      // An archive record of the Ethereal Realm that is a domain's record, or sits in one, belongs to that domain.
+      const inDomain = d.realm === 'ethereal' ? (SETTING_DOMAIN_RECORDS[d.id] ?? (d.parent_id ? SETTING_DOMAIN_RECORDS[d.parent_id] : undefined)) : undefined;
+      if (inDomain) {
+        d.realm = inDomain;
+        d.realms = [inDomain, ...d.realms.filter((x) => x !== inDomain)];
+      }
       d.realm = realmFor(d.realm, d.newRealm);
       d.realms = [...new Set(d.realms.map((x) => realmFor(x, d.newRealm)))];
       const params = {

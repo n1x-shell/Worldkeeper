@@ -772,6 +772,16 @@ INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
 INSERT INTO realms (id, name, kind, parent_id, color, icon, sort_order)
   SELECT 'black-horizon', 'The Black Horizon', 'domain', 'hollow-verge', 'red', 'compass', 10 WHERE EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal');
 
+-- The Ethereal Realm's records that sit in a domain (by their own text: where they live, sleep or stand, or the depth
+-- a creature is met at) belong to that domain, and stay in the Ethereal Realm too.
+UPDATE entities SET realm = 'hollow-verge', realms = '["hollow-verge","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'hollow-verge') AND id IN ('CRE-501', 'CRE-502', 'CRE-503', 'CRE-504', 'CRE-505', 'DEI-911', 'ETH-501', 'LOC-506', 'NPC-371', 'NPC-372', 'NPC-373', 'NPC-374', 'NPC-375', 'NPC-376', 'NPC-392', 'NPC-393', 'NPC-394', 'NPC-400', 'NPC-403', 'NPC-404', 'RUL-632', 'RUL-643');
+UPDATE entities SET realm = 'fields-of-lost-realities', realms = '["fields-of-lost-realities","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'fields-of-lost-realities') AND id IN ('CRE-506', 'CRE-507', 'CRE-508', 'CRE-509', 'CRE-510', 'CRE-511', 'DEI-912', 'ETH-502', 'LOC-501', 'LOC-502', 'NPC-391', 'NPC-399', 'NPC-401', 'NPC-402', 'NPC-464');
+UPDATE entities SET realm = 'ossuary-of-kings', realms = '["ossuary-of-kings","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'ossuary-of-kings') AND id IN ('CRE-512', 'CRE-513', 'CRE-514', 'DEI-913', 'ETH-503', 'LOC-503', 'LOC-504', 'NPC-389', 'NPC-390', 'NPC-395', 'NPC-396');
+UPDATE entities SET realm = 'silent-archive', realms = '["silent-archive","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'silent-archive') AND id IN ('CRE-515', 'CRE-516', 'CRE-517', 'CRE-518', 'DEI-914', 'ETH-504');
+UPDATE entities SET realm = 'loom-of-eternity', realms = '["loom-of-eternity","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'loom-of-eternity') AND id IN ('CRE-519', 'CRE-520', 'CRE-521', 'CRE-522', 'CRE-533', 'ETH-505');
+UPDATE entities SET realm = 'citadel-of-the-hidden', realms = '["citadel-of-the-hidden","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'citadel-of-the-hidden') AND id IN ('CRE-523', 'CRE-524', 'ETH-506', 'LOC-505', 'NPC-466');
+UPDATE entities SET realm = 'black-horizon', realms = '["black-horizon","ethereal"]' WHERE realm = 'ethereal' AND EXISTS (SELECT 1 FROM realms WHERE id = 'black-horizon') AND id IN ('CRE-525', 'CRE-526', 'CRE-527', 'CRE-528', 'CRE-529', 'CRE-530', 'CRE-531', 'CRE-532', 'ETH-507', 'LOC-507', 'LOC-508', 'LOC-509', 'NPC-397', 'NPC-398', 'NPC-465', 'NPC-902');
+
 ALTER TABLE maps ADD COLUMN realm_id TEXT REFERENCES realms(id) ON DELETE SET NULL;
 UPDATE maps SET realm_id = CASE
   WHEN lower(name) LIKE '%ethereal%' AND EXISTS (SELECT 1 FROM realms WHERE id = 'ethereal') THEN 'ethereal'

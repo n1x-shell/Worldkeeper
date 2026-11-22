@@ -3,7 +3,7 @@ Name: Wrong Distance
 Alternate names: None recorded
 Category: Hazard
 Parent: Bestiary (Ethereal Realm)
-Continent or realm: Ethereal Realm
+Continent or realm: The Black Horizon (Ethereal Realm)
 Canon status: CANON
 Source: Worldkeeper additions (the Ethereal Realm's depths, GM decision, 2026)
 Tags: realm/ethereal, cat/hazard, status/canon, vis/gm

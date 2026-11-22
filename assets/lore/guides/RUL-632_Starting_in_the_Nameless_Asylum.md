@@ -3,7 +3,7 @@ Name: Starting in the Nameless Asylum
 Alternate names: None recorded
 Category: Rule
 Parent: The Nameless Asylum [LOC-506]
-Continent or realm: Ethereal Realm
+Continent or realm: The Hollow Verge (Ethereal Realm)
 Canon status: CANON
 Source: Worldkeeper additions (player guides, GM decision, 2026)
 Tags: realm/ethereal, cat/rule, status/canon, vis/player
