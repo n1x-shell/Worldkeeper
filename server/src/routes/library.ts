@@ -15,7 +15,8 @@ import { backupPath, createBackup, listBackups, stageRestore } from '../backup/b
 import { DEFAULT_ADDITIONS_DIR, loreFiles } from '../additions.js';
 import { chosenBooks, importFivetools, scanFivetools } from '../repo/fivetools.js';
 import { deletePack, importPack, listPacks, setPackEnabled, setPackPublished } from '../repo/rulesPacks.js';
-import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, exportPlayerZip, importCampaign, importJson } from '../backup/exporter.js';
+import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, exportPlayerZip, importCampaignWithReport, importFullWorldZip, importJson } from '../backup/exporter.js';
+import { applySidecarRealms, applySidecarState, readSidecar, type Sidecar } from '../backup/sidecar.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { schemaVersion } from '../db/migrations.js';
 import { listModules, setLibraryModules } from '../repo/modules.js';
@@ -31,6 +32,8 @@ interface Staged {
   files: SourceFile[];
   plan: ImportPlan;
   created: number;
+  /** A Worldkeeper Markdown export's realms, templates, canon and reveals. */
+  sidecar?: Sidecar | null;
 }
 
 export function debugEnabled(ctx: AppContext): boolean {
@@ -72,7 +75,7 @@ export function libraryRoutes(ctx: AppContext) {
       if (!files.length) throw badRequest('No Markdown (.md) files were found in the archive');
       const plan = buildPlan(ctx.db, files, req.file.originalname.replace(/[^\w. -]/g, '_'));
       const token = randomBytes(12).toString('hex');
-      staging.set(token, { files, plan, created: Date.now() });
+      staging.set(token, { files, plan, created: Date.now(), sidecar: readSidecar(req.file.buffer) });
       return {
         token,
         summary: summarisePlan(plan),
@@ -88,9 +91,12 @@ export function libraryRoutes(ctx: AppContext) {
       if (!staged) throw badRequest('Import preview expired. Upload the archive again.');
       const hasData = (ctx.db.prepare('SELECT COUNT(*) n FROM entities').get() as { n: number }).n > 0;
       const backup = hasData ? createBackup(ctx.db, ctx.paths, 'pre-import') : null;
+      // A Worldkeeper Markdown export brings its realms (before the records) and its templates, canon and reveals (after).
+      if (staged.sidecar) applySidecarRealms(ctx.db, staged.sidecar);
       const result = commitPlan(ctx.db, staged.files, staged.plan, { resolutions: req.body?.resolutions ?? {}, backupFile: backup?.file ?? null });
+      const restored = staged.sidecar ? applySidecarState(ctx.db, staged.sidecar) : null;
       staging.delete(String(req.body.token));
-      return { result, backup };
+      return { result, backup, ...(restored ? { restored } : {}) };
     }),
   );
   r.get(
@@ -130,8 +136,11 @@ export function libraryRoutes(ctx: AppContext) {
     upload.single('file'),
     h((req) => {
       if (!req.file) throw badRequest('Choose a JSON export');
-      const data = JSON.parse(req.file.buffer.toString('utf8'));
-      if (data?.app === 'worldkeeper-campaign') return { campaignId: importCampaign(ctx.db, data, ctx.paths.uploadsDir) };
+      const zipped = req.file.buffer.subarray(0, 2).toString('latin1') === 'PK';
+      const data = zipped ? null : JSON.parse(req.file.buffer.toString('utf8'));
+      // A full-world ZIP (its JSON, maps and pictures) into an empty library.
+      if (req.file.buffer.subarray(0, 2).toString('latin1') === 'PK') return { ok: true, ...importFullWorldZip(ctx.db, ctx.paths, req.file.buffer) };
+      if (data?.app === 'worldkeeper-campaign') return importCampaignWithReport(ctx.db, data, ctx.paths.uploadsDir);
       importJson(ctx.db, data);
       return { ok: true };
     }),

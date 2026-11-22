@@ -99,6 +99,41 @@ describe('setting packs', () => {
     expect(roles(ctx.db)).toEqual({});
   });
 
+  it('keeps a second pack beside the setting: each updates and uninstalls without touching the other or the GM’s records', () => {
+    const ctx = tempContext();
+    writeTestPack(ctx);
+    updatePack(ctx.db, 'worldkeeper', ctx.paths.uploadsDir);
+    updatePack(ctx.db, 'testpack', ctx.paths.uploadsDir);
+    createEntity(ctx.db, { id: 'BCN-0100', name: 'My Harbour', type: 'beacon', realm: 'the-isle', canon_status: 'CANON', aliases: [], tags: [], fields: [], body: '## Overview\nMine.', notes: '' });
+    const count = (pack: string | null) => (ctx.db.prepare(`SELECT COUNT(*) n FROM entities WHERE pack_id ${pack ? '= ?' : 'IS NULL'}`).get(...(pack ? [pack] : [])) as { n: number }).n;
+    const setting = count('worldkeeper');
+    const snapshot = () => ctx.db.prepare(`SELECT id, name, body FROM entities WHERE pack_id = 'worldkeeper' ORDER BY id`).all();
+    const before = snapshot();
+    expect(setting).toBeGreaterThan(0);
+    expect(count('testpack')).toBe(2);
+    expect(count(null)).toBe(1);
+
+    // Updating either leaves the other as it was.
+    updatePack(ctx.db, 'testpack', ctx.paths.uploadsDir);
+    expect(snapshot()).toEqual(before);
+    updatePack(ctx.db, 'worldkeeper', ctx.paths.uploadsDir);
+    expect(count('testpack')).toBe(2);
+    expect(ctx.db.prepare(`SELECT realm FROM entities WHERE id = 'BCN-0001'`).get()).toEqual({ realm: 'the-isle' });
+
+    // Uninstalling the second pack: the setting and the GM's record (with the realm and type it uses) stay.
+    uninstallPack(ctx.db, 'testpack');
+    expect(count('testpack')).toBe(0);
+    expect(snapshot()).toEqual(before);
+    expect(count(null)).toBe(1);
+    expect(isInstalled(ctx.db, 'worldkeeper')).toBe(true);
+    expect(ctx.db.prepare(`SELECT 1 n FROM realms WHERE id = 'the-isle'`).get()).toEqual({ n: 1 });
+
+    // And the other way round: uninstalling the setting leaves the GM's record.
+    uninstallPack(ctx.db, 'worldkeeper');
+    expect(count('worldkeeper')).toBe(0);
+    expect(ctx.db.prepare(`SELECT name FROM entities WHERE id = 'BCN-0100'`).get()).toEqual({ name: 'My Harbour' });
+  });
+
   it('reports an ID the GM already uses, and keeps the GM’s record', () => {
     const ctx = tempContext();
     writeTestPack(ctx);

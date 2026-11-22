@@ -70,10 +70,10 @@ The restore flow checks the archive and SQLite integrity before replacing live d
 
 | Format | Intended use |
 | --- | --- |
-| Full world ZIP | Markdown library, complete JSON, original source files and uploaded maps |
-| Markdown library | One Markdown file per record for re-import or external editing |
-| JSON data | Full database content for importing into a fresh installation |
-| Campaign-only | One campaign, imported as a new campaign |
+| Full world ZIP | Markdown library, complete JSON, original source files and uploaded pictures (maps, handouts, portraits). Loads into an empty installation from **Load an export**, pictures and all |
+| Markdown library | One Markdown file per record for re-import or external editing, with `_worldkeeper/library.json` beside them: the realms as they are (kind, place, colour, icon), your templates, and each record's canon flags and what players have been shown. Imported again, it makes the same library |
+| JSON data | Every table in the database (a test checks this against the schema), for importing into a fresh installation. Only your books' rules are left out: import them again from your own copy |
+| Campaign-only | One campaign and everything it keeps (party, sheets and pages, quests, adventures, sessions and their logs, state, standing and renown, the clock, treasure, handouts with their pictures, Bastions, downtime, calendar events, what the party has heard and found, and their travel), imported as a new campaign. It names what it needs (its world, setting packs, the records it refers to and the maps it travelled); importing reports anything the library doesn't have |
 | Player-safe export | Only deliberately revealed/published material, generated from the player projection |
 
 **Privacy:** Full-world exports and backups may contain GM secrets, unpublished records and personally authored notes. Treat them as private. Player-safe exports should be reviewed before sharing, particularly maps, markers, hyperlinks and image assets.

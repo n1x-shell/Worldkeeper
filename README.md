@@ -2,17 +2,33 @@
 
 **Your world. Your canon. Your campaigns.**
 
-The Worldkeeper is a **free, open-source, local-first worldbuilding encyclopedia and D&D 5e (2024) campaign manager**. Import existing Markdown lore, connect characters, factions and locations, explore maps, run sessions, and share only the knowledge your players have discovered.
+The Worldkeeper is a **free, open-source, local-first worldbuilding encyclopedia and D&D 5e (2024) campaign manager**. Start a world of your own or bring in the lore you have, connect characters, factions and locations, explore maps, run sessions, and share only the knowledge your players have discovered.
 
-Originally designed for a world with three branches, **Aetheris**, **Kaelmar**, and the **Ethereal Realm**, it preserves stable IDs, source references, canon labels and GM secrets while providing tools to manage independent campaigns. It can run a **standard D&D 2024 campaign**: switch the setting's mechanics off, import the books you own, and play. Full support for a world of your own (its own realms, calendar, templates and a first-run wizard) is planned; see [Your own world](docs/OWN_WORLD_PLAN.md).
+Build **a world of your own**, with its own worlds, continents and planes, calendar, kinds of record and templates, from a first-run wizard. Or play in **the Worldkeeper setting**, a shattered world of Aetheris, Kaelmar and the Ethereal Realm, installed as a setting pack. Either way it runs a **standard D&D 2024 campaign** from the SRD and the books you own, keeps stable IDs, source references, canon labels and GM secrets, and manages independent campaigns in the same world.
 
 **No account, required cloud service, paid API or AI dependency.** World data lives on your computer in SQLite and an uploads directory, with backups and portable exports.
 
-> **Status:** v0.4 **“Illuminated”**, an early functional release with a complete redesign: one design for the GM app, the table server and the player handbook, in Warm Parchment or Dark Codex. Some features and desktop platform builds are still undergoing validation. Read [Development Status](DEVELOPMENT_STATUS.md) before relying on the application for important campaign data.
+> **Status:** v0.5 **“A World of Your Own”**, an early functional release: a first-run wizard for your own world or the Worldkeeper setting, New ▸ anything with guided creation, a Markdown editor for every long text, and settings, calendars, rules and modules that work for any world. Some features and desktop platform builds are still undergoing validation. Read [Development Status](DEVELOPMENT_STATUS.md) before relying on the application for important campaign data.
 
 ## Screenshots
 
-Actual screenshots from Worldkeeper, with the Worldkeeper setting's world and a sample campaign, *The Loose Thread*.
+Actual screenshots from Worldkeeper: a world of one's own, *Ostmark*, and the Worldkeeper setting's world with a sample campaign, *The Loose Thread*.
+
+### Start your world
+
+A fresh library opens on a short wizard: your world's name, calendar and shape (or the Worldkeeper setting), rules and modules, a first campaign with its town and party, and a map. A few records that teach come with it, and the dashboard's **Getting started** card follows what you try.
+
+| Its shape | Getting started |
+| --- | --- |
+| ![The wizard's shape step: Ostmark with two continents and a plane](docs/images/start-world.jpg) | ![The dashboard after the wizard, with the Getting started checklist](docs/images/getting-started.jpg) |
+
+### New ▸ anything
+
+Make any kind of record, **Guided** through its template (facts as proper inputs, one step per section, then a review of what players can see) or **Advanced**, as Markdown in the editor beside its preview.
+
+| Guided: the review | Advanced: Split view |
+| --- | --- |
+| ![A new NPC's review step: the record as it will read, its links and what players will see](docs/images/new-guided.jpg) | ![The same NPC in Advanced mode: the template's Markdown beside its preview](docs/images/new-advanced.jpg) |
 
 ### World dashboard
 
@@ -69,7 +85,9 @@ What the players see, on the table server or published to GitHub Pages: only wha
 
 | Area | What it provides |
 | --- | --- |
-| **Encyclopedia** | Searchable records, Markdown editing, source provenance, record links, revisions and Canon Review |
+| **Your own world** | A first-run wizard; worlds, continents and planes; your own calendar, record types and templates; records that teach |
+| **Encyclopedia** | Searchable records, New ▸ anything (guided or advanced), a Markdown editor with record links and GM-only sections, source provenance, revisions and Canon Review |
+| **Setting packs** | Install a whole setting (realms, types, templates, records, maps, adventures and modules), update it and remove it without touching your own work; the Worldkeeper setting is one, and you can [write your own](docs/SETTING_PACKS.md) |
 | **Characters and factions** | Structured profiles, campaign-specific attitudes and goals, regional influence |
 | **World exploration** | Maps, hierarchical locations, timelines, relationship graphs, cosmology and realm tools |
 | **Campaign management** | Multiple campaigns, party sheets, quests, adventures, scene flows and campaign state overlays |
@@ -78,7 +96,7 @@ What the players see, on the table server or published to GitHub Pages: only wha
 | **Your own books** | Rules packs from the books you own: spells, species, classes, feats, backgrounds, creatures and magic items, kept private to your library |
 | **Modules** | Thinning, the Return, Renown and the rest are modules: on with their setting pack, or switched on for your own world, per library or per campaign; treasure and encounters can come from your books |
 | **Player publishing** | Player-only server, static player handbook, optional GitHub Pages publishing |
-| **Library operations** | Previewed imports, protective merging, exports, backups and restoration |
+| **Library operations** | Previewed imports, protective merging, complete exports (JSON, Markdown, full-world ZIP, campaigns), backups and restoration |
 | **Design** | Warm Parchment or Dark Codex; five workspaces; hover cards, an inspector and split view; tablet and phone layouts for the table |
 
 See the [complete feature reference](docs/FEATURES.md).
@@ -101,7 +119,7 @@ npm run build
 npm start
 ```
 
-Open <http://127.0.0.1:4310>.
+Open <http://127.0.0.1:4310>. A fresh library opens on **Start your world**.
 
 For development, run `npm run dev` (API on port 4310, Vite client on port 5173).
 
@@ -119,7 +137,7 @@ The quickest way is a copy of the **5etools** data:
 
 Spells, species, classes and subclasses, backgrounds and feats then reach the character sheets and the builder. Creatures become stat blocks for the GM, and magic items show their rules in treasure and on sheets. Only use material from books you own. What you import stays in your library: it is never part of the published handbook, a player export, a campaign export or this repository. You can also write your own packs in Markdown. See [Rules packs](docs/RULES_PACKS.md).
 
-To run a standard D&D campaign without the Worldkeeper setting's own systems, switch its modules off in **Settings → Modules** (a library without the setting has them off already). Each world has its own calendar (**Campaign → Calendar → The world's calendar**). See [Features](docs/FEATURES.md#modules-a-standard-dd-campaign-or-the-worldkeeper-setting).
+A world of your own starts as a standard D&D 2024 campaign; with the Worldkeeper setting, switch any of its systems off in **Settings → Modules**. Each world has its own calendar (**Campaign → Calendar → The world's calendar**). See [Features](docs/FEATURES.md#modules-a-standard-dd-campaign-or-the-worldkeeper-setting).
 
 ## How it works
 
@@ -162,9 +180,10 @@ Backups are generated on a schedule while the server is running and before sensi
 
 | Guide | Contents |
 | --- | --- |
-| [Quick Start](docs/QUICKSTART.md) | Import a world and prepare the first session |
+| [Quick Start](docs/QUICKSTART.md) | Start your own world or the Worldkeeper setting, and prepare the first session |
 | [Features](docs/FEATURES.md) | Full encyclopedia, atlas, campaign and table-side feature reference |
 | [Rules packs](docs/RULES_PACKS.md) | The SRD, importing your own books from 5etools, and writing packs by hand |
+| [Writing a setting pack](docs/SETTING_PACKS.md) | Packaging a whole setting: its manifest, records, templates, maps and more |
 | [Player View & Publishing](docs/PLAYER_VIEW.md) | Reveals, player-only LAN server, static handbook, publishing precautions |
 | [Data, Backups & Exports](docs/DATA.md) | Import safety, data paths, backup/restore, export formats |
 | [Development](docs/DEVELOPMENT.md) | Commands, configuration, keyboard shortcuts and testing |
@@ -182,7 +201,7 @@ Contributions are welcome subject to review; see [Contributing](CONTRIBUTING.md)
 
 ## Roadmap
 
-v0.2, **“At the table,”** added record-link suggestions, structured NPC and faction profiles, in-session player reveals, timeline eras and desktop packaging. v0.3, **“Your books, your table,”** added the full D&D 2024 character sheet and builder, rules packs from your own books, the SRD 5.2.1 and the to-scale world map. v0.4, **“Illuminated,”** redesigned everything: the GM app, the table server and the player handbook. See [Development Status](DEVELOPMENT_STATUS.md) for feature maturity, known issues and next steps.
+v0.2, **“At the table,”** added record-link suggestions, structured NPC and faction profiles, in-session player reveals, timeline eras and desktop packaging. v0.3, **“Your books, your table,”** added the full D&D 2024 character sheet and builder, rules packs from your own books, the SRD 5.2.1 and the to-scale world map. v0.4, **“Illuminated,”** redesigned everything: the GM app, the table server and the player handbook. v0.5, **“A World of Your Own,”** made the app as good for a GM's own world as for the Worldkeeper setting: realms, record types, templates, calendars, rules and modules as data, setting packs, the Markdown editor, New ▸ anything and a first-run wizard. See [Development Status](DEVELOPMENT_STATUS.md) for feature maturity, known issues and next steps.
 
 An optional, provider-independent AI assistant is planned for a later phase. Any generated lore should enter as a `PROPOSED` draft subject to GM review, not silently become canon.
 

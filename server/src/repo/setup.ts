@@ -7,6 +7,7 @@ import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { badRequest } from '../lib/errors.js';
 import { CALENDAR_PRESETS, type CalendarDef } from '../../../shared/calendar.js';
+import { REALM_KINDS } from '../../../shared/realms.js';
 import { buildRecord, sectionDrafts } from '../../../shared/newRecord.js';
 import { createEntity } from './entities.js';
 import { createRealm, updateRealm } from './realms.js';
@@ -50,7 +51,8 @@ const realmRow = z.object({
   /** The row's key in the plan, for parents ("world" is the world itself). */
   key: z.string().min(1).max(40),
   name: z.string().trim().min(1).max(200),
-  kind: z.enum(['continent', 'realm', 'domain', 'region_group']),
+  // Any kind but a world (the world is the library's own).
+  kind: z.enum(REALM_KINDS).refine((k) => k !== 'world', 'The world is already there'),
   parent: z.string().max(40).nullable().default(null),
 });
 

@@ -209,7 +209,10 @@ export function StartWorld() {
     }
   };
 
-  const places = useMemo(() => [...index.values()].filter((e) => ['settlement', 'region', 'landmark', 'building'].includes(e.type)).length, [index]);
+  const places = useMemo(() => {
+    const place = new Set(recordTypes.with('place'));
+    return [...index.values()].filter((e) => place.has(e.type)).length;
+  }, [index, recordTypes]);
 
   return (
     <div className="max-w-3xl mx-auto space-y-5">

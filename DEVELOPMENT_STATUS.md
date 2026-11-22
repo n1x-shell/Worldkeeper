@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-22 · v0.4.9_
+_Last updated: 2026-11-22 · v0.5.0_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,41 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.5.0 “A World of Your Own” (own-world step 10)
+
+Step 10 of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md), and the release that completes it: steps 1 to 9 (v0.4.1 to v0.4.9, below) made realms, record types, templates, packs, modules, calendars and rules data, added the Markdown editor, New ▸ anything and the first-run wizard.
+
+- **Complete exports** (§2.10):
+  - **JSON:** `tests/exports.test.ts` checks the export's table list against the schema. The only tables left out are your books' rules (`rules_packs`, `rules_entries`), the migration log and the search index, each named with its reason.
+  - **Markdown:** the ZIP carries `_worldkeeper/library.json` (`server/src/backup/sidecar.ts`): the realms as they are (kind, parent, colour, icon, description), the GM's and the archive's templates, and every record's canon flags and reveal state. The importer reads it: realms before the records, templates and state after (`applySidecarRealms`, `applySidecarState`). A Markdown export imported into a fresh library makes the same library.
+  - **Full-world ZIP:** it now imports. **Load an export** takes it into an empty library: its JSON, and the plain picture files under `uploads/` (`importFullWorldZip`).
+  - **Campaigns** (format 2): everything the campaign keeps. Besides what was there:
+    - standing and renown, the clock and its log, faction ties revealed;
+    - party treasure (with fading-salvage data), handouts (pictures inside the export), Bastions and their turns, downtime, calendar events, profiles;
+    - what the party heard and found: rumours, secrets and clues, matched by key or wording, since ids differ between libraries;
+    - map discoveries and travel, matched by the map's name.
+  - **What a campaign needs:** the export carries a `needs` header (its world, the setting packs installed, the records it refers to, the maps it travelled). Importing reports what the library lacks (`importCampaignWithReport`), and the Import page lists it. An export from before format 2 still imports.
+- **A second pack beside the setting:** `tests/settingPacks.test.ts` installs a small synthetic pack next to the Worldkeeper setting. Each updates and uninstalls without touching the other, or the GM's own record.
+- **Advanced creation's preview:** each header line ends in a Markdown line break, so the preview shows one fact to a line.
+- **Docs:**
+  - Quick Start for both ways to begin, and for bringing in a world you already have.
+  - [Writing a setting pack](docs/SETTING_PACKS.md): the smallest pack, installing and testing it, the manifest, every folder a pack can hold, and good practice.
+  - README for v0.5, with screenshots of the wizard, Getting started, Guided creation and Advanced in Split view.
+  - FEATURES, DATA (export formats), DEVELOPMENT (the first-run E2E).
+- **The plan's cross-step tests,** all in place:
+  - the realms migration on an archive library and an empty one;
+  - export and re-import keeping types, realms, templates and canon flags;
+  - the editor's autosave and conflict protection;
+  - creation both ways;
+  - encounters and treasure for a region of one's own;
+  - installing the setting pack into a fresh library, and an existing setting library unchanged;
+  - a second pack beside the setting;
+  - no setting IDs in app code;
+  - the JSON export covering every table;
+  - an own-world E2E that needs no archive (`e2e-first-run own`) beside the archive E2E;
+  - the wizard both ways;
+  - the bundle guard.
 
 ## v0.4.9: the first run (own-world step 9)
 

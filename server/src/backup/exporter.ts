@@ -18,11 +18,12 @@ import { BUILTIN_REGISTRY } from '../../../shared/recordTypes.js';
 import { syncBuiltinTypes, types } from '../repo/recordTypes.js';
 import { installedManifests, syncInstalledPacks } from '../packs/registry.js';
 import { normalizeRealm, normalizeType } from '../import/normalize.js';
+import { buildSidecar, SIDECAR_PATH } from './sidecar.js';
 import { setModuleData } from '../repo/modules.js';
 import { modulesFromMechanics } from '../../../shared/modules.js';
 
 /** Tables included in a full JSON export, in dependency order. */
-const TABLES = [
+export const TABLES = [
   'settings',
   'setting_packs',
   'calendars',
@@ -160,10 +161,12 @@ export function exportMarkdownZip(db: DB): Buffer {
     const e = rowToEntity(r);
     zip.addFile(`Worldkeeper_Library/${e.realm}/${e.type}/${e.id}_${slug(e.name)}.md`, Buffer.from(entityToMarkdown(e, db), 'utf8'));
   }
+  // The realms as they are, the GM's templates, and each record's canon flags and reveals (sidecar.ts).
+  zip.addFile(`Worldkeeper_Library/${SIDECAR_PATH}`, Buffer.from(JSON.stringify(buildSidecar(db), null, 1), 'utf8'));
   zip.addFile(
     'Worldkeeper_Library/README.md',
     Buffer.from(
-      `# Worldkeeper Markdown export\n\nExported ${new Date().toISOString()}. ${rows.length} records in the library's metadata-header format.\nImport this ZIP into any Worldkeeper installation. DM notes, reveal state and campaigns are in the JSON export / backup, not here.\n`,
+      `# Worldkeeper Markdown export\n\nExported ${new Date().toISOString()}. ${rows.length} records in the library's metadata-header format.\nImport this ZIP into any Worldkeeper installation: its realms, your templates, canon flags and what players have been shown come back with it (${SIDECAR_PATH}). Campaigns and DM-only tools are in the JSON export, a campaign export or a backup.\n`,
     ),
   );
   return zip.toBuffer();
@@ -179,16 +182,64 @@ export function exportFullWorldZip(db: DB, paths: Paths): Buffer {
   return zip.toBuffer();
 }
 
+/**
+ * Load a full-world ZIP (exportFullWorldZip) into an EMPTY installation: its JSON export, and the pictures (maps,
+ * handouts, portraits) it carries. Only plain picture files are taken from it.
+ */
+export function importFullWorldZip(db: DB, paths: Paths, buffer: Buffer) {
+  let zip: AdmZip;
+  try {
+    zip = new AdmZip(buffer);
+  } catch {
+    throw badRequest('Not a ZIP file');
+  }
+  const json = zip.getEntry('worldkeeper.json');
+  if (!json) throw badRequest('Not a full-world ZIP: it has no worldkeeper.json. Import a Markdown ZIP from Import and Export instead.');
+  importJson(db, JSON.parse(json.getData().toString('utf8')));
+  let pictures = 0;
+  fs.mkdirSync(paths.uploadsDir, { recursive: true });
+  for (const e of zip.getEntries()) {
+    const m = /^uploads\/([\w.-]+\.(?:png|jpg|jpeg|webp|gif))$/i.exec(e.entryName);
+    if (!m || e.isDirectory || e.header.size > 60 * 1024 * 1024) continue;
+    fs.writeFileSync(path.join(paths.uploadsDir, m[1]), e.getData());
+    pictures++;
+  }
+  return { pictures };
+}
+
 export function exportCampaign(db: DB, campaignId: number, uploadsDir?: string) {
   const c = db.prepare('SELECT * FROM campaigns WHERE id = ?').get(campaignId);
   if (!c) throw badRequest('Unknown campaign');
   const advIds = (db.prepare('SELECT id FROM adventures WHERE campaign_id = ?').all(campaignId) as { id: number }[]).map((a) => a.id);
   const sesIds = (db.prepare('SELECT id FROM sessions WHERE campaign_id = ?').all(campaignId) as { id: number }[]).map((a) => a.id);
   const inList = (ids: number[]) => (ids.length ? ids.join(',') : '-1');
-  return {
-    app: 'worldkeeper-campaign',
-    format: 1,
-    exported_at: new Date().toISOString(),
+  const byCampaign = (table: string) => db.prepare(`SELECT * FROM ${table} WHERE campaign_id = ?`).all(campaignId) as Record<string, unknown>[];
+  const extra = Object.fromEntries(CAMPAIGN_TABLES.map((t) => [t, byCampaign(t)])) as Record<(typeof CAMPAIGN_TABLES)[number], Record<string, unknown>[]>;
+  const bastionIds = extra.bastions.map((b) => b.id as number);
+  const treasureIds = extra.party_treasure.map((t) => t.id as number);
+  const more = {
+    ...extra,
+    bastion_turns: db.prepare(`SELECT * FROM bastion_turns WHERE bastion_id IN (${inList(bastionIds)})`).all(),
+    // What the party has learned, by the rumour's, secret's and clue's own key (ids differ from library to library).
+    rumour_heard: db
+      .prepare(`SELECT h.*, r.key AS rumour_key, r.text AS rumour_text FROM rumour_heard h JOIN rumours r ON r.id = h.rumour_id WHERE h.campaign_id = ?`)
+      .all(campaignId),
+    secret_progress: db
+      .prepare(`SELECT p.*, s.key AS secret_key, s.title AS secret_title FROM secret_progress p JOIN secrets s ON s.id = p.secret_id WHERE p.campaign_id = ?`)
+      .all(campaignId),
+    clue_found: db
+      .prepare(`SELECT f.*, c.key AS clue_key, c.note AS clue_note, s.key AS secret_key FROM clue_found f JOIN clues c ON c.id = f.clue_id JOIN secrets s ON s.id = c.secret_id WHERE f.campaign_id = ?`)
+      .all(campaignId),
+    // Where the party has been, by the map's name.
+    map_discoveries: db.prepare(`SELECT d.*, m.name AS map_name FROM map_discoveries d JOIN maps m ON m.id = d.map_id WHERE d.campaign_id = ?`).all(campaignId),
+    map_travel: db.prepare(`SELECT t.*, m.name AS map_name FROM map_travel t JOIN maps m ON m.id = t.map_id WHERE t.campaign_id = ?`).all(campaignId),
+    // Modules' data about the party's treasure (fading salvage).
+    treasure_module_data: db.prepare(`SELECT * FROM module_data WHERE owner = 'treasure' AND owner_id IN (${inList(treasureIds)})`).all(),
+    handout_images: uploadsDir
+      ? Object.fromEntries(extra.handouts.map((h) => [h.id, pictureDataUrl(uploadsDir, h.image_file)] as const).filter(([, v]) => v))
+      : {},
+  };
+  const base = {
     campaign: c,
     characters: db.prepare('SELECT * FROM characters WHERE campaign_id = ?').all(campaignId),
     character_pages: db.prepare('SELECT p.* FROM character_pages p JOIN characters c ON c.id = p.character_id WHERE c.campaign_id = ?').all(campaignId),
@@ -213,7 +264,86 @@ export function exportCampaign(db: DB, campaignId: number, uploadsDir?: string) 
     faction_plans: db.prepare('SELECT * FROM faction_plans WHERE campaign_id = ?').all(campaignId),
     encounters: db.prepare('SELECT * FROM encounters WHERE campaign_id = ?').all(campaignId),
     notes: db.prepare('SELECT * FROM notes WHERE campaign_id = ?').all(campaignId),
+    ...more,
   };
+  return { app: 'worldkeeper-campaign' as const, format: 2, exported_at: new Date().toISOString(), needs: campaignNeeds(db, base), ...base };
+}
+
+/** Campaign tables kept by campaign (besides those exportCampaign reads itself), all copied to an imported campaign. */
+const CAMPAIGN_TABLES = [
+  'faction_standing',
+  'renown_log',
+  'return_clock',
+  'return_log',
+  'faction_ties_revealed',
+  'party_treasure',
+  'handouts',
+  'bastions',
+  'downtime',
+  'calendar_events',
+  'profiles',
+] as const;
+
+/** A picture in the uploads folder, as a data URL (a handout's image travels inside the export). */
+function pictureDataUrl(uploadsDir: string, file: unknown): string | null {
+  if (typeof file !== 'string' || !/^[\w.-]+\.(png|jpg|jpeg|webp|gif)$/i.test(file)) return null;
+  const full = path.join(uploadsDir, file);
+  if (!fs.existsSync(full)) return null;
+  const ext = file.split('.').pop()!.toLowerCase();
+  const type = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : `image/${ext}`;
+  return `data:${type};base64,${fs.readFileSync(full).toString('base64')}`;
+}
+
+/**
+ * What a campaign needs from the library it goes into: its world, the setting packs installed where it was made, the
+ * records it refers to and the maps its travel was on. Written into the export, and checked on import.
+ */
+function campaignNeeds(db: DB, data: Record<string, unknown>) {
+  const rows = (k: string) => (data[k] ?? []) as Record<string, unknown>[];
+  const c = data.campaign as Record<string, unknown>;
+  const ids = new Set<string>();
+  const add = (v: unknown) => typeof v === 'string' && v && ids.add(v);
+  add(c.starting_location_id);
+  for (const f of parseJson<string[]>(String(c.active_factions ?? '[]'), [])) add(f);
+  for (const [table, cols] of [
+    ['campaign_state', ['entity_id']],
+    ['quests', ['giver_id', 'location_id']],
+    ['faction_standing', ['faction_id']],
+    ['faction_plans', ['faction_id']],
+    ['renown_log', ['faction_id']],
+    ['party_treasure', ['entity_id']],
+    ['bastions', ['location_id', 'host_faction_id']],
+    ['encounters', ['location_id']],
+    ['map_travel', ['entity_id']],
+    ['map_discoveries', ['entity_id']],
+    ['profiles', ['entity_id']],
+  ] as const)
+    for (const r of rows(table)) for (const col of cols) add(r[col]);
+  const world = c.world_id ? (db.prepare('SELECT id, name FROM realms WHERE id = ?').get(c.world_id) as { id: string; name: string } | undefined) : undefined;
+  return {
+    world: world ?? null,
+    packs: db.prepare('SELECT id, name, version FROM setting_packs ORDER BY id').all() as { id: string; name: string; version: string }[],
+    records: [...ids].sort(),
+    maps: [...new Set([...rows('map_travel'), ...rows('map_discoveries')].map((r) => r.map_name as string).filter(Boolean))].sort(),
+  };
+}
+
+/** What an imported campaign refers to that this library doesn't have. */
+export function campaignMissing(db: DB, data: { needs?: ReturnType<typeof campaignNeeds> }) {
+  const n = data.needs;
+  if (!n) return { world: null, packs: [], records: [], maps: [] };
+  return {
+    world: n.world && !db.prepare('SELECT 1 FROM realms WHERE id = ?').get(n.world.id) ? n.world.name : null,
+    packs: n.packs.filter((p) => !db.prepare('SELECT 1 FROM setting_packs WHERE id = ?').get(p.id)).map((p) => p.name),
+    records: n.records.filter((id) => !db.prepare('SELECT 1 FROM entities WHERE id = ?').get(id)),
+    maps: n.maps.filter((name) => !db.prepare('SELECT 1 FROM maps WHERE name = ?').get(name)),
+  };
+}
+
+/** Import a campaign export, with a report of anything it refers to that this library lacks. */
+export function importCampaignWithReport(db: DB, data: ReturnType<typeof exportCampaign>, uploadsDir?: string) {
+  const missing = campaignMissing(db, data);
+  return { campaignId: importCampaign(db, data, uploadsDir), missing };
 }
 
 /** Import a campaign export as a NEW campaign (all ids remapped). World records are referenced, never copied. */
@@ -283,6 +413,54 @@ export function importCampaign(db: DB, data: ReturnType<typeof exportCampaign>, 
     for (const r of data.encounters as Record<string, unknown>[])
       insert('encounters', r, { campaign_id: cid, session_id: r.session_id ? (sesMap.get(r.session_id as number) ?? null) : null });
     for (const r of data.notes as Record<string, unknown>[]) insert('notes', r, { campaign_id: cid });
+
+    // Everything else the campaign keeps (an export from before format 2 has none of it).
+    const more = data as unknown as Record<string, Record<string, unknown>[] | Record<string, string> | undefined>;
+    const list = (k: string) => (Array.isArray(more[k]) ? (more[k] as Record<string, unknown>[]) : []);
+    const ses = (r: Record<string, unknown>) => (r.session_id ? (sesMap.get(r.session_id as number) ?? null) : null);
+    for (const t of ['faction_standing', 'renown_log', 'return_clock', 'return_log', 'faction_ties_revealed', 'downtime', 'calendar_events', 'profiles'] as const)
+      for (const r of list(t)) insert(t, r, { campaign_id: cid, ...('session_id' in r ? { session_id: ses(r) } : {}) });
+    const treasureMap = new Map<number, number>();
+    for (const r of list('party_treasure')) treasureMap.set(r.id as number, insert('party_treasure', r, { campaign_id: cid, session_id: ses(r) }));
+    for (const r of list('treasure_module_data'))
+      if (treasureMap.has(r.owner_id as number)) insert('module_data', r, { owner_id: treasureMap.get(r.owner_id as number) });
+    const images = (more.handout_images ?? {}) as Record<string, string>;
+    for (const r of list('handouts')) {
+      const id = insert('handouts', r, { campaign_id: cid, session_id: ses(r), image_file: null });
+      const pic = /^data:image\/(png|jpeg|webp|gif);base64,([A-Za-z0-9+/=]+)$/.exec(images[String(r.id)] ?? '');
+      if (pic && uploadsDir) {
+        const file = `handout-${id}-${Date.now().toString(36)}.${pic[1] === 'jpeg' ? 'jpg' : pic[1]}`;
+        fs.mkdirSync(uploadsDir, { recursive: true });
+        fs.writeFileSync(path.join(uploadsDir, file), Buffer.from(pic[2], 'base64'));
+        db.prepare('UPDATE handouts SET image_file = ? WHERE id = ?').run(file, id);
+      }
+    }
+    const bastionMap = new Map<number, number>();
+    for (const r of list('bastions')) bastionMap.set(r.id as number, insert('bastions', r, { campaign_id: cid }));
+    for (const r of list('bastion_turns')) if (bastionMap.has(r.bastion_id as number)) insert('bastion_turns', r, { bastion_id: bastionMap.get(r.bastion_id as number), session_id: ses(r) });
+    // What the party has learned, matched by key (or wording) in this library; what it doesn't have is left out.
+    const idBy = (sql: string, ...args: unknown[]) => (db.prepare(sql).get(...args) as { id: number } | undefined)?.id;
+    const drop = ['rumour_key', 'rumour_text', 'secret_key', 'secret_title', 'clue_key', 'clue_note', 'map_name'];
+    const clean = (r: Record<string, unknown>) => Object.fromEntries(Object.entries(r).filter(([k]) => !drop.includes(k)));
+    for (const r of list('rumour_heard')) {
+      const id = (r.rumour_key && idBy('SELECT id FROM rumours WHERE key = ?', r.rumour_key)) || idBy('SELECT id FROM rumours WHERE text = ?', r.rumour_text);
+      if (id) insert('rumour_heard', clean(r), { campaign_id: cid, rumour_id: id });
+    }
+    for (const r of list('secret_progress')) {
+      const id = (r.secret_key && idBy('SELECT id FROM secrets WHERE key = ?', r.secret_key)) || idBy('SELECT id FROM secrets WHERE title = ?', r.secret_title);
+      if (id) insert('secret_progress', clean(r), { campaign_id: cid, secret_id: id });
+    }
+    for (const r of list('clue_found')) {
+      const id =
+        (r.clue_key && idBy('SELECT id FROM clues WHERE key = ?', r.clue_key)) ||
+        idBy('SELECT c.id FROM clues c JOIN secrets s ON s.id = c.secret_id WHERE s.key = ? AND c.note = ?', r.secret_key, r.clue_note);
+      if (id) insert('clue_found', clean(r), { campaign_id: cid, clue_id: id });
+    }
+    for (const t of ['map_discoveries', 'map_travel'] as const)
+      for (const r of list(t)) {
+        const map = idBy('SELECT id FROM maps WHERE name = ?', r.map_name);
+        if (map) insert(t, clean(r), { campaign_id: cid, map_id: map, session_id: ses(r) });
+      }
     reindexAll(db);
     return cid;
   });

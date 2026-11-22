@@ -2,7 +2,7 @@
 
 [← README](../README.md) · [Quick Start](QUICKSTART.md) · [Development Status](../DEVELOPMENT_STATUS.md)
 
-This document describes Worldkeeper's features as of v0.4. For implementation completeness, test outcomes and known issues, refer to [DEVELOPMENT_STATUS.md](../DEVELOPMENT_STATUS.md). No official rulebook text or monster stat blocks are bundled; rules and statistics come from your own sources or entries.
+This document describes Worldkeeper's features as of v0.5. For implementation completeness, test outcomes and known issues, refer to [DEVELOPMENT_STATUS.md](../DEVELOPMENT_STATUS.md). No official rulebook text or monster stat blocks are bundled; rules and statistics come from your own sources or entries.
 
 ## Starting out
 
@@ -213,9 +213,13 @@ A switched-off module leaves the menus, the sheets, the player view and the publ
 
 The **Library** menu (the gear, top right) holds import preview, confirmation and history, exports, Canon Review, broken-reference reporting, change history, backup and restore, and app settings.
 
-**Canon controls:** Changes are versioned with reasons. Edited canonical records can be reviewed using diffs and either approved or reverted. New entries start `PROPOSED`; campaign overlays do not silently promote local developments to universal canon. Protected setting bibles and original references are retained verbatim.
+**Canon controls:** Changes are versioned with reasons. Edited canonical records can be reviewed using diffs and either approved or reverted. Where Canon Review is on (an imported archive or the Worldkeeper setting, or by choice in **Settings → Canon**), new entries start `PROPOSED`; in your own world they are Canon at once. Campaign overlays do not silently promote local developments to universal canon. Protected setting bibles and original references are retained verbatim.
 
 **Import controls:** Preview handles duplicates, source precedence, redirects, templates, edits made locally, and unavailable references. Unchanged entries stay untouched, and disappearing source entries are not automatically removed.
+
+**Exports are complete:** the JSON export holds every table; a Markdown export brings back its realms, templates, canon flags and reveals when imported again; a full-world ZIP loads into an empty library with its pictures; a campaign export carries everything the campaign keeps, names what it needs, and reports what an importing library lacks.
+
+**Setting packs:** **Library → Setting packs** installs, updates and removes a whole setting. What a pack ships is marked as the pack's, so an update or an uninstall never touches your own records. See [Writing a setting pack](SETTING_PACKS.md).
 
 For the detailed import/export and restore workflow, see [Data, Imports, Backups & Exports](DATA.md).
 

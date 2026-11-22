@@ -30,6 +30,7 @@ Use a supported Rust toolchain and your OS-specific dependencies for desktop pac
 | `npm test` | Unit, API and integration suite |
 | `npm run typecheck` | Type-check client and server |
 | `npm run e2e -- <url> [screenshot dir]` | Browser smoke test against running app |
+| `npm run e2e:first-run -- <url> own\|setting [screenshot dir]` | The first-run wizard in a browser, on an empty data folder |
 | `npm run desktop:prepare` | Bundle app, server, SQLite driver and Node runtime |
 | `npm run desktop:dev` | Desktop development |
 | `npm run desktop:build` | Build desktop installers |
@@ -77,6 +78,13 @@ Browser smoke testing requires Playwright, Chromium and a running application:
 ```bash
 WORLDKEEPER_TEST_ARCHIVE=path/to/archive.zip \
   node scripts/e2e-smoke.mjs http://127.0.0.1:4310 ./screenshots
+```
+
+The first run, on an app started with an empty data folder (`WORLDKEEPER_DATA_DIR`): a world of one's own needs no archive; the setting takes one if given.
+
+```bash
+node scripts/e2e-first-run.mjs http://127.0.0.1:4310 own ./screenshots
+WORLDKEEPER_TEST_ARCHIVE=path/to/archive.zip node scripts/e2e-first-run.mjs http://127.0.0.1:4310 setting ./screenshots
 ```
 
 Test claims describe intended suite coverage, not a guarantee that tests have been executed in a given release. Consult [Development Status](../DEVELOPMENT_STATUS.md) for recorded outcomes and remaining gaps.

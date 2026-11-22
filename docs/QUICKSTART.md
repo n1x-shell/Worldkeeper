@@ -2,7 +2,7 @@
 
 [← README](../README.md) · [Full Features](FEATURES.md) · [Data & Backups](DATA.md)
 
-This walkthrough takes you from an existing Markdown lore library to your first tracked session. Worldkeeper is local-first and does not require an account or AI service.
+This walkthrough takes you from a fresh install to your first tracked session, either in a world of your own or in the Worldkeeper setting. Worldkeeper is local-first and does not require an account or AI service.
 
 ## 1. Install and start
 
@@ -20,13 +20,40 @@ Open <http://127.0.0.1:4310>. Alternatively, use a tested desktop installer from
 
 For development, `npm run dev` serves the API at `:4310` and Vite at <http://localhost:5173>.
 
-## 2. Import your world
+## 2. Start your world
 
-1. Open **Library (the gear, top right) → Import and Export**.
-2. Choose a ZIP archive of your Markdown lore, for example `Amsel_Unified_World_Lore_Reference_v10.zip`.
-3. Select **Preview import**.
-4. Inspect the new/updated/unchanged counts, duplicate IDs, skipped templates and copies, broken references, protected originals and conflicts with your edits.
-5. Select **Confirm import** only after reviewing the report. Worldkeeper creates a backup and commits changes in a database transaction.
+A fresh library opens on **Start your world**. There are two ways to begin, on one path; every step can be skipped and everything it makes can be changed later.
+
+### A world of your own
+
+1. Choose **Build my own world**.
+2. **Your world:** its name, a line about it and the name the app goes by. Set the calendar now (twelve months of thirty days, or months like ours; the year it starts and the year's name, as in "1247 AR"), or decide later.
+3. **Its shape:** one continent, several, a world and another plane (a fey realm, an underworld), or nothing yet. Rename the rows or add more; **Manage worlds & realms** changes them any time.
+4. **Rules:** the SRD 5.2.1 is always on. Import your books now or later (see below), and switch on any optional modules you want.
+5. **A first campaign:** its name, where it starts (a town made for you, from the Settlement template) and the party's names.
+6. **A map:** an image of your world, if you have one.
+7. **Finish:** check the summary and choose **Create my world**. Leave **Add records that teach** ticked for a few linked example records (Start Here, an inn, an NPC with a secret, a faction and a landmark).
+
+The dashboard's **Getting started** card lists things to try. Open **Start Here** first. In your own world, new records are Canon at once (**Settings → Canon**).
+
+### The Worldkeeper setting
+
+1. Choose **Play in the Worldkeeper setting**.
+2. If you have your copy of the setting's archive (a ZIP of Markdown files), add it, then **Install the Worldkeeper setting**. You'll see what came in.
+3. **Rules:** the setting's rules (its creatures, hazards and items) and its modules (Thinning, the Return, vaults, shards and the rest) are on; untick any you won't use.
+4. **A first campaign:** pick its starting place (Hollow Refuge, say) and add the party.
+5. **Finish:** choose **Start playing**. New records wait for you in **Canon Review**, which protects the setting's text.
+
+### Bringing in a world you already have
+
+Choose **Restore a backup** on the first page, or skip the wizard and open **Library (the gear, top right) → Import and Export**:
+
+1. Choose a ZIP archive of your Markdown lore (a Worldkeeper Markdown export, or an archive in the same format).
+2. Select **Preview import**.
+3. Inspect the new/updated/unchanged counts, duplicate IDs, skipped templates and copies, broken references, protected originals and conflicts with your edits.
+4. Select **Confirm import** only after reviewing the report. Worldkeeper creates a backup and commits changes in a database transaction. A Worldkeeper Markdown export brings back its realms, your templates, canon flags and what players had been shown.
+
+A full JSON export or a full-world ZIP loads into an empty library from **Load an export** on the same page; a campaign export is added as a new campaign, with a list of anything it refers to that the library doesn't have.
 
 Command-line equivalents:
 
@@ -41,7 +68,8 @@ Re-imports preserve unchanged records and do not delete records merely because t
 ### Your rules and your kind of campaign
 
 - **Your books.** The SRD 5.2.1 is built in. To use the books you own, find the 5etools project's source repository yourself, download an archive of it as a zip, and import it in **Settings → Rules packs → Import your books from 5etools**. Tick the books you own. See [Rules packs](RULES_PACKS.md).
-- **Standard D&D or the setting.** A library without the Worldkeeper setting starts as standard D&D 2024. If you imported the setting but want a plain campaign, switch its modules off in **Settings → Modules** (for the library, or just for one campaign).
+- **Standard D&D or the setting.** A world of your own starts as standard D&D 2024. With the setting installed, switch any of its modules off in **Settings → Modules** (for the library, or just for one campaign).
+- **Your own setting, packaged.** A setting can be a pack of its own: see [Writing a setting pack](SETTING_PACKS.md).
 
 ## 3. Explore the encyclopedia
 
@@ -49,7 +77,11 @@ Open the **World Dashboard** (the app mark, top left), then browse records in **
 
 Create links in descriptions or notes with `@[Record Name]`; type `@` in the editor to select a record. Check the relationship graph and atlas for existing links. Missing or ambiguous source facts remain `UNDEFINED`, rather than being guessed by the application.
 
-## 4. Create a campaign
+## 4. Grow the world and the campaign
+
+Make anything with **New** in the top bar, **Guided** (step by step through the type's template) or **Advanced** (the template as Markdown). A place's page offers what belongs inside it: **Add a settlement here**, **Add an NPC who lives here**. Sections you skip stay as headings with their guidance, shown as **To write**.
+
+The wizard made your first campaign. For another:
 
 1. Open **All Campaigns** and create a campaign with a premise, dates and status.
 2. Select it as active.
@@ -83,6 +115,7 @@ Use **Backups → Back up now** and make an independent copy of the resulting ba
 
 - [Complete feature reference](FEATURES.md)
 - [Rules packs and your own books](RULES_PACKS.md)
+- [Writing a setting pack](SETTING_PACKS.md)
 - [Player access and publication](PLAYER_VIEW.md)
 - [Data, backup, restore and exports](DATA.md)
 - [Commands, configuration and testing](DEVELOPMENT.md)

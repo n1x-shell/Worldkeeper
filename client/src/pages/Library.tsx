@@ -336,17 +336,31 @@ function ExportPanel() {
           {campaigns && !campaigns.length && <Empty compact title="No campaigns." />}
         </div>
       </Card>
-      <Card title="Load a JSON export">
-        <p className="text-xs text-dim mb-2">A full JSON export loads into an empty installation only. A campaign export is added as a new campaign.</p>
+      <Card title="Load an export">
+        <p className="text-xs text-dim mb-2">
+          A full JSON export or a full-world ZIP loads into an empty installation only (the ZIP brings its maps and pictures too). A campaign export is added as a new campaign; anything it refers to that this
+          library doesn't have is listed.
+        </p>
         {jsonErr && <ErrorBox error={jsonErr} />}
         <input
           type="file"
-          accept="application/json"
+          accept="application/json,.json,.zip,application/zip"
+          aria-label="Export file"
           onChange={async (e) => {
             const f = e.target.files?.[0];
             if (!f) return;
             try {
-              await api.upload('/api/import/json', 'file', f);
+              const r = await api.upload<{ missing?: { world: string | null; packs: string[]; records: string[]; maps: string[] } }>('/api/import/json', 'file', f);
+              const m = r.missing;
+              const lines = m
+                ? [
+                    m.world && `its world, ${m.world}`,
+                    m.packs.length && `the setting packs ${m.packs.join(', ')}`,
+                    m.records.length && `${m.records.length} record${m.records.length === 1 ? '' : 's'} it refers to (${m.records.slice(0, 8).join(', ')}${m.records.length > 8 ? '…' : ''})`,
+                    m.maps.length && `the maps ${m.maps.join(', ')} (its travel on them was left out)`,
+                  ].filter(Boolean)
+                : [];
+              if (lines.length) window.alert(`The campaign was added. This library doesn't have:\n\n- ${lines.join('\n- ')}`);
               location.reload();
             } catch (x) {
               setJsonErr((x as Error).message);
