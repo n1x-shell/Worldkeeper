@@ -1,6 +1,6 @@
 # Your own world: a plan
 
-**Status:** draft for the owner's review (22 November 2026). Nothing here is built yet.
+**Status:** approved direction (owner answers in §4, 22 November 2026). Nothing here is built yet.
 **Goal:** someone who opens a fresh Worldkeeper with no archive to import can click **Next, Next, Finish** and have their own world: named realms, a first campaign and a few records that teach them the system. From then on, every kind of record has a template, a guided way to fill it in, and a modern Markdown editor for anyone who'd rather write it themselves.
 
 ## 1. Where we are today
@@ -168,11 +168,14 @@ Each step is its own PR with screenshots, merged on the owner's OK. As before, t
 - the wizard end to end in the E2E smoke, with a fresh library to a finished world;
 - the bundle guard, so the player side still carries no GM code.
 
-## 4. Questions for you
+## 4. Owner answers (22 November 2026)
 
-1. **Realm kinds.** Are World / Continent / Plane / Region group the right kinds, or do you think of the layers differently?
-2. **Canon for your own world.** Should new records be Canon at once in a world you make yourself, with Canon Review only for imported archives?
-3. **Tutorial records.** Should they be on by default in the wizard (with one-click removal), off by default, or not made at all? The alternative is a guided tour over empty pages.
-4. **The editor.** CodeMirror 6 is my recommendation (about 150 KB, fully offline). A lighter option keeps the text area and adds the toolbar, Split view and outline around it.
-5. **Setting-only record types.** Should they be hidden while the setting is off, or always shown, marked as the setting's?
-6. **Scope.** Should this include more than one world per library (§2.1, recommended) or also several separate libraries you switch between (a bigger change, for later)?
+1. **Canon for your own world: Canon at once.** In a world you make yourself, new records are Canon as soon as they're created. Canon Review stays on for imported archives, and the setting can be switched either way (§2.5).
+2. **Tutorial records: on by default, removable.** The wizard ticks them by default. The dashboard's Getting started card removes them in one click (§2.7).
+3. **The editor: CodeMirror 6** (§2.3).
+4. **Worlds: realms in one library.** One library holds as many worlds, continents and planes as you like (§2.1). Several separate libraries you switch between are left for later.
+
+Decided by default, unless the owner says otherwise:
+
+- **Realm kinds:** World, Continent, Plane and Region group.
+- **Setting-only record types** (vault, vault key, shard, calling, Ethereal domain): hidden from New and the Codex while the setting is off. Existing records of those types still show.
