@@ -437,9 +437,7 @@ Each step is its own PR with screenshots, merged on the owner's OK. As before, t
 3. **The editor: CodeMirror 6** (§2.3).
 4. **Worlds: realms in one library.** One library holds as many worlds, continents and planes as you like (§2.1). Several separate libraries you switch between are left for later.
 
-Still to decide:
-
-- **The name.** "The Worldkeeper" is both the app and the setting today. Should the app keep the name, with the setting called something like "The Worldkeeper setting" (or *Aetheris*), or the other way round? This affects the wizard's wording, export folder names and the default app name.
+5. **The name: the app is The Worldkeeper; the setting is the Worldkeeper setting.** The wizard offers "Build my own world" or "Play in the Worldkeeper setting". Export folders and the default app name follow the app's name, not the setting's.
 
 Decided by default, unless the owner says otherwise:
 
