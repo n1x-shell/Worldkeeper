@@ -8,13 +8,13 @@
  */
 
 /** Bracket tags that are about the source, not the world. [SECRET] and GM-only markers are not in this list. */
-const SOURCE_TAG = /\s*\[(?:SOURCE[- ]PROVIDED[^\]]*|OPTIONAL[^\]]*|OUTSIDE[^\]]*|HOMEBREW[^\]]*|NEW|PROPOSED[^\]]*|UNDEFINED[^\]]*|INFERENCE[^\]]*|BELIEF[^\]]*|EXTRAPOLATED[^\]]*|CANON[^\]]*|DERIVED[^\]]*|OFFICIAL[^\]]*|v\d+[^\]]*)\]/gi;
+export const SOURCE_TAG = /\s*\[(?:SOURCE[- ]PROVIDED[^\]]*|OPTIONAL[^\]]*|OUTSIDE[^\]]*|HOMEBREW[^\]]*|NEW|PROPOSED[^\]]*|UNDEFINED[^\]]*|INFERENCE[^\]]*|BELIEF[^\]]*|EXTRAPOLATED[^\]]*|CANON[^\]]*|DERIVED[^\]]*|OFFICIAL[^\]]*|v\d+[^\]]*)\]/gi;
 
 /** Short citations to the setting bibles: "(A: Geography)", "(K: Peoples and creatures; A: Everyday life)". */
-const CITATION = /\s*\((?:[AKW]\s*:[^()]*)\)|\s*\([^()]*\[[A-Z]{3}-\d{3}\][^()]*\)/g;
+export const CITATION = /\s*\((?:[AKW]\s*:[^()]*)\)|\s*\([^()]*\[[A-Z]{3}-\d{3}\][^()]*\)/g;
 
 /** Phrases that point at the source inside an otherwise good sentence. */
-const SOURCE_PHRASES: [RegExp, string][] = [
+export const SOURCE_PHRASES: [RegExp, string][] = [
   [/\s+as described by the cards/gi, ''],
   [/\s+from the source\b/gi, ''],
   [/\s+in the (?:novel|cards|bible|setting bible)\b/gi, ''],
@@ -28,7 +28,7 @@ const SOURCE_PHRASES: [RegExp, string][] = [
 ];
 
 /** A sentence that is about the source, the rules books or the editing of the library, not about the world. */
-const META_SENTENCE =
+export const META_SENTENCE =
   /\.md\b|Setting[_ ]Bible|\bthe bible\b|\bthe source (?:proposes|suggests|gives|says|states)\b|\bsetting-facing\b|official character class|\brulebooks?\b|character-build interpretation|\bverif(?:y|ied)\b|\bUNDEFINED\b|\bSee [A-Z]{3,4}-\d{3}|\bno (?:additional|further) [^.]* (?:assumed|assigned)\b|\bdo not (?:assign|place|create|invent)\b|\bowner decision\b|\bstated (?:flexible )?convention\b|\bTome\b|\bLore entries\b|\bstandalone page\b|\bnot a replacement for\b|\bauthoritative\b|\brule reference\b|\bthe (?:cards|bibles|books|Lorebook|GM Lorebook)\b|\b(?:cards|books|bibles|Lorebook)'s?\s|`[^`]*\/[^`]*`|\b[A-Z]{3}-\d{3}[\u2013-]\d{3}\b|\bsee (?:the )?[^.]*\b[A-Z]{3}-\d{3}\b|\bbibles?\b|\bcharacter cards?\b|\bno [^.]*\bis established\b|\bonly [^.]*\bis established\b|\bonly the pressures apparent\b/i;
 
 /** Whole-section headings that only describe the source (shown in debug mode only). */

@@ -2,7 +2,9 @@ import type { DB } from '../db/connection.js';
 import { sha256 } from '../lib/hash.js';
 import { now, parseJson } from '../lib/json.js';
 import { parseMarkdownFile, parsePipeTable, splitSections, type ParsedFile } from './parseMarkdown.js';
-import { blockToDraft, extractRefs, ID_RE_STRICT, isTemplatePlaceholder, normalizeRealm, SETTING_DOMAIN_RECORDS, SETTING_REALMS, type EntityDraft } from './normalize.js';
+import { blockToDraft, extractRefs, ID_RE_STRICT, isTemplatePlaceholder, normalizeRealm, type EntityDraft, type KnownRealm } from './normalize.js';
+import { availablePacks, findPack, installPack, installedManifests } from '../packs/registry.js';
+import type { ImportProfile, PackManifest } from '../../../shared/packs.js';
 import { ensureRealm, listRealms, realmExists } from '../repo/realms.js';
 import type { SourceFile } from './scan.js';
 import { contentHash, getEntity, rowToEntity, saveRevision, type EntityRow } from '../repo/entities.js';
@@ -11,7 +13,6 @@ import { loadNameIndex } from '../repo/nameMatch.js';
 import { loadMentionIndex } from '../repo/mentions.js';
 import { reindexAll } from '../repo/search.js';
 import { deriveTimelineEras, eraVocabularyFromText, seedEras } from '../repo/eras.js';
-import { ensureSettingRealm } from './settingRealms.js';
 import { types } from '../repo/recordTypes.js';
 
 export type DocKind =
@@ -25,16 +26,33 @@ export type DocKind =
   | 'index'
   | 'entry';
 
-export function classifyFile(path: string, parsed: ParsedFile): DocKind {
+/**
+ * What kind of file this is. A pack's archive has its own layout (its import profile: references, worked examples,
+ * guides...); any archive's templates folder holds templates, a file with no records is an index, and the rest are
+ * records.
+ */
+export function classifyFile(path: string, parsed: ParsedFile, profile?: ImportProfile): DocKind {
   const p = path.toLowerCase();
-  if (p.startsWith('references/')) return /setting_bible/.test(p) ? 'bible' : 'reference';
-  if (p.includes('/templates/') || /(^|\/)template_[^/]+\.md$/.test(p)) return 'template';
-  if (p.includes('/worked_examples/')) return 'worked_example';
-  if (p === 'manifest.md') return 'manifest';
-  if (p.startsWith('08_amsel_lore_foundation/')) return 'guide';
   const real = parsed.blocks.filter((b) => b.id && !isTemplatePlaceholder(b.id) && ID_RE_STRICT.test(b.id));
-  if (!real.length) return p.startsWith('07_continuity/') ? 'continuity' : 'index';
+  if (!p.startsWith('references/') && (p.includes('/templates/') || /(^|\/)template_[^/]+\.md$/.test(p))) return 'template';
+  for (const rule of profile?.files ?? []) {
+    if (!new RegExp(rule.pattern).test(p)) continue;
+    if (rule.onlyWithoutRecords && real.length) continue;
+    return rule.kind as DocKind;
+  }
+  if (p.includes('/templates/') || /(^|\/)template_[^/]+\.md$/.test(p)) return 'template';
+  if (!real.length) return 'index';
   return 'entry';
+}
+
+/** The pack an import belongs to: one whose archive these files look like (its import profile's detect patterns). */
+export function packForFiles(files: SourceFile[]): PackManifest | null {
+  const paths = files.map((f) => f.path.toLowerCase());
+  for (const { manifest } of availablePacks()) {
+    const detect = manifest.importProfile?.detect ?? [];
+    if (detect.some((d) => paths.some((p) => new RegExp(d).test(p)))) return manifest;
+  }
+  return null;
 }
 
 export type EntityAction = 'create' | 'update' | 'unchanged' | 'conflict';
@@ -58,6 +76,8 @@ export interface ImportPlan {
   missingFromSource: string[];
   templates: { id: string; name: string; fields: string[]; sections: string[] }[];
   timelineRows: number;
+  /** The setting pack this import belongs to (its archive, or its own content), if any. */
+  packId: string | null;
   counts: { byType: Record<string, number>; byRealm: Record<string, number>; byAction: Record<string, number> };
   warnings: string[];
 }
@@ -69,9 +89,10 @@ interface Candidate {
 }
 
 /** Parse the Canonical Entry Locator (`| \`ID\` | Entry | \`file\` |`) if present. */
-function readLocator(files: SourceFile[]): Map<string, string> {
+function readLocator(files: SourceFile[], profile?: ImportProfile): Map<string, string> {
   const map = new Map<string, string>();
-  const loc = files.find((f) => /canonical_entry_locator/i.test(f.path));
+  if (!profile?.locator) return map;
+  const loc = files.find((f) => new RegExp(profile.locator!, 'i').test(f.path));
   if (!loc) return map;
   for (const row of parsePipeTable(loc.content)) {
     if (row.length < 3) continue;
@@ -82,11 +103,17 @@ function readLocator(files: SourceFile[]): Map<string, string> {
   return map;
 }
 
-export function buildPlan(db: DB, files: SourceFile[], sourceName: string): ImportPlan {
+export function buildPlan(db: DB, files: SourceFile[], sourceName: string, opts: { packId?: string } = {}): ImportPlan {
   const reg = types(db);
-  const knownRealms = listRealms(db, { includeArchived: true }).map((r) => ({ id: r.id, name: r.name }));
+  // A pack's archive (or its own content) is read through its import profile, with its realms known even before it
+  // is installed; anything else through the library's types and realms alone.
+  const pack = opts.packId ? (findPack(opts.packId)?.manifest ?? null) : packForFiles(files);
+  const profile = pack?.importProfile;
+  const knownRealms: KnownRealm[] = listRealms(db, { includeArchived: true }).map((r) => ({ id: r.id, name: r.name, kind: r.kind, parent_id: r.parent_id }));
+  for (const r of pack?.realms ?? []) if (!knownRealms.some((k) => k.id === r.id)) knownRealms.push({ id: r.id, name: r.name, kind: r.kind, parent_id: r.parent_id });
   const plan: ImportPlan = {
     sourceName,
+    packId: pack?.id ?? null,
     generatedAt: now(),
     files: [],
     entities: [],
@@ -100,12 +127,12 @@ export function buildPlan(db: DB, files: SourceFile[], sourceName: string): Impo
     counts: { byType: {}, byRealm: {}, byAction: {} },
     warnings: [],
   };
-  const locator = readLocator(files);
+  const locator = readLocator(files, profile);
   const candidates = new Map<string, Candidate[]>();
 
   for (const f of files) {
     const parsed = parseMarkdownFile(f.path, f.content);
-    const kind = classifyFile(f.path, parsed);
+    const kind = classifyFile(f.path, parsed, profile);
     const ids = parsed.blocks.map((b) => b.id).filter((id) => ID_RE_STRICT.test(id));
     plan.files.push({ path: f.path, kind, ids });
 
@@ -132,7 +159,7 @@ export function buildPlan(db: DB, files: SourceFile[], sourceName: string): Impo
         plan.skipped.push({ id: b.id || '(none)', file: f.path, line: b.startLine, reason: 'Block has no valid stable ID' });
         return;
       }
-      const draft = blockToDraft(b, f.path, knownRealms, reg);
+      const draft = blockToDraft(b, f.path, knownRealms, reg, profile);
       const list = candidates.get(b.id) ?? [];
       list.push({ draft, standalone: i === 0, kind });
       candidates.set(b.id, list);
@@ -219,9 +246,9 @@ export function buildPlan(db: DB, files: SourceFile[], sourceName: string): Impo
     }
   }
 
-  const timeline = files.find((f) => /04_World_Timeline\.md$/i.test(f.path));
+  const timeline = profile?.timelineFile ? files.find((f) => new RegExp(profile.timelineFile!, 'i').test(f.path)) : undefined;
   if (timeline) plan.timelineRows = parseTimeline(timeline.content).length;
-  else plan.warnings.push('World Timeline (WLD-904) not found; the timeline view will be empty');
+  else if (profile?.timelineFile && !opts.packId) plan.warnings.push('The archive has no World Timeline; the timeline view will be empty');
   return plan;
 }
 
@@ -271,6 +298,9 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
     .prepare(`INSERT INTO import_runs (source_name, status, backup_file) VALUES (?, 'running', ?)`)
     .run(plan.sourceName, opts.backupFile ?? null);
   const runId = Number(run.lastInsertRowid);
+  // A pack's archive or content: the pack's realms, types and templates come first, so its records have them.
+  const pack = plan.packId ? installPack(db, plan.packId) : null;
+  const profile = pack?.importProfile;
   const result: CommitResult = {
     runId,
     created: 0,
@@ -327,20 +357,27 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
        WHERE id=@id`,
     );
     const touched: string[] = [];
+    // A realm and every realm that holds it (a domain, its parent domain, its realm).
+    const parentOf = db.prepare('SELECT parent_id FROM realms WHERE id = ?');
+    const realmChain = (id: string) => {
+      const out = [id];
+      for (let p = (parentOf.get(id) as { parent_id: string | null } | undefined)?.parent_id; p && out.length < 10; p = (parentOf.get(p) as { parent_id: string | null } | undefined)?.parent_id) out.push(p);
+      return out;
+    };
     // The realms these records name: the setting's own, or new ones this archive brings.
     const palette = ['teal', 'rose', 'red', 'slate', 'amber', 'green', 'violet', 'blue'] as const;
     let nextColor = (db.prepare('SELECT COUNT(*) n FROM realms').get() as { n: number }).n;
     const realmFor = (id: string, created?: { id: string; name: string }) => {
       if (realmExists(db, id)) return id;
-      if (SETTING_REALMS[id]) return ensureSettingRealm(db, id);
       if (created && created.id === id) return ensureRealm(db, id, { name: created.name, kind: 'continent', parent_id: 'world', color: palette[nextColor++ % palette.length], icon: 'compass' });
       return 'world';
     };
     for (const p of plan.entities) {
       const d = p.draft;
-      // An archive record of the Ethereal Realm that is a domain's record, or sits in one, belongs to that domain.
-      const inDomain = d.realm === 'ethereal' ? (SETTING_DOMAIN_RECORDS[d.id] ?? (d.parent_id ? SETTING_DOMAIN_RECORDS[d.parent_id] : undefined)) : undefined;
-      if (inDomain) {
+      // A pack's domain record, or a record that sits in one (its landmarks), belongs to that domain.
+      const domains = profile?.domainRecords ?? {};
+      const inDomain = domains[d.id] ?? (d.parent_id ? domains[d.parent_id] : undefined);
+      if (inDomain && realmExists(db, inDomain) && d.realm !== inDomain && realmChain(inDomain).includes(d.realm)) {
         d.realm = inDomain;
         d.realms = [inDomain, ...d.realms.filter((x) => x !== inDomain)];
       }
@@ -382,14 +419,20 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
     }
 
     // 3. Derived relationships for every imported record (refs may now resolve to newly created records).
+    // A pack's records are marked as the pack's (a record of the GM's own with the same ID keeps its own mark).
+    if (pack) {
+      const mark = db.prepare(`UPDATE entities SET pack_id = ? WHERE id = ? AND origin = 'import'`);
+      for (const p of plan.entities) mark.run(pack.id, p.draft.id);
+    }
     const importedIds = (db.prepare(`SELECT id FROM entities WHERE origin = 'import'`).all() as { id: string }[]).map((r) => r.id);
     const mentionIndex = loadMentionIndex(db);
     const nameIndex = loadNameIndex(db);
     for (const id of importedIds) rebuildDerivedRelationships(db, id, mentionIndex, nameIndex);
+    if (pack) db.prepare(`UPDATE relationships SET pack_id = ? WHERE origin <> 'user' AND source_id IN (SELECT id FROM entities WHERE pack_id = ?)`).run(pack.id, pack.id);
     result.relationships = (db.prepare('SELECT COUNT(*) AS n FROM relationships').get() as { n: number }).n;
 
     // 4. Timeline index rows (imported rows only; DM-added rows are kept).
-    const timeline = files.find((f) => /04_World_Timeline\.md$/i.test(f.path));
+    const timeline = profile?.timelineFile ? files.find((f) => new RegExp(profile.timelineFile!, 'i').test(f.path)) : undefined;
     if (timeline) {
       // Keep the DM's hand-assigned eras across re-imports.
       const kept = new Map(
@@ -399,12 +442,12 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
       );
       db.prepare(`DELETE FROM timeline_rows WHERE origin = 'import'`).run();
       const ins = db.prepare(
-        `INSERT INTO timeline_rows (sort_order, time_label, event, realm_label, realm_ids, source, access, entity_ids, origin, era, era_origin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'import', ?, ?)`,
+        `INSERT INTO timeline_rows (sort_order, time_label, event, realm_label, realm_ids, source, access, entity_ids, origin, era, era_origin, pack_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'import', ?, ?, ?)`,
       );
       for (const r of parseTimeline(timeline.content)) {
         const key = `${r.time_label}\u0000${r.event}`;
         const userEra = kept.has(key) ? kept.get(key)! : undefined;
-        ins.run(r.sort_order, r.time_label, r.event, r.realm_label, JSON.stringify(timelineRealms(db, r.realm_label)), r.source, r.access, JSON.stringify(r.entity_ids), userEra ?? null, userEra !== undefined ? 'user' : null);
+        ins.run(r.sort_order, r.time_label, r.event, r.realm_label, JSON.stringify(timelineRealms(db, r.realm_label)), r.source, r.access, JSON.stringify(r.entity_ids), userEra ?? null, userEra !== undefined ? 'user' : null, pack?.id ?? null);
         result.timelineRows++;
       }
     }
@@ -416,11 +459,11 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
 
     // 5. Templates.
     const insT = db.prepare(
-      `INSERT INTO templates (id, name, type, fields, sections, origin) VALUES (?, ?, ?, ?, ?, 'import')
-       ON CONFLICT(id) DO UPDATE SET name = excluded.name, fields = excluded.fields, sections = excluded.sections WHERE templates.origin = 'import'`,
+      `INSERT INTO templates (id, name, type, fields, sections, origin, pack_id) VALUES (?, ?, ?, ?, ?, 'import', ?)
+       ON CONFLICT(id) DO UPDATE SET name = excluded.name, fields = excluded.fields, sections = excluded.sections, pack_id = excluded.pack_id WHERE templates.origin = 'import'`,
     );
     for (const t of plan.templates) {
-      insT.run(t.id, t.name, templateType(t.id), JSON.stringify(t.fields), JSON.stringify(t.sections));
+      insT.run(t.id, t.name, templateType(t.id), JSON.stringify(t.fields), JSON.stringify(t.sections), pack?.id ?? null);
       result.templates++;
     }
 
@@ -505,6 +548,7 @@ export function timelineRealms(db: DB, label: string): string[] {
   const known = listRealms(db, { includeArchived: true });
   const l = label.toLowerCase();
   if (/\bboth\b/.test(l)) return known.filter((r) => r.kind === 'continent').map((r) => r.id);
-  const { realms } = normalizeRealm(label, known.map((r) => ({ id: r.id, name: r.name })));
+  const profile = installedManifests(db).find((m) => m.importProfile)?.importProfile;
+  const { realms } = normalizeRealm(label, known.map((r) => ({ id: r.id, name: r.name, kind: r.kind, parent_id: r.parent_id })), profile);
   return realms.filter((id) => known.some((r) => r.id === id));
 }

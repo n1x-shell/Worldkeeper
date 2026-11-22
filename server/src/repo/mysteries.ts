@@ -9,6 +9,7 @@ import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
+import { worldkeeperPath } from '../packs/paths.js';
 
 export const SECRET_STATES = ['unknown', 'suspected', 'known'] as const;
 export type SecretState = (typeof SECRET_STATES)[number];
@@ -198,7 +199,7 @@ export function setClueFound(db: DB, id: number, campaignId: number, found: bool
   return { ok: true };
 }
 
-// ------------------------------------------------------------------ sync from assets/lore/mysteries.json
+// ------------------------------------------------------------------ sync from packs/worldkeeper/lore/mysteries.json
 
 interface ClueSpec {
   kind: ClueKind;
@@ -222,9 +223,7 @@ interface MysterySpec {
   secrets: SecretSpec[];
 }
 
-export const DEFAULT_MYSTERIES_FILE = process.env.WORLDKEEPER_ADDITIONS_DIR
-  ? path.join(process.env.WORLDKEEPER_ADDITIONS_DIR, 'lore', 'mysteries.json')
-  : path.resolve(import.meta.dirname, '../../../assets/lore/mysteries.json');
+export const DEFAULT_MYSTERIES_FILE = worldkeeperPath('lore', 'mysteries.json');
 
 /**
  * Bring the drafted mysteries into the library. Text the GM has edited in the app is kept (only rows still

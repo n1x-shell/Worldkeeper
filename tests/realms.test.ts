@@ -15,7 +15,8 @@ import { execSync } from 'node:child_process';
 import { exportJson, importJson } from '../server/src/backup/exporter.js';
 import { playerSnapshot } from '../server/src/player/projection.js';
 import { realmKey, sortRealms } from '../shared/realms.js';
-import { normalizeRealm, SETTING_REALMS } from '../server/src/import/normalize.js';
+import { normalizeRealm } from '../server/src/import/normalize.js';
+import { findPack } from '../server/src/packs/registry.js';
 import { loreFiles } from '../server/src/additions.js';
 
 const rec = (id: string, name: string, type: string, realm: string, body = '## Overview\nText.') =>
@@ -158,8 +159,10 @@ describe('realms', () => {
   });
 
   it("put the Ethereal Realm's records in their domains: named first in the realm field, or by their domain's record", () => {
-    expect(normalizeRealm('The Hollow Verge (Ethereal Realm)')).toEqual({ realm: 'hollow-verge', realms: ['hollow-verge', 'ethereal'] });
-    expect(normalizeRealm('Ethereal Realm, beyond the Black Horizon').realm).toBe('ethereal'); // beyond it is not in it
+    const pack = findPack('worldkeeper')!.manifest;
+    const known = pack.realms.map((r) => ({ id: r.id, name: r.name, kind: r.kind, parent_id: r.parent_id }));
+    expect(normalizeRealm('The Hollow Verge (Ethereal Realm)', known, pack.importProfile)).toEqual({ realm: 'hollow-verge', realms: ['hollow-verge', 'ethereal'] });
+    expect(normalizeRealm('Ethereal Realm, beyond the Black Horizon', known, pack.importProfile).realm).toBe('ethereal'); // beyond it is not in it
     const head = (id: string, name: string, category: string, parent: string) =>
       `ID: ${id}\nName: ${name}\nAlternate names: None\nCategory: ${category}\nParent: ${parent}\nContinent or realm: Ethereal Realm\nCanon status: CANON\nSource: Test\nTags: realm/ethereal\n\n# ${name}\n\n## Overview\nText.\n`;
     const { db } = importFiles([
@@ -174,7 +177,7 @@ describe('realms', () => {
   });
 
   it("are named correctly in the setting's own records: a domain first, then the Ethereal Realm", () => {
-    const domains = Object.values(SETTING_REALMS)
+    const domains = findPack('worldkeeper')!.manifest.realms
       .filter((r) => r.kind === 'domain')
       .map((r) => r.name);
     const fields = loreFiles().flatMap((f) => [...f.content.matchAll(/^Continent or realm: (.+)$/gm)].map((m) => m[1]));

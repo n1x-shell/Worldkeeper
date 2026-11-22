@@ -10,20 +10,20 @@
  * pins, routes or outlines move, <name>.moves.json lists where they were: a library's copy that is still exactly there
  * (the GM hasn't moved it) is brought up to date; anything the GM moved or redrew is left alone.
  */
+import { realmExists } from './repo/realms.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { DB } from './db/connection.js';
 import { maps, markers, shapes } from './repo/maps.js';
 import { imageSize } from './routes/atlas.js';
-import { ensureRealm } from './repo/realms.js';
-import { SETTING_REALMS } from './import/normalize.js';
-import { ensureSettingRealm } from './import/settingRealms.js';
 
 interface PinsSpec {
   name: string;
   image: string;
   /** Miles across (the image's width), when the map is drawn to scale. */
   scale_miles?: number;
+  /** The realm the map shows (a realm id of the pack's). */
+  realm?: string;
   pins: { id: string; label: string; x: number; y: number; category: string }[];
 }
 
@@ -95,8 +95,8 @@ export function applyMaps(db: DB, uploadsDir: string, mapsDir: string, opts: { o
           player_visible: true,
           layers,
           scale_miles: spec.scale_miles ?? null,
-          // The setting's maps: the Ethereal Realm's chart, and the world (moves to the setting's pack, step 3).
-          realm_id: /ethereal/i.test(spec.name) ? ensureSettingRealm(db, 'ethereal') : 'world',
+          // The realm the map shows, as its spec says (a pack's realms are in place before its maps).
+          realm_id: spec.realm && realmExists(db, spec.realm) ? spec.realm : 'world',
         }) as { id: number }
       ).id;
       created = true;

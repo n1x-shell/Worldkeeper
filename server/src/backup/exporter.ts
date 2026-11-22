@@ -13,16 +13,16 @@ import { badRequest } from '../lib/errors.js';
 import { portraitDataUrl, savePortrait } from '../repo/portraits.js';
 import type { Entity } from '../../../shared/domain.js';
 import { repairRealms } from '../repo/realms.js';
-import { SETTING_REALMS } from '../import/normalize.js';
-import { placeSettingWorld } from '../import/settingRealms.js';
 import { listRealms } from '../repo/realms.js';
 import { BUILTIN_REGISTRY } from '../../../shared/recordTypes.js';
 import { syncBuiltinTypes, types } from '../repo/recordTypes.js';
+import { installedManifests, syncInstalledPacks } from '../packs/registry.js';
 import { normalizeRealm, normalizeType } from '../import/normalize.js';
 
 /** Tables included in a full JSON export, in dependency order. */
 const TABLES = [
   'settings',
+  'setting_packs',
   'realms',
   'record_types',
   'entities',
@@ -133,9 +133,11 @@ export function importJson(db: DB, data: ReturnType<typeof exportJson>) {
         );
       }
     }
-    // An export from before realms were data names its realms only on records: make sure each exists.
-    repairRealms(db, SETTING_REALMS);
-    placeSettingWorld(db);
+    // An export from before realms were data names its realms only on records: make sure each exists, with the
+    // installed packs' own realms as they define them.
+    const packRealms = Object.fromEntries(installedManifests(db).flatMap((m) => m.realms.map((r) => [r.id, r] as const)));
+    repairRealms(db, packRealms);
+    syncInstalledPacks(db);
     syncBuiltinTypes(db); // the imported types replace the registry this library had cached
     reindexAll(db);
   });

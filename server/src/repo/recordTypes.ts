@@ -204,5 +204,8 @@ export function deleteRecordType(db: DB, key: string) {
   cache.delete(db);
 }
 
+/** Drop this library's cached registry (after its types change outside this module). */
+export const forgetTypes = (db: DB) => void cache.delete(db);
+
 /** Whether a type exists in this library. */
 export const typeExists = (db: DB, key: string) => !!types(db).get(key);

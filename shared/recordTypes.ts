@@ -55,8 +55,6 @@ export interface RecordTypeDef {
   aliases?: string[];
 }
 
-const SETTING = 'worldkeeper';
-
 /** The built-in types: the core set for any world, and the Worldkeeper setting's own. */
 export const BUILTIN_TYPES: RecordTypeDef[] = [
   // Places
@@ -449,74 +447,7 @@ export const BUILTIN_TYPES: RecordTypeDef[] = [
     pack: null,
   },
   { key: 'custom', label: 'Custom Entry', plural: 'Custom Entries', prefix: 'CUS', icon: 'file', pin: null, category: 'meta', browse: [], handbook: 'other', traits: {}, pack: null },
-  // The Worldkeeper setting's own types (move into its pack in step 3)
-  {
-    key: 'vault',
-    label: 'Vault',
-    plural: 'Vaults',
-    prefix: 'VLT',
-    icon: 'lock',
-    pin: 'site',
-    category: 'place',
-    browse: ['places', 'landmarks'],
-    handbook: 'places',
-    traits: { place: true },
-    pack: SETTING,
-  },
-  {
-    key: 'vault_key',
-    label: 'Vault Key',
-    plural: 'Vault Keys',
-    prefix: 'KEY',
-    icon: 'key',
-    pin: null,
-    category: 'thing',
-    browse: ['artifacts'],
-    handbook: 'treasures',
-    traits: { holdable: true },
-    pack: SETTING,
-  },
-  {
-    key: 'shard',
-    label: 'Crystal Shard',
-    plural: 'Crystal Shards',
-    prefix: 'SHD',
-    icon: 'gem',
-    pin: null,
-    category: 'thing',
-    browse: ['artifacts'],
-    handbook: 'treasures',
-    traits: { holdable: true },
-    pack: SETTING,
-    aliases: ['Shard'],
-  },
-  {
-    key: 'calling',
-    label: 'Calling',
-    plural: 'Callings',
-    prefix: 'CAL',
-    icon: 'swords',
-    pin: null,
-    category: 'folk',
-    browse: ['cultures'],
-    handbook: 'peoples',
-    traits: { commonNoun: true },
-    pack: SETTING,
-  },
-  {
-    key: 'ethereal_domain',
-    label: 'Ethereal Domain',
-    plural: 'Ethereal Domains',
-    prefix: 'ETH',
-    icon: 'ghost',
-    pin: 'area',
-    category: 'place',
-    browse: ['places'],
-    handbook: 'places',
-    traits: { place: true, regionLike: true, intro: true },
-    pack: SETTING,
-    aliases: ['Domain'],
-  },
+  // A pack adds its own types (the Worldkeeper setting's vault, shard, calling... are in packs/worldkeeper/pack.json).
 ];
 
 /** A record type's key: lower-case letters, digits and underscores. */

@@ -3,7 +3,7 @@
  * (the world's mysteries), some have been filled by Worldkeeper's additions (with links to what fills them), and the
  * rest are still to do. A report only: nothing is changed.
  *
- * How each stands comes from assets/lore/open-questions.json (curated rules), then from a few automatic checks
+ * How each stands comes from packs/worldkeeper/lore/open-questions.json (curated rules), then from a few automatic checks
  * (a person's handbook page and fight card, a place's map pin, a god's faith page). Anything else is still to do.
  */
 import fs from 'node:fs';
@@ -11,6 +11,7 @@ import path from 'node:path';
 import type Database from 'better-sqlite3';
 import { splitSections } from '../import/parseMarkdown.js';
 import { statblockFor } from './statblocks.js';
+import { worldkeeperPath } from '../packs/paths.js';
 
 export type QuestionStatus = 'kept' | 'filled' | 'todo';
 export interface OpenQuestion {
@@ -32,9 +33,7 @@ interface Rule {
   note?: string;
 }
 
-const RULES_FILE = process.env.WORLDKEEPER_ADDITIONS_DIR
-  ? path.join(process.env.WORLDKEEPER_ADDITIONS_DIR, 'lore', 'open-questions.json')
-  : path.resolve(import.meta.dirname, '../../../assets/lore/open-questions.json');
+const RULES_FILE = worldkeeperPath('lore', 'open-questions.json');
 
 export function readRules(file = RULES_FILE): Rule[] {
   if (!fs.existsSync(file)) return [];

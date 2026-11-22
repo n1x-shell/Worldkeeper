@@ -1,9 +1,9 @@
 /**
  * Worldkeeper additions: lore written for this world on top of the imported archive.
  *
- *  - assets/lore/*.md        new records, in the archive's record format (drafts/ folders are skipped)
- *  - assets/lore/links.json  links between records (homes, origins, groups) that the archive text does not give
- *  - timeline.json files under assets/lore: rows for the World Timeline (eras the GM has set by hand are kept)
+ *  - packs/worldkeeper/lore/*.md        new records, in the archive's record format (drafts/ folders are skipped)
+ *  - packs/worldkeeper/lore/links.json  links between records (homes, origins, groups) that the archive text does not give
+ *  - timeline.json files under packs/worldkeeper/lore: rows for the World Timeline (eras the GM has set by hand are kept)
  *
  * Applying them never changes or removes archive records. Links are stored as curated links, so the GM can edit or
  * delete them in the app like any other.
@@ -23,9 +23,10 @@ import { applyMaps } from './mapAdditions.js';
 import { applyAdventures } from './adventureAdditions.js';
 import { applyTables, applyTableSpecs } from './tableAdditions.js';
 import { itemTables, treasureData } from './repo/treasure.js';
+import { worldkeeperPath } from './packs/paths.js';
 
-/** The additions' lore folder: bundled with the desktop app (WORLDKEEPER_ADDITIONS_DIR), or assets/lore in the repo. */
-export const DEFAULT_ADDITIONS_DIR = process.env.WORLDKEEPER_ADDITIONS_DIR ? path.join(process.env.WORLDKEEPER_ADDITIONS_DIR, 'lore') : path.resolve(import.meta.dirname, '../../assets/lore');
+/** The Worldkeeper pack's lore folder (packs/worldkeeper/lore, or the installed copy). */
+export const DEFAULT_ADDITIONS_DIR = worldkeeperPath('lore');
 
 /** The new lore records, as source files the importer understands. */
 export function loreFiles(dir = DEFAULT_ADDITIONS_DIR): SourceFile[] {

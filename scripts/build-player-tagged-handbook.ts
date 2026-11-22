@@ -38,7 +38,7 @@ const files = [...readSource(archive), ...loreFiles()];
 commitPlan(ctx.db, files, buildPlan(ctx.db, files, path.basename(archive)));
 const linked = applyLinks(ctx.db);
 // Corrections to the archive's own wording (assets/lore/errata.json), before anything is revealed.
-const fixed = applyErrata(ctx.db, path.resolve(import.meta.dirname, '../assets/lore/errata.json'));
+const fixed = applyErrata(ctx.db, path.resolve(import.meta.dirname, '../packs/worldkeeper/lore/errata.json'));
 console.log(`errata: ${fixed.records} records corrected`);
 console.log(`links: ${linked.added} added${linked.skipped.length ? `, ${linked.skipped.length} skipped` : ''}`);
 // The handbook's reveals (player-tagged records' safe sections, and the DM-written player text), by the same rules
@@ -46,7 +46,7 @@ console.log(`links: ${linked.added} added${linked.skipped.length ? `, ${linked.s
 const reveals = handbookReveals(ctx.db, { mode: 'fresh', apply: true, log: (m) => console.log(m) });
 console.log(`revealed: ${reveals.newRecords} records, ${reveals.sections} sections, ${reveals.playerText} with player text`);
 // Maps: every map in assets/maps, with its pins, routes and region outlines (only revealed places).
-for (const r of applyMaps(ctx.db, ctx.paths.uploadsDir, path.resolve(import.meta.dirname, '../assets/maps'), { onlyRevealed: true }))
+for (const r of applyMaps(ctx.db, ctx.paths.uploadsDir, path.resolve(import.meta.dirname, '../packs/worldkeeper/maps'), { onlyRevealed: true }))
   console.log(`${r.name}: ${r.pins} pins, ${r.routes} routes, ${r.regions} regions`);
 
 const { files: site, summary } = buildPlayerSite(ctx.db, ctx.paths);

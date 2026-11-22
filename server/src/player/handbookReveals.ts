@@ -16,21 +16,21 @@ import { getEntity, updateEntity } from '../repo/entities.js';
 import { splitSections } from '../import/parseMarkdown.js';
 import { isSecretHeading } from './projection.js';
 import { ENTITY_TYPE_LABELS, type EntityType } from '../../../shared/domain.js';
-import { assetsPath } from '../assetsDir.js';
+import { worldkeeperPath } from '../packs/paths.js';
 
 type DB = Database.Database;
 
 // Same rule as the app's display filter for editorial notes about the source.
-const EDITORIAL =
+export const EDITORIAL =
   /^(sources?|references|unspecified fields|tome implementation|review notes|limits( of the source)?|record boundaries|source boundary|use and verification|missing facts|limitations|open questions|unknowns|amsel entry (rule|notes)|use in amsel|status)(\s*\[[^\]]*\])?$/i;
 // DM-facing sections (table advice, campaign bookkeeping, notes about the source).
-const DM_FACING =
+export const DM_FACING =
   /^(use in play|connections and use|verification boundary|cross-entry role link.*|mechanics note|provenance note|related documents|related|undefined|notes|campaign use|adventure material|attitude toward the party.*|established limits|other possibilities|boundaries)$/i;
 // Bookkeeping for the DM and editors: placeholders and instructions about the source, not lore.
 const BOOKKEEPING = (text: string) =>
   text.trim() === 'UNDEFINED' || /do not (assign|place|create|turn|invent)|without (approval|an owner decision)|\bAmsel\b|belongs? in Tome|owner decision/i.test(text);
 // Each sealed vault's purpose is secret (vault records are SECRET): sections that name one stay out.
-const VAULTS = /\b(Seed Vault|Mirewell|Arborhold|Cradlehorn|Cinderlock|Anvilreach|Rimeholt|Deepcall|Saltgate|Greyhall|Watchbarrow|Glassmere|Hollowbell)\b/;
+export const VAULTS = /\b(Seed Vault|Mirewell|Arborhold|Cradlehorn|Cinderlock|Anvilreach|Rimeholt|Deepcall|Saltgate|Greyhall|Watchbarrow|Glassmere|Hollowbell)\b/;
 /** Something secret elsewhere in the lore. The myths entry is exempt for the Hidden Ones (a myth players know). */
 export const isSpoiler = (id: string, text: string) =>
   VAULTS.test(text) ||
@@ -93,7 +93,7 @@ export function handbookReveals(db: DB, opts: { mode: 'fresh' | 'match'; apply: 
 
   // DM-written player text. In a fresh build it is the record's only revealed text; when matching, it's set only
   // where the record has none, and none of its revealed sections are taken away.
-  const textDir = opts.textDir ?? assetsPath('player-text');
+  const textDir = opts.textDir ?? worldkeeperPath('player-text');
   const byName = db.prepare(`SELECT id, type FROM entities WHERE lower(name) = lower(?) AND type NOT IN ('index','register','redirect') AND archived = 0`);
   // "## Name" or, when several records share the name, "## Name (Type)", e.g. "## Kaelholm (Settlement)".
   const findRecords = (heading: string) => {

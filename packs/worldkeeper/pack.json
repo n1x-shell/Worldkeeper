@@ -1,0 +1,472 @@
+{
+  "id": "worldkeeper",
+  "name": "The Worldkeeper setting",
+  "version": "0.4.2",
+  "description": "A shattered world of two continents and the Ethereal Realm between them: Aetheris, broken into five dominions around a lawless middle, and Kaelmar, where forest and old spellwork have grown together.",
+  "licence": "The setting text is the Worldkeeper contributors'; its rules (creatures, hazards, items) are CC BY 4.0.",
+  "realms": [
+    {
+      "id": "aetheris",
+      "name": "Aetheris",
+      "kind": "continent",
+      "parent_id": "world",
+      "color": "amber",
+      "icon": "mountain",
+      "sort_order": 1
+    },
+    {
+      "id": "kaelmar",
+      "name": "Kaelmar",
+      "kind": "continent",
+      "parent_id": "world",
+      "color": "green",
+      "icon": "flame",
+      "sort_order": 2
+    },
+    {
+      "id": "ethereal",
+      "name": "The Ethereal Realm",
+      "kind": "realm",
+      "parent_id": null,
+      "color": "violet",
+      "icon": "ghost",
+      "sort_order": 3
+    },
+    {
+      "id": "evershroud",
+      "name": "Evershroud",
+      "kind": "realm",
+      "parent_id": null,
+      "color": "slate",
+      "icon": "moon",
+      "sort_order": 0
+    },
+    {
+      "id": "hollow-verge",
+      "name": "The Hollow Verge",
+      "kind": "domain",
+      "parent_id": "ethereal",
+      "color": "violet",
+      "icon": "ghost",
+      "sort_order": 4
+    },
+    {
+      "id": "fields-of-lost-realities",
+      "name": "The Fields of Lost Realities",
+      "kind": "domain",
+      "parent_id": "hollow-verge",
+      "color": "teal",
+      "icon": "sparkles",
+      "sort_order": 5
+    },
+    {
+      "id": "ossuary-of-kings",
+      "name": "The Ossuary of Kings",
+      "kind": "domain",
+      "parent_id": "hollow-verge",
+      "color": "slate",
+      "icon": "skull",
+      "sort_order": 6
+    },
+    {
+      "id": "silent-archive",
+      "name": "The Silent Archive",
+      "kind": "domain",
+      "parent_id": "hollow-verge",
+      "color": "blue",
+      "icon": "moon",
+      "sort_order": 7
+    },
+    {
+      "id": "loom-of-eternity",
+      "name": "The Loom of Eternity",
+      "kind": "domain",
+      "parent_id": "hollow-verge",
+      "color": "amber",
+      "icon": "snowflake",
+      "sort_order": 8
+    },
+    {
+      "id": "citadel-of-the-hidden",
+      "name": "The Citadel of the Hidden",
+      "kind": "domain",
+      "parent_id": "hollow-verge",
+      "color": "rose",
+      "icon": "castle",
+      "sort_order": 9
+    },
+    {
+      "id": "black-horizon",
+      "name": "The Black Horizon",
+      "kind": "domain",
+      "parent_id": "hollow-verge",
+      "color": "red",
+      "icon": "compass",
+      "sort_order": 10
+    },
+    {
+      "id": "world",
+      "name": "The World",
+      "kind": "world",
+      "parent_id": "evershroud",
+      "color": "blue",
+      "icon": "globe",
+      "sort_order": 0
+    }
+  ],
+  "types": [
+    {
+      "key": "vault",
+      "label": "Vault",
+      "plural": "Vaults",
+      "prefix": "VLT",
+      "icon": "lock",
+      "pin": "site",
+      "category": "place",
+      "browse": ["places", "landmarks"],
+      "handbook": "places",
+      "traits": {
+        "place": true
+      }
+    },
+    {
+      "key": "vault_key",
+      "label": "Vault Key",
+      "plural": "Vault Keys",
+      "prefix": "KEY",
+      "icon": "key",
+      "pin": null,
+      "category": "thing",
+      "browse": ["artifacts"],
+      "handbook": "treasures",
+      "traits": {
+        "holdable": true
+      }
+    },
+    {
+      "key": "shard",
+      "label": "Crystal Shard",
+      "plural": "Crystal Shards",
+      "prefix": "SHD",
+      "icon": "gem",
+      "pin": null,
+      "category": "thing",
+      "browse": ["artifacts"],
+      "handbook": "treasures",
+      "traits": {
+        "holdable": true
+      },
+      "aliases": ["Shard"]
+    },
+    {
+      "key": "calling",
+      "label": "Calling",
+      "plural": "Callings",
+      "prefix": "CAL",
+      "icon": "swords",
+      "pin": null,
+      "category": "folk",
+      "browse": ["cultures"],
+      "handbook": "peoples",
+      "traits": {
+        "commonNoun": true
+      }
+    },
+    {
+      "key": "ethereal_domain",
+      "label": "Ethereal Domain",
+      "plural": "Ethereal Domains",
+      "prefix": "ETH",
+      "icon": "ghost",
+      "pin": "area",
+      "category": "place",
+      "browse": ["places"],
+      "handbook": "places",
+      "traits": {
+        "place": true,
+        "regionLike": true,
+        "intro": true
+      },
+      "aliases": ["Domain"]
+    }
+  ],
+  "roles": {
+    "world.overview": "WLD-901",
+    "world.timeline": "WLD-904",
+    "register.mysteries": "WLD-907",
+    "register.futures": "WLD-908",
+    "register.decisions": "DEC-901",
+    "register.conflicts": "DEC-903",
+    "register.decisions-required": "DEC-904",
+    "rules.calendar": "SYS-901",
+    "rules.travel": "SYS-906",
+    "rules.thinning": "SYS-907",
+    "clock.stages": "COS-032",
+    "depths.realm": "ethereal",
+    "depths.border": "ETH-501",
+    "depths.peoples": "ETH-590",
+    "depths.ways": "ETH-591",
+    "depths.dangers": "ETH-592",
+    "depths.navigation": "ETH-593"
+  },
+  "modules": ["thinning", "the-return", "fading-salvage", "setting-treasure", "vaults", "shards", "depths-explorer", "quick-reference"],
+  "importProfile": {
+    "about": "How this setting's own archive reads: its folder layout, the wording of its Category and realm fields, and its ID prefixes. Applied to an import that looks like this archive, and to this pack's own content.",
+    "detect": ["aetheris_setting_bible", "canonical_entry_locator", "(^|/)worldkeeper_additions/"],
+    "files": [
+      {
+        "pattern": "^references/.*setting_bible",
+        "kind": "bible"
+      },
+      {
+        "pattern": "^references/",
+        "kind": "reference"
+      },
+      {
+        "pattern": "/worked_examples/",
+        "kind": "worked_example"
+      },
+      {
+        "pattern": "^manifest\\.md$",
+        "kind": "manifest"
+      },
+      {
+        "pattern": "^08_amsel_lore_foundation/",
+        "kind": "guide"
+      },
+      {
+        "pattern": "^07_continuity/",
+        "kind": "continuity",
+        "onlyWithoutRecords": true
+      }
+    ],
+    "locator": "canonical_entry_locator",
+    "categoryRules": [
+      {
+        "pattern": "legacy cross-reference",
+        "type": "redirect"
+      },
+      {
+        "pattern": "^register",
+        "type": "register"
+      },
+      {
+        "pattern": "^(index|guide|npc directory)",
+        "type": "index"
+      },
+      {
+        "pattern": "^world",
+        "type": "world"
+      },
+      {
+        "pattern": "^realm",
+        "type": "realm"
+      },
+      {
+        "pattern": "^continent",
+        "type": "continent"
+      },
+      {
+        "pattern": "^building",
+        "type": "building"
+      },
+      {
+        "pattern": "^magic system",
+        "type": "magic_system"
+      },
+      {
+        "pattern": "^religion",
+        "type": "deity"
+      },
+      {
+        "pattern": "^historical",
+        "type": "event"
+      },
+      {
+        "pattern": "^ethereal group",
+        "type": "faction"
+      },
+      {
+        "pattern": "^people",
+        "type": "people"
+      },
+      {
+        "pattern": "^(shared system|shared rules|travel guide)",
+        "type": "system"
+      },
+      {
+        "pattern": "^rule",
+        "type": "rule"
+      },
+      {
+        "pattern": "^(adventure|campaign arcs)",
+        "type": "adventure_hook"
+      }
+    ],
+    "idTypes": {
+      "CON-501": "realm"
+    },
+    "prefixTypes": {
+      "WLD": {
+        "type": "world",
+        "ids": ["WLD-901"],
+        "else": "index"
+      },
+      "CON": "continent",
+      "REG": "region",
+      "LOC": "landmark",
+      "SET": "settlement",
+      "VLT": "vault",
+      "KEY": "vault_key",
+      "NPC": "npc",
+      "FAC": "faction",
+      "CLT": "cult",
+      "FAM": "family",
+      "PPL": "people",
+      "CAL": "calling",
+      "DEI": "deity",
+      "COS": "cosmology",
+      "HIS": "event",
+      "SHD": "shard",
+      "ART": "artifact",
+      "ITM": "item",
+      "CRE": "creature",
+      "RUL": "rule",
+      "ETH": {
+        "type": "ethereal_domain",
+        "category": "^ethereal domain",
+        "else": "index"
+      },
+      "SYS": "system",
+      "HOOK": "adventure_hook",
+      "DEC": "register",
+      "GDE": "index",
+      "IDX": "index",
+      "CUS": "custom"
+    },
+    "realmNames": {
+      "aetheris": "aetheris",
+      "kaelmar": "kaelmar",
+      "ethereal": "ethereal"
+    },
+    "notARealm": "^(both|all|any|every(where)?|multiple|various|n\\/?a|none|unknown|undefined|-|—|cross[- ]realm)\\b",
+    "realmFocus": "actual established domain:\\s*([^;]+)",
+    "domainRecords": {
+      "ETH-501": "hollow-verge",
+      "ETH-502": "fields-of-lost-realities",
+      "ETH-503": "ossuary-of-kings",
+      "ETH-504": "silent-archive",
+      "ETH-505": "loom-of-eternity",
+      "ETH-506": "citadel-of-the-hidden",
+      "ETH-507": "black-horizon"
+    },
+    "timelineFile": "04_world_timeline\\.md$"
+  },
+  "cleaning": {
+    "about": "Notes in this setting's archive about its own sources (citations, tags, file names, rulebook caveats), hidden outside debug mode. Applied only to records from this pack; the records are never changed.",
+    "sourceTag": {
+      "pattern": "\\s*\\[(?:SOURCE[- ]PROVIDED[^\\]]*|OPTIONAL[^\\]]*|OUTSIDE[^\\]]*|HOMEBREW[^\\]]*|NEW|PROPOSED[^\\]]*|UNDEFINED[^\\]]*|INFERENCE[^\\]]*|BELIEF[^\\]]*|EXTRAPOLATED[^\\]]*|CANON[^\\]]*|DERIVED[^\\]]*|OFFICIAL[^\\]]*|v\\d+[^\\]]*)\\]",
+      "flags": "gi"
+    },
+    "citation": {
+      "pattern": "\\s*\\((?:[AKW]\\s*:[^()]*)\\)|\\s*\\([^()]*\\[[A-Z]{3}-\\d{3}\\][^()]*\\)",
+      "flags": "g"
+    },
+    "sourcePhrases": [
+      {
+        "pattern": "\\s+as described by the cards",
+        "flags": "gi",
+        "to": ""
+      },
+      {
+        "pattern": "\\s+from the source\\b",
+        "flags": "gi",
+        "to": ""
+      },
+      {
+        "pattern": "\\s+in the (?:novel|cards|bible|setting bible)\\b",
+        "flags": "gi",
+        "to": ""
+      },
+      {
+        "pattern": ",?\\s+called [^,.]+ in the novel",
+        "flags": "gi",
+        "to": ""
+      },
+      {
+        "pattern": "What the cards say",
+        "flags": "g",
+        "to": "What is told"
+      },
+      {
+        "pattern": "\\b[Tt]he (\\d+ AB) novel\\b",
+        "flags": "g",
+        "to": "$1"
+      },
+      {
+        "pattern": "\\s+appear in (?:the )?(?:\\w+ )?character cards as ",
+        "flags": "gi",
+        "to": " are "
+      },
+      {
+        "pattern": ",?\\s*but the (?:bibles?|books|cards|source) (?:do|does) not say so",
+        "flags": "gi",
+        "to": ""
+      },
+      {
+        "pattern": "\\bThe source (?:proposes|suggests) representing ",
+        "flags": "g",
+        "to": "Represent "
+      },
+      {
+        "pattern": "\\bThe source suggests this route for ",
+        "flags": "g",
+        "to": "This route suits "
+      }
+    ],
+    "metaSentence": {
+      "pattern": "\\.md\\b|Setting[_ ]Bible|\\bthe bible\\b|\\bthe source (?:proposes|suggests|gives|says|states)\\b|\\bsetting-facing\\b|official character class|\\brulebooks?\\b|character-build interpretation|\\bverif(?:y|ied)\\b|\\bUNDEFINED\\b|\\bSee [A-Z]{3,4}-\\d{3}|\\bno (?:additional|further) [^.]* (?:assumed|assigned)\\b|\\bdo not (?:assign|place|create|invent)\\b|\\bowner decision\\b|\\bstated (?:flexible )?convention\\b|\\bTome\\b|\\bLore entries\\b|\\bstandalone page\\b|\\bnot a replacement for\\b|\\bauthoritative\\b|\\brule reference\\b|\\bthe (?:cards|bibles|books|Lorebook|GM Lorebook)\\b|\\b(?:cards|books|bibles|Lorebook)'s?\\s|`[^`]*\\/[^`]*`|\\b[A-Z]{3}-\\d{3}[\\u2013-]\\d{3}\\b|\\bsee (?:the )?[^.]*\\b[A-Z]{3}-\\d{3}\\b|\\bbibles?\\b|\\bcharacter cards?\\b|\\bno [^.]*\\bis established\\b|\\bonly [^.]*\\bis established\\b|\\bonly the pressures apparent\\b",
+      "flags": "i"
+    },
+    "sourceOnlyHeading": {
+      "pattern": "^(?:undefined|shared-world relationship|cross-entry role link.*|position and map use|limit of the record)$",
+      "flags": "i"
+    },
+    "editorialHeading": {
+      "pattern": "^(sources?|references|unspecified fields|tome implementation|review notes|limits( of the source)?|record boundaries|source boundary|use and verification|missing facts|limitations|open questions|unknowns|amsel entry (rule|notes)|use in amsel|status)(\\s*\\[[^\\]]*\\])?$",
+      "flags": "i"
+    }
+  },
+  "handbook": {
+    "about": "Rules for matching the published Player Handbook: which sections of this pack's records are safe for players.",
+    "editorialHeading": {
+      "pattern": "^(sources?|references|unspecified fields|tome implementation|review notes|limits( of the source)?|record boundaries|source boundary|use and verification|missing facts|limitations|open questions|unknowns|amsel entry (rule|notes)|use in amsel|status)(\\s*\\[[^\\]]*\\])?$",
+      "flags": "i"
+    },
+    "dmFacingHeading": {
+      "pattern": "^(use in play|connections and use|verification boundary|cross-entry role link.*|mechanics note|provenance note|related documents|related|undefined|notes|campaign use|adventure material|attitude toward the party.*|established limits|other possibilities|boundaries)$",
+      "flags": "i"
+    },
+    "bookkeeping": {
+      "pattern": "do not (assign|place|create|turn|invent)|without (approval|an owner decision)|\\bAmsel\\b|belongs? in Tome|owner decision",
+      "flags": "i"
+    },
+    "spoilers": [
+      {
+        "pattern": "\\b(Seed Vault|Mirewell|Arborhold|Cradlehorn|Cinderlock|Anvilreach|Rimeholt|Deepcall|Saltgate|Greyhall|Watchbarrow|Glassmere|Hollowbell)\\b",
+        "flags": ""
+      },
+      {
+        "pattern": "Forgotten One|thirteenth (shard|crystal)|Root Core|Seventh Ward|\\[SECRET|GM only",
+        "flags": "i"
+      }
+    ],
+    "spoilerExceptions": [
+      {
+        "pattern": "Hidden Ones",
+        "flags": "",
+        "exceptIn": "COS-910"
+      }
+    ]
+  }
+}

@@ -5,7 +5,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { assetsPath } from '../assetsDir.js';
+import { worldkeeperPath } from '../packs/paths.js';
 
 export interface StatEntry {
   name: string;
@@ -55,7 +55,7 @@ export interface StatBlock {
   open?: boolean;
 }
 
-const DIR = assetsPath('statblocks');
+const DIR = worldkeeperPath('statblocks');
 let cache: { stamp: string; data: Record<string, StatBlock> } | null = null;
 
 /** Every stat block, re-read when the files change. */

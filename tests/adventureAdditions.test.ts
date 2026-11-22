@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { tempContext } from './helpers';
 import { applyAdventures } from '../server/src/adventureAdditions';
 
-const DIR = path.resolve(import.meta.dirname, '../assets/adventures');
+const DIR = path.resolve(import.meta.dirname, '../packs/worldkeeper/adventures');
 
 describe('adventure additions', () => {
   it('adds each adventure with its scenes, in order, and only once', () => {

@@ -109,7 +109,7 @@ describe('shipped maps put to scale', () => {
 });
 
 describe('the world map, to scale', () => {
-  const dir = path.resolve(import.meta.dirname, '../assets/maps');
+  const dir = path.resolve(import.meta.dirname, '../packs/worldkeeper/maps');
   const spec = JSON.parse(fs.readFileSync(path.join(dir, 'world-map.pins.json'), 'utf8')) as { scale_miles: number; pins: { id: string; x: number; y: number }[] };
   const routes = (JSON.parse(fs.readFileSync(path.join(dir, 'world-map.routes.json'), 'utf8')) as { routes: { label: string; points: [number, number][] }[] }).routes;
   const perPx = spec.scale_miles / 3344;

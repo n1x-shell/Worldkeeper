@@ -117,7 +117,7 @@ describe('consistency: people and secrets', () => {
 
 describe('derived links', () => {
   it('reads a Family section place as where they come from, and never has anyone living in a vault', () => {
-    const ctx = tempContext();
+    const ctx = tempContext({ settingRealms: true }); // the vault type is the setting pack's
     const files = [
       rec('LOC-901', 'Old Spire', 'Landmark'),
       rec('VLT-901', 'Sealed Vault', 'Vault'),

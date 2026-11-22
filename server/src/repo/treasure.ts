@@ -3,7 +3,7 @@
  * for those the archive gave none), the Treasure tool that rolls individual treasure and hoards by tier and region, and
  * the party's treasure log for each campaign.
  *
- * The catalogue and pools ship with the Worldkeeper additions (assets/treasure); they are read, not copied into the
+ * The catalogue and pools ship with the Worldkeeper additions (packs/worldkeeper/treasure); they are read, not copied into the
  * library, so archive records are never changed.
  */
 import fs from 'node:fs';
@@ -13,10 +13,9 @@ import type { DB } from '../db/connection.js';
 import { badRequest } from '../lib/errors.js';
 import { makeCrud } from './crud.js';
 import { rollDice } from '../../../shared/play.js';
+import { worldkeeperPath } from '../packs/paths.js';
 
-export const DEFAULT_TREASURE_DIR = process.env.WORLDKEEPER_ADDITIONS_DIR
-  ? path.join(process.env.WORLDKEEPER_ADDITIONS_DIR, 'treasure')
-  : path.resolve(import.meta.dirname, '../../../assets/treasure');
+export const DEFAULT_TREASURE_DIR = worldkeeperPath('treasure');
 
 export const RARITIES = ['common', 'uncommon', 'rare', 'very rare', 'legendary'] as const;
 export type Rarity = (typeof RARITIES)[number];

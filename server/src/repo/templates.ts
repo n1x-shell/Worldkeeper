@@ -18,7 +18,7 @@ export const BUILTIN_TEMPLATES_DIR = process.env.WORLDKEEPER_ADDITIONS_DIR
 
 export interface TemplateInfo extends TemplateSpec {
   id: string;
-  origin: 'builtin' | 'import' | 'user';
+  origin: 'builtin' | 'import' | 'user' | 'pack';
   /** The template as Markdown (shared/templates.ts), for editing. */
   markdown: string;
 }
@@ -55,7 +55,7 @@ function toInfo(r: Row): TemplateInfo {
 }
 
 export function listTemplates(db: DB): TemplateInfo[] {
-  return (db.prepare(`SELECT * FROM templates ORDER BY CASE origin WHEN 'user' THEN 0 WHEN 'builtin' THEN 1 ELSE 2 END, name`).all() as Row[]).map(toInfo);
+  return (db.prepare(`SELECT * FROM templates ORDER BY CASE origin WHEN 'user' THEN 0 WHEN 'pack' THEN 1 WHEN 'builtin' THEN 2 ELSE 3 END, name`).all() as Row[]).map(toInfo);
 }
 
 export function getTemplate(db: DB, id: string): TemplateInfo {
@@ -97,6 +97,21 @@ export function syncBuiltinTemplates(db: DB, dir = BUILTIN_TEMPLATES_DIR) {
     }
   });
   tx();
+}
+
+/** Write a pack's templates (its templates/ folder) into the library, as that pack's. */
+export function syncPackTemplates(db: DB, packId: string, dir: string) {
+  if (!fs.existsSync(dir)) return;
+  db.transaction(() => {
+    for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.md'))) {
+      const markdown = fs.readFileSync(path.join(dir, f), 'utf8');
+      const spec = parseTemplate(markdown);
+      if (!spec.type) continue;
+      const id = `pack:${packId}:${spec.type}`;
+      save(db, id, spec, markdown, 'pack');
+      db.prepare('UPDATE templates SET pack_id = ? WHERE id = ?').run(packId, id);
+    }
+  })();
 }
 
 /** Check a template the GM wrote: a type the library has, a name, and at least one section. */
