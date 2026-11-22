@@ -20,6 +20,7 @@ import { placeSettingWorld } from '../import/settingRealms.js';
 const TABLES = [
   'settings',
   'realms',
+  'record_types',
   'entities',
   'entity_revisions',
   'relationships',

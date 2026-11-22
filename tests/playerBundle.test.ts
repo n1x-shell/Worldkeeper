@@ -50,7 +50,7 @@ const ALLOWED = [
   /^client\/src\/components\/peek\/hover\.ts$/,
   /^client\/src\/components\/sidebarSlot\.ts$/,
   /^client\/src\/components\/map\/(MapView|grouping)\.tsx?$/,
-  /^client\/src\/components\/(ItemRules|CalendarView|realms)\.tsx$/,
+  /^client\/src\/components\/(ItemRules|CalendarView|realms|recordTypes)\.tsx$/,
   /^client\/src\/components\/realmIcons\.ts$/,
   /^client\/src\/lib\/(mechanics|rank)\.ts$/,
   /^client\/src\/styles\//,

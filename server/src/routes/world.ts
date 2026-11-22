@@ -28,6 +28,7 @@ import { isSecretHeading } from '../player/projection.js';
 import { peekEntity } from '../repo/peek.js';
 import { createRealm, deleteRealm, getRealm, listRealms, realmExists, reorderRealms, updateRealm } from '../repo/realms.js';
 import { timelineRealms } from '../import/importer.js';
+import { createRecordType, deleteRecordType, listRecordTypes, updateRecordType } from '../repo/recordTypes.js';
 import { TYPE_GROUPS } from '../../../shared/domain.js';
 import { revealDuringPlay } from '../repo/reveal.js';
 import { createEra, listEras, setRowEra, updateEra } from '../repo/eras.js';
@@ -96,6 +97,26 @@ export function worldRoutes(ctx: AppContext) {
         sections,
         baseline: e.modified_since_import ? baselineFor(ctx.db, id) : null,
       };
+    }),
+  );
+  // Record types: the registry (shared/recordTypes.ts), with the GM's own types.
+  r.get(
+    '/record-types',
+    h((req) => listRecordTypes(ctx.db, { counts: true, includeArchived: req.query.archived === '1' })),
+  );
+  r.post(
+    '/record-types',
+    h((req) => createRecordType(ctx.db, req.body)),
+  );
+  r.patch(
+    '/record-types/:key',
+    h((req) => updateRecordType(ctx.db, String(req.params.key), req.body)),
+  );
+  r.delete(
+    '/record-types/:key',
+    h((req) => {
+      deleteRecordType(ctx.db, String(req.params.key));
+      return { ok: true };
     }),
   );
   // Realms: the library's worlds, continents and planes (docs/OWN_WORLD_PLAN.md §2.1).

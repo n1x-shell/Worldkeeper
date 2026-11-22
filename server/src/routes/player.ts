@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import type { AppContext } from '../context.js';
 import { h, intParam } from './util.js';
-import { activeCampaignId, playerCampaign, playerCampaigns, playerEntities, playerEntity, playerMaps, playerRealms, playerSearch } from '../player/projection.js';
+import { activeCampaignId, playerCampaign, playerCampaigns, playerEntities, playerEntity, playerMaps, playerRealms, playerSearch, playerTypes } from '../player/projection.js';
 import { playerFactionWeb } from '../repo/factionWeb.js';
 import { notFound } from '../lib/errors.js';
 import { playerLive } from '../repo/handouts.js';
@@ -25,6 +25,7 @@ export function playerRoutes(ctx: AppContext) {
       appName: (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper',
       mechanics: getMechanics(ctx.db),
       realms: playerRealms(ctx.db),
+      types: playerTypes(ctx.db),
     })),
   );
   r.get(

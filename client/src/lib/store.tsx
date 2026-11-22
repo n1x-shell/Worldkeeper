@@ -4,6 +4,7 @@ import type { EntitySummary } from './types';
 import { MentionIndex } from '@shared/mentions';
 import type { RealmInfo } from '@shared/realms';
 import { RealmsProvider } from '../components/realms';
+import { RecordTypesProvider, type ClientRecordType } from '../components/recordTypes';
 
 interface AppState {
   appName: string;
@@ -28,6 +29,9 @@ interface AppState {
   /** The library's realms (archived ones too; most lists hide them). */
   realms: RealmInfo[];
   reloadRealms: () => Promise<void>;
+  /** The library's record types (archived ones too), with how many records each has. */
+  recordTypes: ClientRecordType[];
+  reloadTypes: () => Promise<void>;
 }
 
 const Ctx = createContext<AppState | null>(null);
@@ -58,6 +62,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [debug, setDebugState] = useState(false);
   const [debugForced, setDebugForced] = useState(false);
   const [realms, setRealms] = useState<RealmInfo[] | undefined>(undefined);
+  const [recordTypes, setRecordTypes] = useState<ClientRecordType[] | undefined>(undefined);
   const mentions = useMemo(() => new MentionIndex([...index.values()].map((e) => ({ id: e.id, name: e.name, type: e.type, aliases: e.aliases, redirect_to: e.redirect_to }))), [index]);
 
   useEffect(() => {
@@ -89,11 +94,16 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setRealms(await api.get<RealmInfo[]>('/api/realms?archived=1'));
   }, []);
 
+  const reloadTypes = useCallback(async () => {
+    setRecordTypes(await api.get<ClientRecordType[]>('/api/record-types?archived=1'));
+  }, []);
+
   useEffect(() => {
+    void reloadTypes().catch(() => setRecordTypes([]));
     void reloadRealms().catch(() => setRealms([]));
     void reloadIndex().catch(() => setIndexLoaded(true));
     void reloadMeta().catch(() => undefined);
-  }, [reloadIndex, reloadMeta, reloadRealms]);
+  }, [reloadIndex, reloadMeta, reloadRealms, reloadTypes]);
 
   const value = useMemo<AppState>(
     () => ({
@@ -127,12 +137,16 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
       mentions,
       realms: realms ?? [],
       reloadRealms,
+      recordTypes: recordTypes ?? [],
+      reloadTypes,
     }),
-    [appName, theme, sidebarCollapsed, activeCampaignId, index, indexLoaded, reloadIndex, reloadMeta, entityCount, debug, debugForced, mentions, realms, reloadRealms],
+    [appName, theme, sidebarCollapsed, activeCampaignId, index, indexLoaded, reloadIndex, reloadMeta, entityCount, debug, debugForced, mentions, realms, reloadRealms, recordTypes, reloadTypes],
   );
   return (
     <Ctx.Provider value={value}>
-      <RealmsProvider realms={realms}>{children}</RealmsProvider>
+      <RealmsProvider realms={realms}>
+        <RecordTypesProvider types={recordTypes}>{children}</RecordTypesProvider>
+      </RealmsProvider>
     </Ctx.Provider>
   );
 }

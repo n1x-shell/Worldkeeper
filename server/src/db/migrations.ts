@@ -800,6 +800,32 @@ ALTER TABLE campaigns ADD COLUMN world_id TEXT REFERENCES realms(id) ON DELETE S
 UPDATE campaigns SET world_id = 'world';
 `,
   },
+  {
+    version: 20,
+    name: 'the record-type registry: kinds of record with their prefixes, traits, icons and pin kinds',
+    // The built-in types are written by syncBuiltinTypes (server/src/repo/recordTypes.ts) at every start, from
+    // shared/recordTypes.ts; a GM's own types (and, from step 3, packs') are rows here too.
+    sql: `
+CREATE TABLE record_types (
+  key TEXT PRIMARY KEY,
+  label TEXT NOT NULL,
+  plural TEXT NOT NULL,
+  prefix TEXT NOT NULL UNIQUE,
+  icon TEXT NOT NULL DEFAULT 'file',
+  pin TEXT CHECK (pin IN ('area','site')),
+  category TEXT NOT NULL DEFAULT 'thing',
+  browse TEXT NOT NULL DEFAULT '[]',
+  handbook TEXT NOT NULL DEFAULT 'other',
+  traits TEXT NOT NULL DEFAULT '{}',
+  aliases TEXT NOT NULL DEFAULT '[]',
+  pack_id TEXT,
+  builtin INTEGER NOT NULL DEFAULT 0,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  archived INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

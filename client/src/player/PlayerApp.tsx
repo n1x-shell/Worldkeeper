@@ -4,6 +4,8 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { apiSource, type PlayerSource } from './source';
 import { PlayerProvider } from './context';
 import { RealmsProvider } from '../components/realms';
+import { RecordTypesProvider } from '../components/recordTypes';
+import type { RecordTypeDef } from '@shared/recordTypes';
 import type { RealmInfo } from '@shared/realms';
 import { PlayerLayout } from './PlayerLayout';
 import { PlayerCalendar, PlayerHandouts, PlayerRegions } from './LivePlay';
@@ -31,7 +33,7 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
     mechanicsFrom = source;
     setMechanicsLoader(() => source.info().then((i) => i.mechanics));
   }
-  const [info, setInfo] = useState<{ appName: string; publishedAt?: string; realms?: RealmInfo[] }>({ appName: 'The Worldkeeper' });
+  const [info, setInfo] = useState<{ appName: string; publishedAt?: string; realms?: RealmInfo[]; types?: RecordTypeDef[] }>({ appName: 'The Worldkeeper' });
   useEffect(() => {
     void source.info().then((i) => {
       setInfo(i);
@@ -41,88 +43,90 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
   return (
     <PlayerProvider source={source} base={base}>
       <RealmsProvider realms={info.realms}>
-        <Routes>
-          <Route element={<PlayerLayout appName={info.appName} publishedAt={info.publishedAt} />}>
-            <Route index element={<PlayerHome />} />
-            <Route path="browse/:group" element={<PlayerBrowse />} />
-            <Route path="realm/:realm" element={<PlayerRealm />} />
-            <Route path="e/:id" element={<PlayerEntry />} />
-            <Route path="search" element={<PlayerSearch />} />
-            <Route
-              path="maps"
-              element={
-                <Later>
-                  <MapExplorer />
-                </Later>
-              }
-            />
-            <Route
-              path="maps/:id"
-              element={
-                <Later>
-                  <MapExplorer />
-                </Later>
-              }
-            />
-            <Route path="quests" element={<PlayerQuests />} />
-            <Route path="recaps" element={<PlayerRecaps />} />
-            <Route path="standing" element={<PlayerStanding />} />
-            <Route path="treasure" element={<PlayerTreasure />} />
-            <Route path="handouts" element={<PlayerHandouts />} />
-            <Route path="calendar" element={<PlayerCalendar />} />
-            <Route path="regions" element={<PlayerRegions />} />
-            <Route
-              path="factions-web"
-              element={
-                <Later>
-                  <PlayerFactionWeb />
-                </Later>
-              }
-            />
-            <Route
-              path="me"
-              element={
-                <Later>
-                  <PlayerMe />
-                </Later>
-              }
-            />
-            <Route
-              path="me/:code"
-              element={
-                <Later>
-                  <PlayerMe />
-                </Later>
-              }
-            />
-            <Route
-              path="print"
-              element={
-                <Later>
-                  <PlayerPrint />
-                </Later>
-              }
-            />
-            <Route
-              path="omens"
-              element={
-                <Later>
-                  <PlayerOmens />
-                </Later>
-              }
-            />
-            <Route
-              path="builder"
-              element={
-                <Later>
-                  <CharacterBuilder />
-                </Later>
-              }
-            />
-            <Route path="journal" element={<Navigate to={`${base}/quests`} replace />} />
-            <Route path="*" element={<PlayerHome />} />
-          </Route>
-        </Routes>
+        <RecordTypesProvider types={info.types}>
+          <Routes>
+            <Route element={<PlayerLayout appName={info.appName} publishedAt={info.publishedAt} />}>
+              <Route index element={<PlayerHome />} />
+              <Route path="browse/:group" element={<PlayerBrowse />} />
+              <Route path="realm/:realm" element={<PlayerRealm />} />
+              <Route path="e/:id" element={<PlayerEntry />} />
+              <Route path="search" element={<PlayerSearch />} />
+              <Route
+                path="maps"
+                element={
+                  <Later>
+                    <MapExplorer />
+                  </Later>
+                }
+              />
+              <Route
+                path="maps/:id"
+                element={
+                  <Later>
+                    <MapExplorer />
+                  </Later>
+                }
+              />
+              <Route path="quests" element={<PlayerQuests />} />
+              <Route path="recaps" element={<PlayerRecaps />} />
+              <Route path="standing" element={<PlayerStanding />} />
+              <Route path="treasure" element={<PlayerTreasure />} />
+              <Route path="handouts" element={<PlayerHandouts />} />
+              <Route path="calendar" element={<PlayerCalendar />} />
+              <Route path="regions" element={<PlayerRegions />} />
+              <Route
+                path="factions-web"
+                element={
+                  <Later>
+                    <PlayerFactionWeb />
+                  </Later>
+                }
+              />
+              <Route
+                path="me"
+                element={
+                  <Later>
+                    <PlayerMe />
+                  </Later>
+                }
+              />
+              <Route
+                path="me/:code"
+                element={
+                  <Later>
+                    <PlayerMe />
+                  </Later>
+                }
+              />
+              <Route
+                path="print"
+                element={
+                  <Later>
+                    <PlayerPrint />
+                  </Later>
+                }
+              />
+              <Route
+                path="omens"
+                element={
+                  <Later>
+                    <PlayerOmens />
+                  </Later>
+                }
+              />
+              <Route
+                path="builder"
+                element={
+                  <Later>
+                    <CharacterBuilder />
+                  </Later>
+                }
+              />
+              <Route path="journal" element={<Navigate to={`${base}/quests`} replace />} />
+              <Route path="*" element={<PlayerHome />} />
+            </Route>
+          </Routes>
+        </RecordTypesProvider>
       </RealmsProvider>
     </PlayerProvider>
   );

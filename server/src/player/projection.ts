@@ -20,6 +20,8 @@ import { playerRegions } from '../repo/regionState.js';
 import type { DB } from '../db/connection.js';
 import { SECRET_HEADING_RE, ENTITY_TYPE_LABELS, type EntityType } from '../../../shared/domain.js';
 import { listRealms } from '../repo/realms.js';
+import { listRecordTypes } from '../repo/recordTypes.js';
+import type { RecordTypeDef } from '../../../shared/recordTypes.js';
 import type { RealmInfo } from '../../../shared/realms.js';
 import { parseJson } from '../lib/json.js';
 import { splitSections } from '../import/parseMarkdown.js';
@@ -218,6 +220,14 @@ function realmContext(db: DB): RealmContext {
   };
 }
 
+/** The record types players see: those their revealed records have (a GM's own type stays unnamed until then). */
+export function playerTypes(db: DB): RecordTypeDef[] {
+  const used = new Set((db.prepare('SELECT DISTINCT type FROM entities WHERE revealed = 1 AND archived = 0').all() as { type: string }[]).map((r) => r.type));
+  return listRecordTypes(db)
+    .filter((t) => used.has(t.key))
+    .map(({ builtin: _b, archived: _a, sort_order: _s, records: _r, ...t }) => t);
+}
+
 /** The realms players see: unarchived ones their revealed records are in (and what holds those), without counts. */
 export function playerRealms(db: DB): Omit<RealmInfo, 'records'>[] {
   const list = listRealms(db);
@@ -389,6 +399,7 @@ export function playerSnapshot(db: DB) {
     generated_at: new Date().toISOString(),
     entities: playerEntities(db),
     realms: playerRealms(db),
+    types: playerTypes(db),
     maps: playerMaps(db),
     campaigns: playerCampaigns(db),
     factionWeb: playerFactionWeb(db, activeCampaignId(db)),
