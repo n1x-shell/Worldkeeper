@@ -24,7 +24,7 @@ const TERRAIN_WORDS: Record<Terrain, string[]> = {
   underdark: ['underdark', 'cave', 'caves', 'caverns', 'underground', 'tunnels', 'mines'],
   underwater: ['underwater', 'undersea', 'sunken', 'depths'],
   urban: ['urban', 'city', 'town', 'village', 'streets', 'settled'],
-  planar: ['planar', 'plane', 'ethereal', 'astral', 'otherworld'],
+  planar: ['planar', 'plane', 'planes', 'astral', 'otherworld', 'otherworldly'],
 };
 
 /** The terrains a piece of text names. */

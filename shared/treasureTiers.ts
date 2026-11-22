@@ -13,10 +13,34 @@ export interface TreasureTier {
 }
 
 export const TREASURE_TIERS: TreasureTier[] = [
-  { key: '1-4', label: 'Levels 1 to 4', individual: { dice: '3d6', mult: 1, coin: 'gp' }, hoard: { dice: '2d4', mult: 100, coin: 'gp' }, items: { dice: '1d3-1', rarities: { common: 3, uncommon: 2 } } },
-  { key: '5-10', label: 'Levels 5 to 10', individual: { dice: '2d8', mult: 10, coin: 'gp' }, hoard: { dice: '8d10', mult: 100, coin: 'gp' }, items: { dice: '1d2', rarities: { uncommon: 3, rare: 2 } } },
-  { key: '11-16', label: 'Levels 11 to 16', individual: { dice: '2d10', mult: 10, coin: 'pp' }, hoard: { dice: '8d8', mult: 1000, coin: 'gp' }, items: { dice: '1d3', rarities: { rare: 3, 'very rare': 2 } } },
-  { key: '17-20', label: 'Levels 17 to 20', individual: { dice: '2d8', mult: 100, coin: 'pp' }, hoard: { dice: '6d10', mult: 10000, coin: 'gp' }, items: { dice: '1d3', rarities: { 'very rare': 3, legendary: 1 } } },
+  {
+    key: '1-4',
+    label: 'Levels 1 to 4',
+    individual: { dice: '3d6', mult: 1, coin: 'gp' },
+    hoard: { dice: '2d4', mult: 100, coin: 'gp' },
+    items: { dice: '1d3-1', rarities: { common: 3, uncommon: 2 } },
+  },
+  {
+    key: '5-10',
+    label: 'Levels 5 to 10',
+    individual: { dice: '2d8', mult: 10, coin: 'gp' },
+    hoard: { dice: '8d10', mult: 100, coin: 'gp' },
+    items: { dice: '1d2', rarities: { uncommon: 3, rare: 2 } },
+  },
+  {
+    key: '11-16',
+    label: 'Levels 11 to 16',
+    individual: { dice: '2d10', mult: 10, coin: 'pp' },
+    hoard: { dice: '8d8', mult: 1000, coin: 'gp' },
+    items: { dice: '1d3', rarities: { rare: 3, 'very rare': 2 } },
+  },
+  {
+    key: '17-20',
+    label: 'Levels 17 to 20',
+    individual: { dice: '2d8', mult: 100, coin: 'pp' },
+    hoard: { dice: '6d10', mult: 10000, coin: 'gp' },
+    items: { dice: '1d3', rarities: { 'very rare': 3, legendary: 1 } },
+  },
 ];
 
 /** The tier for a party level. */

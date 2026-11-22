@@ -1,5 +1,7 @@
 import { creatureMentions, suggestEncounters, TERRAINS, type Difficulty } from '../repo/encounters.js';
 import { placeProfile, placesWithTerrain } from '../repo/places.js';
+import { copyTable, generateEncounterTable } from '../repo/tables.js';
+import { partyLevel } from '../repo/journey.js';
 import { difficultyFor } from '../../../shared/places.js';
 import { Router } from 'express';
 import type { AppContext } from '../context.js';
@@ -402,7 +404,21 @@ export function campaignRoutes(ctx: AppContext) {
       return { ...r, creatures: creatureMentions(ctx.db, r.result ?? '') };
     }),
   );
-  mountCrud(r, ctx, '/random-tables', randomTables);
+  // The party's level (the average of its player characters), for tables and encounters.
+  r.get(
+    '/campaigns/:id/party-level',
+    h((req) => ({ level: partyLevel(ctx.db, intParam(req.params.id)) })),
+  );
+  // A place's encounter table, generated (or regenerated) from the rules packs for a level; any table copied to edit.
+  r.post(
+    '/regions/:id/encounter-table',
+    h((req) => generateEncounterTable(ctx.db, String(req.params.id), Number(req.body?.level ?? 1))),
+  );
+  r.post(
+    '/random-tables/:id/copy',
+    h((req) => copyTable(ctx.db, intParam(req.params.id))),
+  );
+  mountCrud(r, ctx, '/random-tables', randomTables, ['region_id', 'kind']);
 
   r.post(
     '/dice/roll',

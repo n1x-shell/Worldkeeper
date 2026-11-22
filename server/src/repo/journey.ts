@@ -3,6 +3,7 @@
  * move the campaign's calendar on by those days, and roll the region's encounter table once a day. Each part is
  * the GM's choice; a live session gets every roll in its log.
  */
+import { encounterTableFor } from './tables.js';
 import type { DB } from '../db/connection.js';
 import { badRequest } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
@@ -45,17 +46,6 @@ export function partyLevel(db: DB, campaignId: number) {
   return Math.max(1, Math.round(r.l ?? 1));
 }
 
-/** A region's encounter table for a level: the one whose "levels a to b" holds it, else its first encounter table. */
-export function encounterTableFor(db: DB, regionId: string, level: number) {
-  const tables = db.prepare(`SELECT id, name FROM random_tables WHERE source LIKE ?`).all(`%(${regionId})%`) as { id: number; name: string }[];
-  const enc = tables.filter((t) => /^Encounters\b/i.test(t.name));
-  const byLevel = enc.find((t) => {
-    const m = /levels?\s+(\d+)\s+to\s+(\d+)/i.exec(t.name);
-    return m && level >= Number(m[1]) && level <= Number(m[2]);
-  });
-  return byLevel ?? enc[0] ?? null;
-}
-
 export interface JourneyInput {
   campaign_id: number;
   map_id: number;
@@ -82,7 +72,7 @@ export function journey(db: DB, input: JourneyInput, rng: () => number = Math.ra
 
   const rolls: { day: number; result: string; creatures: { id: string; name: string }[] }[] = [];
   const region = regionAt(db, input.map_id, { entity_id: to.entity_id, x: to.x, y: to.y });
-  const table = region ? encounterTableFor(db, region, partyLevel(db, input.campaign_id)) : null;
+  const table = region ? encounterTableFor(db, region, partyLevel(db, input.campaign_id), { generate: !!input.roll }) : null;
   if (input.roll && days > 0 && table) {
     const live = db.prepare(`SELECT id FROM sessions WHERE campaign_id = ? AND status = 'live' ORDER BY number DESC LIMIT 1`).get(input.campaign_id) as { id: number } | undefined;
     for (let d = 1; d <= Math.min(days, MAX_ROLLED_DAYS); d++) {

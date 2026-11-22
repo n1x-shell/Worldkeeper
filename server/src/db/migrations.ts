@@ -981,6 +981,23 @@ ALTER TABLE campaigns ADD COLUMN start_year INTEGER;
 ALTER TABLE campaigns ADD COLUMN start_day INTEGER;
 `,
   },
+  {
+    version: 25,
+    name: 'random tables belong to a region and a level band; generated tables are marked',
+    sql: `
+ALTER TABLE random_tables ADD COLUMN region_id TEXT;
+ALTER TABLE random_tables ADD COLUMN level_min INTEGER;
+ALTER TABLE random_tables ADD COLUMN level_max INTEGER;
+ALTER TABLE random_tables ADD COLUMN kind TEXT NOT NULL DEFAULT 'other';
+ALTER TABLE random_tables ADD COLUMN auto INTEGER NOT NULL DEFAULT 0;
+-- A region named in the source ("Worldkeeper additions (REG-001)"); the level band is read at start (tables.ts).
+UPDATE random_tables SET region_id = substr(source, instr(source, '(') + 1, instr(source, ')') - instr(source, '(') - 1)
+  WHERE source LIKE '%(%)%' AND instr(source, ')') > instr(source, '(');
+UPDATE random_tables SET kind = 'encounter' WHERE name LIKE 'Encounters%';
+UPDATE random_tables SET kind = 'treasure' WHERE name LIKE 'Treasure%';
+CREATE INDEX idx_random_tables_region ON random_tables(region_id);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

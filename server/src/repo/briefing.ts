@@ -13,6 +13,7 @@ import { BOOKS_REGION, treasureData } from './treasure.js';
 import { bookTreasure } from './bookData.js';
 import { moduleOn } from './modules.js';
 import { placeProfile } from './places.js';
+import { tablesFor } from './tables.js';
 import { comingUp } from './calendar.js';
 import { types } from './recordTypes.js';
 
@@ -147,11 +148,8 @@ export function sessionBriefing(db: DB, sessionId: number) {
 
   // Tables for the region: the encounter tables tagged with it, and the treasure region it belongs to.
   const regionIds = region ? [region.id] : [];
-  const tables = regionIds.length ? (db.prepare(`SELECT id, name FROM random_tables WHERE source LIKE ? ORDER BY name`).all(`%(${regionIds[0]})%`) as { id: number; name: string }[]) : [];
-  const tLevel = (n: string) => {
-    const m = /levels (\d+) to (\d+)/.exec(n);
-    return m ? level >= Number(m[1]) && level <= Number(m[2]) : true;
-  };
+  const tables = regionIds.length ? tablesFor(db, regionIds[0]) : [];
+  const tLevel = (t: { level_min: number | null; level_max: number | null }) => (t.level_min == null || level >= t.level_min) && (t.level_max == null || level <= t.level_max);
   const tData = treasureData();
   // The setting's region for the place, when its treasure is on; otherwise (or anywhere it doesn't cover) the books.
   const worldRegion = moduleOn(db, 'setting-treasure', c.id) ? (Object.entries(tData.regions).find(([, r]) => r.ids.some((x) => chain.some((e) => e.id === x)))?.[0] ?? null) : null;
@@ -172,7 +170,7 @@ export function sessionBriefing(db: DB, sessionId: number) {
     standing,
     quests,
     level,
-    tables: tables.filter((t) => tLevel(t.name)),
+    tables: tables.filter(tLevel).map((t) => ({ id: t.id, name: t.name })),
     // Festivals and the GM's events in the next two weeks.
     coming: comingUp(db, c.id, 14).map((x) => ({ kind: x.kind, title: x.title, inDays: x.inDays })),
     // The terrain here, for encounters from the GM's books (the nearest place with one: the place, then its region).

@@ -506,9 +506,30 @@ export const randomTables = makeCrud({
     die: z.string().max(50).default(''),
     entries: z.array(z.object({ weight: z.number().int().min(1).max(1000).default(1), text: z.string().max(5000) })).max(1000).default([]),
     source: z.string().max(1000).default('user'),
+    /** The place it's for, the party levels it suits, what it's for, and whether the app made it. */
+    region_id: z.string().max(40).nullable().optional(),
+    level_min: z.number().int().min(1).max(20).nullable().optional(),
+    level_max: z.number().int().min(1).max(20).nullable().optional(),
+    kind: z.enum(['encounter', 'treasure', 'other']).default('other'),
+    auto: z.boolean().default(false),
   }),
   jsonColumns: ['entries'],
+  boolColumns: ['auto'],
   orderBy: 'name',
+  // A table given only a source ("… (REG-001)") and a name ("… levels 1 to 4") gets its region, band and kind from them.
+  onChange: (db, r) => {
+    const region = r.region_id ?? /\(([A-Z]{2,5}-[\w-]+)\)/.exec(String(r.source ?? ''))?.[1] ?? null;
+    const m = r.level_min == null ? /levels?\s+(\d+)\s*(?:to|-|–)\s*(\d+)/i.exec(String(r.name)) : null;
+    const kind = r.kind !== 'other' ? r.kind : /^Encounters/i.test(String(r.name)) ? 'encounter' : /^Treasure/i.test(String(r.name)) ? 'treasure' : 'other';
+    if (region !== r.region_id || m || kind !== r.kind)
+      db.prepare('UPDATE random_tables SET region_id = ?, level_min = COALESCE(?, level_min), level_max = COALESCE(?, level_max), kind = ? WHERE id = ?').run(
+        region,
+        m ? Number(m[1]) : null,
+        m ? Number(m[2]) : null,
+        kind,
+        r.id,
+      );
+  },
 });
 
 export function rollTable(db: DB, id: number, rng: () => number = Math.random) {
