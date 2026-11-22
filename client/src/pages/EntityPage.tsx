@@ -1,24 +1,7 @@
 import { useRecordTypes } from '../components/recordTypes';
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import {
-  Archive,
-  ArchiveRestore,
-  Copy,
-  Download,
-  Network,
-  Pencil,
-  Star,
-  Eye,
-  AlertTriangle,
-  ChevronRight,
-  Undo2,
-  Plus,
-  Trash2,
-  MoreHorizontal,
-  Lock,
-  History,
-} from 'lucide-react';
+import { Archive, ArchiveRestore, Copy, Download, Network, Pencil, Star, AlertTriangle, ChevronRight, Undo2, Plus, Trash2, MoreHorizontal, Lock, History } from 'lucide-react';
 import {
   CANON_STATUSES,
   RELATIONSHIP_LABELS,
@@ -791,7 +774,6 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
   const realms = useRealms();
   const [draft, setDraft] = useState(entity);
   const [reason, setReason] = useState('');
-  const [preview, setPreview] = useState(false);
   const version = useRef(entity.version);
   const [conflict, setConflict] = useState<string | null>(null);
   const save = useCallback(
@@ -851,9 +833,6 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
         <SaveStatus state={auto.state} error={auto.error} />
         <input className="input min-w-0 flex-1 basis-56 max-w-md" placeholder="Reason for change (recorded in history)" value={reason} onChange={(e) => setReason(e.target.value)} />
         <div className="ml-auto flex gap-2">
-          <button className="btn" onClick={() => setPreview((p) => !p)} aria-pressed={preview}>
-            <Eye size={14} /> {preview ? 'Hide preview' : 'Preview'}
-          </button>
           <button
             className="btn-primary"
             onClick={async () => {
@@ -953,23 +932,13 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
           </button>
         </div>
       </Card>
-      <div className={`grid gap-4 ${preview ? 'xl:grid-cols-2' : ''}`}>
-        <Card title="Description">
-          <label className="block">
-            <span className="sr-only">Description</span>
-            <AutoTextarea minRows={16} value={draft.body} onChange={(e) => update({ body: e.target.value })} onBlur={() => void auto.flush()} />
-          </label>
-          <p className="text-xs text-dim mt-1.5">Type @ to link another record. Sections headed “GM only” or “Secret” are never shown to players.</p>
-        </Card>
-        {preview && (
-          <Card title="Preview" className="overflow-auto max-h-[80vh] xl:sticky xl:top-16 self-start">
-            <Markdown text={draft.body} />
-          </Card>
-        )}
-      </div>
+      <Card title="Description">
+        <AutoTextarea full minRows={16} aria-label="Description" value={draft.body} onChange={(e) => update({ body: e.target.value })} onBlur={() => void auto.flush()} />
+        <p className="text-xs text-dim mt-1.5">Type @ to link another record. Sections headed “GM only” or “Secret” are never shown to players.</p>
+      </Card>
       <GmOnly label={gmLabel('Never shown to players')}>
         <Field label="DM notes">
-          <AutoTextarea minRows={4} value={draft.notes} onChange={(e) => update({ notes: e.target.value })} onBlur={() => void auto.flush()} />
+          <AutoTextarea minRows={4} aria-label="DM notes" value={draft.notes} onChange={(e) => update({ notes: e.target.value })} onBlur={() => void auto.flush()} />
         </Field>
       </GmOnly>
     </div>
@@ -1166,7 +1135,7 @@ function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { 
         </Card>
         <Card className="space-y-2">
           <Field label="Player summary (what the party knows)">
-            <textarea className="input" rows={4} value={summary} onChange={(e) => setSummary(e.target.value)} onBlur={() => summary !== entity.player_summary && onPatch({ player_summary: summary }, 'Player summary saved')} />
+            <AutoTextarea full minRows={4} aria-label="Player summary" value={summary} onChange={(e) => setSummary(e.target.value)} onBlur={() => summary !== entity.player_summary && onPatch({ player_summary: summary }, 'Player summary saved')} />
           </Field>
         </Card>
         <Card>

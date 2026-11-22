@@ -871,3 +871,16 @@ h3 {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* The full Markdown editor (components/editor): the text scrolls inside it, beside its preview, in a page;
+   in full screen it fills the screen. */
+[data-editor='markdown'][data-full] .cm-editor {
+  max-height: 70vh;
+}
+[data-editor='markdown'][data-fullscreen] .cm-editor {
+  max-height: none;
+  height: 100%;
+}
+[data-editor='markdown'] .cm-scroller {
+  overflow: auto;
+}

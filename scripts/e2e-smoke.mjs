@@ -15,6 +15,8 @@ const shots = process.argv[3] ?? null;
 const archive = process.env.WORLDKEEPER_TEST_ARCHIVE;
 const errors = [];
 const step = (m) => console.log('✓', m);
+// A long text: the Markdown editor's (CodeMirror) content, by its label (it loads on first use).
+const editor = (name) => page.locator(`.cm-content[aria-label="${name}"]`);
 const shot = async (page, name) => shots && (fs.mkdirSync(shots, { recursive: true }), await page.screenshot({ path: path.join(shots, `${name}.png`), fullPage: false }));
 
 const browser = await chromium.launch();
@@ -65,7 +67,8 @@ try {
 
   // Edit and persist
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
-  const notes = page.locator('textarea').last();
+  // Long texts are the Markdown editor (CodeMirror): a text box by its label.
+  const notes = editor('DM notes');
   const marker = `E2E note ${Date.now()}`;
   await notes.fill(marker);
   await expectText('All changes saved', 10000);
@@ -105,7 +108,7 @@ try {
   await page.goto(`${base}/campaign/live`);
   await page.getByRole('button', { name: /Start session/ }).click();
   await expectText('Live · Session 1');
-  await page.getByPlaceholder('What happened? (Ctrl+Enter to save)').fill('The party arrived at the Crooked Nail.');
+  await editor('Log entry').fill('The party arrived at the Crooked Nail.');
   await page.getByRole('button', { name: 'Save to log' }).click();
   await expectText('The party arrived at the Crooked Nail.');
   await page.getByRole('button', { name: 'New encounter' }).click();
@@ -139,14 +142,14 @@ try {
   // ---- v0.2: record-link suggestions while typing ----
   await page.goto(`${base}/e/NPC-010`);
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
-  const notesBox = page.locator('textarea').last();
+  const notesBox = editor('DM notes');
   await notesBox.fill('');
   await notesBox.pressSequentially('Owes a favour to @blind se');
-  await page.getByRole('listbox', { name: 'Link a record' }).waitFor();
+  await page.locator('.cm-tooltip-autocomplete [role="listbox"]').waitFor();
   await shot(page, '13-link-suggest');
   await page.keyboard.press('Enter');
   await notesBox.pressSequentially(' and drinks at @[Hollow Refuge].');
-  const linked = await notesBox.inputValue();
+  const linked = (await notesBox.innerText()).trim();
   if (linked !== 'Owes a favour to @[The Blind Seer] and drinks at @[Hollow Refuge].') throw new Error(`link insert failed: ${linked}`);
   await expectText('All changes saved', 10000);
   await page.getByRole('button', { name: 'Done' }).click();
@@ -170,7 +173,7 @@ try {
   step('Quick-Peek: hover card, inspector and split view');
   const rel = await (await fetch(`${base}/api/entities/NPC-010`)).json();
   await page.getByRole('button', { name: 'Edit', exact: true }).click();
-  await page.locator('textarea').last().fill('');
+  await editor('DM notes').fill('');
   await expectText('All changes saved', 10000);
   void rel;
   step('@ suggestions insert @[Name]; @[Name] renders as a link to the record');
@@ -233,6 +236,53 @@ try {
   await shot(page, '16-timeline-eras');
   await page.getByLabel('Era for Before any Aetherfall').selectOption('');
   step('timeline era filter + manual era assignment');
+
+  // ---- v0.4.7: the Markdown editor on a record, a scene and a handout ----
+  const api = (method, url, body) => fetch(`${base}${url}`, { method, headers: { 'Content-Type': 'application/json' }, body: body ? JSON.stringify(body) : undefined }).then((r) => r.json());
+  const original = (await api('GET', '/api/entities/SET-001')).entity.body;
+  await page.goto(`${base}/e/SET-001`);
+  await page.getByRole('button', { name: 'Edit', exact: true }).click();
+  const desc = editor('Description');
+  await desc.waitFor();
+  await desc.click();
+  await page.keyboard.press('Control+End');
+  await page.keyboard.type('\n\nEditor check');
+  await page.keyboard.press('Shift+Home');
+  await page.getByRole('button', { name: 'Bold' }).click();
+  await page.getByRole('button', { name: 'GM-only section' }).click();
+  // Autosave: wait for the record to hold the edits.
+  let edited = '';
+  for (let i = 0; i < 40 && !(edited.includes('**Editor check**') && edited.includes('## Secrets (GM only)')); i++) {
+    await page.waitForTimeout(250);
+    edited = (await api('GET', '/api/entities/SET-001')).entity.body;
+  }
+  if (!edited.includes('**Editor check**') || !edited.includes('## Secrets (GM only)')) throw new Error(`toolbar edits missing: ${edited.slice(-120)}`);
+  await page.getByRole('button', { name: 'Split' }).click();
+  await page.getByLabel('Preview').locator('strong', { hasText: 'Editor check' }).waitFor();
+  if ((await page.locator('nav[aria-label="Outline"] button').count()) < 3) throw new Error('no outline');
+  await shot(page, '17-editor-split');
+  await page.getByRole('button', { name: 'Write' }).click();
+  await api('PATCH', '/api/entities/SET-001', { body: original, reason: 'e2e: put back' });
+  const camp = (await api('GET', '/api/campaigns/active')).id;
+  const adv = await api('POST', '/api/adventures', { campaign_id: camp, title: 'E2E Adventure' });
+  const scene = await api('POST', '/api/scenes', { adventure_id: adv.id, title: 'The gate' });
+  await page.goto(`${base}/adventure/${adv.id}`);
+  await page.getByRole('tab', { name: 'Scenes' }).click();
+  const sceneBox = editor('Scene').first();
+  await sceneBox.waitFor();
+  await sceneBox.fill('The gate creaks. @[Hollow Refuge] is beyond.');
+  await page.waitForTimeout(2500);
+  if (!(await api('GET', `/api/scenes/${scene.id}`)).body.includes('The gate creaks.')) throw new Error('scene text not saved');
+  const ho = await api('POST', '/api/handouts', { campaign_id: camp, title: 'E2E Letter' });
+  await page.goto(`${base}/campaign/handouts`);
+  const hoBox = editor('Handout text').first();
+  await hoBox.waitFor();
+  await hoBox.fill('Meet me at the **East Gate** at dusk.');
+  await page.waitForTimeout(2500);
+  if (!(await api('GET', `/api/handouts/${ho.id}`)).body.includes('**East Gate**')) throw new Error('handout text not saved');
+  await api('DELETE', `/api/handouts/${ho.id}`);
+  await api('DELETE', `/api/adventures/${adv.id}`);
+  step('Markdown editor: toolbar, GM-only section, Split preview and outline on a record; a scene and a handout save');
 
   // Atlas page loads
   await page.goto(`${base}/atlas`);

@@ -92,7 +92,14 @@ function HandoutCard({ h: init, onChange }: { h: Handout; onChange: () => void }
           <Markdown text={h.body || '*Nothing written yet.*'} />
         </div>
       ) : (
-        <AutoTextarea minRows={4} value={h.body} onChange={(e) => set({ body: e.target.value })} placeholder="The letter, the read-aloud, or a caption for the picture…" />
+        <AutoTextarea
+          full
+          minRows={6}
+          aria-label="Handout text"
+          value={h.body}
+          onChange={(e) => set({ body: e.target.value })}
+          placeholder="The letter, the read-aloud, or a caption for the picture…"
+        />
       )}
       <div className="flex flex-wrap items-center gap-2">
         <label className="btn text-xs cursor-pointer">

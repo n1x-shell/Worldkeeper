@@ -1649,7 +1649,7 @@ export function SessionPage() {
           </Card>
           <div className="grid gap-4 lg:grid-cols-2">
             <Card title="Write" aside="Markdown">
-              <AutoTextarea minRows={16} value={s.recap} onChange={(e) => set({ recap: e.target.value })} aria-label="Recap" />
+              <AutoTextarea full minRows={16} value={s.recap} onChange={(e) => set({ recap: e.target.value })} aria-label="Recap" />
             </Card>
             <Card featured title="As players read it" aside={s.recap_player_visible ? 'published' : 'not published'}>
               <div className="prose-lore max-w-[72ch]">
@@ -2051,7 +2051,7 @@ function SceneCard({ s: init, onMove, onCopy, onDelete }: { s: Scene; onMove: (d
         </Field>
         <GmOnly inline>
           <Field label="DM notes">
-            <AutoTextarea minRows={2} value={s.body} onChange={(e) => set({ body: e.target.value })} />
+            <AutoTextarea full minRows={4} aria-label="Scene" value={s.body} onChange={(e) => set({ body: e.target.value })} />
           </Field>
         </GmOnly>
       </div>

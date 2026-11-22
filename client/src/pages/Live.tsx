@@ -440,6 +440,7 @@ function LogEntryForm({ onSave }: { onSave: (kind: string, text: string, entity:
         </div>
       </div>
       <AutoTextarea
+        aria-label="Log entry"
         minRows={2}
         className="font-sans text-sm min-h-10"
         value={text}
