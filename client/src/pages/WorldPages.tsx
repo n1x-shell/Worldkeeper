@@ -211,7 +211,7 @@ export function NewEntity() {
         <Field label="Name">
           <input className="input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} autoFocus />
         </Field>
-        <Field label="Template type">
+        <Field label="Type">
           <select className="input" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as EntityType })}>
             {recordTypes.offered.map((x) => x.key).map((t) => (
               <option key={t} value={t}>
@@ -249,9 +249,9 @@ export function NewEntity() {
         <Card
           title={
             <span className="flex flex-wrap items-center gap-2">
-              What a {recordTypes.label(form.type).toLowerCase()} asks for
+              What it asks for
               {forType.length > 1 ? (
-                <select className="input w-auto py-0.5 text-xs font-sans" value={template.id} onChange={(e) => setTemplateId(e.target.value)} aria-label="Template">
+                <select className="input w-auto py-0.5 text-xs font-sans normal-case tracking-normal" value={template.id} onChange={(e) => setTemplateId(e.target.value)} aria-label="Template">
                   {forType.map((t) => (
                     <option key={t.id} value={t.id}>
                       {t.name} ({ORIGIN_LABEL[t.origin].toLowerCase()})
