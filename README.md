@@ -4,7 +4,7 @@
 
 The Worldkeeper is a **free, open-source, local-first worldbuilding encyclopedia and D&D 5e (2024) campaign manager**. Import existing Markdown lore, connect characters, factions and locations, explore maps, run sessions, and share only the knowledge your players have discovered.
 
-Originally designed for a world with three branches, **Aetheris**, **Kaelmar**, and the **Ethereal Realm**, it preserves stable IDs, source references, canon labels and GM secrets while providing tools to manage independent campaigns. It runs just as well as a **standard D&D 2024 campaign** in a world of your own: switch the setting's mechanics off, import the books you own, and play.
+Originally designed for a world with three branches, **Aetheris**, **Kaelmar**, and the **Ethereal Realm**, it preserves stable IDs, source references, canon labels and GM secrets while providing tools to manage independent campaigns. It can run a **standard D&D 2024 campaign**: switch the setting's mechanics off, import the books you own, and play. Full support for a world of your own (its own realms, calendar, templates and a first-run wizard) is planned; see [Your own world](docs/OWN_WORLD_PLAN.md).
 
 **No account, required cloud service, paid API or AI dependency.** World data lives on your computer in SQLite and an uploads directory, with backups and portable exports.
 
@@ -119,7 +119,7 @@ The quickest way is a copy of the **5etools** data:
 
 Spells, species, classes and subclasses, backgrounds and feats then reach the character sheets and the builder. Creatures become stat blocks for the GM, and magic items show their rules in treasure and on sheets. Only use material from books you own. What you import stays in your library: it is never part of the published handbook, a player export, a campaign export or this repository. You can also write your own packs in Markdown. See [Rules packs](docs/RULES_PACKS.md).
 
-To run a campaign in your own world rather than the Worldkeeper setting, choose **Settings → Campaign mechanics → Standard D&D**. See [Features](docs/FEATURES.md#a-standard-dd-campaign-or-the-worldkeeper-setting).
+To run a standard D&D campaign without the Worldkeeper setting's own systems, choose **Settings → Campaign mechanics → Standard D&D**. Some parts of the app (the realms, the calendar) still assume the setting's world for now; [the plan](docs/OWN_WORLD_PLAN.md) covers making them your own. See [Features](docs/FEATURES.md#a-standard-dd-campaign-or-the-worldkeeper-setting).
 
 ## How it works
 

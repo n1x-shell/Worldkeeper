@@ -243,31 +243,192 @@ Rules stay one layer, shared by every world. What changes is how a world, and a 
   - for the setting path, the setting's rules pack, already ticked;
   - the setting's systems (Thinning, the Return…) as modules you can untick.
 
+### 2.10 What the audit added (22 November 2026)
+
+A full audit of the code (Appendix A) found more of the setting built into the app than §1 listed. These parts of the foundation come from it.
+
+**Record types become a registry.** Each type, core or added by a pack, declares:
+
+- its key, label and plural;
+- its ID prefix;
+- its icon, colour and map pin kind;
+- its template;
+- its **traits**:
+  - `place` (can be somewhere and have people in it);
+  - `regionLike` (can have a region panel, terrain and encounter tables);
+  - `holdable` (an item someone can carry);
+  - `group` (a faction-like body);
+  - `commonNoun` (too ordinary a name to auto-link).
+
+Every hard-coded list of types reads these traits instead: map pins, region panels, place pickers, the session briefing's chain of places, State of the World's place counts, the handbook's place types, the consistency checks and the graph's groups. **Nothing works out a record's type from its ID prefix any more.** New records get their type's prefix (e.g. `TWN-0001`), not `CUS-`. ID patterns are built from the registry at run time, so a pack's own prefixes import and link. The importer reads `Category:` against the registry's keys and labels and `Realm:` against the library's realms. A Markdown export therefore re-imports with every record's type and realm intact.
+
+**Where each thing came from.** Every row a pack or an import adds is marked with its source (`pack_id`):
+
+- records and relationships;
+- timeline rows;
+- rumours, mysteries, secrets and clues;
+- maps, markers and outlines;
+- adventures, random tables and templates.
+
+Syncs, updates and deletes are scoped by that mark. Shipped content is keyed by pack and key, never by title or map name. That makes it safe to:
+
+- install a second pack beside the first;
+- update a pack without touching the GM's own work;
+- uninstall a pack.
+
+A pack's IDs are checked for clashes when it installs. Packs live in folders with a manifest:
+
+- the ones bundled with the app stay in the app's resources;
+- installed ones go to `<data>/packs/<id>`, so the desktop app can install them too.
+
+The loaders (stat blocks, the treasure catalogue, omens and the rest) go through the installed packs. They no longer read one fixed `assets/` folder.
+
+**Pack actions only when the pack is there.** These become actions of the installed pack, scoped by `pack_id`, and are hidden without it:
+
+- Apply additions (the pack's update);
+- Mysteries → Update from drafts;
+- Rumours → Update from handbook;
+- Match the published handbook;
+- the open-questions rules;
+- the treasure checks in Consistency.
+
+Today they all run in any library: one click in your own world imports about 460 Aetheris records.
+
+**The setting's handbook rules move into its pack**, along with its archive-cleaning rules, as pack data:
+
+- its spoiler terms (the 13 vault names, the Forgotten One…);
+- its editorial headings;
+- its citation style;
+- the sentences it hides ("the bible", "verify"…).
+
+These cleaners then apply only to records from that pack, because today they would silently delete a GM's own "## Status" section, or any sentence mentioning "the books". The core keeps only the generic rule: GM-only and secret sections stay GM only. The archive's folder layout and timeline file become that pack's **import profile**.
+
+**Modules own their storage, routes and exports.** Each module declares:
+
+- its tables, or its data in a per-character or per-item extension;
+- its server routes, switched off with the module;
+- its pages and sheet tabs;
+- its player-handbook parts;
+- its export tables.
+
+Thinning's track, true names and Shardscarred leave the core `character_pages` columns. Fading and anchored leave `party_treasure`. The players' own notes move to a core tab: today they sit inside the Thinning tab and vanish when Thinning is off. The module list grows:
+
+- **Renown:** faction standing with ranks a pack defines; the setting's ladder comes from its rules.
+- **A clock:** stages, triggers and omens a pack defines; the setting's Return is one.
+- **Quick Reference:** the setting's own reference, as a module page.
+
+Modules default to **off** unless a pack turns them on. Today an unknown library defaults to the setting's preset, and the setting is detected by whether records `SYS-907` or `REG-001` exist. They can be set per campaign, falling back to the library's choice.
+
+**The calendar becomes data.** A **calendar definition** belongs to each world, or comes from a pack. It holds:
+
+- the months (names and lengths);
+- intercalary days;
+- weekdays;
+- seasons;
+- moons;
+- eras and how years are written ("AB", "Year N Unbound");
+- yearly festivals.
+
+The Worldkeeper calendar ships in its pack. A new world picks one of these:
+
+- _twelve months of thirty days_;
+- _like ours_;
+- its own.
+
+Campaign dates are stored as a year and day, not text, and formatted through the world's calendar. The 363-day limit, the AB parsing, the "300 AB" defaults and the fallback to year 300 all go. The setting's festivals, with their gods and places, become pack data (or records with a holy-day fact), plus the GM's own yearly events. The players' calendar gets its definition in the handbook snapshot. Timeline rows get realm ids and calendar dates in place of free text, and eras are defined in the calendar, no longer read from the archive's tag documentation.
+
+**Features read structured facts, not the archive's prose.** The templates (§2.2) carry, as fields, what features now find by parsing the setting's writing:
+
+| Feature                            | Fact                                                                        |
+| ---------------------------------- | --------------------------------------------------------------------------- |
+| Region holder (State of the World) | ruling faction                                                              |
+| Name generator                     | common names and naming style                                               |
+| Rumours                            | what people say                                                             |
+| Faction web                        | allies and opposed                                                          |
+| Who's nearby                       | looks, manner, pronouns                                                     |
+| Standing                           | ranks                                                                       |
+| Character builder                  | species rules for a people; backgrounds, starting places and subclass names |
+| Handbook                           | a people's continents                                                       |
+
+Features read the facts first. For the pack's own records, the pack's import profile converts its prose into facts once, at install. The handbook stops guessing a people's continents from the words "Aetheris" and "Kaelmar" in its text. The **Classes** tab of the players' Species and Classes stops depending on the setting's calling records: it lists the classes from the rules packs, with a world's own names for them where a record gives them.
+
+**Roles, not IDs, wherever a page needs "the" record.** These all name their records by role:
+
+- the world's overview, and each realm's overview (the handbook's "Start here" too);
+- the travel rules;
+- the Return's stages;
+- the canon conflict and decisions registers;
+- the table cards for Print;
+- the graph's starting record.
+
+A role with no record simply hides its part of the page.
+
+**Per world, not per library,** wherever it matters:
+
+- **campaigns** belong to a world (a realm of kind World);
+- **reveals** are per campaign, as rumours and discoveries already are;
+- **the published handbook** is per campaign or world;
+- **settings that are per world**, the calendar, date and default realm among them, live on the world.
+
+**Rules data in the rules layer.**
+
+- **The 2024 treasure tiers** move into the rules layer: today they're in the setting's `pools.json`, so treasure doesn't work without it.
+- **Random tables** get a region, level band and pack column, so a table belongs to a region in the data, not in a `source` string.
+- **Stat blocks** can live in the library, so a GM can give their own NPC one. The setting's cards show only while its rules pack is on.
+- **A pack's open-licence rules** can be published to players.
+- **Consistency** checks classes against the rules packs, not the 13 core names.
+
+**Exports are complete.**
+
+- A test checks the JSON export's table list against the schema.
+- **Campaign exports** carry all campaign data (standing, treasure, handouts, Bastions, calendar events, the clock…). They also carry a header naming the world and packs they need, with a report of anything missing on import.
+- **The Markdown export** keeps canon flags, reveal state, templates and realms.
+- **The full-world zip** gets an import.
+
+**Empty libraries just work.** Every page has a proper empty state and never waits forever or opens on a missing record. Today:
+
+- the Name Generator loads forever with no peoples;
+- the Graph opens on Kaelmar;
+- the Faction Web is blank for any realm the setting doesn't have;
+- Treasure falls back to "the Marches".
+
+**The name.** "The Worldkeeper" is both the app's name and the setting's. The wizard's copy needs them told apart (§4).
+
 ## 3. Delivery plan
 
-Each step is its own PR with screenshots, merged on the owner's OK. As before, the release comes last.
+Each step is its own PR with screenshots, merged on the owner's OK. As before, the release comes last. The audit made the foundation steps (1 to 6) larger than first planned. They come first, because everything after builds on them.
 
-| Step | What                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | You review                                                                                                                            |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
-| 1    | **Realms as data:** the `realms` table and migration (the setting's four become rows, ids unchanged), the API, Codex → Realms (new, edit, recolour, reorder), and everything that reads realms reading the library instead of the code: sidebar, badges, colours, filters, dashboard, handbook. No visible change for existing libraries                                                                                                                                                                                                                                                                                                                                                                                       | A new realm appearing everywhere; Aetheris unchanged                                                                                  |
-| 2    | **Record types and templates:** the core types and their built-in templates in `assets/templates/`, record types a pack can add, Library → Templates (view, edit, duplicate, new)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | The templates for a town, an NPC and a faction                                                                                        |
-| 3    | **The setting as a pack:** the pack format and its manifest (realms, types, templates, content, modules, roles); the Worldkeeper setting moved into it; modules for Thinning, the Return, fading salvage and treasure, vaults and shards, and the Ethereal explorer; Settings → Modules; State of the World, the World Overview and Nations made generic; no setting record IDs left in app code (with a test); existing libraries migrated to "Worldkeeper pack installed"; its rules pack switched on by the pack; terrain, danger and wealth as facts on records (`terrain.json` folded into the setting\'s records); encounter tables and treasure built for any region from your rules packs, with hand-made tables first | An existing Aetheris library unchanged; a blank library with Thinning switched on; an encounter table rolled for a region of your own |
-| 4    | **The editor:** CodeMirror with Write/Preview/Split, toolbar, `@` links, GM-only sections and an outline, used for every long text in the app                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | Editing a record, a scene and a handout                                                                                               |
-| 5    | **New ▸ anything:** the New menu, contextual "Add … here", Guided and Advanced creation, and the Canon setting for your own world                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | Making a town both ways                                                                                                               |
-| 6    | **The first-run wizard and the starter records:** the choice between your own world and the Worldkeeper setting on one path, the shapes, the first campaign and town, the optional map, the tutorial records and the Getting started checklist; Library → Setting packs                                                                                                                                                                                                                                                                                                                                                                                                                                                        | A fresh install both ways: Next, Next, Finish                                                                                         |
-| 7    | **Docs, screenshots and a release** (v0.5): Quick Start rewritten around both ways to begin, and a guide to writing a setting pack                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | The release                                                                                                                           |
+| Step | What                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | You review                                                                      |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| 1    | **Realms as data:** the `realms` table (the setting's four become rows, ids unchanged); Codex → Realms; everything that reads realms reads the library (sidebar, badges, colours, filters, dashboard, the handbook's realm lists, Faction Web, Rumours, Timeline); maps and timeline rows belong to a realm; campaigns belong to a world                                                                                                                                                                                        | A new realm appearing everywhere; Aetheris unchanged                            |
+| 2    | **The record-type registry and templates:** types with prefixes, traits, icons and pin kinds; every hard-coded type list and prefix test replaced; per-type IDs for new records; the importer reading Category and Realm through the registry (export and re-import keeps types); the built-in templates with structured facts; Library → Templates                                                                                                                                                                             | Making a town and an NPC; an export re-imported intact                          |
+| 3    | **Packs:** the pack format, manifest and registry (bundled and installed folders); `pack_id` provenance on every shipped row; scoped syncs, update and uninstall; ID clash checks; the Worldkeeper setting moved into its pack with its import profile, handbook rules, cleaning rules, roles and player text; pack actions (additions, mysteries, rumours, handbook match, open questions, treasure checks) shown only with their pack; roles in place of record IDs everywhere, with a test that app code names no setting ID | An existing Aetheris library unchanged; a blank library with no setting actions |
+| 4    | **Modules:** the module registry (settings, routes, pages, sheet tabs, storage, exports); Thinning, the clock (the Return), fading and the setting's treasure, vaults and shards, the Ethereal explorer, Renown and Quick Reference as modules; module data moved out of core tables; players' notes to a core tab; default off; per-campaign toggles; Settings → Modules                                                                                                                                                       | A blank library with Thinning on; the Aetheris library unchanged                |
+| 5    | **The calendar as data:** calendar definitions (months, days, weekdays, moons, eras, year formats, festivals); the setting's in its pack; presets for new worlds; structured campaign dates; the calendar pages, journeys, briefing, player calendar and party export reading it                                                                                                                                                                                                                                                | A twelve-month calendar on a new world; Aetheris dates unchanged                |
+| 6    | **Rules for any world:** terrain, danger and wealth on records; encounter tables and treasure for any region from your rules packs; random tables with a region and level band; treasure tiers in the rules layer; stat blocks in the library; the setting's rules pack switched on by its pack; publishable open rules; consistency against the rules packs                                                                                                                                                                    | An encounter table and treasure rolled for a region of your own, SRD only       |
+| 7    | **The editor:** CodeMirror with Write/Preview/Split, toolbar, `@` links, GM-only sections and an outline, for every long text                                                                                                                                                                                                                                                                                                                                                                                                   | Editing a record, a scene and a handout                                         |
+| 8    | **New ▸ anything:** the New menu, contextual "Add … here", Guided and Advanced creation, pickers for stat blocks, items and species rules, and the Canon setting for your own world                                                                                                                                                                                                                                                                                                                                             | Making a town both ways                                                         |
+| 9    | **The first-run wizard and the starter records:** both ways to start on one path, the shapes, the calendar choice, rules and modules, the first campaign and town, the optional map, the tutorial records, the Getting started checklist, Library → Setting packs, and every empty state                                                                                                                                                                                                                                        | A fresh install both ways: Next, Next, Finish                                   |
+| 10   | **Docs, screenshots and a release** (v0.5): Quick Start for both ways to begin, a guide to writing a setting pack, and complete exports                                                                                                                                                                                                                                                                                                                                                                                         | The release                                                                     |
 
-**Tests at each step:**
+**Tests across the steps:**
 
 - the realms migration on an archive library and an empty one;
-- templates round-tripping through import and export;
+- export and re-import keeping types, realms, templates and canon flags;
 - the editor's autosave and conflict protection;
 - creation in both modes;
 - encounters and treasure for a region of your own, from the SRD alone and with books imported;
-- the setting pack installing into a fresh library, and an existing setting library migrating to it with no change to its records, maps or handbook;
-- no setting record IDs in app code;
-- the wizard end to end in the E2E smoke, both ways, from a fresh library to a finished world;
-- the bundle guard, so the player side still carries no GM code.
+- the setting pack:
+  - installing into a fresh library;
+  - an existing setting library migrating with no change to its records, maps or handbook;
+- **a second, synthetic pack installed beside the setting**, then updated and uninstalled, with neither touching the other or the GM's own records;
+- no setting record IDs or terms in app code;
+- the JSON export covering every table;
+- **an own-world E2E that needs no archive**, besides today's archive E2E;
+- the wizard end to end, both ways;
+- the bundle guard.
+
+**Before any step:** the README says the app "runs just as well … in a world of your own: switch the setting's mechanics off". The audit shows that isn't true yet, so that sentence is softened now.
 
 ## 4. Owner answers (22 November 2026)
 
@@ -275,6 +436,10 @@ Each step is its own PR with screenshots, merged on the owner's OK. As before, t
 2. **Tutorial records: on by default, removable.** The wizard ticks them by default. The dashboard's Getting started card removes them in one click (§2.7).
 3. **The editor: CodeMirror 6** (§2.3).
 4. **Worlds: realms in one library.** One library holds as many worlds, continents and planes as you like (§2.1). Several separate libraries you switch between are left for later.
+
+Still to decide:
+
+- **The name.** "The Worldkeeper" is both the app and the setting today. Should the app keep the name, with the setting called something like "The Worldkeeper setting" (or *Aetheris*), or the other way round? This affects the wizard's wording, export folder names and the default app name.
 
 Decided by default, unless the owner says otherwise:
 
@@ -284,3 +449,82 @@ Decided by default, unless the owner says otherwise:
 Added on 22 November 2026, at the owner's request: **rules for any world** (§2.9). There is one game system, D&D 2024, whose content comes from rules packs (the SRD, your books, Open5e, a setting's own). A setting pack can bring and switch on its own rules pack. Terrain, danger and wealth become facts on records, so encounter tables and treasure work for any region.
 
 Added on 22 November 2026, at the owner's request: **one foundation.** The Worldkeeper setting is built on the same model as a world of your own: a setting pack of realms, record types, templates, content and roles, plus modules for its systems. The first run offers both ways to start in one wizard (§2.0, §2.6, §2.8, step 3).
+
+## Appendix A. The audit (22 November 2026)
+
+Four read-only passes covered the server, the GM app, the player side with the shared code, and the data, formats and infrastructure. This is the condensed list; severity is **C**ritical (blocks your own world or a second pack), **I**mportant or **M**inor. The step that handles each is in brackets.
+
+**Critical**
+
+- **Record IDs and types:**
+  - ID prefixes are a fixed list (`shared/domain.ts` `ID_PREFIXES`), so other prefixes are skipped at import and their `[ID]` references don't link [2].
+  - Every record the GM creates is `CUS-####`, while the briefing, State of the World and the handbook find places by ID prefix (`briefing.ts`, `regionState.ts`, `projection.ts`) [2].
+  - The Markdown export, re-imported, turns most of the GM's records into type `custom` and realm `world` (`normalize.ts`) [2].
+- **No provenance:** nothing records which pack or import a row came from. A second pack wipes or collides with the first: timeline rows, rumours, maps by name, adventures and tables by title. Two packs' `NPC-005` stat blocks overwrite each other [3].
+- **The calendar is the setting's** (`shared/calendar.ts`):
+  - a 363-day year, its months and moons, AB / Unbound years and its festivals;
+  - an own-world date falls back to 300 AB (`repo/calendar.ts`);
+  - "300 AB" is the default in the schema, the campaigns, Settings and every import [5].
+- **Archive-cleaning applies to every record:**
+  - `loreText.ts` hides sentences mentioning "the books", "verify", "Tome" and the like;
+  - `sections.ts` hides sections headed "Status", "Open questions" and the like [3].
+- **The handbook's spoiler rules hold the setting's secrets** (`handbookReveals.ts`) [3].
+- **The Faction Web** (GM and player) shows nothing for realms other than the setting's three [1].
+- **Species and Classes:** the Classes tab lists only the setting's calling records [6, 8].
+
+**Important**
+
+- **Setting actions run in any library:** Apply additions, the mysteries and rumours syncs, Match the published handbook, open questions, and the treasure checks in Consistency [3].
+- **Detection and defaults:**
+  - the setting is detected by `SYS-907` / `REG-001`;
+  - the client defaults unknown libraries to the setting's preset [4].
+- **Module data sits in core tables:**
+  - Thinning and Shardscarred in `character_pages`;
+  - fading in `party_treasure`;
+  - the Return's tables, with stages 0 to 7 fixed in the schema;
+  - module routes are never switched off;
+  - players' notes are lost when Thinning is off [4].
+- **Hard-coded type lists** (map pins, region panels, place pickers, the graph's groups, relationships, consistency) include the setting's types and can't include a pack's [2].
+- **Prose conventions:** features depend on the archive's wording and page names, including region holders, names, rumours, who's nearby, standing, backgrounds, starting places, species rules and subclass names [2, 8].
+- **Realms elsewhere:**
+  - the handbook guesses a people's continents from the words "Aetheris" and "Kaelmar";
+  - the timeline realm filter is free text;
+  - Rumours keeps its own realm names [1].
+- **Treasure tiers and tables:**
+  - treasure tiers live in the setting's `pools.json`;
+  - random tables find their region by text in `source`;
+  - stat blocks exist only as setting files and show in every library [6].
+- **Faction standing ranks and the Return's stages** are the setting's, fixed in code [4].
+- **Hard-coded roles:**
+  - the Graph opens on `CON-301`;
+  - Canon Review links `DEC-903` and `DEC-904`;
+  - the Return reads `COS-032`;
+  - the briefing falls back to `SET-301`;
+  - the handbook's "Start here" is the first world record [3].
+- **One library-wide scope:**
+  - one library, one date, one handbook;
+  - reveals are library-wide;
+  - campaigns have no world [1, 4].
+- **Exports:**
+  - the JSON export misses the Return's tables, revealed ties and homebrew rules packs;
+  - the campaign export misses most campaign data and names no world or packs;
+  - there's no full-world import [10].
+- **One content root:**
+  - desktop and server read one fixed content folder;
+  - there's nowhere to install a second pack [3].
+- **Tests:**
+  - the E2E needs the private archive and checks setting text;
+  - unit tests read the setting's asset paths [3, 9].
+
+**Minor**
+
+- **Setting copy** in placeholders, empty states and help text ("Mara Venn, Black Sun, vault key…", "The wedding at Varkhaal", "apply the Worldkeeper additions") [9].
+- **Group labels:**
+  - "Shards and Artifacts" / "Shards and Treasures" as group labels [2];
+  - the setting's peoples in the name generator [2].
+- **Print's table cards** are chosen by record name [3].
+- **Treasure defaults** to "the Marches" [6].
+- **Maps match by name;** a map's colours are fixed [3].
+- **Miscellaneous:**
+  - the owner's own books are the 5etools default;
+  - the e2e and handbook build script are setting-only [9, 10].
