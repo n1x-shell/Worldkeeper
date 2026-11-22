@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { api } from './api';
 import type { EntitySummary } from './types';
 import { MentionIndex } from '@shared/mentions';
+import type { RealmInfo } from '@shared/realms';
+import { RealmsProvider } from '../components/realms';
 
 interface AppState {
   appName: string;
@@ -23,6 +25,9 @@ interface AppState {
   setDebug: (v: boolean) => Promise<void>;
   /** Resolves @[Name] mentions and `[ID]` references to records. */
   mentions: MentionIndex;
+  /** The library's realms (archived ones too; most lists hide them). */
+  realms: RealmInfo[];
+  reloadRealms: () => Promise<void>;
 }
 
 const Ctx = createContext<AppState | null>(null);
@@ -52,6 +57,7 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   const [entityCount, setEntityCount] = useState(0);
   const [debug, setDebugState] = useState(false);
   const [debugForced, setDebugForced] = useState(false);
+  const [realms, setRealms] = useState<RealmInfo[] | undefined>(undefined);
   const mentions = useMemo(() => new MentionIndex([...index.values()].map((e) => ({ id: e.id, name: e.name, type: e.type, aliases: e.aliases, redirect_to: e.redirect_to }))), [index]);
 
   useEffect(() => {
@@ -79,10 +85,15 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setActive(a.id);
   }, []);
 
+  const reloadRealms = useCallback(async () => {
+    setRealms(await api.get<RealmInfo[]>('/api/realms?archived=1'));
+  }, []);
+
   useEffect(() => {
+    void reloadRealms().catch(() => setRealms([]));
     void reloadIndex().catch(() => setIndexLoaded(true));
     void reloadMeta().catch(() => undefined);
-  }, [reloadIndex, reloadMeta]);
+  }, [reloadIndex, reloadMeta, reloadRealms]);
 
   const value = useMemo<AppState>(
     () => ({
@@ -114,10 +125,16 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         setDebugState(v || debugForced);
       },
       mentions,
+      realms: realms ?? [],
+      reloadRealms,
     }),
-    [appName, theme, sidebarCollapsed, activeCampaignId, index, indexLoaded, reloadIndex, reloadMeta, entityCount, debug, debugForced, mentions],
+    [appName, theme, sidebarCollapsed, activeCampaignId, index, indexLoaded, reloadIndex, reloadMeta, entityCount, debug, debugForced, mentions, realms, reloadRealms],
   );
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={value}>
+      <RealmsProvider realms={realms}>{children}</RealmsProvider>
+    </Ctx.Provider>
+  );
 }
 
 export function useAppState() {

@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ReactFlow, Background, Controls, MarkerType, type Edge, type Node } from '@xyflow/react';
-import { CANON_STATUSES, ENTITY_TYPE_LABELS, REALMS, REALM_LABELS, RELATIONSHIP_LABELS, RELATIONSHIP_TYPES, type EntityType, type RelationshipType } from '@shared/domain';
+import { CANON_STATUSES, ENTITY_TYPE_LABELS, RELATIONSHIP_LABELS, RELATIONSHIP_TYPES, type EntityType, type RelationshipType } from '@shared/domain';
 import { qs, useApi } from '../lib/api';
 import { Card, Check, ErrorBox, Loading, PageHeader } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { useAppState } from '../lib/store';
 import type { Relationship } from '../lib/types';
+import { REALM_COLORS } from '@shared/realms';
+import { useRealms } from '../components/realms';
 
 interface GraphData {
   focus: string;
@@ -17,7 +19,7 @@ interface GraphData {
 
 /** The theme's colours, read from the CSS variables (React Flow draws markers with plain colours, not var()). */
 interface Palette {
-  /** Realm colours as "r, g, b", so they can take an alpha. */
+  /** Realm colours (by palette key) as "r, g, b", so they can take an alpha. */
   realm: Record<string, string>;
   fallback: string;
   panel: string;
@@ -34,7 +36,7 @@ function readPalette(): Palette {
   const triplet = (name: string) => v(name).split(/\s+/).join(', ') || '128, 128, 128';
   const rgb = (name: string, alpha?: number) => (alpha == null ? `rgb(${triplet(name)})` : `rgba(${triplet(name)}, ${alpha})`);
   return {
-    realm: { aetheris: triplet('--realm-aetheris'), kaelmar: triplet('--realm-kaelmar'), ethereal: triplet('--realm-ethereal'), world: triplet('--realm-world') },
+    realm: Object.fromEntries(REALM_COLORS.map((c) => [c, triplet(`--rc-${c}`)])),
     fallback: triplet('--dim'),
     panel: rgb('--panel'),
     raised: rgb('--raised'),
@@ -66,7 +68,7 @@ const TYPE_GROUPS: Record<string, string[]> = {
 };
 
 /** Radial layout: focus in the centre, each depth on its own ring, nodes on a ring grouped by type. */
-function layout(d: GraphData, debug: boolean, pal: Palette): { nodes: Node[]; edges: Edge[] } {
+function layout(d: GraphData, debug: boolean, pal: Palette, realmColor: (id: string) => string): { nodes: Node[]; edges: Edge[] } {
   const rings = new Map<number, GraphData['nodes']>();
   for (const n of d.nodes) rings.set(n.depth, [...(rings.get(n.depth) ?? []), n]);
   const nodes: Node[] = [];
@@ -75,7 +77,7 @@ function layout(d: GraphData, debug: boolean, pal: Palette): { nodes: Node[]; ed
     const r = depth === 0 ? 0 : Math.max(260 * depth, (list.length * 150) / (2 * Math.PI));
     list.forEach((n, i) => {
       const angle = (2 * Math.PI * i) / Math.max(1, list.length) - Math.PI / 2;
-      const tone = pal.realm[n.realm] ?? pal.fallback;
+      const tone = pal.realm[realmColor(n.realm)] ?? pal.fallback;
       const color = `rgb(${tone})`;
       nodes.push({
         id: n.id,
@@ -125,6 +127,7 @@ export function GraphPage() {
   const [refs, setRefs] = useState(true);
   const [group, setGroup] = useState('');
   const [realm, setRealm] = useState('');
+  const realms = useRealms();
   const [canon, setCanon] = useState('');
   const [rel, setRel] = useState('');
   const [era, setEra] = useState('');
@@ -133,7 +136,7 @@ export function GraphPage() {
   const { data, error, loading } = useApi<GraphData>(url);
   const { debug, theme } = useAppState();
   const pal = usePalette(theme);
-  const flow = useMemo(() => (data ? layout(data, debug, pal) : null), [data, debug, pal]);
+  const flow = useMemo(() => (data ? layout(data, debug, pal, (id) => realms.get(id).color) : null), [data, debug, pal, realms]);
 
   return (
     <div className="space-y-3">
@@ -164,9 +167,9 @@ export function GraphPage() {
           <span className="label">Continent</span>
           <select className="input w-auto" value={realm} onChange={(e) => setRealm(e.target.value)}>
             <option value="">All</option>
-            {REALMS.map((r) => (
-              <option key={r} value={r}>
-                {REALM_LABELS[r]}
+            {realms.list.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.name}
               </option>
             ))}
           </select>

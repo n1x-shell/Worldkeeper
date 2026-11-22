@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Plus, Star } from 'lucide-react';
-import { CANON_STATUSES, REALMS, REALM_LABELS, ENTITY_TYPE_LABELS, TYPE_GROUPS, type EntityType } from '@shared/domain';
+import { CANON_STATUSES, ENTITY_TYPE_LABELS, TYPE_GROUPS, type EntityType } from '@shared/domain';
 import { useApi, qs } from '../lib/api';
 import { Card, CanonFlags, Check, DataTable, Empty, ErrorBox, Loading, PageHeader, RealmBadge, TypeBadge, VisibilityBadge, type Column } from '../components/ui';
 import type { EntitySummary } from '../lib/types';
 import { useDebug } from '../components/Dev';
+import { useRealms } from '../components/realms';
 
 export const BROWSE_GROUPS: Record<string, { title: string; types?: EntityType[]; note?: string }> = {
   all: { title: 'All Lore' },
@@ -87,6 +88,7 @@ export function EntityTable({ rows, showRealm = true }: { rows: EntitySummary[];
 }
 
 export function EntityList({ group: groupProp, realm: fixedRealm }: { group?: string; realm?: string }) {
+  const realms = useRealms();
   const params = useParams();
   const group = groupProp ?? params.group ?? 'all';
   const def = BROWSE_GROUPS[group] ?? BROWSE_GROUPS.all;
@@ -121,9 +123,9 @@ export function EntityList({ group: groupProp, realm: fixedRealm }: { group?: st
         {!fixedRealm && (
           <select className="input w-auto" value={realm} onChange={(e) => setRealm(e.target.value)} aria-label="Realm">
             <option value="">All realms</option>
-            {REALMS.map((r) => (
-              <option key={r} value={r}>
-                {REALM_LABELS[r]}
+            {realms.list.map((r) => (
+              <option key={r.id} value={r.id}>
+                {r.name}
               </option>
             ))}
           </select>

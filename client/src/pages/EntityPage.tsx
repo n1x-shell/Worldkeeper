@@ -22,8 +22,6 @@ import {
   CANON_STATUSES,
   ENTITY_TYPES,
   ENTITY_TYPE_LABELS,
-  REALMS,
-  REALM_LABELS,
   RELATIONSHIP_LABELS,
   RELATIONSHIP_TYPES,
   relationshipLabel,
@@ -41,6 +39,7 @@ import { PartyTiesPanel } from './Campaign';
 import { TreasurePanel } from './Treasure';
 import { StatBlockPanel } from '../components/StatBlock';
 import { Dev, useDebug } from '../components/Dev';
+import { useRealms } from '../components/realms';
 import {
   AutoTextarea,
   Badge,
@@ -550,8 +549,9 @@ function useActiveSection(anchors: string[]) {
 }
 
 function AtAGlance({ entity: e, debug, fieldMap, wide }: { entity: Entity; debug: boolean; fieldMap: [string, string][]; wide: boolean }) {
+  const realms = useRealms();
   const facts: [string, string][] = [
-    ...(debug ? ([['Category', e.category_raw ?? ENTITY_TYPE_LABELS[e.type]], ['Realm', e.realm_raw ?? REALM_LABELS[e.realm]], ['Canon status', e.canon_raw ?? e.canon_status]] as [string, string][]) : []),
+    ...(debug ? ([['Category', e.category_raw ?? ENTITY_TYPE_LABELS[e.type]], ['Realm', e.realm_raw ?? realms.name(e.realm)], ['Canon status', e.canon_raw ?? e.canon_status]] as [string, string][]) : []),
     ...fieldMap,
     ...(debug ? ([['Source', e.source_raw ?? 'UNDEFINED']] as [string, string][]) : []),
   ];
@@ -783,6 +783,7 @@ function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; 
 
 // ------------------------------------------------------------------ Editor
 export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSaved: (e: Entity) => void; onDone: () => void }) {
+  const realms = useRealms();
   const [draft, setDraft] = useState(entity);
   const [reason, setReason] = useState('');
   const [preview, setPreview] = useState(false);
@@ -880,11 +881,13 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
           </Field>
           <Field label="Realm">
             <select className="input" value={draft.realm} onChange={(e) => update({ realm: e.target.value as Entity['realm'] })}>
-              {REALMS.map((r) => (
-                <option key={r} value={r}>
-                  {REALM_LABELS[r]}
-                </option>
-              ))}
+              {realms.list
+                .filter((r) => !r.archived || r.id === draft.realm)
+                .map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.name}
+                  </option>
+                ))}
             </select>
           </Field>
           <Field label="Canon status">

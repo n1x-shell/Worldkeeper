@@ -35,7 +35,8 @@ import { UserRound, Printer,
   X,
 } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
-import { PLAYER_GROUPS, PLAYER_REALMS, OTHER_GROUP, playerWorkspaceFor, type PlayerWorkspace } from './categories';
+import { RealmIconOf, useRealms } from '../components/realms';
+import { PLAYER_GROUPS, OTHER_GROUP, playerWorkspaceFor, type PlayerWorkspace } from './categories';
 import { PlayerLiveCard } from './LivePlay';
 import { ConfirmHost, ToastHost } from '../components/ui/overlays';
 import { PlayerHoverCards } from './PlayerPeek';
@@ -54,12 +55,6 @@ const GROUP_ICONS: Record<string, ReactNode> = {
   treasures: <Gem size={I} />,
   creatures: <Skull size={I} />,
   other: <Library size={I} />,
-};
-const REALM_ICONS: Record<string, ReactNode> = {
-  aetheris: <Mountain size={I} />,
-  kaelmar: <Flame size={I} />,
-  ethereal: <Ghost size={I} />,
-  world: <Globe2 size={I} />,
 };
 
 const read = (k: string, d: string) => {
@@ -101,7 +96,8 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
   }, [theme]);
 
   const types = new Set((entities ?? []).map((e) => e.type));
-  const realms = new Set((entities ?? []).map((e) => e.realm));
+  const realmsUsed = new Set((entities ?? []).flatMap((e) => [e.realm, ...(e.realms ?? [])]));
+  const realms = useRealms();
   const groups = [...PLAYER_GROUPS, OTHER_GROUP].filter((g) =>
     g === OTHER_GROUP ? (entities ?? []).some((e) => !PLAYER_GROUPS.some((p) => p.types.includes(e.type))) : g.types.some((t) => types.has(t)),
   );
@@ -123,7 +119,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
       to: base || '/',
       items: [
         { to: base || '/', label: 'Home', icon: <Home size={I} />, end: true },
-        ...PLAYER_REALMS.filter((r) => realms.has(r.key)).map((r) => ({ to: `${base}/realm/${r.key}`, label: r.label, icon: REALM_ICONS[r.key] })),
+        ...realms.list.filter((r) => !r.archived && realmsUsed.has(r.id)).map((r) => ({ to: `${base}/realm/${r.id}`, label: r.name, icon: <RealmIconOf realm={r} size={I} /> })),
       ],
     },
     {
