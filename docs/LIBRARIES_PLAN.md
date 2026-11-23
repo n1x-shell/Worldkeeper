@@ -1,6 +1,6 @@
 # Campaigns and libraries: a plan (v0.6)
 
-**Status:** proposed, 23 November 2026, awaiting the owner's answers in §5.
+**Status:** approved direction (owner answers in §5, 23 November 2026).
 **Goal:** a GM can run several groups in one world without one group's handbook showing what another group learned, and can keep unrelated worlds in libraries of their own, each with its own records, backups and handbook, switching between them in a click.
 
 Two parts, in this order:
@@ -52,7 +52,7 @@ Maps work the same way: a map, a pin or an outline is shown to everyone, or to a
 - **Each campaign has its own handbook address** on the table server: `/player/c/<code>`, a short private code per campaign, shown on the campaign page with a QR code. Two groups can use the table server at the same time, each seeing only their own. `/player` keeps working: it shows the active campaign, as today.
 - A character's private page already belongs to a campaign: it links to that campaign's handbook.
 - Search, the lore list, the map, the timeline of revealed records, the faction web and standing all follow the campaign.
-- **Publishing:** each campaign publishes its own handbook (its own folder on the GitHub Pages branch, or its own branch), so one group's site never holds another group's reveals. A library with one campaign publishes as today.
+- **Publishing is unchanged.** The published (GitHub Pages) handbook is a demo of the app, not where groups play (§5, answer 4): it keeps showing what's revealed to everyone, as today. Groups play on the table server, each at its own address.
 
 ### 2.4 Existing libraries
 
@@ -72,7 +72,7 @@ An installation has a **library root** (the data folder) holding:
 
 ### 3.2 For the GM
 
-- **The Library menu** names the open library and lists the others: **Open**, **New library**, and **Manage libraries** (rename, duplicate, archive, show in folder).
+- **The Library menu** names the open library and lists the others: **Open**, **New library**, and **Manage libraries** (rename, duplicate, archive (hidden, files kept; restore it any time), show in folder).
 - **New library** opens **Start your world** in the new, empty library. Both ways to begin work as now.
 - **Duplicate** makes a copy to try something risky in (a big import, a pack update).
 - **Backups and restore are per library**: restoring one never touches another.
@@ -101,21 +101,21 @@ Each step is its own PR, merged on the owner's OK; the release comes last.
 | ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
 | A1   | **Campaign reveals: storage and projection.** `campaign_reveals` and `campaign_map_reveals`; the player projection, search and snapshot per campaign (everyone's plus the campaign's); exports; existing reveals stay world-wide | Two campaigns in one world: each handbook shows only its own reveals and the common knowledge         |
 | A2   | **Revealing per campaign, for the GM.** Who learns this (the active campaign or everyone) in Player view and the live reveal; who knows what; promote to everyone, or take back to one campaign; maps and pins                   | Reveal in a live session for one group; the other group's handbook doesn't change                     |
-| A3   | **Each campaign's handbook.** `/player/c/<code>` on the table server, the code and QR on the campaign page, character pages linking to it, publishing per campaign                                                               | Two browsers, two campaigns, one table server: each sees only its own                                 |
+| A3   | **Each campaign's handbook.** `/player/c/<code>` on the table server, the code and QR on the campaign page, character pages linking to it                                                                                        | Two browsers, two campaigns, one table server: each sees only its own                                 |
 | B1   | **The library root.** `libraries.json`, per-library folders, opening and switching libraries on the server, the move of an existing installation                                                                                 | An existing installation upgrades into its first library unchanged; a second library opens and closes |
 | B2   | **Shared rules and packs.** `shared/rules.db` attached, per-library switches, installed packs and the token shared                                                                                                               | Books imported once are in every library; each library's switches are its own                         |
 | B3   | **Libraries for the GM.** The Library menu's switcher, New library (with the wizard), Manage libraries, open from a file, the desktop start                                                                                      | Make a second world, switch back and forth, restore one without touching the other                    |
 | B4   | **Docs, screenshots and the release (v0.6.0)**                                                                                                                                                                                   | The release                                                                                           |
 
-**Tests across the steps:** two groups in one world never see each other's campaign reveals (projection, search, snapshot, published site, campaign export); every existing library unchanged on upgrade (its handbook identical before and after); a reveal promoted to everyone and taken back; two libraries never share records, settings, backups or uploads; books imported once and used by both; an installation upgraded from v0.5 with its archive library intact; the table server serving two campaigns at once.
+**Tests across the steps:** two groups in one world never see each other's campaign reveals (projection, search, snapshot, campaign export); every existing library unchanged on upgrade (its handbook identical before and after); a reveal promoted to everyone and taken back; two libraries never share records, settings, backups or uploads; books imported once and used by both; an installation upgraded from v0.5 with its archive library intact; the table server serving two campaigns at once.
 
-## 5. Questions for the owner
+## 5. Owner answers (23 November 2026)
 
-1. **New reveals in a library with two or more campaigns:** to the active campaign by default, with "everyone" a choice (recommended), or to everyone by default?
-2. **Existing reveals:** stay "to everyone" so nothing changes on upgrade (recommended), or move to the active campaign?
-3. **How players reach their campaign:** a handbook address and code per campaign, with `/player` still showing the active campaign (recommended), or only ever the active campaign?
-4. **Publishing:** one published handbook per campaign (recommended), or one per library?
-5. **Maps and pins:** revealed per campaign too (recommended), or always world-wide?
-6. **Existing installations:** move the current library into `libraries/<id>/` on upgrade, after a backup (recommended, one layout for everyone), or leave it where it is and only put new libraries in `libraries/`?
-7. **Your books:** shared across libraries, with each library's own switches (recommended), or imported per library?
-8. **Removing a library:** archive it (hidden, files kept; recommended), or delete it after a final backup?
+1. **New reveals, with two or more campaigns: to the active campaign.** "Reveal to everyone" is the choice for common knowledge (§2.2).
+2. **Existing reveals stay world-wide.** Nothing changes on upgrade (§2.4).
+3. **Each campaign has its own handbook address and code** on the table server; `/player` keeps showing the active campaign (§2.3).
+4. **The published GitHub Pages handbook is a demo, not for gameplay.** Publishing stays as it is, one per library, showing what's revealed to everyone; groups play on the table server (§2.3).
+5. **Maps, pins and outlines are revealed per campaign too,** the same way as records (§2.1).
+6. **An existing installation moves into `libraries/<id>/` on upgrade,** after a backup, so every installation has one layout (§3.4).
+7. **Your books' rules are shared across libraries,** imported once per computer; each library keeps its own switches (§3.3).
+8. **Removing a library archives it:** hidden from the list, its files kept, to be restored or deleted by hand (§3.2).
