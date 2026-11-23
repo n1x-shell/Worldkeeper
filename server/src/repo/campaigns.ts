@@ -1,4 +1,4 @@
-import { syncCampaignDateText } from './calendars.js';
+import { campaignDates, syncCampaignDateText, syncSessionDate } from './calendars.js';
 import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { makeCrud, zId, zText } from './crud.js';
@@ -258,6 +258,9 @@ export const sessions = makeCrud({
     status: z.enum(['planned', 'live', 'completed']).default('planned'),
     played_on: z.string().max(100).default(''),
     in_world_date: z.string().max(200).default(''),
+    /** The in-world date through the campaign's calendar (kept in step with in_world_date; calendars.ts). */
+    date_year: z.number().int().nullable().optional(),
+    date_day: z.number().int().min(1).max(1000).nullable().optional(),
     prep: prepSchema.default(prepSchema.parse({})),
     recap: zText().default(''),
     recap_player_visible: z.boolean().default(false),
@@ -266,7 +269,10 @@ export const sessions = makeCrud({
   jsonColumns: ['prep'],
   boolColumns: ['recap_player_visible'],
   orderBy: 'number DESC',
-  onChange: (db, r) => indexAux(db, 'session', r.id as number, `Session ${r.number}: ${r.title}`, `${r.recap}\n${JSON.stringify(r.prep)}`),
+  onChange: (db, r) => {
+    syncSessionDate(db, r.id as number);
+    indexAux(db, 'session', r.id as number, `Session ${r.number}: ${r.title}`, `${r.recap}\n${JSON.stringify(r.prep)}`);
+  },
   onDelete: (db, id) => removeAux(db, 'session', id),
 });
 
@@ -276,7 +282,9 @@ export function createNextSession(db: DB, campaignId: number, title = '') {
     | { number: number; recap: string }
     | undefined;
   const prep = prepSchema.parse({ recap: last?.recap ?? '' });
-  return sessions.create(db, { campaign_id: campaignId, number: (last?.number ?? 0) + 1, title, prep });
+  // It starts on the campaign's date, which the GM changes as play moves on.
+  const now = campaignDates(db, campaignId).date;
+  return sessions.create(db, { campaign_id: campaignId, number: (last?.number ?? 0) + 1, title, prep, date_year: now.year, date_day: now.day });
 }
 
 export const sessionLog = makeCrud({

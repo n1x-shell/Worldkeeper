@@ -216,7 +216,7 @@ export function TimelinePage() {
   const toggleEra = (k: string) => setParam('era', (eraFilter.includes(k) ? eraFilter.filter((x) => x !== k) : [...eraFilter, k]).join(','));
   const [adding, setAdding] = useState(false);
   const [managing, setManaging] = useState(false);
-  const [form, setForm] = useState({ time_label: '', event: '', realm_id: '', access: 'PROPOSED' });
+  const [form, setForm] = useState({ time_label: '', year: '', event: '', realm_id: '', access: 'PROPOSED' });
   const eraName = (k: string | null) => (k ? eras?.find((e) => e.key === k)?.name ?? k : 'No era assigned');
   const rows = (data ?? []).filter(
     (r) => (!realm || r.realm_ids.includes(realm)) && (!eraFilter.length || eraFilter.includes(r.era ?? '__none')),
@@ -253,9 +253,19 @@ export function TimelinePage() {
       {error && <ErrorBox error={error} />}
       {managing && eras && <EraManager eras={eras} onChange={() => (void reloadEras(), void reload())} />}
       {adding && (
-        <Card className="grid gap-2 md:grid-cols-[160px_1fr_160px_140px_auto] items-end">
+        <Card className="grid gap-2 md:grid-cols-[110px_160px_1fr_160px_140px_auto] items-end">
+          <Field label="Year">
+            <input
+              className="input num"
+              type="number"
+              value={form.year}
+              onChange={(e) => setForm({ ...form, year: e.target.value })}
+              aria-label="Year"
+              title="The year in the world's calendar: the event goes in order, and its time is written out if you leave Time empty"
+            />
+          </Field>
           <Field label="Time">
-            <input className="input" value={form.time_label} onChange={(e) => setForm({ ...form, time_label: e.target.value })} />
+            <input className="input" value={form.time_label} placeholder={form.year ? 'Written from the year' : 'e.g. Before the Cycle'} onChange={(e) => setForm({ ...form, time_label: e.target.value })} />
           </Field>
           <Field label="Event">
             <input className="input" value={form.event} onChange={(e) => setForm({ ...form, event: e.target.value })} />
@@ -282,7 +292,13 @@ export function TimelinePage() {
           <button
             className="btn-primary"
             onClick={async () => {
-              await api.post('/api/timeline', { time_label: form.time_label, event: form.event, access: form.access, realm_ids: form.realm_id ? [form.realm_id] : [] });
+              await api.post('/api/timeline', {
+                time_label: form.time_label,
+                ...(form.year.trim() && Number.isInteger(Number(form.year)) ? { year: Number(form.year) } : {}),
+                event: form.event,
+                access: form.access,
+                realm_ids: form.realm_id ? [form.realm_id] : [],
+              });
               setAdding(false);
               void reload();
             }}

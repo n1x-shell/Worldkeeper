@@ -76,7 +76,8 @@ describe('the first-run wizard', () => {
     let gs = (await request(gm).get('/api/getting-started')).body;
     expect(gs.show).toBe(true);
     expect(gs.tutorial).toBe(5);
-    expect(gs.items.map((i: { key: string }) => i.key)).toEqual(['start', 'peek', 'new', 'reveal', 'map', 'session']);
+    expect(gs.items.map((i: { key: string }) => i.key)).toEqual(['start', 'town', 'peek', 'new', 'reveal', 'map', 'session']);
+    expect(gs.items[1].label).toBe('Write Harrowgate: fill in a section or two');
     // Start Here was opened above (to read it); nothing else is done yet.
     expect(gs.items.filter((i: { done: boolean }) => i.done).map((i: { key: string }) => i.key)).toEqual(['start']);
     await request(gm).get(`/api/entities/${byName['Start Here'].id}`);
@@ -85,7 +86,22 @@ describe('the first-run wizard', () => {
       .patch(`/api/entities/${made.town}`)
       .send({ revealed: true, revealed_sections: ['A first look'] });
     gs = (await request(gm).put('/api/getting-started').send({ tick: 'peek' })).body;
-    expect(Object.fromEntries(gs.items.map((i: { key: string; done: boolean }) => [i.key, i.done]))).toEqual({ start: true, peek: true, new: true, reveal: true, map: false, session: false });
+    expect(Object.fromEntries(gs.items.map((i: { key: string; done: boolean }) => [i.key, i.done]))).toEqual({
+      start: true,
+      town: false,
+      peek: true,
+      new: true,
+      reveal: true,
+      map: false,
+      session: false,
+    });
+    // Writing a section of the town ticks it off.
+    const body = (await request(gm).get(`/api/entities/${made.town}`)).body.entity.body as string;
+    await request(gm)
+      .patch(`/api/entities/${made.town}`)
+      .send({ body: body.replace(/(## A first look\n\n)<!--[^>]*-->/, '$1Mill wheels and slate roofs.') });
+    gs = (await request(gm).get('/api/getting-started')).body;
+    expect(gs.items.find((i: { key: string }) => i.key === 'town').done).toBe(true);
 
     // Remove the tutorial records: they go, links and all; the GM's own town and records stay.
     const removed = (await request(gm).delete('/api/setup/tutorial')).body;

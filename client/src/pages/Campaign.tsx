@@ -10,6 +10,7 @@ import { useAppState } from '../lib/store';
 import type { Campaign, Session, StateRow } from '../lib/types';
 import { ask, askText, AutoTextarea, Badge, Card, Check as CheckBox, DataTable, Empty, EntityLink, ErrorBox, Field, GmOnly, HpBar, KeyValue, Loading, Modal, PageHeader, SaveStatus, Section, Skeleton, Tabs, Toggle, useToast, type Tone } from '../components/ui';
 import { DatePicker } from '../components/DatePicker';
+import { GettingStarted } from '../components/GettingStarted';
 import { formatDate, type CalendarDef, type WDate } from '../../../shared/calendar';
 import { EntityMultiPicker, EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
@@ -239,6 +240,8 @@ export function ActiveCampaign() {
           </>
         }
       />
+      {/* The first-run checklist, here too: the app opens on the campaign once there is one. */}
+      <GettingStarted />
       <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
         <Card className="space-y-3">
           <div className="grid gap-3 md:grid-cols-2">
@@ -1427,7 +1430,18 @@ export function SessionPage() {
   useEffect(() => {
     if (data) setS(data);
   }, [data]);
-  const auto = useAutosave((x: Session) => api.patch(`/api/sessions/${x.id}`, { title: x.title, played_on: x.played_on, in_world_date: x.in_world_date, prep: x.prep, recap: x.recap, recap_player_visible: x.recap_player_visible }));
+  const auto = useAutosave((x: Session) =>
+    api.patch(`/api/sessions/${x.id}`, {
+      title: x.title,
+      played_on: x.played_on,
+      in_world_date: x.in_world_date,
+      date_year: x.date_year ?? null,
+      date_day: x.date_day ?? null,
+      prep: x.prep,
+      recap: x.recap,
+      recap_player_visible: x.recap_player_visible,
+    }),
+  );
   useEffect(() => {
     if (data?.status === 'completed') setTab('recap');
   }, [data?.status]);
@@ -1506,9 +1520,7 @@ export function SessionPage() {
           <Field label="Played on">
             <input className="input num" value={s.played_on} onChange={(e) => set({ played_on: e.target.value })} placeholder="YYYY-MM-DD" />
           </Field>
-          <Field label="In-world date">
-            <input className="input" value={s.in_world_date} onChange={(e) => set({ in_world_date: e.target.value })} />
-          </Field>
+          <SessionDate campaignId={s.campaign_id} session={s} onChange={set} />
         </div>
       </header>
       <Tabs
@@ -2107,6 +2119,62 @@ function SceneFlow({ adventureId }: { adventureId: number }) {
         Refresh
       </button>
     </div>
+  );
+}
+
+/**
+ * A session's in-world date: written in words, or picked with the calendar's own months. Words the calendar can read
+ * become a date on the server; others are kept as written.
+ */
+function SessionDate({ campaignId, session, onChange }: { campaignId: number; session: Session; onChange: (p: Partial<Session>) => void }) {
+  const { data } = useApi<{ def: CalendarDef; date: WDate }>(`/api/calendar?campaign_id=${campaignId}&days=1`);
+  const [value, setValue] = useState<WDate | null>(null);
+  const dated = session.date_year != null ? { year: session.date_year, day: session.date_day ?? 1 } : null;
+  return (
+    <Field label="In-world date">
+      <div className="flex items-center gap-2">
+        <input
+          className="input flex-1"
+          value={session.in_world_date}
+          aria-label="In-world date"
+          placeholder={data ? `e.g. ${formatDate(data.def, data.date)}` : ''}
+          // Typed words replace the picked date; the server reads them through the calendar.
+          onChange={(e) => onChange({ in_world_date: e.target.value, date_year: null, date_day: null })}
+        />
+        {data && (
+          <button className="btn" type="button" onClick={() => setValue(dated ?? data.date)}>
+            Pick
+          </button>
+        )}
+      </div>
+      {data && value && (
+        <Modal title="The session's in-world date" onClose={() => setValue(null)}>
+          <div className="space-y-3">
+            <DatePicker def={data.def} value={value} onChange={setValue} />
+            <div className="flex gap-2">
+              <button
+                className="btn-primary"
+                onClick={() => {
+                  onChange({ in_world_date: formatDate(data.def, value), date_year: value.year, date_day: value.day });
+                  setValue(null);
+                }}
+              >
+                Set it
+              </button>
+              <button
+                className="btn-ghost"
+                onClick={() => {
+                  onChange({ in_world_date: '', date_year: null, date_day: null });
+                  setValue(null);
+                }}
+              >
+                No date
+              </button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </Field>
   );
 }
 

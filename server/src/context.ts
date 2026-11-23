@@ -7,7 +7,7 @@ import { syncBuiltinTemplates } from './repo/templates.js';
 import path from 'node:path';
 import { setInstalledPacksDir } from './packs/paths.js';
 import { syncInstalledPacks } from './packs/registry.js';
-import { adoptCampaignDates } from './repo/calendars.js';
+import { adoptCampaignDates, adoptSessionDates, adoptTimelineDates } from './repo/calendars.js';
 import { adoptTableBands } from './repo/tables.js';
 
 /** Holds the live database handle so a restore can swap it without restarting the server. */
@@ -20,6 +20,8 @@ export class AppContext {
     syncBuiltinTemplates(this.db);
     syncInstalledPacks(this.db);
     adoptCampaignDates(this.db);
+    adoptSessionDates(this.db);
+    adoptTimelineDates(this.db);
     adoptTableBands(this.db);
     ensureEras(this.db);
   }
@@ -37,6 +39,8 @@ export class AppContext {
     syncBuiltinTemplates(this.db);
     syncInstalledPacks(this.db);
     adoptCampaignDates(this.db);
+    adoptSessionDates(this.db);
+    adoptTimelineDates(this.db);
     adoptTableBands(this.db);
     ensureEras(this.db);
   }

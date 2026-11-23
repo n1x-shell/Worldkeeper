@@ -1014,6 +1014,18 @@ INSERT INTO settings (key, value) SELECT 'rules_worldkeeper', 'on' WHERE EXISTS 
   ON CONFLICT(key) DO NOTHING;
 `,
   },
+  {
+    version: 27,
+    name: 'dates for sessions and timeline rows',
+    // A session's in-world date, and a timeline row's year (and day, when it names one), through the world's calendar.
+    // The text stays as written; startup reads existing text into them (calendars.ts adoptSessionDates, adoptTimelineDates).
+    sql: `
+ALTER TABLE sessions ADD COLUMN date_year INTEGER;
+ALTER TABLE sessions ADD COLUMN date_day INTEGER;
+ALTER TABLE timeline_rows ADD COLUMN year INTEGER;
+ALTER TABLE timeline_rows ADD COLUMN day INTEGER;
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-22 · v0.5.0_
+_Last updated: 2026-11-23 · v0.5.1_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,22 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.5.1: follow-ups and housekeeping
+
+- **Session dates** (migration 27): sessions keep `date_year`/`date_day` through the campaign's calendar, in step with `in_world_date` (`syncSessionDate`). A new session starts on the campaign's date; the session page's **Pick** opens the calendar's date picker; words the calendar can't read are kept as written, undated. Existing sessions are read at start (`adoptSessionDates`).
+- **Timeline dates** (migration 27): timeline rows keep an optional `year` and `day` (`parseWhen` in `shared/calendar.ts` tells a year from a day). `POST /api/timeline` takes `year` (and `day`): the event goes after the last dated event on or before it, and its time is written in the world's calendar when no words are given. Existing rows are read at start (`adoptTimelineDates`; "22 AB" and "300 AB / Year 31 Unbound" read as years, "Before the Cycle" stays undated).
+- **The handbook's Classes tab** lists the classes in the rules in use (`loadRulesText`), not only the setting's callings. A class with a calling page shows it; the others show the rules: hit die, saves, skills, weapons, features by level, subclasses with their source. An empty handbook links to Species and Classes and the builder.
+- **Stat blocks from any pack:** an installed pack's `statblocks/*.json` gives its records their stat blocks (`packBlocks` in `server/src/repo/statblocks.ts`); the Worldkeeper setting's stay tied to its rules pack. Documented in `docs/SETTING_PACKS.md`.
+- **The wizard's town:** Getting started gains "Write <town>: fill in a section or two", done once any of its sections has text; the card shows on the campaign overview too, since the app opens there once a campaign is active.
+- **Housekeeping:**
+  - **Desktop:** one app at a time (`tauri-plugin-single-instance`: a second launch brings the open window forward instead of starting a second server on the same library; `cargo check` passes).
+  - **The GM app's pages load on first visit:** the main chunk went from 1.42 MB to 327 kB (413 to 99 kB gzipped).
+  - `docs/FUTURE_WORK.md` ticks what shipped, and Known issues drops what's fixed.
+- **Tests:**
+  - `tests/dates.test.ts`: parseWhen; a session dated on creation, by typing and by picking, and adopted; timeline rows by year, in order, written out, and adopted.
+  - A pack's stat blocks: installed and uninstalled.
+  - The checklist's town item.
 
 ## v0.5.0 “A World of Your Own” (own-world step 10)
 
@@ -399,12 +415,10 @@ The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are n
 
 - The desktop app is about 140 MB, most of it the bundled Node.js runtime.
 - The desktop app only serves this computer. A LAN player server still needs `npm run start:player` from the repository.
-- Opening two desktop windows at once shares one database. SQLite handles this safely, but there is no single-instance lock yet.
 
-- Client bundle is ~1 MB (one chunk); fine locally, could be code-split.
 - Import keeps the whole archive in memory during preview (fine for this ~2.4 MB library; large image-heavy archives are not supported because only `.md` files are read).
 - `faction_plans`/`campaign_state` have no undo beyond editing/rejecting rows.
-- The dashboard "World date" shows the active campaign's date when one is active; the default comes from settings (`300 AB / Year 31 Unbound`).
+- The dashboard shows the active campaign's date; with no campaign it shows the world date from Settings, which is free text.
 
 ## Tests performed
 
