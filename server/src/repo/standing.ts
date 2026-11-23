@@ -3,6 +3,7 @@
  * change. What each rank brings comes from the faction's "Standing with…" rule record (a rule with a Faction field),
  * so the GM edits it like any other record.
  */
+import { revealedIds } from './reveals.js';
 import type { DB } from '../db/connection.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
@@ -173,8 +174,9 @@ export function setStandingOptions(db: DB, campaignId: number, factionId: string
 export function playerStanding(db: DB, campaignId: number | null) {
   if (campaignId == null) return [];
   const L = ladder(db);
+  const known = revealedIds(db, campaignId);
   return standingFor(db, campaignId)
-    .filter((r) => r.revealed && r.player_visible && r.rank !== L.neutral)
+    .filter((r) => known.has(r.faction_id) && r.player_visible && r.rank !== L.neutral)
     .map((r) => ({
       faction_id: r.faction_id,
       name: r.name,

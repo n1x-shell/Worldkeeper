@@ -6,6 +6,7 @@
  * The catalogue and pools ship with the Worldkeeper additions (packs/worldkeeper/treasure); they are read, not copied into the
  * library, so archive records are never changed.
  */
+import { revealedIds } from './reveals.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { z } from 'zod';
@@ -376,7 +377,9 @@ export function playerTreasure(db: DB, campaignId: number) {
     status: string;
     found_at: string;
   }[];
-  const revealed = db.prepare('SELECT 1 FROM entities WHERE id = ? AND revealed = 1');
+  // Records revealed to everyone, or to this campaign.
+  const known = revealedIds(db, campaignId);
+  const revealed = { get: (id: string) => known.has(id) };
   // Fading shows only while its module is on for the campaign.
   const fading = moduleOn(db, 'fading-salvage', campaignId)
     ? moduleDataFor<Fading>(

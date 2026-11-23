@@ -3,6 +3,7 @@
  * it, what has changed there, what the party has seen and found, and what's still to find. The GM sees all of it;
  * players get a short "what you've heard lately" built only from what they already know.
  */
+import { revealedIds } from './reveals.js';
 import type { DB } from '../db/connection.js';
 import { notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
@@ -162,7 +163,9 @@ export function allRegionStates(db: DB, campaignId: number) {
  * they were last there, and the rumours they've heard. No GM notes, no agendas, no unfound clues.
  */
 export function playerRegions(db: DB, campaignId: number) {
-  const revealed = db.prepare('SELECT 1 FROM entities WHERE id = ? AND revealed = 1');
+  // Records revealed to everyone, or to this campaign.
+  const known = revealedIds(db, campaignId);
+  const revealed = { get: (id: string) => known.has(id) };
   return allRegionStates(db, campaignId)
     .filter((s) => revealed.get(s.region.id) && (s.discovered.length || s.visits.length || s.rumours.heard))
     .map((s) => ({

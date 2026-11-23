@@ -3,6 +3,7 @@
  * quests, standing, treasure, handouts) plus the places the party has discovered and the people it has met, where
  * players already know those records. Nothing here can carry a GM secret that the projection wouldn't.
  */
+import { revealedIds } from '../repo/reveals.js';
 import type { DB } from '../db/connection.js';
 import { notFound } from '../lib/errors.js';
 import { playerCampaign } from './projection.js';
@@ -13,7 +14,9 @@ const strip = (md: string) => md.replace(/\]\(\/player\/e\/[^)]+\)/g, ']').repla
 export function partyExport(db: DB, campaignId: number): { title: string; markdown: string } {
   const c = playerCampaign(db, campaignId);
   if (!c) throw notFound('Campaign');
-  const known = db.prepare('SELECT name FROM entities WHERE id = ? AND revealed = 1');
+  // Names of records revealed to everyone, or to this campaign.
+  const revealedHere = revealedIds(db, campaignId);
+  const known = { get: (id: string) => (revealedHere.has(id) ? (db.prepare('SELECT name FROM entities WHERE id = ?').get(id) as { name: string } | undefined) : undefined) };
   const nameOf = (id: string) => (known.get(id) as { name: string } | undefined)?.name ?? null;
   const places = [
     ...new Set((db.prepare('SELECT entity_id FROM map_discoveries WHERE campaign_id = ?').all(campaignId) as { entity_id: string }[]).map((r) => nameOf(r.entity_id)).filter((x): x is string => !!x)),

@@ -9,6 +9,7 @@
  *  - Aliases, sources, notes, fields, canon flags, GM sections and unrevealed records are never included.
  *  - References inside revealed text to unrevealed records are reduced to plain names-free placeholders.
  */
+import { REVEALED_IN_SCOPE, campaignMapReveals, inScope, revealedIds, type RevealScope } from '../repo/reveals.js';
 import { stripComments } from '../../../shared/newRecord.js';
 import { publishedRuleEntries } from '../repo/rulesPacks.js';
 import { playerOmens } from '../repo/returnClock.js';
@@ -69,9 +70,8 @@ export function isSecretHeading(heading: string) {
   return SECRET_HEADING_RE.test(heading);
 }
 
-function revealedIdSet(db: DB): Set<string> {
-  return new Set((db.prepare('SELECT id FROM entities WHERE revealed = 1 AND archived = 0').all() as { id: string }[]).map((r) => r.id));
-}
+/** The records revealed in a scope: to everyone, plus (for a campaign) what only its players have learned. */
+const revealedIdSet = (db: DB, scope: RevealScope = null) => revealedIds(db, scope);
 
 /**
  * Rewrite record references for players: links to revealed records become player links showing the name;
@@ -96,12 +96,12 @@ interface Lexicon {
 }
 
 /** Names of revealed records, as they are written in prose (no leading "The", no nickname or bracketed note; a god by the name before the comma). */
-function buildLexicon(db: DB): Lexicon {
+function buildLexicon(db: DB, scope: RevealScope = null): Lexicon {
   const reg = types(db);
   // Not linked from prose: ordinary-word names, bookkeeping and adventure hooks. A shared name goes to the place.
   const NO_AUTOLINK = new Set(reg.list.filter((t) => t.traits.commonNoun || t.traits.meta || t.category === 'adventure').map((t) => t.key));
   const PLACE_TYPES = new Set(reg.with('place'));
-  const rows = db.prepare(`SELECT id, name, type FROM entities WHERE revealed = 1 AND archived = 0`).all() as { id: string; name: string; type: string }[];
+  const rows = db.prepare(`SELECT id, name, type FROM entities WHERE archived = 0 AND ${REVEALED_IN_SCOPE}`).all(scope) as { id: string; name: string; type: string }[];
   const groups = new Map<string, { id: string; type: string }[]>();
   for (const r of rows) {
     if (NO_AUTOLINK.has(r.type)) continue;
@@ -217,18 +217,18 @@ const esc = (x: string) => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
  * The realms players may know of: those their revealed records are in, and what holds them (a continent's world).
  * A realm the GM has made but revealed nothing in stays unnamed, in the handbook and in every list.
  */
-function visibleRealmIds(db: DB, list: RealmInfo[]): Set<string> {
+function visibleRealmIds(db: DB, list: RealmInfo[], scope: RevealScope = null): Set<string> {
   const byId = new Map(list.map((r) => [r.id, r]));
   const out = new Set<string>();
-  for (const { realm } of db.prepare('SELECT DISTINCT realm FROM entities WHERE revealed = 1 AND archived = 0').all() as { realm: string }[]) {
+  for (const { realm } of db.prepare(`SELECT DISTINCT realm FROM entities WHERE archived = 0 AND ${REVEALED_IN_SCOPE}`).all(scope) as { realm: string }[]) {
     for (let r = byId.get(realm); r && !out.has(r.id); r = r.parent_id ? byId.get(r.parent_id) : undefined) out.add(r.id);
   }
   return out;
 }
 
-function realmContext(db: DB): RealmContext {
+function realmContext(db: DB, scope: RevealScope = null): RealmContext {
   const list = listRealms(db, { includeArchived: true });
-  const visible = visibleRealmIds(db, list);
+  const visible = visibleRealmIds(db, list, scope);
   return {
     byId: new Map(list.map((r) => [r.id, r])),
     continents: list.filter((r) => r.kind === 'continent' && visible.has(r.id)).map((r) => ({ ...r, nameRe: new RegExp(`\\b${esc(r.name.replace(/^the\s+/i, ''))}\\b`) })),
@@ -237,17 +237,17 @@ function realmContext(db: DB): RealmContext {
 }
 
 /** The record types players see: those their revealed records have (a GM's own type stays unnamed until then). */
-export function playerTypes(db: DB): RecordTypeDef[] {
-  const used = new Set((db.prepare('SELECT DISTINCT type FROM entities WHERE revealed = 1 AND archived = 0').all() as { type: string }[]).map((r) => r.type));
+export function playerTypes(db: DB, scope: RevealScope = null): RecordTypeDef[] {
+  const used = new Set((db.prepare(`SELECT DISTINCT type FROM entities WHERE archived = 0 AND ${REVEALED_IN_SCOPE}`).all(scope) as { type: string }[]).map((r) => r.type));
   return listRecordTypes(db)
     .filter((t) => used.has(t.key))
     .map(({ builtin: _b, archived: _a, sort_order: _s, records: _r, ...t }) => t);
 }
 
 /** The realms players see: unarchived ones their revealed records are in (and what holds those), without counts. */
-export function playerRealms(db: DB): Omit<RealmInfo, 'records'>[] {
+export function playerRealms(db: DB, scope: RevealScope = null): Omit<RealmInfo, 'records'>[] {
   const list = listRealms(db);
-  const visible = visibleRealmIds(db, list);
+  const visible = visibleRealmIds(db, list, scope);
   return list.filter((r) => visible.has(r.id)).map(({ records: _r, ...rest }) => rest);
 }
 
@@ -263,29 +263,37 @@ function placeRealms(db: DB) {
 
 const COLS = 'id, name, type, realm, tags, body, player_summary, revealed_sections, revealed_facts, revealed, archived, fields';
 
-export function playerEntities(db: DB): PlayerEntity[] {
-  const revealed = revealedIdSet(db);
+/**
+ * The records players can read, in a scope: a campaign's players see what's revealed to everyone and what's revealed
+ * to their campaign (repo/reveals.ts); null is what's revealed to everyone (the published handbook).
+ */
+export function playerEntities(db: DB, scope: RevealScope = null): PlayerEntity[] {
+  const revealed = revealedIdSet(db, scope);
   const index = loadMentionIndex(db);
-  const lex = buildLexicon(db);
+  const lex = buildLexicon(db, scope);
   const places = placeRealms(db);
-  const rc = realmContext(db);
-  return (db.prepare(`SELECT ${COLS} FROM entities WHERE revealed = 1 AND archived = 0 ORDER BY name`).all() as Row[]).map((r) => project(r, revealed, index, rc, lex, places));
+  const rc = realmContext(db, scope);
+  const rows = db.prepare(`SELECT ${COLS} FROM entities WHERE archived = 0 AND ${REVEALED_IN_SCOPE} ORDER BY name`).all(scope) as Row[];
+  return inScope(db, rows, scope).map((r) => project(r, revealed, index, rc, lex, places));
 }
 
-export function playerEntity(db: DB, id: string): PlayerEntity | null {
-  const r = db.prepare(`SELECT ${COLS} FROM entities WHERE id = ? AND revealed = 1 AND archived = 0`).get(id) as Row | undefined;
-  return r ? project(r, revealedIdSet(db), loadMentionIndex(db), realmContext(db), buildLexicon(db), placeRealms(db)) : null;
+export function playerEntity(db: DB, id: string, scope: RevealScope = null): PlayerEntity | null {
+  const r = db.prepare(`SELECT ${COLS} FROM entities WHERE id = ? AND archived = 0 AND ${REVEALED_IN_SCOPE}`).get(id, scope) as Row | undefined;
+  return r ? project(inScope(db, [r], scope)[0], revealedIdSet(db, scope), loadMentionIndex(db), realmContext(db, scope), buildLexicon(db, scope), placeRealms(db)) : null;
 }
 
-export function playerSearch(db: DB, q: string): PlayerEntity[] {
+export function playerSearch(db: DB, q: string, scope: RevealScope = null): PlayerEntity[] {
   const needle = q.trim().toLowerCase();
   if (!needle) return [];
-  return playerEntities(db).filter((e) => [e.name, e.summary, ...e.facts, ...e.sections.map((s) => s.heading + ' ' + s.content)].join('\n').toLowerCase().includes(needle));
+  return playerEntities(db, scope).filter((e) => [e.name, e.summary, ...e.facts, ...e.sections.map((s) => s.heading + ' ' + s.content)].join('\n').toLowerCase().includes(needle));
 }
 
-export function playerMaps(db: DB) {
-  const revealed = revealedIdSet(db);
-  const maps = db.prepare('SELECT id, name, kind, parent_map_id, image_file, width, height FROM maps WHERE player_visible = 1 ORDER BY id').all() as {
+export function playerMaps(db: DB, scope: RevealScope = null) {
+  const revealed = revealedIdSet(db, scope);
+  // Maps, pins and outlines shown to everyone, and those shown to this campaign.
+  const extra = campaignMapReveals(db, scope);
+  const inList = (ids: Set<number>) => (ids.size ? [...ids].join(',') : '-1');
+  const maps = db.prepare(`SELECT id, name, kind, parent_map_id, image_file, width, height FROM maps WHERE player_visible = 1 OR id IN (${inList(extra.map)}) ORDER BY id`).all() as {
     id: number;
     name: string;
     kind: string;
@@ -304,7 +312,7 @@ export function playerMaps(db: DB) {
     width: m.width,
     height: m.height,
     markers: (
-      db.prepare('SELECT id, entity_id, label, x, y, category, child_map_id FROM map_markers WHERE map_id = ? AND hidden = 0').all(m.id) as {
+      db.prepare(`SELECT id, entity_id, label, x, y, category, child_map_id FROM map_markers WHERE map_id = ? AND (hidden = 0 OR id IN (${inList(extra.marker)}))`).all(m.id) as {
         id: number;
         entity_id: string | null;
         label: string;
@@ -323,7 +331,7 @@ export function playerMaps(db: DB) {
       child_map_id: mk.child_map_id && visibleMapIds.has(mk.child_map_id) ? mk.child_map_id : null,
     })),
     shapes: (
-      db.prepare('SELECT id, kind, label, points, color, entity_id FROM map_shapes WHERE map_id = ? AND hidden = 0').all(m.id) as {
+      db.prepare(`SELECT id, kind, label, points, color, entity_id FROM map_shapes WHERE map_id = ? AND (hidden = 0 OR id IN (${inList(extra.shape)}))`).all(m.id) as {
         id: number;
         kind: string;
         label: string;
@@ -363,7 +371,8 @@ export function playerCampaign(db: DB, campaignId: number) {
     played_on: string;
     recap: string;
   }[];
-  const revealed = revealedIdSet(db);
+  // What this campaign's players know: links in its quests, recaps and handouts go to records revealed to them.
+  const revealed = revealedIdSet(db, c.id);
   const index = loadMentionIndex(db);
   return {
     id: c.id,
