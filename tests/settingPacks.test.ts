@@ -134,6 +134,22 @@ describe('setting packs', () => {
     expect(ctx.db.prepare(`SELECT name FROM entities WHERE id = 'BCN-0100'`).get()).toEqual({ name: 'My Harbour' });
   });
 
+  it('gives a pack’s records the stat blocks it ships, while it is installed', async () => {
+    const ctx = tempContext();
+    const dir = writeTestPack(ctx);
+    fs.mkdirSync(path.join(dir, 'statblocks'), { recursive: true });
+    fs.writeFileSync(
+      path.join(dir, 'statblocks', 'keepers.json'),
+      JSON.stringify({ statblocks: { 'BCN-0001': { id: 'BCN-0001', name: 'The Lamp’s Keeper', meta: 'Medium Humanoid', ac: 12, hpAvg: 22, cr: '1' } } }),
+    );
+    const gm = createApp(ctx);
+    updatePack(ctx.db, 'testpack', ctx.paths.uploadsDir);
+    expect((await request(gm).get('/api/statblocks/BCN-0001')).body).toMatchObject({ name: 'The Lamp’s Keeper', ac: 12, cr: '1' });
+    expect((await request(gm).get('/api/statblocks')).body.some((s: { id: string }) => s.id === 'BCN-0001')).toBe(true);
+    uninstallPack(ctx.db, 'testpack');
+    expect((await request(gm).get('/api/statblocks')).body.some((s: { id: string }) => s.id === 'BCN-0001')).toBe(false);
+  });
+
   it('reports an ID the GM already uses, and keeps the GM’s record', () => {
     const ctx = tempContext();
     writeTestPack(ctx);

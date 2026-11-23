@@ -8,7 +8,8 @@ import type { DB } from '../db/connection.js';
 import { badRequest } from '../lib/errors.js';
 import { CALENDAR_PRESETS, type CalendarDef } from '../../../shared/calendar.js';
 import { REALM_KINDS } from '../../../shared/realms.js';
-import { buildRecord, sectionDrafts } from '../../../shared/newRecord.js';
+import { buildRecord, sectionDrafts, stripComments } from '../../../shared/newRecord.js';
+import { splitSections } from '../import/parseMarkdown.js';
 import { createEntity } from './entities.js';
 import { createRealm, updateRealm } from './realms.js';
 import { setWorldCalendar } from './calendars.js';
@@ -166,6 +167,8 @@ export function finishSetup(db: DB, input: unknown) {
       JSON.stringify({
         at: new Date().toISOString(),
         path: plan.path,
+        // The town the wizard made from the template, for the checklist's "Write …".
+        town: made.town,
         // The records there were, so the checklist can tell when the GM makes one of their own.
         records: count(db, `SELECT COUNT(*) n FROM entities`),
       }),
@@ -456,7 +459,7 @@ const progress = (db: DB): Progress => {
 export function gettingStarted(db: DB) {
   const p = progress(db);
   const ticked = new Set(p.ticked ?? []);
-  let setup: { at?: string; records?: number; path?: string } = {};
+  let setup: { at?: string; records?: number; path?: string; town?: string | null } = {};
   try {
     setup = JSON.parse(setting(db, 'setup_done') ?? '{}');
   } catch {
@@ -468,8 +471,12 @@ export function gettingStarted(db: DB) {
   const seen = (id: string | null) => !!id && !!db.prepare('SELECT 1 FROM recent_views WHERE entity_id = ?').get(id);
   const own = count(db, `SELECT COUNT(*) n FROM entities WHERE tags NOT LIKE ? AND origin = 'user'`, `%"${TUTORIAL_TAG}"%`);
   const baseline = Math.max(0, (setup.records ?? 0) - tutorial.length);
+  // The town the wizard made: written once any of its sections is (each starts as its guidance, waiting).
+  const town = setup.town ? (db.prepare('SELECT id, name, body FROM entities WHERE id = ?').get(setup.town) as { id: string; name: string; body: string } | undefined) : undefined;
+  const townWritten = (body: string) => splitSections(body).some((s) => s.heading && stripComments(s.content).trim().length > 0);
   const items: ChecklistItem[] = [
     ...(start ? [{ key: 'start', label: 'Read Start Here', done: seen(start), to: `/e/${start}` }] : []),
+    ...(town ? [{ key: 'town', label: `Write ${town.name}: fill in a section or two`, done: townWritten(town.body), to: `/e/${town.id}` }] : []),
     { key: 'peek', label: 'Hover a link to peek at a record, then press ] to open it beside', done: false, to: start ? `/e/${start}` : '/browse/all' },
     { key: 'new', label: 'Make a record of your own with New', done: own > baseline, to: '/new?type=npc' },
     { key: 'reveal', label: 'Reveal a section to your players', done: count(db, `SELECT COUNT(*) n FROM entities WHERE revealed = 1`) > 0, to: npc ? `/e/${npc}` : '/browse/all' },

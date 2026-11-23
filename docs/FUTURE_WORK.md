@@ -16,7 +16,7 @@ Ideas for what comes next, after the lore checklist (`LORE_CHECKLIST.md`) was fi
 - [x] **Random encounter tables** by region, and by depth in the Ethereal Realm, built from the bestiary. *Done: 41 d12 tables in Random Tables, by region and tier (1–4, 5–10, 11–20), and by depth in the Ethereal Realm.*
 - [x] **Faction standing tracks.** Renown with each faction in the campaign tools, with what each rank unlocks, as the archive's rules describe. *Done: Campaign → Faction Standing, with rank rewards for fifteen factions; players see theirs in the handbook.*
 - [x] **Treasure.** Loot tables and the world's own items, fleshed out. *Done: the Treasure rules, a catalogue of the 34 setting items and 20 artifacts (rules, where they rest, leads, who wants them), the Treasure tool, magic item tables by region and rarity, and the party's treasure log, which players see in the handbook.*
-- [ ] **A handbook that works offline.** Players install it on their phones and use it at the table without a signal.
+- [x] **A handbook that works offline.** Players install it on their phones and use it at the table without a signal. *Done: the published handbook installs and works offline, with offline search.*
 
 ## Play tools
 
@@ -29,7 +29,7 @@ Ideas for what comes next, after the lore checklist (`LORE_CHECKLIST.md`) was fi
 - [x] **Calendar.** *Done: the campaign date, time passing, festivals, the two moons and your own events, for GM and players.*
 - [x] **Consistency check.** *Done: a Library report.*
 - [x] **What the Party Knows.** *Done: printable and Markdown.*
-- [ ] **The Return as a visible threat.** A panel for the Return clock: what each stage changes, which encounters and rumours switch on. (Parked for now.)
+- [x] **The Return as a visible threat.** A panel for the Return clock: what each stage changes, which encounters and rumours switch on. *Done: Campaign → The Return (the clock module), with omens players see in the handbook.*
 
 ## Lore
 
@@ -39,5 +39,5 @@ Ideas for what comes next, after the lore checklist (`LORE_CHECKLIST.md`) was fi
 
 ## Housekeeping
 
-- [ ] **Speed up the handbook's first load.** It's about 610 KB of code; splitting it would make the first load faster on phones.
+- [x] **Speed up the handbook's first load.** It's about 610 KB of code; splitting it would make the first load faster on phones. *Done: the map, builder, faction web and print pages load when opened. In v0.5.1 the GM app's pages do too: its first load went from 1.4 MB to 330 kB.*
 - [ ] **Refresh the GM's own app.** Rebuild the desktop app so it carries all the latest additions, and apply them to the laptop library (Import and Export → Apply additions).

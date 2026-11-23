@@ -95,6 +95,8 @@ Each world has its own calendar: its months and how long they are, days outside 
 
 A campaign's date is kept as a year and a day, so changing the calendar keeps every campaign where it was; only how the date reads changes. The campaign's page sets where it started and where it is now with the calendar's own months; the Calendar page, travel, the session briefing, the players' calendar and the party export all read the world's calendar.
 
+A session's in-world date works the same way: a new session starts on the campaign's date, **Pick** sets it with the calendar's months, and words the calendar can't read ("the morning after") are kept as written. A timeline event can be given a year: it's placed in order among the dated events, and its time is written out in the world's calendar if you leave the words empty. Existing sessions and timeline rows are read through the calendar when the library opens.
+
 ## World branches and timelines
 
 ### Aetheris
@@ -198,6 +200,7 @@ A switched-off module leaves the menus, the sheets, the player view and the publ
 **From your books** (see [Rules packs](RULES_PACKS.md)):
 
 - **Character options.** The sheet and the builder list the world's peoples, classes and backgrounds first, then every other species, class, subclass and background in your rules packs. With no world pages, the books' options are the whole list.
+- **Species and Classes in the handbook.** The Classes tab lists every class in the rules in use: a class with a page of its own (the setting's callings) shows that page; the others show their hit die, saves, skills, features by level and subclasses from the rules. A handbook with nothing revealed yet still offers Species and Classes and the character builder.
 - **Treasure.** The Treasure tool rolls at any place in your world: a place your setting pack covers uses its regional tables (when the setting's treasure is on); anywhere else rolls magic items by tier and rarity from the SRD and your books, with gems and art objects for goods, scaled by the place's **Wealth** (a poor place has half the coin and an item fewer; a rich one double the coin and an item more). The 2024 treasure tiers belong to the rules, not to any setting.
 - **Encounters.** Your Books → Encounters, and "Suggest from your books" in a live session, offer groups of creatures for the party's level within the Dungeon Master's Guide (2024) XP budget, in a place's terrain. A place's **Terrain**, **Danger** and **Wealth** are facts on its record (forest, hills, coast…; safe, risky or deadly; poor, modest or rich), and a place takes any it doesn't give from the place it's in; a setting pack can give terrain for its own places (the Worldkeeper setting's `encounters/terrain.json`). Danger sets the difficulty. "Put in the tracker" makes it an encounter, with HP, AC, initiative and stat blocks filled in.
 - **Encounter tables for any region.** A region's panel on the map has **Make a table**: eight rows of creatures from the rules packs you have on, for its terrain and danger and the party's level. **Regenerate** rebuilds it; **Copy to edit** makes it your own. Hand-made tables (a pack's or yours) come first, and a journey that rolls encounters where there is no table gets one made. Random tables now belong to a region and a band of levels.

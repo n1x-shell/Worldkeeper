@@ -229,7 +229,15 @@ export function PlayerHome() {
           <div className="section-title">Player Handbook</div>
           <h1 className="mt-3 text-2xl sm:text-3xl text-ink">The handbook is empty</h1>
           <div className="mx-auto mt-3 h-0.5 w-24 bg-gradient-to-r from-transparent via-gold to-transparent" aria-hidden />
-          <p className="prose-lore mx-auto mt-4 max-w-[52ch] text-[17px] text-ink/90">Your Dungeon Master hasn't revealed anything yet.</p>
+          <p className="prose-lore mx-auto mt-4 max-w-[52ch] text-[17px] text-ink/90">Your Dungeon Master hasn't revealed anything yet. You can still read up on the classes and make a character.</p>
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
+            <Link to={`${base}/browse/peoples?tab=classes`} className="btn min-h-10">
+              Species and Classes
+            </Link>
+            <Link to={`${base}/builder`} className="btn-primary min-h-10">
+              Make a character
+            </Link>
+          </div>
         </div>
       </div>
     );

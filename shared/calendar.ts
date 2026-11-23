@@ -215,6 +215,18 @@ export function parseDate(def: CalendarDef, text: string): WDate | null {
   return { year, day: 1 };
 }
 
+/**
+ * Like parseDate, but says whether a day was named: "22 AB" is a year alone (day null), "Midsummer 15, 300 AB" a day.
+ * For timelines, where most entries are a year or an era.
+ */
+export function parseWhen(def: CalendarDef, text: string): { year: number; day: number | null } | null {
+  const d = parseDate(def, text);
+  if (!d) return null;
+  const t = text.toLowerCase();
+  const named = (def.extraDays ?? []).some((e) => t.includes(e.name.toLowerCase())) || def.months.some((m) => new RegExp(`${escape(m.name.toLowerCase())}\\s+\\d`).test(t));
+  return { year: d.year, day: named ? d.day : null };
+}
+
 // ---------------------------------------------------------------- counting days
 
 /** Days since the first day of year 1 (negative before it). */

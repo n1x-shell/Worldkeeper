@@ -10,7 +10,8 @@ import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
-import { worldkeeperPath } from '../packs/paths.js';
+import { WORLDKEEPER, worldkeeperPath } from '../packs/paths.js';
+import { findPack, installedPacks } from '../packs/registry.js';
 import { settingPackOn } from './settingPack.js';
 
 export interface StatEntry {
@@ -64,9 +65,9 @@ export interface StatBlock {
 }
 
 const DIR = worldkeeperPath('statblocks');
-let cache: { stamp: string; data: Record<string, StatBlock> } | null = null;
+const caches = new Map<string, { stamp: string; data: Record<string, StatBlock> }>();
 
-/** Every stat block, re-read when the files change. */
+/** Every stat block in a pack's statblocks folder (the Worldkeeper setting's by default), re-read when the files change. */
 export function statblocks(dir = DIR): Record<string, StatBlock> {
   if (!fs.existsSync(dir)) return {};
   const files = fs
@@ -74,15 +75,27 @@ export function statblocks(dir = DIR): Record<string, StatBlock> {
     .filter((f) => f.endsWith('.json'))
     .sort();
   const stamp = files.map((f) => `${f}:${fs.statSync(path.join(dir, f)).mtimeMs}`).join('|');
-  if (cache?.stamp === stamp) return cache.data;
+  const hit = caches.get(dir);
+  if (hit?.stamp === stamp) return hit.data;
   const data: Record<string, StatBlock> = {};
-  for (const f of files) Object.assign(data, (JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')) as { statblocks: Record<string, StatBlock> }).statblocks);
-  cache = { stamp, data };
+  for (const f of files) Object.assign(data, (JSON.parse(fs.readFileSync(path.join(dir, f), 'utf8')) as { statblocks?: Record<string, StatBlock> }).statblocks ?? {});
+  caches.set(dir, { stamp, data });
   return data;
 }
 
-/** The setting pack's stat blocks, while its rules pack is on. */
-const packBlocks = (db: DB) => (settingPackOn(db) ? statblocks() : {});
+/**
+ * The packs' stat blocks: the Worldkeeper setting's while its rules pack is on, and any other installed pack's own
+ * (its statblocks/*.json, docs/SETTING_PACKS.md).
+ */
+function packBlocks(db: DB): Record<string, StatBlock> {
+  const out: Record<string, StatBlock> = settingPackOn(db) ? { ...statblocks() } : {};
+  for (const p of installedPacks(db)) {
+    if (p.id === WORLDKEEPER) continue;
+    const dir = findPack(p.id)?.dir;
+    if (dir) for (const [id, b] of Object.entries(statblocks(path.join(dir, 'statblocks')))) out[id] ??= b;
+  }
+  return out;
+}
 
 /** The GM's own stat block for a record. */
 export function libraryStatblock(db: DB, id: string): StatBlock | null {

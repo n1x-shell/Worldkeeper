@@ -130,6 +130,14 @@ fn show_error(window: &tauri::WebviewWindow, message: &str) {
 
 pub fn run() {
     let app = tauri::Builder::default()
+        // First, so a second launch hands over to this one before it starts its own server on the same library.
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            if let Some(window) = app.get_webview_window("main") {
+                let _ = window.unminimize();
+                let _ = window.show();
+                let _ = window.set_focus();
+            }
+        }))
         .manage(ServerProcess(Mutex::new(None)))
         .setup(|app| {
             let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))

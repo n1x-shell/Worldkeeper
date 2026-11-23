@@ -1,4 +1,6 @@
 import { role } from '../packs/registry.js';
+import { timelineCalendar } from '../repo/calendars.js';
+import { formatDate, formatYear, parseWhen } from '../../../shared/calendar.js';
 import { Router } from 'express';
 import type { AppContext } from '../context.js';
 import { h, intParam, listParam } from './util.js';
@@ -292,15 +294,32 @@ export function worldRoutes(ctx: AppContext) {
     '/timeline',
     h((req) => {
       const b = req.body ?? {};
-      if (!b.time_label || !b.event) throw badRequest('Time and event are required');
+      const year = Number.isInteger(b.year) ? (b.year as number) : null;
+      const day = year != null && Number.isInteger(b.day) ? (b.day as number) : null;
+      if ((!b.time_label && year == null) || !b.event) throw badRequest('A time (a date, or words) and an event are required');
       const max = (ctx.db.prepare('SELECT MAX(sort_order) m FROM timeline_rows').get() as { m: number | null }).m ?? 0;
       // The realms it belongs to: as picked (each must exist), or read from the label.
       const picked = Array.isArray(b.realm_ids) ? (b.realm_ids as unknown[]).map(String).filter((id) => realmExists(ctx.db, id)) : null;
       const label = String(b.realm_label ?? '') || (picked ?? []).map((id) => getRealm(ctx.db, id)?.name ?? id).join(', ');
       const realmIds = picked ?? timelineRealms(ctx.db, label);
+      // A date through its world's calendar: written out when no words are given, read from the words otherwise.
+      const def = timelineCalendar(ctx.db, realmIds);
+      const when = year != null ? { year, day } : parseWhen(def, String(b.time_label ?? ''));
+      const time = String(b.time_label ?? '').trim() || (day != null ? formatDate(def, { year: year!, day }, 'short') : formatYear(def, year!));
+      // A dated event goes after the last one on or before its date; otherwise at the end.
+      let order = Number(b.sort_order ?? max + 1);
+      if (b.sort_order == null && when) {
+        const after = ctx.db
+          .prepare('SELECT MAX(sort_order) m FROM timeline_rows WHERE year IS NOT NULL AND (year < ? OR (year = ? AND COALESCE(day, 0) <= ?))')
+          .get(when.year, when.year, when.day ?? 0) as { m: number | null };
+        if (after.m != null && after.m < max) {
+          order = after.m + 1;
+          ctx.db.prepare('UPDATE timeline_rows SET sort_order = sort_order + 1 WHERE sort_order >= ?').run(order);
+        }
+      }
       ctx.db
-        .prepare(`INSERT INTO timeline_rows (sort_order, time_label, event, realm_label, realm_ids, source, access, entity_ids, origin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'user')`)
-        .run(Number(b.sort_order ?? max + 1), String(b.time_label), String(b.event), label, JSON.stringify(realmIds), String(b.source ?? 'DM'), String(b.access ?? 'PROPOSED'), '[]');
+        .prepare(`INSERT INTO timeline_rows (sort_order, time_label, event, realm_label, realm_ids, source, access, entity_ids, origin, year, day) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'user', ?, ?)`)
+        .run(order, time, String(b.event), label, JSON.stringify(realmIds), String(b.source ?? 'DM'), String(b.access ?? 'PROPOSED'), '[]', when?.year ?? null, when?.day ?? null);
       return { ok: true };
     }),
   );

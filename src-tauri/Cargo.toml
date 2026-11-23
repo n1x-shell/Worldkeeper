@@ -1,6 +1,6 @@
 [package]
 name = "worldkeeper"
-version = "0.5.0"
+version = "0.5.1"
 description = "The Worldkeeper: local-first world encyclopedia and D&D campaign manager"
 edition = "2021"
 publish = false
@@ -14,6 +14,8 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 tauri = { version = "2", features = [] }
+# One app at a time: opening it again brings the open window forward (two would share one library).
+tauri-plugin-single-instance = "2"
 
 [profile.release]
 codegen-units = 1

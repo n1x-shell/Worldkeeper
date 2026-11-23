@@ -7,7 +7,7 @@ import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
-import { CALENDAR_PRESETS, TWELVE_THIRTY, formatDate, isValidDate, parseDate, type CalendarDef, type WDate } from '../../../shared/calendar.js';
+import { CALENDAR_PRESETS, TWELVE_THIRTY, formatDate, isValidDate, parseDate, parseWhen, type CalendarDef, type WDate } from '../../../shared/calendar.js';
 
 const monthSchema = z.object({ name: z.string().trim().min(1).max(60), days: z.number().int().min(1).max(400), season: z.string().trim().max(40).optional() });
 export const calendarSchema = z.object({
@@ -180,4 +180,74 @@ export function syncCampaignDateText(db: DB, campaignId: number) {
   const newNow = typedNow ?? (c.date_year == null && typedStart ? typedStart : date);
   if (isValidDate(def, newStart)) writeCampaignDate(db, campaignId, 'start', newStart);
   if (isValidDate(def, newNow)) writeCampaignDate(db, campaignId, 'date', newNow);
+}
+
+// ---------------------------------------------------------------- session dates
+
+/** Sessions from before structured dates: read their in-world date through the campaign's calendar. */
+export function adoptSessionDates(db: DB) {
+  let rows: { id: number; campaign_id: number; in_world_date: string }[];
+  try {
+    rows = db.prepare(`SELECT id, campaign_id, in_world_date FROM sessions WHERE date_year IS NULL AND in_world_date <> ''`).all() as typeof rows;
+  } catch {
+    return; // a library from before migration 27
+  }
+  const set = db.prepare('UPDATE sessions SET date_year = ?, date_day = ? WHERE id = ?');
+  for (const r of rows) {
+    const d = parseDate(campaignCalendar(db, r.campaign_id), r.in_world_date);
+    if (d) set.run(d.year, d.day, r.id);
+  }
+}
+
+/**
+ * After a session is saved: text typed in (or imported) that differs from what its date reads as is read through the
+ * calendar; a date with no text is written out; clearing both leaves the session undated.
+ */
+export function syncSessionDate(db: DB, sessionId: number) {
+  const s = db.prepare('SELECT campaign_id, in_world_date, date_year, date_day FROM sessions WHERE id = ?').get(sessionId) as
+    | { campaign_id: number; in_world_date: string; date_year: number | null; date_day: number | null }
+    | undefined;
+  if (!s) return;
+  const def = campaignCalendar(db, s.campaign_id);
+  const dated = s.date_year != null ? { year: s.date_year, day: s.date_day ?? 1 } : null;
+  const text = (s.in_world_date ?? '').trim();
+  const set = db.prepare('UPDATE sessions SET date_year = ?, date_day = ? WHERE id = ?');
+  if (text) {
+    if (dated && text === formatDate(def, dated)) return;
+    // Typed text wins; text the calendar can't read ("the morning after") is kept as written, undated.
+    const typed = parseDate(def, text);
+    set.run(typed?.year ?? null, typed?.day ?? null, sessionId);
+  } else if (dated && isValidDate(def, dated)) db.prepare('UPDATE sessions SET in_world_date = ? WHERE id = ?').run(formatDate(def, dated), sessionId);
+}
+
+// ---------------------------------------------------------------- timeline dates
+
+/** The world a realm belongs to (walking up), or 'world'. */
+export function worldOfRealm(db: DB, realmId: string | null | undefined): string {
+  let r = realmId ?? null;
+  for (let guard = 0; r && guard < 10; guard++) {
+    const row = db.prepare('SELECT kind, parent_id FROM realms WHERE id = ?').get(r) as { kind: string; parent_id: string | null } | undefined;
+    if (!row) break;
+    if (row.kind === 'world') return r;
+    r = row.parent_id;
+  }
+  return 'world';
+}
+
+/** The calendar a timeline row reads by: its first realm's world's. */
+export const timelineCalendar = (db: DB, realmIds: string[]) => worldCalendar(db, worldOfRealm(db, realmIds[0])).def;
+
+/** Timeline rows from before structured dates: their year (and day) where their label names one. */
+export function adoptTimelineDates(db: DB) {
+  let rows: { id: number; time_label: string; realm_ids: string | null }[];
+  try {
+    rows = db.prepare('SELECT id, time_label, realm_ids FROM timeline_rows WHERE year IS NULL').all() as typeof rows;
+  } catch {
+    return;
+  }
+  const set = db.prepare('UPDATE timeline_rows SET year = ?, day = ? WHERE id = ?');
+  for (const r of rows) {
+    const w = parseWhen(timelineCalendar(db, parseJson<string[]>(r.realm_ids ?? '[]', [])), r.time_label ?? '');
+    if (w) set.run(w.year, w.day, r.id);
+  }
 }

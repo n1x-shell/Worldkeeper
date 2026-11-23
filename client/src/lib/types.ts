@@ -41,6 +41,9 @@ export interface Session {
   status: 'planned' | 'live' | 'completed';
   played_on: string;
   in_world_date: string;
+  /** The in-world date through the campaign's calendar (null: undated, or words the calendar can't read). */
+  date_year?: number | null;
+  date_day?: number | null;
   prep: Record<string, string> & { relevantIds: string[]; adventureIds: number[] };
   recap: string;
   recap_player_visible: boolean;
