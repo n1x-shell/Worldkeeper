@@ -4,6 +4,7 @@ import { resolvePaths } from './config.js';
 import { AppContext } from './context.js';
 import { createApp } from './app.js';
 import { createBackup, listBackups } from './backup/backup.js';
+import { closeTable, configureTable } from './table.js';
 
 const mode = process.env.WORLDKEEPER_MODE === 'player' ? 'player' : 'dm';
 const port = Number(process.env.PORT ?? (mode === 'player' ? 4320 : 4310));
@@ -15,7 +16,10 @@ const ctx = new AppContext(resolvePaths(), mode);
 if (mode === 'player') ctx.followOpenLibrary();
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 // The desktop app passes the bundled client location; otherwise use the repository's build output.
-const app = createApp(ctx, { staticDir: process.env.WORLDKEEPER_STATIC_DIR || path.join(root, 'dist') });
+const staticDir = process.env.WORLDKEEPER_STATIC_DIR || path.join(root, 'dist');
+const app = createApp(ctx, { staticDir });
+// The GM can open the table (players' handbook on the network) from the app; it starts closed.
+configureTable({ staticDir });
 
 function dailyBackup() {
   try {
@@ -37,6 +41,7 @@ app.listen(port, host, () => {
   console.log(`[worldkeeper] ${mode.toUpperCase()} server on http://${host === '0.0.0.0' ? 'localhost' : host}:${port}  (data: ${ctx.paths.rootDir}, library: ${ctx.paths.libraryId})`);
 });
 function shutdown() {
+  void closeTable();
   try {
     ctx.db.close();
   } finally {

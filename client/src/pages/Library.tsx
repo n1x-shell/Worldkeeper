@@ -1010,7 +1010,7 @@ export function SettingsPage() {
             ]}
           />
           <div className="text-dim text-xs pt-2">
-            Keyboard: Ctrl+K or / search · Alt+D DM screen · Ctrl+\ collapse sidebar. Player view: open <code>/player</code>, or run <code>npm run start:player</code> for a separate player-only
+            Keyboard: Ctrl+K or / search · Alt+D DM screen · Ctrl+\ collapse sidebar. Player view: open <code>/player</code>, or open the table from a campaign's overview (or run <code>npm run start:player</code>) for a separate player-only
             server.
           </div>
         </Card>

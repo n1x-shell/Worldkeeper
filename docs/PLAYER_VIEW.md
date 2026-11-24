@@ -14,7 +14,9 @@ Open <http://127.0.0.1:4310/player> on the DM machine, or select **Player View**
 
 ## Player-only LAN server
 
-Run:
+**From the app:** on a campaign's overview, **The players' handbook → Open the table**. The GM's own server starts the player-only server on your network (port 4320, or `WORLDKEEPER_TABLE_PORT`), serving the open library; **Table open** shows in the top bar while it is, and **Close the table** stops it. It starts closed every time the app starts. This works the same in the desktop app and in the web version; the first time, your system may ask whether to let the app accept network connections.
+
+**Or as a separate process,** run:
 
 ```bash
 npm run start:player

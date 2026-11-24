@@ -103,7 +103,7 @@ Generate a recap draft from recorded session events. Edit it before publication,
 
 ## 7. Share with players
 
-Use the in-app `/player` view for local preview. For other devices on a trusted LAN, use the separate player-only server, or publish a static handbook after checking exactly what it contains.
+Use the in-app `/player` view for local preview. For other devices on a trusted LAN, **Open the table** on a campaign's overview (or run the separate player-only server), or publish a static handbook after checking exactly what it contains.
 
 **Each campaign has its own handbook address** on the player-only server: the campaign's overview shows it with a QR code (**The players' handbook**). With two or more campaigns, each reveal goes to the active campaign unless you choose **Everyone**, so one group never sees what another learned.
 

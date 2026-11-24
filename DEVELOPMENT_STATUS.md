@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.6.0_
+_Last updated: 2026-11-24 · v0.6.1_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,14 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.6.1: open the table
+
+- **Open the table from the GM app** (`server/src/table.ts`): the GM's server starts the player-only table server itself, on the network (`0.0.0.0`, port 4320 or `WORLDKEEPER_TABLE_PORT`). It serves a player-mode view of the GM's context (`Object.create(ctx)` with `mode: 'player'`), so it shares the open library's database connection and paths: a library switch or a restore is seen at once, and only the player routes exist on it. Closed at every start; closed on shutdown. A port in use says so (409).
+- **Routes** (GM only): `GET /api/table`, `POST /api/table` (`open`). The campaign handbook card's address data adds `table_open`.
+- **Client:** the campaign's **The players' handbook** card shows whether the table is open, with **Open the table** / **Close the table**; **Table open** shows in the top bar while it is (`TableIndicator`). The top bar's search box now gives up width when the bar is full, so the Library menu never falls off the edge (checked from 1280 to 1920 px).
+- The desktop app can now serve players' phones: no repository or terminal needed.
+- **Tests:** `tests/table.test.ts`: opened on a free port, only player routes there (GM, table and library routes 404), following a library switch, opening twice, closing, a port in use, and no table routes on the table server. A browser check: open from the card, a phone on the campaign's address, the indicator, close.
 
 ## v0.6.0 “Many Tables, Many Worlds” (step B4)
 
@@ -492,7 +500,6 @@ The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are n
 ## Known issues
 
 - The desktop app is about 140 MB, most of it the bundled Node.js runtime.
-- The desktop app only serves this computer. A LAN player server still needs `npm run start:player` from the repository.
 - The plain table server address, `/player`, shows the active campaign; with two groups playing at once, each should use its campaign's own address. A handbook code keeps groups apart; it is not a password.
 - The QR codes come from a small encoder in the app (`shared/qr.ts`), checked against the standard's worked example and a reader in the tests; scan one with a phone before relying on it at the table.
 - A library's backups hold its own database and pictures, not `shared/` (your books' rules): import them again after restoring on another computer.
