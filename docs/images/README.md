@@ -1,6 +1,6 @@
 # Worldkeeper Screenshots
 
-Screenshots of The Worldkeeper, a local-first worldbuilding encyclopedia and D&D 5e (2024) campaign manager, used in the main README. They show the Worldkeeper setting's world and a sample campaign, _The Loose Thread_, at 1440 × 900 (and an iPhone 13 for the phone views).
+Screenshots of The Worldkeeper, a local-first worldbuilding encyclopedia and D&D 5e (2024) campaign manager, used in the main README. They show the Worldkeeper world and a sample campaign, _The Loose Thread_, at 1440 × 900 (and an iPhone 13 for the phone views).
 
 | File                                                 | Shows                                                  |
 | ---------------------------------------------------- | ------------------------------------------------------ |

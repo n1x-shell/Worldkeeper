@@ -49,7 +49,7 @@ jobs:
           PORT=4310 WORLDKEEPER_DATA_DIR="$RUNNER_TEMP/own" NODE_ENV=production npx tsx server/src/index.ts > "$RUNNER_TEMP/own.log" 2>&1 &
           for i in $(seq 60); do curl -sf http://127.0.0.1:4310/api/health > /dev/null && break; sleep 1; done
           node scripts/e2e-first-run.mjs http://127.0.0.1:4310 own e2e-shots/own
-      - name: First run, the Worldkeeper setting
+      - name: First run, the Worldkeeper world
         run: |
           PORT=4311 WORLDKEEPER_DATA_DIR="$RUNNER_TEMP/setting" NODE_ENV=production npx tsx server/src/index.ts > "$RUNNER_TEMP/setting.log" 2>&1 &
           for i in $(seq 60); do curl -sf http://127.0.0.1:4311/api/health > /dev/null && break; sleep 1; done

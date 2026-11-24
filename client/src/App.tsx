@@ -75,7 +75,7 @@ const SettingsPage = page(() => import('./pages/Library'), 'SettingsPage');
 const RumoursPage = page(() => import('./pages/Rumours'), 'RumoursPage');
 const RealmsPage = page(() => import('./pages/Realms'), 'RealmsPage');
 const TemplatesPage = page(() => import('./pages/Templates'), 'TemplatesPage');
-const SettingPacksPage = page(() => import('./pages/SettingPacks'), 'SettingPacksPage');
+const WorldbooksPage = page(() => import('./pages/Worldbooks'), 'WorldbooksPage');
 const PlayerApp = page(() => import('./player/PlayerApp'), 'PlayerApp');
 const CampaignHandbook = page(() => import('./player/CampaignHandbook'), 'CampaignHandbook');
 const PlainHandbookGate = page(() => import('./player/CampaignHandbook'), 'PlainHandbookGate');
@@ -187,13 +187,15 @@ export function App() {
             }
           />
           <Route
-            path="setting-packs"
+            path="worldbooks"
             element={
               <Page>
-                <SettingPacksPage />
+                <WorldbooksPage />
               </Page>
             }
           />
+          {/* The page's address before worldbooks (v0.7.1). */}
+          <Route path="setting-packs" element={<Navigate to="/worldbooks" replace />} />
           <Route
             path="realms"
             element={

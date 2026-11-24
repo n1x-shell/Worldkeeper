@@ -40,7 +40,7 @@ export const MODULES: ModuleDef[] = [
   {
     key: 'the-return',
     label: 'The Return (a clock)',
-    about: 'A clock only the GM sees, whose stages bring omens the players do see. Its stages come from the setting pack.',
+    about: 'A clock only the GM sees, whose stages bring omens the players do see. Its stages come from the worldbook.',
     pages: ['/campaign/return'],
     routes: ['/return'],
     handbook: ['Signs and Omens'],
@@ -98,7 +98,7 @@ export const MODULES: ModuleDef[] = [
   {
     key: 'renown',
     label: 'Renown',
-    about: 'The party’s standing with each faction, with ranks and what each rank earns. The ranks come from the setting pack, or a plain ladder.',
+    about: 'The party’s standing with each faction, with ranks and what each rank earns. The ranks come from the worldbook, or a plain ladder.',
     pages: ['/campaign/standing'],
     routes: ['/standing'],
     handbook: ['Faction Standing'],

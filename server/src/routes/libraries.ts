@@ -99,13 +99,13 @@ export function librariesRoutes(ctx: AppContext) {
       return list(true);
     }),
   );
-  // Open a library from a file: a full-world ZIP (from Import and Export) becomes a new library, opened.
+  // Open a library from a file: a full-world ZIP (from Add and Share) becomes a new library, opened.
   r.post(
     '/libraries/import',
     upload.single('file'),
     h((req) => {
       if (!req.file) throw badRequest('Choose a full-world ZIP');
-      if (req.file.buffer.subarray(0, 2).toString('latin1') !== 'PK') throw badRequest('Not a ZIP file: choose a full-world ZIP from Import and Export');
+      if (req.file.buffer.subarray(0, 2).toString('latin1') !== 'PK') throw badRequest('Not a ZIP file: choose a full-world ZIP from Add and Share');
       const fallback = (req.file.originalname || 'Imported library').replace(/\.zip$/i, '').replace(/[-_]+/g, ' ');
       const e = createLibrary(root(), String(req.body?.name ?? req.query.name ?? '').trim() || fallback);
       const before = ctx.paths.libraryId;

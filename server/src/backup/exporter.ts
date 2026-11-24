@@ -198,7 +198,7 @@ export function importFullWorldZip(db: DB, paths: Paths, buffer: Buffer) {
     throw badRequest('Not a ZIP file');
   }
   const json = zip.getEntry('worldkeeper.json');
-  if (!json) throw badRequest('Not a full-world ZIP: it has no worldkeeper.json. Import a Markdown ZIP from Import and Export instead.');
+  if (!json) throw badRequest('Not a full-world ZIP: it has no worldkeeper.json. Add a Markdown ZIP from Add and Share instead.');
   importJson(db, JSON.parse(json.getData().toString('utf8')));
   let pictures = 0;
   fs.mkdirSync(paths.uploadsDir, { recursive: true });

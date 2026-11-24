@@ -37,7 +37,7 @@ A worldbook works with whatever rules a GM has; nothing breaks without a book, s
 | Setting pack, Library → Setting packs | Worldbook, Library → Worldbooks                       |
 | Install a pack / Uninstall            | Add to this library / Remove from this library        |
 | Import (an archive, a Markdown ZIP)   | Add (records from files)                              |
-| Import and Export page                | Add and share (page name to be confirmed with the UI) |
+| Import and Export page                | Add and Share                                         |
 | Full world (ZIP) to move a world      | Share as a worldbook (the world, not your campaigns)  |
 | "Play in the Worldkeeper setting"     | "Play in the Worldkeeper world"                       |
 

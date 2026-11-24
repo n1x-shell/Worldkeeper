@@ -4,7 +4,7 @@
  *   node scripts/e2e-first-run.mjs <baseUrl> own [screenshotDir]
  *   WORLDKEEPER_TEST_ARCHIVE=path/to/archive.zip node scripts/e2e-first-run.mjs <baseUrl> setting [screenshotDir]
  * "own" builds a world of one's own (shape, calendar, a campaign with a town and party, a map, the records that teach,
- * then removes them); "setting" installs the Worldkeeper setting (with the archive, if given) and starts a campaign in it.
+ * then removes them); "setting" adds the Worldkeeper worldbook (with the archive, if given) and starts a campaign in it.
  */
 import { createRequire } from 'node:module';
 const { chromium } = createRequire(import.meta.url)('playwright');
@@ -124,10 +124,10 @@ try {
     if (left.join() !== 'Harrowgate') throw new Error(`after removing the tutorial records: ${left}`);
     step('the records that teach: Start Here links to them, and they go in one click; the town stays');
   } else {
-    await page.getByRole('button', { name: /Play in the Worldkeeper setting/ }).click();
+    await page.getByRole('button', { name: /Play in the Worldkeeper world/ }).click();
     if (archive) await page.getByLabel('Archive').setInputFiles(archive);
-    await page.getByRole('button', { name: /Install the Worldkeeper setting/ }).click();
-    await page.getByText('Installed').waitFor({ timeout: 180000 });
+    await page.getByRole('button', { name: /Add the Worldkeeper worldbook/ }).click();
+    await page.getByText('Added', { exact: true }).waitFor({ timeout: 180000 });
     await shot(page, '02-installed');
     await next();
     await page.getByText('Thinning, true names and memories').waitFor();
@@ -146,7 +146,7 @@ try {
     if (!meta.canonReview || !mods.includes('thinning') || mods.includes('the-return')) throw new Error(`setting: canonReview ${meta.canonReview}, modules ${mods}`);
     if ((await api(`/api/campaigns/${(await api('/api/campaigns/active')).id}`)).title !== 'The Loose Thread') throw new Error('campaign');
     await shot(page, '05-dashboard');
-    step(`the Worldkeeper setting: installed${archive ? ' with the archive' : ''}, a module unticked, a campaign started, Canon Review on`);
+    step(`the Worldkeeper world: added${archive ? ' with the archive' : ''}, a module unticked, a campaign started, Canon Review on`);
   }
 } catch (e) {
   errors.push(`FAILED: ${e.message}`);

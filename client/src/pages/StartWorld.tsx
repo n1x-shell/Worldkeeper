@@ -3,7 +3,7 @@
  *
  * - **Build my own world:** your world's name and pitch (and the app's), the calendar or "decide later", its shape
  *   (continents and planes, renamed or added as you like), then the shared steps.
- * - **Play in the Worldkeeper setting:** install the setting's pack, with your copy of the archive if you have it,
+ * - **Play in the Worldkeeper world:** add the Worldkeeper worldbook, with your copy of the archive if you have it,
  *   see what was installed, then the shared steps.
  * - The shared steps: rules and modules, a first campaign (its starting place, a town made for you, the party), an
  *   optional map, and Finish, which shows what will be made (with the records that teach, ticked by default for your
@@ -186,7 +186,7 @@ export function StartWorld() {
         campaign: campaign.skip
           ? null
           : {
-              title: campaign.title.trim() || `${path === 'own' ? worldName : 'The Worldkeeper setting'}: the first campaign`,
+              title: campaign.title.trim() || `${path === 'own' ? worldName : 'The Worldkeeper world'}: the first campaign`,
               startId: campaign.start === 'pick' ? campaign.startId : null,
               town: campaign.start === 'town' ? campaign.town.trim() || 'Millbrook' : null,
               party,
@@ -245,9 +245,9 @@ export function StartWorld() {
             </button>
             <button type="button" className="panel elev-1 p-5 text-left hover:border-gold/60" onClick={() => choose('setting')}>
               <Sparkles className="text-gold" size={22} />
-              <div className="mt-2 font-display text-lg text-ink">Play in the Worldkeeper setting</div>
+              <div className="mt-2 font-display text-lg text-ink">Play in the Worldkeeper world</div>
               <p className="mt-1 text-sm text-dim">
-                A shattered world of two continents and a realm between. Installs the setting's realms, records, rules and modules, with your copy of its archive if you have one.
+                A shattered world of two continents and a realm between. Adds the Worldkeeper worldbook: its realms, records, rules and modules, with your copy of its archive if you have one.
               </p>
             </button>
           </div>
@@ -370,20 +370,20 @@ export function StartWorld() {
       {step === 'setting' && (
         <Card className="space-y-4">
           <p className="text-sm">
-            The setting's pack brings its realms (the world, Aetheris, Kaelmar and the Ethereal Realm), record types, templates, its own content and rules, and its systems as modules you can switch
-            off. If you have your copy of the setting's archive (a ZIP of Markdown files), add it too.
+            The Worldkeeper worldbook brings its realms (the world, Aetheris, Kaelmar and the Ethereal Realm), record types, templates, its own content and rules, and its systems as modules you can switch
+            off. If you have your copy of its archive (a ZIP of Markdown files), add it too.
           </p>
           <Field label="Your copy of the archive (optional)">
             <input type="file" accept=".zip" className="input" aria-label="Archive" disabled={!!installed} onChange={(e) => setArchive(e.target.files?.[0] ?? null)} />
           </Field>
           {!installed ? (
             <button type="button" className="btn-primary" disabled={busy} onClick={() => void install()}>
-              <Upload size={14} /> {busy ? 'Installing…' : 'Install the Worldkeeper setting'}
+              <Upload size={14} /> {busy ? 'Adding…' : 'Add the Worldkeeper worldbook'}
             </button>
           ) : (
             <div className="rounded-md border border-good/40 bg-good/10 p-3 text-sm space-y-1" role="status">
               <div className="flex items-center gap-2 font-medium text-ink">
-                <Check size={15} className="text-good" /> Installed
+                <Check size={15} className="text-good" /> Added
               </div>
               <div>
                 {installed.records.toLocaleString()} records{installed.imported != null ? `, ${installed.imported.toLocaleString()} of them from your archive` : ''}.
@@ -519,10 +519,10 @@ export function StartWorld() {
                 <li>New records are Canon at once (Settings → Canon).</li>
               </>
             ) : (
-              <li>The Worldkeeper setting{installed ? `, installed: ${installed.records.toLocaleString()} records` : ''}. New records wait for you in Canon Review.</li>
+              <li>The Worldkeeper worldbook{installed ? `, added: ${installed.records.toLocaleString()} records` : ''}. New records wait for you in Canon Review.</li>
             )}
             <li>
-              Rules: the SRD{path === 'setting' && settingRules ? " and the setting's rules" : ''}. Modules:{' '}
+              Rules: the SRD{path === 'setting' && settingRules ? " and the worldbook's rules" : ''}. Modules:{' '}
               {modules
                 .filter((m) => m.on)
                 .map((m) => m.label)
@@ -531,7 +531,7 @@ export function StartWorld() {
             </li>
             {!campaign.skip ? (
               <li>
-                A campaign, <b>{campaign.title.trim() || `${path === 'own' ? worldName : 'The Worldkeeper setting'}: the first campaign`}</b>
+                A campaign, <b>{campaign.title.trim() || `${path === 'own' ? worldName : 'The Worldkeeper world'}: the first campaign`}</b>
                 {campaign.start === 'town'
                   ? `, starting in a new town, ${campaign.town.trim() || 'Millbrook'}`
                   : campaign.start === 'pick' && campaign.startId

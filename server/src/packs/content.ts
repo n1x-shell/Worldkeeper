@@ -17,7 +17,7 @@ import { findPack, installPack } from './registry.js';
 /** Install a pack if needed, then bring its content into the library. Returns what changed, with any ID clashes. */
 export function updatePack(db: DB, id: string, uploadsDir?: string) {
   const found = findPack(id);
-  if (!found) throw notFound('Setting pack');
+  if (!found) throw notFound('Worldbook');
   installPack(db, id);
   const result = applyAdditions(db, path.join(found.dir, 'lore'), uploadsDir, id);
   const marked = markPackRows(db, id, found.dir);

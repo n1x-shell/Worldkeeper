@@ -2,7 +2,7 @@
 
 [← README](../README.md) · [Full Features](FEATURES.md) · [Data & Backups](DATA.md)
 
-This walkthrough takes you from a fresh install to your first tracked session, either in a world of your own or in the Worldkeeper setting. Worldkeeper is local-first and does not require an account or AI service.
+This walkthrough takes you from a fresh install to your first tracked session, either in a world of your own or in the Worldkeeper world. Worldkeeper is local-first and does not require an account or AI service.
 
 ## 1. Install and start
 
@@ -36,17 +36,17 @@ A fresh library opens on **Start your world**. There are two ways to begin, on o
 
 The dashboard's **Getting started** card lists things to try. Open **Start Here** first. In your own world, new records are Canon at once (**Settings → Canon**).
 
-### The Worldkeeper setting
+### The Worldkeeper world
 
-1. Choose **Play in the Worldkeeper setting**.
-2. If you have your copy of the setting's archive (a ZIP of Markdown files), add it, then **Install the Worldkeeper setting**. You'll see what came in.
+1. Choose **Play in the Worldkeeper world**.
+2. If you have your copy of its archive (a ZIP of Markdown files), add it, then **Add the Worldkeeper worldbook**. You'll see what came in.
 3. **Rules:** the setting's rules (its creatures, hazards and items) and its modules (Thinning, the Return, vaults, shards and the rest) are on; untick any you won't use.
 4. **A first campaign:** pick its starting place (Hollow Refuge, say) and add the party.
 5. **Finish:** choose **Start playing**. New records wait for you in **Canon Review**, which protects the setting's text.
 
 ### Bringing in a world you already have
 
-Choose **Restore a backup** on the first page, or skip the wizard and open **Library (the gear, top right) → Import and Export**:
+Choose **Restore a backup** on the first page, or skip the wizard and open **Library (the gear, top right) → Add and Share**:
 
 1. Choose a ZIP archive of your Markdown lore (a Worldkeeper Markdown export, or an archive in the same format).
 2. Select **Preview import**.
@@ -69,7 +69,7 @@ Re-imports preserve unchanged records and do not delete records merely because t
 
 - **Your books.** The SRD 5.2.1 is built in. To use the books you own, find the 5etools project's source repository yourself, download an archive of it as a zip, and import it in **Settings → Rules packs → Import your books from 5etools**. Tick the books you own. See [Rules packs](RULES_PACKS.md).
 - **Standard D&D or the setting.** A world of your own starts as standard D&D 2024. With the setting installed, switch any of its modules off in **Settings → Modules** (for the library, or just for one campaign).
-- **Your own setting, packaged.** A setting can be a pack of its own: see [Writing a setting pack](SETTING_PACKS.md).
+- **Your own world, packaged.** A world can be a worldbook of its own: see [Writing a worldbook](WORLDBOOKS.md).
 
 ## 3. Explore the encyclopedia
 
@@ -121,7 +121,7 @@ Use **Backups → Back up now** and make an independent copy of the resulting ba
 
 - [Complete feature reference](FEATURES.md)
 - [Rules packs and your own books](RULES_PACKS.md)
-- [Writing a setting pack](SETTING_PACKS.md)
+- [Writing a worldbook](WORLDBOOKS.md)
 - [Player access and publication](PLAYER_VIEW.md)
 - [Data, backup, restore and exports](DATA.md)
 - [Commands, configuration and testing](DEVELOPMENT.md)

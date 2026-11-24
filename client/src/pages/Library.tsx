@@ -78,13 +78,13 @@ export function ImportExportPage() {
 
   return (
     <div className="space-y-4">
-      <PageHeader title="Import and Export" note="Imports are previewed, validated and confirmed before anything is written, and run in a single transaction after an automatic backup." />
+      <PageHeader title="Add and Share" note="What you add is previewed, checked and confirmed before anything is written, after an automatic backup. Share your world, a campaign or what players may see as files." />
       <Tabs
         value={tab}
         onChange={setTab}
         tabs={[
-          { id: 'import', label: 'Import' },
-          { id: 'export', label: 'Export' },
+          { id: 'import', label: 'Add' },
+          { id: 'export', label: 'Share' },
         ]}
       />
       {err && <ErrorBox error={err} />}
@@ -93,7 +93,7 @@ export function ImportExportPage() {
         <div className="space-y-4">
           <AdditionsPanel onDone={(msg) => (setDone(msg), reloadIndex(), reloadMeta(), void reloadRuns())} />
           <Card className="flex flex-wrap items-end gap-3">
-            <Field label="World archive (.zip of Markdown files)">
+            <Field label="Records from files (a .zip of Markdown files)">
               <input type="file" accept=".zip,application/zip" onChange={(e) => (setFile(e.target.files?.[0] ?? null), setPreview(null), setDone(null), setLarge(null), setRun(null))} />
             </Field>
             <button
@@ -127,7 +127,7 @@ export function ImportExportPage() {
                 }
               }}
             >
-              <Upload size={14} /> {busy ? 'Reading…' : 'Preview import'}
+              <Upload size={14} /> {busy ? 'Reading…' : 'Preview'}
             </button>
             <p className={`text-xs text-dim w-full ${debug ? '' : 'hidden'}`}>
               Also available from the command line: <code>npm run import -- path/to/archive.zip</code> (add <code>--dry-run</code> to preview only).
@@ -140,8 +140,8 @@ export function ImportExportPage() {
                 <p className="text-sm">
                   {large.check.reason}{' '}
                   {large.check.possible
-                    ? `Import it in ${planParts(large.entries, { textBytes: large.check.partTextBytes, root: large.root, everyPart: large.check.everyPart }).length} parts: each is previewed and confirmed like any import, one after another, and the links between records in different parts are made at the end.`
-                    : 'It can’t be imported as it is.'}
+                    ? `Add it in ${planParts(large.entries, { textBytes: large.check.partTextBytes, root: large.root, everyPart: large.check.everyPart }).length} parts: each is previewed and confirmed like any addition, one after another, and the links between records in different parts are made at the end.`
+                    : 'It can’t be added as it is.'}
                 </p>
                 <div className="flex gap-2">
                   {large.check.possible && (
@@ -168,7 +168,7 @@ export function ImportExportPage() {
                         }
                       }}
                     >
-                      <Upload size={14} /> Import in parts
+                      <Upload size={14} /> Add in parts
                     </button>
                   )}
                   <button className="btn" onClick={() => setLarge(null)}>
@@ -212,7 +212,7 @@ export function ImportExportPage() {
                       setLarge(null);
                     }
                     setDone(
-                      `${run ? `All ${run.parts.length} parts imported, and the links between them made. Last part: ` : ''}Import complete: ${r.result.created} created, ${r.result.updated} updated, ${r.result.unchanged} unchanged, ${r.result.conflictsKept} conflicts kept local, ${r.result.conflictsReplaced} replaced from source. ${r.result.relationships} relationships.${r.backup ? ` Backup first: ${r.backup.file}.` : ''}`,
+                      `${run ? `All ${run.parts.length} parts added, and the links between them made. Last part: ` : ''}Added: ${r.result.created} created, ${r.result.updated} updated, ${r.result.unchanged} unchanged, ${r.result.conflictsKept} conflicts kept local, ${r.result.conflictsReplaced} replaced from source. ${r.result.relationships} relationships.${r.backup ? ` Backup first: ${r.backup.file}.` : ''}`,
                     );
                     setPreview(null);
                     await reloadIndex();
@@ -221,27 +221,27 @@ export function ImportExportPage() {
                     await packsChanged();
                     void reloadRuns();
                   } catch (x) {
-                    setErr(`Import failed and was rolled back: ${(x as Error).message}`);
+                    setErr(`Adding failed and was rolled back: ${(x as Error).message}`);
                   } finally {
                     setBusy(false);
                   }
                 }}
               >
-                <Check size={14} /> {run ? (run.index + 1 < run.parts.length ? `Confirm part ${run.index + 1} and go on` : 'Confirm the last part') : 'Confirm import'}
+                <Check size={14} /> {run ? (run.index + 1 < run.parts.length ? `Confirm part ${run.index + 1} and go on` : 'Confirm the last part') : 'Confirm and add'}
               </button>
               <button className="btn" onClick={() => (setPreview(null), run && (setRun(null), setLarge(null), void api.post('/api/import/relink', {})))}>
                 {run ? 'Stop here' : 'Cancel'}
               </button>
             </div>
           )}
-          <Card title="Import history" flush>
+          <Card title="Added before" flush>
             {!runs ? (
               <Loading inline />
             ) : (
               <DataTable
                 rows={runs}
                 rowKey={(r) => r.id}
-                empty="No imports yet."
+                empty="Nothing added yet."
                 columns={[
                   { key: 'started_at', label: 'When', sortable: true, className: 'text-xs whitespace-nowrap', render: (r) => new Date(r.started_at).toLocaleString() },
                   { key: 'source_name', label: 'Source', sortable: true },
@@ -311,7 +311,7 @@ function ImportPreview({
           Protected: {d.path}. {d.note}
         </div>
       ))}
-      {s.missingFromSource.length > 0 && <div className="text-sm text-dim">{s.missingFromSource.length} imported records are not in this archive. They are kept, never deleted.</div>}
+      {s.missingFromSource.length > 0 && <div className="text-sm text-dim">{s.missingFromSource.length} records added before are not in these files. They are kept, never deleted.</div>}
       {s.conflicts.length > 0 && (
         <Card className="border-warn/50 space-y-1">
           <div className="text-warn text-sm font-medium">Conflicts: you edited these records and the source also changed. Default keeps your version.</div>
@@ -345,7 +345,7 @@ function ImportPreview({
             maxHeight="50vh"
             rows={p.entities.filter((e) => e.action !== 'unchanged')}
             rowKey={(e) => e.id}
-            empty="Every record is unchanged. Importing again changes nothing."
+            empty="Every record is unchanged. Adding these files again changes nothing."
             columns={[
               ...(debug ? [{ key: 'id', label: 'ID', sortable: true, className: 'text-xs' }] : []),
               { key: 'name', label: 'Name', sortable: true },
@@ -420,8 +420,8 @@ function ExportPanel() {
   const [jsonErr, setJsonErr] = useState<string | null>(null);
   const items: [string, string, string][] = [
     ['/api/export/full', 'Full world ZIP', 'Markdown library + complete JSON data + every original source file + map images.'],
-    ['/api/export/markdown', 'Markdown library', 'One file per record in the library format. Re-importable into any installation.'],
-    ['/api/export/json', 'JSON data export', 'Every table (records, history, campaigns, maps). Imports into an empty installation.'],
+    ['/api/export/markdown', 'Markdown library', 'One file per record in the library format. Can be added to any library.'],
+    ['/api/export/json', 'JSON data export', 'Every table (records, history, campaigns, maps). Loads into an empty library.'],
     ['/api/export/player', 'Player-safe export', 'Only revealed records, published maps, visible quests and published recaps. No secrets.'],
   ];
   return (
@@ -436,7 +436,7 @@ function ExportPanel() {
           </a>
         ))}
       </div>
-      <Card title="Campaign-only export">
+      <Card title="One campaign">
         <div className="flex flex-wrap gap-2">
           {campaigns?.map((c) => (
             <a key={c.id} className="btn" href={`/api/export/campaign/${c.id}`}>
@@ -446,7 +446,7 @@ function ExportPanel() {
           {campaigns && !campaigns.length && <Empty compact title="No campaigns." />}
         </div>
       </Card>
-      <Card title="Load an export">
+      <Card title="Add a shared file">
         <p className="text-xs text-dim mb-2">
           A full JSON export or a full-world ZIP loads into an empty installation only (the ZIP brings its maps and pictures too). A campaign export is added as a new campaign; anything it refers to that this
           library doesn't have is listed.
@@ -455,7 +455,7 @@ function ExportPanel() {
         <input
           type="file"
           accept="application/json,.json,.zip,application/zip"
-          aria-label="Export file"
+          aria-label="Shared file"
           onChange={async (e) => {
             const f = e.target.files?.[0];
             if (!f) return;
@@ -465,7 +465,7 @@ function ExportPanel() {
               const lines = m
                 ? [
                     m.world && `its world, ${m.world}`,
-                    m.packs.length && `the setting packs ${m.packs.join(', ')}`,
+                    m.packs.length && `the worldbooks ${m.packs.join(', ')}`,
                     m.records.length && `${m.records.length} record${m.records.length === 1 ? '' : 's'} it refers to (${m.records.slice(0, 8).join(', ')}${m.records.length > 8 ? '…' : ''})`,
                     m.maps.length && `the maps ${m.maps.join(', ')} (its travel on them was left out)`,
                   ].filter(Boolean)
@@ -821,8 +821,8 @@ export function OpenQuestionsPage() {
         note="A report only: nothing is changed. Some questions are open on purpose (the world's mysteries). Some have been answered by Worldkeeper's additions, linked here. The rest are still to do. The Undefined Lore Register lists the subjects the archive left open deliberately."
       />
       {error ? (
-        <Empty title="Open Questions come with the Worldkeeper setting" action={<Link className="btn" to="/setting-packs">Setting packs</Link>}>
-          They track what the setting's archive leaves undefined. Install the setting in Library → Setting packs to use them.
+        <Empty title="Open Questions come with the Worldkeeper worldbook" action={<Link className="btn" to="/worldbooks">Worldbooks</Link>}>
+          They track what the setting's archive leaves undefined. Add the Worldkeeper worldbook to this library (Library → Worldbooks) to use them.
         </Empty>
       ) : !data ? (
         <Loading />
@@ -998,7 +998,7 @@ export function BackupsPage() {
           />
         </Field>
         <p className="text-xs text-dim mt-2">
-          These backups are this library’s own. To keep <b>everything</b> (every library, your books’ rules and installed setting packs) in one file, or to move it all to a new computer, use{' '}
+          These backups are this library’s own. To keep <b>everything</b> (every library, your books’ rules and worldbooks) in one file, or to move it all to a new computer, use{' '}
           <Link to="/libraries" className="text-arcane">
             Libraries → Back up everything
           </Link>

@@ -1,10 +1,11 @@
 /**
- * Library → Setting packs: the settings the app can add to this library (bundled with it, or installed into its data
- * folder), and the ones it has. Installing brings in the pack's realms, record types, templates and content; updating
- * brings in what's new without touching the GM's own work; removing takes out only what the pack brought.
+ * Library → Worldbooks (docs/WORLDBOOKS_PLAN.md): the worlds the app can add to this library (bundled with it, or added
+ * to this computer), and the ones it has. Adding brings in the worldbook's realms, record types, templates and content;
+ * updating brings in what's new without touching the GM's own work; removing takes out only what the worldbook brought.
+ * (Internally a worldbook is still a "pack": packs/, /api/setting-packs.)
  */
 import { useState } from 'react';
-import { Download, Package, RefreshCw, Trash2 } from 'lucide-react';
+import { BookCopy, Download, RefreshCw, Trash2 } from 'lucide-react';
 import type { PackInfo } from '@shared/packs';
 import { api } from '../lib/api';
 import { useAppState } from '../lib/store';
@@ -32,7 +33,7 @@ const MODULE_LABEL: Record<string, string> = {
   'quick-reference': 'Quick reference',
 };
 
-export function SettingPacksPage() {
+export function WorldbooksPage() {
   const { packs, loaded } = usePacks();
   const { reloadIndex, reloadMeta, reloadRealms, reloadTypes, debug } = useAppState();
   const [busy, setBusy] = useState<string | null>(null);
@@ -49,7 +50,7 @@ export function SettingPacksPage() {
         toast(`${p.name} removed. A backup was taken first.`);
       } else {
         const r = await api.post<UpdateResult>(`/api/setting-packs/${p.id}/${what}`, {});
-        toast(`${p.name} ${what === 'install' ? 'installed' : 'updated'}: ${r.records} records. A backup was taken first.`);
+        toast(`${p.name} ${what === 'install' ? 'added to this library' : 'updated'}: ${r.records} records. A backup was taken first.`);
         setClashes(r.clashes.length ? { pack: p.name, list: r.clashes } : null);
       }
       await after();
@@ -61,15 +62,15 @@ export function SettingPacksPage() {
   return (
     <div className="space-y-4">
       <PageHeader
-        title="Setting packs"
-        subtitle="Ready-made settings to add to this library: their places, peoples, record types, templates, maps and tools."
-        note="Your own records are never changed. Updating brings in what's new; removing takes out only what the pack brought. A backup is taken before each."
+        title="Worldbooks"
+        subtitle="Whole worlds to add to this library: their places, peoples, record types, templates, maps and tools."
+        note="Your own records are never changed. Updating brings in what's new; removing takes out only what the worldbook brought. A backup is taken before each."
       />
       {!loaded ? (
         <Loading />
       ) : !packs.length ? (
-        <Empty title="No setting packs" icon={<Package size={18} />}>
-          This copy of the app has no setting packs to add. Your world is your own.
+        <Empty title="No worldbooks" icon={<BookCopy size={18} />}>
+          This copy of the app has no worldbooks to add. Your world is your own.
         </Empty>
       ) : (
         packs.map((p) => (
@@ -78,16 +79,16 @@ export function SettingPacksPage() {
               <div className="flex-1 min-w-[16rem]">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-display text-gold text-lg">{p.name}</span>
-                  {p.installed ? <Badge tone="ok">In this library</Badge> : <Badge>Not installed</Badge>}
+                  {p.installed ? <Badge tone="ok">In this library</Badge> : <Badge>Not in this library</Badge>}
                   {p.installed && p.installed.version !== p.version && <Badge tone="warn">Update available</Badge>}
                   {debug && (
-                    <Badge title="Where the pack comes from">
-                      {p.source === 'bundled' ? 'bundled' : 'installed folder'} · {p.id} · v{p.version}
+                    <Badge title="Where the worldbook comes from">
+                      {p.source === 'bundled' ? 'comes with the app' : 'added to this computer'} · {p.id} · v{p.version}
                     </Badge>
                   )}
                 </div>
                 <p className="text-sm text-dim mt-1">{p.description}</p>
-                {p.installed && <p className="text-xs text-dim mt-1">{p.records ?? 0} records from this pack.</p>}
+                {p.installed && <p className="text-xs text-dim mt-1">{p.records ?? 0} records from this worldbook.</p>}
                 {!!p.modules.length && (
                   <div className="flex flex-wrap gap-1 mt-2">
                     {p.modules.map((m) => (
@@ -102,7 +103,7 @@ export function SettingPacksPage() {
               <div className="flex flex-wrap gap-2">
                 {!p.installed ? (
                   <button className="btn-primary" disabled={!!busy} onClick={() => void run(p, 'install')}>
-                    <Download size={14} /> {busy === p.id ? 'Installing…' : 'Install'}
+                    <Download size={14} /> {busy === p.id ? 'Adding…' : 'Add to this library'}
                   </button>
                 ) : (
                   <>
@@ -115,8 +116,8 @@ export function SettingPacksPage() {
                       onClick={async () => {
                         if (
                           await ask({
-                            title: `Remove ${p.name}?`,
-                            body: `Its ${p.records ?? 0} records go, with their links, maps, adventures, tables, rumours and mysteries. Your own records stay; links from them to the pack's records will show in Broken references. A backup is taken first.`,
+                            title: `Remove ${p.name} from this library?`,
+                            body: `Its ${p.records ?? 0} records go, with their links, maps, adventures, tables, rumours and mysteries. Your own records stay; links from them to the worldbook's records will show in Broken references. A backup is taken first.`,
                             confirmLabel: 'Remove',
                             danger: true,
                           })
@@ -124,7 +125,7 @@ export function SettingPacksPage() {
                           void run(p, 'remove');
                       }}
                     >
-                      <Trash2 size={14} /> Remove
+                      <Trash2 size={14} /> Remove from this library
                     </button>
                   </>
                 )}
@@ -137,7 +138,7 @@ export function SettingPacksPage() {
         <Card className="space-y-1">
           <div className="font-display text-gold">Records kept as yours</div>
           <p className="text-sm text-dim">
-            {clashes.pack} has records with the same ID as some of yours. Yours were kept, and the pack's versions weren't brought in. Give yours a new ID to bring the pack's in on its next update.
+            {clashes.pack} has records with the same ID as some of yours. Yours were kept, and the worldbook's versions weren't brought in. Give yours a new ID to bring the worldbook's in on its next update.
           </p>
           <ul className="text-sm list-disc pl-5">
             {clashes.list.map((c) => (

@@ -115,7 +115,7 @@ export function LibrariesPage() {
     <div className="space-y-4 max-w-4xl">
       <PageHeader
         title="Libraries"
-        subtitle="Each library is a world of its own: its own records, campaigns, settings, backups and handbook. Your books’ rules and installed setting packs are shared by all of them."
+        subtitle="Each library is a world of its own: its own records, campaigns, settings, backups and handbook. Your books’ rules and worldbooks are shared by all of them."
         actions={
           <>
             <button className="btn-primary" onClick={() => void newLibrary()}>
@@ -124,7 +124,7 @@ export function LibrariesPage() {
             <button className="btn" disabled={!!busy} onClick={() => file.current?.click()}>
               <Upload size={14} /> Open a library from a file
             </button>
-            <a className="btn" href="/api/libraries/everything" download title="Every library and your books’ rules and setting packs, in one file (not your publishing token)">
+            <a className="btn" href="/api/libraries/everything" download title="Every library and your books’ rules and worldbooks, in one file (not your publishing token)">
               <Download size={14} /> Back up everything
             </a>
             <button className="btn-ghost" disabled={!!busy} onClick={() => everything.current?.click()}>
@@ -143,7 +143,7 @@ export function LibrariesPage() {
                 if (
                   !(await ask({
                     title: 'Open everything from a file?',
-                    body: `Each library in ${f.name} is added as a new library; your books’ rules and setting packs it has are added too. Nothing here is replaced.`,
+                    body: `Each library in ${f.name} is added as a new library; your books’ rules and worldbooks it has are added too. Nothing here is replaced.`,
                     confirmLabel: 'Add them',
                   }))
                 )
@@ -152,7 +152,7 @@ export function LibrariesPage() {
                   const r = await api.upload<LibraryList & { result: { libraries: { name: string }[]; rules: number; packs: string[] } }>('/api/libraries/everything', 'file', f);
                   setData(r);
                   toast(
-                    `Added ${r.result.libraries.length} librar${r.result.libraries.length === 1 ? 'y' : 'ies'}${r.result.rules ? `, ${r.result.rules} rules pack${r.result.rules === 1 ? '' : 's'}` : ''}${r.result.packs.length ? `, ${r.result.packs.length} setting pack${r.result.packs.length === 1 ? '' : 's'}` : ''}`,
+                    `Added ${r.result.libraries.length} librar${r.result.libraries.length === 1 ? 'y' : 'ies'}${r.result.rules ? `, ${r.result.rules} rules pack${r.result.rules === 1 ? '' : 's'}` : ''}${r.result.packs.length ? `, ${r.result.packs.length} worldbook${r.result.packs.length === 1 ? '' : 's'}` : ''}`,
                     'ok',
                   );
                 });
@@ -192,7 +192,7 @@ export function LibrariesPage() {
         <ul className="divide-y divide-line/60">{live.map(row)}</ul>
       </Card>
       <p className="text-xs text-dim">
-        <b>Moving a world</b> to a co-GM or another computer: export it from <b>Import and Export → Full world (ZIP)</b>, and there use <b>Open a library from a file</b>. Backups and restores are each
+        <b>Moving a world</b> to a co-GM or another computer: export it from <b>Add and Share → Full world (ZIP)</b>, and there use <b>Open a library from a file</b>. Backups and restores are each
         library’s own; restoring one never touches another.
       </p>
       {archived.length > 0 && (

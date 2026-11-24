@@ -40,4 +40,4 @@ Ideas for what comes next, after the lore checklist (`LORE_CHECKLIST.md`) was fi
 ## Housekeeping
 
 - [x] **Speed up the handbook's first load.** It's about 610 KB of code; splitting it would make the first load faster on phones. *Done: the map, builder, faction web and print pages load when opened. In v0.5.1 the GM app's pages do too: its first load went from 1.4 MB to 330 kB.*
-- [ ] **Refresh the GM's own app.** Rebuild the desktop app so it carries all the latest additions, and apply them to the laptop library (Import and Export → Apply additions).
+- [ ] **Refresh the GM's own app.** Rebuild the desktop app so it carries all the latest additions, and apply them to the laptop library (Add and Share → Apply additions).

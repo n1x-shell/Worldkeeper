@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.7.0_
+_Last updated: 2026-11-24 · v0.7.1_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,17 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.7.1: worldbooks and adding (the words)
+
+Step W1 of [docs/WORLDBOOKS_PLAN.md](docs/WORLDBOOKS_PLAN.md). Words only; nothing behaves differently.
+
+- **Setting pack → worldbook** in the GM app, the wizard, server messages and the docs. **Library → Worldbooks** (`/worldbooks`, `client/src/pages/Worldbooks.tsx`; the old `/setting-packs` address redirects): "Add to this library" and "Remove from this library". The Worldkeeper worldbook is named "The Worldkeeper world" (`packs/worldkeeper/pack.json`); its rules pack "The Worldkeeper worldbook", credited "The Worldkeeper worldbook's rules (CC BY 4.0)".
+- **Import and Export → Add and Share**, with tabs **Add** and **Share**: "Preview", "Confirm and add", "Add in parts", "Added before", "Add a shared file", "One campaign".
+- **Wizard:** "Play in the Worldkeeper world", "Add the Worldkeeper worldbook", "Added".
+- **Docs:** `docs/SETTING_PACKS.md` is now [docs/WORLDBOOKS.md](docs/WORLDBOOKS.md) ("Writing a worldbook"); README, FEATURES, QUICKSTART, DATA, DESKTOP, RULES_PACKS and the rules pack's README follow. Release history keeps the old words.
+- **Unchanged inside:** `packs/`, the `setting_packs` table, `/api/setting-packs`, `/api/import/*`, `installPack`, `SETTING_PACK`, the command `npm run import`.
+- The e2e scripts click the new labels.
 
 ## v0.7.0: the timeline, for the GM and for players
 

@@ -4,7 +4,7 @@
 
 The Worldkeeper is a **free, open-source, local-first worldbuilding encyclopedia and D&D 5e (2024) campaign manager**. Start a world of your own or bring in the lore you have, connect characters, factions and locations, explore maps, run sessions, and share only the knowledge your players have discovered.
 
-Build **a world of your own**, with its own worlds, continents and planes, calendar, kinds of record and templates, from a first-run wizard. Or play in **the Worldkeeper setting**, a shattered world of Aetheris, Kaelmar and the Ethereal Realm, installed as a setting pack. Either way it runs a **standard D&D 2024 campaign** from the SRD and the books you own, keeps stable IDs, source references, canon labels and GM secrets, and manages independent campaigns in the same world.
+Build **a world of your own**, with its own worlds, continents and planes, calendar, kinds of record and templates, from a first-run wizard. Or play in **the Worldkeeper world**, a shattered world of Aetheris, Kaelmar and the Ethereal Realm, installed as a setting pack. Either way it runs a **standard D&D 2024 campaign** from the SRD and the books you own, keeps stable IDs, source references, canon labels and GM secrets, and manages independent campaigns in the same world.
 
 **No account, required cloud service, paid API or AI dependency.** World data lives on your computer in SQLite and an uploads directory, with backups and portable exports.
 
@@ -12,11 +12,11 @@ Build **a world of your own**, with its own worlds, continents and planes, calen
 
 ## Screenshots
 
-Actual screenshots from Worldkeeper: a world of one's own, *Ostmark*, and the Worldkeeper setting's world with a sample campaign, *The Loose Thread*.
+Actual screenshots from Worldkeeper: a world of one's own, *Ostmark*, and the Worldkeeper world with a sample campaign, *The Loose Thread*.
 
 ### Start your world
 
-A fresh library opens on a short wizard: your world's name, calendar and shape (or the Worldkeeper setting), rules and modules, a first campaign with its town and party, and a map. A few records that teach come with it, and the dashboard's **Getting started** card follows what you try.
+A fresh library opens on a short wizard: your world's name, calendar and shape (or the Worldkeeper world), rules and modules, a first campaign with its town and party, and a map. A few records that teach come with it, and the dashboard's **Getting started** card follows what you try.
 
 | Its shape | Getting started |
 | --- | --- |
@@ -38,7 +38,7 @@ Run two groups in one world without either seeing what the other learned: each r
 | --- | --- |
 | ![Hollow Refuge's Player view: revealing to The Loose Thread only, who knows each section, and exactly what that group's players see](docs/images/reveal-per-campaign.jpg) | ![The Loose Thread's overview with its handbook code, address and QR code](docs/images/handbook-address.jpg) |
 
-![Library → Libraries: the Worldkeeper setting, Ostmark and a copy, with the Library menu open to switch between them](docs/images/libraries.jpg)
+![Library → Libraries: the Worldkeeper world, Ostmark and a copy, with the Library menu open to switch between them](docs/images/libraries.jpg)
 
 ### World dashboard
 
@@ -97,14 +97,14 @@ What the players see, on the table server or published to GitHub Pages: only wha
 | --- | --- |
 | **Your own world** | A first-run wizard; worlds, continents and planes; your own calendar, record types and templates; records that teach |
 | **Encyclopedia** | Searchable records, New ▸ anything (guided or advanced), a Markdown editor with record links and GM-only sections, source provenance, revisions and Canon Review |
-| **Setting packs** | Install a whole setting (realms, types, templates, records, maps, adventures and modules), update it and remove it without touching your own work; the Worldkeeper setting is one, and you can [write your own](docs/SETTING_PACKS.md) |
+| **Worldbooks** | Add a whole world (realms, types, templates, records, maps, adventures and modules), update it and remove it without touching your own work; the Worldkeeper worldbook is one, and you can [write your own](docs/WORLDBOOKS.md) |
 | **Characters and factions** | Structured profiles, campaign-specific attitudes and goals, regional influence |
 | **World exploration** | Maps, hierarchical locations, timelines, relationship graphs, cosmology and realm tools |
 | **Campaign management** | Multiple campaigns, each with its own reveals (what one group learned stays with it), party sheets, quests, adventures, scene flows and campaign state overlays |
 | **Session tools** | Preparation, live session dashboard, initiative, dice, event log, recaps and player reveals |
 | **Character sheets and builder** | A full D&D 2024 sheet for players and the GM, with a change log, and a builder for any level from 1 to 20 |
 | **Your own books** | Rules packs from the books you own: spells, species, classes, feats, backgrounds, creatures and magic items, imported once for all your libraries and kept private |
-| **Modules** | Thinning, the Return, Renown and the rest are modules: on with their setting pack, or switched on for your own world, per library or per campaign; treasure and encounters can come from your books |
+| **Modules** | Thinning, the Return, Renown and the rest are modules: on with their worldbook, or switched on for your own world, per library or per campaign; treasure and encounters can come from your books |
 | **Player publishing** | Player-only server with a handbook address (and QR code) per campaign, static player handbook, optional GitHub Pages publishing |
 | **Libraries** | Several worlds in one installation, each with its own records, campaigns, settings, backups and handbook: switch, duplicate, archive, or open one from a file |
 | **Library operations** | Previewed imports, protective merging, complete exports (JSON, Markdown, full-world ZIP, campaigns), backups and restoration |
@@ -148,7 +148,7 @@ The quickest way is a copy of the **5etools** data:
 
 Spells, species, classes and subclasses, backgrounds and feats then reach the character sheets and the builder. Creatures become stat blocks for the GM, and magic items show their rules in treasure and on sheets. Only use material from books you own. What you import stays in your library: it is never part of the published handbook, a player export, a campaign export or this repository. You can also write your own packs in Markdown. See [Rules packs](docs/RULES_PACKS.md).
 
-A world of your own starts as a standard D&D 2024 campaign; with the Worldkeeper setting, switch any of its systems off in **Settings → Modules**. Each world has its own calendar (**Campaign → Calendar → The world's calendar**). See [Features](docs/FEATURES.md#modules-a-standard-dd-campaign-or-the-worldkeeper-setting).
+A world of your own starts as a standard D&D 2024 campaign; with the Worldkeeper world, switch any of its systems off in **Settings → Modules**. Each world has its own calendar (**Campaign → Calendar → The world's calendar**). See [Features](docs/FEATURES.md#modules-a-standard-dd-campaign-or-the-worldkeeper-setting).
 
 ## How it works
 
@@ -191,10 +191,10 @@ Backups are generated on a schedule while the server is running and before sensi
 
 | Guide | Contents |
 | --- | --- |
-| [Quick Start](docs/QUICKSTART.md) | Start your own world or the Worldkeeper setting, and prepare the first session |
+| [Quick Start](docs/QUICKSTART.md) | Start your own world or the Worldkeeper world, and prepare the first session |
 | [Features](docs/FEATURES.md) | Full encyclopedia, atlas, campaign and table-side feature reference |
 | [Rules packs](docs/RULES_PACKS.md) | The SRD, importing your own books from 5etools, and writing packs by hand |
-| [Writing a setting pack](docs/SETTING_PACKS.md) | Packaging a whole setting: its manifest, records, templates, maps and more |
+| [Writing a worldbook](docs/WORLDBOOKS.md) | Packaging a whole world: its manifest, records, templates, maps and more |
 | [Player View & Publishing](docs/PLAYER_VIEW.md) | Reveals, player-only LAN server, static handbook, publishing precautions |
 | [Data, Backups & Exports](docs/DATA.md) | Import safety, data paths, backup/restore, export formats |
 | [Development](docs/DEVELOPMENT.md) | Commands, configuration, keyboard shortcuts and testing |
@@ -222,7 +222,7 @@ Licensed under the **BSD 2-Clause License**. See [LICENSE](LICENSE) for the full
 
 Worldkeeper is an independent tabletop campaign tool, compatible with fifth edition. It is **not affiliated with or endorsed by Wizards of the Coast**. Apart from the System Reference Document 5.2.1 (its character rules, spells, creatures, magic items, equipment and hazards), it does not bundle official D&D rulebook text. A creature's environments in the encounter generator are facts recorded alongside the SRD's stat blocks, not text. The 5etools importer reads a copy that you supply and stores what it converts only in your own library; users provide their own appropriately licensed or owned material. Worldkeeper is not affiliated with 5etools.
 
-The Worldkeeper setting pack (the setting's creatures, hazards and items, in `packs/worldkeeper/rules/`, `packs/worldkeeper/statblocks/statblocks.json` and `packs/worldkeeper/treasure/catalogue.json`) is licensed under CC BY 4.0: "The Worldkeeper setting pack, by the Worldkeeper contributors, CC BY 4.0."
+The Worldkeeper worldbook's rules (the world's creatures, hazards and items, in `packs/worldkeeper/rules/`, `packs/worldkeeper/statblocks/statblocks.json` and `packs/worldkeeper/treasure/catalogue.json`) is licensed under CC BY 4.0: "The Worldkeeper worldbook's rules, by the Worldkeeper contributors, CC BY 4.0."
 
 This work includes material from the System Reference Document 5.2.1 (“SRD 5.2.1”) by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.
 

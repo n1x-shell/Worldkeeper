@@ -34,11 +34,11 @@ try {
     await expectText('How would you like to start?');
     await page.goto(`${base}/import`);
     await page.setInputFiles('input[type=file]', archive);
-    await page.getByRole('button', { name: 'Preview import' }).click();
+    await page.getByRole('button', { name: 'Preview', exact: true }).click();
     await expectText('Broken references', 60000);
     await shot(page, '01-import-preview');
-    await page.getByRole('button', { name: 'Confirm import' }).click();
-    await expectText('Import complete', 120000);
+    await page.getByRole('button', { name: 'Confirm and add' }).click();
+    await expectText('Added:', 120000);
     step('imported archive through the UI');
   }
   await page.goto(base);
