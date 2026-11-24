@@ -3,8 +3,8 @@
  *
  * - **Build my own world:** your world's name and pitch (and the app's), the calendar or "decide later", its shape
  *   (continents and planes, renamed or added as you like), then the shared steps.
- * - **Play in the Worldkeeper world:** add the Worldkeeper worldbook, with your copy of the archive if you have it,
- *   see what was installed, then the shared steps.
+ * - **Play in the Worldkeeper world:** add the Worldkeeper worldbook (the whole world: it ships with the app), see
+ *   what came in, then the shared steps.
  * - The shared steps: rules and modules, a first campaign (its starting place, a town made for you, the party), an
  *   optional map, and Finish, which shows what will be made (with the records that teach, ticked by default for your
  *   own world) and makes it all at once. Each step can be skipped, and everything can be changed later.
@@ -32,7 +32,7 @@ const STEP_LABEL: Record<Step, string> = {
   welcome: 'Welcome',
   world: 'Your world',
   shape: 'Its shape',
-  setting: 'The setting',
+  setting: 'The Worldkeeper world',
   rules: 'Rules',
   campaign: 'A first campaign',
   map: 'A map',
@@ -92,9 +92,8 @@ export function StartWorld() {
   // Its shape.
   const [shape, setShape] = useState<Shape>('one');
   const [rows, setRows] = useState<Row[]>(SHAPES[0].rows);
-  // The setting.
-  const [archive, setArchive] = useState<File | null>(null);
-  const [installed, setInstalled] = useState<{ records: number; realms: string[]; imported: number | null } | null>(null);
+  // The Worldkeeper world.
+  const [installed, setInstalled] = useState<{ records: number; realms: string[]; } | null>(null);
   // Rules and modules.
   const [modules, setModules] = useState<ModuleRow[]>([]);
   const [settingRules, setSettingRules] = useState(true);
@@ -136,17 +135,11 @@ export function StartWorld() {
     setErr(null);
     setBusy(true);
     try {
-      let imported: number | null = null;
-      if (archive) {
-        const preview = await api.upload<{ token: string; summary: { entityCount: number } }>('/api/import/preview', 'archive', archive);
-        await api.post('/api/import/commit', { token: preview.token });
-        imported = preview.summary.entityCount;
-      }
       await api.post('/api/setting-packs/worldkeeper/install');
       await Promise.all([reloadIndex(), reloadRealms(), reloadTypes(), reloadMeta(), packsChanged(), reloadModules()]);
       const meta = await api.get<{ entities: number }>('/api/meta');
       const realms = await api.get<{ name: string }[]>('/api/realms');
-      setInstalled({ records: meta.entities, realms: realms.map((r) => r.name), imported });
+      setInstalled({ records: meta.entities, realms: realms.map((r) => r.name) });
       setModules([]);
     } catch (x) {
       setErr((x as Error).message);
@@ -247,7 +240,7 @@ export function StartWorld() {
               <Sparkles className="text-gold" size={22} />
               <div className="mt-2 font-display text-lg text-ink">Play in the Worldkeeper world</div>
               <p className="mt-1 text-sm text-dim">
-                A shattered world of two continents and a realm between. Adds the Worldkeeper worldbook: its realms, records, rules and modules, with your copy of its archive if you have one.
+                A shattered world of two continents and a realm between. Adds the Worldkeeper worldbook: the whole world, with its records, maps, adventures, rules and modules.
               </p>
             </button>
           </div>
@@ -370,12 +363,9 @@ export function StartWorld() {
       {step === 'setting' && (
         <Card className="space-y-4">
           <p className="text-sm">
-            The Worldkeeper worldbook brings its realms (the world, Aetheris, Kaelmar and the Ethereal Realm), record types, templates, its own content and rules, and its systems as modules you can switch
-            off. If you have your copy of its archive (a ZIP of Markdown files), add it too.
+            The Worldkeeper worldbook brings the whole world: its realms (the world, Aetheris, Kaelmar and the Ethereal Realm), record types and templates, every record with its source documents,
+            the maps, adventures and tables, its own rules, and its systems as modules you can switch off.
           </p>
-          <Field label="Your copy of the archive (optional)">
-            <input type="file" accept=".zip" className="input" aria-label="Archive" disabled={!!installed} onChange={(e) => setArchive(e.target.files?.[0] ?? null)} />
-          </Field>
           {!installed ? (
             <button type="button" className="btn-primary" disabled={busy} onClick={() => void install()}>
               <Upload size={14} /> {busy ? 'Adding…' : 'Add the Worldkeeper worldbook'}
@@ -386,7 +376,7 @@ export function StartWorld() {
                 <Check size={15} className="text-good" /> Added
               </div>
               <div>
-                {installed.records.toLocaleString()} records{installed.imported != null ? `, ${installed.imported.toLocaleString()} of them from your archive` : ''}.
+                {installed.records.toLocaleString()} records.
               </div>
               <div>Realms: {installed.realms.join(', ')}.</div>
             </div>
@@ -402,7 +392,7 @@ export function StartWorld() {
             </div>
             {path === 'setting' && (
               <Toggle checked={settingRules} onChange={setSettingRules}>
-                The setting's rules: its creatures, hazards and items
+                The worldbook's rules: its creatures, hazards and items
               </Toggle>
             )}
             <p className="text-dim">
@@ -415,7 +405,7 @@ export function StartWorld() {
           </Card>
           <Card title="Modules" className="space-y-2 text-sm">
             <p className="text-dim">
-              Optional systems. {path === 'setting' ? "The setting's are on: untick any you won't use." : 'All off for a world of your own: switch on any you want.'} Change them in Settings at any
+              Optional systems. {path === 'setting' ? "The worldbook's are on: untick any you won't use." : 'All off for a world of your own: switch on any you want.'} Change them in Settings at any
               time.
             </p>
             {modules.map((m) => (

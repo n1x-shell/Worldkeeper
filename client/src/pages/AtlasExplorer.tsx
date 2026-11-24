@@ -354,7 +354,7 @@ export function AtlasExplorer() {
             </Link>
           }
         >
-          Add one in the Atlas, or apply the Worldkeeper additions.
+          Add one in the Atlas, or add the Worldkeeper worldbook (Library → Worldbooks).
         </Empty>
       </div>
     );

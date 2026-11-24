@@ -39,7 +39,7 @@ The dashboard's **Getting started** card lists things to try. Open **Start Here*
 ### The Worldkeeper world
 
 1. Choose **Play in the Worldkeeper world**.
-2. If you have your copy of its archive (a ZIP of Markdown files), add it, then **Add the Worldkeeper worldbook**. You'll see what came in.
+2. Choose **Add the Worldkeeper worldbook**. The whole world comes with the app, so there's no file to find; you'll see what came in.
 3. **Rules:** the setting's rules (its creatures, hazards and items) and its modules (Thinning, the Return, vaults, shards and the rest) are on; untick any you won't use.
 4. **A first campaign:** pick its starting place (Hollow Refuge, say) and add the party.
 5. **Finish:** choose **Start playing**. New records wait for you in **Canon Review**, which protects the setting's text.

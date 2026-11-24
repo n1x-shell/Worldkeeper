@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.7.1_
+_Last updated: 2026-11-24 · v0.7.2_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,18 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.7.2: the Worldkeeper worldbook, complete
+
+Step W2 of [docs/WORLDBOOKS_PLAN.md](docs/WORLDBOOKS_PLAN.md). The whole world now ships with the app; no one adds an archive by hand.
+
+- **`packs/worldkeeper/archive/`:** the world's original archive (472 Markdown files, 2.3 MB), at the paths it had. Left out, by the owner's decision: the archive's working notes (`References/Phase_1_Verification_Audit.md`, `Project_Context_Addendum.md`, `Amsel_Suite_Implementation_Guide.md`). The maps were already in `packs/worldkeeper/maps/`.
+- **Adding the worldbook brings everything** (`applyAdditions` in `server/src/additions.ts`, `archiveFiles`): the archive and `lore/` go through one import (`buildPlan`/`commitPlan` with the pack's id), then links, rumours, mysteries, timeline, errata, maps, adventures and tables as before. A fresh library gets 878 records, 929 source documents, both maps, 15 adventures; checked field by field against the old way (the archive ZIP added by hand, then the setting): the same records, links and timeline.
+- **A library that already has the archive** (added by hand, as before) is unchanged by an update: 878 records unchanged, nothing duplicated. Its copies of the three working notes stay.
+- **Eras:** the era list came from the implementation guide's tag table; it's now in the manifest (`importProfile.eras`), used when no file lists them.
+- **Wizard:** the "your copy of the archive" field is gone; "Add the Worldkeeper worldbook" brings the whole world.
+- **"Apply additions" removed** (the card on Add and Share and `/api/additions`): Library → Worldbooks → Update does the same.
+- **Tests and scripts:** `tests/archive.test.ts` runs on the shipped archive every time (`WORLDKEEPER_TEST_ARCHIVE` can name another copy). The first-run e2e checks the setting path brings 878+ records and both maps. The smoke test zips the shipped archive itself when no archive is named. `scripts/build-player-tagged-handbook.ts <data dir> <out dir> [archive]` defaults to the shipped archive.
 
 ## v0.7.1: worldbooks and adding (the words)
 

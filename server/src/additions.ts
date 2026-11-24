@@ -134,10 +134,29 @@ export function applyTimeline(db: DB, dir = DEFAULT_ADDITIONS_DIR): number {
   return specs.length;
 }
 
-/** Bring the additions into an existing library: the new records first, then the links. */
+/**
+ * The world's original archive, shipped with its worldbook (packs/<id>/archive, v0.7.2): its Markdown files, at the
+ * paths they had in the archive, so a library that imported the archive by hand finds them unchanged.
+ */
+export function archiveFiles(dir: string): SourceFile[] {
+  const out: SourceFile[] = [];
+  const walk = (d: string) => {
+    for (const ent of fs.existsSync(d) ? fs.readdirSync(d, { withFileTypes: true }) : []) {
+      if (ent.name.startsWith('.')) continue;
+      const full = path.join(d, ent.name);
+      if (ent.isDirectory()) walk(full);
+      else if (ent.isFile() && ent.name.endsWith('.md')) out.push({ path: path.relative(dir, full).split(path.sep).join('/'), content: fs.readFileSync(full, 'utf8') });
+    }
+  };
+  walk(dir);
+  return out.sort((a, b) => a.path.localeCompare(b.path));
+}
+
+/** Bring the worldbook into a library: its archive and new records first (one import), then the links and the rest. */
 export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?: string, packId = 'worldkeeper') {
-  const files = loreFiles(dir);
-  const plan = files.length ? buildPlan(db, files, 'Worldkeeper additions', { packId }) : null;
+  const archive = archiveFiles(path.resolve(dir, '../archive'));
+  const files = [...archive, ...loreFiles(dir)];
+  const plan = files.length ? buildPlan(db, files, 'The Worldkeeper world', { packId }) : null;
   // A record of the GM's own with an ID the pack also uses: the GM's is kept, and the clash is reported.
   const ownIds = new Set((db.prepare(`SELECT id FROM entities WHERE origin = 'user' AND pack_id IS NULL`).all() as { id: string }[]).map((r) => r.id));
   const clashes = (plan?.entities ?? []).filter((p) => ownIds.has(p.draft.id)).map((p) => ({ id: p.draft.id, name: p.draft.name }));
@@ -166,7 +185,8 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?:
   // Errata for adventures run after the shipped adventures are added (a library that had none gets them corrected too).
   const adventureErrata = applyErrata(db, path.join(dir, 'errata.json'));
   return {
-    records: files.length,
+    records: files.length - archive.length,
+    archive: archive.length,
     clashes,
     imported,
     links,

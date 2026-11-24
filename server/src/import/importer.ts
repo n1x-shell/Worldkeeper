@@ -457,7 +457,7 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
     }
 
     // 4b. Eras: vocabulary from the library's own tag documentation and era tags; then derive row eras.
-    const vocab = files.map((f) => eraVocabularyFromText(f.content)).find((v) => v.length) ?? [];
+    const vocab = files.map((f) => eraVocabularyFromText(f.content)).find((v) => v.length) ?? pack?.importProfile?.eras ?? [];
     seedEras(db, vocab);
     deriveTimelineEras(db);
 

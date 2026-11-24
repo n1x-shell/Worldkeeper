@@ -9,7 +9,7 @@ This document describes Worldkeeper's features as of v0.6. For implementation co
 A fresh library opens on **Start your world**. Choose how to begin; every step can be skipped and everything it makes can be changed later.
 
 - **Build my own world:** your world's name, a line about it and the name the app goes by; the calendar now (the months, the year it starts and the year's name, as in "1247 AR") or later; and its shape: one continent, several, a world and another plane, or nothing yet, each renamed or added to as you like.
-- **Play in the Worldkeeper world:** adds the Worldkeeper worldbook (its realms, records, rules and modules), with your copy of its archive if you have one, and shows what came in.
+- **Play in the Worldkeeper world:** adds the Worldkeeper worldbook, the whole world that ships with the app (its realms, every record with its source documents, maps, adventures, tables, rules and modules), and shows what came in.
 
 Both ways then go through the same steps: **rules** (the SRD is always on; import your books or open content now or later; the setting's rules and modules, any of which you can untick), **a first campaign** (its name, where it starts, a place you pick or a town made for you, and the party's names, each a blank character ready for the builder), **a map** of the world if you have one, and **Finish**, which shows what will be made. **Restore a backup** is on the first page too.
 

@@ -69,7 +69,6 @@ Use a supported Rust toolchain and your OS-specific dependencies for desktop pac
 
 ```bash
 npm test
-WORLDKEEPER_TEST_ARCHIVE=path/to/archive.zip npm test
 npm run typecheck
 npm run lint -- --deny-warnings
 npm run deadcode
@@ -77,22 +76,23 @@ npm run audit
 npm run build
 ```
 
-CI runs all of these on every pull request, and the first-run wizard in a browser both ways (`e2e:first-run`, own world and the Worldkeeper world without the archive, each on an empty data folder; screenshots and server logs are kept when it fails). The smoke test needs the archive, so it's run locally. The linter is Oxlint because typescript-eslint doesn't support TypeScript 7 yet; rules that don't fit the codebase are switched off in `.oxlintrc.json` with the reason. Dependabot (`.github/dependabot.yml`) opens update pull requests: npm weekly, Cargo and GitHub Actions monthly, minor and patch updates grouped.
+CI runs all of these on every pull request, and the first-run wizard in a browser both ways (`e2e:first-run`, own world and the Worldkeeper world, each on an empty data folder; screenshots and server logs are kept when it fails). The smoke test is run locally. The linter is Oxlint because typescript-eslint doesn't support TypeScript 7 yet; rules that don't fit the codebase are switched off in `.oxlintrc.json` with the reason. Dependabot (`.github/dependabot.yml`) opens update pull requests: npm weekly, Cargo and GitHub Actions monthly, minor and patch updates grouped.
 
-The second command adds import testing against a real archive, where configured. The regular tests use synthetic fixtures for import planning, deduplication, rollback, idempotency, edit/source protection, relationships, revision history, campaigns, recaps, player projection, backups and exports, maps, dice and initiative.
+The tests import the world's archive as the Worldkeeper worldbook ships it (`packs/worldkeeper/archive`; `WORLDKEEPER_TEST_ARCHIVE` can name another copy), and use synthetic fixtures for import planning, deduplication, rollback, idempotency, edit/source protection, relationships, revision history, campaigns, recaps, player projection, backups and exports, maps, dice and initiative.
 
 Browser smoke testing requires Playwright, Chromium and a running application:
 
 ```bash
-WORLDKEEPER_TEST_ARCHIVE=path/to/archive.zip \
-  node scripts/e2e-smoke.mjs http://127.0.0.1:4310 ./screenshots
+node scripts/e2e-smoke.mjs http://127.0.0.1:4310 ./screenshots
 ```
 
-The first run, on an app started with an empty data folder (`WORLDKEEPER_DATA_DIR`): a world of one's own needs no archive; the setting takes one if given.
+On an empty library it adds the shipped archive through **Add and Share**.
+
+The first run, on an app started with an empty data folder (`WORLDKEEPER_DATA_DIR`): a world of one's own, or the Worldkeeper world (the whole world, with no file to choose).
 
 ```bash
 node scripts/e2e-first-run.mjs http://127.0.0.1:4310 own ./screenshots
-WORLDKEEPER_TEST_ARCHIVE=path/to/archive.zip node scripts/e2e-first-run.mjs http://127.0.0.1:4310 setting ./screenshots
+node scripts/e2e-first-run.mjs http://127.0.0.1:4310 setting ./screenshots
 ```
 
 Test claims describe intended suite coverage, not a guarantee that tests have been executed in a given release. Consult [Development Status](../DEVELOPMENT_STATUS.md) for recorded outcomes and remaining gaps.

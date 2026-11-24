@@ -1,7 +1,9 @@
 /**
  * End-to-end smoke test in a real browser (Playwright/Chromium).
  * Start the app first (npm start), then:
- *   WORLDKEEPER_TEST_ARCHIVE=path/to/archive.zip node scripts/e2e-smoke.mjs [baseUrl] [screenshotDir]
+ *   node scripts/e2e-smoke.mjs [baseUrl] [screenshotDir]
+ * On an empty library it adds the archive the Worldkeeper worldbook ships (packs/worldkeeper/archive, zipped here) through
+ * Add and Share, or the ZIP WORLDKEEPER_TEST_ARCHIVE names.
  * Covers: import via UI, search, open record, edit + persist, relationships, campaign, encounter, player view safety.
  */
 import { createRequire } from 'node:module';
@@ -13,6 +15,14 @@ import path from 'node:path';
 const base = process.argv[2] ?? 'http://127.0.0.1:4310';
 const shots = process.argv[3] ?? null;
 const archive = process.env.WORLDKEEPER_TEST_ARCHIVE;
+/** The file to add: the named ZIP, or the shipped archive zipped in memory. */
+const archiveFile = () => {
+  if (archive) return archive;
+  const AdmZip = createRequire(import.meta.url)('adm-zip');
+  const zip = new AdmZip();
+  zip.addLocalFolder(path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'packs', 'worldkeeper', 'archive'));
+  return { name: 'Worldkeeper_archive.zip', mimeType: 'application/zip', buffer: zip.toBuffer() };
+};
 const errors = [];
 const step = (m) => console.log('✓', m);
 // A long text: the Markdown editor's (CodeMirror) content, by its label (it loads on first use).
@@ -29,11 +39,10 @@ try {
   await page.goto(base);
   const entities = await (await fetch(`${base}/api/meta`)).json();
   if (entities.entities === 0) {
-    if (!archive) throw new Error('Library is empty; set WORLDKEEPER_TEST_ARCHIVE');
     // A fresh library opens on Start your world; this run brings in an archive instead.
     await expectText('How would you like to start?');
     await page.goto(`${base}/import`);
-    await page.setInputFiles('input[type=file]', archive);
+    await page.setInputFiles('input[type=file]', archiveFile());
     await page.getByRole('button', { name: 'Preview', exact: true }).click();
     await expectText('Broken references', 60000);
     await shot(page, '01-import-preview');

@@ -3,7 +3,9 @@
  * the gh-pages branch. Imports the archive into a fresh data folder, reveals only safe sections, and writes the
  * static site to an output folder (push that folder to gh-pages, or publish from the app instead).
  *
- *   npx tsx scripts/build-player-tagged-handbook.ts <fresh data dir> <archive.zip> <output dir>
+ *   npx tsx scripts/build-player-tagged-handbook.ts <fresh data dir> <output dir> [archive]
+ *
+ * The archive is the one the Worldkeeper worldbook ships (packs/worldkeeper/archive) unless another copy is named.
  *
  * Maps in packs/worldkeeper/maps/ (each <name>.pins.json with its image, and an optional <name>.routes.json) are added as player-visible maps.
  * Pins link only to records that end up revealed; the others are left off.
@@ -29,8 +31,9 @@ import { buildPlayerSite } from '../server/src/publish/site.js';
 import { applyMaps } from '../server/src/mapAdditions.js';
 import { applyLinks, loreFiles } from '../server/src/additions.js';
 import { applyErrata } from '../server/src/errata.js';
+import { worldkeeperPath } from '../server/src/packs/paths.js';
 
-const [dataDir, archive, outDir] = process.argv.slice(2);
+const [dataDir, outDir, archive = worldkeeperPath('archive')] = process.argv.slice(2);
 const ctx = new AppContext(resolvePaths(dataDir));
 // New lore records written for this world (packs/worldkeeper/lore/, same format as the archive's records) are imported with
 // the archive, then the curated links in packs/worldkeeper/lore/links.json. Drafts folders are left out.
