@@ -11,6 +11,8 @@ const port = Number(process.env.PORT ?? (mode === 'player' ? 4320 : 4310));
 const host = process.env.HOST ?? (mode === 'player' ? '0.0.0.0' : '127.0.0.1');
 
 const ctx = new AppContext(resolvePaths(), mode);
+// The table server serves whichever library the GM has open (docs/LIBRARIES_PLAN.md §3.1).
+if (mode === 'player') ctx.followOpenLibrary();
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 // The desktop app passes the bundled client location; otherwise use the repository's build output.
 const app = createApp(ctx, { staticDir: process.env.WORLDKEEPER_STATIC_DIR || path.join(root, 'dist') });
@@ -32,7 +34,7 @@ dailyBackup();
 setInterval(dailyBackup, 3600 * 1000).unref();
 
 app.listen(port, host, () => {
-  console.log(`[worldkeeper] ${mode.toUpperCase()} server on http://${host === '0.0.0.0' ? 'localhost' : host}:${port}  (data: ${ctx.paths.dataDir})`);
+  console.log(`[worldkeeper] ${mode.toUpperCase()} server on http://${host === '0.0.0.0' ? 'localhost' : host}:${port}  (data: ${ctx.paths.rootDir}, library: ${ctx.paths.libraryId})`);
 });
 function shutdown() {
   try {

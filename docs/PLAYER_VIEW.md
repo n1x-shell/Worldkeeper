@@ -20,7 +20,7 @@ Run:
 npm run start:player
 ```
 
-The separate process listens by default on port `4320` on all interfaces (`0.0.0.0`) and mounts no DM routes. Players on the same trusted network can open `http://<your-computer>:4320`.
+The separate process listens by default on port `4320` on all interfaces (`0.0.0.0`) and mounts no DM routes. It serves the library that is open in the GM app, and switches within a few seconds when the GM opens another. Players on the same trusted network can open `http://<your-computer>:4320`.
 
 ### Each campaign's handbook address
 

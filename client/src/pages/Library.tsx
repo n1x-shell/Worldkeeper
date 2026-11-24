@@ -936,7 +936,7 @@ export function BackupsPage() {
 // ------------------------------------------------------------------ Settings
 export function SettingsPage() {
   const { data, reload } = useApi<Record<string, string>>('/api/settings');
-  const { data: meta } = useApi<{ schemaVersion: number; dataDir: string; entities: number }>('/api/meta');
+  const { data: meta } = useApi<{ schemaVersion: number; dataDir: string; library?: { id: string; name: string; dir: string }; entities: number }>('/api/meta');
   const { theme, setTheme, reloadMeta } = useAppState();
   const [form, setForm] = useState<Record<string, string>>({});
   const [texture, setTexture] = useState(() => {
@@ -1004,6 +1004,7 @@ export function SettingsPage() {
           <KeyValue
             items={[
               ['Data folder', <code key="d">{meta?.dataDir}</code>],
+              ['Open library', meta?.library && <span key="l">{meta.library.name} <code>{meta.library.dir}</code></span>],
               ['Database schema version', meta?.schemaVersion],
               ['Records', meta?.entities],
             ]}

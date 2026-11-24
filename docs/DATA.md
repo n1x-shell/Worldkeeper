@@ -6,15 +6,24 @@
 
 Worldkeeper stores world records, relationships, campaigns, revision history and map metadata in SQLite. Map image files are stored separately.
 
+The data folder (`./data` by default) holds one or more **libraries**. Each is a complete world, or set of worlds, with its own database, pictures and backups; one is open at a time.
+
 | Default path | Contents |
 | --- | --- |
-| `data/worldkeeper.db` | SQLite world database |
-| `data/uploads/` | Uploaded image assets |
-| `data/backups/` | Versioned `.wkbackup.zip` backup archives |
+| `data/libraries.json` | The libraries, and which one is open |
+| `data/libraries/<id>/worldkeeper.db` | A library's SQLite database |
+| `data/libraries/<id>/uploads/` | Its uploaded images |
+| `data/libraries/<id>/backups/` | Its versioned `.wkbackup.zip` backup archives |
+| `data/packs/` | Installed setting packs, shared by every library |
+| `data/secrets.json` | The publishing token, shared by every library |
 
 The base path is controlled by `WORLDKEEPER_DATA_DIR` (default `./data` for the Node-based run). Desktop installations use the OS application-data location described in [DESKTOP.md](DESKTOP.md). The local data directory is git-ignored.
 
-GitHub publishing credentials are held separately in `secrets.json` in the data directory and are not intended to be included in ordinary database backups and exports. Protect this file from unauthorized access.
+**Upgrading from v0.5.4 or earlier:** on the first start, a data folder with `worldkeeper.db` in it becomes its first library. A backup of the database and pictures as they were is made first (in the library's backups, named `…-before-libraries`), then the database, `uploads/`, `backups/` and `staging/` move into `libraries/<id>/`. The library is named after the app name you set, or your world. If the start is interrupted, the next one finishes the move. Pointing `WORLDKEEPER_DATA_DIR` at an old data folder works the same way.
+
+Backups and restores are per library: restoring one never touches another. The table server (`npm run start:player`) serves whichever library is open in the GM app, and switches when it does.
+
+GitHub publishing credentials are held separately in `secrets.json` in the data folder and are not intended to be included in ordinary database backups and exports. Protect this file from unauthorized access.
 
 ## Importing Markdown lore
 

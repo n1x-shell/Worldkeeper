@@ -172,7 +172,7 @@ Source facts and campaign developments are intentionally distinct. A fortress ca
 
 ## Data and privacy
 
-By default, Worldkeeper uses `./data/worldkeeper.db`, `./data/uploads/` and `./data/backups/`. The DM web server binds to `127.0.0.1` by default; **do not expose it to an untrusted network**. A separate player-only server is available for LAN use.
+By default, Worldkeeper keeps its libraries in `./data`: each library's database, pictures and backups in `./data/libraries/<id>/`. The DM web server binds to `127.0.0.1` by default; **do not expose it to an untrusted network**. A separate player-only server is available for LAN use.
 
 Backups are generated on a schedule while the server is running and before sensitive operations. Backups and exports should still be stored and tested independently. Read [Data, Backups & Exports](docs/DATA.md).
 

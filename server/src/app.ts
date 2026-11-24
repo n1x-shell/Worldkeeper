@@ -9,6 +9,7 @@ import { worldRoutes } from './routes/world.js';
 import { campaignRoutes } from './routes/campaign.js';
 import { moduleForRoute } from '../../shared/modules.js';
 import { requireModule } from './repo/modules.js';
+import { librariesRoutes } from './routes/libraries.js';
 import { libraryRoutes } from './routes/library.js';
 import { atlasRoutes, uploadsHandler } from './routes/atlas.js';
 import { isCharacterPortrait } from './repo/portraits.js';
@@ -64,6 +65,7 @@ export function createApp(ctx: AppContext, opts: { staticDir?: string } = {}) {
     app.use('/api', worldRoutes(ctx));
     app.use('/api', campaignRoutes(ctx));
     app.use('/api', libraryRoutes(ctx));
+    app.use('/api', librariesRoutes(ctx));
     app.use('/api', atlasRoutes(ctx));
     app.use('/api', publishRoutes(ctx));
     app.get('/api/uploads/:file', uploadsHandler(ctx));

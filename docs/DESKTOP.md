@@ -29,9 +29,8 @@ The Worldkeeper (Tauri window)
 | Windows | `%APPDATA%\app.worldkeeper.desktop\` |
 
 That folder contains:
-- `worldkeeper.db`
-- `uploads/`
-- `backups/`
+- `libraries.json` and `libraries/`: your libraries, each with its own `worldkeeper.db`, `uploads/` and `backups/` (see [DATA.md](DATA.md))
+- `packs/` and `secrets.json`, shared by every library
 - `logs/server.log`
 
 To keep your data somewhere else, such as a synced folder, start the app with `WORLDKEEPER_DATA_DIR` set.
@@ -107,7 +106,7 @@ Unsigned builds work, but:
 ## Troubleshooting
 
 - **The window shows "could not start":** open `logs/server.log` in the data folder. Common causes:
-  - a damaged database — restore the newest file from `backups/`
+  - a damaged database — restore the newest file from the library's `backups/` (under `libraries/<id>/`)
   - the app was built without `npm run desktop:prepare` — rebuild with it
 - **Two windows open at once:** both use the same database. SQLite handles this safely, but stick to one window to avoid confusion.
 - **Players on your network:** the desktop app only listens on this computer. Run `npm run start:player` from the repository for a LAN player server. A desktop toggle for this is planned.
