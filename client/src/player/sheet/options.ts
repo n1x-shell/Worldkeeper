@@ -4,7 +4,7 @@
  * class features, species traits, feats) is loaded only when a sheet needs it.
  */
 import { useEffect, useState } from 'react';
-import type { PEntity } from '../source';
+import { playerApiBase, type PEntity } from '../source';
 import { CLASSES } from '../../../../shared/rules2024';
 import { rulesSpeciesName, type SrdText, type WorldBackground } from './srd';
 import { addRule, byName, emptyRulesView, srdRulesView, type RuleKind } from '../../../../shared/rulesView';
@@ -140,8 +140,8 @@ export function useSheetOptions(): SheetOptions | null {
       fetch(url)
         .then((r) => (r.ok ? (r.json() as Promise<T>) : fallback))
         .catch(() => fallback);
-    cached ??= get<PEntity[]>('/api/player/entities', []).then(async (es) => {
-      const tables = await Promise.all(es.filter(isBackgroundTable).map((e) => get<PEntity | null>(`/api/player/entities/${encodeURIComponent(e.id)}`, null)));
+    cached ??= get<PEntity[]>(`${playerApiBase()}/entities`, []).then(async (es) => {
+      const tables = await Promise.all(es.filter(isBackgroundTable).map((e) => get<PEntity | null>(`${playerApiBase()}/entities/${encodeURIComponent(e.id)}`, null)));
       return { peoples: peoplesFrom(es), classes: classesFrom(es), backgrounds: backgroundsFrom(tables.filter((x): x is PEntity => !!x)) };
     });
     let live = true;

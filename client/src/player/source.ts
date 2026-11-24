@@ -123,6 +123,8 @@ export interface PlayerSource {
   info(): Promise<{
     appName: string;
     publishedAt?: string;
+    /** On a campaign's own handbook address (/player/c/<code>): which campaign it is. */
+    campaign?: { id: number; title: string };
     realms?: RealmInfo[];
     types?: RecordTypeDef[];
     rulesSrd?: boolean;
@@ -157,6 +159,8 @@ export interface PlayerSource {
 
 /** A character's own page: memories, true name, who knows it, and Thinning (set by the GM). */
 export interface PCharacterPage {
+  /** Their campaign's handbook code (/player/c/<code>), when the table server gives it. */
+  handbook?: string | null;
   name: string;
   species: string;
   class_name: string;
@@ -178,39 +182,55 @@ async function getJson<T>(url: string): Promise<T> {
   return (await r.json()) as T;
 }
 
+/**
+ * The player API under a prefix: /api/player (the active campaign) or /api/player/c/<code> (one campaign's own
+ * handbook address, docs/LIBRARIES_PLAN.md §2.3). Pictures always come from /api/player/uploads.
+ */
+export function makeApiSource(api = '/api/player'): PlayerSource {
+  return {
+    info: () => getJson(`${api}/info`),
+    entities: () => getJson(`${api}/entities`),
+    entity: async (id) => {
+      const r = await fetch(`${api}/entities/${encodeURIComponent(id)}`);
+      return r.ok ? ((await r.json()) as PEntity) : null;
+    },
+    search: (q) => getJson(`${api}/search?q=${encodeURIComponent(q)}`),
+    maps: () => getJson(`${api}/maps`),
+    campaigns: () => getJson(`${api}/campaigns`),
+    factionWeb: () => getJson(`${api}/faction-web`),
+    imageUrl: (file) => `/api/player/uploads/${encodeURIComponent(file)}`,
+    live: () => getJson(`${api}/live`),
+    myPage: async (code) => {
+      const r = await fetch(`${api}/me/${encodeURIComponent(code)}`);
+      return r.ok ? ((await r.json()) as PCharacterPage) : null;
+    },
+    saveMyPage: async (code, patch) => {
+      const r = await fetch(`${api}/me/${encodeURIComponent(code)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patch) });
+      const body = (await r.json().catch(() => ({}))) as PCharacterPage & { error?: string };
+      if (!r.ok) throw new Error(body.error ?? `Couldn't save (${r.status})`);
+      return body;
+    },
+    myLog: (code) => getJson(`${api}/me/${encodeURIComponent(code)}/log`),
+    myPortrait: async (code, image) => {
+      const r = await fetch(
+        `${api}/me/${encodeURIComponent(code)}/portrait`,
+        image ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image }) } : { method: 'DELETE' },
+      );
+      const body = (await r.json().catch(() => ({}))) as PCharacterPage & { error?: string };
+      if (!r.ok) throw new Error(body.error ?? `Couldn't save the portrait (${r.status})`);
+      return body;
+    },
+  };
+}
+
+/** The API path for the handbook at the current address: a campaign's own (/player/c/<code>), or the plain one. */
+export function playerApiBase(path = typeof location === 'undefined' ? '' : location.pathname): string {
+  const m = /^\/player\/c\/([A-Za-z0-9]+)(\/|$)/.exec(path);
+  return m ? `/api/player/c/${m[1]}` : '/api/player';
+}
+
 export const apiSource: PlayerSource = {
-  info: () => getJson('/api/player/info'),
-  entities: () => getJson('/api/player/entities'),
-  entity: async (id) => {
-    const r = await fetch(`/api/player/entities/${encodeURIComponent(id)}`);
-    return r.ok ? ((await r.json()) as PEntity) : null;
-  },
-  search: (q) => getJson(`/api/player/search?q=${encodeURIComponent(q)}`),
-  maps: () => getJson('/api/player/maps'),
-  campaigns: () => getJson('/api/player/campaigns'),
-  factionWeb: () => getJson('/api/player/faction-web'),
-  imageUrl: (file) => `/api/player/uploads/${encodeURIComponent(file)}`,
-  live: () => getJson('/api/player/live'),
-  myPage: async (code) => {
-    const r = await fetch(`/api/player/me/${encodeURIComponent(code)}`);
-    return r.ok ? ((await r.json()) as PCharacterPage) : null;
-  },
-  saveMyPage: async (code, patch) => {
-    const r = await fetch(`/api/player/me/${encodeURIComponent(code)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patch) });
-    const body = (await r.json().catch(() => ({}))) as PCharacterPage & { error?: string };
-    if (!r.ok) throw new Error(body.error ?? `Couldn't save (${r.status})`);
-    return body;
-  },
-  myLog: (code) => getJson(`/api/player/me/${encodeURIComponent(code)}/log`),
-  myPortrait: async (code, image) => {
-    const r = await fetch(
-      `/api/player/me/${encodeURIComponent(code)}/portrait`,
-      image ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ image }) } : { method: 'DELETE' },
-    );
-    const body = (await r.json().catch(() => ({}))) as PCharacterPage & { error?: string };
-    if (!r.ok) throw new Error(body.error ?? `Couldn't save the portrait (${r.status})`);
-    return body;
-  },
+  ...makeApiSource('/api/player'),
   // The table server runs in player mode, where the GM's routes don't exist: these are for the GM's app only.
   gmCampaigns: async () => {
     const h = await getJson<{ mode?: string }>('/api/health').catch(() => null);

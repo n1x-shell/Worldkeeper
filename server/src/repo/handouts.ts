@@ -55,11 +55,11 @@ export function playerHandouts(db: DB, campaignId: number) {
 }
 
 /**
- * The players' live feed. Nothing unless the active campaign has a live session. The running encounter's turn order
+ * The players' live feed. Nothing unless the campaign (the active one unless named) has a live session. The running encounter's turn order
  * shows names as the GM set them for players, hides hidden and defeated combatants, and gives hit points for PCs only.
  */
-export function playerLive(db: DB) {
-  const play = inPlay(db);
+export function playerLive(db: DB, campaignId?: number | null) {
+  const play = campaignId === undefined ? inPlay(db) : inPlay(db, campaignId);
   if (!play) return { live: false as const };
   const enc = db.prepare(`SELECT id, title, round, turn_index, combatants FROM encounters WHERE session_id = ? AND status = 'running' ORDER BY updated_at DESC LIMIT 1`).get(play.sessionId) as
     | { id: number; title: string; round: number; turn_index: number; combatants: string }

@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.5.3_
+_Last updated: 2026-11-24 · v0.5.4_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -73,6 +73,20 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
 
+## v0.5.4: each campaign's handbook address (v0.6 step A3)
+
+Step A3 of [docs/LIBRARIES_PLAN.md](docs/LIBRARIES_PLAN.md). Part A (per-campaign reveals) is complete.
+
+- **Codes** (migration 29): `campaigns.handbook_code`, unique, eight characters without look-alikes (`server/src/repo/handbookCodes.ts`). Every campaign gets one at startup (`adoptHandbookCodes`) or when first shown; `renewHandbookCode` replaces it. An archived campaign's code opens nothing.
+- **The table server** (`server/src/routes/player.ts`): the player routes are mounted twice, at `/api/player` (the active campaign, as before) and at `/api/player/c/:handbook` (that campaign only). On a campaign's address, `/campaigns` lists only it, `/campaigns/:id` opens only it, the faction web, modules and live feed are its own, and character pages open only for its characters. `/info` names the campaign. `playerLive` and `inPlay` take a campaign.
+- **GM routes:** `GET /api/campaigns/:id/handbook` (code, this computer's network addresses, the table server's port: 4320 or `WORLDKEEPER_TABLE_PORT`) and `POST /api/campaigns/:id/handbook/new-code`.
+- **Exports:** a campaign export leaves the code out; its import gets a code of its own. The JSON export keeps codes (a restored library keeps its addresses).
+- **Client:** `/player/c/:code/*` opens the handbook with `makeApiSource('/api/player/c/<code>')` and the address as its base, so links stay on the campaign's address; the header names the campaign; an unknown code says so. The campaign overview has **The players' handbook** (code, address, QR code, Copy, New code). A character's page links to its campaign's handbook (`handbook` on the player's page).
+- **QR codes** (`shared/qr.ts`): a small encoder (byte mode, level M, versions 1 to 10), written in the app rather than added as a dependency.
+- **Tests:**
+  - `tests/handbookAddress.test.ts`: two groups at once on one table server (records, search, quests, campaigns by id, info); the plain address unchanged; unknown, lower-case and archived codes; a new code; codes out of campaign exports and fresh on import; character pages linked and kept to their campaign; codes given at startup.
+  - `tests/qr.test.ts`: the standard's worked example ("01234567", 1-M) for Reed–Solomon, published format and version bits and alignment positions, and a reader that decodes each code back (both format copies, unmasking, de-interleaving, error correction syndromes) for versions up to 10.
+
 ## v0.5.3: revealing per campaign, for the GM (v0.6 step A2)
 
 Step A2 of [docs/LIBRARIES_PLAN.md](docs/LIBRARIES_PLAN.md).
@@ -81,7 +95,7 @@ Step A2 of [docs/LIBRARIES_PLAN.md](docs/LIBRARIES_PLAN.md).
 - **The live reveal** (`revealDuringPlay`) takes `to: campaign | everyone` and `campaign_id`; unset, it follows the default with the session's campaign. The session log names who learned it ("Revealed to Table A: …"; "Revealed to players: …" with one campaign).
 - **Routes:** `GET/POST /api/entities/:id/reveals` (reveal to a campaign, take sections or facts back, `hide`), `POST …/reveals/everyone` and `…/reveals/only`, `GET /api/entities/:id/player-preview?campaign_id=`, `POST /api/map-reveals`, `GET /api/maps/:id/reveals`. A record's page data has `knownTo`.
 - **Client:** the Player view tab asks who learns what's revealed there, shows who knows each section and fact, previews what the chosen campaign sees, and has **Reveal to everyone** and **Only <campaign>** (with a confirmation). The record header says "Known to …". The live reveal offers **This campaign** or **Everyone**. The Atlas (map settings, outlines, pins) and the map explorer's pin panel offer a chip per campaign (`client/src/components/MapReveals.tsx`). With one campaign, everything looks and works as before.
-- **Not yet:** an address per campaign on the table server (A3).
+- **Not yet:** an address per campaign on the table server (A3, in v0.5.4).
 - **Tests:** `tests/campaignReveals.test.ts` adds: a live session's reveal goes to its own group and the other group's handbook doesn't change; everyone when chosen; who knows what and the default; promote and take back; a section revealed and taken back for one campaign; GM-only refused; map parts to a campaign or everyone.
 
 ## v0.5.2: reveals per campaign, storage and what players see (v0.6 step A1)

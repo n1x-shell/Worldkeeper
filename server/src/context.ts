@@ -9,6 +9,7 @@ import { setInstalledPacksDir } from './packs/paths.js';
 import { syncInstalledPacks } from './packs/registry.js';
 import { adoptCampaignDates, adoptSessionDates, adoptTimelineDates } from './repo/calendars.js';
 import { adoptTableBands } from './repo/tables.js';
+import { adoptHandbookCodes } from './repo/handbookCodes.js';
 
 /** Holds the live database handle so a restore can swap it without restarting the server. */
 export class AppContext {
@@ -23,6 +24,7 @@ export class AppContext {
     adoptSessionDates(this.db);
     adoptTimelineDates(this.db);
     adoptTableBands(this.db);
+    adoptHandbookCodes(this.db);
     ensureEras(this.db);
   }
 
@@ -42,6 +44,7 @@ export class AppContext {
     adoptSessionDates(this.db);
     adoptTimelineDates(this.db);
     adoptTableBands(this.db);
+    adoptHandbookCodes(this.db);
     ensureEras(this.db);
   }
 }

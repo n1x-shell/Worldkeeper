@@ -1050,6 +1050,16 @@ CREATE TABLE campaign_map_reveals (
 );
 `,
   },
+  {
+    version: 29,
+    name: 'campaign handbook codes',
+    // Each campaign's handbook address on the table server, /player/c/<code> (docs/LIBRARIES_PLAN.md §2.3). Codes are
+    // given at startup and when a campaign is first shown (repo/handbookCodes.ts).
+    sql: `
+ALTER TABLE campaigns ADD COLUMN handbook_code TEXT;
+CREATE UNIQUE INDEX campaigns_handbook_code ON campaigns(handbook_code) WHERE handbook_code IS NOT NULL;
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

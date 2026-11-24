@@ -6,6 +6,7 @@
  * (the GM does, after a failed save), and can never bring back a memory once it is struck: lost memories don't return.
  * Nothing here is ever part of the published handbook.
  */
+import { handbookCode } from './handbookCodes.js';
 import { randomInt } from 'node:crypto';
 import type Database from 'better-sqlite3';
 import { z } from 'zod';
@@ -32,8 +33,13 @@ export interface CharacterPage {
   notes: string;
   updated_at: string;
 }
-/** What the player sees: their page, and who their character is. Never the code-holder's campaign or anyone else's page. */
+/**
+ * What the player sees: their page, who their character is, and the address of their own campaign's handbook. Never
+ * anyone else's page, or any other campaign.
+ */
 export interface PlayerCharacterPage extends Omit<CharacterPage, 'character_id' | 'code'> {
+  /** Their campaign's handbook code (/player/c/<code>), or null when the campaign is archived. */
+  handbook: string | null;
   name: string;
   species: string;
   class_name: string;
@@ -156,16 +162,18 @@ export const characterIdByCode = (db: DB, code: string) => byCode(db, code).char
 const withoutGmNotes = (sheet: Record<string, unknown>) => Object.fromEntries(Object.entries(sheet).filter(([k]) => !(GM_ONLY_SHEET_KEYS as readonly string[]).includes(k)));
 
 function forPlayer(db: DB, page: CharacterPage): PlayerCharacterPage {
-  const c = db.prepare('SELECT name, species, class_name, level, sheet FROM characters WHERE id = ?').get(page.character_id) as {
+  const { campaign_id, ...c } = db.prepare('SELECT name, species, class_name, level, sheet, campaign_id FROM characters WHERE id = ?').get(page.character_id) as {
     name: string;
     species: string;
     class_name: string;
     level: number;
     sheet: string;
+    campaign_id: number;
   };
+  const archived = (db.prepare('SELECT status FROM campaigns WHERE id = ?').get(campaign_id) as { status: string } | undefined)?.status === 'archived';
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { character_id, code, ...rest } = page;
-  return { ...c, sheet: withoutGmNotes(JSON.parse(c.sheet || '{}') as Record<string, unknown>), ...rest };
+  return { ...c, handbook: archived ? null : handbookCode(db, campaign_id), sheet: withoutGmNotes(JSON.parse(c.sheet || '{}') as Record<string, unknown>), ...rest };
 }
 
 /** On the table server: the page behind a private code. */

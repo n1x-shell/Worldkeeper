@@ -82,7 +82,9 @@ type Workspace = { id: PlayerWorkspace; label: string; icon: ReactNode; to: stri
  * players may see. A top bar with World, Records, Maps, Campaign and My Character, and a sidebar for the current one;
  * on phones a drawer with everything. Parchment by default, dark as a toggle, remembered on the device.
  */
-export function PlayerLayout({ appName, publishedAt }: { appName: string; publishedAt?: string }) {
+export function PlayerLayout({ appName, publishedAt, campaign }: { appName: string; publishedAt?: string; campaign?: string }) {
+  // On a campaign's own address, the handbook names the campaign.
+  const subtitle = campaign ? `${campaign} · Handbook` : 'Player Handbook';
   const { base, source } = usePlayer();
   const { entities, campaigns, maps, factionWeb } = usePlayerIndex();
   const [collapsed, setCollapsed] = useState(read('wk.player.sidebar', '0') === '1');
@@ -255,7 +257,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
           {mark}
           <span className="hidden lg:flex flex-col leading-none">
             <span className="font-display text-gold text-[15px] whitespace-nowrap">{appName}</span>
-            <span className="text-[9px] uppercase tracking-[0.22em] text-dim mt-0.5">Player Handbook</span>
+            <span className="text-[9px] uppercase tracking-[0.22em] text-dim mt-0.5">{subtitle}</span>
           </span>
         </NavLink>
         <nav aria-label="Handbook sections" className="hidden md:flex items-stretch h-full">
@@ -327,7 +329,7 @@ export function PlayerLayout({ appName, publishedAt }: { appName: string; publis
                 {mark}
                 <div className="min-w-0 flex-1">
                   <div className="font-display text-gold text-[15px] truncate">{appName}</div>
-                  <div className="text-[10px] uppercase tracking-[0.2em] text-dim">Player Handbook</div>
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-dim truncate">{subtitle}</div>
                 </div>
                 <button className="btn-ghost min-h-[40px]" onClick={() => setDrawer(false)} aria-label="Close menu">
                   <X size={16} />
