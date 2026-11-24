@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-23 · v0.5.2_
+_Last updated: 2026-11-24 · v0.5.3_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -73,6 +73,17 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
 
+## v0.5.3: revealing per campaign, for the GM (v0.6 step A2)
+
+Step A2 of [docs/LIBRARIES_PLAN.md](docs/LIBRARIES_PLAN.md).
+
+- **Who learns this** (`server/src/repo/reveals.ts`): `defaultRevealTarget` is the campaign at hand (a live session's) or the active one once the library has two or more campaigns not archived, otherwise everyone. `recordReveals` (everyone's, each campaign's, the choices and the default), `unrevealFromCampaign`, `promoteToEveryone`, `onlyToCampaign`, `revealMapPart` (null is everyone: the map's `player_visible`, a pin's or outline's `hidden`) and `mapRevealsFor`.
+- **The live reveal** (`revealDuringPlay`) takes `to: campaign | everyone` and `campaign_id`; unset, it follows the default with the session's campaign. The session log names who learned it ("Revealed to Table A: …"; "Revealed to players: …" with one campaign).
+- **Routes:** `GET/POST /api/entities/:id/reveals` (reveal to a campaign, take sections or facts back, `hide`), `POST …/reveals/everyone` and `…/reveals/only`, `GET /api/entities/:id/player-preview?campaign_id=`, `POST /api/map-reveals`, `GET /api/maps/:id/reveals`. A record's page data has `knownTo`.
+- **Client:** the Player view tab asks who learns what's revealed there, shows who knows each section and fact, previews what the chosen campaign sees, and has **Reveal to everyone** and **Only <campaign>** (with a confirmation). The record header says "Known to …". The live reveal offers **This campaign** or **Everyone**. The Atlas (map settings, outlines, pins) and the map explorer's pin panel offer a chip per campaign (`client/src/components/MapReveals.tsx`). With one campaign, everything looks and works as before.
+- **Not yet:** an address per campaign on the table server (A3).
+- **Tests:** `tests/campaignReveals.test.ts` adds: a live session's reveal goes to its own group and the other group's handbook doesn't change; everyone when chosen; who knows what and the default; promote and take back; a section revealed and taken back for one campaign; GM-only refused; map parts to a campaign or everyone.
+
 ## v0.5.2: reveals per campaign, storage and what players see (v0.6 step A1)
 
 Step A1 of [docs/LIBRARIES_PLAN.md](docs/LIBRARIES_PLAN.md).
@@ -81,7 +92,7 @@ Step A1 of [docs/LIBRARIES_PLAN.md](docs/LIBRARIES_PLAN.md).
 - **`server/src/repo/reveals.ts`:** a reveal scope is a campaign or null (everyone). `REVEALED_IN_SCOPE` (SQL), `revealedIds`, `isRevealed`, `inScope` (a record's sections and facts as a campaign sees them: everyone's and the campaign's, merged), `campaignMapReveals`; `revealToCampaign` (adds sections and facts, refuses GM-only sections, `hide` takes the record back), `revealMapPartToCampaign`, `whoKnows`.
 - **The player projection** takes a scope: records, sections, facts, search, realms and types players can name, the lexicon of linked names, links in text, maps, pins and outlines. The table server uses the active campaign's scope (A3 adds an address per campaign). A campaign's own parts (quests, recaps, handouts, treasure, regions, standing, the faction web, the party export) link and show records as that campaign knows them. The published handbook (a demo, §5 answer 4) shows what's revealed to everyone.
 - **Exports:** both tables are in the JSON export; a campaign export carries its reveals (records by ID; maps, pins and outlines by their map's name and what they mark) and the import restores them where the library has them.
-- **Not yet:** revealing to a campaign from the GM app (A2) and an address per campaign (A3).
+- **Not yet:** revealing to a campaign from the GM app (A2, in v0.5.3) and an address per campaign (A3).
 - **Tests:** `tests/campaignReveals.test.ts` (two groups in one world: records, sections, facts, search and links per group; maps and pins per group; the published handbook; GM-only sections refused; taking a record back; a campaign export and import; deleting a campaign; a library with reveals from before unchanged for every campaign).
 
 ## v0.5.1: follow-ups and housekeeping

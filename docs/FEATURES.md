@@ -165,7 +165,7 @@ Prepare recaps, party location, goals, scenes, NPC notes, read-aloud text, clues
 
 ### Live Session Mode
 
-The table-side dashboard consolidates current scene and read-aloud material, encounter tracking, a quick event log, quest updates, proposed changes, relevant NPC cards and dice. From the session you can reveal a record's existence, an allowed section or a fact written for players. Reveals are recorded in the session log and available to the recap workflow. GM-only and secret sections are not selectable for ordinary publication.
+The table-side dashboard consolidates current scene and read-aloud material, encounter tracking, a quick event log, quest updates, proposed changes, relevant NPC cards and dice. From the session you can reveal a record's existence, an allowed section or a fact written for players. Reveals are recorded in the session log and available to the recap workflow. GM-only and secret sections are not selectable for ordinary publication. With two or more campaigns, a reveal goes to the session's campaign unless you choose **Everyone**, so one group never sees what another learned.
 
 ### After the session
 
@@ -228,7 +228,7 @@ For the detailed import/export and restore workflow, see [Data, Imports, Backups
 
 ## Player view and distribution
 
-The local `/player` interface provides a preview of material that has been explicitly revealed. A separate player-only server on port 4320 mounts no DM routes and is intended for trusted LAN use. Its one write route is a character's own page, opened with that character's private code. A static handbook can be exported as a ZIP or published to a GitHub Pages branch. The handbook updates when republished, not whenever the local campaign changes.
+The local `/player` interface provides a preview of material that has been explicitly revealed. **Several groups in one world:** each reveal goes to one campaign or to everyone, and each group sees what's common knowledge plus what it learned; a record's Player view shows who knows each section and fact, and promotes a campaign's reveal to everyone or takes one back to a single campaign. Maps, pins and outlines work the same way. A separate player-only server on port 4320 mounts no DM routes and is intended for trusted LAN use. Its one write route is a character's own page, opened with that character's private code. A static handbook can be exported as a ZIP or published to a GitHub Pages branch. The handbook updates when republished, not whenever the local campaign changes.
 
 **Important:** Publication filtering should be tested and manually reviewed, especially for labels and other indirect disclosure paths. Content placed in Git history may remain accessible after it is removed from a newer snapshot. See [Player View & Publishing](PLAYER_VIEW.md).
 

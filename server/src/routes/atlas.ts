@@ -7,6 +7,7 @@ import { randomBytes } from 'node:crypto';
 import type { AppContext } from '../context.js';
 import { h, intParam, mountCrud } from './util.js';
 import { mapDetail, maps, markers, shapes, unplacedLocations } from '../repo/maps.js';
+import { defaultRevealTarget, mapRevealsFor, revealCampaigns, revealMapPart } from '../repo/reveals.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { kindOf, saveProfile } from '../repo/profiles.js';
 import { clearTrail, explorationFor, inPlay, removeTravel, setDiscovered, travel } from '../repo/exploration.js';
@@ -185,6 +186,20 @@ export function atlasRoutes(ctx: AppContext) {
   r.delete(
     '/exploration/trail',
     h((req) => clearTrail(ctx.db, campaignOf(req.query.campaign_id), Number(req.query.map_id))),
+  );
+  // Show a map, pin or outline to everyone (campaign_id null) or to one campaign; and who was shown what on a map.
+  r.post(
+    '/map-reveals',
+    h((req) => {
+      const kind = String(req.body?.kind);
+      if (kind !== 'map' && kind !== 'marker' && kind !== 'shape') throw badRequest('kind must be map, marker or shape');
+      const cid = req.body?.campaign_id == null ? null : intParam(req.body.campaign_id, 'campaign_id');
+      return revealMapPart(ctx.db, kind, intParam(req.body?.ref_id, 'ref_id'), cid, !!req.body?.on);
+    }),
+  );
+  r.get(
+    '/maps/:id/reveals',
+    h((req) => ({ ...mapRevealsFor(ctx.db, intParam(req.params.id)), choices: revealCampaigns(ctx.db), default: defaultRevealTarget(ctx.db) })),
   );
   mountCrud(r, ctx, '/maps', maps, ['parent_map_id', 'entity_id']);
   mountCrud(r, ctx, '/markers', markers, ['map_id', 'entity_id']);

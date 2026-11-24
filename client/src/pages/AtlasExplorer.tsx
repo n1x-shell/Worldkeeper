@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowRight, Columns2, ExternalLink, Eye, EyeOff, Flag, MapPin, PanelRight, PenLine, Trash2, X } from 'lucide-react';
 import { api, useApi } from '../lib/api';
+import { CampaignChips, useMapReveals } from '../components/MapReveals';
 import { useAppState } from '../lib/store';
 import { displaySections } from '../lib/sections';
 import { useCleaners } from '../lib/packs';
@@ -117,6 +118,8 @@ function GmCodex({
   const cleanerFor = useCleaners();
   const peek = usePeek();
   const { data } = useApi<{ entity: Entity }>(`/api/entities/${encodeURIComponent(id)}`);
+  const { data: reveals, reload: reloadReveals } = useMapReveals(mapId);
+  const many = (reveals?.choices.length ?? 0) >= 2;
   const [err, setErr] = useState<string | null>(null);
   const e = data?.entity;
   const run = async (f: () => Promise<Exploration | unknown>, isEx = false) => {
@@ -185,9 +188,10 @@ function GmCodex({
                 )
               }
             >
-              {marker.hidden ? <EyeOff size={13} /> : <Eye size={13} />} {marker.hidden ? 'Hidden from players' : 'Shown to players'}
+              {marker.hidden ? <EyeOff size={13} /> : <Eye size={13} />} {marker.hidden ? (many ? 'Not shown to everyone' : 'Hidden from players') : many ? 'Shown to everyone' : 'Shown to players'}
             </button>
           )}
+          {marker && <CampaignChips reveals={reveals} kind="marker" refId={marker.id} everyone={!marker.hidden} onChange={() => void reloadReveals()} />}
           {outline ? (
             <>
               <button type="button" className="btn text-xs" onClick={() => onOutline('edit', e.name)}>

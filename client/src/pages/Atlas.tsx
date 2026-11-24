@@ -5,6 +5,7 @@ import L from 'leaflet';
 import { ImageOverlay, MapContainer, Marker, Polygon, Polyline, Rectangle, Tooltip, useMapEvents, useMap } from 'react-leaflet';
 import { Eye, EyeOff, Layers, Plus, Trash2, Upload, MapPin, Spline, Hexagon, X, ArrowUpLeft, Maximize2 } from 'lucide-react';
 import { api, qs, useApi } from '../lib/api';
+import { CampaignChips, useMapReveals } from '../components/MapReveals';
 import { useAppState } from '../lib/store';
 import { Card, Check, Empty, EntityLink, ErrorBox, Field, Loading, Modal, PageHeader, Toggle, TypeBadge, ask } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
@@ -414,6 +415,8 @@ function MapSettings({
   const m = detail.map;
   const layers = [...new Set([...m.layers, ...detail.markers.map((x) => x.layer), ...detail.shapes.map((s) => s.layer)])];
   const [err, setErr] = useState<string | null>(null);
+  const { data: reveals, reload: reloadReveals } = useMapReveals(m.id);
+  const many = (reveals?.choices.length ?? 0) >= 2;
   return (
     <Card className="space-y-3 text-sm">
       {err && <ErrorBox error={err} />}
@@ -442,8 +445,9 @@ function MapSettings({
           onChange();
         }}
       >
-        Visible in player view
+        {many ? 'Visible to everyone in player view' : 'Visible in player view'}
       </Toggle>
+      <CampaignChips reveals={reveals} kind="map" refId={m.id} everyone={m.player_visible} onChange={() => void reloadReveals()} />
       <Field label="Realm" hint="The world, continent or plane it shows.">
         <select
           className="input"
@@ -487,14 +491,14 @@ function MapSettings({
         <div>
           <div className="label">Regions and routes</div>
           {detail.shapes.map((s) => (
-            <div key={s.id} className="flex items-center gap-2">
+            <div key={s.id} className="flex flex-wrap items-center gap-2">
               <span className="w-3 h-3 rounded-sm" style={{ background: s.color }} />
               <span className="flex-1 truncate">
-                {s.label || s.kind} {s.hidden && <span className="text-dim text-xs">(DM)</span>}
+                {s.label || s.kind} {s.hidden && <span className="text-dim text-xs">{many ? `(${(reveals?.shape[s.id] ?? []).length ? 'some campaigns' : 'DM'})` : '(DM)'}</span>}
               </span>
               <button
                 className="btn-ghost"
-                title={s.hidden ? 'Show to players' : 'Hide from players'}
+                title={s.hidden ? (many ? 'Show to everyone' : 'Show to players') : many ? 'Hide from everyone' : 'Hide from players'}
                 onClick={async () => {
                   await api.patch(`/api/shapes/${s.id}`, { hidden: !s.hidden });
                   onChange();
@@ -505,6 +509,7 @@ function MapSettings({
               <button className="btn-ghost" onClick={() => onDeleteShape(s.id)} aria-label="Delete shape">
                 <Trash2 size={13} />
               </button>
+              {many && s.hidden && <div className="basis-full pl-5"><CampaignChips reveals={reveals} kind="shape" refId={s.id} everyone={false} onChange={() => void reloadReveals()} /></div>}
             </div>
           ))}
         </div>
@@ -531,6 +536,8 @@ function MarkerPanel({ marker, maps, onClose, onChange }: { marker: MarkerRow; m
   const debug = useDebug();
   const cleanerFor = useCleaners();
   const overview = data ? displaySections(data.entity.body, debug, cleanerFor(data.entity.pack_id)).find((s) => s.content && !s.secret) : null;
+  const { data: reveals, reload: reloadReveals } = useMapReveals(marker.map_id);
+  const many = (reveals?.choices.length ?? 0) >= 2;
   return (
     <Card
       title="Marker"
@@ -591,14 +598,15 @@ function MarkerPanel({ marker, maps, onClose, onChange }: { marker: MarkerRow; m
         <button className="btn" onClick={() => save({ hidden: !marker.hidden })}>
           {marker.hidden ? (
             <>
-              <EyeOff size={14} /> DM only
+              <EyeOff size={14} /> {many ? 'Not shown to everyone' : 'DM only'}
             </>
           ) : (
             <>
-              <Eye size={14} /> Visible to players
+              <Eye size={14} /> {many ? 'Visible to everyone' : 'Visible to players'}
             </>
           )}
         </button>
+        <CampaignChips reveals={reveals} kind="marker" refId={marker.id} everyone={!marker.hidden} onChange={() => void reloadReveals()} />
         <button
           className="btn-danger"
           onClick={async () => {

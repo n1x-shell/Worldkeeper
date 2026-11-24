@@ -291,7 +291,7 @@ function LiveView({ session, campaign, quests, onEnd }: { session: Session; camp
       <section className="panel elev-1 overflow-hidden" aria-label="Table tools">
         <QuestUpdates quests={quests} campaignId={activeCampaignId} onLog={addLog} />
         <ToolSection id="reveal" title="Reveal to players" icon={<Eye size={15} />} defaultOpen>
-          <RevealPanel sessionId={session.id} onRevealed={() => void reloadLog()} />
+          <RevealPanel sessionId={session.id} campaignId={session.campaign_id} onRevealed={() => void reloadLog()} />
         </ToolSection>
         <WorldChange sessionId={session.id} campaignId={activeCampaignId} />
         <ToolSection id="dice" title="Dice" icon={<Dices size={15} />}>
@@ -826,30 +826,50 @@ interface RevealEntity {
 }
 
 /** Reveal information to players without leaving live mode. Every reveal is logged to the session. */
-function RevealPanel({ sessionId, onRevealed }: { sessionId: number; onRevealed: () => void }) {
+function RevealPanel({ sessionId, campaignId, onRevealed }: { sessionId: number; campaignId: number; onRevealed: () => void }) {
   const debug = useDebug();
   const [id, setId] = useState<string | null>(null);
   const cleanerFor = useCleaners();
   const { data, reload } = useApi<{ entity: RevealEntity; sections: { heading: string; secret: boolean }[] }>(id ? `/api/entities/${encodeURIComponent(id)}` : null);
+  const { data: rv, reload: reloadReveals } = useApi<{ campaigns: { campaign_id: number; title: string; sections: string[]; facts: string[] }[]; choices: { id: number; title: string }[] }>(
+    id ? `/api/entities/${encodeURIComponent(id)}/reveals` : null,
+  );
+  // Who learns it: this session's campaign once the library has two or more, unless the GM picks everyone.
+  const [everyone, setEveryone] = useState(false);
+  const many = (rv?.choices.length ?? 0) >= 2;
+  const toCampaign = many && !everyone;
+  const mine = toCampaign ? rv?.campaigns.find((c) => c.campaign_id === campaignId) : undefined;
   const [fact, setFact] = useState('');
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const reveal = async (body: Record<string, unknown>, done: string) => {
     if (!id) return;
     try {
-      await api.post(`/api/entities/${encodeURIComponent(id)}/reveal`, { ...body, session_id: sessionId });
+      await api.post(`/api/entities/${encodeURIComponent(id)}/reveal`, { ...body, session_id: sessionId, ...(many ? (everyone ? { to: 'everyone' } : { to: 'campaign', campaign_id: campaignId }) : {}) });
       setMsg(done);
       setErr(null);
       await reload();
+      await reloadReveals();
       onRevealed();
     } catch (x) {
       setErr((x as Error).message);
     }
   };
   const e = data?.entity;
+  const known = !!e && (e.revealed || !!mine);
   return (
     <div className="space-y-2 [&_.input]:min-h-10">
       <EntityPicker value={id} onChange={(v) => (setId(v), setMsg(null), setErr(null))} placeholder="What did they learn about?" />
+      {many && (
+        <div className="flex gap-1.5 text-xs" role="radiogroup" aria-label="Who learns this">
+          <button role="radio" aria-checked={!everyone} className={`chip min-h-8 px-2.5 ${!everyone ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setEveryone(false)}>
+            This campaign
+          </button>
+          <button role="radio" aria-checked={everyone} className={`chip min-h-8 px-2.5 ${everyone ? 'border-gold text-gold' : 'border-line text-dim'}`} onClick={() => setEveryone(true)}>
+            Everyone
+          </button>
+        </div>
+      )}
       {err && <div className="text-xs text-danger">{err}</div>}
       {msg && (
         <div className="text-xs text-ok" role="status">
@@ -859,9 +879,9 @@ function RevealPanel({ sessionId, onRevealed }: { sessionId: number; onRevealed:
       {e && (
         <div className="space-y-2 text-sm">
           <div className="flex items-center gap-2">
-            <Badge tone={e.revealed ? 'ok' : 'dim'}>{e.revealed ? 'Known to players' : 'Unknown to players'}</Badge>
-            {!e.revealed && (
-              <button className="btn h-10 text-xs ml-auto" onClick={() => reveal({ revealed: true }, `${e.name} is now known to players.`)}>
+            <Badge tone={known ? 'ok' : 'dim'}>{e.revealed ? (many ? 'Known to everyone' : 'Known to players') : mine ? 'Known to this campaign' : toCampaign ? 'Unknown to this campaign' : 'Unknown to players'}</Badge>
+            {(toCampaign ? !known : !e.revealed) && (
+              <button className="btn h-10 text-xs ml-auto" onClick={() => reveal({ revealed: true }, `${e.name} is now known to ${toCampaign ? 'this campaign' : many ? 'everyone' : 'players'}.`)}>
                 Reveal that it exists
               </button>
             )}
@@ -871,7 +891,7 @@ function RevealPanel({ sessionId, onRevealed }: { sessionId: number; onRevealed:
             {data!.sections
               .filter((s) => s.heading && (debug || !cleanerFor(e.pack_id).editorial(s.heading)))
               .map((s) => {
-                const shown = e.revealed_sections.includes(s.heading);
+                const shown = (e.revealed && e.revealed_sections.includes(s.heading)) || !!mine?.sections.includes(s.heading);
                 return (
                   <button
                     key={s.heading}
@@ -899,9 +919,9 @@ function RevealPanel({ sessionId, onRevealed }: { sessionId: number; onRevealed:
               Reveal
             </button>
           </div>
-          {e.revealed_facts.length > 0 && (
+          {e.revealed_facts.length + (mine?.facts.length ?? 0) > 0 && (
             <ul className="text-xs text-dim list-disc pl-4">
-              {e.revealed_facts.slice(-4).map((f, i) => (
+              {[...e.revealed_facts, ...(mine?.facts ?? [])].slice(-4).map((f, i) => (
                 <li key={i}>{f}</li>
               ))}
             </ul>

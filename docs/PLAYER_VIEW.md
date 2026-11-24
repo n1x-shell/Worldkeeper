@@ -52,9 +52,21 @@ References to unrevealed records are designed to be removed. Other player-visibl
 
 1. Open the current live session.
 2. Select the relevant record.
-3. Choose to reveal existence, a permitted section, or a custom fact in your own words.
+3. Choose to reveal existence, a permitted section, or a custom fact in your own words. With two or more campaigns, choose who learns it: this campaign (the default) or everyone.
 4. Review the exact material players will receive.
 5. Confirm. The event is logged in the session and can appear in the recap.
+
+## Two or more groups in one world
+
+With two or more campaigns, what one group learns stays with that group. A reveal goes either to **one campaign** (only its players see it) or to **everyone** (common knowledge: every campaign's players see it). A group sees everything revealed to everyone, plus what it learned itself; GM-only sections are never shown either way.
+
+- **Who learns this:** the Player view tab asks, defaulting to the active campaign; the live session's reveal offers **This campaign** (the session's) or **Everyone**. With one campaign, every reveal goes to everyone, as before.
+- **Who knows what:** each section and fact shows who knows it (Everyone, or the campaigns), and the record's header says "Known to …" when only some campaigns know it. The preview shows exactly what the chosen campaign's players see.
+- **Reveal to everyone** makes what one campaign learned common knowledge. **Only <campaign>** takes a world-wide reveal back to one campaign, after asking, since every other group loses it.
+- **Maps, pins and outlines** work the same way: in the Atlas, beside **Visible to everyone**, a chip per campaign shows the map, pin or outline to that campaign only.
+- The session log names who learned it ("Revealed to Table A: …").
+
+Reveals from before v0.5.3 are to everyone. The published handbook shows what's revealed to everyone.
 
 Do not copy secret text into an unrestricted player-summary field. A GM-only heading prevents that section from being selected, but it cannot judge the intent of newly written prose.
 
