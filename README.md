@@ -8,7 +8,7 @@ Build **a world of your own**, with its own worlds, continents and planes, calen
 
 **No account, required cloud service, paid API or AI dependency.** World data lives on your computer in SQLite and an uploads directory, with backups and portable exports.
 
-> **Status:** v0.5 **“A World of Your Own”**, an early functional release: a first-run wizard for your own world or the Worldkeeper setting, New ▸ anything with guided creation, a Markdown editor for every long text, and settings, calendars, rules and modules that work for any world. Some features and desktop platform builds are still undergoing validation. Read [Development Status](DEVELOPMENT_STATUS.md) before relying on the application for important campaign data.
+> **Status:** v0.6 **“Many Tables, Many Worlds”**, an early functional release: several groups in one world, each seeing only what it has learned, at its own handbook address; and several worlds in one installation, each a library of its own, sharing your books' rules. Built on v0.5's first-run wizard, New ▸ anything, the Markdown editor and settings, calendars, rules and modules for any world. Some features and desktop platform builds are still undergoing validation. Read [Development Status](DEVELOPMENT_STATUS.md) before relying on the application for important campaign data.
 
 ## Screenshots
 
@@ -29,6 +29,16 @@ Make any kind of record, **Guided** through its template (facts as proper inputs
 | Guided: the review | Advanced: Split view |
 | --- | --- |
 | ![A new NPC's review step: the record as it will read, its links and what players will see](docs/images/new-guided.jpg) | ![The same NPC in Advanced mode: the template's Markdown beside its preview](docs/images/new-advanced.jpg) |
+
+### Several groups, several worlds
+
+Run two groups in one world without either seeing what the other learned: each reveal goes to one campaign or to everyone, and each campaign has its own handbook address on the table server, with a QR code to scan at the table. Keep unrelated worlds in libraries of their own, and switch between them from the Library menu.
+
+| Who learns this | Each campaign's handbook |
+| --- | --- |
+| ![Hollow Refuge's Player view: revealing to The Loose Thread only, who knows each section, and exactly what that group's players see](docs/images/reveal-per-campaign.jpg) | ![The Loose Thread's overview with its handbook code, address and QR code](docs/images/handbook-address.jpg) |
+
+![Library → Libraries: the Worldkeeper setting, Ostmark and a copy, with the Library menu open to switch between them](docs/images/libraries.jpg)
 
 ### World dashboard
 
@@ -90,12 +100,13 @@ What the players see, on the table server or published to GitHub Pages: only wha
 | **Setting packs** | Install a whole setting (realms, types, templates, records, maps, adventures and modules), update it and remove it without touching your own work; the Worldkeeper setting is one, and you can [write your own](docs/SETTING_PACKS.md) |
 | **Characters and factions** | Structured profiles, campaign-specific attitudes and goals, regional influence |
 | **World exploration** | Maps, hierarchical locations, timelines, relationship graphs, cosmology and realm tools |
-| **Campaign management** | Multiple campaigns, party sheets, quests, adventures, scene flows and campaign state overlays |
+| **Campaign management** | Multiple campaigns, each with its own reveals (what one group learned stays with it), party sheets, quests, adventures, scene flows and campaign state overlays |
 | **Session tools** | Preparation, live session dashboard, initiative, dice, event log, recaps and player reveals |
 | **Character sheets and builder** | A full D&D 2024 sheet for players and the GM, with a change log, and a builder for any level from 1 to 20 |
-| **Your own books** | Rules packs from the books you own: spells, species, classes, feats, backgrounds, creatures and magic items, kept private to your library |
+| **Your own books** | Rules packs from the books you own: spells, species, classes, feats, backgrounds, creatures and magic items, imported once for all your libraries and kept private |
 | **Modules** | Thinning, the Return, Renown and the rest are modules: on with their setting pack, or switched on for your own world, per library or per campaign; treasure and encounters can come from your books |
-| **Player publishing** | Player-only server, static player handbook, optional GitHub Pages publishing |
+| **Player publishing** | Player-only server with a handbook address (and QR code) per campaign, static player handbook, optional GitHub Pages publishing |
+| **Libraries** | Several worlds in one installation, each with its own records, campaigns, settings, backups and handbook: switch, duplicate, archive, or open one from a file |
 | **Library operations** | Previewed imports, protective merging, complete exports (JSON, Markdown, full-world ZIP, campaigns), backups and restoration |
 | **Design** | Warm Parchment or Dark Codex; five workspaces; hover cards, an inspector and split view; tablet and phone layouts for the table |
 
@@ -201,7 +212,7 @@ Contributions are welcome subject to review; see [Contributing](CONTRIBUTING.md)
 
 ## Roadmap
 
-v0.2, **“At the table,”** added record-link suggestions, structured NPC and faction profiles, in-session player reveals, timeline eras and desktop packaging. v0.3, **“Your books, your table,”** added the full D&D 2024 character sheet and builder, rules packs from your own books, the SRD 5.2.1 and the to-scale world map. v0.4, **“Illuminated,”** redesigned everything: the GM app, the table server and the player handbook. v0.5, **“A World of Your Own,”** made the app as good for a GM's own world as for the Worldkeeper setting: realms, record types, templates, calendars, rules and modules as data, setting packs, the Markdown editor, New ▸ anything and a first-run wizard. See [Development Status](DEVELOPMENT_STATUS.md) for feature maturity, known issues and next steps.
+v0.2, **“At the table,”** added record-link suggestions, structured NPC and faction profiles, in-session player reveals, timeline eras and desktop packaging. v0.3, **“Your books, your table,”** added the full D&D 2024 character sheet and builder, rules packs from your own books, the SRD 5.2.1 and the to-scale world map. v0.4, **“Illuminated,”** redesigned everything: the GM app, the table server and the player handbook. v0.5, **“A World of Your Own,”** made the app as good for a GM's own world as for the Worldkeeper setting: realms, record types, templates, calendars, rules and modules as data, setting packs, the Markdown editor, New ▸ anything and a first-run wizard. v0.6, **“Many Tables, Many Worlds,”** lets several groups share a world without seeing each other's discoveries, each at its own handbook address, and keeps several worlds in one installation as libraries of their own. See [Development Status](DEVELOPMENT_STATUS.md) for feature maturity, known issues and next steps.
 
 An optional, provider-independent AI assistant is planned for a later phase. Any generated lore should enter as a `PROPOSED` draft subject to GM review, not silently become canon.
 

@@ -105,9 +105,15 @@ Generate a recap draft from recorded session events. Edit it before publication,
 
 Use the in-app `/player` view for local preview. For other devices on a trusted LAN, use the separate player-only server, or publish a static handbook after checking exactly what it contains.
 
+**Each campaign has its own handbook address** on the player-only server: the campaign's overview shows it with a QR code (**The players' handbook**). With two or more campaigns, each reveal goes to the active campaign unless you choose **Everyone**, so one group never sees what another learned.
+
 **Do not share the DM server with players.** The default DM server is for localhost. See [Player View & Publishing](PLAYER_VIEW.md) for the network and public-publication precautions.
 
-## 8. Protect your progress
+## 8. More than one world
+
+Each world can be a **library** of its own, with its own records, campaigns, settings and backups. Use the Library menu (the gear) for **New library…** (it opens with Start your world) or to switch, and **Library → Libraries** to rename, duplicate, archive, or open a library from a full-world ZIP. Your books' rules are shared: import them once.
+
+## 9. Protect your progress
 
 Use **Backups → Back up now** and make an independent copy of the resulting backup archive. Confirm that a restore works before your world grows large. Automatic backups are not a substitute for tested off-device copies.
 

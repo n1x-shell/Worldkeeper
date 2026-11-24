@@ -15,5 +15,8 @@ Screenshots of The Worldkeeper, a local-first worldbuilding encyclopedia and D&D
 | `party.jpg`                                          | Party and Characters with a character sheet            |
 | `handbook.jpg`                                       | The player handbook's home                             |
 | `handbook-phone-entry.jpg`, `handbook-phone-map.jpg` | The handbook on a phone (Dark Codex)                   |
+| `reveal-per-campaign.jpg`                            | A record's Player view, revealing to one campaign      |
+| `handbook-address.jpg`                               | A campaign's handbook address and QR code              |
+| `libraries.jpg`                                      | Library → Libraries, with the Library menu open        |
 
-To retake them, build a library from the world archive, Apply additions and a campaign, then screenshot those pages; the same pages are what the design overhaul (docs/DESIGN_OVERHAUL.md) was reviewed against.
+To retake them, build a library from the world archive (the v0.6 ones add a second campaign, The Ashen Road, Hollow Refuge revealed partly to everyone and partly to one campaign, and the libraries Ostmark and a copy), Apply additions and a campaign, then screenshot those pages; the same pages are what the design overhaul (docs/DESIGN_OVERHAUL.md) was reviewed against.
