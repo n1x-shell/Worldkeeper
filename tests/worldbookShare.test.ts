@@ -81,6 +81,10 @@ describe('worldbooks shared between GMs', () => {
     // Only pins of records travel; positions from the top-left.
     expect(pins).toMatchObject({ name: 'Ostmark', image: 'ostmark.png', pins: [{ id: keep.id, label: 'Brennhold', x: 100, y: 100 }] });
 
+    // Added back to the computer it came from, it isn't offered to the library it was made from.
+    await request(gmA).post('/api/worldbooks/add').attach('file', file, 'Ostmark.worldbook');
+    expect((await request(gmA).get('/api/setting-packs')).body.packs.find((p: { id: string }) => p.id === 'ostmark')).toMatchObject({ madeHere: true, installed: null });
+
     // GM B, on another computer, adds it and starts a library with it.
     const b = tempContext();
     const gmB = createApp(b);

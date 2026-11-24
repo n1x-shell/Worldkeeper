@@ -281,7 +281,10 @@ export function libraryRoutes(ctx: AppContext) {
   // Setting packs (packs/<id>): the ones the app can install, and this library's. Each change takes a backup first.
   r.get(
     '/setting-packs',
-    h(() => ({ packs: listSettingPacks(ctx.db), roles: roles(ctx.db) })),
+    h(() => {
+      const madeHere = (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'worldbook_made_here'`).get() as { value: string } | undefined)?.value;
+      return { packs: listSettingPacks(ctx.db).map((p) => (p.id === madeHere ? { ...p, madeHere: true } : p)), roles: roles(ctx.db) };
+    }),
   );
   r.post(
     '/setting-packs/:id/install',

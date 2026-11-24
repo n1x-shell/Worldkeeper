@@ -242,6 +242,8 @@ export function buildWorldbook(db: DB, uploadsDir: string, o: ShareOptions): { f
     },
   };
   add('pack.json', JSON.stringify(manifest, null, 1));
+  // Remember it: this library's own world is that worldbook, so it isn't offered back to it.
+  db.prepare(`INSERT INTO settings (key, value) VALUES ('worldbook_made_here', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`).run(id);
   return { file: zip.toBuffer(), manifest };
 }
 

@@ -113,7 +113,13 @@ Use the in-app `/player` view for local preview. For other devices on a trusted 
 
 Each world can be a **library** of its own, with its own records, campaigns, settings and backups. Use the Library menu (the gear) for **New library…** (it opens with Start your world) or to switch, and **Library → Libraries** to rename, duplicate, archive, or open a library from a full-world ZIP. Your books' rules are shared: import them once.
 
-## 9. Protect your progress
+## 9. Share your world, or add someone else's
+
+**Library → Worldbooks → Share as a worldbook…** makes a `.worldbook` file of the open library's world: its realms, record types, templates, calendar, records, links, timeline and maps, never your campaigns or what your players saw. If the world uses something only one of your books has (a species, a class, an item), choose whether that book is **required**, **optional**, or swapped for an open stand-in (**safe mode**).
+
+To use one another GM shared, choose **Add a worldbook…**, then **Start a library with it** (a new library named after the world) or **Add to this library**. The app says which books it draws on that you don't have; with all of them, the new library uses your books alone.
+
+## 10. Protect your progress
 
 Use **Backups → Back up now** and make an independent copy of the resulting backup archive. Confirm that a restore works before your world grows large. Automatic backups are not a substitute for tested off-device copies.
 

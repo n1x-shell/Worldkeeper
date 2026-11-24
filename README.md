@@ -4,11 +4,11 @@
 
 The Worldkeeper is a **free, open-source, local-first worldbuilding encyclopedia and D&D 5e (2024) campaign manager**. Start a world of your own or bring in the lore you have, connect characters, factions and locations, explore maps, run sessions, and share only the knowledge your players have discovered.
 
-Build **a world of your own**, with its own worlds, continents and planes, calendar, kinds of record and templates, from a first-run wizard. Or play in **the Worldkeeper world**, a shattered world of Aetheris, Kaelmar and the Ethereal Realm, installed as a setting pack. Either way it runs a **standard D&D 2024 campaign** from the SRD and the books you own, keeps stable IDs, source references, canon labels and GM secrets, and manages independent campaigns in the same world.
+Build **a world of your own**, with its own worlds, continents and planes, calendar, kinds of record and templates, from a first-run wizard. Or play in **the Worldkeeper world**, a shattered world of Aetheris, Kaelmar and the Ethereal Realm, which comes whole with the app as a **worldbook**. Share your own world as a worldbook, and add the ones other GMs share. Either way it runs a **standard D&D 2024 campaign** from the SRD and the books you own, keeps stable IDs, source references, canon labels and GM secrets, and manages independent campaigns in the same world.
 
 **No account, required cloud service, paid API or AI dependency.** World data lives on your computer in SQLite and an uploads directory, with backups and portable exports.
 
-> **Status:** v0.6 **“Many Tables, Many Worlds”**, an early functional release: several groups in one world, each seeing only what it has learned, at its own handbook address; and several worlds in one installation, each a library of its own, sharing your books' rules. Built on v0.5's first-run wizard, New ▸ anything, the Markdown editor and settings, calendars, rules and modules for any world. Some features and desktop platform builds are still undergoing validation. Read [Development Status](DEVELOPMENT_STATUS.md) before relying on the application for important campaign data.
+> **Status:** v0.8 **“Worldbooks”**, an early functional release: whole worlds you add, share and hand to other GMs as one file, the Worldkeeper world complete inside the app, and worldbooks that work with whatever books each GM owns (books required, optional, or open stand-ins), with a Books only switch. Built on v0.7's players' timeline and v0.6's several groups and several worlds in one installation. Some features and desktop platform builds are still undergoing validation. Read [Development Status](DEVELOPMENT_STATUS.md) before relying on the application for important campaign data.
 
 ## Screenshots
 
@@ -39,6 +39,14 @@ Run two groups in one world without either seeing what the other learned: each r
 | ![Hollow Refuge's Player view: revealing to The Loose Thread only, who knows each section, and exactly what that group's players see](docs/images/reveal-per-campaign.jpg) | ![The Loose Thread's overview with its handbook code, address and QR code](docs/images/handbook-address.jpg) |
 
 ![Library → Libraries: the Worldkeeper world, Ostmark and a copy, with the Library menu open to switch between them](docs/images/libraries.jpg)
+
+### Worldbooks
+
+A **worldbook** is a whole world in one file: its realms, record types, templates, calendar, records, links, timeline and maps. The Worldkeeper world comes with the app as one. **Share as a worldbook…** makes one from your own world, never your campaigns or what your players saw; another GM **adds** it and starts a library with it. A worldbook never holds book text, only names: sharing asks whether the books it draws on are required, optional, or swapped for open stand-ins, and adding one says which books it misses.
+
+| Worldbooks in a library | Share as a worldbook |
+| --- | --- |
+| ![Library → Worldbooks: the Worldkeeper world in this library, and Ostmark, shared by another GM, ready to start a library with](docs/images/worldbooks.jpg) | ![Sharing Ostmark: its name, author, description and licence, and what it says about the books](docs/images/share-worldbook.jpg) |
 
 ### World dashboard
 
@@ -97,13 +105,13 @@ What the players see, on the table server or published to GitHub Pages: only wha
 | --- | --- |
 | **Your own world** | A first-run wizard; worlds, continents and planes; your own calendar, record types and templates; records that teach |
 | **Encyclopedia** | Searchable records, New ▸ anything (guided or advanced), a Markdown editor with record links and GM-only sections, source provenance, revisions and Canon Review |
-| **Worldbooks** | Add a whole world (realms, types, templates, records, maps, adventures and modules), update it and remove it without touching your own work; the Worldkeeper worldbook is one, and you can [write your own](docs/WORLDBOOKS.md) |
+| **Worldbooks** | Whole worlds as one file: add one (or start a library with it), update it and remove it without touching your own work; share your own world as a `.worldbook`; the Worldkeeper world comes with the app as one. Books required, optional or open stand-ins; see [Writing a worldbook](docs/WORLDBOOKS.md) |
 | **Characters and factions** | Structured profiles, campaign-specific attitudes and goals, regional influence |
 | **World exploration** | Maps, hierarchical locations, timelines, relationship graphs, cosmology and realm tools |
 | **Campaign management** | Multiple campaigns, each with its own reveals (what one group learned stays with it), party sheets, quests, adventures, scene flows and campaign state overlays |
 | **Session tools** | Preparation, live session dashboard, initiative, dice, event log, recaps and player reveals |
 | **Character sheets and builder** | A full D&D 2024 sheet for players and the GM, with a change log, and a builder for any level from 1 to 20 |
-| **Your own books** | Rules packs from the books you own: spells, species, classes, feats, backgrounds, creatures and magic items, imported once for all your libraries and kept private |
+| **Your own books** | Rules packs from the books you own: spells, species, classes, feats, backgrounds, creatures and magic items, imported once for all your libraries and kept private; **Books only** sets the open rules aside |
 | **Modules** | Thinning, the Return, Renown and the rest are modules: on with their worldbook, or switched on for your own world, per library or per campaign; treasure and encounters can come from your books |
 | **Player publishing** | Player-only server with a handbook address (and QR code) per campaign, static player handbook, optional GitHub Pages publishing |
 | **Libraries** | Several worlds in one installation, each with its own records, campaigns, settings, backups and handbook: switch, duplicate, archive, or open one from a file |
@@ -146,7 +154,7 @@ The quickest way is a copy of the **5etools** data:
 2. Download an archive of the repository as a zip (the whole repository, or just its `data` folder).
 3. In Worldkeeper, open **Settings → Rules packs → Import your books from 5etools**, upload the zip, tick the books you own, and choose **Import**.
 
-Spells, species, classes and subclasses, backgrounds and feats then reach the character sheets and the builder. Creatures become stat blocks for the GM, and magic items show their rules in treasure and on sheets. Only use material from books you own. What you import stays in your library: it is never part of the published handbook, a player export, a campaign export or this repository. You can also write your own packs in Markdown. See [Rules packs](docs/RULES_PACKS.md).
+Spells, species, classes and subclasses, backgrounds and feats then reach the character sheets and the builder. To use your books alone, switch on **Settings → Rules packs → Books only**: it says first what your books don't cover, and keeps the open rules for just that. Creatures become stat blocks for the GM, and magic items show their rules in treasure and on sheets. Only use material from books you own. What you import stays in your library: it is never part of the published handbook, a player export, a campaign export or this repository. You can also write your own packs in Markdown. See [Rules packs](docs/RULES_PACKS.md).
 
 A world of your own starts as a standard D&D 2024 campaign; with the Worldkeeper world, switch any of its systems off in **Settings → Modules**. Each world has its own calendar (**Campaign → Calendar → The world's calendar**). See [Features](docs/FEATURES.md#modules-a-standard-dd-campaign-or-the-worldkeeper-setting).
 
@@ -212,7 +220,7 @@ Contributions are welcome subject to review; see [Contributing](CONTRIBUTING.md)
 
 ## Roadmap
 
-v0.2, **“At the table,”** added record-link suggestions, structured NPC and faction profiles, in-session player reveals, timeline eras and desktop packaging. v0.3, **“Your books, your table,”** added the full D&D 2024 character sheet and builder, rules packs from your own books, the SRD 5.2.1 and the to-scale world map. v0.4, **“Illuminated,”** redesigned everything: the GM app, the table server and the player handbook. v0.5, **“A World of Your Own,”** made the app as good for a GM's own world as for the Worldkeeper setting: realms, record types, templates, calendars, rules and modules as data, setting packs, the Markdown editor, New ▸ anything and a first-run wizard. v0.6, **“Many Tables, Many Worlds,”** lets several groups share a world without seeing each other's discoveries, each at its own handbook address, and keeps several worlds in one installation as libraries of their own. See [Development Status](DEVELOPMENT_STATUS.md) for feature maturity, known issues and next steps.
+v0.2, **“At the table,”** added record-link suggestions, structured NPC and faction profiles, in-session player reveals, timeline eras and desktop packaging. v0.3, **“Your books, your table,”** added the full D&D 2024 character sheet and builder, rules packs from your own books, the SRD 5.2.1 and the to-scale world map. v0.4, **“Illuminated,”** redesigned everything: the GM app, the table server and the player handbook. v0.5, **“A World of Your Own,”** made the app as good for a GM's own world as for the Worldkeeper setting: realms, record types, templates, calendars, rules and modules as data, setting packs, the Markdown editor, New ▸ anything and a first-run wizard. v0.6, **“Many Tables, Many Worlds,”** lets several groups share a world without seeing each other's discoveries, each at its own handbook address, and keeps several worlds in one installation as libraries of their own. v0.7 brought the timeline to the table: sessions on the World Timeline and the players' own timeline of what they've learned. v0.8, **“Worldbooks,”** makes a world something you hand to another GM: the Worldkeeper world complete inside the app, sharing and adding `.worldbook` files, and worldbooks that respect the books each GM owns, with Books only. See [Development Status](DEVELOPMENT_STATUS.md) for feature maturity, known issues and next steps.
 
 An optional, provider-independent AI assistant is planned for a later phase. Any generated lore should enter as a `PROPOSED` draft subject to GM review, not silently become canon.
 
