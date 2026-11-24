@@ -1,27 +1,49 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { Router } from 'express';
+import multer from 'multer';
+import Database from 'better-sqlite3';
 import type { AppContext } from '../context.js';
 import { h } from './util.js';
 import { badRequest } from '../lib/errors.js';
-import { createLibrary, readIndex, renameLibrary } from '../libraries.js';
+import { createLibrary, discardNewLibrary, libraryDir, libraryEntry, readIndex, recordCount, renameLibrary, setArchived } from '../libraries.js';
+import { importFullWorldZip } from '../backup/exporter.js';
+import { isDesktop, openFolder } from '../lib/desktop.js';
 
-/** The libraries in this data folder: list, make, open and rename (docs/LIBRARIES_PLAN.md §3). GM only. */
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 300 * 1024 * 1024, files: 1 } });
+
+/**
+ * The libraries in this data folder (docs/LIBRARIES_PLAN.md §3.2): list, make, open, rename, duplicate, archive and
+ * restore, open one from a file, and show one's folder. GM only.
+ */
 export function librariesRoutes(ctx: AppContext) {
   const r = Router();
-  const list = () => {
-    const idx = readIndex(ctx.paths.rootDir)!;
-    return { open: ctx.paths.libraryId, libraries: idx.libraries.filter((l) => !l.archived) };
+  const root = () => ctx.paths.rootDir;
+  const list = (all = false) => {
+    const idx = readIndex(root())!;
+    return {
+      open: ctx.paths.libraryId,
+      libraries: idx.libraries
+        .filter((l) => all || !l.archived)
+        .map((l) => ({ ...l, archived: !!l.archived, dir: libraryDir(root(), l), records: l.id === ctx.paths.libraryId ? openCount() : recordCount(root(), l) })),
+    };
   };
+  const openCount = () => (ctx.db.prepare('SELECT COUNT(*) AS n FROM entities WHERE archived = 0').get() as { n: number }).n;
+  const name = (v: unknown) => {
+    const n = String(v ?? '').trim();
+    if (!n) throw badRequest('A library needs a name');
+    return n;
+  };
+
   r.get(
     '/libraries',
-    h(() => list()),
+    h((req) => list(req.query.all === '1')),
   );
   // A new, empty library; `open` opens it at once (it then starts with "Start your world").
   r.post(
     '/libraries',
     h((req) => {
-      const name = String(req.body?.name ?? '').trim();
-      if (!name) throw badRequest('A library needs a name');
-      const e = createLibrary(ctx.paths.rootDir, name);
+      const e = createLibrary(root(), name(req.body?.name));
       if (req.body?.open) ctx.openLibrary(e.id);
       return { library: e, ...list() };
     }),
@@ -36,8 +58,73 @@ export function librariesRoutes(ctx: AppContext) {
   r.patch(
     '/libraries/:id',
     h((req) => {
-      renameLibrary(ctx.paths.rootDir, String(req.params.id), String(req.body?.name ?? ''));
-      return list();
+      renameLibrary(root(), String(req.params.id), String(req.body?.name ?? ''));
+      return list(true);
+    }),
+  );
+  // A copy to try something risky in: its database and pictures (not its backups), as a new library.
+  r.post(
+    '/libraries/:id/duplicate',
+    h((req) => {
+      const src = libraryEntry(root(), String(req.params.id));
+      if (src.archived) throw badRequest('Restore that library before copying it');
+      const e = createLibrary(root(), String(req.body?.name ?? '').trim() || `${src.name} (copy)`);
+      const from = libraryDir(root(), src);
+      const to = libraryDir(root(), e);
+      try {
+        const target = path.join(to, 'worldkeeper.db');
+        if (src.id === ctx.paths.libraryId) ctx.db.prepare('VACUUM main INTO ?').run(target);
+        else if (fs.existsSync(path.join(from, 'worldkeeper.db'))) {
+          const db = new Database(path.join(from, 'worldkeeper.db'), { readonly: true, fileMustExist: true });
+          try {
+            db.prepare('VACUUM INTO ?').run(target);
+          } finally {
+            db.close();
+          }
+        }
+        if (fs.existsSync(path.join(from, 'uploads'))) fs.cpSync(path.join(from, 'uploads'), path.join(to, 'uploads'), { recursive: true });
+      } catch (err) {
+        discardNewLibrary(root(), e.id);
+        throw err;
+      }
+      return { library: e, ...list() };
+    }),
+  );
+  // Archive: hidden from the list, its files kept; restore brings it back.
+  r.post(
+    '/libraries/:id/archive',
+    h((req) => {
+      setArchived(root(), String(req.params.id), req.body?.archived !== false);
+      return list(true);
+    }),
+  );
+  // Open a library from a file: a full-world ZIP (from Import and Export) becomes a new library, opened.
+  r.post(
+    '/libraries/import',
+    upload.single('file'),
+    h((req) => {
+      if (!req.file) throw badRequest('Choose a full-world ZIP');
+      if (req.file.buffer.subarray(0, 2).toString('latin1') !== 'PK') throw badRequest('Not a ZIP file: choose a full-world ZIP from Import and Export');
+      const fallback = (req.file.originalname || 'Imported library').replace(/\.zip$/i, '').replace(/[-_]+/g, ' ');
+      const e = createLibrary(root(), String(req.body?.name ?? req.query.name ?? '').trim() || fallback);
+      const before = ctx.paths.libraryId;
+      ctx.openLibrary(e.id);
+      try {
+        const result = importFullWorldZip(ctx.db, ctx.paths, req.file.buffer);
+        return { library: e, result, ...list() };
+      } catch (err) {
+        ctx.openLibrary(before);
+        discardNewLibrary(root(), e.id);
+        throw err;
+      }
+    }),
+  );
+  // In the desktop app: show the library's folder in the file manager.
+  r.post(
+    '/libraries/:id/show',
+    h((req) => {
+      if (!isDesktop()) throw badRequest('Only the desktop app opens folders');
+      return openFolder(libraryDir(root(), libraryEntry(root(), String(req.params.id))));
     }),
   );
   return r;

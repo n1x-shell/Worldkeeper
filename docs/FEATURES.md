@@ -212,6 +212,16 @@ A switched-off module leaves the menus, the sheets, the player view and the publ
 
 **The rules are D&D 2024.** The sheet and builder do their arithmetic by the 2024 rules: backgrounds raise ability scores, the 2024 class tables, weapon mastery. Books written for the 2014 rules import fine, and their species, subclasses, spells, feats, items and creatures can be used, but characters are built and calculated the 2024 way.
 
+## Libraries: more than one world
+
+One installation holds several **libraries**. Each is a world (or set of worlds) of its own: its own records, campaigns, settings, backups and handbook. Your books' rules and installed setting packs are shared, so they're imported once; each library chooses which it uses.
+
+- **The Library menu** (the gear, top right) names the open library and lists the others to open. **New library…** makes one and opens it with **Start your world**.
+- **Library → Libraries** manages them: rename, **Duplicate** (a copy of the records, campaigns, settings and pictures, to try something risky in), **Archive** (hidden from the list, its files kept; **Restore** brings it back), and **Show in folder** in the desktop app.
+- **Open a library from a file** turns a full-world ZIP (**Import and Export → Full world**) into a new library: how a world goes to a co-GM or another computer.
+- Backups and restores are each library's own. The table server serves the library that's open.
+- **The desktop app** opens the last library; with several, its start asks which.
+
 ## Library management
 
 The **Library** menu (the gear, top right) holds import preview, confirmation and history, exports, Canon Review, broken-reference reporting, change history, backup and restore, and app settings.

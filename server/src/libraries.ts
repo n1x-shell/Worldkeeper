@@ -215,3 +215,41 @@ export function markOpen(root: string, id: string) {
   e.last_opened_at = now();
   writeIndex(root, idx);
 }
+
+/** Hide a library from the list (its files kept), or bring it back (§5, answer 8). */
+export function setArchived(root: string, id: string, archived: boolean): LibraryEntry {
+  const idx = readIndex(root)!;
+  const e = idx.libraries.find((l) => l.id === id);
+  if (!e) throw notFound('Library');
+  if (archived && idx.open === id) throw badRequest('Open another library before archiving this one');
+  e.archived = archived || undefined;
+  if (!archived) makeFolders(root, e);
+  writeIndex(root, idx);
+  return e;
+}
+
+/** Take a library out of the list and delete its folder: only for one just made that couldn't be filled. */
+export function discardNewLibrary(root: string, id: string) {
+  const idx = readIndex(root)!;
+  const e = idx.libraries.find((l) => l.id === id);
+  if (!e || idx.open === id) return;
+  idx.libraries = idx.libraries.filter((l) => l.id !== id);
+  writeIndex(root, idx);
+  fs.rmSync(libraryDir(root, e), { recursive: true, force: true });
+}
+
+/** How many records a library holds, read without opening it for use (null if it can't be read). */
+export function recordCount(root: string, e: LibraryEntry): number | null {
+  const file = path.join(libraryDir(root, e), 'worldkeeper.db');
+  if (!fs.existsSync(file)) return 0;
+  try {
+    const db = new Database(file, { readonly: true, fileMustExist: true });
+    try {
+      return (db.prepare('SELECT COUNT(*) AS n FROM entities WHERE archived = 0').get() as { n: number }).n;
+    } finally {
+      db.close();
+    }
+  } catch {
+    return null;
+  }
+}
