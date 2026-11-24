@@ -4,10 +4,10 @@ import type { Paths } from '../config.js';
 
 /**
  * Local secrets (e.g. the GitHub token for publishing the player handbook).
- * Kept in `<data dir>/secrets.json` with owner-only permissions: NOT in the database, so never in
- * backups, exports or any API response.
+ * Kept in `<data folder>/secrets.json` with owner-only permissions: NOT in the database, so never in
+ * backups, exports or any API response. Shared by every library in the data folder.
  */
-const file = (paths: Paths) => path.join(paths.dataDir, 'secrets.json');
+const file = (paths: Paths) => path.join(paths.rootDir, 'secrets.json');
 
 function readAll(paths: Paths): Record<string, string> {
   try {

@@ -4,6 +4,7 @@ import { finishSetup, gettingStarted, removeTutorial, setupState, skipSetup, upd
 import { consistencyReport } from '../repo/consistency.js';
 import { openQuestions } from '../repo/openQuestions.js';
 import multer from 'multer';
+import { libraryEntry } from '../libraries.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { randomBytes } from 'node:crypto';
@@ -377,7 +378,9 @@ export function libraryRoutes(ctx: AppContext) {
     h(() => ({
       mode: ctx.mode,
       schemaVersion: schemaVersion(ctx.db),
-      dataDir: ctx.paths.dataDir,
+      dataDir: ctx.paths.rootDir,
+      /** The open library: its own folder (docs/LIBRARIES_PLAN.md §3.1). */
+      library: { id: ctx.paths.libraryId, name: libraryEntry(ctx.paths.rootDir, ctx.paths.libraryId).name, dir: ctx.paths.dataDir },
       entities: (ctx.db.prepare('SELECT COUNT(*) n FROM entities').get() as { n: number }).n,
       appName: (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper',
       /** Technical details (IDs, files, sources, how-it-works notes) are shown only in debug mode. */
