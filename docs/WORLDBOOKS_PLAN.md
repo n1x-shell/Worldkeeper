@@ -19,7 +19,11 @@ A **worldbook** is a whole world you can hand to someone: its records, maps, cal
 A worldbook works with whatever rules a GM has; nothing breaks without a book, some things show less.
 
 - **A worldbook never contains book text.** It names rules ("Tabaxi", "Moon-Touched Sword") and the app finds each name in the rules this GM has: the SRD (always), open rules packs, the GM's own books. That also keeps sharing legal.
-- **Say what's missing, up front.** Adding or sharing a worldbook lists the books it draws on and what each gives ("Xanathar's Guide: 6 treasure items; Monsters of the Multiverse: 5 species. Without them, those show by name only"), as a campaign export already reports what it needs. Part of W3.
+- **Adding says what's missing.** Adding a worldbook lists the books it draws on that this GM doesn't have, and what each gives ("Xanathar's Guide: 6 treasure items; Monsters of the Multiverse: 5 species").
+- **Sharing asks how the books count** (owner, November 2026). Three choices:
+  - **Books required:** the worldbook names the books it needs; it can't be added unless those books are in the GM's rules.
+  - **Books optional:** it can be added without them, with the warning above; those things show by name only.
+  - **Safe mode:** it uses open rules only, so anyone can add it. Each thing that exists only in a closed book is swapped for the closest open-rules match of the same kind (an item of the same rarity and type, a creature of the same type and challenge, an SRD species), in a list the GM reviews and can change before sharing. Open-licensed rules the library uses beyond the SRD (an Open5e pack, for example) travel inside the worldbook, with their credits.
 - **A worldbook can carry its own fallback**: its own open rules for what it needs, as the Worldkeeper worldbook already carries its creatures and a standard-rules version of what Thinning touches. For Worldkeeper, open (CC BY) species rules for the few peoples that borrow book species would make it whole on the SRD alone: writing work, the owner's call, not part of these steps.
 - Today, for Worldkeeper: its creatures, hazards, items and NPC fight cards, the classes and most species work on the SRD alone; a few peoples' species (Tortle, Tabaxi, Kenku, Firbolg, Aarakocra and the like), some faction-pool treasure and subclasses beyond the SRD need the GM's books.
 
@@ -52,7 +56,7 @@ Internally the code keeps its names (`packs/`, `setting_packs`, `installPack`): 
 
 ### W3 (v0.7.3): share and add any worldbook
 
-- **What it needs** (§2a): adding or sharing lists the books a worldbook draws on and what each gives.
+- **The books** (§2a): sharing asks Books required, Books optional or Safe mode (with the review list of open-rules swaps, and open rules bundled); adding lists the books missing, and refuses a worldbook whose required books the GM doesn't have.
 - **Share as a worldbook** (Library → Worldbooks): makes a `.worldbook` file (a ZIP) from the open library: a manifest (name, description, version, author, licence), its realms, record types, templates and calendar, every record as Markdown, its maps and pictures. Never campaigns, characters, sessions or what players were shown. An option leaves out GM-only sections, for sharing a world with players in mind.
 - **Add a worldbook…**: choose a `.worldbook` file; it is checked (paths, sizes, IDs that clash with yours) and added to the computer's worldbooks, shared by every library like books' rules. Then **Start a library with it**, or **Add to this library**.
 - The old route (Full world ZIP, then "Open a library from a file") keeps working for files made before.
