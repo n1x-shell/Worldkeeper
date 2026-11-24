@@ -24,6 +24,8 @@ export interface PEntity {
   summary: string;
   facts?: string[];
   sections?: { heading: string; content: string }[];
+  /** Its pictures the GM shows players, the record's own first (v0.9.3). */
+  images?: { file: string; caption: string }[];
 }
 export interface PMap {
   id: number;

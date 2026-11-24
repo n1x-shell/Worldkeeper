@@ -144,6 +144,14 @@ export function buildWorldbook(db: DB, uploadsDir: string, o: ShareOptions): { f
   }
   counts.records = rows.length;
 
+  // Their pictures (pictures/<file>, listed in lore/pictures.json). With players in mind, only the ones players see.
+  const pictures = (
+    db.prepare(`SELECT entity_id, file, caption, player_visible FROM entity_images WHERE removed = 0 ORDER BY entity_id, sort_order, id`).all() as { entity_id: string; file: string; caption: string; player_visible: number }[]
+  ).filter((p) => ids.has(p.entity_id) && /^[\w.-]+$/.test(p.file) && (!o.leaveOutGmOnly || p.player_visible) && fs.existsSync(path.join(uploadsDir, p.file)));
+  for (const file of new Set(pictures.map((p) => p.file))) add(`pictures/${file}`, fs.readFileSync(path.join(uploadsDir, file)));
+  if (pictures.length) add('lore/pictures.json', JSON.stringify({ pictures: pictures.map((p) => ({ id: p.entity_id, file: p.file, caption: p.caption, player_visible: !!p.player_visible })) }, null, 1));
+  counts.pictures = pictures.length;
+
   // Links the GM made by hand (the rest come back from the records' own text).
   const links = (
     db
@@ -332,9 +340,9 @@ export function adoptWorldbookRealms(db: DB, m: PackManifest) {
 // ---- Adding one --------------------------------------------------------------------------------------------------
 
 const LIMITS = { files: 20_000, bytes: 500 * 1024 * 1024, file: 50 * 1024 * 1024 };
-const FOLDERS = ['lore', 'templates', 'maps', 'adventures', 'tables', 'treasure', 'statblocks', 'encounters', 'player-text', 'archive', 'open-rules'];
+const FOLDERS = ['lore', 'templates', 'maps', 'adventures', 'tables', 'treasure', 'statblocks', 'encounters', 'player-text', 'archive', 'open-rules', 'pictures'];
 const ROOT_FILES = ['pack.json', 'calendar.json', 'README.md'];
-const EXT = /\.(md|json|webp|png|jpe?g)$/i;
+const EXT = /\.(md|json|webp|png|jpe?g|gif)$/i;
 
 /** Check a `.worldbook` and read its manifest and files. Throws, naming the problem, if anything is wrong. */
 export function readWorldbook(buf: Buffer): { manifest: SharedManifest; files: { path: string; data: Buffer }[] } {

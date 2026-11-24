@@ -14,6 +14,7 @@ import { tableRoutes } from './routes/table.js';
 import { libraryRoutes } from './routes/library.js';
 import { atlasRoutes, uploadsHandler } from './routes/atlas.js';
 import { isCharacterPortrait } from './repo/portraits.js';
+import { isPlayerRecordPicture } from './repo/entityImages.js';
 import { playerRoutes } from './routes/player.js';
 import { publishRoutes } from './routes/publish.js';
 
@@ -43,7 +44,9 @@ export function createApp(ctx: AppContext, opts: { staticDir?: string } = {}) {
       // Handout pictures, once given to the players.
       ctx.db.prepare('SELECT 1 FROM handouts WHERE image_file = ? AND pushed_at IS NOT NULL').get(f) ||
       // Character portraits (their file names are random, and only given out with the character).
-      isCharacterPortrait(ctx.db, f);
+      isCharacterPortrait(ctx.db, f) ||
+      // A record's pictures the GM marked for players.
+      isPlayerRecordPicture(ctx.db, f);
     if (!ok) return next(new HttpError(404, 'File not found'));
     return uploadsHandler(ctx)(req, res, next);
   });

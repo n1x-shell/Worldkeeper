@@ -9,6 +9,7 @@
  *  - Aliases, sources, notes, fields, canon flags, GM sections and unrevealed records are never included.
  *  - References inside revealed text to unrevealed records are reduced to plain names-free placeholders.
  */
+import { playerImages } from '../repo/entityImages.js';
 import { REVEALED_IN_SCOPE, campaignMapReveals, inScope, revealedIds, type RevealScope } from '../repo/reveals.js';
 import { stripComments } from '../../../shared/newRecord.js';
 import { publishedRuleEntries } from '../repo/rulesPacks.js';
@@ -51,6 +52,8 @@ export interface PlayerEntity {
   summary: string;
   facts: string[];
   sections: { heading: string; content: string }[];
+  /** Its pictures the GM marked for players, the record's own picture first. */
+  images?: { file: string; caption: string }[];
 }
 
 interface Row {
@@ -277,12 +280,16 @@ export function playerEntities(db: DB, scope: RevealScope = null): PlayerEntity[
   const places = placeRealms(db);
   const rc = realmContext(db, scope);
   const rows = db.prepare(`SELECT ${COLS} FROM entities WHERE archived = 0 AND ${REVEALED_IN_SCOPE} ORDER BY name`).all(scope) as Row[];
-  return inScope(db, rows, scope).map((r) => project(r, revealed, index, rc, lex, places));
+  const pictures = playerImages(db);
+  return inScope(db, rows, scope).map((r) => withPictures(project(r, revealed, index, rc, lex, places), pictures));
 }
+
+/** A record's pictures for players (only those the GM marked), when it has any. */
+const withPictures = (e: PlayerEntity, pictures: Map<string, { file: string; caption: string }[]>): PlayerEntity => (pictures.has(e.id) ? { ...e, images: pictures.get(e.id) } : e);
 
 export function playerEntity(db: DB, id: string, scope: RevealScope = null): PlayerEntity | null {
   const r = db.prepare(`SELECT ${COLS} FROM entities WHERE id = ? AND archived = 0 AND ${REVEALED_IN_SCOPE}`).get(id, scope) as Row | undefined;
-  return r ? project(inScope(db, [r], scope)[0], revealedIdSet(db, scope), loadMentionIndex(db), realmContext(db, scope), buildLexicon(db, scope), placeRealms(db)) : null;
+  return r ? withPictures(project(inScope(db, [r], scope)[0], revealedIdSet(db, scope), loadMentionIndex(db), realmContext(db, scope), buildLexicon(db, scope), placeRealms(db)), playerImages(db)) : null;
 }
 
 export function playerSearch(db: DB, q: string, scope: RevealScope = null): PlayerEntity[] {

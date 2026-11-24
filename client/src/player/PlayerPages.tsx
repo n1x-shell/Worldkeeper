@@ -603,6 +603,29 @@ const slug = (s: string) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 
+/** A record's pictures for players: one shown large with its caption, the rest to choose from. */
+function EntryPictures({ images, name, url }: { images: { file: string; caption: string }[]; name: string; url: (file: string) => string }) {
+  const [at, setAt] = useState(0);
+  const shown = images[Math.min(at, images.length - 1)];
+  return (
+    <section className="panel elev-1 overflow-hidden" aria-label="Pictures">
+      <a href={url(shown.file)} target="_blank" rel="noreferrer" aria-label="Open the picture full size">
+        <img src={url(shown.file)} alt={shown.caption || name} className="w-full max-h-96 object-cover" loading="lazy" />
+      </a>
+      {shown.caption && <div className="px-3 py-2 text-xs text-dim">{shown.caption}</div>}
+      {images.length > 1 && (
+        <div className="grid grid-cols-4 gap-1 p-2">
+          {images.map((p, i) => (
+            <button key={p.file} type="button" onClick={() => setAt(i)} aria-label={p.caption || `Picture ${i + 1}`} aria-current={i === at}>
+              <img src={url(p.file)} alt="" className={`aspect-square w-full rounded object-cover ${i === at ? 'ring-2 ring-gold' : 'opacity-80'}`} loading="lazy" />
+            </button>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
 export function PlayerEntry() {
   const { id = '' } = useParams();
   const { source, base } = usePlayer();
@@ -708,6 +731,7 @@ export function PlayerEntry() {
           </div>
         </article>
         <aside className="space-y-4 min-w-0" aria-label="About this entry">
+          {!!data.images?.length && source.imageUrl && <EntryPictures key={data.id} images={data.images} name={data.name} url={source.imageUrl} />}
           <section className="parchment px-4 py-3.5 text-sm" aria-label="At a glance">
             <h2 className="font-display text-[11px] tracking-[0.2em] uppercase opacity-70 mb-2">At a glance</h2>
             <dl className="space-y-2">

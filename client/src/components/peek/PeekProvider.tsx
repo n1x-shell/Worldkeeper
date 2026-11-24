@@ -195,6 +195,7 @@ function HoverCard({ card, api: p, onEnter, onLeave, onDone }: { card: Card; api
         </div>
       ) : (
         <div className="space-y-2">
+          {d.image && <img src={`/api/uploads/${encodeURIComponent(d.image)}`} alt="" className="float-right ml-2 mb-1 h-16 w-16 rounded object-cover" />}
           <PeekBadges d={d} />
           <div className="font-display text-gold text-lg leading-tight">{d.name}</div>
           {d.summary && <Markdown text={d.summary} className="prose-peek text-[13px] leading-snug text-ink/90 line-clamp-5" />}

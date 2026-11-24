@@ -16,6 +16,8 @@ export interface PeekData {
   sections: { heading: string; content: string; secret: boolean }[];
   links: { id: string; name: string; label: string }[];
   hasStatBlock: boolean;
+  /** The record's picture, if it has one (a file in the library's uploads). */
+  image?: string | null;
 }
 
 export interface Pin {

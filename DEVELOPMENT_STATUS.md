@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.9.2_
+_Last updated: 2026-11-24 · v0.9.3_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,19 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.3: pictures on records
+
+The first step of `docs/BETA_PLAN.md` (B1). The owner's decision: the whole beta plan happens in v0.9.x releases, section B first.
+
+- **Data:** migration 34, `entity_images` (record, file, caption, `player_visible`, `sort_order`, `origin`, `removed`); the first by `sort_order` is the record's picture. Files are in the library's uploads folder, named `record-<id>-<random>`. In the backup table list, so it's in JSON exports, backups and full-world ZIPs. Deleting a record deletes its rows (cascade).
+- **Upgrade:** the `portrait` field of NPC and faction profiles is gone (`shared/profiles.ts`, and the `image` field type with it); on upgrade each profile's portrait becomes its record's first picture, GM only as it was (`onUpgrade`).
+- **API** (`server/src/routes/atlas.ts`, `server/src/repo/entityImages.ts`): `GET` and `POST /api/entities/:id/images` (field `image`; PNG, JPEG, WebP or GIF by content, 60 MB), `PATCH /api/entity-images/:id` (`caption`, `player_visible`, `main: true`), `DELETE /api/entity-images/:id` (the file goes too).
+- **GM app:** `RecordPictures` at the top of a record page's side column (add several at once, captions, "Players see it", "Make it the record's picture", remove, full-size view); the record's picture on hover cards and in the inspector (`peek.image`).
+- **Players:** a revealed record's ticked pictures on its handbook page (`PlayerEntity.images`). The table server's uploads allow-list sends a record picture only when it is ticked and its record isn't archived (`isPlayerRecordPicture`); the published handbook copies only those of records it shows. Pictures are per record, not per campaign: every group that knows the record sees its ticked pictures.
+- **Worldbooks:** shared in `pictures/` with `lore/pictures.json`; with players in mind, only ticked ones. Added once each (keyed by `origin`); one the GM removed keeps a `removed` row so an update doesn't bring it back.
+- **Not done:** pictures inside a record's text (the editor has no image syntax yet); thumbnails or resizing (the original file is served everywhere); per-campaign picture reveals.
+- **Tests:** `tests/pictures.test.ts`.
 
 ## v0.9.2: stat blocks in shared worldbooks
 

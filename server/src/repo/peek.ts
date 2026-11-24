@@ -8,6 +8,7 @@ import { listRelationshipsFor } from './relationships.js';
 import { splitSections } from '../import/parseMarkdown.js';
 import { isSecretHeading } from '../player/projection.js';
 import { statblockFor } from './statblocks.js';
+import { mainImage } from './entityImages.js';
 import { relationshipLabel } from '../../../shared/domain.js';
 
 const BLANK = /^(undefined|none|unknown|n\/a|-|—)?$/i;
@@ -57,5 +58,7 @@ export function peekEntity(db: DB, id: string) {
     sections,
     links,
     hasStatBlock: !!statblockFor(db, e.id),
+    /** The record's picture (its first), for the card's corner. */
+    image: mainImage(db, e.id),
   };
 }

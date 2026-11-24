@@ -56,8 +56,6 @@ function valueSchema(f: ProfileField) {
     case 'text':
     case 'stats':
       return z.string().max(50_000);
-    case 'image':
-      return z.string().regex(/^[\w.-]+\.(png|jpg|webp|gif)$/).max(200);
     case 'ref':
       return z.string().max(40);
     case 'refs':
