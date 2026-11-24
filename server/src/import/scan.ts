@@ -32,7 +32,11 @@ export function stripCommonRoot(files: SourceFile[]): SourceFile[] {
   return files;
 }
 
-export function readZip(buffer: Buffer): SourceFile[] {
+/**
+ * The Markdown files in a ZIP. `root`, when given, is the folder to strip (a part of a large archive strips the whole
+ * archive's root, so its paths come out as they would in one import); otherwise the shared root is found.
+ */
+export function readZip(buffer: Buffer, opts: { root?: string } = {}): SourceFile[] {
   const zip = new AdmZip(buffer);
   const out: SourceFile[] = [];
   let total = 0;
@@ -47,7 +51,8 @@ export function readZip(buffer: Buffer): SourceFile[] {
     if (out.length >= MAX_FILES) throw new Error('Archive contains too many files');
     out.push({ path: rel, content: entry.getData().toString('utf8') });
   }
-  return stripCommonRoot(out).sort((a, b) => a.path.localeCompare(b.path));
+  const stripped = opts.root === undefined ? stripCommonRoot(out) : out.map((f) => ({ ...f, path: opts.root && f.path.startsWith(opts.root) ? f.path.slice(opts.root.length) : f.path }));
+  return stripped.sort((a, b) => a.path.localeCompare(b.path));
 }
 
 export function readDirectory(dir: string): SourceFile[] {

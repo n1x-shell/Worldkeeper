@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.6.6_
+_Last updated: 2026-11-24 · v0.6.7_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,15 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.6.7: large imports
+
+- **`shared/zipParts.ts`** (runs in the browser on a `File`, read in slices, and in tests on a Buffer): `listZip` reads a ZIP's central directory (ZIP and ZIP64) without reading or unpacking any file; `measure`, `commonRoot` (the folder an import strips, as the server does); `planParts` splits the Markdown files into parts by size, keeping each top folder together where it fits (a compendium and its entries are read in one part) and putting the sidecar and any every-part files in each; `buildPart` writes a part as a ZIP by copying each file's local header and compressed bytes as they are (stored or deflated; nothing is recompressed).
+- **`server/src/import/largeImport.ts`:** `assessImport` says whether an archive is large: its text needs more than half of what the process can spare (an import holds the text about six times over; the budget is the smaller of free memory and the JavaScript heap's headroom; `WORLDKEEPER_IMPORT_BUDGET_MB` overrides it for tests), or it's past an import's limits (300 MB of text, 20,000 files, near the 300 MB upload). A file over 8 MB can't be imported at all. It also gives the part size.
+- **Routes:** `POST /api/import/check` (the listing's measures; with `paths` and `root` for a large one, also the setting it belongs to, `packForFiles` on the names, and the files every part needs, the setting's locator); `/import/preview` takes `root`, `part` and `pack` (so every part strips the same root and reads as the same setting); `/import/commit` takes `part` (one backup, before the first); `POST /api/import/relink` (links between records in different parts, `rebuildAllDerivedRelationships`). `readZip` takes an explicit root.
+- **Client:** Import and Export reads the listing first; a normal archive goes straight to its preview as before. A large one shows why and offers **Import in parts**; each part is built in the browser, previewed and confirmed (**Confirm part N and go on**, **Confirm the last part**, **Stop here**), then relinked.
+- **Checked on the Worldkeeper archive** (1,811 Markdown files, 4.7 MB): imported whole and in 2 and in 9 parts, the libraries are identical (879 records with their types, realms, text, canon and reveals; 3,591 links; 17 timeline rows; 1,811 source documents; 12 realms). The first try found two real differences, both fixed: a part not recognised as the setting (detection now uses the whole listing, and each part names the setting), and the setting's locator in one part only (now in every part).
+- **Tests:** `tests/largeImport.test.ts`: listing and parts (a stored and a deflated file, a picture left out, every file intact); the check silent for a normal archive and offering parts when the budget is small or limits are passed; a fixture archive imported in parts through the API with the same records and links as whole, one backup, a run per part; the check endpoint. A browser run of the real archive: a normal server goes straight to preview; a small-budget one offers parts and imports them.
 
 ## v0.6.6: undo for faction plans and campaign changes
 
@@ -545,7 +554,7 @@ The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are n
 - The QR codes come from a small encoder in the app (`shared/qr.ts`), checked against the standard's worked example and a reader in the tests; scan one with a phone before relying on it at the table.
 - A library's backups hold its own database and pictures, not `shared/`; **Back up everything** holds both.
 
-- Import keeps the whole archive in memory during preview (fine for this ~2.4 MB library; large image-heavy archives are not supported because only `.md` files are read).
+- A Markdown import reads only `.md` files (pictures in an archive aren't imported; a full-world ZIP brings them). A large archive is imported in parts (v0.6.7); a single file over 8 MB can't be imported.
 - The dashboard shows the active campaign's date; with no campaign it shows the world date from Settings, which is free text.
 
 ## Tests performed
@@ -586,7 +595,7 @@ The queue agreed with the owner, one PR each:
 
 1. ~~**v0.6.5, Node.js LTS**~~ (done: Node.js 26).
 2. ~~**v0.6.6, undo**~~ (done).
-3. **v0.6.7, large imports:** read a ZIP's listing first (sizes are known before anything is unpacked) and warn only when an archive is large for this computer's free memory; then offer to import it in parts (the text records, then the pictures in batches), each previewed and confirmed.
+3. ~~**v0.6.7, large imports**~~ (done).
 
 After that, candidates (not yet agreed):
 

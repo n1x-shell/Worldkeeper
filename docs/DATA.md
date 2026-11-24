@@ -30,7 +30,11 @@ GitHub publishing credentials are held separately in `shared/secrets.json` in th
 
 ## Importing Markdown lore
 
-In **Library (the gear, top right) → Import and Export**, select a ZIP archive, preview changes, and confirm only after examining the report. The importer understands:
+In **Library (the gear, top right) → Import and Export**, select a ZIP archive, preview changes, and confirm only after examining the report.
+
+**Large archives:** before uploading, the app reads the ZIP's listing (from the end of the file; nothing is unpacked) and checks whether its text is too much to import in one go on this computer, or past an import's limits (300 MB of text, 20,000 files). Only then does it say so, and offer to **import it in parts**: the browser builds each part from the archive's own compressed bytes, so neither it nor the app holds the whole archive. Files stay with their folder, every part is read as the same setting and carries what all parts need (a setting's locator, a Worldkeeper export's realms and reveals), each part is previewed and confirmed like any import, one backup is made before the first, and the links between records in different parts are made after the last. The result is the same library as one import (checked on the Worldkeeper archive: records, links, timeline, source documents and realms identical). A single file over 8 MB can't be imported either way.
+
+The importer understands:
 
 - Record metadata including `ID`, `Name`, aliases, category, parent, realm/continent, canon status, source and tags.
 - Multiple records in one Markdown file.
