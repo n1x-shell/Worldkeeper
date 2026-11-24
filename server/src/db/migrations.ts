@@ -1060,6 +1060,20 @@ ALTER TABLE campaigns ADD COLUMN handbook_code TEXT;
 CREATE UNIQUE INDEX campaigns_handbook_code ON campaigns(handbook_code) WHERE handbook_code IS NOT NULL;
 `,
   },
+  {
+    version: 30,
+    name: "each library's own switches for the shared books' rules",
+    // Your books' rules move to shared/rules.db, imported once for every library (docs/LIBRARIES_PLAN.md §3.3); each
+    // library keeps whether it uses a pack, and whether it publishes it. Filled, and the old tables emptied, when the
+    // library opens (repo/sharedRules.ts adoptSharedRules).
+    sql: `
+CREATE TABLE rules_pack_switches (
+  pack_id TEXT PRIMARY KEY,
+  enabled INTEGER NOT NULL DEFAULT 1,
+  publish INTEGER NOT NULL DEFAULT 0
+);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

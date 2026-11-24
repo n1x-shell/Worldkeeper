@@ -9,11 +9,11 @@ The character sheet and the character builder draw on **rules packs**: spells, s
   So treasure, encounters, stat blocks and item rules work with no books imported. The SRD's text and numbers are read from the SRD itself (`scripts/srd/`).
 - Anything else, such as material from your own books or your homebrew, comes in as a pack you import. Import it in **Settings → Rules packs**.
 
-Packs are for your own table. They are stored in your library's database, and so are in your backups, but nowhere else:
+Packs are for your own table. They are stored once for all your libraries, in the data folder's `shared/rules.db`, and nowhere else. Each library keeps its own switches: whether it uses a pack, and whether it publishes it (a library that hasn't chosen uses a pack, as a newly imported one is). **Remove** takes a pack out of every library; to stop using it in one, untick it there. A library's backups don't include the packs (they're in `shared/`): keep your source books, or back up the data folder, to bring them back. Packs are:
 
-- they are not in the app's repository or its releases;
-- they never appear in the published handbook, the player export, a campaign export or the JSON export;
-- the GM app and your table server use them, so your players get them in their sheets and the builder at the table.
+- not in the app's repository or its releases;
+- never in the published handbook, the player export, a campaign export or the JSON export;
+- used by the GM app and your table server, so your players get them in their sheets and the builder at the table.
 
 Keep pack files in a `rules-packs/` folder, or name them `…-rules-pack.zip`. The repository's `.gitignore` keeps both out of git.
 

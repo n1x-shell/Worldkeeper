@@ -55,11 +55,11 @@ describe('libraries in one data folder', () => {
     expect(idx.libraries[0].name).toBe('The Ashen Coast');
     expect(idx.moving).toBeUndefined();
     const dir = path.join(root, 'libraries', idx.open);
-    // Its files moved; what libraries share stayed.
+    // Its files moved; what libraries share went to shared/.
     for (const f of ['worldkeeper.db', 'uploads', 'backups', 'staging']) expect(fs.existsSync(path.join(root, f))).toBe(false);
     expect(fs.readFileSync(path.join(dir, 'uploads', 'map.png'), 'utf8')).toBe('png');
-    expect(fs.existsSync(path.join(root, 'packs'))).toBe(true);
-    expect(fs.existsSync(path.join(root, 'secrets.json'))).toBe(true);
+    expect(fs.existsSync(path.join(root, 'shared', 'packs'))).toBe(true);
+    expect(fs.existsSync(path.join(root, 'shared', 'secrets.json'))).toBe(true);
     // Its records and settings, as they were.
     const gm = createApp(ctx);
     expect(((await request(gm).get('/api/entities')).body as { name: string }[]).map((e) => e.name).sort()).toEqual(['Ashford', 'Harrowgate']);

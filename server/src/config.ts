@@ -12,6 +12,8 @@ import { createBackup } from './backup/backup.js';
 export interface Paths {
   /** The data folder: the library root. */
   rootDir: string;
+  /** What every library shares: the books' rules (rules.db), installed setting packs (packs/), the publishing token. */
+  sharedDir: string;
   /** The open library's id. */
   libraryId: string;
   /** The open library's own folder. */
@@ -29,6 +31,7 @@ export function libraryPaths(rootDir: string, e: LibraryEntry): Paths {
   const dir = libraryDir(rootDir, e);
   const p: Paths = {
     rootDir,
+    sharedDir: path.join(rootDir, 'shared'),
     libraryId: e.id,
     dataDir: dir,
     dbFile: path.join(dir, 'worldkeeper.db'),
@@ -36,7 +39,7 @@ export function libraryPaths(rootDir: string, e: LibraryEntry): Paths {
     uploadsDir: path.join(dir, 'uploads'),
     stagingDir: path.join(dir, 'staging'),
   };
-  for (const d of [p.dataDir, p.backupsDir, p.uploadsDir, p.stagingDir]) fs.mkdirSync(d, { recursive: true });
+  for (const d of [p.sharedDir, p.dataDir, p.backupsDir, p.uploadsDir, p.stagingDir]) fs.mkdirSync(d, { recursive: true });
   return p;
 }
 
@@ -50,7 +53,7 @@ function backupOldInstallation(dbFile: string, backupsDir: string, uploadsDir: s
   fs.mkdirSync(stagingDir, { recursive: true });
   const db = new Database(dbFile, { fileMustExist: true });
   try {
-    createBackup(db, { rootDir: root, libraryId: '', dataDir: root, dbFile, backupsDir, uploadsDir, stagingDir }, 'before-libraries');
+    createBackup(db, { rootDir: root, sharedDir: path.join(root, 'shared'), libraryId: '', dataDir: root, dbFile, backupsDir, uploadsDir, stagingDir }, 'before-libraries');
   } finally {
     db.close();
   }

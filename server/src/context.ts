@@ -12,6 +12,7 @@ import { syncInstalledPacks } from './packs/registry.js';
 import { adoptCampaignDates, adoptSessionDates, adoptTimelineDates } from './repo/calendars.js';
 import { adoptTableBands } from './repo/tables.js';
 import { adoptHandbookCodes } from './repo/handbookCodes.js';
+import { adoptSharedRules, attachSharedRules } from './repo/sharedRules.js';
 
 /** Holds the live database handle so a restore can swap it without restarting the server. */
 export class AppContext {
@@ -21,13 +22,16 @@ export class AppContext {
     public mode: 'dm' | 'player' = 'dm',
   ) {
     // Installed setting packs are shared by every library in the data folder.
-    setInstalledPacksDir(path.join(paths.rootDir, 'packs'));
+    setInstalledPacksDir(path.join(paths.sharedDir, 'packs'));
     this.db = this.open();
   }
 
   /** Open the library's database and bring it up to date (types, templates, packs, and what older versions lacked). */
   private open(): DB {
     const db = openDatabase(this.paths.dbFile);
+    // The books' rules every library shares; rules this library kept itself (from before) move there.
+    attachSharedRules(db, path.join(this.paths.sharedDir, 'rules.db'));
+    adoptSharedRules(db);
     syncBuiltinTypes(db);
     syncBuiltinTemplates(db);
     syncInstalledPacks(db);

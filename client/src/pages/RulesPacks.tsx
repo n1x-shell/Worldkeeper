@@ -51,8 +51,9 @@ export function RulesPacksPanel() {
       <p className="text-sm text-dim">
         The rules the character sheets and the builder use: spells, species, class and subclass features, backgrounds and feats. Packs from your books also bring creatures (in Your Books, the
         encounter tracker and NPC cards; only you see them) and items (their rules show in treasure and on sheets). Import a pack made from your own books, or your homebrew, as a zip of Markdown
-        files. Packs stay in this library: they reach your sheets and your table server, never a player export or a campaign export, and never the published handbook unless a pack is openly licensed
-        (CC BY, OGL, CC0, ORC) and you choose Publish to players. Where packs overlap, the newest wins, and any pack wins over the SRD.
+        files. A pack is imported once for all your libraries; each library chooses whether it uses a pack, and whether it publishes it. Packs reach your sheets and your table server, never a player
+        export or a campaign export, and never the published handbook unless a pack is openly licensed (CC BY, OGL, CC0, ORC) and you choose Publish to players. Where packs overlap, the newest wins,
+        and any pack wins over the SRD.
       </p>
       <ul className="divide-y divide-line/60">
         {(data ?? []).map((p) => (
@@ -93,7 +94,13 @@ export function RulesPacksPanel() {
                 className="btn-ghost"
                 aria-label={`Remove ${p.name}`}
                 onClick={async () => {
-                  if (await ask({ body: `Remove ${p.name}? Sheets keep what was already filled in from it.`, danger: true, confirmLabel: 'Remove' }))
+                  if (
+                    await ask({
+                      body: `Remove ${p.name} from all your libraries? To stop using it here only, untick it instead. Sheets keep what was already filled in from it.`,
+                      danger: true,
+                      confirmLabel: 'Remove',
+                    })
+                  )
                     changed(await api.del<Pack[]>(`/api/rules/packs/${encodeURIComponent(p.id)}`));
                 }}
               >

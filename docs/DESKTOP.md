@@ -30,7 +30,7 @@ The Worldkeeper (Tauri window)
 
 That folder contains:
 - `libraries.json` and `libraries/`: your libraries, each with its own `worldkeeper.db`, `uploads/` and `backups/` (see [DATA.md](DATA.md))
-- `packs/` and `secrets.json`, shared by every library
+- `shared/`: your books' rules (`rules.db`), installed setting packs (`packs/`) and the publishing token (`secrets.json`), shared by every library
 - `logs/server.log`
 
 To keep your data somewhere else, such as a synced folder, start the app with `WORLDKEEPER_DATA_DIR` set.

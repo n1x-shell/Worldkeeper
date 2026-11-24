@@ -8,6 +8,7 @@
  * published handbook, the player export or a campaign export. Where packs disagree, the most recently imported
  * enabled pack wins, and any imported pack wins over the SRD.
  */
+import { removeRulesPack, saveRulesPack, setPackSwitch, sharedPackExists } from './sharedRules.js';
 import AdmZip from 'adm-zip';
 import type Database from 'better-sqlite3';
 import { badRequest, notFound } from '../lib/errors.js';
@@ -175,15 +176,7 @@ export function readPack(buf: Buffer) {
 export function importPack(db: DB, buf: Buffer) {
   const p = readPack(buf);
   if (p.id === 'srd') throw badRequest('That name is taken by the built-in SRD.');
-  db.transaction(() => {
-    db.prepare('DELETE FROM rules_entries WHERE pack_id = ?').run(p.id);
-    db.prepare(
-      `INSERT INTO rules_packs (id, name, source, enabled, imported_at) VALUES (?, ?, ?, 1, ?)
-       ON CONFLICT(id) DO UPDATE SET name = excluded.name, source = excluded.source, imported_at = excluded.imported_at`,
-    ).run(p.id, p.name, p.source, new Date().toISOString());
-    const ins = db.prepare('INSERT OR REPLACE INTO rules_entries (pack_id, kind, name, cls, data) VALUES (?, ?, ?, ?, ?)');
-    for (const e of p.entries) ins.run(p.id, e.kind, e.name, e.cls, JSON.stringify(e.data));
-  })();
+  saveRulesPack(db, p, p.entries);
   return { pack: listPacks(db).find((x) => x.id === p.id)!, problems: p.problems };
 }
 
@@ -231,7 +224,8 @@ export function listPacks(db: DB): PackSummary[] {
 export function setPackEnabled(db: DB, id: string, enabled: boolean) {
   if (id === 'srd') db.prepare(`INSERT INTO settings (key, value) VALUES ('rules_srd', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`).run(enabled ? 'on' : 'off');
   else if (id === SETTING_PACK.id) setSettingPack(db, enabled);
-  else if (!db.prepare('UPDATE rules_packs SET enabled = ? WHERE id = ?').run(enabled ? 1 : 0, id).changes) throw notFound('Rules pack');
+  else if (!sharedPackExists(db, id)) throw notFound('Rules pack');
+  else setPackSwitch(db, id, { enabled });
   return listPacks(db);
 }
 
@@ -240,7 +234,7 @@ export function setPackPublished(db: DB, id: string, publish: boolean) {
   const r = db.prepare('SELECT source FROM rules_packs WHERE id = ?').get(id) as { source: string } | undefined;
   if (!r) throw notFound('Rules pack');
   if (publish && !isOpenSource(r.source)) throw badRequest('Only openly licensed rules (CC BY, OGL, CC0, ORC) can be published to players.');
-  db.prepare('UPDATE rules_packs SET publish = ? WHERE id = ?').run(publish ? 1 : 0, id);
+  setPackSwitch(db, id, { publish });
   return listPacks(db);
 }
 
@@ -263,8 +257,8 @@ export function publishedRuleEntries(db: DB): { kind: RuleKind; name: string; cl
 
 export function deletePack(db: DB, id: string) {
   if (id === 'srd' || id === SETTING_PACK.id) throw badRequest('This pack is built in: turn it off instead.');
-  if (!db.prepare('DELETE FROM rules_packs WHERE id = ?').run(id).changes) throw notFound('Rules pack');
-  db.prepare('DELETE FROM rules_entries WHERE pack_id = ?').run(id);
+  // The pack's rules are shared: removing it removes it from every library.
+  if (!removeRulesPack(db, id)) throw notFound('Rules pack');
   return listPacks(db);
 }
 
