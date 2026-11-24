@@ -13,6 +13,7 @@ import { syncBuiltinTypes } from '../server/src/repo/recordTypes.js';
 import { createEntity } from '../server/src/repo/entities.js';
 import { readIndex, writeIndex } from '../server/src/libraries.js';
 import { createBackup, listBackups } from '../server/src/backup/backup.js';
+import { exportFullWorldZip } from '../server/src/backup/exporter.js';
 import { tempContext } from './helpers.js';
 
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'wk-test-'));
@@ -141,5 +142,73 @@ describe('libraries in one data folder', () => {
     const ctx = tempContext();
     const table = createApp(new AppContext(ctx.paths, 'player'));
     expect((await request(table).get('/api/libraries')).status).toBe(404);
+  });
+
+  it('duplicates, archives and restores libraries, and opens one from a full-world ZIP', async () => {
+    const ctx = tempContext();
+    const gm = createApp(ctx);
+    const first = ctx.paths.libraryId;
+    await request(gm).post('/api/entities').send({ name: 'Harrowgate', type: 'settlement', realm: 'world', body: '' });
+    fs.writeFileSync(path.join(ctx.paths.uploadsDir, 'map.png'), 'png');
+    const names = async () => ((await request(gm).get('/api/entities')).body as { name: string }[]).map((e) => e.name);
+
+    // Duplicate the open library: its records and pictures, as a new library (not opened).
+    let r = (await request(gm).post(`/api/libraries/${first}/duplicate`).send({})).body;
+    const copy = r.library.id;
+    expect(r.open).toBe(first);
+    expect(r.libraries.find((l: { id: string }) => l.id === copy)).toMatchObject({ name: 'My library (copy)', records: 1 });
+    await request(gm).post('/api/entities').send({ name: 'Ashford', type: 'settlement', realm: 'world', body: '' });
+    await request(gm).post(`/api/libraries/${copy}/open`);
+    expect(await names()).toEqual(['Harrowgate']);
+    expect(fs.readFileSync(path.join(ctx.paths.uploadsDir, 'map.png'), 'utf8')).toBe('png');
+    // And a library that isn't open.
+    r = (await request(gm).post(`/api/libraries/${first}/duplicate`).send({ name: 'Second copy' })).body;
+    expect(r.libraries.find((l: { name: string }) => l.name === 'Second copy').records).toBe(2);
+
+    // Archive: not the open one; hidden from the list, files kept; restore brings it back.
+    expect((await request(gm).post(`/api/libraries/${copy}/archive`).send({ archived: true })).status).toBe(400);
+    await request(gm).post(`/api/libraries/${first}/open`);
+    r = (await request(gm).post(`/api/libraries/${copy}/archive`).send({ archived: true })).body;
+    expect(r.libraries.find((l: { id: string }) => l.id === copy).archived).toBe(true);
+    expect(((await request(gm).get('/api/libraries')).body.libraries as { id: string }[]).some((l) => l.id === copy)).toBe(false);
+    expect(fs.existsSync(path.join(ctx.paths.rootDir, 'libraries', copy, 'worldkeeper.db'))).toBe(true);
+    expect((await request(gm).post(`/api/libraries/${copy}/open`)).status).toBe(400);
+    await request(gm).post(`/api/libraries/${copy}/archive`).send({ archived: false });
+    expect(((await request(gm).get('/api/libraries')).body.libraries as { id: string }[]).some((l) => l.id === copy)).toBe(true);
+
+    // Open a library from a file: a full-world ZIP becomes a new library, opened, with its records and pictures.
+    const zip = exportFullWorldZip(ctx.db, ctx.paths);
+    r = (await request(gm).post('/api/libraries/import').field('name', 'From a friend').attach('file', zip, 'world.zip')).body;
+    expect(r.open).toBe(r.library.id);
+    expect((await names()).sort()).toEqual(['Ashford', 'Harrowgate']);
+    expect(fs.existsSync(path.join(ctx.paths.uploadsDir, 'map.png'))).toBe(true);
+    expect((await request(gm).get('/api/setup')).body.needed).toBe(false);
+    // A file that isn't one leaves things as they were, with no half-made library.
+    const shape = (b: { open: string; libraries: { id: string; name: string }[] }) => ({ open: b.open, ids: b.libraries.map((l) => `${l.id}:${l.name}`) });
+    const before = shape((await request(gm).get('/api/libraries')).body);
+    expect((await request(gm).post('/api/libraries/import').attach('file', Buffer.from('PKnope'), 'bad.zip')).status).toBe(400);
+    expect((await request(gm).post('/api/libraries/import').attach('file', Buffer.from('hello'), 'bad.zip')).status).toBe(400);
+    expect(shape((await request(gm).get('/api/libraries')).body)).toEqual(before);
+    expect(fs.readdirSync(path.join(ctx.paths.rootDir, 'libraries'))).toHaveLength(before.ids.length); // no folder left behind
+    // Showing a folder is for the desktop app.
+    expect((await request(gm).post(`/api/libraries/${first}/show`)).status).toBe(400);
+  });
+
+  it('restores a backup in one library without touching another', async () => {
+    const ctx = tempContext();
+    const gm = createApp(ctx);
+    const names = async () => ((await request(gm).get('/api/entities')).body as { name: string }[]).map((e) => e.name).sort();
+    await request(gm).post('/api/entities').send({ name: 'Harrowgate', type: 'settlement', realm: 'world', body: '' });
+    const backup = createBackup(ctx.db, ctx.paths, 'manual').file;
+    await request(gm).post('/api/entities').send({ name: 'Ashford', type: 'settlement', realm: 'world', body: '' });
+    const first = ctx.paths.libraryId;
+    await request(gm).post('/api/libraries').send({ name: 'Other', open: true });
+    await request(gm).post('/api/entities').send({ name: 'Coldwater', type: 'settlement', realm: 'world', body: '' });
+    await request(gm).post(`/api/libraries/${first}/open`);
+    expect((await request(gm).post(`/api/backups/${backup}/restore`)).status).toBe(200);
+    expect(await names()).toEqual(['Harrowgate']);
+    const other = (await request(gm).get('/api/libraries')).body.libraries.find((l: { name: string }) => l.name === 'Other').id;
+    await request(gm).post(`/api/libraries/${other}/open`);
+    expect(await names()).toEqual(['Coldwater']);
   });
 });

@@ -24,3 +24,12 @@ export function openInBrowser(raw: string, run: typeof spawn = spawn) {
   child.unref();
   return { opened: href };
 }
+
+/** Show a folder in the system's file manager (desktop app only; the folder is the app's own, never one asked for). */
+export function openFolder(dir: string, run: typeof spawn = spawn) {
+  const [cmd, args] = process.platform === 'win32' ? ['explorer', [dir]] : process.platform === 'darwin' ? ['open', [dir]] : ['xdg-open', [dir]];
+  const child = run(cmd, args as string[], { detached: true, stdio: 'ignore', windowsHide: true });
+  child.on('error', () => undefined);
+  child.unref();
+  return { opened: dir };
+}

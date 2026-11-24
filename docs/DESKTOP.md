@@ -20,6 +20,10 @@ The Worldkeeper (Tauri window)
 - No Tauri commands are exposed to the page, so the page has no native access beyond a normal browser tab.
 - Everything works offline. Nothing is sent anywhere.
 
+### Libraries
+
+The app opens the library you used last. With more than one, its start shows them to pick from, the last opened first (once per window). Switch any time from the Library menu (the gear), and manage them in **Library → Libraries**, where **Show in folder** opens a library's folder.
+
 ### Where your data lives
 
 | OS | Folder |

@@ -260,6 +260,7 @@ export const LIBRARY: Group = {
     { to: '/consistency', label: 'Consistency Check', icon: ListChecks },
     { to: '/open-questions', label: 'Open Questions', icon: CircleHelp },
     { to: '/history', label: 'Change History', icon: History },
+    { to: '/libraries', label: 'Libraries', icon: Library },
     { to: '/backups', label: 'Backups', icon: Archive },
     { to: '/settings', label: 'Settings', icon: Settings },
     { to: '/broken', label: 'Broken References', icon: FileWarning },

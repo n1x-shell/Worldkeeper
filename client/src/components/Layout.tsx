@@ -9,6 +9,7 @@ import { moduleForPage } from '../../../shared/modules';
 import { usePacks } from '../lib/packs';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { LibraryMenuSection } from './Libraries';
 import { BookMarked, Check, ChevronDown, ChevronsLeft, ChevronsRight, Compass, Eye, Map as MapIcon, MapPinned, Menu, Moon, Plus, Search, Settings, Sun, X } from 'lucide-react';
 import { newMenu } from '@shared/newRecord';
 import { useRecordTypes } from './recordTypes';
@@ -407,6 +408,7 @@ export function Layout() {
             <Dropdown label="Library" align="right" active={ws === 'library'} button={<Settings size={16} />}>
               {(close) => (
                 <>
+                  <LibraryMenuSection close={close} onManage={() => nav('/libraries')} itemClass={menuItem} />
                   <div className="px-3 pt-1.5 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim">Library</div>
                   {LIBRARY.items.filter(visible).map((it) => (
                     <button

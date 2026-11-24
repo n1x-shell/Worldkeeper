@@ -1,3 +1,4 @@
+import { LibraryPicker } from './components/Libraries';
 import { lazy, Suspense, type ComponentType } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppStateProvider } from './lib/store';
@@ -63,6 +64,7 @@ const TrackerPage = page(() => import('./pages/DmTools'), 'TrackerPage');
 const WorldEventsPage = page(() => import('./pages/DmTools'), 'WorldEventsPage');
 const QuickReferencePage = page(() => import('./pages/QuickReference'), 'QuickReferencePage');
 const BackupsPage = page(() => import('./pages/Library'), 'BackupsPage');
+const LibrariesPage = page(() => import('./pages/Libraries'), 'LibrariesPage');
 const BrokenPage = page(() => import('./pages/Library'), 'BrokenPage');
 const ConsistencyPage = page(() => import('./pages/Library'), 'ConsistencyPage');
 const HistoryPage = page(() => import('./pages/Library'), 'HistoryPage');
@@ -110,9 +112,11 @@ export function App() {
         />
         <Route
           element={
-            <AppStateProvider>
-              <Layout />
-            </AppStateProvider>
+            <LibraryPicker>
+              <AppStateProvider>
+                <Layout />
+              </AppStateProvider>
+            </LibraryPicker>
           }
         >
           <Route
@@ -640,6 +644,14 @@ export function App() {
             element={
               <Page>
                 <BackupsPage />
+              </Page>
+            }
+          />
+          <Route
+            path="libraries"
+            element={
+              <Page>
+                <LibrariesPage />
               </Page>
             }
           />
