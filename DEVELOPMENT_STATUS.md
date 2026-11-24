@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.7.2_
+_Last updated: 2026-11-24 · v0.7.3_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,17 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.7.3: Books only
+
+Step W3a of [docs/WORLDBOOKS_PLAN.md](docs/WORLDBOOKS_PLAN.md) (W3 is now three PRs: Books only; sharing and adding `.worldbook` files; the books checks and safe mode).
+
+- **`server/src/repo/booksOnly.ts`:** the library setting `rules_books_only` (`{ "keep": [kinds] }`, absent when off). `openRulesFor(db, kind)`: whether the open rules (the built-in SRD, packs whose source names an open licence) count for a kind. A filter, not a change to the pack switches: turning it off puts everything back. A worldbook's own rules (the Worldkeeper rules pack) are the world's and stay on.
+- **Where it applies:** `rulesView` (sheets and builder: the SRD's spells, species, feats, backgrounds, classes and subclasses, and open packs' entries, by kind) and `bookData` entries (creatures and items, for stat blocks, encounters and treasure). The published handbook is unchanged (books never reach it).
+- **The gaps check** (`checkBooksOnly`): the books in use (closed packs that are on), what they hold and what the open rules in use hold, by kind; a gap is a kind the open rules have and the books don't. Turning it on keeps the open rules for the gaps unless the call names `keep`. It needs at least one book in use.
+- **API:** `GET /api/rules/books-only` (state and check), `PUT /api/rules/books-only` `{ on, keep? }`.
+- **Settings → Rules packs → Books only:** the switch; turning it on with gaps says what the books lack first ("Your books have no classes… kept for those alone"); while on, it names the books and what's kept.
+- **Tests:** `tests/booksOnly.test.ts` (needs books, an open pack isn't one, the gaps, what's set aside and kept, nothing kept, the switches unchanged, everything back when off).
 
 ## v0.7.2: the Worldkeeper worldbook, complete
 
