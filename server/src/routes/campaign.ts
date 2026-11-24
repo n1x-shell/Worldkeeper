@@ -73,6 +73,7 @@ import { bookCounts, bookCreature, bookTreasure, bookCreatureIndex, bookCreature
 import { characterPage, renewCharacterCode, updateCharacterPage } from '../repo/characterPages.js';
 import { handbookCode, renewHandbookCode } from '../repo/handbookCodes.js';
 import { tableStatus } from '../table.js';
+import { recentActions, undoAction, undoable } from '../repo/undo.js';
 import { addressesOnly } from './player.js';
 
 /** Where players reach the table server: this computer's network addresses, the port, and whether it's open. */
@@ -293,23 +294,87 @@ export function campaignRoutes(ctx: AppContext) {
   mountCrud(r, ctx, '/sessions', sessions, ['campaign_id', 'status']);
   mountCrud(r, ctx, '/session-log', sessionLog, ['session_id', 'kind']);
 
+  // Every change to campaign state and faction plans is one undo step (repo/undo.ts); GETs come from mountCrud below.
+  type StateRow = { campaign_id: number; field: string; value: string };
+  type PlanRow = { campaign_id: number | null; title: string };
+  const stateRow = (id: number) => campaignState.get(ctx.db, id) as StateRow;
+  const planRow = (id: number) => factionPlans.get(ctx.db, id) as PlanRow;
   r.post(
     '/campaign-state',
-    h((req) => recordState(ctx.db, req.body)),
+    h((req) => {
+      const b = (req.body ?? {}) as Partial<StateRow> & { status?: string };
+      const verb = b.status === 'proposed' ? 'Proposed' : 'Recorded';
+      return undoable(ctx.db, `${verb} ${b.field ?? 'a change'} → ${b.value ?? ''}`, b.campaign_id, () => recordState(ctx.db, req.body));
+    }),
   );
   r.post(
     '/campaign-state/:id/decide',
-    h((req) => decideState(ctx.db, intParam(req.params.id), !!req.body?.accept)),
+    h((req) => {
+      const s = stateRow(intParam(req.params.id));
+      return undoable(ctx.db, `${req.body?.accept ? 'Accepted' : 'Rejected'} ${s.field} → ${s.value}`, s.campaign_id, () => decideState(ctx.db, intParam(req.params.id), !!req.body?.accept));
+    }),
   );
   r.post(
     '/campaign-state/:id/promote',
     h((req) => ({ proposalId: proposePromotion(ctx.db, intParam(req.params.id), String(req.body?.reason ?? '')) })),
   );
+  r.patch(
+    '/campaign-state/:id',
+    h((req) => {
+      const s = stateRow(intParam(req.params.id));
+      return undoable(ctx.db, `Edited ${s.field}`, s.campaign_id, () => campaignState.update(ctx.db, intParam(req.params.id), req.body));
+    }),
+  );
+  r.delete(
+    '/campaign-state/:id',
+    h((req) => {
+      const s = stateRow(intParam(req.params.id));
+      undoable(ctx.db, `Deleted ${s.field} → ${s.value}`, s.campaign_id, () => campaignState.remove(ctx.db, intParam(req.params.id)));
+      return { ok: true };
+    }),
+  );
   mountCrud(r, ctx, '/campaign-state', campaignState, ['campaign_id', 'entity_id', 'session_id', 'status']);
 
   r.post(
     '/faction-plans/:id/advance',
-    h((req) => advancePlan(ctx.db, intParam(req.params.id), Number(req.body?.delta ?? 1), String(req.body?.reason ?? ''))),
+    h((req) => {
+      const p = planRow(intParam(req.params.id));
+      const delta = Number(req.body?.delta ?? 1);
+      return undoable(ctx.db, `${delta >= 0 ? 'Advanced' : 'Set back'} “${p.title}” by ${Math.abs(delta)}`, p.campaign_id, () =>
+        advancePlan(ctx.db, intParam(req.params.id), delta, String(req.body?.reason ?? '')),
+      );
+    }),
+  );
+  r.post(
+    '/faction-plans',
+    h((req) => {
+      const b = (req.body ?? {}) as Partial<PlanRow>;
+      return undoable(ctx.db, `Added the plan “${b.title ?? ''}”`, b.campaign_id, () => factionPlans.create(ctx.db, req.body));
+    }),
+  );
+  r.patch(
+    '/faction-plans/:id',
+    h((req) => {
+      const p = planRow(intParam(req.params.id));
+      return undoable(ctx.db, `Edited the plan “${p.title}”`, p.campaign_id, () => factionPlans.update(ctx.db, intParam(req.params.id), req.body));
+    }),
+  );
+  r.delete(
+    '/faction-plans/:id',
+    h((req) => {
+      const p = planRow(intParam(req.params.id));
+      undoable(ctx.db, `Deleted the plan “${p.title}”`, p.campaign_id, () => factionPlans.remove(ctx.db, intParam(req.params.id)));
+      return { ok: true };
+    }),
+  );
+  // The recent changes to plans and campaign state that can be undone, and undoing one.
+  r.get(
+    '/undo',
+    h((req) => recentActions(ctx.db, req.query.campaign_id ? Number(req.query.campaign_id) : getActiveCampaignId(ctx.db))),
+  );
+  r.post(
+    '/undo/:id',
+    h((req) => undoAction(ctx.db, intParam(req.params.id))),
   );
   mountCrud(r, ctx, '/faction-plans', factionPlans, ['campaign_id', 'faction_id', 'status']);
   // Rumours (GM only; never part of player data).

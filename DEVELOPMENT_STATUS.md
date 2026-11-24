@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.6.5_
+_Last updated: 2026-11-24 · v0.6.6_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,15 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.6.6: undo for faction plans and campaign changes
+
+- **Migration 31:** `undo_actions` (label, campaign, when, undone), `undo_rows` (each row's before and after as JSON, by action) and `undo_recording` (a switch). `server/src/repo/undo.ts` makes triggers on `faction_plans` and `campaign_state` when a library opens (`ensureUndoTriggers`, from the tables' current columns); they record only while an action runs.
+- **One action, one step:** `undoable(db, label, campaign, fn)` runs a GM action in one transaction and collects what it changed, however many rows: recording a value (which supersedes the old one), accepting or rejecting a proposed change, advancing a plan (and the change it logs), adding, editing or deleting either. The same edit again within two minutes joins the step before (a plan autosaves while you type). The last 200 steps are kept. Writes outside an action (imports, restores, campaign deletion) record nothing.
+- **Undo** (`undoAction`) puts every row the step touched back as it was before it (re-adding deleted rows with their ids), and refuses (409) if any has changed since: undo the later change first. `GET /api/undo` lists the recent steps for a campaign with whether each can be undone; `POST /api/undo/:id`.
+- **Client:** **Recent changes** with **Undo** (`client/src/components/RecentChanges.tsx`) on Faction Agendas and on the campaign's world changes card.
+- **Not exported:** the undo tables are about this computer's recent clicks, not the world (listed in the exports coverage test).
+- **Tests:** `tests/undo.test.ts`: recording and the superseded value coming back; advancing a plan with its logged change; editing, deleting (re-added with its id) and adding; refusing over a later change, then allowing it; accepting a proposed change; nothing recorded outside an action; joined autosave edits; no undo on the table server. A browser check on both pages.
 
 ## v0.6.5: Node.js LTS
 
@@ -537,7 +546,6 @@ The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are n
 - A library's backups hold its own database and pictures, not `shared/`; **Back up everything** holds both.
 
 - Import keeps the whole archive in memory during preview (fine for this ~2.4 MB library; large image-heavy archives are not supported because only `.md` files are read).
-- `faction_plans`/`campaign_state` have no undo beyond editing/rejecting rows.
 - The dashboard shows the active campaign's date; with no campaign it shows the world date from Settings, which is free text.
 
 ## Tests performed
@@ -577,7 +585,7 @@ The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are n
 The queue agreed with the owner, one PR each:
 
 1. ~~**v0.6.5, Node.js LTS**~~ (done: Node.js 26).
-2. **v0.6.6, undo:** faction plans and campaign-state changes get a history, so a change can be undone in one click, like records.
+2. ~~**v0.6.6, undo**~~ (done).
 3. **v0.6.7, large imports:** read a ZIP's listing first (sizes are known before anything is unpacked) and warn only when an archive is large for this computer's free memory; then offer to import it in parts (the text records, then the pictures in batches), each previewed and confirmed.
 
 After that, candidates (not yet agreed):

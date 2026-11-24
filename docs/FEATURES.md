@@ -157,6 +157,8 @@ The handbook's **Make a Character** builder makes a complete character at any le
 
 Quests support a **players see** flag. Adventures include premise, hook, stakes, opposition, clues, obstacles, rewards, approaches, consequences and an **if ignored** outcome. Story arcs connect related adventures. Scenes can be reordered, reused across adventures, and arranged in a branching visual flow editor.
 
+
+**Undo for plans and campaign changes:** faction plans and campaign-specific world changes show **Recent changes**, each with **Undo**. One action is one step (recording a new value also brings back the one it replaced; advancing a plan also removes the change it logged), and typing in a plan joins one step. A change that something later changed again waits until that one is undone.
 ## Session preparation and play
 
 ### Session preparation
