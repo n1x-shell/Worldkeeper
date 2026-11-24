@@ -101,7 +101,7 @@ export function SpeciesBuilder({ entities }: { entities: PEntity[] }) {
 
   return (
     <div className="space-y-5">
-      <header className="title-band elev-1 !px-4 !py-4 sm:!px-6 sm:!py-5">
+      <header className="title-band elev-1 px-4! py-4! sm:px-6! sm:py-5!">
         <div className="section-title">Peoples and classes</div>
         <h1 className="illuminated mt-1 text-[26px] sm:text-[30px] leading-tight text-ink">Species and Classes</h1>
         <p className="mt-2 text-sm text-dim max-w-[72ch]">
@@ -187,7 +187,7 @@ export function SpeciesBuilder({ entities }: { entities: PEntity[] }) {
           </ul>
           {worldNames.length > 0 && (
             <div className="px-1 text-sm">
-              <div className="section-title !text-xs mb-1.5">What the world calls them</div>
+              <div className="section-title text-xs! mb-1.5">What the world calls them</div>
               <div className="flex flex-wrap gap-x-3 gap-y-1">
                 {worldNames.map((e) => (
                   <button key={e.id} className={`min-h-8 hover:text-gold ${shown?.id === e.id ? 'text-gold' : 'text-arcane'}`} onClick={() => set({ pick: e.id })}>
@@ -246,7 +246,7 @@ function RuleClassDetail({ name, rules, onBack }: { name: string; rules: RulesVi
         <ArrowLeft size={14} /> All classes
       </button>
       <header className="border-b border-line pb-4">
-        <h2 className="illuminated text-[26px] sm:text-[30px] leading-tight text-ink break-words">{name}</h2>
+        <h2 className="illuminated text-[26px] sm:text-[30px] leading-tight text-ink wrap-break-word">{name}</h2>
         {info && (
           <p className="mt-2 text-sm text-dim">
             Hit die d{info.hitDie} · {info.primary} · saves {info.saves.join(' and ')}
@@ -270,7 +270,7 @@ function RuleClassDetail({ name, rules, onBack }: { name: string; rules: RulesVi
         )}
         {byLevel.size > 0 && (
           <section>
-            <h3 className="section-title !text-xs mb-1.5">Features by level</h3>
+            <h3 className="section-title text-xs! mb-1.5">Features by level</h3>
             <ul className="space-y-0.5">
               {[...byLevel.entries()]
                 .sort((a, b) => a[0] - b[0])
@@ -284,7 +284,7 @@ function RuleClassDetail({ name, rules, onBack }: { name: string; rules: RulesVi
         )}
         {subs.length > 0 && (
           <section>
-            <h3 className="section-title !text-xs mb-1.5">Subclasses</h3>
+            <h3 className="section-title text-xs! mb-1.5">Subclasses</h3>
             <ul className="space-y-1.5">
               {subs.map((x) => (
                 <li key={x.name}>
@@ -316,7 +316,7 @@ function Detail({ entry, onBack }: { entry: PEntity; onBack: () => void }) {
         <ArrowLeft size={14} /> All {e.type === 'calling' ? 'classes' : 'species'}
       </button>
       <header className="border-b border-line pb-4">
-        <h2 className="illuminated text-[26px] sm:text-[30px] leading-tight text-ink break-words">{e.name}</h2>
+        <h2 className="illuminated text-[26px] sm:text-[30px] leading-tight text-ink wrap-break-word">{e.name}</h2>
         {(places.length > 0 || e.bloom) && (
           <div className="flex flex-wrap gap-1.5 mt-3">
             {places.map((c) => (

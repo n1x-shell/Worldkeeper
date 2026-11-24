@@ -59,7 +59,7 @@ export const SRD_ATTRIBUTION =
 
 const SKILLS_BY: Record<Ability, string[]> = Object.fromEntries(ABILITIES.map((a) => [a, SKILLS.filter((k) => k.ability === a).map((k) => k.name)])) as Record<Ability, string[]>;
 /** A row in an ability card: the whole row toggles its diamond, and on a phone it's finger-height. */
-const ROW = 'relative flex items-center gap-1.5 rounded px-1 py-0.5 max-sm:min-h-10';
+const ROW = 'relative flex items-center gap-1.5 rounded-sm px-1 py-0.5 max-sm:min-h-10';
 const toggle = (list: string[] | undefined, item: string) => (list?.includes(item) ? list.filter((x) => x !== item) : [...(list ?? []), item]);
 
 /**
@@ -99,7 +99,7 @@ export function FullSheet(props: FullSheetProps) {
       <Band value={value} set={set} put={put} readOnly={readOnly} status={props.status} portraitUrl={props.portraitUrl ?? null} onPortrait={readOnly ? undefined : props.onPortrait} />
       <div className="grid gap-6 p-4 sm:p-5 lg:grid-cols-[17rem_minmax(0,1fr)]">
         {/* On a phone the tabs come straight after the band; this side column follows them. */}
-        <aside className="order-2 space-y-4 lg:order-none lg:sticky lg:top-4 lg:self-start" aria-label="Rests, Hit Dice and identity">
+        <aside className="order-2 space-y-4 lg:order-0 lg:sticky lg:top-4 lg:self-start" aria-label="Rests, Hit Dice and identity">
           <Vitals s={s} put={put} level={lvl} cls={cls} readOnly={readOnly} />
           <Identity value={value} set={set} put={put} levelLocked={levelLocked} readOnly={readOnly} options={options} speciesRules={speciesRules} />
         </aside>
@@ -137,13 +137,13 @@ function Band({
   const who = [value.species, value.class_name && `${value.class_name} ${value.level}`, s.subclass, s.background].filter(Boolean);
   const conditions = s.conditions ?? [];
   return (
-    <header className="relative rounded-t-lg border-b border-gold/25 bg-gradient-to-b from-gold/10 to-transparent px-4 pb-4 pt-5 sm:px-5">
+    <header className="relative rounded-t-lg border-b border-gold/25 bg-linear-to-b from-gold/10 to-transparent px-4 pb-4 pt-5 sm:px-5">
       <div aria-hidden className="gilt-corners pointer-events-none absolute inset-0 rounded-t-lg" />
       <div className="relative grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-4 gap-y-4 xl:grid-cols-[auto_minmax(0,1fr)_minmax(0,37rem)]">
         <Portrait name={value.name} url={portraitUrl} onPortrait={onPortrait} />
         <div className="min-w-0 space-y-1">
           <input
-            className="block w-full truncate border-b border-transparent bg-transparent font-display text-2xl leading-tight tracking-wide text-gold hover:border-line focus:border-gold focus:outline-none disabled:opacity-100 sm:text-[28px]"
+            className="block w-full truncate border-b border-transparent bg-transparent font-display text-2xl leading-tight tracking-wide text-gold hover:border-line focus:border-gold focus:outline-hidden disabled:opacity-100 sm:text-[28px]"
             value={value.name}
             placeholder="Name"
             aria-label="Character name"
@@ -152,7 +152,7 @@ function Band({
           />
           <p className="num text-sm text-ink/85">{who.length ? who.join(' · ') : <span className="text-dim">Choose a species and class below.</span>}</p>
           <input
-            className="block w-full max-w-[16rem] border-b border-transparent bg-transparent text-sm text-dim placeholder:text-dim/70 hover:border-line focus:border-gold focus:outline-none disabled:opacity-100"
+            className="block w-full max-w-[16rem] border-b border-transparent bg-transparent text-sm text-dim placeholder:text-dim/70 hover:border-line focus:border-gold focus:outline-hidden disabled:opacity-100"
             value={s.pronouns ?? ''}
             placeholder={readOnly ? '' : 'Pronouns'}
             aria-label="Pronouns"
@@ -195,7 +195,7 @@ function Glance({ s, put, readOnly }: { s: Sheet; put: (p: Partial<Sheet>) => vo
           <span className="num ml-auto flex items-baseline text-2xl font-semibold leading-none text-ink">
             <input
               type="number"
-              className={`w-[3.2ch] bg-transparent text-right focus:outline-none disabled:opacity-100 ${NO_SPIN}`}
+              className={`w-[3.2ch] bg-transparent text-right focus:outline-hidden disabled:opacity-100 ${NO_SPIN}`}
               value={s.hp ?? ''}
               placeholder={String(max)}
               aria-label="Current hit points"
@@ -205,7 +205,7 @@ function Glance({ s, put, readOnly }: { s: Sheet; put: (p: Partial<Sheet>) => vo
             <span className="px-1 text-base font-normal text-dim">/</span>
             <input
               type="number"
-              className={`w-[3.2ch] bg-transparent text-base font-normal text-dim focus:text-ink focus:outline-none disabled:opacity-100 ${NO_SPIN}`}
+              className={`w-[3.2ch] bg-transparent text-base font-normal text-dim focus:text-ink focus:outline-hidden disabled:opacity-100 ${NO_SPIN}`}
               value={s.maxHp ?? ''}
               placeholder="max"
               aria-label="Hit point maximum"
@@ -238,7 +238,7 @@ function Glance({ s, put, readOnly }: { s: Sheet; put: (p: Partial<Sheet>) => vo
         label="AC"
         title="Armor Class"
         foot={
-          <span className="relative mt-0.5 flex items-center gap-1 rounded px-1 text-[11px] text-dim max-sm:min-h-8">
+          <span className="relative mt-0.5 flex items-center gap-1 rounded-sm px-1 text-[11px] text-dim max-sm:min-h-8">
             <Diamond cover on={!!s.shield} label="Shield" onChange={readOnly ? undefined : (on) => put({ shield: on, ac: (s.ac ?? 10) + (on ? 2 : -2) })} /> Shield
           </span>
         }
@@ -255,7 +255,7 @@ function Glance({ s, put, readOnly }: { s: Sheet; put: (p: Partial<Sheet>) => vo
       </Stat>
       <Stat label="Initiative">{signed(initiative(s))}</Stat>
       <Stat label="Speed">
-        <input className={`${STAT_INPUT} !text-lg`} value={s.speed ?? ''} placeholder="30 ft." aria-label="Speed" disabled={readOnly} onChange={(e) => put({ speed: e.target.value })} />
+        <input className={`${STAT_INPUT} text-lg!`} value={s.speed ?? ''} placeholder="30 ft." aria-label="Speed" disabled={readOnly} onChange={(e) => put({ speed: e.target.value })} />
       </Stat>
     </div>
   );
@@ -274,10 +274,10 @@ function Portrait({ name, url, onPortrait }: { name: string; url: string | null;
       setBusy((e as Error).message);
     }
   };
-  const badge = "absolute flex h-7 w-7 items-center justify-center rounded-full border border-gold/60 bg-panel text-gold shadow-sm hover:bg-raised after:absolute after:-inset-1.5 after:content-['']";
+  const badge = "absolute flex h-7 w-7 items-center justify-center rounded-full border border-gold/60 bg-panel text-gold shadow-xs hover:bg-raised after:absolute after:-inset-1.5 after:content-['']";
   return (
     <figure className="relative w-20 sm:w-24 xl:w-28">
-      <div className="ledger-frame !p-1">
+      <div className="ledger-frame p-1!">
         <div className="ledger-frame-inner relative flex items-center justify-center">
           {url ? (
             <img src={url} alt={`Portrait of ${name}`} className="h-full w-full object-cover" />
@@ -491,7 +491,7 @@ function Vitals({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Partial<S
         <Stat label="Passive Perception">{passive(s, level, 'Perception')}</Stat>
         <Stat label="Size">
           <select
-            className="w-full appearance-none bg-transparent text-center text-base font-semibold text-ink focus:outline-none disabled:opacity-100 max-sm:min-h-8"
+            className="w-full appearance-none bg-transparent text-center text-base font-semibold text-ink focus:outline-hidden disabled:opacity-100 max-sm:min-h-8"
             value={s.size ?? ''}
             aria-label="Size"
             disabled={readOnly}
@@ -564,7 +564,7 @@ function AbilitiesTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Par
               type="number"
               min={1}
               max={30}
-              className={`num mt-1.5 h-7 w-14 rounded-full border border-gold/40 bg-raised text-center text-sm text-ink focus:border-gold focus:outline-none disabled:opacity-100 max-sm:h-9 ${NO_SPIN}`}
+              className={`num mt-1.5 h-7 w-14 rounded-full border border-gold/40 bg-raised text-center text-sm text-ink focus:border-gold focus:outline-hidden disabled:opacity-100 max-sm:h-9 ${NO_SPIN}`}
               value={s.abilities?.[a] ?? ''}
               placeholder={String(score(s, a))}
               aria-label={`${ABILITY_NAMES[a]} score`}
@@ -614,7 +614,7 @@ function AbilitiesTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Par
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
           <span className={`w-full sm:w-auto ${LABEL}`}>Armor training</span>
           {(['light', 'medium', 'heavy', 'shields'] as const).map((k) => (
-            <span key={k} className="relative flex items-center gap-1.5 rounded px-1 max-sm:min-h-10">
+            <span key={k} className="relative flex items-center gap-1.5 rounded-sm px-1 max-sm:min-h-10">
               <Diamond cover on={!!s.armorTraining?.[k]} label={`${k} armor training`} onChange={readOnly ? undefined : (on) => put({ armorTraining: { ...s.armorTraining, [k]: on } })} />
               {k[0].toUpperCase() + k.slice(1)}
             </span>
@@ -764,7 +764,7 @@ function CombatTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Partia
                 {!readOnly ? (
                   <button
                     aria-label={`Remove ${a.name || 'attack'}`}
-                    className="col-start-3 row-start-1 flex h-10 w-10 items-center justify-center justify-self-end rounded text-dim hover:bg-danger/10 hover:text-danger md:col-start-auto md:row-start-auto md:h-7 md:w-7"
+                    className="col-start-3 row-start-1 flex h-10 w-10 items-center justify-center justify-self-end rounded-sm text-dim hover:bg-danger/10 hover:text-danger md:col-start-auto md:row-start-auto md:h-7 md:w-7"
                     onClick={() => put({ attacks: attacks.filter((_, j) => j !== i) })}
                   >
                     <X size={14} />
@@ -859,7 +859,7 @@ function InventoryTab({ s, put, cls, readOnly }: { s: Sheet; put: (p: Partial<Sh
               ))}
             </select>
           </Field>
-          <span className="relative flex items-center gap-1.5 rounded px-1 pb-2 text-sm max-sm:min-h-10 max-sm:pb-0">
+          <span className="relative flex items-center gap-1.5 rounded-sm px-1 pb-2 text-sm max-sm:min-h-10 max-sm:pb-0">
             <Diamond cover on={!!s.shield} label="Shield" onChange={readOnly ? undefined : (on) => wear({ shield: on })} /> Shield (+2)
           </span>
         </div>
@@ -914,7 +914,7 @@ function InventoryTab({ s, put, cls, readOnly }: { s: Sheet; put: (p: Partial<Sh
               <input
                 type="number"
                 min={0}
-                className={`${STAT_INPUT} !text-lg ${NO_SPIN}`}
+                className={`${STAT_INPUT} text-lg! ${NO_SPIN}`}
                 value={coins[c] ?? ''}
                 placeholder="0"
                 aria-label={c.toUpperCase()}

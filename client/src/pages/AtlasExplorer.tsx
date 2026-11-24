@@ -204,7 +204,7 @@ function GmCodex({
                 type="button"
                 className="btn text-xs"
                 onClick={async () => {
-                  if (await ask({ body: `Remove the outline of ${e.name}?`, danger: true, confirmLabel: 'Remove' })) void run(() => api.del(`/api/shapes/${outline.id}`));
+                  if (await ask({ body: `Remove the outline-solid of ${e.name}?`, danger: true, confirmLabel: 'Remove' })) void run(() => api.del(`/api/shapes/${outline.id}`));
                 }}
               >
                 <Trash2 size={13} /> Remove outline
@@ -445,7 +445,7 @@ export function AtlasExplorer() {
   async function saveOutline() {
     const o = outline;
     if (!o) return;
-    if (o.points.length < 3) return setErr('An outline needs at least three corners.');
+    if (o.points.length < 3) return setErr('An outline-solid needs at least three corners.');
     await act(async () => {
       if (o.shapeId) await api.patch(`/api/shapes/${o.shapeId}`, { points: o.points });
       else

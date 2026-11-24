@@ -191,7 +191,7 @@ function LiveView({ session, campaign, quests, onEnd }: { session: Session; camp
           <h2 className="section-title flex items-center gap-2 mr-1">
             <Swords size={15} /> Encounter
           </h2>
-          <select className="input h-10 w-auto min-w-[10rem] flex-1" value={encId ?? ''} onChange={(e) => setEncId(e.target.value ? Number(e.target.value) : null)} aria-label="Encounter">
+          <select className="input h-10 w-auto min-w-40 flex-1" value={encId ?? ''} onChange={(e) => setEncId(e.target.value ? Number(e.target.value) : null)} aria-label="Encounter">
             <option value="">No encounter</option>
             {encs?.map((e) => (
               <option key={e.id} value={e.id}>
@@ -232,14 +232,14 @@ function LiveView({ session, campaign, quests, onEnd }: { session: Session; camp
           {log && log.length > 0 && <span className="text-xs text-dim num">{log.length} entries</span>}
         </div>
         {log?.length ? (
-          <ol className="max-h-[26rem] overflow-y-auto divide-y divide-line/50 text-sm">
+          <ol className="max-h-104 overflow-y-auto divide-y divide-line/50 text-sm">
             {[...log].reverse().map((l) => (
               <li key={l.id} className="grid grid-cols-[3.25rem_4.5rem_minmax(0,1fr)] items-baseline gap-2 px-4 py-2">
                 <time className="num text-[11px] text-dim" dateTime={l.created_at}>
                   {new Date(l.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </time>
                 <span className="text-[10px] uppercase tracking-wider text-dim truncate">{KIND_LABEL[l.kind] ?? l.kind}</span>
-                <span className="min-w-0 break-words">
+                <span className="min-w-0 wrap-break-word">
                   {l.text} {l.entity_id && <EntityLink id={l.entity_id} className="text-xs" />}
                 </span>
               </li>
@@ -312,7 +312,7 @@ function LiveView({ session, campaign, quests, onEnd }: { session: Session; camp
               <span className="absolute inline-flex h-full w-full rounded-full bg-danger opacity-60 motion-safe:animate-ping" />
               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-danger" />
             </span>
-            <h1 className="font-display text-xl text-gold leading-tight min-w-0 break-words">{`Live · Session ${session.number}${session.title ? `: ${session.title}` : ''}`}</h1>
+            <h1 className="font-display text-xl text-gold leading-tight min-w-0 wrap-break-word">{`Live · Session ${session.number}${session.title ? `: ${session.title}` : ''}`}</h1>
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-dim">
             {date && (
@@ -329,7 +329,7 @@ function LiveView({ session, campaign, quests, onEnd }: { session: Session; camp
               <span className="inline-flex items-center gap-1.5 rounded-full border border-gold/60 bg-gold/10 px-2.5 py-0.5 text-gold" aria-live="polite" title={combat.title}>
                 <Swords size={12} aria-hidden />
                 <span className="num font-semibold whitespace-nowrap">Round {combat.round}</span>
-                {combat.turn && <span className="max-w-[12rem] truncate text-ink">· {combat.turn}&rsquo;s turn</span>}
+                {combat.turn && <span className="max-w-48 truncate text-ink">· {combat.turn}&rsquo;s turn</span>}
               </span>
             )}
           </div>
@@ -404,7 +404,7 @@ function Divider({ ratio, onRatio, box }: { ratio: number; onRatio: (r: number) 
       aria-valuemax={75}
       aria-valuenow={Math.round(ratio * 100)}
       tabIndex={0}
-      className="group sticky top-0 flex h-[min(100%,calc(100vh-10rem))] cursor-col-resize touch-none justify-center self-stretch outline-none"
+      className="group sticky top-0 flex h-[min(100%,calc(100vh-10rem))] cursor-col-resize touch-none justify-center self-stretch outline-hidden"
       onPointerDown={(e) => (e.currentTarget.setPointerCapture(e.pointerId), setDrag(true))}
       onPointerMove={move}
       onPointerUp={() => setDrag(false)}
@@ -455,7 +455,7 @@ function LogEntryForm({ onSave }: { onSave: (kind: string, text: string, entity:
         placeholder="What happened? (Ctrl+Enter to save)"
       />
       <div className="flex flex-wrap items-center gap-2 [&_.input]:min-h-10">
-        <div className="min-w-[12rem] flex-1">
+        <div className="min-w-48 flex-1">
           <EntityPicker value={entity} onChange={setEntity} placeholder="Link a record (optional)" />
         </div>
         <button className="btn-primary h-10 justify-center px-4" disabled={!text.trim()} onClick={save}>
@@ -659,7 +659,7 @@ function LiveMap() {
     <div className="absolute inset-0 flex flex-col">
       <div className="flex flex-wrap items-center gap-2 border-b border-line/70 px-3 py-2 text-xs">
         <MapIcon size={14} className="text-gold" aria-hidden />
-        <select className="input h-10 w-auto min-w-0 max-w-[14rem] text-sm" value={current ?? ''} onChange={(e) => setChosen(Number(e.target.value))} aria-label="Map">
+        <select className="input h-10 w-auto min-w-0 max-w-56 text-sm" value={current ?? ''} onChange={(e) => setChosen(Number(e.target.value))} aria-label="Map">
           {ordered.map((x) => (
             <option key={x.id} value={x.id}>
               {x.name}

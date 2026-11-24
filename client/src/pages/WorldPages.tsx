@@ -347,7 +347,7 @@ export function TimelinePage() {
             <ol className="relative border-l border-gold/40 ml-3 space-y-4 mb-6">
               {list.map((r) => (
                 <li key={r.id} className="ml-5">
-                  <span className="absolute -left-[7px] mt-1.5 h-3 w-3 rounded-full border-2 border-gold bg-bg" />
+                  <span className="absolute left-[-7px] mt-1.5 h-3 w-3 rounded-full border-2 border-gold bg-bg" />
                   <Card>
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-display text-gold text-sm">{r.time_label}</span>
@@ -584,7 +584,7 @@ export function DocumentsPage() {
               ?.filter((d) => !filter || d.path.toLowerCase().includes(filter.toLowerCase()))
               .map((d) => (
                 <li key={d.path}>
-                  <button className={`w-full text-left px-2 py-1 rounded hover:bg-raised ${d.path === path ? 'text-gold' : ''}`} onClick={() => setSp({ path: d.path })}>
+                  <button className={`w-full text-left px-2 py-1 rounded-sm hover:bg-raised ${d.path === path ? 'text-gold' : ''}`} onClick={() => setSp({ path: d.path })}>
                     <div className="truncate">{d.path}</div>
                     <div className="text-[11px] text-dim">
                       {d.kind}

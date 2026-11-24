@@ -93,7 +93,7 @@ export function RegionPanel({ id, onPick }: { id: string; onPick: (id: string) =
                   </span>
                   <span className="flex gap-0.5 shrink-0" aria-label={`${a.progress} of ${a.segments}`}>
                     {Array.from({ length: a.segments }, (_, i) => (
-                      <span key={i} className={`h-2 w-2 rounded-sm ${i < a.progress ? 'bg-gold' : 'bg-line'}`} />
+                      <span key={i} className={`h-2 w-2 rounded-xs ${i < a.progress ? 'bg-gold' : 'bg-line'}`} />
                     ))}
                   </span>
                 </li>
@@ -165,7 +165,7 @@ export function RegionPanel({ id, onPick }: { id: string; onPick: (id: string) =
                     ) : null}
                   </div>
                   {r && (
-                    <div className="mt-1 rounded border border-line bg-raised px-2 py-1 text-[13px]">
+                    <div className="mt-1 rounded-sm border border-line bg-raised px-2 py-1 text-[13px]">
                       {typeof r === 'string' ? (
                         <span className="text-danger">{r}</span>
                       ) : (

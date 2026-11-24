@@ -201,7 +201,7 @@ export function AtlasPage() {
                   </span>
                 </div>
                 {mode.kind !== 'view' && (
-                  <div className="absolute z-[1000] top-14 left-1/2 -translate-x-1/2 panel elev-2 px-3 py-2 text-sm flex items-center gap-2">
+                  <div className="absolute z-1000 top-14 left-1/2 -translate-x-1/2 panel elev-2 px-3 py-2 text-sm flex items-center gap-2">
                     {mode.kind === 'place' ? `Click the map to place ${mode.label}` : `Click to add points (${mode.points.length})`}
                     {mode.kind === 'draw' && mode.points.length >= 2 && (
                       <ShapeSave
@@ -382,7 +382,7 @@ function MapTree({ maps, current, onPick }: { maps: MapRow[]; current?: number; 
       .filter((m) => m.parent_map_id === parent)
       .map((m) => (
         <div key={m.id}>
-          <button onClick={() => onPick(m.id)} className={`w-full text-left px-2 py-1 rounded text-sm hover:bg-raised ${current === m.id ? 'text-gold bg-gold/10' : ''}`} style={{ paddingLeft: 8 + depth * 14 }}>
+          <button onClick={() => onPick(m.id)} className={`w-full text-left px-2 py-1 rounded-sm text-sm hover:bg-raised ${current === m.id ? 'text-gold bg-gold/10' : ''}`} style={{ paddingLeft: 8 + depth * 14 }}>
             {m.name}
             {!m.player_visible && <EyeOff size={11} className="inline ml-1 text-dim" />}
           </button>
@@ -492,7 +492,7 @@ function MapSettings({
           <div className="label">Regions and routes</div>
           {detail.shapes.map((s) => (
             <div key={s.id} className="flex flex-wrap items-center gap-2">
-              <span className="w-3 h-3 rounded-sm" style={{ background: s.color }} />
+              <span className="w-3 h-3 rounded-xs" style={{ background: s.color }} />
               <span className="flex-1 truncate">
                 {s.label || s.kind} {s.hidden && <span className="text-dim text-xs">{many ? `(${(reveals?.shape[s.id] ?? []).length ? 'some campaigns' : 'DM'})` : '(DM)'}</span>}
               </span>

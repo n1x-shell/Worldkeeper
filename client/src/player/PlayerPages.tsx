@@ -101,8 +101,8 @@ export function PlayerPageTitle({
               {eyebrow}
             </div>
           )}
-          <h1 className={`mt-1.5 text-[26px] sm:text-[32px] text-ink leading-tight break-words ${illuminated ? 'illuminated' : ''}`}>{title}</h1>
-          <div className="mt-2 h-0.5 w-24 bg-gradient-to-r from-gold to-transparent" aria-hidden />
+          <h1 className={`mt-1.5 text-[26px] sm:text-[32px] text-ink leading-tight wrap-break-word ${illuminated ? 'illuminated' : ''}`}>{title}</h1>
+          <div className="mt-2 h-0.5 w-24 bg-linear-to-r from-gold to-transparent" aria-hidden />
           {subtitle && <div className="mt-3 text-sm text-dim max-w-[72ch]">{subtitle}</div>}
           {children}
         </div>
@@ -161,7 +161,7 @@ function EntryCard({ e, realm = true }: { e: PEntity; realm?: boolean }) {
   const preview = previewText(e.summary || e.sections?.[0]?.content || '');
   return (
     <Link to={entryHref(base, e.id)} data-peek={e.id} className="group panel elev-1 flex flex-col gap-2 px-4 py-3.5 min-w-0 hover:border-gold/60 transition-colors">
-      <span className="font-display text-[15px] leading-snug text-ink group-hover:text-gold break-words">{e.name}</span>
+      <span className="font-display text-[15px] leading-snug text-ink group-hover:text-gold wrap-break-word">{e.name}</span>
       <span className="flex flex-wrap gap-1">
         <Badge>{e.typeLabel}</Badge>
         {realm && <RealmBadge realm={e.realm} label={e.realmLabel} />}
@@ -188,7 +188,7 @@ function QuickFilter({ value, onChange, label }: { value: string; onChange: (v: 
   return (
     <label className="input flex items-center gap-2 min-h-[40px] sm:min-h-[34px] w-full sm:w-64">
       <Search size={14} className="text-dim shrink-0" aria-hidden />
-      <input className="bg-transparent outline-none flex-1 min-w-0" placeholder={label} aria-label={label} value={value} onChange={(e) => onChange(e.target.value)} type="search" />
+      <input className="bg-transparent outline-hidden flex-1 min-w-0" placeholder={label} aria-label={label} value={value} onChange={(e) => onChange(e.target.value)} type="search" />
     </label>
   );
 }
@@ -221,7 +221,7 @@ export function PlayerHome() {
         <div className="title-band gilt-corners elev-1 px-6 py-10 sm:px-10 text-center">
           <div className="section-title">Player Handbook</div>
           <h1 className="mt-3 text-2xl sm:text-3xl text-ink">The handbook is empty</h1>
-          <div className="mx-auto mt-3 h-0.5 w-24 bg-gradient-to-r from-transparent via-gold to-transparent" aria-hidden />
+          <div className="mx-auto mt-3 h-0.5 w-24 bg-linear-to-r from-transparent via-gold to-transparent" aria-hidden />
           <p className="prose-lore mx-auto mt-4 max-w-[52ch] text-[17px] text-ink/90">Your Dungeon Master hasn't revealed anything yet. You can still read up on the classes and make a character.</p>
           <div className="mt-6 flex flex-wrap justify-center gap-2">
             <Link to={`${base}/browse/peoples?tab=classes`} className="btn min-h-10">
@@ -252,16 +252,16 @@ export function PlayerHome() {
   const search = (
     <form
       role="search"
-      className="hidden sm:block w-full sm:w-[22rem]"
+      className="hidden sm:block w-full sm:w-88"
       onSubmit={(ev) => {
         ev.preventDefault();
         if (q.trim()) void nav(`${base}/search?q=${encodeURIComponent(q.trim())}`);
       }}
     >
-      <label className="group flex w-full items-center gap-3 rounded-md border border-edge/60 bg-raised px-4 min-h-[48px] shadow-sm focus-within:border-gold/70 hover:border-gold/70 transition-colors">
+      <label className="group flex w-full items-center gap-3 rounded-md border border-edge/60 bg-raised px-4 min-h-[48px] shadow-xs focus-within:border-gold/70 hover:border-gold/70 transition-colors">
         <Search size={18} className="text-gold shrink-0" aria-hidden />
         <input
-          className="flex-1 min-w-0 bg-transparent outline-none text-[15px] placeholder:text-dim"
+          className="flex-1 min-w-0 bg-transparent outline-hidden text-[15px] placeholder:text-dim"
           placeholder="Search people, places, lore…"
           aria-label="Search the handbook"
           value={q}
@@ -385,7 +385,7 @@ export function PlayerHome() {
                 <Link
                   key={r.key}
                   to={`${base}/realm/${r.key}`}
-                  className={`${s.cls} group panel elev-1 relative overflow-hidden flex flex-col bg-gradient-to-b ${s.wash} to-transparent ${s.ring} transition-colors`}
+                  className={`${s.cls} group panel elev-1 relative overflow-hidden flex flex-col bg-linear-to-b ${s.wash} to-transparent ${s.ring} transition-colors`}
                 >
                   <span className={`absolute inset-x-0 top-0 h-1 ${s.rule}`} aria-hidden />
                   <div className="flex items-start gap-3 px-4 pt-5">
@@ -563,7 +563,7 @@ export function PlayerRealm() {
         featured
       />
       {intro && (
-        <Card className={`${s.cls} relative overflow-hidden bg-gradient-to-b ${s.wash} to-transparent px-5 py-5 sm:px-7`}>
+        <Card className={`${s.cls} relative overflow-hidden bg-linear-to-b ${s.wash} to-transparent px-5 py-5 sm:px-7`}>
           <span className={`absolute inset-x-0 top-0 h-1 ${s.rule}`} aria-hidden />
           <div className="max-w-[72ch]">{intro.summary ? <Md text={intro.summary} className="prose-lore text-[17px]" /> : intro.sections?.[0] && <Md text={intro.sections[0].content} />}</div>
           <Link to={entryHref(base, intro.id)} data-peek={intro.id} className="mt-3 inline-flex items-center gap-1 text-sm text-arcane hover:text-gold">
@@ -670,7 +670,7 @@ export function PlayerEntry() {
                 {data.realmLabel}
               </Link>
             </nav>
-            <h1 className="illuminated font-display text-[26px] sm:text-[32px] leading-tight text-ink break-words">{data.name}</h1>
+            <h1 className="illuminated font-display text-[26px] sm:text-[32px] leading-tight text-ink wrap-break-word">{data.name}</h1>
             <div className="flex flex-wrap items-center gap-1.5 mt-3">
               <Badge>{data.typeLabel}</Badge>
               {realms.map((r) => (
@@ -899,7 +899,7 @@ export function PlayerStanding() {
               <div>
                 <div className="flex gap-1" role="img" aria-label={`${f.rank}, rank ${at + 1} of ${ladder.length}`}>
                   {ladder.map((r, i) => (
-                    <span key={r} title={r} className={`h-2 flex-1 rounded-sm ${i === at ? (i < n ? 'bg-danger' : 'bg-gold') : i < at && i > n ? 'bg-gold/45' : 'bg-line'}`} />
+                    <span key={r} title={r} className={`h-2 flex-1 rounded-xs ${i === at ? (i < n ? 'bg-danger' : 'bg-gold') : i < at && i > n ? 'bg-gold/45' : 'bg-line'}`} />
                   ))}
                 </div>
                 <div className="hidden sm:flex gap-1 mt-1 text-[10px] uppercase tracking-wider text-dim" aria-hidden>

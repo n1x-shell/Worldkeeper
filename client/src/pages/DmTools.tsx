@@ -54,7 +54,7 @@ const bookLabel = (c: BookCreature) => `${c.name} (CR ${c.cr ?? '?'})`;
 /** The tracker's first line: initiative, the combatant, AC, HP and (from the sm breakpoint) its row actions. */
 const ROW = 'grid grid-cols-[3.5rem_3.5rem_minmax(0,1fr)] sm:grid-cols-[3.5rem_minmax(0,1fr)_3.5rem_7.5rem_7.75rem] items-center gap-2';
 /** On phones the name takes the first line to itself; initiative, AC and HP share the next. */
-const NAME_CELL = 'min-w-0 col-span-3 order-first sm:col-span-1 sm:order-none';
+const NAME_CELL = 'min-w-0 col-span-3 order-first sm:col-span-1 sm:order-0';
 
 /** Where a fight stands, for a page that shows it elsewhere too (Live's header). */
 export interface CombatStatus {
@@ -212,7 +212,7 @@ export function EncounterTracker({
       <div className="flex flex-wrap items-center gap-2">
         <div className={`flex h-10 items-center gap-2 rounded-md border px-3 ${enc.round > 0 ? 'border-gold/60 bg-gold/10' : 'border-line bg-raised'}`} aria-live="polite">
           <span className={`num text-sm font-semibold whitespace-nowrap ${enc.round > 0 ? 'text-gold' : 'text-dim'}`}>{enc.round > 0 ? `Round ${enc.round}` : 'Not started'}</span>
-          {active && <span className="max-w-[10rem] truncate text-sm text-ink">· {active.name}</span>}
+          {active && <span className="max-w-40 truncate text-sm text-ink">· {active.name}</span>}
         </div>
         <button className={`btn ${tap}`} onClick={prev} disabled={enc.round === 0} aria-label="Previous turn" title="Previous turn">
           <ChevronLeft size={16} />
@@ -258,7 +258,7 @@ export function EncounterTracker({
       {/* The turn order: one row per combatant. The first line is what you read at a glance (initiative, name, AC, HP);
           the second is what you change (damage and healing, conditions, concentration, its stat block). */}
       <div className="panel overflow-hidden" role="list" aria-label="Turn order">
-        <div className={`${ROW} !hidden sm:!grid px-3 py-1.5 border-b border-line text-[11px] uppercase tracking-wider text-dim`} aria-hidden>
+        <div className={`${ROW} hidden! sm:grid! px-3 py-1.5 border-b border-line text-[11px] uppercase tracking-wider text-dim`} aria-hidden>
           <span className="text-center">Init</span>
           <span>Combatant</span>
           <span className="text-center">AC</span>
@@ -299,14 +299,14 @@ export function EncounterTracker({
                 <div className={NAME_CELL}>
                   <div className="flex items-center gap-1.5 min-w-0">
                     {c.isPC ? <Shield size={13} className="text-arcane shrink-0" aria-label="Player character" /> : <Sword size={13} className="text-dim shrink-0" aria-label="Opponent" />}
-                    <input className="min-w-0 flex-1 bg-transparent outline-none font-medium truncate focus-visible:underline" value={c.name} onChange={(e) => setC(c.id, (x) => ({ ...x, name: e.target.value }))} aria-label="Name" />
+                    <input className="min-w-0 flex-1 bg-transparent outline-hidden font-medium truncate focus-visible:underline" value={c.name} onChange={(e) => setC(c.id, (x) => ({ ...x, name: e.target.value }))} aria-label="Name" />
                     {c.concentration && <Badge tone="arcane" className="shrink-0" title={`Concentrating on ${c.concentration}`}>Conc.</Badge>}
                   </div>
                   <div className="flex items-center gap-2 min-w-0 text-[11px]">
                     {c.entityId && <EntityLink id={c.entityId} className="text-[11px] shrink-0 max-w-[50%] truncate" />}
                     {!c.isPC && (
                       <input
-                        className="min-w-0 flex-1 bg-transparent outline-none text-[11px] text-dim placeholder:text-dim/70"
+                        className="min-w-0 flex-1 bg-transparent outline-hidden text-[11px] text-dim placeholder:text-dim/70"
                         placeholder="Players see it as…"
                         title="The name players see on their phones. Leave blank to show its name."
                         value={c.playerName ?? ''}
@@ -345,7 +345,7 @@ export function EncounterTracker({
                   )}
                   <div className="sm:hidden">{rowActions}</div>
                 </div>
-                <input className="input h-10 w-28 min-w-[7rem] flex-1 text-xs" placeholder="Concentration" value={c.concentration ?? ''} onChange={(e) => setC(c.id, (x) => ({ ...x, concentration: e.target.value || null }))} aria-label="Concentration" />
+                <input className="input h-10 w-28 min-w-28 flex-1 text-xs" placeholder="Concentration" value={c.concentration ?? ''} onChange={(e) => setC(c.id, (x) => ({ ...x, concentration: e.target.value || null }))} aria-label="Concentration" />
               </div>
               {openBlock === c.id && block && (
                 <div className="rounded-md border border-line p-3">
@@ -619,7 +619,7 @@ export function NpcCard({ id }: { id: string }) {
   return (
     <Card className="text-sm space-y-1.5">
       <div className="flex gap-3 items-start">
-        {portrait && <img src={`/api/uploads/${portrait}`} alt="" className="w-14 h-14 rounded object-cover border border-line" />}
+        {portrait && <img src={`/api/uploads/${portrait}`} alt="" className="w-14 h-14 rounded-sm object-cover border border-line" />}
         <div>
           <Link to={`/e/${e.id}`} className="font-display text-gold text-base">
             {e.name}
@@ -844,7 +844,7 @@ function PlanCard({ p: init, onChange }: { p: Plan; onChange: () => void }) {
       </div>
       <div className="flex items-center gap-1">
         {Array.from({ length: p.segments }, (_, i) => (
-          <div key={i} className={`h-3 flex-1 rounded-sm ${i < p.progress ? 'bg-gold/80' : 'bg-raised border border-line'}`} />
+          <div key={i} className={`h-3 flex-1 rounded-xs ${i < p.progress ? 'bg-gold/80' : 'bg-raised border border-line'}`} />
         ))}
         <span className="text-xs text-dim ml-2 num">
           {p.progress}/{p.segments}
@@ -968,7 +968,7 @@ export function TablesPage() {
         <div className="grid gap-4 lg:grid-cols-[220px_1fr]">
           <Card flush className="p-2">
             {data.map((x) => (
-              <button key={x.id} onClick={() => (setSel(x.id), setResult(null))} className={`w-full text-left px-2 py-1 rounded text-sm ${t?.id === x.id ? 'bg-gold/10 text-gold' : 'hover:bg-raised'}`}>
+              <button key={x.id} onClick={() => (setSel(x.id), setResult(null))} className={`w-full text-left px-2 py-1 rounded-sm text-sm ${t?.id === x.id ? 'bg-gold/10 text-gold' : 'hover:bg-raised'}`}>
                 {x.name}
               </button>
             ))}
@@ -1063,7 +1063,7 @@ export function NotesPage() {
         <div className="grid gap-4 lg:grid-cols-[240px_1fr]">
           <Card flush className="p-2">
             {data.map((x) => (
-              <button key={x.id} onClick={() => setSp({ note: String(x.id) })} className={`w-full text-left px-2 py-1 rounded text-sm ${x.id === sel ? 'bg-gold/10 text-gold' : 'hover:bg-raised'}`}>
+              <button key={x.id} onClick={() => setSp({ note: String(x.id) })} className={`w-full text-left px-2 py-1 rounded-sm text-sm ${x.id === sel ? 'bg-gold/10 text-gold' : 'hover:bg-raised'}`}>
                 {x.pinned && <Pin size={11} className="inline mr-1" />}
                 {x.title}
               </button>

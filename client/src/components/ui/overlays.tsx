@@ -27,7 +27,7 @@ function useOverlay(onClose: () => void) {
 export function Modal({ title, onClose, children, wide, footer }: { title: string; onClose: () => void; children: ReactNode; wide?: boolean; footer?: ReactNode }) {
   const ref = useOverlay(onClose);
   return (
-    <div className="fixed inset-0 z-[2000] flex items-start justify-center bg-black/60 p-4 pt-[8vh]" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="fixed inset-0 z-2000 flex items-start justify-center bg-black/60 p-4 pt-[8vh]" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div ref={ref} data-overlay role="dialog" aria-modal="true" aria-label={title} className={`panel elev-3 w-full ${wide ? 'max-w-4xl' : 'max-w-lg'} max-h-[84vh] overflow-auto`}>
         <div className="flex items-center justify-between border-b border-line px-4 py-3 sticky top-0 bg-panel z-10">
           <h2 className="text-gold text-base">{title}</h2>
@@ -46,7 +46,7 @@ export function Modal({ title, onClose, children, wide, footer }: { title: strin
 export function Drawer({ title, onClose, children, side = 'right', width = 380 }: { title: ReactNode; onClose: () => void; children: ReactNode; side?: 'left' | 'right'; width?: number }) {
   const ref = useOverlay(onClose);
   return (
-    <div className="fixed inset-0 z-[1900] bg-black/40" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="fixed inset-0 z-1900 bg-black/40" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div
         ref={ref}
         data-overlay
@@ -232,7 +232,7 @@ export function useToast() {
   return {
     toast: setMsg,
     node: msg ? (
-      <div className="fixed bottom-4 right-4 z-[3000]">
+      <div className="fixed bottom-4 right-4 z-3000">
         <Toast message={msg} onDone={done} />
       </div>
     ) : null,
@@ -255,7 +255,7 @@ export function ToastHost() {
     };
   }, []);
   return (
-    <div className="fixed bottom-4 right-4 z-[3000] flex flex-col items-end gap-2" aria-live="polite">
+    <div className="fixed bottom-4 right-4 z-3000 flex flex-col items-end gap-2" aria-live="polite">
       {list.map((t) => (
         <Toast key={t.id} message={t.message} tone={t.tone} onDone={() => setList((l) => l.filter((x) => x.id !== t.id))} />
       ))}

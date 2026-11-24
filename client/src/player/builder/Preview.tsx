@@ -12,7 +12,7 @@ const subtitle = (b: Build) => [b.people, b.cls && `${b.cls} ${b.level}`, b.leve
 
 function Portrait({ b, size }: { b: Build; size: 'sm' | 'lg' }) {
   return (
-    <div className={`${size === 'lg' ? 'h-[4.5rem] w-14' : 'h-10 w-8'} shrink-0 overflow-hidden rounded-t-full rounded-b border border-gold/50 bg-raised flex items-center justify-center`} aria-hidden>
+    <div className={`${size === 'lg' ? 'h-18 w-14' : 'h-10 w-8'} shrink-0 overflow-hidden rounded-t-full rounded-b border border-gold/50 bg-raised flex items-center justify-center`} aria-hidden>
       {b.portrait ? (
         <img src={b.portrait} alt="" className="h-full w-full object-cover" />
       ) : (
@@ -77,7 +77,7 @@ function Body({ b, sheet, todo, onStep }: { b: Build; sheet: Sheet; todo: StepTo
             <ul className="space-y-0.5">
               {todo.slice(0, 4).map((t) => (
                 <li key={t.what}>
-                  <button className="w-full min-h-8 flex items-center gap-2 rounded px-1 -mx-1 text-left text-[13px] text-ink hover:bg-raised hover:text-gold" onClick={() => onStep(t.step)}>
+                  <button className="w-full min-h-8 flex items-center gap-2 rounded-sm px-1 -mx-1 text-left text-[13px] text-ink hover:bg-raised hover:text-gold" onClick={() => onStep(t.step)}>
                     <span className="h-1.5 w-1.5 rotate-45 border border-gold/70 shrink-0" aria-hidden />
                     <span className="flex-1">{t.what[0].toUpperCase() + t.what.slice(1)}</span>
                     <span className="text-[11px] text-dim">{STEPS[t.step]}</span>

@@ -18,8 +18,8 @@ function PageTitle({ eyebrow, icon, title, subtitle }: { eyebrow: string; icon: 
         {icon}
         {eyebrow}
       </div>
-      <h1 className="mt-1.5 text-[26px] sm:text-[32px] text-ink leading-tight break-words">{title}</h1>
-      <div className="mt-2 h-0.5 w-24 bg-gradient-to-r from-gold to-transparent" aria-hidden />
+      <h1 className="mt-1.5 text-[26px] sm:text-[32px] text-ink leading-tight wrap-break-word">{title}</h1>
+      <div className="mt-2 h-0.5 w-24 bg-linear-to-r from-gold to-transparent" aria-hidden />
       <p className="mt-3 text-sm text-dim max-w-[72ch]">{subtitle}</p>
     </header>
   );

@@ -261,7 +261,7 @@ export function StanceMatrix() {
         <div className="flex flex-wrap gap-3 text-xs text-dim">
           {Object.entries(STANCE_STYLE).map(([k, c]) => (
             <span key={k} className="flex items-center gap-1">
-              <span className={`inline-block w-3 h-3 rounded-sm ${c}`} /> {k}
+              <span className={`inline-block w-3 h-3 rounded-xs ${c}`} /> {k}
             </span>
           ))}
           <span>Choose a square to read why. Edit a stance from either faction's Relationships tab.</span>
@@ -296,7 +296,7 @@ export function StanceMatrix() {
                             <span className="block w-5 h-5" />
                           ) : (
                             <button
-                              className={`block w-5 h-5 rounded-sm border border-line/40 ${s ? STANCE_STYLE[s.label] ?? 'bg-raised' : ''}`}
+                              className={`block w-5 h-5 rounded-xs border border-line/40 ${s ? STANCE_STYLE[s.label] ?? 'bg-raised' : ''}`}
                               title={s ? `${a.name} and ${b.name}: ${s.label}. ${s.description}` : `${a.name} and ${b.name}: not set`}
                               aria-label={s ? `${a.name} and ${b.name}: ${s.label}` : `${a.name} and ${b.name}: not set`}
                               onClick={() => s && setPick({ a: a.id, b: b.id, ...s })}

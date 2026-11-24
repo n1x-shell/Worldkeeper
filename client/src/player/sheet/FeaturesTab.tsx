@@ -82,7 +82,7 @@ function FeatureList({
           <li key={i} className={`rounded-md border bg-raised/40 ${open === i ? 'border-gold/40' : 'border-line'}`}>
             <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_2.5rem] items-center gap-x-1 py-0.5 pr-0.5 sm:grid-cols-[2rem_minmax(0,1fr)_10rem_2rem] sm:gap-x-2 sm:py-1">
               <button
-                className="flex h-10 items-center justify-center rounded text-dim hover:text-gold sm:h-7"
+                className="flex h-10 items-center justify-center rounded-sm text-dim hover:text-gold sm:h-7"
                 onClick={() => setOpen(open === i ? null : i)}
                 aria-expanded={open === i}
                 aria-label={`${open === i ? 'Hide' : 'Show'} ${f.name || 'feature'}`}
@@ -100,7 +100,7 @@ function FeatureList({
               />
               {!readOnly && (
                 <button
-                  className="col-start-3 row-start-1 flex h-10 w-10 items-center justify-center rounded text-dim hover:bg-danger/10 hover:text-danger sm:col-start-auto sm:row-start-auto sm:h-7 sm:w-7"
+                  className="col-start-3 row-start-1 flex h-10 w-10 items-center justify-center rounded-sm text-dim hover:bg-danger/10 hover:text-danger sm:col-start-auto sm:row-start-auto sm:h-7 sm:w-7"
                   aria-label={`Remove ${f.name || 'feature'}`}
                   onClick={() => onChange(list.filter((_, j) => j !== i))}
                 >

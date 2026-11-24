@@ -56,7 +56,7 @@ export function ReturnPage() {
       <Card featured className="space-y-3">
         <div className="flex items-center gap-1" aria-label={`Stage ${data.stage} of ${data.stages.length}`}>
           {data.stages.map((s) => (
-            <div key={s.stage} title={s.title} className={`flex-1 h-3 rounded ${s.stage <= data.stage ? 'bg-danger/80' : 'bg-raised border border-line'}`} />
+            <div key={s.stage} title={s.title} className={`flex-1 h-3 rounded-sm ${s.stage <= data.stage ? 'bg-danger/80' : 'bg-raised border border-line'}`} />
           ))}
         </div>
         <div className="flex flex-wrap items-center gap-2">

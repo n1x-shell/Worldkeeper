@@ -49,7 +49,7 @@ export function BackgroundStep({ b, set, world, rules, nav }: { b: Build; set: S
       {bg && !bg.fixed && (
         <div className="rounded-md border border-gold/40 bg-gold/5 p-3 space-y-2.5">
           <div className="flex flex-wrap items-baseline gap-2 text-sm">
-            <span className="flex-1 min-w-[12rem]">
+            <span className="flex-1 min-w-48">
               The world&apos;s backgrounds don&apos;t name the abilities they raise: choose three that fit <b className="font-semibold">{bg.name}</b>.
             </span>
             <Count n={b.bgAbilities.length} of={3} />
@@ -152,7 +152,7 @@ export function AbilitiesStep({ b, set, feats, nav }: { b: Build; set: SetB; fea
             <span className="flex flex-wrap items-center gap-1.5">
               <span className="text-dim">Your rolls:</span>
               {b.rolls.map((r, i) => (
-                <span key={i} className="num inline-flex h-7 min-w-7 items-center justify-center rounded border border-line bg-raised px-1 text-sm font-semibold">
+                <span key={i} className="num inline-flex h-7 min-w-7 items-center justify-center rounded-sm border border-line bg-raised px-1 text-sm font-semibold">
                   {r}
                 </span>
               ))}

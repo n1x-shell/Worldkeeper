@@ -20,7 +20,7 @@ export function CreatureLinks({ creatures, label = 'Stat blocks' }: { creatures:
         ))}
       </div>
       {open && (
-        <div className="rounded border border-line p-3 bg-panel/40">
+        <div className="rounded-sm border border-line p-3 bg-panel/40">
           <StatBlockById id={open} />
         </div>
       )}

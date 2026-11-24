@@ -1,263 +1,226 @@
-@import '@fontsource/cinzel/500.css';
-@import '@fontsource/cinzel/700.css';
-@import '@fontsource/eb-garamond/400.css';
-@import '@fontsource/eb-garamond/500.css';
-@import '@fontsource/eb-garamond/400-italic.css';
-@import 'leaflet/dist/leaflet.css';
-@import '@xyflow/react/dist/style.css';
+@import '@fontsource/cinzel/500.css' layer(base);
+@import '@fontsource/cinzel/700.css' layer(base);
+@import '@fontsource/eb-garamond/400.css' layer(base);
+@import '@fontsource/eb-garamond/500.css' layer(base);
+@import '@fontsource/eb-garamond/400-italic.css' layer(base);
+@import 'leaflet/dist/leaflet.css' layer(base);
+/* The graph's own CSS (in its own layer, xyflow) goes above Tailwind's reset, as with Tailwind CSS v3, whose reset left margins alone. */
+@import '@xyflow/react/dist/style.css' layer(components);
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind reads only the app's own markup (as tailwind.config.js's content did in v3). */
+@import 'tailwindcss' source(none);
+@source '../../index.html';
+@source '../../player-site/index.html';
+@source '../**/*.{ts,tsx}';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-bg: rgb(var(--bg));
+  --color-panel: rgb(var(--panel));
+  --color-raised: rgb(var(--raised));
+  --color-line: rgb(var(--line));
+  --color-edge: rgb(var(--edge));
+  --color-ink: rgb(var(--ink));
+  --color-dim: rgb(var(--dim));
+  --color-gold: rgb(var(--gold));
+  --color-parchment: rgb(var(--parchment));
+  --color-parchink: rgb(var(--parchink));
+  --color-parchlink: rgb(var(--parchlink));
+  --color-arcane: rgb(var(--arcane));
+  --color-danger: rgb(var(--danger));
+  --color-ok: rgb(var(--ok));
+  --color-warn: rgb(var(--warn));
+  --color-belief: rgb(var(--belief));
+  --color-homebrew: rgb(var(--homebrew));
+  --color-realm: rgb(var(--rc));
+
+  --text-ui: 13px;
+  --text-ui--line-height: 1.35;
+
+  /* Line heights as Tailwind CSS v3 set them: fixed lengths, which text of another size inside inherits as they are
+     (v4's are ratios, which change with the inner text's size). */
+  --text-xs--line-height: 1rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg--line-height: 1.75rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
+
+  --font-display: Cinzel, Georgia, serif;
+  --font-serif: 'EB Garamond', Georgia, serif;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
 
 /*
- * Design tokens (docs/DESIGN_OVERHAUL.md, section 6). RGB triplets, so Tailwind can apply opacity.
- * Warm Parchment (.light) is the default; Dark Codex (.dark) is the alternative. Every text token passes WCAG AA
- * (4.5:1) on bg, panel and raised, and edge (control borders) passes 3:1, in both themes (tests/designTokens.test.ts).
- * Components use these tokens, never raw colours.
- */
-:root,
-.light {
-  --bg: 239 230 210; /* page: warm parchment */
-  --panel: 247 241 227; /* cards and bars: vellum */
-  --raised: 251 247 238; /* inputs, hovers */
-  --line: 214 200 170; /* hairlines and dividers */
-  --edge: 140 122 92; /* control borders (inputs), 3:1 */
-  --ink: 42 34 25; /* text: iron-gall */
-  --dim: 98 84 64; /* secondary text */
-  --gold: 128 90 18; /* accent, links on hover, focus */
-  --parchment: 246 238 218; /* the character sheet's paper */
-  --parchink: 52 40 26;
-  --parchlink: 59 74 143; /* links on the paper, which stays light in both themes */
-  --arcane: 48 68 150; /* record links */
-  --danger: 156 46 36;
-  --ok: 44 100 56;
-  --warn: 138 86 8;
-  /* Item rarity */
-  --r-common: 98 88 74;
-  --r-uncommon: 40 104 54;
-  --r-rare: 36 82 160;
-  --r-very-rare: 116 56 148;
-  --r-legendary: 146 82 8;
-  --r-artifact: 156 40 34;
-  /* Realm palette (shared/realms.ts REALM_COLORS): a realm's colour sets --rc, used as text-realm, border-realm, bg-realm */
-  --rc-blue: 30 88 138;
-  --rc-amber: 136 82 10;
-  --rc-green: 30 104 68;
-  --rc-violet: 104 60 150;
-  --rc-red: 150 50 40;
-  --rc-teal: 16 98 108;
-  --rc-rose: 150 40 92;
-  --rc-slate: 72 80 96;
-  /* Canon labels */
-  --belief: 20 104 100;
-  --homebrew: 146 40 108;
-  --shadow: 92 66 30;
-  color-scheme: light;
-}
-.dark {
-  --bg: 17 18 22;
-  --panel: 24 26 31;
-  --raised: 33 36 43;
-  --line: 52 56 66;
-  --edge: 108 114 128;
-  --ink: 228 223 210;
-  --dim: 160 155 144;
-  --gold: 208 170 84;
-  --parchment: 233 222 196;
-  --parchink: 52 40 26;
-  --parchlink: 59 74 143; /* links on the paper, which stays light in both themes */
-  --arcane: 146 162 228;
-  --danger: 232 122 110;
-  --ok: 122 186 132;
-  --warn: 222 176 84;
-  --r-common: 176 171 160;
-  --r-uncommon: 118 196 128;
-  --r-rare: 124 170 240;
-  --r-very-rare: 192 152 236;
-  --r-legendary: 234 168 80;
-  --r-artifact: 240 124 112;
-  --rc-blue: 120 186 232;
-  --rc-amber: 236 184 92;
-  --rc-green: 110 200 150;
-  --rc-violet: 190 160 240;
-  --rc-red: 236 132 118;
-  --rc-teal: 100 200 204;
-  --rc-rose: 236 142 184;
-  --rc-slate: 172 182 200;
-  --belief: 96 200 190;
-  --homebrew: 232 128 200;
-  --shadow: 0 0 0;
-  color-scheme: dark;
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+  /* A file input's button and placeholder text as Tailwind CSS v3 left them: the browser's own button (in the page's
+     font), and placeholders in v3's grey. */
+  ::file-selector-button {
+    margin: revert;
+    padding: revert;
+    border: revert;
+    border-radius: revert;
+    background-color: revert;
+    color: revert;
+  }
+  input::placeholder,
+  textarea::placeholder {
+    opacity: 1;
+    color: #9ca3af;
+  }
+  /* Buttons show the pointing hand, as they did with Tailwind CSS v3. */
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
-/* A realm's colour: put rc-<colour> on an element, then use text-realm, border-realm/50, bg-realm/10 inside it. */
-.rc-blue {
-  --rc: var(--rc-blue);
-}
-.rc-amber {
-  --rc: var(--rc-amber);
-}
-.rc-green {
-  --rc: var(--rc-green);
-}
-.rc-violet {
-  --rc: var(--rc-violet);
-}
-.rc-red {
-  --rc: var(--rc-red);
-}
-.rc-teal {
-  --rc: var(--rc-teal);
-}
-.rc-rose {
-  --rc: var(--rc-rose);
-}
-.rc-slate {
-  --rc: var(--rc-slate);
-}
-:root {
-  --rc: var(--rc-slate);
+@utility panel {
+  @apply bg-panel border border-line rounded-lg;
 }
 
-html,
-body,
-#root {
-  height: 100%;
-}
-body {
-  @apply bg-bg text-ink font-sans antialiased;
-  background-image: radial-gradient(ellipse at top, rgb(var(--gold) / 0.05), transparent 60%);
-}
-/* Parchment: a very faint paper grain on the page background only ("Reduce texture" turns it off). */
-html.light:not(.no-texture) body {
-  background-image:
-    radial-gradient(ellipse at top, rgb(var(--gold) / 0.06), transparent 60%),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .26 0 0 0 0 .12 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+@utility panel-pad {
+  @apply bg-panel border border-line rounded-lg p-4;
 }
 
-h1,
-h2,
-h3 {
-  @apply font-display tracking-wide;
+@utility parchment {
+  @apply bg-parchment text-parchink rounded-lg border border-gold/40 shadow-inner;
 }
 
-:focus-visible {
-  outline: 2px solid rgb(var(--gold));
-  outline-offset: 2px;
+@utility btn {
+  @apply inline-flex items-center gap-1.5 rounded-md border border-line bg-raised px-3 py-1.5 text-sm text-ink hover:border-gold/60 hover:text-gold disabled:opacity-50 disabled:pointer-events-none transition-colors;
 }
 
-@layer components {
-  .panel {
-    @apply bg-panel border border-line rounded-lg;
-  }
-  .panel-pad {
-    @apply bg-panel border border-line rounded-lg p-4;
-  }
-  .parchment {
-    @apply bg-parchment text-parchink rounded-lg border border-gold/40 shadow-inner;
-  }
-  .btn {
-    @apply inline-flex items-center gap-1.5 rounded-md border border-line bg-raised px-3 py-1.5 text-sm text-ink hover:border-gold/60 hover:text-gold disabled:opacity-50 disabled:pointer-events-none transition-colors;
-  }
-  .btn-primary {
-    @apply inline-flex items-center gap-1.5 rounded-md border border-gold/70 bg-gold/15 px-3 py-1.5 text-sm text-gold hover:bg-gold/25 disabled:opacity-50 disabled:pointer-events-none transition-colors;
-  }
-  .btn-danger {
-    @apply inline-flex items-center gap-1.5 rounded-md border border-danger/60 bg-danger/10 px-3 py-1.5 text-sm text-danger hover:bg-danger/20 disabled:opacity-50 transition-colors;
-  }
-  .btn-ghost {
-    @apply inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm text-dim hover:text-gold hover:bg-raised transition-colors;
-  }
-  .input {
-    @apply w-full rounded-md border border-edge/70 bg-raised px-2.5 py-1.5 text-sm text-ink placeholder:text-dim/70 focus:border-gold/70 focus:outline-none;
-  }
-  .label {
-    @apply block text-xs uppercase tracking-wider text-dim mb-1;
-  }
-  .chip {
-    @apply inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium leading-4;
-  }
-  .section-title {
-    @apply font-display text-sm uppercase tracking-[0.18em] text-gold/90;
-  }
-  .table {
-    @apply w-full text-sm;
-  }
-  .table th {
+@utility btn-primary {
+  @apply inline-flex items-center gap-1.5 rounded-md border border-gold/70 bg-gold/15 px-3 py-1.5 text-sm text-gold hover:bg-gold/25 disabled:opacity-50 disabled:pointer-events-none transition-colors;
+}
+
+@utility btn-danger {
+  @apply inline-flex items-center gap-1.5 rounded-md border border-danger/60 bg-danger/10 px-3 py-1.5 text-sm text-danger hover:bg-danger/20 disabled:opacity-50 transition-colors;
+}
+
+@utility btn-ghost {
+  @apply inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm text-dim hover:text-gold hover:bg-raised transition-colors;
+}
+
+@utility input {
+  @apply w-full rounded-md border border-edge/70 bg-raised px-2.5 py-1.5 text-sm text-ink placeholder:text-dim/70 focus:border-gold/70 focus:outline-hidden;
+}
+
+@utility label {
+  @apply block text-xs uppercase tracking-wider text-dim mb-1;
+}
+
+@utility chip {
+  @apply inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium leading-4;
+}
+
+@utility section-title {
+  @apply font-display text-sm uppercase tracking-[0.18em] text-gold/90;
+}
+
+@utility table {
+  @apply w-full text-sm;
+  & th {
     @apply text-left text-xs uppercase tracking-wider text-dim font-medium px-3 py-2 border-b border-line;
   }
-  .table th.text-right {
+  & th.text-right {
     text-align: right;
   }
-  .table th.text-center {
+  & th.text-center {
     text-align: center;
   }
-  .table td {
+  & td {
     @apply px-3 py-2 border-b border-line/50 align-top;
   }
-  .table tr:hover td {
+  & tr:hover td {
     @apply bg-raised/50;
   }
+}
 
+@utility num {
   /* ---- Design system additions (docs/DESIGN_OVERHAUL.md, sections 6 and 7) ---- */
   /* Numbers that line up: stats, HP, AC, DCs, modifiers. */
-  .num {
-    font-variant-numeric: tabular-nums lining-nums;
-  }
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+@utility elev-1 {
   /* Elevation: flat panels, raised (hover cards, menus), overlay (drawers, dialogs). */
-  .elev-1 {
-    box-shadow: 0 1px 2px rgb(var(--shadow) / 0.12);
-  }
-  .elev-2 {
-    box-shadow:
-      0 2px 6px rgb(var(--shadow) / 0.14),
-      0 8px 24px rgb(var(--shadow) / 0.12);
-  }
-  .elev-3 {
-    box-shadow:
-      0 4px 12px rgb(var(--shadow) / 0.18),
-      0 18px 48px rgb(var(--shadow) / 0.2);
-  }
+  box-shadow: 0 1px 2px rgb(var(--shadow) / 0.12);
+}
+
+@utility elev-2 {
+  box-shadow:
+    0 2px 6px rgb(var(--shadow) / 0.14),
+    0 8px 24px rgb(var(--shadow) / 0.12);
+}
+
+@utility elev-3 {
+  box-shadow:
+    0 4px 12px rgb(var(--shadow) / 0.18),
+    0 18px 48px rgb(var(--shadow) / 0.2);
+}
+
+@utility title-rule {
   /* A title with a 2px gilt rule beneath it. */
-  .title-rule {
-    @apply font-display text-ink tracking-wide pb-1.5;
-    background: linear-gradient(90deg, rgb(var(--gold)), rgb(var(--gold) / 0.15) 70%, transparent) bottom left / 100% 2px no-repeat;
-  }
+  @apply font-display text-ink tracking-wide pb-1.5;
+  background: linear-gradient(90deg, rgb(var(--gold)), rgb(var(--gold) / 0.15) 70%, transparent) bottom left / 100% 2px no-repeat;
+}
+
+@utility title-band {
   /* A record's title band: the name over a faint gilt wash. */
-  .title-band {
-    @apply relative rounded-md border border-line px-5 py-4;
-    background: linear-gradient(180deg, rgb(var(--gold) / 0.08), transparent 70%), rgb(var(--panel));
-  }
+  @apply relative rounded-md border border-line px-5 py-4;
+  background: linear-gradient(180deg, rgb(var(--gold) / 0.08), transparent 70%), rgb(var(--panel));
+}
+
+@utility gilt-corners {
   /* Gilt corner marks on featured cards. */
-  .gilt-corners {
-    position: relative;
-    --c: rgb(var(--gold) / 0.75);
-    background-image:
-      linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)),
-      linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c));
-    background-repeat: no-repeat;
-    background-size:
-      14px 1px,
-      1px 14px,
-      14px 1px,
-      1px 14px,
-      14px 1px,
-      1px 14px,
-      14px 1px,
-      1px 14px;
-    background-position:
-      5px 5px,
-      5px 5px,
-      calc(100% - 5px) 5px,
-      calc(100% - 5px) 5px,
-      5px calc(100% - 5px),
-      5px calc(100% - 5px),
-      calc(100% - 5px) calc(100% - 5px),
-      calc(100% - 5px) calc(100% - 5px);
-  }
+  position: relative;
+  --c: rgb(var(--gold) / 0.75);
+  background-image:
+    linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)),
+    linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c)), linear-gradient(var(--c), var(--c));
+  background-repeat: no-repeat;
+  background-size:
+    14px 1px,
+    1px 14px,
+    14px 1px,
+    1px 14px,
+    14px 1px,
+    1px 14px,
+    14px 1px,
+    1px 14px;
+  background-position:
+    5px 5px,
+    5px 5px,
+    calc(100% - 5px) 5px,
+    calc(100% - 5px) 5px,
+    5px calc(100% - 5px),
+    5px calc(100% - 5px),
+    calc(100% - 5px) calc(100% - 5px),
+    calc(100% - 5px) calc(100% - 5px);
+}
+
+@utility illuminated {
   /* An illuminated first letter: a gold Cinzel capital in a faint framed square. */
-  .illuminated::first-letter {
+  &::first-letter {
     @apply font-display text-gold;
     font-size: 1.35em;
     line-height: 1;
@@ -267,620 +230,882 @@ h3 {
     background: rgb(var(--gold) / 0.1);
     border-radius: 2px;
   }
+}
+
+@utility tag {
   /* Tags: rarity, status. */
-  .tag {
-    @apply inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium leading-4;
-  }
-  .rarity-common {
-    color: rgb(var(--r-common));
-    border-color: rgb(var(--r-common) / 0.5);
-  }
-  .rarity-uncommon {
-    color: rgb(var(--r-uncommon));
-    border-color: rgb(var(--r-uncommon) / 0.5);
-  }
-  .rarity-rare {
-    color: rgb(var(--r-rare));
-    border-color: rgb(var(--r-rare) / 0.5);
-  }
-  .rarity-very-rare {
-    color: rgb(var(--r-very-rare));
-    border-color: rgb(var(--r-very-rare) / 0.5);
-  }
-  .rarity-legendary {
-    color: rgb(var(--r-legendary));
-    border-color: rgb(var(--r-legendary) / 0.5);
-  }
-  .rarity-artifact {
-    color: rgb(var(--r-artifact));
-    border-color: rgb(var(--r-artifact) / 0.5);
-  }
+  @apply inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium leading-4;
+}
+
+@utility rarity-common {
+  color: rgb(var(--r-common));
+  border-color: rgb(var(--r-common) / 0.5);
+}
+
+@utility rarity-uncommon {
+  color: rgb(var(--r-uncommon));
+  border-color: rgb(var(--r-uncommon) / 0.5);
+}
+
+@utility rarity-rare {
+  color: rgb(var(--r-rare));
+  border-color: rgb(var(--r-rare) / 0.5);
+}
+
+@utility rarity-very-rare {
+  color: rgb(var(--r-very-rare));
+  border-color: rgb(var(--r-very-rare) / 0.5);
+}
+
+@utility rarity-legendary {
+  color: rgb(var(--r-legendary));
+  border-color: rgb(var(--r-legendary) / 0.5);
+}
+
+@utility rarity-artifact {
+  color: rgb(var(--r-artifact));
+  border-color: rgb(var(--r-artifact) / 0.5);
+}
+
+@utility gm-only {
   /* GM-only material: a stitched red margin and a label, the same everywhere. */
-  .gm-only {
-    @apply relative rounded-md border border-danger/30 bg-danger/5 py-2 pl-4 pr-3;
-    background-image: repeating-linear-gradient(180deg, rgb(var(--danger) / 0.7) 0 6px, transparent 6px 10px);
-    background-size: 2px 100%;
-    background-repeat: no-repeat;
-    background-position: 6px 0;
-  }
-  .gm-only-label {
-    @apply mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-danger;
-  }
-  .gm-only-inline {
-    @apply py-1 pl-3.5 pr-2;
-  }
+  @apply relative rounded-md border border-danger/30 bg-danger/5 py-2 pl-4 pr-3;
+  background-image: repeating-linear-gradient(180deg, rgb(var(--danger) / 0.7) 0 6px, transparent 6px 10px);
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: 6px 0;
+}
+
+@utility gm-only-label {
+  @apply mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-danger;
+}
+
+@utility gm-only-inline {
+  @apply py-1 pl-3.5 pr-2;
+}
+
+@utility toggle {
   /* An on/off switch: a native checkbox (role="switch") drawn as a track and knob. */
-  .toggle {
-    @apply relative mt-0.5 h-5 w-9 shrink-0 cursor-pointer appearance-none rounded-full border border-edge/70 bg-raised transition-colors;
-  }
-  .toggle::after {
+  @apply relative mt-0.5 h-5 w-9 shrink-0 cursor-pointer appearance-none rounded-full border border-edge/70 bg-raised transition-colors;
+  &::after {
     content: '';
     @apply absolute left-0.5 top-0.5 h-3.5 w-3.5 rounded-full bg-dim transition-transform;
   }
-  .toggle:checked {
+  &:checked {
     @apply border-gold/80 bg-gold/30;
   }
-  .toggle:checked::after {
+  &:checked::after {
     @apply translate-x-4 bg-gold;
   }
-  .toggle:disabled {
+  &:disabled {
     @apply cursor-default;
   }
+}
+
+@utility check {
   /* A checkbox in the theme's colours. */
-  .check {
-    @apply mt-0.5 h-4 w-4 shrink-0 cursor-pointer;
-    accent-color: rgb(var(--gold));
-  }
+  @apply mt-0.5 h-4 w-4 shrink-0 cursor-pointer;
+  accent-color: rgb(var(--gold));
+}
+
+@utility segmented {
   /* One choice from a few, side by side. */
-  .segmented {
-    @apply inline-flex overflow-hidden rounded-md border border-line text-sm;
-  }
-  .segmented button {
+  @apply inline-flex overflow-hidden rounded-md border border-line text-sm;
+  & button {
     @apply px-3 py-1.5 text-dim transition-colors hover:text-ink;
   }
-  .segmented button + button {
+  & button + button {
     @apply border-l border-line;
   }
-  .segmented button.on {
+  & button.on {
     @apply bg-gold/15 text-gold;
   }
-  .segmented-sm {
-    @apply text-xs;
-  }
-  .segmented-sm button {
+}
+
+@utility segmented-sm {
+  @apply text-xs;
+  & button {
     @apply px-2 py-1;
   }
+}
+
+@utility skeleton {
   /* Loading placeholders. */
-  .skeleton {
-    @apply rounded bg-raised;
-    background-image: linear-gradient(90deg, transparent, rgb(var(--line) / 0.5), transparent);
-    background-size: 200% 100%;
-    animation: wk-shimmer 1.4s ease-in-out infinite;
-  }
+  @apply rounded-sm bg-raised;
+  background-image: linear-gradient(90deg, transparent, rgb(var(--line) / 0.5), transparent);
+  background-size: 200% 100%;
+  animation: wk-shimmer 1.4s ease-in-out infinite;
+}
+
+@utility data-table {
   /* Tables: the header stays put while the rows scroll. */
-  .data-table thead th {
-    @apply sticky top-0 z-[1] bg-panel;
-  }
-}
-@keyframes wk-shimmer {
-  from {
-    background-position: 100% 0;
-  }
-  to {
-    background-position: -100% 0;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .skeleton {
-    animation: none;
+  & thead th {
+    @apply sticky top-0 z-1 bg-panel;
   }
 }
 
-/* Lore prose */
-.prose-lore {
-  @apply font-serif text-[17px] leading-relaxed;
-}
-.prose-lore h1 {
-  @apply text-2xl text-gold mt-2 mb-3;
-}
-.prose-lore h2 {
-  @apply text-lg text-gold/90 mt-6 mb-2 border-b border-line pb-1;
-}
-.prose-lore h3 {
-  @apply text-base text-gold/80 mt-4 mb-1;
-}
-.prose-lore p {
-  @apply my-2;
-}
-.prose-lore ul {
-  @apply list-disc pl-6 my-2;
-}
-.prose-lore ol {
-  @apply list-decimal pl-6 my-2;
-}
-.prose-lore table {
-  @apply my-3 w-full text-sm font-sans border border-line;
-}
-.prose-lore th {
-  @apply bg-raised text-left px-2 py-1 border border-line;
-}
-.prose-lore td {
-  @apply px-2 py-1 border border-line align-top;
-}
-.prose-lore code {
-  @apply font-mono text-[13px] bg-raised px-1 rounded;
-}
-.prose-lore blockquote {
-  @apply border-l-2 border-gold/50 pl-3 italic text-dim;
-}
-.prose-lore strong {
-  @apply text-ink font-semibold;
-}
-.prose-lore a.wk-ref {
-  @apply text-arcane underline decoration-dotted underline-offset-2 hover:text-gold;
-}
-.prose-lore a.wk-ref-broken {
-  @apply text-danger underline decoration-wavy;
-}
-.prose-lore .wk-secret {
-  @apply gm-only my-3;
+@layer utilities {
+  /*
+ * Design tokens (docs/DESIGN_OVERHAUL.md, section 6). RGB triplets, so Tailwind can apply opacity.
+ * Warm Parchment (.light) is the default; Dark Codex (.dark) is the alternative. Every text token passes WCAG AA
+ * (4.5:1) on bg, panel and raised, and edge (control borders) passes 3:1, in both themes (tests/designTokens.test.ts).
+ * Components use these tokens, never raw colours.
+ */
+  :root,
+  .light {
+    --bg: 239 230 210; /* page: warm parchment */
+    --panel: 247 241 227; /* cards and bars: vellum */
+    --raised: 251 247 238; /* inputs, hovers */
+    --line: 214 200 170; /* hairlines and dividers */
+    --edge: 140 122 92; /* control borders (inputs), 3:1 */
+    --ink: 42 34 25; /* text: iron-gall */
+    --dim: 98 84 64; /* secondary text */
+    --gold: 128 90 18; /* accent, links on hover, focus */
+    --parchment: 246 238 218; /* the character sheet's paper */
+    --parchink: 52 40 26;
+    --parchlink: 59 74 143; /* links on the paper, which stays light in both themes */
+    --arcane: 48 68 150; /* record links */
+    --danger: 156 46 36;
+    --ok: 44 100 56;
+    --warn: 138 86 8;
+    /* Item rarity */
+    --r-common: 98 88 74;
+    --r-uncommon: 40 104 54;
+    --r-rare: 36 82 160;
+    --r-very-rare: 116 56 148;
+    --r-legendary: 146 82 8;
+    --r-artifact: 156 40 34;
+    /* Realm palette (shared/realms.ts REALM_COLORS): a realm's colour sets --rc, used as text-realm, border-realm, bg-realm */
+    --rc-blue: 30 88 138;
+    --rc-amber: 136 82 10;
+    --rc-green: 30 104 68;
+    --rc-violet: 104 60 150;
+    --rc-red: 150 50 40;
+    --rc-teal: 16 98 108;
+    --rc-rose: 150 40 92;
+    --rc-slate: 72 80 96;
+    /* Canon labels */
+    --belief: 20 104 100;
+    --homebrew: 146 40 108;
+    --shadow: 92 66 30;
+    color-scheme: light;
+  }
+  .dark {
+    --bg: 17 18 22;
+    --panel: 24 26 31;
+    --raised: 33 36 43;
+    --line: 52 56 66;
+    --edge: 108 114 128;
+    --ink: 228 223 210;
+    --dim: 160 155 144;
+    --gold: 208 170 84;
+    --parchment: 233 222 196;
+    --parchink: 52 40 26;
+    --parchlink: 59 74 143; /* links on the paper, which stays light in both themes */
+    --arcane: 146 162 228;
+    --danger: 232 122 110;
+    --ok: 122 186 132;
+    --warn: 222 176 84;
+    --r-common: 176 171 160;
+    --r-uncommon: 118 196 128;
+    --r-rare: 124 170 240;
+    --r-very-rare: 192 152 236;
+    --r-legendary: 234 168 80;
+    --r-artifact: 240 124 112;
+    --rc-blue: 120 186 232;
+    --rc-amber: 236 184 92;
+    --rc-green: 110 200 150;
+    --rc-violet: 190 160 240;
+    --rc-red: 236 132 118;
+    --rc-teal: 100 200 204;
+    --rc-rose: 236 142 184;
+    --rc-slate: 172 182 200;
+    --belief: 96 200 190;
+    --homebrew: 232 128 200;
+    --shadow: 0 0 0;
+    color-scheme: dark;
+  }
+
+  /* A realm's colour: put rc-<colour> on an element, then use text-realm, border-realm/50, bg-realm/10 inside it. */
+  .rc-blue {
+    --rc: var(--rc-blue);
+  }
+  .rc-amber {
+    --rc: var(--rc-amber);
+  }
+  .rc-green {
+    --rc: var(--rc-green);
+  }
+  .rc-violet {
+    --rc: var(--rc-violet);
+  }
+  .rc-red {
+    --rc: var(--rc-red);
+  }
+  .rc-teal {
+    --rc: var(--rc-teal);
+  }
+  .rc-rose {
+    --rc: var(--rc-rose);
+  }
+  .rc-slate {
+    --rc: var(--rc-slate);
+  }
+  :root {
+    --rc: var(--rc-slate);
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+    background-image: radial-gradient(ellipse at top, rgb(var(--gold) / 0.05), transparent 60%);
+  }
+  /* Parchment: a very faint paper grain on the page background only ("Reduce texture" turns it off). */
+  html.light:not(.no-texture) body {
+    background-image:
+      radial-gradient(ellipse at top, rgb(var(--gold) / 0.06), transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .36 0 0 0 0 .26 0 0 0 0 .12 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-wide;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--gold));
+    outline-offset: 2px;
+  }
 }
 
-.leaflet-container {
-  background: rgb(var(--bg));
-  font: inherit;
-}
-.wk-marker {
-  @apply rounded-full border-2 border-bg shadow-lg;
-}
-.react-flow__attribution {
-  display: none;
-}
+/*
+  The app's own CSS sits with the utilities, after them, as it did with Tailwind CSS v3 (where it came after
+  @tailwind utilities): a rule wins by specificity, then by order. Left outside any layer, it would beat every
+  utility (an unlayered rule outranks a layered one), so a class such as [&>h2:first-child]:mt-0 would stop working.
+*/
+@layer utilities {
+  @keyframes wk-shimmer {
+    from {
+      background-position: 100% 0;
+    }
+    to {
+      background-position: -100% 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton {
+      animation: none;
+    }
+  }
 
-/* Map explorer (handbook): full-screen map with slide-out panels. */
-.wk-pin {
-  @apply flex items-center justify-center rounded-full border shadow-lg transition-transform;
-  --pin: 201 162 74;
-  width: 28px;
-  height: 28px;
-  color: rgb(var(--pin));
-  border-color: rgb(var(--pin) / 0.85);
-  background: rgb(14 13 18 / 0.88);
-  box-shadow:
-    0 0 0 2px rgb(0 0 0 / 0.35),
-    0 2px 8px rgb(0 0 0 / 0.6);
-}
-/* One colour per kind of place, readable on parchment and on the dark Ethereal chart. */
-.wk-pin-k-region {
-  --pin: 232 237 245;
-}
-.wk-pin-k-settlement {
-  --pin: 222 178 82;
-}
-.wk-pin-k-landmark {
-  --pin: 102 196 168;
-}
-.wk-pin-k-fortress {
-  --pin: 226 112 96;
-}
-.wk-pin-k-vault {
-  --pin: 176 146 236;
-}
-.wk-pin-k-other {
-  --pin: 126 182 236;
-}
-.wk-pin:hover {
-  transform: scale(1.15);
-}
-.wk-pin-region {
-  border-width: 2px;
-  background: rgb(14 13 18 / 0.9);
-}
-.wk-pin-active {
-  color: rgb(14 13 18);
-  background: rgb(var(--pin));
-  transform: scale(1.2);
-  box-shadow:
-    0 0 0 3px rgb(var(--pin) / 0.35),
-    0 0 18px rgb(var(--pin) / 0.6);
-}
-.wk-pin-legend {
-  width: 24px;
-  height: 24px;
-}
-.wk-map-btn {
-  @apply inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-sm text-ink hover:border-gold/60 hover:text-gold transition-colors;
-  background: rgb(14 13 18 / 0.82);
-  backdrop-filter: blur(6px);
-}
-/* The map's framed edge: a gilt line and a soft vignette, above the chart and under the panels. */
-.wk-explorer::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 900;
-  box-shadow:
-    inset 0 0 0 1px rgb(201 162 74 / 0.5),
-    inset 0 0 0 5px rgb(14 13 18 / 0.55),
-    inset 0 0 0 6px rgb(201 162 74 / 0.35),
-    inset 0 0 70px rgb(0 0 0 / 0.45);
-}
-.wk-compass {
-  color: rgb(242 227 179);
-  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.7));
-}
-.wk-cluster {
-  @apply flex items-center justify-center rounded-full border-2 text-[12px] font-semibold;
-  width: 34px;
-  height: 34px;
-  color: rgb(242 227 179);
-  border-color: rgb(201 162 74 / 0.9);
-  background: radial-gradient(circle, rgb(40 34 22 / 0.95), rgb(14 13 18 / 0.92));
-  box-shadow:
-    0 0 0 4px rgb(201 162 74 / 0.18),
-    0 2px 8px rgb(0 0 0 / 0.6);
-}
-.wk-overview {
-  position: relative;
-  display: block;
-  border: 1px solid rgb(201 162 74 / 0.6);
-  border-radius: 4px;
-  background-size: 100% 100%;
-  background-color: #0b0b10;
-  box-shadow: 0 2px 10px rgb(0 0 0 / 0.6);
-  overflow: hidden;
-  cursor: pointer;
-}
-.wk-overview-view {
-  position: absolute;
-  border: 1.5px solid rgb(242 227 179);
-  background: rgb(242 227 179 / 0.12);
-  box-shadow: 0 0 0 1px rgb(20 16 10 / 0.7);
-  pointer-events: none;
-}
-/* Map panels in the app's theme (Panels: App theme). */
-.wk-explorer-themed .wk-map-panel,
-.wk-explorer-themed .wk-map-btn,
-.wk-explorer-themed .wk-scale-bar {
-  background: rgb(var(--panel) / 0.95);
-}
-.wk-scale-bar {
-  @apply flex flex-col items-start gap-0.5 rounded px-1.5 py-1 text-[11px] text-ink;
-  background: rgb(14 13 18 / 0.75);
-}
-.wk-scale-line {
-  height: 6px;
-  border: 2px solid rgb(242 227 179);
-  border-top: 0;
-}
-.wk-badge {
-  @apply flex items-center justify-center gap-0.5 rounded-full border px-1 text-[10px] font-semibold leading-none shadow-lg;
-  min-width: 22px;
-  height: 22px;
-  color: rgb(var(--b));
-  border-color: rgb(var(--b) / 0.9);
-  background: rgb(14 13 18 / 0.9);
-}
-.wk-badge-legend {
-  width: 24px;
-  height: 24px;
-}
-.wk-badge-quests {
-  --b: 232 186 90;
-}
-.wk-badge-adventures {
-  --b: 146 162 228;
-}
-.wk-badge-people {
-  --b: 196 208 222;
-}
-.wk-badge-encounters {
-  --b: 236 124 110;
-}
-.wk-map-panel {
-  @apply absolute z-[1000] rounded-lg border border-line shadow-2xl overflow-hidden transition-transform duration-300 ease-out;
-  background: rgb(14 13 18 / 0.92);
-  backdrop-filter: blur(8px);
-}
-.wk-map-panel-hidden-left {
-  transform: translateX(calc(-100% - 2rem));
-}
-.wk-map-panel-hidden-right {
-  transform: translateX(calc(100% + 2rem));
-}
-.wk-map-tip {
-  @apply rounded-md border border-gold/40 px-2.5 py-1 text-ink shadow-xl;
-  background: rgb(14 13 18 / 0.95) !important;
-}
-.wk-map-tip::before {
-  display: none;
-}
-.wk-codex button.wk-ref {
-  @apply text-arcane underline decoration-dotted underline-offset-2 hover:text-gold;
-}
-/* Name cards sit above the map's side panels and bars, never under them. */
-.wk-explorer .leaflet-tooltip-pane {
-  z-index: 1100;
-}
-/* Popups (a layer badge's list) open above the legend and place panels too. */
-.wk-explorer .leaflet-popup-pane {
-  z-index: 1150;
-}
-.wk-map-tip {
-  width: max-content;
-  max-width: 280px;
-  white-space: normal;
-}
-.wk-pin-k-note {
-  --pin: 245 240 225;
-}
-.wk-pin-k-party {
-  --pin: 242 227 179;
-  width: 32px !important;
-  height: 32px !important;
-  box-shadow:
-    0 0 0 3px rgb(242 227 179 / 0.3),
-    0 0 16px rgb(242 227 179 / 0.55);
-}
-.wk-pin-undiscovered {
-  opacity: 0.45;
-  filter: grayscale(0.6);
-}
-.wk-pin-gmonly {
-  border-style: dotted;
-}
-.wk-fog {
-  pointer-events: none;
-}
-.wk-note-popup .leaflet-popup-content-wrapper,
-.wk-note-popup .leaflet-popup-tip {
-  background: rgb(14 13 18 / 0.96);
-  color: rgb(var(--ink));
-  border: 1px solid rgb(var(--line));
-}
+  /* Lore prose */
+  .prose-lore {
+    @apply font-serif text-[17px] leading-relaxed;
+  }
+  .prose-lore h1 {
+    @apply text-2xl text-gold mt-2 mb-3;
+  }
+  .prose-lore h2 {
+    @apply text-lg text-gold/90 mt-6 mb-2 border-b border-line pb-1;
+  }
+  .prose-lore h3 {
+    @apply text-base text-gold/80 mt-4 mb-1;
+  }
+  .prose-lore p {
+    @apply my-2;
+  }
+  .prose-lore ul {
+    @apply list-disc pl-6 my-2;
+  }
+  .prose-lore ol {
+    @apply list-decimal pl-6 my-2;
+  }
+  .prose-lore table {
+    @apply my-3 w-full text-sm font-sans border border-line;
+  }
+  .prose-lore th {
+    @apply bg-raised text-left px-2 py-1 border border-line;
+  }
+  .prose-lore td {
+    @apply px-2 py-1 border border-line align-top;
+  }
+  .prose-lore code {
+    @apply font-mono text-[13px] bg-raised px-1 rounded-sm;
+  }
+  .prose-lore blockquote {
+    @apply border-l-2 border-gold/50 pl-3 italic text-dim;
+  }
+  .prose-lore strong {
+    @apply text-ink font-semibold;
+  }
+  .prose-lore a.wk-ref {
+    @apply text-arcane underline decoration-dotted underline-offset-2 hover:text-gold;
+  }
+  .prose-lore a.wk-ref-broken {
+    @apply text-danger underline decoration-wavy;
+  }
+  .prose-lore .wk-secret {
+    @apply gm-only my-3;
+  }
 
-/* Drawing a place's outline (GM explorer). While it is open, the other pins stay still and let clicks through. */
-.wk-editing .leaflet-marker-icon:not(.wk-handle) {
-  pointer-events: none;
-  opacity: 0.55;
-}
-.wk-handle {
-  border-radius: 9999px;
-  border: 2px solid #f2e3b3;
-  background: #0b0b10;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
-  cursor: move;
-}
-.wk-handle-first {
-  background: #c9a24a;
-}
-.wk-handle-mid {
-  border-width: 1px;
-  background: rgba(242, 227, 179, 0.45);
-  cursor: copy;
-}
-.wk-handle:hover {
-  transform-origin: center;
-  outline: 2px solid rgba(242, 227, 179, 0.5);
-}
-
-/* Printing "What the party knows": only the document, on white. */
-@media print {
-  body * {
-    visibility: hidden;
+  .leaflet-container {
+    background: rgb(var(--bg));
+    font: inherit;
   }
-  .wk-print,
-  .wk-print * {
-    visibility: visible;
+  .wk-marker {
+    @apply rounded-full border-2 border-bg shadow-lg;
   }
-  .wk-print {
-    position: absolute;
-    inset: 0 auto auto 0;
-    width: 100%;
-    max-width: none;
-    background: #fff;
-    color: #111;
-    border: 0;
-    box-shadow: none;
-  }
-  .wk-print * {
-    color: #111 !important;
-  }
-  @page {
-    margin: 16mm 18mm;
-  }
-  /* The GM Quick Reference: flowing columns, so the sheet packs tight. */
-  .wk-quickref {
-    display: block;
-    columns: 2;
-    column-gap: 8mm;
-    font-size: 11px;
-  }
-  .wk-quickref > section {
-    break-inside: avoid;
-    margin-bottom: 5mm;
-    padding: 3mm;
-    border: 1px solid #999;
-  }
-  /* The handbook's Print view: one entry to a sheet, and none of the page around it. */
-  .wk-print-controls {
+  .react-flow__attribution {
     display: none;
   }
-  .wk-print-pages {
-    padding: 0;
-  }
-  .wk-print-page {
-    break-before: page;
-    border: 0;
-    padding: 0;
-    background: none;
-  }
-  .wk-print-page:first-child {
-    break-before: auto;
-  }
-}
 
-/* Character sheet: a ledger, inked on dark vellum (or parchment in the light theme), with a framed portrait. */
-.ledger {
-  --ledger: rgb(var(--panel));
-  background: radial-gradient(ellipse at 20% 0%, rgb(var(--gold) / 0.07), transparent 55%), radial-gradient(ellipse at 100% 100%, rgb(var(--gold) / 0.05), transparent 50%), var(--ledger);
-  @apply border border-gold/30 rounded-lg shadow-lg;
-}
-.ledger-rule {
-  @apply flex items-center gap-2 font-display text-[11px] uppercase tracking-[0.22em] text-gold/90;
-}
-.ledger-rule::before,
-.ledger-rule::after {
-  content: '';
-  @apply h-px flex-1 bg-gradient-to-r from-transparent via-gold/40 to-transparent;
-}
-.ledger-rule::before {
-  @apply max-w-4;
-}
-.ledger-card {
-  @apply rounded-md border border-line/80 bg-bg/40 p-3;
-}
-.ledger-frame {
-  position: relative;
-  padding: 6px;
-  border: 1px solid rgb(var(--gold) / 0.55);
-  outline: 1px solid rgb(var(--gold) / 0.25);
-  outline-offset: 3px;
-  border-radius: 999px 999px 10px 10px;
-  background: rgb(var(--bg) / 0.6);
-}
-.ledger-frame > .ledger-frame-inner {
-  border-radius: 999px 999px 6px 6px;
-  overflow: hidden;
-  aspect-ratio: 4 / 5;
-  background: linear-gradient(180deg, rgb(var(--raised)), rgb(var(--bg)));
-}
-.ledger-tabs {
-  @apply flex flex-nowrap overflow-x-auto border-b border-gold/25;
-  scrollbar-width: thin;
-}
-.ledger-tab {
-  @apply relative shrink-0 whitespace-nowrap px-2.5 py-2 font-display text-[12px] uppercase tracking-[0.1em] text-dim hover:text-gold transition-colors;
-}
-.ledger-tab[aria-selected='true'] {
-  @apply text-gold;
-}
-.ledger-tab[aria-selected='true']::after {
-  content: '';
-  @apply absolute inset-x-2 -bottom-px h-0.5 bg-gold;
-}
-/* A diamond toggle, like the official sheet's. */
-.diamond {
-  @apply inline-flex h-4 w-4 shrink-0 items-center justify-center;
-}
-.diamond::before {
-  content: '';
-  @apply block h-2.5 w-2.5 rotate-45 border border-gold/70 bg-transparent transition-colors;
-}
-.diamond[aria-pressed='true']::before,
-.diamond[aria-checked='true']::before {
-  @apply bg-gold;
-}
-.diamond.diamond-double[aria-checked='true']::before {
-  box-shadow:
-    0 0 0 2px rgb(var(--panel)),
-    0 0 0 3px rgb(var(--gold));
-}
-.diamond:disabled {
-  @apply opacity-60;
-}
-.medallion {
-  @apply relative flex flex-col items-center rounded-t-[40%] rounded-b-md border border-gold/40 bg-bg/50 px-2 pt-2 pb-1.5;
-}
-.stat-box {
-  @apply flex flex-col items-center justify-center rounded-md border border-line bg-bg/50 px-2 py-1.5 text-center;
-}
-.stat-box > .stat-label {
-  @apply text-[10px] uppercase tracking-[0.16em] text-dim;
-}
-.stat-box > .stat-value {
-  @apply font-display text-xl text-ink leading-tight;
-}
-.input-bare {
-  @apply w-full bg-transparent border-0 border-b border-dashed border-line/80 px-0.5 py-0.5 text-ink focus:border-gold focus:outline-none;
-}
-@media print {
-  html,
-  body {
-    background: white !important;
+  /* Map explorer (handbook): full-screen map with slide-out panels. */
+  .wk-pin {
+    @apply flex items-center justify-center rounded-full border shadow-lg transition-transform;
+    --pin: 201 162 74;
+    width: 28px;
+    height: 28px;
+    color: rgb(var(--pin));
+    border-color: rgb(var(--pin) / 0.85);
+    background: rgb(14 13 18 / 0.88);
+    box-shadow:
+      0 0 0 2px rgb(0 0 0 / 0.35),
+      0 2px 8px rgb(0 0 0 / 0.6);
   }
+  /* One colour per kind of place, readable on parchment and on the dark Ethereal chart. */
+  .wk-pin-k-region {
+    --pin: 232 237 245;
+  }
+  .wk-pin-k-settlement {
+    --pin: 222 178 82;
+  }
+  .wk-pin-k-landmark {
+    --pin: 102 196 168;
+  }
+  .wk-pin-k-fortress {
+    --pin: 226 112 96;
+  }
+  .wk-pin-k-vault {
+    --pin: 176 146 236;
+  }
+  .wk-pin-k-other {
+    --pin: 126 182 236;
+  }
+  .wk-pin:hover {
+    transform: scale(1.15);
+  }
+  .wk-pin-region {
+    border-width: 2px;
+    background: rgb(14 13 18 / 0.9);
+  }
+  .wk-pin-active {
+    color: rgb(14 13 18);
+    background: rgb(var(--pin));
+    transform: scale(1.2);
+    box-shadow:
+      0 0 0 3px rgb(var(--pin) / 0.35),
+      0 0 18px rgb(var(--pin) / 0.6);
+  }
+  .wk-pin-legend {
+    width: 24px;
+    height: 24px;
+  }
+  .wk-map-btn {
+    @apply inline-flex items-center gap-1.5 rounded-md border border-line px-3 py-1.5 text-sm text-ink hover:border-gold/60 hover:text-gold transition-colors;
+    background: rgb(14 13 18 / 0.82);
+    backdrop-filter: blur(6px);
+  }
+  /* The map's framed edge: a gilt line and a soft vignette, above the chart and under the panels. */
+  .wk-explorer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 900;
+    box-shadow:
+      inset 0 0 0 1px rgb(201 162 74 / 0.5),
+      inset 0 0 0 5px rgb(14 13 18 / 0.55),
+      inset 0 0 0 6px rgb(201 162 74 / 0.35),
+      inset 0 0 70px rgb(0 0 0 / 0.45);
+  }
+  .wk-compass {
+    color: rgb(242 227 179);
+    filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.7));
+  }
+  .wk-cluster {
+    @apply flex items-center justify-center rounded-full border-2 text-[12px] font-semibold;
+    width: 34px;
+    height: 34px;
+    color: rgb(242 227 179);
+    border-color: rgb(201 162 74 / 0.9);
+    background: radial-gradient(circle, rgb(40 34 22 / 0.95), rgb(14 13 18 / 0.92));
+    box-shadow:
+      0 0 0 4px rgb(201 162 74 / 0.18),
+      0 2px 8px rgb(0 0 0 / 0.6);
+  }
+  .wk-overview {
+    position: relative;
+    display: block;
+    border: 1px solid rgb(201 162 74 / 0.6);
+    border-radius: 4px;
+    background-size: 100% 100%;
+    background-color: #0b0b10;
+    box-shadow: 0 2px 10px rgb(0 0 0 / 0.6);
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .wk-overview-view {
+    position: absolute;
+    border: 1.5px solid rgb(242 227 179);
+    background: rgb(242 227 179 / 0.12);
+    box-shadow: 0 0 0 1px rgb(20 16 10 / 0.7);
+    pointer-events: none;
+  }
+  /* Map panels in the app's theme (Panels: App theme). */
+  .wk-explorer-themed .wk-map-panel,
+  .wk-explorer-themed .wk-map-btn,
+  .wk-explorer-themed .wk-scale-bar {
+    background: rgb(var(--panel) / 0.95);
+  }
+  .wk-scale-bar {
+    @apply flex flex-col items-start gap-0.5 rounded-sm px-1.5 py-1 text-[11px] text-ink;
+    background: rgb(14 13 18 / 0.75);
+  }
+  .wk-scale-line {
+    height: 6px;
+    border: 2px solid rgb(242 227 179);
+    border-top: 0;
+  }
+  .wk-badge {
+    @apply flex items-center justify-center gap-0.5 rounded-full border px-1 text-[10px] font-semibold leading-none shadow-lg;
+    min-width: 22px;
+    height: 22px;
+    color: rgb(var(--b));
+    border-color: rgb(var(--b) / 0.9);
+    background: rgb(14 13 18 / 0.9);
+  }
+  .wk-badge-legend {
+    width: 24px;
+    height: 24px;
+  }
+  .wk-badge-quests {
+    --b: 232 186 90;
+  }
+  .wk-badge-adventures {
+    --b: 146 162 228;
+  }
+  .wk-badge-people {
+    --b: 196 208 222;
+  }
+  .wk-badge-encounters {
+    --b: 236 124 110;
+  }
+  .wk-map-panel {
+    @apply absolute z-1000 rounded-lg border border-line shadow-2xl overflow-hidden transition-transform duration-300 ease-out;
+    background: rgb(14 13 18 / 0.92);
+    backdrop-filter: blur(8px);
+  }
+  .wk-map-panel-hidden-left {
+    transform: translateX(calc(-100% - 2rem));
+  }
+  .wk-map-panel-hidden-right {
+    transform: translateX(calc(100% + 2rem));
+  }
+  .wk-map-tip {
+    @apply rounded-md border border-gold/40 px-2.5 py-1 text-ink shadow-xl;
+    background: rgb(14 13 18 / 0.95) !important;
+  }
+  .wk-map-tip::before {
+    display: none;
+  }
+  .wk-codex button.wk-ref {
+    @apply text-arcane underline decoration-dotted underline-offset-2 hover:text-gold;
+  }
+  /* Name cards sit above the map's side panels and bars, never under them. */
+  .wk-explorer .leaflet-tooltip-pane {
+    z-index: 1100;
+  }
+  /* Popups (a layer badge's list) open above the legend and place panels too. */
+  .wk-explorer .leaflet-popup-pane {
+    z-index: 1150;
+  }
+  .wk-map-tip {
+    width: max-content;
+    max-width: 280px;
+    white-space: normal;
+  }
+  .wk-pin-k-note {
+    --pin: 245 240 225;
+  }
+  .wk-pin-k-party {
+    --pin: 242 227 179;
+    width: 32px !important;
+    height: 32px !important;
+    box-shadow:
+      0 0 0 3px rgb(242 227 179 / 0.3),
+      0 0 16px rgb(242 227 179 / 0.55);
+  }
+  .wk-pin-undiscovered {
+    opacity: 0.45;
+    filter: grayscale(0.6);
+  }
+  .wk-pin-gmonly {
+    border-style: dotted;
+  }
+  .wk-fog {
+    pointer-events: none;
+  }
+  .wk-note-popup .leaflet-popup-content-wrapper,
+  .wk-note-popup .leaflet-popup-tip {
+    background: rgb(14 13 18 / 0.96);
+    color: rgb(var(--ink));
+    border: 1px solid rgb(var(--line));
+  }
+
+  /* Drawing a place's outline (GM explorer). While it is open, the other pins stay still and let clicks through. */
+  .wk-editing .leaflet-marker-icon:not(.wk-handle) {
+    pointer-events: none;
+    opacity: 0.55;
+  }
+  .wk-handle {
+    border-radius: 9999px;
+    border: 2px solid #f2e3b3;
+    background: #0b0b10;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+    cursor: move;
+  }
+  .wk-handle-first {
+    background: #c9a24a;
+  }
+  .wk-handle-mid {
+    border-width: 1px;
+    background: rgba(242, 227, 179, 0.45);
+    cursor: copy;
+  }
+  .wk-handle:hover {
+    transform-origin: center;
+    outline: 2px solid rgba(242, 227, 179, 0.5);
+  }
+
+  /* Printing "What the party knows": only the document, on white. */
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    .wk-print,
+    .wk-print * {
+      visibility: visible;
+    }
+    .wk-print {
+      position: absolute;
+      inset: 0 auto auto 0;
+      width: 100%;
+      max-width: none;
+      background: #fff;
+      color: #111;
+      border: 0;
+      box-shadow: none;
+    }
+    .wk-print * {
+      color: #111 !important;
+    }
+    @page {
+      margin: 16mm 18mm;
+    }
+    /* The GM Quick Reference: flowing columns, so the sheet packs tight. */
+    .wk-quickref {
+      display: block;
+      columns: 2;
+      column-gap: 8mm;
+      font-size: 11px;
+    }
+    .wk-quickref > section {
+      break-inside: avoid;
+      margin-bottom: 5mm;
+      padding: 3mm;
+      border: 1px solid #999;
+    }
+    /* The handbook's Print view: one entry to a sheet, and none of the page around it. */
+    .wk-print-controls {
+      display: none;
+    }
+    .wk-print-pages {
+      padding: 0;
+    }
+    .wk-print-page {
+      break-before: page;
+      border: 0;
+      padding: 0;
+      background: none;
+    }
+    .wk-print-page:first-child {
+      break-before: auto;
+    }
+  }
+
+  /* Character sheet: a ledger, inked on dark vellum (or parchment in the light theme), with a framed portrait. */
   .ledger {
-    background: white !important;
-    color: black !important;
-    box-shadow: none !important;
+    --ledger: rgb(var(--panel));
+    background: radial-gradient(ellipse at 20% 0%, rgb(var(--gold) / 0.07), transparent 55%), radial-gradient(ellipse at 100% 100%, rgb(var(--gold) / 0.05), transparent 50%), var(--ledger);
+    @apply border border-gold/30 rounded-lg shadow-lg;
   }
-}
-/* The paper character sheet: US Letter pages, ink on white. */
-.print-page {
-  width: 8.5in;
-  min-height: 11in;
-  color: #111;
-}
-@media print {
+  .ledger-rule {
+    @apply flex items-center gap-2 font-display text-[11px] uppercase tracking-[0.22em] text-gold/90;
+  }
+  .ledger-rule::before,
+  .ledger-rule::after {
+    content: '';
+    @apply h-px flex-1 bg-linear-to-r from-transparent via-gold/40 to-transparent;
+  }
+  .ledger-rule::before {
+    @apply max-w-4;
+  }
+  .ledger-card {
+    @apply rounded-md border border-line/80 bg-bg/40 p-3;
+  }
+  .ledger-frame {
+    position: relative;
+    padding: 6px;
+    border: 1px solid rgb(var(--gold) / 0.55);
+    outline: 1px solid rgb(var(--gold) / 0.25);
+    outline-offset: 3px;
+    border-radius: 999px 999px 10px 10px;
+    background: rgb(var(--bg) / 0.6);
+  }
+  .ledger-frame > .ledger-frame-inner {
+    border-radius: 999px 999px 6px 6px;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    background: linear-gradient(180deg, rgb(var(--raised)), rgb(var(--bg)));
+  }
+  .ledger-tabs {
+    @apply flex flex-nowrap overflow-x-auto border-b border-gold/25;
+    scrollbar-width: thin;
+  }
+  .ledger-tab {
+    @apply relative shrink-0 whitespace-nowrap px-2.5 py-2 font-display text-[12px] uppercase tracking-widest text-dim hover:text-gold transition-colors;
+  }
+  .ledger-tab[aria-selected='true'] {
+    @apply text-gold;
+  }
+  .ledger-tab[aria-selected='true']::after {
+    content: '';
+    @apply absolute inset-x-2 -bottom-px h-0.5 bg-gold;
+  }
+  /* A diamond toggle, like the official sheet's. */
+  .diamond {
+    @apply inline-flex h-4 w-4 shrink-0 items-center justify-center;
+  }
+  .diamond::before {
+    content: '';
+    @apply block h-2.5 w-2.5 rotate-45 border border-gold/70 bg-transparent transition-colors;
+  }
+  .diamond[aria-pressed='true']::before,
+  .diamond[aria-checked='true']::before {
+    @apply bg-gold;
+  }
+  .diamond.diamond-double[aria-checked='true']::before {
+    box-shadow:
+      0 0 0 2px rgb(var(--panel)),
+      0 0 0 3px rgb(var(--gold));
+  }
+  .diamond:disabled {
+    @apply opacity-60;
+  }
+  .medallion {
+    @apply relative flex flex-col items-center rounded-t-[40%] rounded-b-md border border-gold/40 bg-bg/50 px-2 pt-2 pb-1.5;
+  }
+  .stat-box {
+    @apply flex flex-col items-center justify-center rounded-md border border-line bg-bg/50 px-2 py-1.5 text-center;
+  }
+  .stat-box > .stat-label {
+    @apply text-[10px] uppercase tracking-[0.16em] text-dim;
+  }
+  .stat-box > .stat-value {
+    @apply font-display text-xl text-ink leading-tight;
+  }
+  .input-bare {
+    @apply w-full bg-transparent border-0 border-b border-dashed border-line/80 px-0.5 py-0.5 text-ink focus:border-gold focus:outline-hidden;
+  }
+  @media print {
+    html,
+    body {
+      background: white !important;
+    }
+    .ledger {
+      background: white !important;
+      color: black !important;
+      box-shadow: none !important;
+    }
+  }
+  /* The paper character sheet: US Letter pages, ink on white. */
   .print-page {
-    width: auto;
-    min-height: 0;
-    padding: 0 !important;
-    page-break-after: always;
-    break-after: page;
+    width: 8.5in;
+    min-height: 11in;
+    color: #111;
   }
-  .print-page:last-child {
-    page-break-after: auto;
-    break-after: auto;
+  @media print {
+    .print-page {
+      width: auto;
+      min-height: 0;
+      padding: 0 !important;
+      page-break-after: always;
+      break-after: page;
+    }
+    .print-page:last-child {
+      page-break-after: auto;
+      break-after: auto;
+    }
   }
-}
-@media screen and (max-width: 900px) {
-  .print-sheet {
-    zoom: 0.45;
+  @media screen and (max-width: 900px) {
+    .print-sheet {
+      zoom: 0.45;
+    }
   }
-}
 
-/* Quick-Peek: split view's divider, and lore text sized for the inspector and hover cards. */
-.wk-split-handle {
-  @apply relative w-1.5 shrink-0 cursor-col-resize bg-line/60 transition-colors hover:bg-gold/50 focus-visible:bg-gold/60;
-}
-.wk-split-handle::after {
-  content: '';
-  @apply absolute inset-y-0 -left-1 -right-1;
-}
-.prose-peek {
-  @apply font-serif text-[15px] leading-relaxed;
-}
-.prose-peek p + p {
-  @apply mt-2;
-}
-.prose-peek ul {
-  @apply list-disc pl-5;
-}
-.prose-peek a.wk-ref {
-  @apply text-arcane underline decoration-dotted underline-offset-2 hover:text-gold;
-}
-/* Pages built for the full width stack their side column when a record is open beside them, or the inspector is
-   docked on a screen too narrow for both. */
-.wk-split .wk-record-grid {
-  grid-template-columns: minmax(0, 1fr);
-}
-@media (max-width: 1599px) {
-  .wk-inspector-docked .wk-record-grid {
+  /* Quick-Peek: split view's divider, and lore text sized for the inspector and hover cards. */
+  .wk-split-handle {
+    @apply relative w-1.5 shrink-0 cursor-col-resize bg-line/60 transition-colors hover:bg-gold/50 focus-visible:bg-gold/60;
+  }
+  .wk-split-handle::after {
+    content: '';
+    @apply absolute inset-y-0 -left-1 -right-1;
+  }
+  .prose-peek {
+    @apply font-serif text-[15px] leading-relaxed;
+  }
+  .prose-peek p + p {
+    @apply mt-2;
+  }
+  .prose-peek ul {
+    @apply list-disc pl-5;
+  }
+  .prose-peek a.wk-ref {
+    @apply text-arcane underline decoration-dotted underline-offset-2 hover:text-gold;
+  }
+  /* Pages built for the full width stack their side column when a record is open beside them, or the inspector is
+     docked on a screen too narrow for both. */
+  .wk-split .wk-record-grid {
     grid-template-columns: minmax(0, 1fr);
   }
+  @media (max-width: 1599px) {
+    .wk-inspector-docked .wk-record-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* The full Markdown editor (components/editor): the text scrolls inside it, beside its preview, in a page;
+     in full screen it fills the screen. */
+  [data-editor='markdown'][data-full] .cm-editor {
+    max-height: 70vh;
+  }
+  [data-editor='markdown'][data-fullscreen] .cm-editor {
+    max-height: none;
+    height: 100%;
+  }
+  [data-editor='markdown'] .cm-scroller {
+    overflow: auto;
+  }
 }
 
-/* The full Markdown editor (components/editor): the text scrolls inside it, beside its preview, in a page;
-   in full screen it fills the screen. */
-[data-editor='markdown'][data-full] .cm-editor {
-  max-height: 70vh;
-}
-[data-editor='markdown'][data-fullscreen] .cm-editor {
-  max-height: none;
-  height: 100%;
-}
-[data-editor='markdown'] .cm-scroller {
-  overflow: auto;
+/*
+  space-y as Tailwind CSS v3 had it: the gap is a top margin on every item after the first, and it replaces the item's
+  own top margin; an item's own bottom margin adds to it. (v4 puts the gap below each item instead, and an item's own
+  margin replaces it, which closed up the gaps under page headers and other items with margins.) Only the sizes the
+  app uses.
+*/
+@layer utilities {
+  :where(.space-y-0\.5 > :not(:last-child)) {
+    margin-bottom: 0;
+  }
+  .space-y-0\.5 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: calc(var(--spacing) * 0.5);
+  }
+  :where(.space-y-1 > :not(:last-child)) {
+    margin-bottom: 0;
+  }
+  .space-y-1 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: calc(var(--spacing) * 1);
+  }
+  :where(.space-y-1\.5 > :not(:last-child)) {
+    margin-bottom: 0;
+  }
+  .space-y-1\.5 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: calc(var(--spacing) * 1.5);
+  }
+  :where(.space-y-2 > :not(:last-child)) {
+    margin-bottom: 0;
+  }
+  .space-y-2 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: calc(var(--spacing) * 2);
+  }
+  :where(.space-y-2\.5 > :not(:last-child)) {
+    margin-bottom: 0;
+  }
+  .space-y-2\.5 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: calc(var(--spacing) * 2.5);
+  }
+  :where(.space-y-3 > :not(:last-child)) {
+    margin-bottom: 0;
+  }
+  .space-y-3 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: calc(var(--spacing) * 3);
+  }
+  :where(.space-y-3\.5 > :not(:last-child)) {
+    margin-bottom: 0;
+  }
+  .space-y-3\.5 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: calc(var(--spacing) * 3.5);
+  }
+  :where(.space-y-4 > :not(:last-child)) {
+    margin-bottom: 0;
+  }
+  .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: calc(var(--spacing) * 4);
+  }
+  :where(.space-y-5 > :not(:last-child)) {
+    margin-bottom: 0;
+  }
+  .space-y-5 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: calc(var(--spacing) * 5);
+  }
+  :where(.space-y-6 > :not(:last-child)) {
+    margin-bottom: 0;
+  }
+  .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: calc(var(--spacing) * 6);
+  }
+  :where(.space-y-7 > :not(:last-child)) {
+    margin-bottom: 0;
+  }
+  .space-y-7 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: calc(var(--spacing) * 7);
+  }
+  :where(.space-y-8 > :not(:last-child)) {
+    margin-bottom: 0;
+  }
+  .space-y-8 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: calc(var(--spacing) * 8);
+  }
+  @media (width >= 48rem) {
+    :where(.md\:space-y-0 > :not(:last-child)) {
+      margin-bottom: 0;
+    }
+    .md\:space-y-0 > :not([hidden]) ~ :not([hidden]) {
+      margin-top: 0;
+    }
+  }
+  @media print {
+    :where(.print\:space-y-0 > :not(:last-child)) {
+      margin-bottom: 0;
+    }
+    .print\:space-y-0 > :not([hidden]) ~ :not([hidden]) {
+      margin-top: 0;
+    }
+  }
 }

@@ -246,7 +246,7 @@ export function PlayerLayout({ appName, publishedAt, campaign }: { appName: stri
 
   return (
     <div className="flex flex-col h-full">
-      <header className="h-[52px] shrink-0 flex items-center gap-1 border-b border-line bg-panel px-2 md:px-3 elev-1 relative z-[1500]">
+      <header className="h-[52px] shrink-0 flex items-center gap-1 border-b border-line bg-panel px-2 md:px-3 elev-1 relative z-1500">
         <button className="btn-ghost md:hidden min-h-[40px]" onClick={() => setDrawer(true)} aria-label="Open menu">
           <MenuIcon size={18} />
         </button>
@@ -283,7 +283,7 @@ export function PlayerLayout({ appName, publishedAt, campaign }: { appName: stri
           }}
         >
           <Search size={14} className="text-dim shrink-0" />
-          <input className="bg-transparent outline-none flex-1 min-w-0" placeholder="Search what you know…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search" />
+          <input className="bg-transparent outline-hidden flex-1 min-w-0" placeholder="Search what you know…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search" />
         </form>
         {publishedAt && <span className="hidden xl:block text-xs text-dim whitespace-nowrap px-2">Updated {new Date(publishedAt).toLocaleDateString()}</span>}
         {themeButton}
@@ -320,7 +320,7 @@ export function PlayerLayout({ appName, publishedAt, campaign }: { appName: stri
           </aside>
         )}
         {drawer && (
-          <div className="fixed inset-0 z-[1800] md:hidden bg-black/60" onClick={() => setDrawer(false)}>
+          <div className="fixed inset-0 z-1800 md:hidden bg-black/60" onClick={() => setDrawer(false)}>
             <aside className="w-72 max-w-[85vw] h-full bg-panel border-r border-line flex flex-col" onClick={(e) => e.stopPropagation()} aria-label="Menu">
               <div className="flex items-center gap-2 px-3 py-3 border-b border-line">
                 {mark}

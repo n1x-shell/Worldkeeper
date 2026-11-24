@@ -32,13 +32,13 @@ export function Stat({ label, children, foot, className = '', title }: { label: 
 export const NO_SPIN = '[-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none';
 
 /** The bare input inside a Stat: it takes the box's figure style. */
-export const STAT_INPUT = 'num w-full bg-transparent text-center text-xl font-semibold leading-tight text-ink placeholder:text-dim/60 focus:outline-none disabled:opacity-100';
+export const STAT_INPUT = 'num w-full bg-transparent text-center text-xl font-semibold leading-tight text-ink placeholder:text-dim/60 focus:outline-hidden disabled:opacity-100';
 
 /** A section heading in the ledger's style, with optional actions on the right. */
 export function Rule({ children, actions }: { children: ReactNode; actions?: ReactNode }) {
   return (
     <div className="flex flex-wrap items-center gap-x-2 gap-y-2">
-      <h3 className="ledger-rule min-w-[14rem] flex-1">{children}</h3>
+      <h3 className="ledger-rule min-w-56 flex-1">{children}</h3>
       {actions}
     </div>
   );
@@ -59,7 +59,7 @@ export function Diamond({ on, onChange, label, disabled, double, cover }: { on: 
       aria-label={label}
       title={label}
       disabled={!live}
-      className={`diamond ${double ? 'diamond-double' : ''} ${cover && live ? "after:absolute after:inset-0 after:rounded after:content-[''] hover:after:bg-gold/5" : ''}`}
+      className={`diamond ${double ? 'diamond-double' : ''} ${cover && live ? "after:absolute after:inset-0 after:rounded-sm after:content-[''] hover:after:bg-gold/5" : ''}`}
       onClick={() => onChange?.(!on)}
     />
   );

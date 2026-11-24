@@ -183,7 +183,7 @@ function HoverCard({ card, api: p, onEnter, onLeave, onDone }: { card: Card; api
   const style = below ? { left, top: r.bottom + 6 } : { left, bottom: window.innerHeight - r.top + 6 };
   const pinned = p.pins.some((x) => x.id === card.id);
   return (
-    <div className="wk-hovercard panel elev-2 fixed z-[2500] p-3 text-sm" style={{ ...style, width: W }} role="dialog" aria-label={d?.name ?? 'Record'} onMouseEnter={onEnter} onMouseLeave={onLeave}>
+    <div className="wk-hovercard panel elev-2 fixed z-2500 p-3 text-sm" style={{ ...style, width: W }} role="dialog" aria-label={d?.name ?? 'Record'} onMouseEnter={onEnter} onMouseLeave={onLeave}>
       {failed ? (
         <p className="text-dim">This record can&apos;t be shown.</p>
       ) : !d ? (

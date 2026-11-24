@@ -416,7 +416,7 @@ function DomainDetail({ id }: { id: string }) {
             <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
           </GmOnly>
         ) : (
-          <div key={i} className={/access/i.test(s.heading) ? 'rc-violet border border-realm/30 rounded px-3 my-2 bg-realm/5' : ''}>
+          <div key={i} className={/access/i.test(s.heading) ? 'rc-violet border border-realm/30 rounded-sm px-3 my-2 bg-realm/5' : ''}>
             <Markdown text={s.heading ? `## ${s.heading}\n\n${s.content}` : s.content} />
           </div>
         ),

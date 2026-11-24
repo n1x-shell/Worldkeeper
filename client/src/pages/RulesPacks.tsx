@@ -59,7 +59,7 @@ export function RulesPacksPanel() {
         {(data ?? []).map((p) => (
           <li key={p.id} className="flex flex-wrap items-center gap-3 py-2">
             <Check
-              className="flex flex-1 min-w-[14rem]"
+              className="flex flex-1 min-w-56"
               checked={p.enabled}
               label={`Use ${p.name}`}
               onChange={async (v) => changed(await api.patch<Pack[]>(`/api/rules/packs/${encodeURIComponent(p.id)}`, { enabled: v }))}
@@ -266,7 +266,7 @@ function BookPicker({
       .map(([k, label]) => `${c[k]} ${label}`)
       .join(', ');
   return (
-    <div className="rounded border border-gold/40 p-3 space-y-2">
+    <div className="rounded-sm border border-gold/40 p-3 space-y-2">
       <div className="text-sm font-medium">Choose the books to import</div>
       <p className="text-xs text-dim">
         Only books with rules, creatures or items are listed: your last choice first, then the rest, newest first. Where two chosen books have the same rule, the newer printing wins. Your choice is
@@ -346,7 +346,7 @@ function Open5ePicker({ onCancel, onDone }: { onCancel: () => void; onDone: (msg
     }
   };
   return (
-    <div className="rounded border border-gold/40 p-3 space-y-2">
+    <div className="rounded-sm border border-gold/40 p-3 space-y-2">
       <div className="text-sm font-medium">Open content from Open5e</div>
       <p className="text-xs text-dim">
         Openly licensed fifth-edition material, from api.open5e.com. Each source comes in as its own pack, named with its publisher and licence, and stays in this library like any other. Some were

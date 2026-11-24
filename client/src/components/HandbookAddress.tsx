@@ -31,7 +31,7 @@ export async function setTableOpen(open: boolean) {
 export function QrCode({ text, size = 168, label }: { text: string; size?: number; label: string }) {
   const qr = useMemo(() => qrSvgPath(qrMatrix(text)), [text]);
   return (
-    <svg role="img" aria-label={label} width={size} height={size} viewBox={`0 0 ${qr.size} ${qr.size}`} shapeRendering="crispEdges" className="rounded-sm">
+    <svg role="img" aria-label={label} width={size} height={size} viewBox={`0 0 ${qr.size} ${qr.size}`} shapeRendering="crispEdges" className="rounded-xs">
       <rect width={qr.size} height={qr.size} fill="#fff" />
       <path d={qr.path} fill="#000" />
     </svg>

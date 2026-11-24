@@ -42,7 +42,7 @@ export function itemLine(i: BookItem) {
 /** One item's rules, folded. */
 export function ItemCard({ item, label }: { item: BookItem; label?: string }) {
   return (
-    <details className="rounded border border-line/70 px-2 py-1 text-sm">
+    <details className="rounded-sm border border-line/70 px-2 py-1 text-sm">
       <summary className="cursor-pointer">
         <span className="font-medium">{label ?? item.name}</span> <span className="text-xs text-dim">{itemLine(item)}</span>
       </summary>

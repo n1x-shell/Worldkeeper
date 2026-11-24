@@ -162,7 +162,7 @@ function ScopeEditor({
             <div key={f.key} className="px-2 py-1.5">
               <GmOnly
                 inline
-                className="!pl-3.5"
+                className="pl-3.5!"
                 label={
                   <span className="inline-flex items-center gap-1">
                     <Lock size={10} aria-hidden /> GM only
@@ -200,7 +200,7 @@ function SourceCell({ values }: { values: SourceValue[] }) {
               <BookOpen size={10} /> {v.from}
             </div>
           </Dev>
-          <Markdown text={named(v.text.length > 900 ? v.text.slice(0, 900) + '…' : v.text)} className="prose-lore text-[14px] text-parchink [&_p]:my-1 [&_a]:!text-parchlink [&_strong]:!text-parchink" />
+          <Markdown text={named(v.text.length > 900 ? v.text.slice(0, 900) + '…' : v.text)} className="prose-lore text-[14px] text-parchink [&_p]:my-1 [&_a]:text-parchlink! [&_strong]:text-parchink!" />
         </div>
       ))}
     </div>

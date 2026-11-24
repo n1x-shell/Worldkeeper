@@ -25,7 +25,7 @@ export function Inspector({ overlay }: { overlay: boolean }) {
   const current = p.inspected[p.inspected.length - 1] ?? null;
   return (
     <aside
-      className={`wk-inspector flex flex-col bg-panel border-l border-line ${overlay ? 'fixed right-0 top-[52px] bottom-0 z-[1700] elev-3' : 'shrink-0 relative'}`}
+      className={`wk-inspector flex flex-col bg-panel border-l border-line ${overlay ? 'fixed right-0 top-[52px] bottom-0 z-1700 elev-3' : 'shrink-0 relative'}`}
       style={{ width: 'min(360px, 100vw)' }}
       aria-label="Inspector"
     >

@@ -51,7 +51,7 @@ export function PrintSheet({ value, portraitUrl }: { value: SheetChar; portraitU
       <div className="print-page bg-white shadow-lg print:shadow-none mx-auto p-[0.35in] space-y-2">
         <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 items-stretch">
           <Box className="grid grid-cols-[auto_1fr] gap-2">
-            {portraitUrl ? <img src={portraitUrl} alt="" className="h-[0.95in] w-[0.8in] object-cover rounded border border-neutral-400" /> : <span />}
+            {portraitUrl ? <img src={portraitUrl} alt="" className="h-[0.95in] w-[0.8in] object-cover rounded-sm border border-neutral-400" /> : <span />}
             <div className="grid grid-cols-2 gap-x-3 gap-y-1">
               <div className="col-span-2">
                 <Line label="Character name" value={<b className="text-[12pt]">{value.name}</b>} />
@@ -115,7 +115,7 @@ export function PrintSheet({ value, portraitUrl }: { value: SheetChar; portraitU
               <Box key={a} title={ABILITY_NAMES[a]}>
                 <div className="flex items-baseline justify-center gap-2">
                   <span className="text-[14pt] font-semibold">{signed(mod(s, a))}</span>
-                  <span className="text-[8pt] border border-neutral-400 rounded px-1">{score(s, a)}</span>
+                  <span className="text-[8pt] border border-neutral-400 rounded-sm px-1">{score(s, a)}</span>
                 </div>
                 <div className="flex items-center gap-1 border-b border-neutral-300 py-0.5 font-semibold">
                   <Dot on={!!s.saves?.includes(a)} /> <span className="w-6 text-right">{signed(saveBonus(s, lvl, a))}</span> Saving throw
@@ -302,7 +302,7 @@ export function PrintSheet({ value, portraitUrl }: { value: SheetChar; portraitU
                 {(['cp', 'sp', 'ep', 'gp', 'pp'] as const).map((c) => (
                   <div key={c}>
                     <div className="text-[6.5pt] uppercase text-neutral-600">{c}</div>
-                    <div className="border border-neutral-400 rounded mx-0.5 min-h-[14pt]">{s.coins?.[c] ?? ''}</div>
+                    <div className="border border-neutral-400 rounded-sm mx-0.5 min-h-[14pt]">{s.coins?.[c] ?? ''}</div>
                   </div>
                 ))}
               </div>
