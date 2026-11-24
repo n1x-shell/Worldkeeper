@@ -887,6 +887,13 @@ export function BackupsPage() {
             }}
           />
         </Field>
+        <p className="text-xs text-dim mt-2">
+          These backups are this library’s own. To keep <b>everything</b> (every library, your books’ rules and installed setting packs) in one file, or to move it all to a new computer, use{' '}
+          <Link to="/libraries" className="text-arcane">
+            Libraries → Back up everything
+          </Link>
+          .
+        </p>
       </Card>
       <Card flush>
         {!data ? (

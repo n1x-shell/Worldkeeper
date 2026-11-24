@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.6.2_
+_Last updated: 2026-11-24 · v0.6.3_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,14 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.6.3: back up everything
+
+- **`server/src/backup/installation.ts`:** `exportInstallation` makes one ZIP: `manifest.json` (`worldkeeper-installation`, format 1, the libraries with their names, folders and archived state), each library's database (`VACUUM INTO`, the open one through its connection; a library never opened has none and comes over empty) and pictures, `shared/rules.db` (`VACUUM shared INTO`) and `shared/packs/`. Never `secrets.json`, never a library's own backups or staging.
+- **`importInstallation` adds, never replaces:** each library becomes a new one ("… (from file)" when the name is taken; archived stays archived); a rules pack is added when this installation lacks it or has an older copy, and the open library's own switch for it is kept; setting packs this installation lacks are added. Entry names are checked (folders, picture names, pack paths), so nothing is written outside its folder.
+- **Routes** (GM only): `GET /api/libraries/everything` (the file), `POST /api/libraries/everything` (open one).
+- **Client:** **Library → Libraries** has **Back up everything** and **Open everything from a file** (asks first, then says what was added). The Backups page points to it.
+- **Tests:** `tests/installationBackup.test.ts`: every library (with a never-opened one), pictures, rules and packs carried and the token and backups not; added to another installation without replacing its own; a library's own switch kept; a path leaving its folder ignored; not such a file refused. A browser check downloads the file from the page and opens it again.
 
 ## v0.6.2: campaign addresses only
 
@@ -508,7 +516,7 @@ The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are n
 - The desktop app is about 140 MB, most of it the bundled Node.js runtime.
 - A handbook code keeps groups apart; it is not a password. (With two groups at once, turn on **Only campaign addresses on the table**.)
 - The QR codes come from a small encoder in the app (`shared/qr.ts`), checked against the standard's worked example and a reader in the tests; scan one with a phone before relying on it at the table.
-- A library's backups hold its own database and pictures, not `shared/` (your books' rules): import them again after restoring on another computer.
+- A library's backups hold its own database and pictures, not `shared/`; **Back up everything** holds both.
 
 - Import keeps the whole archive in memory during preview (fine for this ~2.4 MB library; large image-heavy archives are not supported because only `.md` files are read).
 - `faction_plans`/`campaign_state` have no undo beyond editing/rejecting rows.

@@ -3,7 +3,7 @@
  * settings, backups and handbook. Rename, duplicate, archive and restore, open from a file, show in folder.
  */
 import { useRef, useState } from 'react';
-import { Archive, ArchiveRestore, Copy, FolderOpen, Library as LibraryIcon, Plus, Upload } from 'lucide-react';
+import { Archive, ArchiveRestore, Copy, Download, FolderOpen, Library as LibraryIcon, Plus, Upload } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { Badge, Card, ErrorBox, Loading, PageHeader, ask, askText, toast } from '../components/ui';
 import { newLibrary, openLibrary, records, type LibraryList, type LibraryRow } from '../components/Libraries';
@@ -12,6 +12,7 @@ export function LibrariesPage() {
   const { data, setData } = useApi<LibraryList>('/api/libraries?all=1');
   const { data: meta } = useApi<{ desktop?: boolean }>('/api/meta');
   const file = useRef<HTMLInputElement>(null);
+  const everything = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
   if (!data) return <Loading />;
@@ -123,6 +124,40 @@ export function LibrariesPage() {
             <button className="btn" disabled={!!busy} onClick={() => file.current?.click()}>
               <Upload size={14} /> Open a library from a file
             </button>
+            <a className="btn" href="/api/libraries/everything" download title="Every library and your books’ rules and setting packs, in one file (not your publishing token)">
+              <Download size={14} /> Back up everything
+            </a>
+            <button className="btn-ghost" disabled={!!busy} onClick={() => everything.current?.click()}>
+              <Upload size={14} /> Open everything from a file
+            </button>
+            <input
+              ref={everything}
+              type="file"
+              accept=".zip,application/zip"
+              className="sr-only"
+              aria-label="Everything file"
+              onChange={async (e) => {
+                const f = e.target.files?.[0];
+                e.target.value = '';
+                if (!f) return;
+                if (
+                  !(await ask({
+                    title: 'Open everything from a file?',
+                    body: `Each library in ${f.name} is added as a new library; your books’ rules and setting packs it has are added too. Nothing here is replaced.`,
+                    confirmLabel: 'Add them',
+                  }))
+                )
+                  return;
+                await act('everything', async () => {
+                  const r = await api.upload<LibraryList & { result: { libraries: { name: string }[]; rules: number; packs: string[] } }>('/api/libraries/everything', 'file', f);
+                  setData(r);
+                  toast(
+                    `Added ${r.result.libraries.length} librar${r.result.libraries.length === 1 ? 'y' : 'ies'}${r.result.rules ? `, ${r.result.rules} rules pack${r.result.rules === 1 ? '' : 's'}` : ''}${r.result.packs.length ? `, ${r.result.packs.length} setting pack${r.result.packs.length === 1 ? '' : 's'}` : ''}`,
+                    'ok',
+                  );
+                });
+              }}
+            />
             <input
               ref={file}
               type="file"
@@ -152,6 +187,7 @@ export function LibrariesPage() {
       />
       {err && <ErrorBox error={err} />}
       {busy === 'import' && <Loading label="Opening the library…" />}
+      {busy === 'everything' && <Loading label="Adding everything from the file…" />}
       <Card>
         <ul className="divide-y divide-line/60">{live.map(row)}</ul>
       </Card>
