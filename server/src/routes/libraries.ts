@@ -5,7 +5,10 @@ import multer from 'multer';
 import Database from 'better-sqlite3';
 import type { AppContext } from '../context.js';
 import { h } from './util.js';
-import { badRequest } from '../lib/errors.js';
+import { badRequest, notFound } from '../lib/errors.js';
+import { findPack, installPack } from '../packs/registry.js';
+import { updatePack } from '../packs/content.js';
+import { adoptWorldbookRealms } from '../packs/share.js';
 import { createLibrary, discardNewLibrary, libraryDir, libraryEntry, readIndex, recordCount, renameLibrary, setArchived } from '../libraries.js';
 import { importFullWorldZip } from '../backup/exporter.js';
 import { exportInstallation, importInstallation } from '../backup/installation.js';
@@ -112,6 +115,27 @@ export function librariesRoutes(ctx: AppContext) {
       ctx.openLibrary(e.id);
       try {
         const result = importFullWorldZip(ctx.db, ctx.paths, req.file.buffer);
+        return { library: e, result, ...list() };
+      } catch (err) {
+        ctx.openLibrary(before);
+        discardNewLibrary(root(), e.id);
+        throw err;
+      }
+    }),
+  );
+  // Start a library with a worldbook (docs/WORLDBOOKS_PLAN.md: adding a shared worldbook starts a new library by default).
+  r.post(
+    '/libraries/from-worldbook/:id',
+    h((req) => {
+      const found = findPack(String(req.params.id));
+      if (!found) throw notFound('Worldbook');
+      const e = createLibrary(root(), String(req.body?.name ?? '').trim().slice(0, 120) || found.manifest.name);
+      const before = ctx.paths.libraryId;
+      ctx.openLibrary(e.id);
+      try {
+        installPack(ctx.db, found.manifest.id);
+        adoptWorldbookRealms(ctx.db, found.manifest);
+        const result = updatePack(ctx.db, found.manifest.id, ctx.paths.uploadsDir);
         return { library: e, result, ...list() };
       } catch (err) {
         ctx.openLibrary(before);

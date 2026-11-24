@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.7.3_
+_Last updated: 2026-11-24 · v0.7.4_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,18 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.7.4: sharing and adding worldbooks
+
+Step W3b of [docs/WORLDBOOKS_PLAN.md](docs/WORLDBOOKS_PLAN.md).
+
+- **A `.worldbook` file** is a ZIP of a worldbook folder in the same format as `packs/worldkeeper` ([docs/WORLDBOOKS.md](docs/WORLDBOOKS.md)), so adding one reuses the worldbook machinery (`installPack`, `updatePack`).
+- **Share as a worldbook** (`server/src/packs/share.ts` `buildWorldbook`, `GET /api/worldbooks/share?name=&description=&author=&licence=&gmOnly=leave-out`): the open library's own world, meaning rows with no `pack_id`: realms (with their names and descriptions), custom record types, the GM's templates (one per type), the world's calendar if it's the library's own, the modules on, every unarchived record (`entityToMarkdown`, under `lore/<realm>/`), hand-made links (`lore/links.json`), timeline rows (`lore/timeline.json`), and image maps (picture, `pins.json` for pins on shared records, `routes.json`, `regions.json`; pixels from the top-left). The manifest's `shared` block: format, when, app version, GM-only left out, the worldbooks it was built on, counts. GM-only sections (`## … (GM only)`) can be left out (`leaveOutGmOnly`).
+- **Add a worldbook** (`readWorldbook`, `addWorldbookFile`, `POST /api/worldbooks/add`): checks the ZIP (a `pack.json`, read from inside one folder if it was zipped with it; only `lore`, `templates`, `maps`, `adventures`, `tables`, `treasure`, `statblocks`, `encounters`, `player-text`, `archive` and root `pack.json`, `calendar.json`, `README.md`; only `.md`, `.json` and pictures; no `..`, absolute or backslash paths; 20,000 files, 50 MB a file, 500 MB in all; an id of lower-case letters, digits and hyphens that no bundled worldbook uses), drops `importProfile`, `cleaning`, `handbook` and `rulesPack` (patterns the app would run; only bundled worldbooks may), and unpacks it into `data/shared/packs/<id>` through a staging folder (replacing an earlier version).
+- **Start a library with it** (`POST /api/libraries/from-worldbook/:id`): a new library named after it, opened, the worldbook added, and its realm names adopted (`adoptWorldbookRealms`: the world is "Ostmark", not "The World"). A failure goes back to the library that was open and discards the new one.
+- **Library → Worldbooks:** "Share as a worldbook…" (name, by, what it is, licence, leave out GM-only sections; "Make the .worldbook" downloads it) and "Add a worldbook…" (then "Start a library with it" or "Add to this library"); worldbooks added to the computer also offer "Start a library with it".
+- **Not yet:** adventures and random tables aren't shared; pins not on a record don't travel.
+- **Tests:** `tests/worldbookShare.test.ts`: a world shared, added on another computer and started as a library (realms, records, link, timeline, map, pins, route; no campaign; GM-only left out; removable); files refused (not a ZIP, no manifest, outside the folder, unknown folder or kind, a bundled id, a bad id); patterns dropped; GM-only sections.
 
 ## v0.7.3: Books only
 
