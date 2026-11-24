@@ -1,0 +1,66 @@
+# Worldbooks: plan
+
+Status: proposed, November 2026. Decisions so far are in DEC-910 ("Worldbooks").
+
+## 1. What changes, in one paragraph
+
+A **worldbook** is a whole world you can hand to someone: its records, maps, calendar, realms, record types, templates, rules and adventures. It is what the app called a "setting pack", renamed because "setting" collides with Settings. The Worldkeeper world becomes a worldbook that **ships complete with the app**: no one adds an archive by hand any more. GMs who build their own world can **share it as a worldbook**, and other GMs **add** it. "Import" stops being a word the app uses for worlds.
+
+## 2. Decided (owner, November 2026)
+
+- The name is **worldbook**.
+- Bringing one in is **adding** it ("Add a worldbook…"), never importing.
+- The Worldkeeper worldbook ships **pre-installed and whole, GM-only secrets included**, knowing the repository and the app are public.
+- The archive's working notes (the Phase 1 audit, the project-context note, the ChatGPT implementation guide) are left out.
+- Adding a worldbook someone shared starts a **new library** named after it by default; "Add to this library" is the other choice.
+
+## 2a. Worldbooks and the GM's books
+
+A worldbook works with whatever rules a GM has; nothing breaks without a book, some things show less.
+
+- **A worldbook never contains book text.** It names rules ("Tabaxi", "Moon-Touched Sword") and the app finds each name in the rules this GM has: the SRD (always), open rules packs, the GM's own books. That also keeps sharing legal.
+- **Say what's missing, up front.** Adding or sharing a worldbook lists the books it draws on and what each gives ("Xanathar's Guide: 6 treasure items; Monsters of the Multiverse: 5 species. Without them, those show by name only"), as a campaign export already reports what it needs. Part of W3.
+- **A worldbook can carry its own fallback**: its own open rules for what it needs, as the Worldkeeper worldbook already carries its creatures and a standard-rules version of what Thinning touches. For Worldkeeper, open (CC BY) species rules for the few peoples that borrow book species would make it whole on the SRD alone: writing work, the owner's call, not part of these steps.
+- Today, for Worldkeeper: its creatures, hazards, items and NPC fight cards, the classes and most species work on the SRD alone; a few peoples' species (Tortle, Tabaxi, Kenku, Firbolg, Aarakocra and the like), some faction-pool treasure and subclasses beyond the SRD need the GM's books.
+
+## 3. Words
+
+| Today                                 | After                                                 |
+| ------------------------------------- | ----------------------------------------------------- |
+| Setting pack, Library → Setting packs | Worldbook, Library → Worldbooks                       |
+| Install a pack / Uninstall            | Add to this library / Remove from this library        |
+| Import (an archive, a Markdown ZIP)   | Add (records from files)                              |
+| Import and Export page                | Add and share (page name to be confirmed with the UI) |
+| Full world (ZIP) to move a world      | Share as a worldbook (the world, not your campaigns)  |
+| "Play in the Worldkeeper setting"     | "Play in the Worldkeeper world"                       |
+
+Internally the code keeps its names (`packs/`, `setting_packs`, `installPack`): renaming tables and files gains nothing and risks upgrades. Backups (one library, or everything) stay backups: a backup restores your whole state, campaigns included; a worldbook is the world only.
+
+## 4. Steps (one PR each)
+
+### W1 (v0.7.1): the words
+
+- Rename in the GM app, the wizard, the handbook's help text and the docs: setting pack → worldbook, import → add (for worlds and records). `docs/SETTING_PACKS.md` becomes `docs/WORLDBOOKS.md`.
+- No behaviour changes. Screens checked with the screenshot comparison from v0.6.11 (only the words differ).
+
+### W2 (v0.7.2): the Worldkeeper worldbook, complete
+
+- The Worldkeeper archive's records, its two maps and its source documents move into `packs/worldkeeper/` (about 12 MB of Markdown and two pictures), so the worldbook carries the whole world.
+- Adding the Worldkeeper worldbook to a library (the wizard's "Play in the Worldkeeper world", New library, or Library → Worldbooks) brings in every record, map and pin, with no file to choose. The wizard's "add your archive" step goes.
+- A library that already has the records (yours) is updated the way an import is today: records you edited are kept and flagged, nothing you wrote is lost.
+- Left out: the archive's working notes about how it was built (the Phase 1 audit, the project-context note, the ChatGPT implementation guide), unless you want them in.
+
+### W3 (v0.7.3): share and add any worldbook
+
+- **What it needs** (§2a): adding or sharing lists the books a worldbook draws on and what each gives.
+- **Share as a worldbook** (Library → Worldbooks): makes a `.worldbook` file (a ZIP) from the open library: a manifest (name, description, version, author, licence), its realms, record types, templates and calendar, every record as Markdown, its maps and pictures. Never campaigns, characters, sessions or what players were shown. An option leaves out GM-only sections, for sharing a world with players in mind.
+- **Add a worldbook…**: choose a `.worldbook` file; it is checked (paths, sizes, IDs that clash with yours) and added to the computer's worldbooks, shared by every library like books' rules. Then **Start a library with it**, or **Add to this library**.
+- The old route (Full world ZIP, then "Open a library from a file") keeps working for files made before.
+
+### W4 (v0.8.0 "Worldbooks"): docs, screenshots, release
+
+- README, Quick Start (both ways to begin, now without the archive step), FEATURES, DEVELOPMENT_STATUS, screenshots, release notes.
+
+## 5. Questions
+
+1. **File name:** `Name.worldbook` (a ZIP inside)? _Proposed: yes; the app also accepts `.zip`._
