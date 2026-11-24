@@ -1,6 +1,6 @@
 # Future work
 
-Ideas for what comes next, after the lore checklist (`LORE_CHECKLIST.md`) was finished. Tick items off as they're done. The next release, v0.6, is planned in [LIBRARIES_PLAN.md](LIBRARIES_PLAN.md): per-campaign reveals, then separate libraries.
+Ideas for what comes next, after the lore checklist (`LORE_CHECKLIST.md`) was finished. Tick items off as they're done. v0.6 (per-campaign reveals, then separate libraries) shipped as planned in [LIBRARIES_PLAN.md](LIBRARIES_PLAN.md).
 
 ## Maps (building on the explorer)
 

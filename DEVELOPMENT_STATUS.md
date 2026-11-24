@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.5.7_
+_Last updated: 2026-11-24 · v0.6.0_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,15 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.6.0 “Many Tables, Many Worlds” (step B4)
+
+The release that completes [docs/LIBRARIES_PLAN.md](docs/LIBRARIES_PLAN.md): per-campaign reveals (A1 to A3, v0.5.2 to v0.5.4) and separate libraries (B1 to B3, v0.5.5 to v0.5.7), below.
+
+- **Several groups in one world:** a reveal goes to one campaign or to everyone, and each group sees what's common knowledge plus what it learned (records, sections, facts, maps, pins, outlines). The GM chooses who learns it in the Player view and the live session, sees who knows what, and promotes a reveal to everyone or takes one back to one campaign. Each campaign has its own handbook address on the table server (`/player/c/<code>`), with a QR code on its overview. Existing reveals stayed "to everyone", so every handbook looked the same after upgrading.
+- **Several worlds in one installation:** the data folder holds libraries, each with its own database, pictures and backups; an existing installation moved into its first library on upgrade, after a backup. Your books' rules, installed setting packs and the publishing token are shared (`shared/`); each library keeps its own switches. The Library menu switches libraries and makes new ones (into Start your world); **Library → Libraries** renames, duplicates, archives and restores them, and opens one from a full-world ZIP. The desktop app asks which library to open when there are several.
+- **Docs:** README (status, a "Several groups, several worlds" section with three new screenshots, features at a glance), Quick Start (each campaign's handbook; more than one world), FEATURES, PLAYER_VIEW, DATA, DESKTOP, RULES_PACKS, SETTING_PACKS, FUTURE_WORK and the plan's status.
+- **Screenshots** (`docs/images`): `reveal-per-campaign.jpg`, `handbook-address.jpg`, `libraries.jpg`, from the Worldkeeper setting's library with two campaigns and two more libraries.
 
 ## v0.5.7: libraries for the GM (v0.6 step B3)
 
@@ -484,6 +493,9 @@ The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are n
 
 - The desktop app is about 140 MB, most of it the bundled Node.js runtime.
 - The desktop app only serves this computer. A LAN player server still needs `npm run start:player` from the repository.
+- The plain table server address, `/player`, shows the active campaign; with two groups playing at once, each should use its campaign's own address. A handbook code keeps groups apart; it is not a password.
+- The QR codes come from a small encoder in the app (`shared/qr.ts`), checked against the standard's worked example and a reader in the tests; scan one with a phone before relying on it at the table.
+- A library's backups hold its own database and pictures, not `shared/` (your books' rules): import them again after restoring on another computer.
 
 - Import keeps the whole archive in memory during preview (fine for this ~2.4 MB library; large image-heavy archives are not supported because only `.md` files are read).
 - `faction_plans`/`campaign_state` have no undo beyond editing/rejecting rows.
