@@ -107,4 +107,29 @@ describe('each campaign’s handbook address', () => {
     const again = new AppContext(ctx.paths, 'player');
     expect((again.db.prepare('SELECT COUNT(*) AS n FROM campaigns WHERE handbook_code IS NULL').get() as { n: number }).n).toBe(0);
   });
+
+  it('answers only campaign addresses when the GM says so, on the table and never in the GM app', async () => {
+    const { a, gm, table } = twoTables();
+    const code = (await request(gm).get(`/api/campaigns/${a}/handbook`)).body.code;
+    const ch = (await request(gm).post('/api/characters').send({ campaign_id: a, name: 'Wren', species: 'Human', class_name: 'Rogue', level: 3 })).body;
+    const page = (await request(gm).get(`/api/characters/${ch.id}/page`)).body;
+    expect((await request(table).get('/api/player/entities')).status).toBe(200);
+
+    await request(gm).put('/api/settings').send({ table_addresses_only: 'on' });
+    // The plain address: only what a player needs to find their own.
+    expect((await request(table).get('/api/player/entities')).status).toBe(403);
+    expect((await request(table).get('/api/player/campaigns')).status).toBe(403);
+    expect((await request(table).get('/api/player/search?q=river')).status).toBe(403);
+    const info = (await request(table).get('/api/player/info')).body;
+    expect(info).toMatchObject({ addressesOnly: true, realms: [], types: [] });
+    expect((await request(table).get(`/api/player/me/${page.code}`)).body.handbook).toBe(code);
+    // Each campaign's address works as before.
+    expect((await request(table).get(`/api/player/c/${code}/entities`)).status).toBe(200);
+    expect((await request(table).get(`/api/player/c/${code}/info`)).body.addressesOnly).toBeUndefined();
+    // The GM's own preview is never limited.
+    expect((await request(gm).get('/api/player/entities')).status).toBe(200);
+
+    await request(gm).put('/api/settings').send({ table_addresses_only: 'off' });
+    expect((await request(table).get('/api/player/entities')).status).toBe(200);
+  });
 });

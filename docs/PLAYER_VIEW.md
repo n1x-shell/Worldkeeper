@@ -31,7 +31,7 @@ Every campaign has its own address on the table server, `http://<your-computer>:
 - **New code** makes a fresh address; the old one and its QR code stop working (for an address shared too widely).
 - An archived campaign's address stops working. An unknown code shows "This handbook address isn't open".
 - On a campaign's address, a character page opens only for that campaign's characters. A character's page links to its campaign's handbook.
-- The plain address, `http://<your-computer>:4320/player`, keeps showing the active campaign, as before.
+- The plain address, `http://<your-computer>:4320/player`, keeps showing the active campaign, as before. With two groups playing at once, tick **Only campaign addresses on the table** on the card: the plain address then shows no campaign, only a box for a campaign's code; a character's link still goes on to its campaign's address. The GM's own preview in the app is never limited.
 - If the table server runs on another port, set `WORLDKEEPER_TABLE_PORT` for the GM app so the address and QR code match.
 
 **Network precautions:** LAN exposure is not authentication. A handbook code keeps one group from wandering into another's handbook by accident; it is not a password. Use a trusted network and firewall restrictions; do not forward the port to the public internet. The DM server should remain bound to `127.0.0.1`. Do not set its `HOST` to `0.0.0.0` on a shared or untrusted network.
