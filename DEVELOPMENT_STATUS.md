@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.7.4_
+_Last updated: 2026-11-24 · v0.7.5_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,18 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.7.5: worldbooks and the GM's books
+
+Step W3c of [docs/WORLDBOOKS_PLAN.md](docs/WORLDBOOKS_PLAN.md) (§2a). W3 is complete.
+
+- **What a world names** (`server/src/packs/worldbookRules.ts` `ruleRefs`): species from folk records ("Use the tabaxi rules", `rulesSpeciesName`), classes from **Class** facts (first word(s) before a bracket or full stop, `Fighter/Wizard` split, Unknown skipped), items from a worldbook's `treasure/pools.json`.
+- **Where each comes from** (`resolveRefs`): the SRD, the world's own rules (the Worldkeeper rules pack), a GM book (a closed pack anywhere on the computer, on or off here), an open pack, or missing; item names through `itemNameCandidates`; a missing item's book from its tag ("(XGE)" → Xanathar's Guide to Everything).
+- **Sharing** (`GET /api/worldbooks/share/books`; `share?books=required|optional|safe&swaps={"species:Tabaxi":"Human"}`): the manifest's `rules` (`mode`, `books` with their things, `standIns`, `open` packs); safe mode's stand-ins (`closestStandIn`: a species of the same size and speed, a class by a small table, Artificer → Wizard, an item of the same rarity and kind) reviewed and changed in the share panel; open entries the world names in `open-rules/<pack>.json`.
+- **Adding** (`requireBooks` before, `settleBooks` after, in `/api/setting-packs/:id/install` and `/api/libraries/from-worldbook/:id`): required books missing → refused (a new library is discarded); the books it draws on switched on in the library; its open rules brought in (never replacing a pack the GM already has); stand-ins stored (`rules_stand_ins`, `server/src/repo/standIns.ts`), removed with the worldbook; a report of what's missing by book. A new library whose worldbook's books are all here goes Books only, keeping the open rules for the gaps, and the answer says so once.
+- **Stand-ins applied** where the original is missing: `rulesView` (species and classes, labelled "…, standing in for Tabaxi (Book)") and `bookData` entries (items and creatures).
+- **UI:** the share panel asks Books required / optional / Safe mode with the stand-in list; Worldbooks shows what adding found; Start a library with it says it once before opening; the first-run setup lists the books the Worldkeeper world draws on.
+- **Tests:** `tests/worldbookBooks.test.ts` (what a world names; safe mode without and with the book, books only, open rules bundled and only those named; required refused then accepted; optional warns; books switched on; the Worldkeeper report by book).
 
 ## v0.7.4: sharing and adding worldbooks
 

@@ -28,11 +28,14 @@ import { modulesOn } from '../repo/modules.js';
 import { forgetPacks, installedPacks } from './registry.js';
 import { BUNDLED_PACKS_DIR, installedPacksDir } from './paths.js';
 import type { PackManifest, PackRealm } from '../../../shared/packs.js';
+import { worldbookRulesFor, type WorldbookRules } from './worldbookRules.js';
 import pkg from '../../../package.json' with { type: 'json' };
 
 /** What a shared worldbook's manifest adds to a worldbook's. */
 export interface SharedManifest extends PackManifest {
   author?: string;
+  /** The rules it names and how the books count (worldbookRules.ts). */
+  rules?: WorldbookRules;
   /** Made by "Share as a worldbook". */
   shared?: { format: 1; made_at: string; app_version: string; gm_only_left_out: boolean; built_on: string[]; counts: Record<string, number> };
 }
@@ -45,6 +48,9 @@ export interface ShareOptions {
   version?: string;
   /** Leave out sections marked GM only, for a world shared with players in mind. */
   leaveOutGmOnly?: boolean;
+  /** How the books it draws on count, and safe mode's stand-ins the GM changed ("species:Tabaxi" → "Human"). */
+  books?: WorldbookRules['mode'];
+  swaps?: Record<string, string>;
 }
 
 const slug = (s: string) =>
@@ -209,6 +215,10 @@ export function buildWorldbook(db: DB, uploadsDir: string, o: ShareOptions): { f
   }
   counts.maps = mapCount;
 
+  // The rules it names: the books it draws on, how they count, and the open rules that travel with it.
+  const { rules, openFiles } = worldbookRulesFor(db, o.books ?? 'optional', o.swaps);
+  for (const f of openFiles) add(f.path, f.content);
+
   const manifest: SharedManifest = {
     id,
     name,
@@ -221,6 +231,7 @@ export function buildWorldbook(db: DB, uploadsDir: string, o: ShareOptions): { f
     roles: {},
     modules: [...modulesOn(db)],
     ...(calendar ? { calendar } : {}),
+    rules,
     shared: {
       format: 1,
       made_at: new Date().toISOString(),
@@ -247,7 +258,7 @@ export function adoptWorldbookRealms(db: DB, m: PackManifest) {
 // ---- Adding one --------------------------------------------------------------------------------------------------
 
 const LIMITS = { files: 20_000, bytes: 500 * 1024 * 1024, file: 50 * 1024 * 1024 };
-const FOLDERS = ['lore', 'templates', 'maps', 'adventures', 'tables', 'treasure', 'statblocks', 'encounters', 'player-text', 'archive'];
+const FOLDERS = ['lore', 'templates', 'maps', 'adventures', 'tables', 'treasure', 'statblocks', 'encounters', 'player-text', 'archive', 'open-rules'];
 const ROOT_FILES = ['pack.json', 'calendar.json', 'README.md'];
 const EXT = /\.(md|json|webp|png|jpe?g)$/i;
 

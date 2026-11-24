@@ -8,7 +8,9 @@ import { h } from './util.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { findPack, installPack } from '../packs/registry.js';
 import { updatePack } from '../packs/content.js';
-import { adoptWorldbookRealms } from '../packs/share.js';
+import { adoptWorldbookRealms, type SharedManifest } from '../packs/share.js';
+import { hasEveryBook, requireBooks, settleBooks } from '../packs/worldbookRules.js';
+import { checkBooksOnly, setBooksOnly } from '../repo/booksOnly.js';
 import { createLibrary, discardNewLibrary, libraryDir, libraryEntry, readIndex, recordCount, renameLibrary, setArchived } from '../libraries.js';
 import { importFullWorldZip } from '../backup/exporter.js';
 import { exportInstallation, importInstallation } from '../backup/installation.js';
@@ -133,10 +135,17 @@ export function librariesRoutes(ctx: AppContext) {
       const before = ctx.paths.libraryId;
       ctx.openLibrary(e.id);
       try {
+        const rules = (found.manifest as SharedManifest).rules;
+        requireBooks(ctx.db, rules);
         installPack(ctx.db, found.manifest.id);
         adoptWorldbookRealms(ctx.db, found.manifest);
         const result = updatePack(ctx.db, found.manifest.id, ctx.paths.uploadsDir);
-        return { library: e, result, ...list() };
+        const books = settleBooks(ctx.db, found.manifest.id, found.dir, rules);
+        // Every book it draws on is here: the new library uses the books alone, the open rules kept only for what the
+        // books don't cover (said once, in the answer).
+        let booksOnly: { on: boolean; keep: string[] } | null = null;
+        if (hasEveryBook(rules, books) && checkBooksOnly(ctx.db).books.length) booksOnly = setBooksOnly(ctx.db, true, checkBooksOnly(ctx.db).gaps);
+        return { library: e, result, books, booksOnly, ...list() };
       } catch (err) {
         ctx.openLibrary(before);
         discardNewLibrary(root(), e.id);
