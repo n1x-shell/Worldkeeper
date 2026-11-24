@@ -34,7 +34,7 @@ export function GettingStarted() {
         </span>
       }
       actions={
-        <button className="btn-ghost !px-1.5" aria-label="Hide Getting started" title="Hide this card" onClick={() => void update({ dismissed: true })}>
+        <button className="btn-ghost px-1.5!" aria-label="Hide Getting started" title="Hide this card" onClick={() => void update({ dismissed: true })}>
           <X size={14} />
         </button>
       }

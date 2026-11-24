@@ -156,7 +156,7 @@ export function MarkdownEditor({ value, onChange, onBlur, placeholder, minRows =
 
   return (
     <div
-      className={`${fullscreen ? 'fixed inset-0 z-[1800] bg-bg p-4 flex flex-col gap-2' : 'space-y-1'} ${className}`}
+      className={`${fullscreen ? 'fixed inset-0 z-1800 bg-bg p-4 flex flex-col gap-2' : 'space-y-1'} ${className}`}
       data-editor="markdown"
       data-full=""
       data-fullscreen={fullscreen ? '' : undefined}

@@ -121,7 +121,7 @@ function BastionCard({ b: init, level, onDelete }: { b: Bastion; level: number; 
     <Card className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
         <Castle size={18} className="text-gold" />
-        <input className="input font-display text-lg text-gold flex-1 min-w-[12rem]" value={b.name} onChange={(e) => set({ name: e.target.value })} aria-label="Bastion name" />
+        <input className="input font-display text-lg text-gold flex-1 min-w-48" value={b.name} onChange={(e) => set({ name: e.target.value })} aria-label="Bastion name" />
         <SaveStatus state={auto.state} error={auto.error} />
         <button
           className="btn-ghost hover:text-danger"
@@ -209,7 +209,7 @@ function BastionCard({ b: init, level, onDelete }: { b: Bastion; level: number; 
                     <span className="text-dim text-xs">—</span>
                   )}
                 </td>
-                <td className="min-w-[12rem]">
+                <td className="min-w-48">
                   <input className="input py-0.5 text-sm" value={f.notes} onChange={(e) => setF(f.id, { notes: e.target.value })} placeholder="What it makes, who runs it…" />
                 </td>
                 <td>

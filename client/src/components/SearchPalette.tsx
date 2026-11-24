@@ -43,7 +43,7 @@ export function Snippet({ text }: { text: string }) {
     <span>
       {parts.map((p, i) =>
         p.startsWith('[[') ? (
-          <mark key={i} className="bg-gold/25 text-ink rounded px-0.5">
+          <mark key={i} className="bg-gold/25 text-ink rounded-sm px-0.5">
             {p.slice(2, -2)}
           </mark>
         ) : (
@@ -81,7 +81,7 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
     onClose();
   };
   return (
-    <div className="fixed inset-0 z-[2500] bg-black/60 flex justify-center pt-[10vh] px-3" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="fixed inset-0 z-2500 bg-black/60 flex justify-center pt-[10vh] px-3" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div className="panel elev-3 w-full max-w-2xl h-fit max-h-[75vh] flex flex-col" role="dialog" aria-label="Search">
         <div className="flex items-center gap-2 px-3 border-b border-line">
           <Search size={16} className="text-dim" />
@@ -101,11 +101,11 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
                 }
               }
             }}
-            className="flex-1 bg-transparent py-3 text-base outline-none"
+            className="flex-1 bg-transparent py-3 text-base outline-hidden"
             placeholder="People, places, lore…"
             aria-label="Search query"
           />
-          <kbd className="text-[10px] text-dim border border-line rounded px-1">Esc</kbd>
+          <kbd className="text-[10px] text-dim border border-line rounded-sm px-1">Esc</kbd>
         </div>
         <ul className="overflow-y-auto">
           {hits.map((h, i) => (

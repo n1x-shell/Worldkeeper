@@ -49,7 +49,7 @@ const TEXT = [
 
 describe.each([
   ['Warm Parchment', theme(/:root,\s*\.light\s*\{([^}]*)\}/)],
-  ['Dark Codex', theme(/\n\.dark\s*\{([^}]*)\}/)],
+  ['Dark Codex', theme(/\n\s*\.dark\s*\{([^}]*)\}/)],
 ])('%s', (_name, t) => {
   it('has every token', () => {
     for (const k of [...SURFACES, 'line', 'edge', ...TEXT]) expect(t[k], k).toBeDefined();

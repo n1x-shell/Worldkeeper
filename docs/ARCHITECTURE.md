@@ -4,7 +4,7 @@
 
 | Layer | Choice | Reason |
 | --- | --- | --- |
-| Client | React 19 + TypeScript + Vite, Tailwind CSS 3, Lucide icons | Requested stack; fast builds; fully offline (fonts bundled via @fontsource) |
+| Client | React 19 + TypeScript + Vite, Tailwind CSS 4 (theme in `client/src/styles/index.css`), Lucide icons | Requested stack; fast builds; fully offline (fonts bundled via @fontsource) |
 | Maps | Leaflet + react-leaflet with `CRS.Simple` | Mature image-map viewer: zoom/pan, draggable markers, polygons, polylines |
 | Graphs | @xyflow/react (React Flow) | Relationship explorer and adventure scene-flow editor |
 | Markdown | react-markdown + remark-gfm | Raw HTML is never rendered (no rehype-raw); URL transform blocks `javascript:` links |

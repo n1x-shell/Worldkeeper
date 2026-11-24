@@ -87,7 +87,7 @@ export function EncounterIdeas({ level, terrain, region, campaignId, compact = f
         </Empty>
       )}
       {res?.ideas.map((idea, i) => (
-        <div key={i} className="rounded border border-line p-2 space-y-1">
+        <div key={i} className="rounded-sm border border-line p-2 space-y-1">
           <div className="flex flex-wrap items-center gap-2 text-sm">
             <span className="font-medium">{idea.label}</span>
             <span className="text-xs text-dim num">

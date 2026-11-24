@@ -84,7 +84,7 @@ function RecordList({ rows, empty, limit }: { rows: Row[]; empty: string; limit?
   return (
     <ul className="-mx-1.5">
       {rows.slice(0, limit).map((r) => (
-        <li key={r.id} className="flex items-center gap-2 rounded px-1.5 py-1 text-sm hover:bg-raised/70">
+        <li key={r.id} className="flex items-center gap-2 rounded-sm px-1.5 py-1 text-sm hover:bg-raised/70">
           <span className={`h-1.5 w-1.5 rounded-full shrink-0 bg-realm ${realmClass(realms.get(r.realm))}`} aria-hidden />
           <EntityLink id={r.id} className="min-w-0 truncate">
             {r.name}
@@ -178,7 +178,7 @@ export function Dashboard() {
         <div className="title-band gilt-corners px-6 py-10 sm:px-10 text-center elev-1">
           <div className="section-title">World Dashboard</div>
           <h1 className="mt-3 text-2xl sm:text-3xl text-ink">Your world is waiting</h1>
-          <div className="mx-auto mt-3 h-0.5 w-24 bg-gradient-to-r from-transparent via-gold to-transparent" aria-hidden />
+          <div className="mx-auto mt-3 h-0.5 w-24 bg-linear-to-r from-transparent via-gold to-transparent" aria-hidden />
           <p className="prose-lore mx-auto mt-4 max-w-[52ch] text-[17px] text-ink/90">
             Nothing here yet. Start your world in a few steps, make your first record, or bring in a world you already have: an archive of Markdown files, or a backup.
           </p>
@@ -216,10 +216,10 @@ export function Dashboard() {
       {/* Hero: the world's name, its date, and the way in (search). */}
       <header className="title-band gilt-corners elev-1 px-5 py-6 sm:px-8 sm:py-7">
         <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
-          <div className="min-w-0 flex-1 basis-[22rem]">
+          <div className="min-w-0 flex-1 basis-88">
             <div className="section-title">World Dashboard</div>
             <h1 className="mt-1.5 text-3xl sm:text-4xl text-ink leading-tight">{appName}</h1>
-            <div className="mt-2 h-0.5 w-28 bg-gradient-to-r from-gold to-transparent" aria-hidden />
+            <div className="mt-2 h-0.5 w-28 bg-linear-to-r from-gold to-transparent" aria-hidden />
             <p className="mt-3 flex items-start gap-2 text-sm text-dim">
               <CalendarDays size={15} className="text-gold/80 shrink-0 mt-0.5" aria-hidden />
               <span>
@@ -236,12 +236,12 @@ export function Dashboard() {
             <button
               type="button"
               onClick={openSearch}
-              className="group flex w-full items-center gap-3 rounded-md border border-edge/60 bg-raised px-4 py-3 text-left shadow-sm hover:border-gold/70 transition-colors"
+              className="group flex w-full items-center gap-3 rounded-md border border-edge/60 bg-raised px-4 py-3 text-left shadow-xs hover:border-gold/70 transition-colors"
               aria-label="Search the world (Ctrl K)"
             >
               <Search size={18} className="text-gold shrink-0" aria-hidden />
               <span className="flex-1 min-w-0 truncate text-[15px] text-dim group-hover:text-ink">Search people, places, lore…</span>
-              <kbd className="hidden sm:inline-block rounded border border-line bg-panel px-1.5 py-0.5 text-[11px] text-dim font-sans">Ctrl K</kbd>
+              <kbd className="hidden sm:inline-block rounded-sm border border-line bg-panel px-1.5 py-0.5 text-[11px] text-dim font-sans">Ctrl K</kbd>
             </button>
           </div>
         </div>
@@ -386,7 +386,7 @@ export function Dashboard() {
           {realmCards.map((r) => {
             const s = realmStyle(realms.get(r.key));
             return (
-              <Link key={r.key} to={r.to} className={`${s.cls} group panel elev-1 relative overflow-hidden flex flex-col bg-gradient-to-b ${s.wash} to-transparent ${s.ring} transition-colors`}>
+              <Link key={r.key} to={r.to} className={`${s.cls} group panel elev-1 relative overflow-hidden flex flex-col bg-linear-to-b ${s.wash} to-transparent ${s.ring} transition-colors`}>
                 <span className={`absolute inset-x-0 top-0 h-1 ${s.rule}`} aria-hidden />
                 <div className="flex items-start gap-3 px-4 pt-5">
                   <span className={`mt-0.5 shrink-0 ${s.text}`} aria-hidden>
@@ -428,7 +428,7 @@ export function Dashboard() {
             >
               <span className="flex gap-0.5 my-1" aria-label={`Stage ${clock.stage} of ${clock.stages.length}`}>
                 {clock.stages.map((s) => (
-                  <span key={s.stage} className={`h-1.5 flex-1 rounded-sm ${s.stage <= clock.stage ? 'bg-danger/80' : 'bg-line'}`} />
+                  <span key={s.stage} className={`h-1.5 flex-1 rounded-xs ${s.stage <= clock.stage ? 'bg-danger/80' : 'bg-line'}`} />
                 ))}
               </span>
             </StateTile>
@@ -488,7 +488,7 @@ export function Dashboard() {
                   </div>
                   <div className="mt-1 flex gap-0.5" aria-label={`${p.progress} of ${p.segments}`}>
                     {Array.from({ length: p.segments }, (_, i) => (
-                      <span key={i} className={`h-1.5 flex-1 rounded-sm ${i < p.progress ? 'bg-gold/80' : 'bg-line'}`} />
+                      <span key={i} className={`h-1.5 flex-1 rounded-xs ${i < p.progress ? 'bg-gold/80' : 'bg-line'}`} />
                     ))}
                   </div>
                 </li>
@@ -537,7 +537,7 @@ export function Dashboard() {
           {data.recentEdits.length ? (
             <ul className="-mx-1.5">
               {data.recentEdits.map((r, i) => (
-                <li key={i} className="flex items-center gap-2 rounded px-1.5 py-1 text-sm hover:bg-raised/70">
+                <li key={i} className="flex items-center gap-2 rounded-sm px-1.5 py-1 text-sm hover:bg-raised/70">
                   <EntityLink id={r.entity_id} className="min-w-0 truncate">
                     {r.name}
                   </EntityLink>

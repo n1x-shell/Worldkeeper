@@ -95,7 +95,7 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
             const sl = slots[l] ?? { max: 0, used: 0 };
             return (
               <div key={l} className={`space-y-1 rounded-md border p-2 text-center ${sl.max ? 'border-line bg-raised/50' : 'border-line/60 bg-transparent'}`}>
-                <div className={`text-[10px] font-medium uppercase tracking-[0.1em] ${sl.max ? 'text-gold' : 'text-dim'}`}>Level {l}</div>
+                <div className={`text-[10px] font-medium uppercase tracking-widest ${sl.max ? 'text-gold' : 'text-dim'}`}>Level {l}</div>
                 <input
                   type="number"
                   min={0}
@@ -143,7 +143,7 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
                 <span className="text-xs font-semibold uppercase tracking-[0.12em] text-gold">{LEVEL_NAME(l)}</span>
                 <span className="num text-xs text-dim">{spells.filter((x) => x.level === l).length}</span>
               </div>
-              <div className={`hidden md:grid grid-cols-[1.5rem_1fr_7rem_6rem_5.5rem_1fr_1.75rem] gap-2 px-1 ${LABEL} !text-[10px]`}>
+              <div className={`hidden md:grid grid-cols-[1.5rem_1fr_7rem_6rem_5.5rem_1fr_1.75rem] gap-2 px-1 ${LABEL} text-[10px]!`}>
                 <span title="Prepared">P</span>
                 <span>Name</span>
                 <span>Casting time</span>
@@ -156,7 +156,7 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
                 x.level !== l ? null : (
                   <div key={i} className="rounded-md border border-line bg-raised/40">
                     <div className="grid grid-cols-[2rem_minmax(0,1fr)_2.5rem] items-center gap-2 p-1 md:grid-cols-[1.5rem_1fr_7rem_6rem_5.5rem_1fr_1.75rem]">
-                      <span className="relative flex h-10 items-center justify-center rounded md:h-7">
+                      <span className="relative flex h-10 items-center justify-center rounded-sm md:h-7">
                         <Diamond
                           cover
                           on={l === 0 || x.prepared}
@@ -167,7 +167,7 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
                       <span className="flex items-center gap-1 min-w-0">
                         {byName.has(x.name.toLowerCase()) && (
                           <button
-                            className="flex h-10 w-7 shrink-0 items-center justify-center rounded text-dim hover:text-gold md:h-7"
+                            className="flex h-10 w-7 shrink-0 items-center justify-center rounded-sm text-dim hover:text-gold md:h-7"
                             onClick={() => setOpen(open === x.name ? null : x.name)}
                             aria-label={`${open === x.name ? 'Hide' : 'Show'} ${x.name}`}
                           >
@@ -199,7 +199,7 @@ export function SpellsTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p:
                       <input className="input-bare hidden md:block text-sm" value={x.notes ?? ''} aria-label="Notes" disabled={readOnly} onChange={(e) => setSpell(i, { notes: e.target.value })} />
                       {!readOnly ? (
                         <button
-                          className="flex h-10 w-10 items-center justify-center justify-self-end rounded text-dim hover:bg-danger/10 hover:text-danger md:h-7 md:w-7"
+                          className="flex h-10 w-10 items-center justify-center justify-self-end rounded-sm text-dim hover:bg-danger/10 hover:text-danger md:h-7 md:w-7"
                           aria-label={`Remove ${x.name || 'spell'}`}
                           onClick={() => put({ spells: spells.filter((_, j) => j !== i) })}
                         >
@@ -250,7 +250,7 @@ function SpellPicker({ srd, cls, level, have, onPick, onHand }: { srd: SrdSpell[
   return (
     <div className="space-y-2 rounded-md border border-gold/40 bg-raised/40 p-3">
       <div className="flex flex-wrap gap-2 items-center">
-        <span className="relative flex-1 min-w-[12rem]">
+        <span className="relative flex-1 min-w-48">
           <Search size={14} className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-dim" />
           <input className="input pl-8 max-sm:min-h-10" placeholder="Search the SRD's spells" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search spells" autoFocus />
         </span>

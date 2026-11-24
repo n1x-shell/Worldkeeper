@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.6.9_
+_Last updated: 2026-11-24 · v0.6.11_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,24 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.6.11: Tailwind CSS 4
+
+- **What moved:** `tailwind.config.js` is gone; the theme is an `@theme inline` block in `client/src/styles/index.css` (inline, so a colour such as `realm` reads `--rc` where it's used, as v3 did: a badge's own `rc-*` class still colours it). Tailwind reads only the app's own markup (`@import 'tailwindcss' source(none)` with `@source` for the two `index.html` files and `client/src`). PostCSS uses `@tailwindcss/postcss`; autoprefixer is gone (Tailwind 4 prefixes itself). Components are `@utility` blocks. The official upgrade tool renamed classes (`rounded` → `rounded-sm`, `outline-none` → `outline-hidden`, `!x` → `x!`, `bg-gradient-to-*` → `bg-linear-to-*` and so on).
+- **Kept as v3 had it** (each with its reason in the CSS):
+  - borders default to the old grey, buttons show the pointing hand, a file input's button is the browser's own, placeholders are v3's grey;
+  - `space-y-*` puts the gap above each item after the first, adding to an item's own bottom margin (v4 puts it below, and an item's margin replaces it, which closed up the gap under page headers);
+  - text sizes set fixed line heights (v4's are ratios, which changed text of another size inside, such as the top bar's Ctrl K);
+  - the app's own CSS sits with the utilities, after them, so a rule wins by specificity and order as in v3 (outside a layer it would beat every utility, and `[&>h2:first-child]:mt-0` stopped working);
+  - React Flow's CSS (in its own `xyflow` layer since 13) sits above Tailwind's reset, which in v4 clears every margin and moved the graph's controls.
+- **Checked by screenshots:** 166 full pages (83 routes of the GM app and handbook, light and dark, on a library made from the Worldkeeper archive plus the smoke test's campaign), 20 at phone width and 6 with overlays open (search, New menu, record peek), Tailwind 3 against 4. Every page is pixel-identical except what also differs between two Tailwind 3 runs (the name generator's random names, the dashboard, a backup's timestamp, one line of the Hollow Refuge record) and React Flow's connection dots, now drawn at the library's own size. Smoke and first-run E2E pass.
+- **Browsers:** Tailwind 4 needs Safari 16.4, Chrome 111 or Firefox 128 or later (it uses `color-mix()` and cascade layers). The desktop app on macOS uses the system's Safari engine.
+
+## v0.6.10: Dependabot's first round
+
+- **Merged from Dependabot** (by the owner): the npm minor-and-patch group (better-sqlite3 13.2, lucide-react, React Router, Tauri CLI, autoprefixer, PostCSS, Vite, Vitest), Tauri 2.12.7 and tauri-build 2.7.6, and the GitHub Actions majors (checkout 7, setup-node 7, upload-artifact 7, download-artifact 8, action-gh-release 3).
+- **@xyflow/react 13** (Dependabot's PR failed CI): `onNodesChange` now receives a `NodeChangeset` (`changes.applyTo(nodes)` replaces `applyNodeChanges`), and `colorMode` is `forceColorMode`. Checked in a browser: a scene dragged in an adventure's flow diagram moves and saves its place; the relationship graph follows the theme.
+- **Tailwind 4** (Dependabot's PR fails the build): migrated separately, in v0.6.11.
 
 ## v0.6.9: a linter, dead code and dependency checks
 

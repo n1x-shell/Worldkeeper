@@ -197,7 +197,7 @@ export function CharacterBuilder() {
 
   return (
     <div className="space-y-5 print:space-y-0">
-      <header className="title-band elev-1 print:hidden !px-4 !py-4 sm:!px-6 sm:!py-5">
+      <header className="title-band elev-1 print:hidden px-4! py-4! sm:px-6! sm:py-5!">
         <div className="flex flex-wrap items-end gap-x-6 gap-y-3">
           <div className="min-w-0 flex-1 basis-72">
             <div className="section-title">My Character</div>
@@ -206,7 +206,7 @@ export function CharacterBuilder() {
           </div>
           <div className="flex w-full sm:w-auto items-end justify-between gap-4 border-t border-line pt-3 sm:border-0 sm:pt-0">
             <div className="sm:text-right">
-              <div className="label !mb-0.5">Progress</div>
+              <div className="label mb-0.5!">Progress</div>
               <div className="num text-sm text-ink">
                 <b className="font-semibold">{doneCount}</b> of {STEPS.length} steps
               </div>
@@ -376,7 +376,7 @@ export function CharacterBuilder() {
                 <Check size={15} /> Complete. Print it, or send it to your sheet.
               </p>
             )}
-            <div className="flex flex-wrap items-center gap-2 [&>*]:min-h-10 sm:[&>*]:min-h-0">
+            <div className="flex flex-wrap items-center gap-2 *:min-h-10 sm:*:min-h-0">
               <button className="btn-primary" onClick={() => window.print()}>
                 <Printer size={14} /> Print the sheet
               </button>

@@ -53,7 +53,7 @@ export function CalendarView({ def, date, events, onDay }: { def: CalendarDef; d
         onClick={onDay ? () => onDay(day) : undefined}
         disabled={!onDay}
         title={[label, ...items.map((i) => i.title)].join('\n')}
-        className={`relative h-9 rounded text-[11px] text-left px-1 border ${today ? 'border-gold bg-gold/20 text-gold' : items.length ? 'border-arcane/50 bg-arcane/10' : 'border-transparent hover:border-line'} ${onDay ? 'cursor-pointer' : 'cursor-default'}`}
+        className={`relative h-9 rounded-sm text-[11px] text-left px-1 border ${today ? 'border-gold bg-gold/20 text-gold' : items.length ? 'border-arcane/50 bg-arcane/10' : 'border-transparent hover:border-line'} ${onDay ? 'cursor-pointer' : 'cursor-default'}`}
       >
         <span className="num">{label}</span>
         {phase && (phase.full || phase.dark) && <span className="absolute right-0.5 top-0 text-[9px] opacity-70">{phase.full ? '○' : '●'}</span>}
@@ -65,7 +65,7 @@ export function CalendarView({ def, date, events, onDay }: { def: CalendarDef; d
     const day = extraDay(def, name)!;
     return (
       <div key={name} className="col-span-full">
-        <div className={`rounded border px-2 py-1 text-xs ${day === date.day ? 'border-gold bg-gold/20 text-gold' : 'border-gold/30'}`}>{cell(day, name)}</div>
+        <div className={`rounded-sm border px-2 py-1 text-xs ${day === date.day ? 'border-gold bg-gold/20 text-gold' : 'border-gold/30'}`}>{cell(day, name)}</div>
       </div>
     );
   };

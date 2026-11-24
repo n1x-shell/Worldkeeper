@@ -75,7 +75,7 @@ export function PlayerLiveCard() {
   const myTurn = !!current && isMe(current.name);
   const next = fight ? fight.order[(fight.order.findIndex((c) => c.current) + 1) % fight.order.length] : undefined;
   return (
-    <div className="fixed inset-x-3 bottom-3 z-[1400] space-y-2 sm:left-auto sm:w-96" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="fixed inset-x-3 bottom-3 z-1400 space-y-2 sm:left-auto sm:w-96" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       {fresh && (
         <Link
           to={`${base}/handouts`}
@@ -96,7 +96,7 @@ export function PlayerLiveCard() {
       {fight &&
         (open ? (
           <section className={`panel elev-3 overflow-hidden ${myTurn ? 'border-gold' : ''}`} aria-label="Turn order" aria-live="polite">
-            <header className={`flex items-start gap-3 border-b px-4 py-3 ${myTurn ? 'border-gold/50 bg-gold/20' : 'border-line bg-gold/[0.06]'}`}>
+            <header className={`flex items-start gap-3 border-b px-4 py-3 ${myTurn ? 'border-gold/50 bg-gold/20' : 'border-line bg-gold/6'}`}>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.12em] text-dim">
                   <Swords size={14} className="text-gold" />

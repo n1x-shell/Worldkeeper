@@ -48,7 +48,7 @@ function Card({ target, load, onEnter, onLeave, onDone }: { target: HoverTarget;
   const left = Math.max(8, Math.min(window.innerWidth - W - 8, r.left));
   const style = below ? { left, top: r.bottom + 6 } : { left, bottom: window.innerHeight - r.top + 6 };
   return (
-    <div className="wk-hovercard panel elev-2 fixed z-[2500] p-3 text-sm" style={{ ...style, width: W }} role="dialog" aria-label={e?.name ?? 'Entry'} onMouseEnter={onEnter} onMouseLeave={onLeave}>
+    <div className="wk-hovercard panel elev-2 fixed z-2500 p-3 text-sm" style={{ ...style, width: W }} role="dialog" aria-label={e?.name ?? 'Entry'} onMouseEnter={onEnter} onMouseLeave={onLeave}>
       {e === undefined ? (
         <div className="space-y-2" aria-busy="true">
           <span className="skeleton block h-3 w-1/3" />

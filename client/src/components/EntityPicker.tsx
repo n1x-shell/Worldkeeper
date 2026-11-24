@@ -88,7 +88,7 @@ export function EntityPicker({
         }}
       />
       {open && results.length > 0 && (
-        <ul role="listbox" className="absolute z-[1500] mt-1 max-h-64 w-full overflow-auto panel elev-2">
+        <ul role="listbox" className="absolute z-1500 mt-1 max-h-64 w-full overflow-auto panel elev-2">
           {results.map((e, i) => (
             <li
               key={e.id}

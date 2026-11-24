@@ -68,15 +68,13 @@ export function Stepper({ step, done, onStep }: { step: number; done: boolean[];
   }, [step]);
   return (
     <nav className="print:hidden" aria-label="Progress">
-      <ol ref={list} className="flex overflow-x-auto pb-1 -mx-1 px-1 [scrollbar-width:thin]" aria-label="Steps">
+      <ol ref={list} className="flex overflow-x-auto pb-1 -mx-1 px-1 scrollbar-thin" aria-label="Steps">
         {STEPS.map((s, i) => {
           const cur = i === step;
           const ok = done[i] && !cur;
           return (
-            <li key={s} className="relative flex-1 min-w-[4.75rem]">
-              {i > 0 && (
-                <span aria-hidden className={`absolute top-[1.375rem] h-px ${done[i - 1] ? 'bg-gold/60' : 'bg-line'}`} style={{ right: 'calc(50% + 1.125rem)', width: 'calc(100% - 2.25rem)' }} />
-              )}
+            <li key={s} className="relative flex-1 min-w-19">
+              {i > 0 && <span aria-hidden className={`absolute top-5.5 h-px ${done[i - 1] ? 'bg-gold/60' : 'bg-line'}`} style={{ right: 'calc(50% + 1.125rem)', width: 'calc(100% - 2.25rem)' }} />}
               <button
                 type="button"
                 onClick={() => onStep(i)}
@@ -146,7 +144,7 @@ export function StepNav({ step, onBack, onNext }: { step: number; onBack: () => 
         <ArrowLeft size={14} /> Back
       </button>
       {onNext && step < STEPS.length - 1 && (
-        <button className="btn-primary min-h-10 sm:min-h-0 justify-center flex-[2] sm:flex-none sm:ml-auto" onClick={onNext}>
+        <button className="btn-primary min-h-10 sm:min-h-0 justify-center flex-2 sm:flex-none sm:ml-auto" onClick={onNext}>
           Next: {STEPS[step + 1]} <ArrowRight size={14} />
         </button>
       )}

@@ -230,7 +230,7 @@ export function GraphPage() {
             nodesConnectable={false}
             onNodeClick={(_, n) => n.id !== focus && setSp({ focus: n.id })}
             onNodeDoubleClick={(_, n) => nav(`/e/${encodeURIComponent(n.id)}`)}
-            colorMode={theme}
+            forceColorMode={theme}
           >
             <Background gap={24} color={pal.line} />
             <Controls />

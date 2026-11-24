@@ -17,7 +17,7 @@ export function TemplatePreview({ template, compact }: { template: TemplateSpec;
       {template.description && <p className="text-ink/90">{template.description}</p>}
       {template.facts.length > 0 && (
         <div>
-          <div className="section-title !text-xs mb-1.5">Facts</div>
+          <div className="section-title text-xs! mb-1.5">Facts</div>
           <dl className="grid gap-x-4 gap-y-2 sm:grid-cols-[minmax(8rem,auto)_1fr]">
             {template.facts.map((f) => (
               <div key={f.name} className="contents">
@@ -32,7 +32,7 @@ export function TemplatePreview({ template, compact }: { template: TemplateSpec;
         </div>
       )}
       <div>
-        <div className="section-title !text-xs mb-1.5">Sections</div>
+        <div className="section-title text-xs! mb-1.5">Sections</div>
         <ol className="space-y-2.5">
           {template.sections.map((s) => (
             <li key={s.heading}>

@@ -136,7 +136,7 @@ export function EntityPage() {
     <div className="space-y-4">
       {toastNode}
       {data.redirectedFrom && debug && <div className="text-sm text-dim">Redirected from legacy ID {data.redirectedFrom}.</div>}
-      <header className="title-band gilt-corners elev-1 !px-4 !py-4 sm:!px-6 sm:!py-5">
+      <header className="title-band gilt-corners elev-1 px-4! py-4! sm:px-6! sm:py-5!">
         <div className="flex flex-wrap items-start gap-x-6 gap-y-3">
           <div className="min-w-0 flex-1 basis-[16rem]">
             <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1 text-xs text-dim mb-1.5">
@@ -158,7 +158,7 @@ export function EntityPage() {
                 <span className="ml-2 font-mono">{e.id}</span>
               </Dev>
             </nav>
-            <h1 className="illuminated font-display text-[26px] sm:text-[32px] leading-tight text-ink break-words">{e.name}</h1>
+            <h1 className="illuminated font-display text-[26px] sm:text-[32px] leading-tight text-ink wrap-break-word">{e.name}</h1>
             {e.aliases.length > 0 && (
               <p className="font-serif italic text-[16px] text-dim mt-1">
                 Also known as {e.aliases.join(' · ')}
@@ -332,7 +332,7 @@ function MoreMenu({ items }: { items: MenuItem[] }) {
       close();
     } else if (ev.key === 'Tab') close(false);
   };
-  const cls = 'flex w-full items-start gap-2.5 px-3 py-2 text-left text-sm text-ink hover:bg-raised hover:text-gold focus:bg-raised focus:text-gold focus:outline-none';
+  const cls = 'flex w-full items-start gap-2.5 px-3 py-2 text-left text-sm text-ink hover:bg-raised hover:text-gold focus:bg-raised focus:text-gold focus:outline-hidden';
   const body = (it: MenuItem) => (
     <>
       <span className="mt-0.5 text-dim">{it.icon}</span>
@@ -448,7 +448,7 @@ function RecordTab({
     <div ref={ref} className={`grid gap-4 xl:gap-6 ${cols}`}>
       {layout === 'three' && (
         <nav aria-label="On this page" className="sticky top-2 self-start pt-2 text-[13px]">
-          <div className="section-title !text-[11px] mb-2 text-dim">On this page</div>
+          <div className="section-title text-[11px]! mb-2 text-dim">On this page</div>
           <ul className="border-l border-line">
             {toc.map((s) => (
               <TocLink key={s.anchor} anchor={s.anchor} active={active === s.anchor} secret={s.secret}>
@@ -587,8 +587,8 @@ function Fact({ k, v }: { k: string; v: string }) {
   return (
     <div className="min-w-0">
       <dt className="text-[11px] uppercase tracking-wider opacity-60">{k}</dt>
-      <dd className="font-serif text-[15px] leading-snug break-words">
-        <Markdown text={v} className="[&_p]:my-0 [&_a]:!text-parchlink" />
+      <dd className="font-serif text-[15px] leading-snug wrap-break-word">
+        <Markdown text={v} className="[&_p]:my-0 [&_a]:text-parchlink!" />
       </dd>
     </div>
   );
@@ -612,7 +612,7 @@ function DetailGroup({ title, count, action, children }: { title: string; count?
   return (
     <section className="border-t border-line pt-3 mt-3 first:border-t-0 first:pt-0 first:mt-0">
       <div className="flex items-baseline gap-2 mb-2">
-        <h2 className="section-title !text-[12px]">{title}</h2>
+        <h2 className="section-title text-[12px]!">{title}</h2>
         {count != null && <span className="num text-xs text-dim">{count}</span>}
         {action && <div className="ml-auto">{action}</div>}
       </div>
@@ -656,7 +656,7 @@ function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; 
   const mentions = allMentions ? mentionedIn : mentionedIn.slice(0, 8);
   const more = (n: number, open: boolean, set: (v: boolean) => void) =>
     n > 8 && (
-      <button className="btn-ghost !px-1 text-xs mt-1" onClick={() => set(!open)} aria-expanded={open}>
+      <button className="btn-ghost px-1! text-xs mt-1" onClick={() => set(!open)} aria-expanded={open}>
         {open ? 'Show fewer' : <>Show all <span className="num">{n}</span></>}
       </button>
     );
@@ -673,7 +673,7 @@ function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; 
       <DetailGroup
         title="Connections"
         action={
-          <button className="btn-ghost !px-1.5 text-xs" onClick={() => onTab('relationships')}>
+          <button className="btn-ghost px-1.5! text-xs" onClick={() => onTab('relationships')}>
             All <span className="num">{data.relationships.length}</span>
           </button>
         }
@@ -701,7 +701,7 @@ function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; 
                     </span>
                   ))}
                   {list.length > 6 && (
-                    <button className="btn-ghost !inline !px-1 !py-0 text-xs" aria-expanded={openGroups.has(l)} onClick={() => setOpenGroups((g) => new Set(g.has(l) ? [...g].filter((x) => x !== l) : [...g, l]))}>
+                    <button className="btn-ghost inline! px-1! py-0! text-xs" aria-expanded={openGroups.has(l)} onClick={() => setOpenGroups((g) => new Set(g.has(l) ? [...g].filter((x) => x !== l) : [...g, l]))}>
                       {openGroups.has(l) ? 'fewer' : <>+<span className="num">{list.length - 6}</span> more</>}
                     </button>
                   )}
@@ -733,7 +733,7 @@ function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; 
         {addHere(e.type, (t) => recordTypes.offered.some((x) => x.key === t)).length > 0 && (
           <div className="mt-3 flex flex-wrap gap-1">
             {addHere(e.type, (t) => recordTypes.offered.some((x) => x.key === t)).map((a) => (
-              <Link key={a.type} className="btn-ghost !px-1.5 text-xs" to={addHereUrl(a.type, e)}>
+              <Link key={a.type} className="btn-ghost px-1.5! text-xs" to={addHereUrl(a.type, e)}>
                 <Plus size={12} /> {a.label}
               </Link>
             ))}
@@ -762,7 +762,7 @@ function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; 
       <DetailGroup
         title="Latest changes"
         action={
-          <button className="btn-ghost !px-1.5 text-xs" onClick={() => onTab('history')}>
+          <button className="btn-ghost px-1.5! text-xs" onClick={() => onTab('history')}>
             <History size={12} /> History
           </button>
         }
@@ -1131,7 +1131,7 @@ function RelationshipsTab({ entityId, rels, onChange }: { entityId: string; rels
 
 // ------------------------------------------------------------------ Player view
 /** Lore on the parchment card stays dark-on-paper in both themes. */
-const ON_PAPER = '[&_h2]:!text-parchink [&_h2]:!border-parchink/20 [&_strong]:!text-parchink [&_a]:!text-parchlink [&_blockquote]:!text-parchink/80 [&_table]:!border-parchink/25 [&_th]:!border-parchink/25 [&_td]:!border-parchink/25 [&_th]:!bg-parchink/10 [&_th]:!text-parchink';
+const ON_PAPER = '[&_h2]:text-parchink! [&_h2]:border-parchink/20! [&_strong]:text-parchink! [&_a]:text-parchlink! [&_blockquote]:text-parchink/80! [&_table]:border-parchink/25! [&_th]:border-parchink/25! [&_td]:border-parchink/25! [&_th]:bg-parchink/10! [&_th]:text-parchink!';
 /** A record's reveals for the GM: to everyone, and to each campaign (docs/LIBRARIES_PLAN.md §2.2). */
 export interface RecordReveals {
   everyone: { revealed: boolean; sections: string[]; facts: string[] };

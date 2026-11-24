@@ -621,7 +621,7 @@ export function MapView(p: MapViewProps) {
           const off = hidden.has(k.key);
           return (
             <li key={k.key}>
-              <button type="button" onClick={() => toggle(k.key)} className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 ${off ? 'opacity-45' : ''}`}>
+              <button type="button" onClick={() => toggle(k.key)} className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-sm hover:bg-white/5 ${off ? 'opacity-45' : ''}`}>
                 {k.key === 'routes' ? (
                   <span className="w-6 h-0 border-t-2 border-dashed border-gold/80 shrink-0" />
                 ) : (
@@ -644,7 +644,7 @@ export function MapView(p: MapViewProps) {
             <button
               type="button"
               onClick={() => toggle('gmonly')}
-              className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 ${hidden.has('gmonly') ? 'opacity-45' : ''}`}
+              className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-sm hover:bg-white/5 ${hidden.has('gmonly') ? 'opacity-45' : ''}`}
               title="Hide them to see the map as players do"
             >
               <span className="w-6 h-6 rounded-full border border-dashed border-danger/70 shrink-0" />
@@ -668,7 +668,7 @@ export function MapView(p: MapViewProps) {
                     type="button"
                     disabled={!n}
                     onClick={() => toggleLayer(l.key)}
-                    className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded hover:bg-white/5 disabled:opacity-35 ${off ? 'opacity-45' : ''}`}
+                    className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-sm hover:bg-white/5 disabled:opacity-35 ${off ? 'opacity-45' : ''}`}
                   >
                     <span className={`wk-badge wk-badge-${l.key} wk-badge-legend shrink-0`} dangerouslySetInnerHTML={{ __html: `<svg viewBox="0 0 24 24" width="12" height="12">${l.glyph}</svg>` }} />
                     <span className="flex-1 text-left text-sm">{l.label}</span>
@@ -964,14 +964,14 @@ export function MapView(p: MapViewProps) {
       </MapContainer>
 
       {/* The compass, and the overview while zoomed in (bottom right). */}
-      <div className="absolute right-3 bottom-3 z-[950] hidden sm:flex items-end gap-2 pointer-events-none">
+      <div className="absolute right-3 bottom-3 z-950 hidden sm:flex items-end gap-2 pointer-events-none">
         <Compass />
         {overview && lmap && rel > 0.6 && <Overview map={lmap} m={m} />}
       </div>
 
       {/* Scale bar and ruler (bottom left), when the map has a scale. */}
       {milesPerUnit && (
-        <div className="absolute left-3 bottom-3 z-[1000] flex flex-col items-start gap-2 pointer-events-none">
+        <div className="absolute left-3 bottom-3 z-1000 flex flex-col items-start gap-2 pointer-events-none">
           {measuring && (
             <div className="wk-map-btn pointer-events-auto flex-col items-start gap-1 text-sm max-w-xs" role="status">
               <div className="flex items-center gap-2 w-full">
@@ -1017,7 +1017,7 @@ export function MapView(p: MapViewProps) {
 
       {/* Top bar: back, the legend, the maps (in the GM app's sidebar instead, while it is open). */}
       {!inSidebar && (
-        <div className="absolute top-3 left-3 right-3 z-[1000] flex items-center gap-2 pointer-events-none">
+        <div className="absolute top-3 left-3 right-3 z-1000 flex items-center gap-2 pointer-events-none">
           {!p.contained && (
             <Link to={p.back.href} className="wk-map-btn pointer-events-auto" title={`Back to the ${p.back.label.toLowerCase()}`}>
               <ArrowLeft size={16} /> <span className="hidden sm:inline">{p.back.label}</span>
@@ -1039,11 +1039,7 @@ export function MapView(p: MapViewProps) {
       {((p.banner && !(codexOpen && boxW < 900)) || p.placing || addingNote) && (
         <div
           className={`absolute left-1/2 -translate-x-1/2 wk-map-btn pointer-events-auto text-center max-w-[90%] ${
-            !codexOpen
-              ? `${inSidebar ? 'top-3' : 'top-16'} z-[1000]`
-              : boxW >= 900
-                ? `${inSidebar ? 'top-3' : 'top-16'} z-[1000] left-[calc((100%-27rem)/2)] max-w-[calc(100%-29rem)]`
-                : 'bottom-16 z-[1010]'
+            !codexOpen ? `${inSidebar ? 'top-3' : 'top-16'} z-1000` : boxW >= 900 ? `${inSidebar ? 'top-3' : 'top-16'} z-1000 left-[calc((100%-27rem)/2)] max-w-[calc(100%-29rem)]` : 'bottom-16 z-1010'
           }`}
         >
           {p.placing ? (

@@ -92,7 +92,7 @@ export function JourneyDialog({
             <Section title={result.table.name}>
               <ol className="space-y-2">
                 {result.rolls.map((r) => (
-                  <li key={r.day} className="rounded border border-line px-2 py-1">
+                  <li key={r.day} className="rounded-sm border border-line px-2 py-1">
                     <div className="text-xs text-dim mb-0.5">Day {r.day}</div>
                     <Markdown text={r.result} />
                     {r.creatures.length > 0 && <CreatureLinks creatures={r.creatures} label="From your books" />}

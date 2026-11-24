@@ -162,7 +162,7 @@ export function LibraryPicker({ children }: { children: React.ReactNode }) {
           {byLast.map((l) => (
             <li key={l.id}>
               <button
-                className="w-full text-left py-3 px-2 hover:bg-gold/10 rounded flex items-center gap-3"
+                className="w-full text-left py-3 px-2 hover:bg-gold/10 rounded-sm flex items-center gap-3"
                 onClick={async () => {
                   if (l.id === list.open) {
                     remember();

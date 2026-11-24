@@ -3,7 +3,7 @@ import { useModules } from '../lib/modules';
 import { briefingFill, type Briefing } from './Briefing';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ReactFlow, Background, Controls, MarkerType, type Connection, type Edge, type Node, type NodeChange, applyNodeChanges } from '@xyflow/react';
+import { ReactFlow, Background, Controls, MarkerType, type Connection, type Edge, type Node, type NodeChangeset } from '@xyflow/react';
 import { BookOpen, CalendarDays, Check, Compass, Copy, Dices, Download, Eye, FileText, Flag, Hourglass, MapPin, Play, Plus, ScrollText, Search, Shield as ShieldIcon, Sun, Swords, Trash2, Upload, UserPlus, Users, Wand2, ArrowUp, ArrowDown, X } from 'lucide-react';
 import { api, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
@@ -434,7 +434,7 @@ function PartySummary({ chars }: { chars: Character[] }) {
         ) : (
           '—'
         ),
-        maxHp ? <HpBar hp={hp} max={maxHp} className="mt-1.5 max-w-[10rem]" /> : 'not on the sheets yet',
+        maxHp ? <HpBar hp={hp} max={maxHp} className="mt-1.5 max-w-40" /> : 'not on the sheets yet',
       )}
       {stat('Armour Class', acs.length ? (Math.min(...acs) === Math.max(...acs) ? acs[0] : `${Math.min(...acs)}–${Math.max(...acs)}`) : '—', acs.length > 1 ? 'lowest to highest' : undefined)}
       {stat('Passive Perception', pps.length ? pps[0].perception : '—', pps.length > 1 ? `best: ${pps[0].c.name}` : pps.length ? pps[0].c.name : undefined, true)}
@@ -555,7 +555,7 @@ export function PartyPage() {
         <>
           <PartySummary chars={chars} />
           <section aria-label="The party">
-            <div className="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(15rem,1fr))]">
+            <div className="grid gap-3 grid-cols-[repeat(auto-fill,minmax(15rem,1fr))]">
               {chars.map((c) => (
                 <RosterCard key={c.id} c={c} selected={ch?.id === c.id} onSelect={() => setSel(c.id)} />
               ))}
@@ -600,7 +600,7 @@ function CharacterSheet({ ch: initial, onDeleted, onEdited }: { ch: Character; o
   const portrait = (sh as Sheet).portrait;
   return (
     <section className="space-y-3" aria-label={`${ch.name}'s sheet`}>
-      <div className="title-band flex flex-wrap items-end gap-x-4 gap-y-3 !py-3">
+      <div className="title-band flex flex-wrap items-end gap-x-4 gap-y-3 py-3!">
         <div className="min-w-0 basis-full sm:basis-auto sm:mr-2 self-center">
           {/* The sheet's own header names the character; this band holds the GM's settings for it. */}
           <h2 className="text-[11px] uppercase tracking-wider text-dim">
@@ -769,7 +769,7 @@ function WorldTies({
               <Badge>{t.kind}</Badge>
               <EntityLink id={t.entity_id} />
               <input
-                className="input flex-1 min-w-[12rem] text-sm"
+                className="input flex-1 min-w-48 text-sm"
                 value={t.note}
                 placeholder="What's between them"
                 onChange={(e) => onChange({ ties: ties.map((x, j) => (j === i ? { ...x, note: e.target.value } : x)) })}
@@ -1001,7 +1001,7 @@ function BoardCard({ title, icon, count, more, className = '', children }: { tit
       title={
         <>
           {title}
-          {count != null && <span className="num ml-1 rounded border border-line px-1.5 text-[11px] tracking-normal text-dim">{count}</span>}
+          {count != null && <span className="num ml-1 rounded-sm border border-line px-1.5 text-[11px] tracking-normal text-dim">{count}</span>}
         </>
       }
     >
@@ -1031,7 +1031,7 @@ function EncounterRow({ e, note }: { e: Overview['encounters'][number] & { comba
           {note && ` · ${note}`}
         </div>
       </div>
-      <Link to={`/tracker/${e.id}`} className="btn text-xs !px-2 !py-1" aria-label={`Run ${e.title}`}>
+      <Link to={`/tracker/${e.id}`} className="btn text-xs px-2! py-1!" aria-label={`Run ${e.title}`}>
         <Play size={12} /> Run
       </Link>
     </li>
@@ -1059,7 +1059,7 @@ function AdventureInPlay({ a, current, onRemove }: { a: Adventure; current: numb
             )}
           </div>
         </div>
-        <button type="button" className="btn-ghost !p-1" onClick={onRemove} aria-label={`Take ${a.title} out of play`} title="Take out of play">
+        <button type="button" className="btn-ghost p-1!" onClick={onRemove} aria-label={`Take ${a.title} out of play`} title="Take out of play">
           <X size={14} />
         </button>
       </div>
@@ -1353,7 +1353,7 @@ function PrepBoard({ s, b, overview, advs, setPrep }: { s: Session; b: Briefing 
             <label className="flex items-center gap-2">
               <span className="text-dim whitespace-nowrap">Put in play</span>
               <select
-                className="input !w-auto max-w-full !py-1 text-xs"
+                className="input w-auto! max-w-full py-1! text-xs"
                 value=""
                 aria-label="Put an adventure in play"
                 onChange={(e) => e.target.value && setPrep('adventureIds', [...(s.prep.adventureIds ?? []), Number(e.target.value)])}
@@ -1580,7 +1580,7 @@ export function SessionPage() {
             <h2 className="section-title flex items-center gap-2">
               <Compass size={15} className="text-gold" /> From the world
             </h2>
-            <span className="h-px flex-1 bg-gradient-to-r from-gold/50 to-transparent" aria-hidden />
+            <span className="h-px flex-1 bg-linear-to-r from-gold/50 to-transparent" aria-hidden />
             <span className="text-xs text-dim hidden sm:inline">Built from the campaign as it stands now</span>
           </div>
           <PrepBoard s={s} b={briefing ?? null} overview={overview ?? null} advs={advs ?? null} setPrep={setPrep} />
@@ -2097,7 +2097,7 @@ function SceneFlow({ adventureId }: { adventureId: number }) {
       );
   }, [scenes]);
   const edges: Edge[] = (links ?? []).map((l) => ({ id: String(l.id), source: String(l.from_scene), target: String(l.to_scene), label: l.label, markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: 'rgb(var(--gold))' }, labelStyle: { fill: 'rgb(var(--ink))' }, labelBgStyle: { fill: 'rgb(var(--panel))' } }));
-  const onNodesChange = useCallback((ch: NodeChange[]) => setNodes((n) => applyNodeChanges(ch, n)), []);
+  const onNodesChange = useCallback((ch: NodeChangeset) => setNodes((n) => ch.applyTo(n)), []);
   return (
     <div className="space-y-2">
       <p className="text-sm text-dim">Drag scenes to arrange them. Drag from one scene's edge to another to connect them; click a connection to remove it.</p>
@@ -2118,7 +2118,7 @@ function SceneFlow({ adventureId }: { adventureId: number }) {
             void reloadLinks();
           }}
           fitView
-          colorMode="dark"
+          forceColorMode="dark"
         >
           <Background gap={20} color="rgb(var(--line))" />
           <Controls />

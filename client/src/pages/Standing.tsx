@@ -140,7 +140,7 @@ function StandingCard({
     <li>
       <Card flush>
         <div className="flex flex-wrap items-center gap-3 p-3">
-          <button type="button" className="text-left flex-1 min-w-[12rem]" onClick={onToggle} aria-expanded={open}>
+          <button type="button" className="text-left flex-1 min-w-48" onClick={onToggle} aria-expanded={open}>
             <div className="font-display text-gold text-lg leading-tight">{r.name}</div>
             <div className="text-xs text-dim">
               Renown <span className="num">{r.renown}</span>

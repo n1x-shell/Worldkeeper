@@ -50,7 +50,7 @@ function Dropdown({ button, label, children, align = 'right', active }: { button
         {button}
       </button>
       {open && (
-        <div role="menu" className={`absolute top-full mt-1 z-[1900] min-w-[220px] panel elev-2 py-1 ${align === 'right' ? 'right-0' : 'left-0'}`}>
+        <div role="menu" className={`absolute top-full mt-1 z-1900 min-w-[220px] panel elev-2 py-1 ${align === 'right' ? 'right-0' : 'left-0'}`}>
           {children(() => setOpen(false))}
         </div>
       )}
@@ -70,7 +70,7 @@ function NewMenu() {
     <button
       key={key}
       role="menuitem"
-      className="block w-full truncate rounded px-2 py-1 text-left text-sm text-ink hover:bg-raised hover:text-gold"
+      className="block w-full truncate rounded-sm px-2 py-1 text-left text-sm text-ink hover:bg-raised hover:text-gold"
       onClick={() => {
         close();
         void nav(`/new?type=${encodeURIComponent(key)}`);
@@ -309,7 +309,7 @@ export function Layout() {
     <PeekProvider live={live}>
       <PeekKeys />
       <div className="flex flex-col h-full">
-        <header className="h-[52px] shrink-0 flex items-center gap-1 border-b border-line bg-panel px-2 md:px-3 elev-1 relative z-[1500]">
+        <header className="h-[52px] shrink-0 flex items-center gap-1 border-b border-line bg-panel px-2 md:px-3 elev-1 relative z-1500">
           <button className="btn-ghost md:hidden" onClick={() => setMobileNav(true)} aria-label="Open navigation">
             <Menu size={18} />
           </button>
@@ -342,12 +342,12 @@ export function Layout() {
           </nav>
           <button
             onClick={() => setSearchOpen(true)}
-            className="ml-auto md:ml-3 flex items-center gap-2 rounded-md border border-line bg-raised px-2.5 h-8 text-sm text-dim hover:border-gold/60 min-w-[2rem] shrink lg:w-48 xl:w-72"
+            className="ml-auto md:ml-3 flex items-center gap-2 rounded-md border border-line bg-raised px-2.5 h-8 text-sm text-dim hover:border-gold/60 min-w-8 shrink lg:w-48 xl:w-72"
             aria-label="Search"
             title="Search (Ctrl K)"
           >
             <Search size={14} className="shrink-0" /> <span className="hidden lg:inline truncate">Search…</span>
-            <kbd className="ml-auto hidden xl:inline whitespace-nowrap text-[10px] border border-line rounded px-1">Ctrl K</kbd>
+            <kbd className="ml-auto hidden xl:inline whitespace-nowrap text-[10px] border border-line rounded-sm px-1">Ctrl K</kbd>
           </button>
           <div className="ml-auto flex items-center gap-1">
             <NewMenu />
@@ -449,7 +449,7 @@ export function Layout() {
             )}
           </aside>
           {mobileNav && (
-            <div className="fixed inset-0 z-[1800] md:hidden bg-black/50" onClick={() => setMobileNav(false)}>
+            <div className="fixed inset-0 z-1800 md:hidden bg-black/50" onClick={() => setMobileNav(false)}>
               <aside className="w-72 h-full bg-panel border-r border-line flex flex-col" onClick={(e) => e.stopPropagation()}>
                 <div className="flex items-center justify-between px-3 py-2 border-b border-line">
                   <span className="font-display text-gold">{appName}</span>

@@ -85,7 +85,7 @@ export function TemplatesPage() {
         <nav aria-label="Record types" className="space-y-4">
           {byCategory.map(({ c, types }) => (
             <div key={c}>
-              <div className="section-title !text-xs mb-1">{CATEGORY_LABEL[c]}</div>
+              <div className="section-title text-xs! mb-1">{CATEGORY_LABEL[c]}</div>
               <ul>
                 {types.map((t) => {
                   const n = (templates ?? []).filter((x) => x.type === t.key).length;
@@ -292,7 +292,7 @@ function TemplateEditor({ initial, onClose, onSave }: { initial: string; onClose
         </Field>
         <div className="min-w-0">
           <div className="label mb-1.5">Preview</div>
-          <div className="panel p-3 max-h-[28rem] overflow-auto">
+          <div className="panel p-3 max-h-112 overflow-auto">
             <div className="font-display text-lg text-ink mb-2">{spec.name || 'Untitled'}</div>
             <TemplatePreview template={spec} />
           </div>

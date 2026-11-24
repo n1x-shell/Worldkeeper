@@ -97,7 +97,7 @@ export function StatBlock({ s }: { s: StatBlockData }) {
           <div className="italic text-dim text-xs">{s.meta}</div>
         </div>
         {looks}
-        <p className="rounded border border-line p-2">
+        <p className="rounded-sm border border-line p-2">
           <b>Left open.</b> {s.tactics}
         </p>
       </div>
@@ -130,7 +130,7 @@ export function StatBlock({ s }: { s: StatBlockData }) {
           )}
         </div>
         {s.fights === false && (
-          <p className="rounded border border-line p-2">
+          <p className="rounded-sm border border-line p-2">
             <b>Won't fight.</b> {s.tactics}
           </p>
         )}
@@ -139,7 +139,7 @@ export function StatBlock({ s }: { s: StatBlockData }) {
         </p>
         {s.changes && <p>{s.changes}</p>}
         {s.baseBlock && (
-          <details className="rounded border border-line p-2">
+          <details className="rounded-sm border border-line p-2">
             <summary className="cursor-pointer">
               The <b>{s.baseBlock.name}</b> stat block, from your books
             </summary>
@@ -149,7 +149,7 @@ export function StatBlock({ s }: { s: StatBlockData }) {
           </details>
         )}
         {s.fights !== false && s.tactics && (
-          <p className="rounded border border-line p-2">
+          <p className="rounded-sm border border-line p-2">
             <b>In a fight.</b> {s.tactics}
           </p>
         )}
@@ -211,7 +211,7 @@ export function StatBlock({ s }: { s: StatBlockData }) {
         </span>
       </div>
       {s.ab && (
-        <div className="grid grid-cols-6 text-center border border-line rounded">
+        <div className="grid grid-cols-6 text-center border border-line rounded-sm">
           {['Str', 'Dex', 'Con', 'Int', 'Wis', 'Cha'].map((k, i) => (
             <div key={k} className="py-1">
               <div className="text-[10px] uppercase tracking-wider text-dim">{k}</div>
@@ -237,7 +237,7 @@ export function StatBlock({ s }: { s: StatBlockData }) {
         )}
       </div>
       {s.tactics && (
-        <p className="rounded border border-line p-2">
+        <p className="rounded-sm border border-line p-2">
           <b>In a fight.</b> {s.tactics}
         </p>
       )}

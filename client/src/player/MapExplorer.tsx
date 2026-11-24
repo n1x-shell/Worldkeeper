@@ -59,7 +59,7 @@ function Codex({ id, fallback, onClose, onPlace, pinned }: { id: string; fallbac
     <div className="flex flex-col h-full">
       <div className="flex items-start gap-2 px-4 pt-4 pb-3 border-b border-line">
         <div className="min-w-0 flex-1">
-          <h2 className="illuminated font-display text-[22px] text-ink leading-tight break-words">{e.name}</h2>
+          <h2 className="illuminated font-display text-[22px] text-ink leading-tight wrap-break-word">{e.name}</h2>
           <div className="flex flex-wrap gap-1 mt-2">
             <Badge>{e.typeLabel}</Badge>
             <RealmBadge realm={e.realm} label={e.realmLabel} />
@@ -149,7 +149,7 @@ export function MapExplorer() {
       />
       {/* Hidden while a place is open, so it never covers the place's panel. */}
       {exploration && !selected && (
-        <div className="pointer-events-none absolute bottom-20 md:bottom-auto md:top-3 left-1/2 -translate-x-1/2 z-[1000] max-w-[calc(100%-2rem)] md:max-w-[calc(100%-7rem)]">
+        <div className="pointer-events-none absolute bottom-20 md:bottom-auto md:top-3 left-1/2 -translate-x-1/2 z-1000 max-w-[calc(100%-2rem)] md:max-w-[calc(100%-7rem)]">
           <Badge tone="danger" icon={<Radio size={11} />} className="bg-panel/95 elev-2">
             Live session: places you haven't found yet are hidden
           </Badge>
