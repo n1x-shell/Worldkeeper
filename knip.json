@@ -1,0 +1,9 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["server/src/cli/*.ts", "scripts/*.{ts,mjs}", "scripts/srd/*.ts", "tests/**/*.test.ts"],
+  "project": ["client/**/*.{ts,tsx}", "server/**/*.ts", "shared/**/*.ts", "scripts/**/*.{ts,mjs}", "tests/**/*.ts"],
+  "ignore": [],
+  "ignoreDependencies": ["@fontsource/cinzel", "@fontsource/eb-garamond"],
+  "ignoreBinaries": ["rustc", "strip"],
+  "ignoreExportsUsedInFile": true
+}
