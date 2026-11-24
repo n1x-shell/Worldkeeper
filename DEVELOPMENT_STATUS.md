@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.7.5_
+_Last updated: 2026-11-24 · v0.8.0_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,16 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.8.0 “Worldbooks” (step W4)
+
+The release that completes [docs/WORLDBOOKS_PLAN.md](docs/WORLDBOOKS_PLAN.md): the words (W1, v0.7.1), the Worldkeeper world complete inside the app (W2, v0.7.2), Books only (W3a, v0.7.3), sharing and adding `.worldbook` files (W3b, v0.7.4) and worldbooks and the GM's books (W3c, v0.7.5), below.
+
+- **Worldbooks:** a whole world as one file. Setting packs are worldbooks now, and bringing one in is adding it. **Library → Worldbooks** adds, updates and removes them; **Share as a worldbook…** makes one from your own world (never campaigns or what players saw); **Add a worldbook…** and **Start a library with it** bring one another GM shared. The page **Add and Share** (was Import and Export).
+- **The Worldkeeper world, complete:** its archive ships in the app, so adding the worldbook brings every record, source document, map and adventure, with no file to choose.
+- **Your books:** a worldbook never holds book text, only names. Sharing asks whether the books it draws on are required, optional, or swapped for open stand-ins (originals kept for GMs with the book); adding says which books are missing; **Books only** (Settings → Rules packs) sets the open rules aside, and a new library whose worldbook's books are all here uses them alone.
+- **In W4:** a worldbook shared from a library is marked "Made from this library" there and isn't offered back to it (`worldbook_made_here`; `madeHere` on `/api/setting-packs`); the Renown module's badge; README (status, a Worldbooks section with two new screenshots, features, using your own books, roadmap), Quick Start (share your world, or add someone else's), the screenshots list, FUTURE_WORK (what worldbooks don't do yet), the plan's status.
+- **Screenshots** (`docs/images`): `worldbooks.jpg` (the Worldkeeper world's library, with Ostmark added to the computer) and `share-worldbook.jpg` (sharing Ostmark from its own library).
 
 ## v0.7.5: worldbooks and the GM's books
 

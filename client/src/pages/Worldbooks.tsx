@@ -68,6 +68,7 @@ const MODULE_LABEL: Record<string, string> = {
   shards: 'Shards',
   'depths-explorer': 'Depths explorer',
   'quick-reference': 'Quick reference',
+  renown: 'Renown',
 };
 
 interface Added {
@@ -336,7 +337,7 @@ export function WorldbooksPage() {
               <div className="flex-1 min-w-[16rem]">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="font-display text-gold text-lg">{p.name}</span>
-                  {p.installed ? <Badge tone="ok">In this library</Badge> : <Badge>Not in this library</Badge>}
+                  {p.installed ? <Badge tone="ok">In this library</Badge> : p.madeHere ? <Badge tone="gold">Made from this library</Badge> : <Badge>Not in this library</Badge>}
                   {p.installed && p.installed.version !== p.version && <Badge tone="warn">Update available</Badge>}
                   {debug && (
                     <Badge title="Where the worldbook comes from">
@@ -365,9 +366,11 @@ export function WorldbooksPage() {
                         <LibraryBig size={14} /> Start a library with it
                       </button>
                     )}
-                    <button className="btn-primary" disabled={!!busy} onClick={() => void run(p, 'install')}>
-                      <Download size={14} /> {busy === p.id ? 'Adding…' : 'Add to this library'}
-                    </button>
+                    {!p.madeHere && (
+                      <button className="btn-primary" disabled={!!busy} onClick={() => void run(p, 'install')}>
+                        <Download size={14} /> {busy === p.id ? 'Adding…' : 'Add to this library'}
+                      </button>
+                    )}
                   </>
                 ) : (
                   <>

@@ -109,6 +109,8 @@ export interface PackInfo {
   installed: { version: string; installed_at: string; updated_at: string | null } | null;
   /** Records it holds in this library. */
   records?: number;
+  /** Shared from this library (Share as a worldbook): its world is already here. */
+  madeHere?: boolean;
   cleaning?: CleaningRules;
 }
 

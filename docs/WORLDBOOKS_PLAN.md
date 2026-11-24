@@ -1,6 +1,6 @@
 # Worldbooks: plan
 
-Status: proposed, November 2026. Decisions so far are in DEC-910 ("Worldbooks").
+Status: done, v0.8.0 (November 2026). Decisions are in DEC-910 ("Worldbooks").
 
 ## 1. What changes, in one paragraph
 
@@ -72,6 +72,8 @@ In three PRs: W3a (v0.7.3) Books only; W3b (v0.7.4) sharing and adding `.worldbo
 - The old route (Full world ZIP, then "Open a library from a file") keeps working for files made before.
 
 ### W4 (v0.8.0 "Worldbooks"): docs, screenshots, release
+
+Done in v0.8.0.
 
 - README, Quick Start (both ways to begin, now without the archive step), FEATURES, DEVELOPMENT_STATUS, screenshots, release notes.
 
