@@ -140,8 +140,20 @@ for (let i = 0; i < 60 && !ok; i++) {
     /* not up yet */
   }
 }
-child.kill();
-fs.rmSync(tmpData, { recursive: true, force: true });
+// Stop the server and wait until it has exited: on Windows its open files (the library's database) keep the folder
+// locked until then.
+await new Promise((r) => {
+  if (child.exitCode !== null || child.signalCode !== null) return r();
+  child.once('exit', r);
+  child.kill();
+  setTimeout(r, 10000);
+});
+// The check's data folder is temporary: a lock Windows hasn't released yet is retried, and never fails the build.
+try {
+  fs.rmSync(tmpData, { recursive: true, force: true, maxRetries: 10, retryDelay: 300 });
+} catch (e) {
+  log(`could not remove the check's temporary folder (${e.code}): ${tmpData}`);
+}
 if (!ok) throw new Error(`bundled server did not start:\n${stderr}`);
 const size = (p) => {
   let n = 0;
