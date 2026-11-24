@@ -18,6 +18,8 @@ import { removePortrait, savePortrait } from '../repo/portraits.js';
  */
 export function playerRoutes(ctx: AppContext) {
   const r = Router();
+  // Whose knowledge the table sees: the active campaign's (what's revealed to everyone, and to that campaign).
+  const scope = () => activeCampaignId(ctx.db);
   r.get(
     '/info',
     h(() => ({
@@ -25,29 +27,31 @@ export function playerRoutes(ctx: AppContext) {
       appName: (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper',
       // The modules on for the table's campaign (Thinning, the Return's omens, fading, renown...).
       modules: [...modulesOn(ctx.db)],
-      realms: playerRealms(ctx.db),
-      types: playerTypes(ctx.db),
+      realms: playerRealms(ctx.db, scope()),
+      types: playerTypes(ctx.db, scope()),
     })),
   );
   r.get(
     '/entities',
-    h(() => playerEntities(ctx.db).map(({ id, name, type, typeLabel, realm, realmLabel, realms, bloom, summary }) => ({ id, name, type, typeLabel, realm, realmLabel, realms, bloom, summary }))),
+    h(() =>
+      playerEntities(ctx.db, scope()).map(({ id, name, type, typeLabel, realm, realmLabel, realms, bloom, summary }) => ({ id, name, type, typeLabel, realm, realmLabel, realms, bloom, summary })),
+    ),
   );
   r.get(
     '/entities/:id',
     h((req) => {
-      const e = playerEntity(ctx.db, String(req.params.id));
+      const e = playerEntity(ctx.db, String(req.params.id), scope());
       if (!e) throw notFound('Entry');
       return e;
     }),
   );
   r.get(
     '/search',
-    h((req) => playerSearch(ctx.db, String(req.query.q ?? '')).map(({ id, name, typeLabel, realmLabel, summary }) => ({ id, name, typeLabel, realmLabel, summary }))),
+    h((req) => playerSearch(ctx.db, String(req.query.q ?? ''), scope()).map(({ id, name, typeLabel, realmLabel, summary }) => ({ id, name, typeLabel, realmLabel, summary }))),
   );
   r.get(
     '/maps',
-    h(() => playerMaps(ctx.db)),
+    h(() => playerMaps(ctx.db, scope())),
   );
   r.get(
     '/campaigns',

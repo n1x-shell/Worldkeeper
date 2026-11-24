@@ -81,6 +81,8 @@ export const TABLES = [
   'bastion_turns',
   'downtime',
   'calendar_events',
+  'campaign_reveals',
+  'campaign_map_reveals',
 ];
 
 const slug = (s: string) =>
@@ -233,6 +235,19 @@ export function exportCampaign(db: DB, campaignId: number, uploadsDir?: string) 
     // Where the party has been, by the map's name.
     map_discoveries: db.prepare(`SELECT d.*, m.name AS map_name FROM map_discoveries d JOIN maps m ON m.id = d.map_id WHERE d.campaign_id = ?`).all(campaignId),
     map_travel: db.prepare(`SELECT t.*, m.name AS map_name FROM map_travel t JOIN maps m ON m.id = t.map_id WHERE t.campaign_id = ?`).all(campaignId),
+    // What only this campaign's players have learned (repo/reveals.ts), records by ID; maps, pins and outlines by
+    // their map's name and what they mark (ids differ from library to library).
+    campaign_reveals: db.prepare('SELECT entity_id, revealed, revealed_sections, revealed_facts FROM campaign_reveals WHERE campaign_id = ?').all(campaignId),
+    campaign_map_reveals: db
+      .prepare(
+        `SELECT r.kind, COALESCE(m.name, mm.name, sm.name) AS map_name, COALESCE(mk.entity_id, sh.entity_id) AS entity_id, COALESCE(mk.label, sh.label) AS label
+         FROM campaign_map_reveals r
+         LEFT JOIN maps m ON r.kind = 'map' AND m.id = r.ref_id
+         LEFT JOIN map_markers mk ON r.kind = 'marker' AND mk.id = r.ref_id LEFT JOIN maps mm ON mm.id = mk.map_id
+         LEFT JOIN map_shapes sh ON r.kind = 'shape' AND sh.id = r.ref_id LEFT JOIN maps sm ON sm.id = sh.map_id
+         WHERE r.campaign_id = ?`,
+      )
+      .all(campaignId),
     // Modules' data about the party's treasure (fading salvage).
     treasure_module_data: db.prepare(`SELECT * FROM module_data WHERE owner = 'treasure' AND owner_id IN (${inList(treasureIds)})`).all(),
     handout_images: uploadsDir
@@ -317,6 +332,7 @@ function campaignNeeds(db: DB, data: Record<string, unknown>) {
     ['map_travel', ['entity_id']],
     ['map_discoveries', ['entity_id']],
     ['profiles', ['entity_id']],
+    ['campaign_reveals', ['entity_id']],
   ] as const)
     for (const r of rows(table)) for (const col of cols) add(r[col]);
   const world = c.world_id ? (db.prepare('SELECT id, name FROM realms WHERE id = ?').get(c.world_id) as { id: string; name: string } | undefined) : undefined;
@@ -455,6 +471,18 @@ export function importCampaign(db: DB, data: ReturnType<typeof exportCampaign>, 
         (r.clue_key && idBy('SELECT id FROM clues WHERE key = ?', r.clue_key)) ||
         idBy('SELECT c.id FROM clues c JOIN secrets s ON s.id = c.secret_id WHERE s.key = ? AND c.note = ?', r.secret_key, r.clue_note);
       if (id) insert('clue_found', clean(r), { campaign_id: cid, clue_id: id });
+    }
+    // What the campaign's players had learned: records this library has, and maps, pins and outlines found by their
+    // map's name and what they mark.
+    for (const r of list('campaign_reveals'))
+      if (db.prepare('SELECT 1 FROM entities WHERE id = ?').get(r.entity_id)) insert('campaign_reveals', r, { campaign_id: cid });
+    for (const r of list('campaign_map_reveals')) {
+      const map = idBy('SELECT id FROM maps WHERE name = ?', r.map_name);
+      if (!map) continue;
+      const part = (table: string) =>
+        r.entity_id ? idBy(`SELECT id FROM ${table} WHERE map_id = ? AND entity_id = ?`, map, r.entity_id) : idBy(`SELECT id FROM ${table} WHERE map_id = ? AND label = ?`, map, r.label);
+      const ref = r.kind === 'map' ? map : r.kind === 'marker' ? part('map_markers') : r.kind === 'shape' ? part('map_shapes') : undefined;
+      if (ref) db.prepare('INSERT OR IGNORE INTO campaign_map_reveals (campaign_id, kind, ref_id) VALUES (?, ?, ?)').run(cid, r.kind, ref);
     }
     for (const t of ['map_discoveries', 'map_travel'] as const)
       for (const r of list(t)) {

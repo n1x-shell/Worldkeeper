@@ -1026,6 +1026,30 @@ ALTER TABLE timeline_rows ADD COLUMN year INTEGER;
 ALTER TABLE timeline_rows ADD COLUMN day INTEGER;
 `,
   },
+  {
+    version: 28,
+    name: 'reveals per campaign',
+    // What one campaign's players have learned (docs/LIBRARIES_PLAN.md §2.1). A record's own reveal columns keep
+    // meaning "revealed to everyone"; these add what only one campaign knows. Maps, pins and outlines the same way.
+    sql: `
+CREATE TABLE campaign_reveals (
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  entity_id TEXT NOT NULL REFERENCES entities(id) ON DELETE CASCADE,
+  revealed INTEGER NOT NULL DEFAULT 1,
+  revealed_sections TEXT NOT NULL DEFAULT '[]',
+  revealed_facts TEXT NOT NULL DEFAULT '[]',
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  PRIMARY KEY (campaign_id, entity_id)
+);
+CREATE INDEX campaign_reveals_entity ON campaign_reveals(entity_id);
+CREATE TABLE campaign_map_reveals (
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  kind TEXT NOT NULL CHECK (kind IN ('map', 'marker', 'shape')),
+  ref_id INTEGER NOT NULL,
+  PRIMARY KEY (campaign_id, kind, ref_id)
+);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

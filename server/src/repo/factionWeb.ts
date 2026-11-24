@@ -3,6 +3,7 @@
  * The ties come from the library's own links (allied_with, opposes). A tie is public when a faction's handbook page
  * already names the other in its "Who opposes them" line; any other tie players see only once the GM reveals it.
  */
+import { revealedIds } from './reveals.js';
 import type { DB } from '../db/connection.js';
 import { types } from './recordTypes.js';
 
@@ -79,7 +80,9 @@ export function revealTie(db: DB, campaignId: number, a: string, b: string, on: 
 /** What players know: public and revealed ties between groups whose pages they can read. With no campaign, public ties only. */
 export function playerFactionWeb(db: DB, campaignId: number | null) {
   const { groups, ties } = factionWeb(db, campaignId);
-  const visible = new Map(groups.filter((g) => g.revealed).map((g) => [g.id, g]));
+  // Groups revealed to everyone, or to this campaign.
+  const known = revealedIds(db, campaignId);
+  const visible = new Map(groups.filter((g) => known.has(g.id)).map((g) => [g.id, g]));
   return ties
     .filter((t) => (t.public || t.revealed) && visible.has(t.a) && visible.has(t.b))
     .map((t) => ({ a: t.a, b: t.b, aName: t.aName, bName: t.bName, kind: t.kind, aRealm: visible.get(t.a)!.realm, bRealm: visible.get(t.b)!.realm }));

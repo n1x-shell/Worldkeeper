@@ -37,7 +37,7 @@ export function createApp(ctx: AppContext, opts: { staticDir?: string } = {}) {
   player.get('/uploads/:file', (req, res, next) => {
     const f = String(req.params.file);
     const ok =
-      ctx.db.prepare('SELECT 1 FROM maps WHERE image_file = ? AND player_visible = 1').get(f) ||
+      ctx.db.prepare(`SELECT 1 FROM maps WHERE image_file = ? AND (player_visible = 1 OR id IN (SELECT ref_id FROM campaign_map_reveals WHERE kind = 'map'))`).get(f) ||
       // Handout pictures, once given to the players.
       ctx.db.prepare('SELECT 1 FROM handouts WHERE image_file = ? AND pushed_at IS NOT NULL').get(f) ||
       // Character portraits (their file names are random, and only given out with the character).

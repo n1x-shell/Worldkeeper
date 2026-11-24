@@ -1,6 +1,6 @@
 # Campaigns and libraries: a plan (v0.6)
 
-**Status:** approved direction (owner answers in §5, 23 November 2026).
+**Status:** approved direction (owner answers in §5, 23 November 2026). Step A1 (campaign reveals: storage and what players see) is built, in v0.5.2.
 **Goal:** a GM can run several groups in one world without one group's handbook showing what another group learned, and can keep unrelated worlds in libraries of their own, each with its own records, backups and handbook, switching between them in a click.
 
 Two parts, in this order:
