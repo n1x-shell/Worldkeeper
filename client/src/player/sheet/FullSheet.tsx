@@ -473,7 +473,7 @@ function Identity({
             onClick={applyBasics}
             title="Saving throws, Hit Die, armor and weapon training, tools, spellcasting ability and class resources"
           >
-            <Wand2 size={13} /> Fill in {info!.name} basics
+            <Wand2 size={13} /> Fill in {info.name} basics
           </button>
         )}
       </div>
@@ -569,7 +569,7 @@ function AbilitiesTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Par
               placeholder={String(score(s, a))}
               aria-label={`${ABILITY_NAMES[a]} score`}
               disabled={readOnly}
-              onChange={(e) => put({ abilities: { ...(s.abilities ?? {}), [a]: Number(e.target.value) || 10 } })}
+              onChange={(e) => put({ abilities: { ...s.abilities, [a]: Number(e.target.value) || 10 } })}
             />
             <ul className="mt-2 w-full border-t border-gold/20 pt-1 text-sm">
               <li className={`${ROW} font-medium`}>
@@ -615,7 +615,7 @@ function AbilitiesTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Par
           <span className={`w-full sm:w-auto ${LABEL}`}>Armor training</span>
           {(['light', 'medium', 'heavy', 'shields'] as const).map((k) => (
             <span key={k} className="relative flex items-center gap-1.5 rounded px-1 max-sm:min-h-10">
-              <Diamond cover on={!!s.armorTraining?.[k]} label={`${k} armor training`} onChange={readOnly ? undefined : (on) => put({ armorTraining: { ...(s.armorTraining ?? {}), [k]: on } })} />
+              <Diamond cover on={!!s.armorTraining?.[k]} label={`${k} armor training`} onChange={readOnly ? undefined : (on) => put({ armorTraining: { ...s.armorTraining, [k]: on } })} />
               {k[0].toUpperCase() + k.slice(1)}
             </span>
           ))}

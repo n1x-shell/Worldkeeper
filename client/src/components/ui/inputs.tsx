@@ -1,5 +1,5 @@
 /** Inputs: fields, switches, checkboxes, segmented controls and tabs. No app dependencies (the player handbook uses these). */
-import type { InputHTMLAttributes, KeyboardEvent, ReactNode, SelectHTMLAttributes } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 
 export function Field({ label, children, hint }: { label: string; children: ReactNode; hint?: ReactNode }) {
   return (
@@ -8,18 +8,6 @@ export function Field({ label, children, hint }: { label: string; children: Reac
       {children}
       {hint && <span className="block text-xs text-dim mt-1">{hint}</span>}
     </label>
-  );
-}
-
-export function Input({ className = '', ...p }: InputHTMLAttributes<HTMLInputElement>) {
-  return <input {...p} className={`input ${className}`} />;
-}
-
-export function Select({ className = '', children, ...p }: SelectHTMLAttributes<HTMLSelectElement>) {
-  return (
-    <select {...p} className={`input ${className}`}>
-      {children}
-    </select>
   );
 }
 

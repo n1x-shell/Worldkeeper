@@ -65,7 +65,7 @@ function sectionRelation(k: Kinds, heading: string, sourceType: string, targetTy
     if (k.group.has(targetType)) return ['member_of', false];
     if (k.place.has(targetType)) {
       // A place in a Family section is the family's seat, not necessarily where this person lives now.
-      if (/^family/.test(h)) return ['comes_from', false];
+      if (h.startsWith('family')) return ['comes_from', false];
       // Nobody lives in a sealed vault; they want it, guard it or came from it.
       if (k.uninhabited.has(targetType)) return ['related_to', false];
       return ['lives_in', false];

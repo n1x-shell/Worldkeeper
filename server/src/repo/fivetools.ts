@@ -236,7 +236,7 @@ export function scanFivetools(buf: Buffer): ScannedBook[] {
   return Object.entries(counts)
     .map(([id, c]) => {
       const b = info[id];
-      return { id, name: b?.name ?? id, published: b?.published ?? '', group: b?.group ?? '', counts: c, unofficial: !b || /^UA/.test(id) || b.group === 'homebrew' };
+      return { id, name: b?.name ?? id, published: b?.published ?? '', group: b?.group ?? '', counts: c, unofficial: !b || id.startsWith('UA') || b.group === 'homebrew' };
     })
     .sort((a, b) => Number(a.unofficial) - Number(b.unofficial) || b.published.localeCompare(a.published) || a.name.localeCompare(b.name));
 }
@@ -522,7 +522,7 @@ export function importFivetools(db: DB, buf: Buffer, books: string[] = DEFAULT_B
   const variants = best(
     ((read('magicvariants.json').magicvariant as J[]) ?? [])
       .filter((v) => v.inherits && !have.has((v.name as string).toLowerCase()))
-      .map((v) => ({ ...(v.inherits as J), ...v, source: (v.inherits as J).source, page: (v.inherits as J).page }) as J)
+      .map((v): J => ({ ...(v.inherits as J), ...v, source: (v.inherits as J).source, page: (v.inherits as J).page }))
       .filter(inBooks),
     (v) => v.name as string,
     (v) => rank(v.source as string),
@@ -648,7 +648,6 @@ const crPb = (cr: string) => {
   return n >= 29 ? 9 : n >= 25 ? 8 : n >= 21 ? 7 : n >= 17 ? 6 : n >= 13 ? 5 : n >= 9 ? 4 : n >= 5 ? 3 : 2;
 };
 const amod = (n: number) => Math.floor((n - 10) / 2);
-const sgn = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 /** A list that may hold plain strings, or objects naming a group with a note ("resist" and "immune" lists). */
 function damageList(list: unknown): string {
   if (!Array.isArray(list)) return '';
@@ -683,7 +682,7 @@ function spellcastingEntries(sc: J): { name: string; text: string } {
 /** A 5etools creature as one of the app's stat blocks. */
 export function creatureBlock(m: J): J {
   const type = typeof m.type === 'string' ? m.type : ((m.type as J)?.type as string | J);
-  const typeName = typeof type === 'string' ? type : (((type as J)?.choose as string[] | undefined)?.join(' or ') ?? '');
+  const typeName = typeof type === 'string' ? type : ((type?.choose as string[] | undefined)?.join(' or ') ?? '');
   const tags = typeof m.type === 'object' ? ((m.type as J).tags as unknown[] | undefined)?.map((t) => (typeof t === 'string' ? t : (t as J).tag)) : undefined;
   const align = ((m.alignment as unknown[]) ?? []).map((a) => (typeof a === 'string' ? ALIGN[a] : '')).filter(Boolean);
   const meta = `${((m.size as string[]) ?? ['M']).map((x) => SIZE[x]).join(' or ')} ${title(String(typeName))}${tags?.length ? ` (${tags.map((t) => title(String(t))).join(', ')})` : ''}${align.length ? `, ${align.join(' ')}` : ''}`;
@@ -752,7 +751,7 @@ export function creatureBlock(m: J): J {
     bonus: [...named(m.bonus), ...castAs('bonus')],
     reactions: [...named(m.reaction), ...castAs('reaction')],
     legendary,
-    environment: (m.environment as string[]) ?? [],
+    environment: m.environment ?? [],
     source: cite(m),
   };
 }
@@ -866,11 +865,11 @@ export function itemEntry(i: J): J {
     rarity,
     attunement: att,
     magic: !!rarity,
-    value: typeof i.value === 'number' ? (i.value as number) / 100 : null,
+    value: typeof i.value === 'number' ? i.value / 100 : null,
     weight: i.weight ?? null,
     text: body,
     // A generic magic item names the items it makes: "Flame Tongue " + "Longsword".
-    ...(i.namePrefix || i.nameSuffix ? { prefix: (i.namePrefix as string) ?? '', suffix: (i.nameSuffix as string) ?? '' } : {}),
+    ...(i.namePrefix || i.nameSuffix ? { prefix: i.namePrefix ?? '', suffix: i.nameSuffix ?? '' } : {}),
     tables: ((i.lootTables as string[]) ?? []).map((t) => t.split('|')[0]),
     source: cite(i),
   };

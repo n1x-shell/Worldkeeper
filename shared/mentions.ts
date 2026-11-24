@@ -8,7 +8,7 @@
  *
  * Pure functions shared by the server (relationships, broken links, player text) and the client (rendering).
  */
-import { BRACKET_REF_RE, ENTITY_TYPE_LABELS, type EntityType } from './domain.js';
+import { BRACKET_REF_RE, ENTITY_TYPE_LABELS } from './domain.js';
 
 export interface MentionTarget {
   id: string;
@@ -27,7 +27,7 @@ const norm = (s: string) =>
     .replace(/\s+/g, ' ')
     .trim();
 const bare = (s: string) => norm(s).replace(/^the /, '');
-const typeLabel = (t: string) => ENTITY_TYPE_LABELS[t as EntityType] ?? t;
+const typeLabel = (t: string) => ENTITY_TYPE_LABELS[t] ?? t;
 
 export type Resolution = { id: string } | { ambiguous: string[] } | null;
 
@@ -116,7 +116,7 @@ export function parseRefs(text: string, index: MentionIndex): RefSegment[] {
   const re = new RegExp(`${MENTION_RE().source}|${BRACKET_REF_RE().source}(?!\\()|\`[^\`\\n]*\``, 'g');
   let pos = 0;
   for (const m of text.matchAll(re)) {
-    const at = m.index!;
+    const at = m.index;
     if (m[0].startsWith('`')) continue; // inline code: leave as is
     if (m[0].startsWith('@[')) {
       pushText(text.slice(pos, at));

@@ -17,7 +17,7 @@ export function partyExport(db: DB, campaignId: number): { title: string; markdo
   // Names of records revealed to everyone, or to this campaign.
   const revealedHere = revealedIds(db, campaignId);
   const known = { get: (id: string) => (revealedHere.has(id) ? (db.prepare('SELECT name FROM entities WHERE id = ?').get(id) as { name: string } | undefined) : undefined) };
-  const nameOf = (id: string) => (known.get(id) as { name: string } | undefined)?.name ?? null;
+  const nameOf = (id: string) => known.get(id)?.name ?? null;
   const places = [
     ...new Set((db.prepare('SELECT entity_id FROM map_discoveries WHERE campaign_id = ?').all(campaignId) as { entity_id: string }[]).map((r) => nameOf(r.entity_id)).filter((x): x is string => !!x)),
   ].sort();

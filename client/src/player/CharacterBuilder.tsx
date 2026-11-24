@@ -27,7 +27,7 @@ function useSaved(): [Build, (c: Build) => void] {
   const [c, setC] = useState<Build>(() => {
     try {
       const old = JSON.parse(localStorage.getItem(KEY) ?? '{}') as Partial<Build> & { cls?: string };
-      return { ...EMPTY_BUILD, ...old, base: { ...EMPTY_BUILD.base, ...(old.base ?? {}) } };
+      return { ...EMPTY_BUILD, ...old, base: { ...EMPTY_BUILD.base, ...old.base } };
     } catch {
       return EMPTY_BUILD;
     }
@@ -93,9 +93,12 @@ export function CharacterBuilder() {
         .sort(),
     [text, peoples],
   );
-  const people =
-    peoples.find((p) => p.name === b.people) ??
-    (otherSpecies.includes(b.people) ? { id: null as string | null, name: b.people, plural: b.people, tagline: '', rules: b.people, atTable: '', summary: '' } : undefined);
+  const people = useMemo(
+    () =>
+      peoples.find((p) => p.name === b.people) ??
+      (otherSpecies.includes(b.people) ? { id: null as string | null, name: b.people, plural: b.people, tagline: '', rules: b.people, atTable: '', summary: '' } : undefined),
+    [peoples, otherSpecies, b.people],
+  );
   const cls = classes.find((x) => x.name === b.cls);
   const info = classInfo(b.cls);
   const bg = backgroundFor(b, world, text);
@@ -144,7 +147,7 @@ export function CharacterBuilder() {
     const { portrait, ...rest } = built.sheet;
     await source.saveMyPage(code, { character: { name: built.name, species: built.species, class_name: built.class_name, sheet: rest } });
     if (portrait && source.myPortrait) await source.myPortrait(code, portrait);
-    navigate(`${base}/me/${code}`);
+    void navigate(`${base}/me/${code}`);
   };
 
   // In the GM's own app: save the build straight into a campaign's Party and Characters.
@@ -172,7 +175,7 @@ export function CharacterBuilder() {
       const { portrait, ...rest } = sheet.sheet as Record<string, unknown> & { portrait?: string };
       const id = await source.gmSaveCharacter(gmCampaign, { name: sheet.name, species: sheet.species, class_name: sheet.class_name, level: sheet.level, sheet: rest }, portrait || undefined);
       if (gmCampaign !== gm?.active) await fetch('/api/campaigns/active', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: gmCampaign }) });
-      navigate(`/campaign/party?character=${id}`);
+      void navigate(`/campaign/party?character=${id}`);
     } catch (x) {
       setGmState({ error: (x as Error).message });
     }

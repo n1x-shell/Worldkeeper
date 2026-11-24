@@ -101,7 +101,7 @@ function packBlocks(db: DB): Record<string, StatBlock> {
 export function libraryStatblock(db: DB, id: string): StatBlock | null {
   try {
     const r = db.prepare('SELECT data FROM statblocks WHERE entity_id = ?').get(id) as { data: string } | undefined;
-    return r ? ({ ...parseJson<StatBlock>(r.data, { id, name: id, meta: '' }), id, own: true } as StatBlock) : null;
+    return r ? { ...parseJson<StatBlock>(r.data, { id, name: id, meta: '' }), id, own: true } : null;
   } catch {
     return null; // a library from before migration 26
   }

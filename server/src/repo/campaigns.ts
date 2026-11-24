@@ -212,7 +212,7 @@ export const sceneLinks = makeCrud({
 
 /** Copy a scene (and nothing else) into another adventure. */
 export function copyScene(db: DB, sceneId: number, targetAdventureId: number) {
-  const s = scenes.get(db, sceneId) as Record<string, unknown>;
+  const s = scenes.get(db, sceneId);
   adventures.get(db, targetAdventureId);
   const { id: _id, adventure_id: _a, ...rest } = s;
   return scenes.create(db, { ...rest, adventure_id: targetAdventureId, title: `${s.title}` });

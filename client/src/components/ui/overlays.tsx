@@ -41,8 +41,6 @@ export function Modal({ title, onClose, children, wide, footer }: { title: strin
     </div>
   );
 }
-/** The same as Modal: the design's name for it. */
-export const Dialog = Modal;
 
 /** A panel that slides in from the side (the inspector's content on narrow screens, long side lists). */
 export function Drawer({ title, onClose, children, side = 'right', width = 380 }: { title: ReactNode; onClose: () => void; children: ReactNode; side?: 'left' | 'right'; width?: number }) {

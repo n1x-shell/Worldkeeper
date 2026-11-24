@@ -29,6 +29,9 @@ Use a supported Rust toolchain and your OS-specific dependencies for desktop pac
 | `npm run backup [-- reason]` | Write a backup archive |
 | `npm test` | Unit, API and integration suite |
 | `npm run typecheck` | Type-check client and server |
+| `npm run lint` | Oxlint, with type-aware rules (`.oxlintrc.json`); CI fails on any warning |
+| `npm run deadcode` | knip: unused files, exports and packages (`knip.json`) |
+| `npm run audit` | Known security holes in the packages (high or critical) |
 | `npm run e2e -- <url> [screenshot dir]` | Browser smoke test against running app |
 | `npm run e2e:first-run -- <url> own\|setting [screenshot dir]` | The first-run wizard in a browser, on an empty data folder |
 | `npm run desktop:prepare` | Bundle app, server, SQLite driver and Node runtime |
@@ -68,8 +71,13 @@ Use a supported Rust toolchain and your OS-specific dependencies for desktop pac
 npm test
 WORLDKEEPER_TEST_ARCHIVE=path/to/archive.zip npm test
 npm run typecheck
+npm run lint -- --deny-warnings
+npm run deadcode
+npm run audit
 npm run build
 ```
+
+CI runs all of these on every pull request. The linter is Oxlint because typescript-eslint doesn't support TypeScript 7 yet; rules that don't fit the codebase are switched off in `.oxlintrc.json` with the reason. Dependabot (`.github/dependabot.yml`) opens update pull requests: npm weekly, Cargo and GitHub Actions monthly, minor and patch updates grouped.
 
 The second command adds import testing against a real archive, where configured. The regular tests use synthetic fixtures for import planning, deduplication, rollback, idempotency, edit/source protection, relationships, revision history, campaigns, recaps, player projection, backups and exports, maps, dice and initiative.
 

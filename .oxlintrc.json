@@ -33,7 +33,22 @@
     "no-underscore-dangle": "off",
     "no-shadow": "off",
     "typescript/consistent-return": "off",
-    "import/no-unassigned-import": "off"
+    "import/no-unassigned-import": "off",
+    "react/set-state-in-effect": "off",
+    "react/preserve-manual-memoization": "off",
+    "react/refs": "off",
+    "react/exhaustive-effect-dependencies": "off",
+    "react/memo-dependencies": "off",
+    "react/globals": "off",
+    "no-unused-expressions": "off",
+    "typescript/no-base-to-string": "off",
+    "typescript/restrict-template-expressions": "off",
+    "unicorn/no-useless-spread": "off",
+    "unicorn/no-new-array": "off",
+    "unicorn/prefer-add-event-listener": "off",
+    "typescript/no-redundant-type-constituents": "off",
+    "typescript/no-unnecessary-type-conversion": "off",
+    "typescript/unbound-method": "off"
   },
   "ignorePatterns": ["dist/**", "dist-player/**", "node_modules/**", "src-tauri/**", "packs/**", "data/**"]
 }

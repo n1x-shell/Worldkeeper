@@ -36,7 +36,7 @@ export function makeCleaner(rules: CleaningRules | undefined | null): Cleaner {
     // Keep list markers and quote markers; split the rest into sentences.
     const m = /^(\s*(?:[-*]|\d+\.|>)\s+)?(.*)$/.exec(line)!;
     const lead = m[1] ?? '';
-    const kept = m[2].split(/(?<=[.!?])\s+(?=[A-Z*_"'(\[])/).filter((s) => !isMeta(s));
+    const kept = m[2].split(/(?<=[.!?])\s+(?=[A-Z*_"'([])/).filter((s) => !isMeta(s));
     return kept.length ? lead + kept.join(' ') : '';
   };
   const cleanTableRow = (line: string) =>

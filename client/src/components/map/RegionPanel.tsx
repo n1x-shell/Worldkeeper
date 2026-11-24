@@ -43,7 +43,7 @@ export function RegionPanel({ id, onPick }: { id: string; onPick: (id: string) =
     setBusy(true);
     try {
       await api.post(`/api/regions/${encodeURIComponent(id)}/encounter-table`, { level: lv });
-      reload();
+      void reload();
     } finally {
       setBusy(false);
     }

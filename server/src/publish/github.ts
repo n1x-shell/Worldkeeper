@@ -66,7 +66,7 @@ export async function publishToGitHub(o: PublishOptions): Promise<PublishResult>
       }
       throw new GitHubError(res.status, msg || `GitHub returned ${res.status}`);
     }
-    return res.status === 204 ? (null as T) : ((await res.json()) as T);
+    return res.status === 204 ? null : ((await res.json()) as T);
   };
 
   // 1. Repository access

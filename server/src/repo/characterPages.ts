@@ -210,7 +210,7 @@ export function updatePlayerCharacterPage(db: DB, code: string, body: unknown): 
     const old = JSON.parse(row.sheet || '{}') as Record<string, unknown>;
     // The portrait changes only through its own route, too.
     const kept = Object.fromEntries([...(GM_ONLY_SHEET_KEYS as readonly string[]), 'portrait'].filter((k) => k in old).map((k) => [k, old[k]]));
-    const sent = patch.character.sheet ? withoutGmNotes(patch.character.sheet as Record<string, unknown>) : null;
+    const sent = patch.character.sheet ? withoutGmNotes(patch.character.sheet) : null;
     if (sent) delete sent.portrait;
     const sheet = sent ? { ...sent, ...kept } : old;
     db.prepare('UPDATE characters SET name = ?, species = ?, class_name = ?, sheet = ?, updated_at = ? WHERE id = ?').run(

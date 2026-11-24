@@ -1,5 +1,5 @@
 import { BUILTIN_REGISTRY, type TypeRegistry } from '@shared/recordTypes';
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
@@ -177,6 +177,8 @@ function Viewport({ bounds, onZoom, focus }: { bounds: L.LatLngBoundsExpression;
       return z;
     };
     map.setMaxBounds(b);
+    // Leaflet's own options object, set once the map exists.
+    // oxlint-disable-next-line react/immutability
     map.options.maxBoundsViscosity = 1;
     map.setView(b.getCenter(), cover(), { animate: false });
     onZoom(0);
@@ -320,7 +322,8 @@ function Clicks({ onClick }: { onClick: ((x: number, y: number) => void) | null 
 /** Darkness over everything the party hasn't seen, with clear patches around what it has. */
 function Fog({ w, h, clear, strength }: { w: number; h: number; clear: { x: number; y: number }[]; strength: number }) {
   const r = Math.max(w, h) * 0.07;
-  const id = useMemo(() => `wk-fog-${Math.random().toString(36).slice(2)}`, []);
+  // An id for the SVG mask, unique on the page (useId's own characters aren't safe in url(#…)).
+  const id = `wk-fog-${useId().replace(/[^\w-]/g, '')}`;
   return (
     <SVGOverlay
       bounds={[
@@ -625,7 +628,7 @@ export function MapView(p: MapViewProps) {
                   <span
                     className={`wk-pin wk-pin-legend wk-pin-k-${k.key} shrink-0`}
                     dangerouslySetInnerHTML={{
-                      __html: `<svg viewBox="0 0 24 24" width="14" height="14">${GLYPH[k.key as Kind]}</svg>`,
+                      __html: `<svg viewBox="0 0 24 24" width="14" height="14">${GLYPH[k.key]}</svg>`,
                     }}
                   />
                 )}

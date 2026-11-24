@@ -78,16 +78,16 @@ export function DataTable<T>({
                   key={c.key}
                   scope="col"
                   className={`${a === 'right' ? 'text-right' : a === 'center' ? 'text-center' : ''} ${c.headClassName ?? ''}`}
-                  aria-sort={on ? (sort!.dir === 'asc' ? 'ascending' : 'descending') : canSort ? 'none' : undefined}
+                  aria-sort={on ? (sort.dir === 'asc' ? 'ascending' : 'descending') : canSort ? 'none' : undefined}
                 >
                   {canSort ? (
                     <button
                       type="button"
                       className={`inline-flex items-center gap-1 uppercase tracking-wider hover:text-gold ${on ? 'text-gold' : ''}`}
-                      onClick={() => setSort(on && sort!.dir === 'asc' ? { key: c.key, dir: 'desc' } : on ? null : { key: c.key, dir: 'asc' })}
+                      onClick={() => setSort(on && sort.dir === 'asc' ? { key: c.key, dir: 'desc' } : on ? null : { key: c.key, dir: 'asc' })}
                     >
                       {c.label}
-                      {on ? sort!.dir === 'asc' ? <ArrowUp size={11} /> : <ArrowDown size={11} /> : <ChevronsUpDown size={11} className="opacity-50" />}
+                      {on ? sort.dir === 'asc' ? <ArrowUp size={11} /> : <ArrowDown size={11} /> : <ChevronsUpDown size={11} className="opacity-50" />}
                     </button>
                   ) : (
                     c.label
@@ -204,7 +204,7 @@ export function ConditionChips({ value, options, onChange, readOnly }: { value: 
     <div className="flex flex-wrap items-center gap-1">
       {value.map((k) =>
         edit ? (
-          <button key={k} type="button" className="chip border-danger/60 text-danger bg-danger/10 hover:bg-danger/20" onClick={() => onChange!(value.filter((x) => x !== k))} title={`Remove ${k}`}>
+          <button key={k} type="button" className="chip border-danger/60 text-danger bg-danger/10 hover:bg-danger/20" onClick={() => onChange(value.filter((x) => x !== k))} title={`Remove ${k}`}>
             {k} <X size={10} />
           </button>
         ) : (
@@ -214,7 +214,7 @@ export function ConditionChips({ value, options, onChange, readOnly }: { value: 
         ),
       )}
       {edit && (
-        <select className="input w-auto py-0 text-xs" value="" onChange={(e) => e.target.value && onChange!([...value, e.target.value])} aria-label="Add condition">
+        <select className="input w-auto py-0 text-xs" value="" onChange={(e) => e.target.value && onChange([...value, e.target.value])} aria-label="Add condition">
           <option value="">+ Condition</option>
           {options
             .filter((k) => !value.includes(k))

@@ -86,12 +86,15 @@ export function NewRecord() {
   }, [canonReview, canonTouched]);
 
   const [templateId, setTemplateId] = useState('');
-  const forType = (templates ?? []).filter((t) => t.type === basics.type);
-  const template = forType.find((t) => t.id === templateId) ??
-    forType[0] ?? { id: '', origin: 'builtin' as const, markdown: '', type: basics.type, name: '', description: '', facts: [], sections: [] };
+  const forType = useMemo(() => (templates ?? []).filter((t) => t.type === basics.type), [templates, basics.type]);
+  const template = useMemo(
+    () => forType.find((t) => t.id === templateId) ?? forType[0] ?? { id: '', origin: 'builtin' as const, markdown: '', type: basics.type, name: '', description: '', facts: [], sections: [] },
+    [forType, templateId, basics.type],
+  );
 
   const [facts, setFacts] = useState<Record<string, string>>({});
   const [sections, setSections] = useState<SectionDraft[]>([]);
+  const [step, setStep] = useState(0);
   // A new type or template starts its facts and sections again, with what the parent can fill in.
   useEffect(() => {
     setFacts(parent ? factsFromParent(template, parent.name) : {});
@@ -99,7 +102,6 @@ export function NewRecord() {
     setStep(0);
   }, [template.id, basics.type, templates, parent?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const [step, setStep] = useState(0);
   const [draft, setDraft] = useState('');
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -147,7 +149,7 @@ export function NewRecord() {
       });
       rememberType(input.type);
       await reloadIndex();
-      nav(`/e/${e.id}`);
+      void nav(`/e/${e.id}`);
     } catch (x) {
       setErr((x as Error).message);
     } finally {

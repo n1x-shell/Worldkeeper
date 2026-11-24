@@ -2,7 +2,7 @@ import { useModules } from '../lib/modules';
 import { ItemRulesList } from '../components/ItemRules';
 import { useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import ReactMarkdown, { defaultUrlTransform } from 'react-markdown';
+import ReactMarkdown, { defaultUrlTransform, type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
   ArrowRight,
@@ -13,16 +13,12 @@ import {
   Crown,
   Feather,
   Flag,
-  Flame,
   Gem,
-  Ghost,
-  Globe2,
   Landmark,
   Library,
   ListChecks,
   Map as MapIcon,
   MapPin,
-  Mountain,
   Scale,
   ScrollText,
   Search,
@@ -42,31 +38,28 @@ import { Card } from '../components/ui/surfaces';
 import { DataTable, type Column } from '../components/ui/data';
 import { Empty, Loading } from '../components/ui/feedback';
 
-/** Markdown for players: links to other revealed entries (/player/e/ID from the server) stay inside the handbook. */
-export function Md({ text, className = 'prose-lore' }: { text: string; className?: string }) {
+/** A link in players' Markdown: other revealed entries (/player/e/ID from the server) stay inside the handbook. */
+function PlayerLink({ href, children }: { href?: string; children?: ReactNode }) {
   const { base } = usePlayer();
+  const entry = href ? /^\/player\/e\/([^/?#]+)/.exec(href)?.[1] : undefined;
+  return href?.startsWith('/player/') ? (
+    <Link to={`${base}${href.slice('/player'.length)}`} className="wk-ref" data-peek={entry ? decodeURIComponent(entry) : undefined}>
+      {children}
+    </Link>
+  ) : (
+    <a href={href} target="_blank" rel="noreferrer noopener" className="text-arcane underline">
+      {children}
+    </a>
+  );
+}
+const MD_COMPONENTS: Components = { a: PlayerLink };
+const MD_PLUGINS = [remarkGfm];
+
+/** Markdown for players: links to other revealed entries stay inside the handbook. */
+export function Md({ text, className = 'prose-lore' }: { text: string; className?: string }) {
   return (
     <div className={className}>
-      <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
-        urlTransform={defaultUrlTransform}
-        components={{
-          a: ({ href, children }) =>
-            href?.startsWith('/player/') ? (
-              <Link
-                to={`${base}${href.slice('/player'.length)}`}
-                className="wk-ref"
-                data-peek={/^\/player\/e\/([^/?#]+)/.exec(href)?.[1] ? decodeURIComponent(/^\/player\/e\/([^/?#]+)/.exec(href)![1]) : undefined}
-              >
-                {children}
-              </Link>
-            ) : (
-              <a href={href} target="_blank" rel="noreferrer noopener" className="text-arcane underline">
-                {children}
-              </a>
-            ),
-        }}
-      >
+      <ReactMarkdown remarkPlugins={MD_PLUGINS} urlTransform={defaultUrlTransform} components={MD_COMPONENTS}>
         {text}
       </ReactMarkdown>
     </div>
@@ -262,7 +255,7 @@ export function PlayerHome() {
       className="hidden sm:block w-full sm:w-[22rem]"
       onSubmit={(ev) => {
         ev.preventDefault();
-        if (q.trim()) nav(`${base}/search?q=${encodeURIComponent(q.trim())}`);
+        if (q.trim()) void nav(`${base}/search?q=${encodeURIComponent(q.trim())}`);
       }}
     >
       <label className="group flex w-full items-center gap-3 rounded-md border border-edge/60 bg-raised px-4 min-h-[48px] shadow-sm focus-within:border-gold/70 hover:border-gold/70 transition-colors">
@@ -823,8 +816,8 @@ export function PlayerQuests() {
   const all = campaigns.flatMap((c) => c.quests.map((q) => ({ ...q, campaign: c.title })));
   const open = all.filter((q) => OPEN_QUEST.includes(q.status));
   const done = all.filter((q) => !OPEN_QUEST.includes(q.status));
-  const Quest = ({ q }: { q: (typeof all)[number] }) => (
-    <li className={`panel elev-1 px-5 py-4 ${OPEN_QUEST.includes(q.status) ? '' : 'bg-panel/60'}`}>
+  const quest = (q: (typeof all)[number]) => (
+    <li key={`${q.campaign}-${q.id}`} className={`panel elev-1 px-5 py-4 ${OPEN_QUEST.includes(q.status) ? '' : 'bg-panel/60'}`}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
         <h3 className={`text-[17px] leading-snug ${OPEN_QUEST.includes(q.status) ? 'text-ink' : 'text-dim'}`}>{q.title}</h3>
         <QuestStatus status={q.status} />
@@ -851,11 +844,7 @@ export function PlayerQuests() {
           <h2 id="quests-open" className="title-rule text-lg mb-3">
             Open
           </h2>
-          <ul className="grid gap-3 xl:grid-cols-2">
-            {open.map((q) => (
-              <Quest key={`${q.campaign}-${q.id}`} q={q} />
-            ))}
-          </ul>
+          <ul className="grid gap-3 xl:grid-cols-2">{open.map((q) => quest(q))}</ul>
         </section>
       )}
       {done.length > 0 && (
@@ -863,11 +852,7 @@ export function PlayerQuests() {
           <h2 id="quests-done" className="title-rule text-lg mb-3">
             Finished
           </h2>
-          <ul className="grid gap-3 xl:grid-cols-2">
-            {done.map((q) => (
-              <Quest key={`${q.campaign}-${q.id}`} q={q} />
-            ))}
-          </ul>
+          <ul className="grid gap-3 xl:grid-cols-2">{done.map((q) => quest(q))}</ul>
         </section>
       )}
     </div>

@@ -55,7 +55,7 @@ export function EncounterIdeas({ level, terrain, region, campaignId, compact = f
       title: idea.creatures.map((c) => `${c.count > 1 ? `${c.count} ` : ''}${c.name}`).join(' and '),
       combatants,
     });
-    nav(`/tracker/${e.id}`);
+    void nav(`/tracker/${e.id}`);
   };
   return (
     <div className="space-y-2">

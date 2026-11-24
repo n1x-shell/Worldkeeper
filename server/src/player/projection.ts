@@ -22,7 +22,7 @@ import { campaignDate, comingUp } from '../repo/calendar.js';
 import { campaignCalendar } from '../repo/calendars.js';
 import { playerRegions } from '../repo/regionState.js';
 import type { DB } from '../db/connection.js';
-import { SECRET_HEADING_RE, ENTITY_TYPE_LABELS, type EntityType } from '../../../shared/domain.js';
+import { SECRET_HEADING_RE, ENTITY_TYPE_LABELS } from '../../../shared/domain.js';
 import { listRealms } from '../repo/realms.js';
 import { listRecordTypes } from '../repo/recordTypes.js';
 import type { RecordTypeDef } from '../../../shared/recordTypes.js';
@@ -180,7 +180,7 @@ function project(r: Row, revealed: Set<string>, index: MentionIndex, realmsInfo:
     id: r.id,
     name: r.name,
     type: r.type,
-    typeLabel: ENTITY_TYPE_LABELS[r.type as EntityType] ?? r.type,
+    typeLabel: ENTITY_TYPE_LABELS[r.type] ?? r.type,
     realm: r.realm,
     realmLabel: realmsInfo.byId.get(r.realm)?.name ?? r.realm,
     realms: [...realms],

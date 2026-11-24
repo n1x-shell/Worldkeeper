@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.6.8_
+_Last updated: 2026-11-24 · v0.6.9_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -73,6 +73,19 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
 
+## v0.6.9: a linter, dead code and dependency checks
+
+- **Checks** (all in CI): `npm run lint` (Oxlint 1.95 with type-aware rules through `oxlint-tsgolint`; typescript-eslint doesn't support TypeScript 7), `npm run deadcode` (knip), `npm run audit` (`npm audit --audit-level=high`). Dependabot (`.github/dependabot.yml`): npm weekly, Cargo and GitHub Actions monthly, minor and patch grouped. ESLint was the plan; its TypeScript support needs TypeScript 6.1 or earlier.
+- **First run:** 8,245 findings; about 7,800 from rules that don't fit (the old React-in-scope rule, unsafe-assertion on SQLite rows), 414 after configuring. Switched off, each with its reason in `.oxlintrc.json`: React Compiler rules (no compiler here), comma one-liners, the text-conversion rules (checked against all 123 books of a 5etools copy: nothing prints "[object Object]"), deliberate copies, unbound methods (the repos never use `this`), style rules.
+- **Fixed:**
+  - **Stat block crash:** a book that gives ability scores in words (two shape-change forms in an unofficial book) crashed Your Books; scores in words are kept as a note and shown as dashes.
+  - **Stale labels:** "Mentioned in" on a record, Live, the Atlas explorer and the player map computed type labels once; they now update when the record types load.
+  - **Components made during render:** Markdown links (GM app and handbook), the calendar's days and extra days, the handbook's quests and the player map's links are no longer remade (and remounted) on every render.
+  - **Silent failures:** quick initiative now says when it can't make its encounter; a failed record preview no longer leaves an unhandled rejection. Page changes and reloads that can't fail are marked as such.
+  - **Recomputed every render:** New record's template and the character builder's people.
+  - **Fog of war:** the mask id comes from `useId`, not `Math.random` during render.
+- **Dead code removed:** `LinkSuggest.tsx` (the old suggestion box; the editor's `@` links replaced it), `server/src/assetsDir.ts`, `@types/adm-zip` (adm-zip ships its types), 19 unused exports and 6 unused types, about 40 unused imports and variables, and about 60 unneeded type assertions (removed by `oxlint --fix`).
+
 ## v0.6.8: books off until a library switches them on
 
 - **The owner's decision:** a rules pack is on in the library it's imported in, and off in the other libraries until the GM ticks it there (DEC-910). Before, a library with no switch for a pack used it. The SRD and the setting's rules pack are unchanged.
@@ -114,7 +127,7 @@ Checked against the Node.js project's own schedule (`nodejs/Release` schedule.js
 - **Next development steps** rewritten: the v0.6.5 to v0.6.7 queue, then candidates. The old list (written for v0.4) had mostly shipped: the single-instance lock (v0.5.1), the table switch (v0.6.1), per-campaign handbooks (v0.6), handouts, session dates (v0.5.1), code splitting (v0.5.1) and keyboard save (v0.4.7).
 - **Partially completed:** the editor note now describes the Markdown editor.
 - **CI** runs `npm run build` (both builds: the GM app and the player site, after typechecking) instead of `npx vite build` alone, so a broken player build fails the PR.
-- **No linter is set up:** recorded under Next steps. (Earlier PR descriptions said "lint passes": `npm run lint` doesn't exist, and its error was hidden; typecheck, tests, build and the browser tests were the checks that ran.)
+- **No linter was set up then** (v0.6.9 adds one). Earlier PR descriptions said "lint passes": `npm run lint` didn't exist, and its error was hidden; typecheck, tests, build and the browser tests were the checks that ran.
 
 ## v0.6.3: back up everything
 
@@ -607,7 +620,6 @@ The queue agreed with the owner, one PR each:
 After that, candidates (not yet agreed):
 
 - **Desktop builds for macOS and Windows:** run `desktop.yml` on both and fix what comes up; code signing, so the system's warnings go away.
-- **A linter:** there is none (`npm run lint` doesn't exist; only Prettier's settings, `.prettierrc.json`). Adding ESLint means new development dependencies.
 - **The browser tests in CI:** `e2e:first-run` (own world) needs no archive and could run on every PR; it needs Playwright's browser on the runner.
 - **Sessions on the timeline**, by their in-world dates, and **a player timeline** of what's been revealed.
 - **Optional AI assistant** that cites records and only makes PROPOSED drafts (deferred until the core is in daily use).

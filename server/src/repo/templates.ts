@@ -8,7 +8,7 @@ import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
-import { parseTemplate, templateToMarkdown, GM_ONLY_HEADING, type TemplateSpec } from '../../../shared/templates.js';
+import { parseTemplate, templateToMarkdown, type TemplateSpec } from '../../../shared/templates.js';
 import { SECRET_HEADING_RE } from '../../../shared/domain.js';
 import { types } from './recordTypes.js';
 
@@ -157,6 +157,3 @@ export function deleteTemplate(db: DB, id: string) {
   if (t.origin !== 'user') throw badRequest('Only your own templates can be deleted');
   db.prepare('DELETE FROM templates WHERE id = ?').run(id);
 }
-
-/** Whether a section heading is for the GM only. */
-export const isGmHeading = (heading: string) => GM_ONLY_HEADING.test(heading) || SECRET_HEADING_RE.test(heading);

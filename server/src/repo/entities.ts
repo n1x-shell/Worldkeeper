@@ -2,7 +2,7 @@ import type { DB } from '../db/connection.js';
 import { parseJson, now } from '../lib/json.js';
 import { sha256 } from '../lib/hash.js';
 import { badRequest, notFound } from '../lib/errors.js';
-import type { Entity, EntitySummary, Realm, EntityType, CanonStatus } from '../../../shared/domain.js';
+import type { Entity, EntitySummary, CanonStatus } from '../../../shared/domain.js';
 import { BARE_ID_RE, CANON_STATUSES } from '../../../shared/domain.js';
 import { TYPE_KEY_RE } from '../../../shared/recordTypes.js';
 import { typeExists, types } from './recordTypes.js';
@@ -94,11 +94,11 @@ export function rowToEntity(r: EntityRow): Entity {
     name: r.name,
     aliases: parseJson(r.aliases, []),
     category_raw: r.category_raw,
-    type: r.type as EntityType,
+    type: r.type,
     parent_raw: r.parent_raw,
     parent_id: r.parent_id,
     realm_raw: r.realm_raw,
-    realm: r.realm as Realm,
+    realm: r.realm,
     realms: parseJson(r.realms, []),
     canon_raw: r.canon_raw,
     canon_status: r.canon_status as CanonStatus,

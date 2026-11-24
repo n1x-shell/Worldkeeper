@@ -52,7 +52,7 @@ export function PlayerMe() {
           className="space-y-4"
           onSubmit={(e) => {
             e.preventDefault();
-            if (entered.trim()) navigate(`${base}/me/${entered.trim().toUpperCase()}`);
+            if (entered.trim()) void navigate(`${base}/me/${entered.trim().toUpperCase()}`);
           }}
         >
           <p className="text-sm text-ink/85">Your sheet, your portrait and your story, kept up to date at the table. Enter the code your GM gave you for your character.</p>
@@ -133,7 +133,7 @@ function MyPage({ code }: { code: string }) {
           className="btn h-11 w-full justify-center"
           onClick={() => {
             remember('');
-            navigate(`${base}/me`);
+            void navigate(`${base}/me`);
           }}
         >
           Try another code

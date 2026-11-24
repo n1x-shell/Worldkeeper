@@ -28,10 +28,8 @@ export const SKILLS: { name: string; ability: Ability }[] = [
   { name: 'Survival', ability: 'WIS' },
 ];
 
-export const MASTERY_PROPERTIES = ['Cleave', 'Graze', 'Nick', 'Push', 'Sap', 'Slow', 'Topple', 'Vex'];
 export const SIZES = ['Tiny', 'Small', 'Medium', 'Large'];
 export const ALIGNMENTS = ['Lawful Good', 'Neutral Good', 'Chaotic Good', 'Lawful Neutral', 'Neutral', 'Chaotic Neutral', 'Lawful Evil', 'Neutral Evil', 'Chaotic Evil', 'Unaligned'];
-export const HIT_DICE = ['d6', 'd8', 'd10', 'd12'];
 
 export interface Attack {
   name: string;

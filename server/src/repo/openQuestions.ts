@@ -7,7 +7,6 @@
  * (a person's handbook page and fight card, a place's map pin, a god's faith page). Anything else is still to do.
  */
 import fs from 'node:fs';
-import path from 'node:path';
 import type Database from 'better-sqlite3';
 import { splitSections } from '../import/parseMarkdown.js';
 import { statblocks } from './statblocks.js';
@@ -77,7 +76,7 @@ export function openQuestions(db: Database.Database, rules = readRules()) {
       const rule = rules.find((x) => x.ids.includes(r.id) && (!x.section || new RegExp(x.section, 'i').test(section)));
       if (rule?.status === 'skip') continue;
       if (rule) {
-        q.status = rule.status as QuestionStatus;
+        q.status = rule.status;
         q.by = rule.by ?? [];
         q.note = rule.note;
       } else autoStatus(q, r, pinned);

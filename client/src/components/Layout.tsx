@@ -73,7 +73,7 @@ function NewMenu() {
       className="block w-full truncate rounded px-2 py-1 text-left text-sm text-ink hover:bg-raised hover:text-gold"
       onClick={() => {
         close();
-        nav(`/new?type=${encodeURIComponent(key)}`);
+        void nav(`/new?type=${encodeURIComponent(key)}`);
       }}
     >
       {label}
@@ -103,7 +103,7 @@ function NewMenu() {
                       className="rounded-md border border-line px-2 py-0.5 text-sm hover:border-gold/60 hover:text-gold"
                       onClick={() => {
                         close();
-                        nav(`/new?type=${encodeURIComponent(t.key)}`);
+                        void nav(`/new?type=${encodeURIComponent(t.key)}`);
                       }}
                     >
                       {t.label}
@@ -211,7 +211,7 @@ export function Layout() {
   useEffect(() => {
     if (opened.current || activeCampaignId == null) return;
     opened.current = true;
-    if (loc.pathname === '/' && !sessionStorageFlag()) nav('/campaign', { replace: true });
+    if (loc.pathname === '/' && !sessionStorageFlag()) void nav('/campaign', { replace: true });
   }, [activeCampaignId, loc.pathname, nav]);
 
   useEffect(() => setMobileNav(false), [loc.pathname]);
@@ -224,7 +224,7 @@ export function Layout() {
       } else if (!typing && e.key === '/') {
         e.preventDefault();
         setSearchOpen(true);
-      } else if (!typing && e.altKey && e.key === 'd') nav('/dm');
+      } else if (!typing && e.altKey && e.key === 'd') void nav('/dm');
       else if (((e.ctrlKey || e.metaKey) && e.key === '\\') || (!typing && !e.ctrlKey && !e.metaKey && !e.altKey && e.key === '[')) toggleSidebar();
     };
     window.addEventListener('keydown', onKey);
@@ -386,7 +386,7 @@ export function Layout() {
                     className={menuItem}
                     onClick={() => {
                       close();
-                      nav('/campaigns');
+                      void nav('/campaigns');
                     }}
                   >
                     <BookMarked size={14} /> All campaigns
@@ -419,7 +419,7 @@ export function Layout() {
                       className={`${menuItem} ${matches(loc.pathname, it.to) ? 'text-gold' : ''}`}
                       onClick={() => {
                         close();
-                        nav(it.to);
+                        void nav(it.to);
                       }}
                     >
                       <it.icon size={I} /> {it.label}

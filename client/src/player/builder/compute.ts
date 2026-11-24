@@ -18,7 +18,6 @@ import {
   resourcesFor,
   spellSlotsFor,
   weaponInfo,
-  abilityFromName,
 } from '../../../../shared/rules2024';
 import type { SrdSpell, SrdText, WorldBackground } from '../sheet/srd';
 import { byName } from '../../../../shared/rulesView';
@@ -300,6 +299,3 @@ export function buildSheet(b: Build, opts: { world: WorldBackground[]; speciesRu
   sheet.resources = resourcesFor(b.cls, level, sheet);
   return { name: b.name || 'Unnamed', species: b.people, class_name: info?.name ?? b.cls, level, sheet };
 }
-
-/** Ability choices a background's increases can go to (by name, for the world's backgrounds that name none). */
-export const abilityList = (names: string[]) => names.map((n) => abilityFromName(n)).filter((a): a is Ability => !!a);

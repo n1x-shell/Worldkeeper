@@ -105,11 +105,6 @@ export function types(db: DB): TypeRegistry {
   return reg;
 }
 
-/** SQL for "type IN (...)" over the types with these traits, with its arguments. */
-export function typeIn(db: DB, keys: string[]): { sql: string; args: string[] } {
-  return keys.length ? { sql: `(${keys.map(() => '?').join(',')})`, args: keys } : { sql: `('')`, args: [] };
-}
-
 const typeInput = z.object({
   key: z.string().regex(TYPE_KEY_RE, 'Use lower-case letters, digits and underscores').optional(),
   label: z.string().trim().min(1).max(60),

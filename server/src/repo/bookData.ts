@@ -91,7 +91,6 @@ export function creatureByName(db: DB, name: string | null | undefined) {
 
 const norm = (s: string) => s.toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, ' ').trim();
 
-const ORD: Record<string, string> = { '1st': '1', '2nd': '2', '3rd': '3', '4th': '4', '5th': '5', '6th': '6', '7th': '7', '8th': '8', '9th': '9' };
 /** The ways a written item name might appear in the books, best guess first. */
 export function itemNameCandidates(raw: string): string[] {
   const n = norm(raw).replace(/\s*\(\*\)/g, '');

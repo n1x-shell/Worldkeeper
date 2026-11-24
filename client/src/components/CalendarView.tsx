@@ -41,12 +41,14 @@ export function CalendarView({ def, date, events, onDay }: { def: CalendarDef; d
     ...festivals.filter((f) => f.day === day).map((f) => ({ title: f.name, kind: 'festival' as const })),
     ...events.filter((e) => e.day === day && (e.year == null || e.year === date.year)),
   ];
-  const Cell = ({ day, label }: { day: number; label: string }) => {
+  // Render functions, not components: a component made here would be new on every render and lose its state.
+  const cell = (day: number, label: string) => {
     const items = on(day);
     const today = day === date.day;
     const phase = moon ? moonPhase(def, { year: date.year, day }, moon) : null;
     return (
       <button
+        key={label}
         type="button"
         onClick={onDay ? () => onDay(day) : undefined}
         disabled={!onDay}
@@ -59,13 +61,11 @@ export function CalendarView({ def, date, events, onDay }: { def: CalendarDef; d
       </button>
     );
   };
-  const Extra = ({ name }: { name: string }) => {
+  const extra = (name: string) => {
     const day = extraDay(def, name)!;
     return (
-      <div className="col-span-full">
-        <div className={`rounded border px-2 py-1 text-xs ${day === date.day ? 'border-gold bg-gold/20 text-gold' : 'border-gold/30'}`}>
-          <Cell day={day} label={name} />
-        </div>
+      <div key={name} className="col-span-full">
+        <div className={`rounded border px-2 py-1 text-xs ${day === date.day ? 'border-gold bg-gold/20 text-gold' : 'border-gold/30'}`}>{cell(day, name)}</div>
       </div>
     );
   };
@@ -74,16 +74,10 @@ export function CalendarView({ def, date, events, onDay }: { def: CalendarDef; d
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
       {def.months.map((m, mi) => (
         <div key={`${m.name}-${mi}`} className="rounded-md border border-line p-2">
-          {mi === 0 && extrasAfter(-1).map((e) => <Extra key={e.name} name={e.name} />)}
+          {mi === 0 && extrasAfter(-1).map((e) => extra(e.name))}
           <div className="text-xs uppercase tracking-widest text-dim my-1">{m.name}</div>
-          <div className="grid grid-cols-6 gap-0.5">
-            {Array.from({ length: m.days }, (_, i) => (
-              <Cell key={i} day={dayOfYear(def, mi, i + 1)} label={String(i + 1)} />
-            ))}
-          </div>
-          {extrasAfter(mi).map((e) => (
-            <Extra key={e.name} name={e.name} />
-          ))}
+          <div className="grid grid-cols-6 gap-0.5">{Array.from({ length: m.days }, (_, i) => cell(dayOfYear(def, mi, i + 1), String(i + 1)))}</div>
+          {extrasAfter(mi).map((e) => extra(e.name))}
         </div>
       ))}
     </div>

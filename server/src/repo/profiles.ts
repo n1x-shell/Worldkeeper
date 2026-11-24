@@ -122,7 +122,7 @@ export function saveProfile(db: DB, entityId: string, scope: 'world' | 'campaign
   for (const [key, raw] of Object.entries(patch as Record<string, unknown>)) {
     const f = fields.find((x) => x.key === key);
     if (!f) throw badRequest(`Unknown ${scope} profile field: ${key}`);
-    const v = valueSchema(f).parse(raw) as ProfileData[string];
+    const v = valueSchema(f).parse(raw);
     const empty = v === '' || (Array.isArray(v) && v.length === 0);
     if (empty) delete data[key];
     else data[key] = v;

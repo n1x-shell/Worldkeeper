@@ -80,11 +80,11 @@ export function TreasurePage() {
     await api.post('/api/party-treasure/from-roll', { campaign_id: activeCampaignId, roll, found_at: foundAt });
     setRoll(null);
     setFoundAt('');
-    reload();
+    void reload();
   };
   const patch = async (r: Row, p: Partial<Row>) => {
     await api.patch(`/api/party-treasure/${r.id}`, p);
-    reload();
+    void reload();
   };
   const held = rows.filter((r) => r.status === 'carried' || r.status === 'stored');
   const list = showAll ? rows : held;

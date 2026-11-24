@@ -15,7 +15,7 @@ import type Database from 'better-sqlite3';
 import { getEntity, updateEntity } from '../repo/entities.js';
 import { splitSections } from '../import/parseMarkdown.js';
 import { isSecretHeading } from './projection.js';
-import { ENTITY_TYPE_LABELS, type EntityType } from '../../../shared/domain.js';
+import { ENTITY_TYPE_LABELS } from '../../../shared/domain.js';
 import { worldkeeperPath } from '../packs/paths.js';
 import { findPack } from '../packs/registry.js';
 import { compile, type HandbookRules } from '../../../shared/packs.js';
@@ -115,7 +115,7 @@ export function handbookReveals(db: DB, opts: { mode: 'fresh' | 'match'; apply: 
     const m = /^(.*?)\s*\(([^)]+)\)$/.exec(heading);
     if (exact.length || !m) return exact;
     const kind = m[2].trim().toLowerCase();
-    return (byName.all(m[1]) as { id: string; type: string }[]).filter((r) => r.type === kind || (ENTITY_TYPE_LABELS[r.type as EntityType] ?? '').toLowerCase() === kind);
+    return (byName.all(m[1]) as { id: string; type: string }[]).filter((r) => r.type === kind || (ENTITY_TYPE_LABELS[r.type] ?? '').toLowerCase() === kind);
   };
   for (const f of fs.existsSync(textDir)
     ? fs

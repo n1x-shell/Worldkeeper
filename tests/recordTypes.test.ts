@@ -73,7 +73,7 @@ describe('the record-type registry', () => {
     const tavern = createEntity(src.db, rec('The Laughing Stoat', 'tavern', 'sunken-isles'));
     const port = createEntity(src.db, rec('Brine Port', 'settlement', 'sunken-isles'));
     // An archive record whose type and realm the GM changed.
-    updateEntity(src.db, 'LOC-002', { type: 'dungeon', realm: 'sunken-isles' } as never);
+    updateEntity(src.db, 'LOC-002', { type: 'dungeon', realm: 'sunken-isles' });
 
     const dst = tempContext();
     // The GM's own type travels with a JSON export; a Markdown export needs it defined in the library it goes to.

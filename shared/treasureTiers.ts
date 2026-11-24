@@ -42,6 +42,3 @@ export const TREASURE_TIERS: TreasureTier[] = [
     items: { dice: '1d3', rarities: { 'very rare': 3, legendary: 1 } },
   },
 ];
-
-/** The tier for a party level. */
-export const tierFor = (level: number) => (level <= 4 ? '1-4' : level <= 10 ? '5-10' : level <= 16 ? '11-16' : '17-20');

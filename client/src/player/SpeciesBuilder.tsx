@@ -308,7 +308,7 @@ function Detail({ entry, onBack }: { entry: PEntity; onBack: () => void }) {
   const { where } = useWhere();
   // The index may hold only the summary; the full entry has every section.
   const { data } = usePlayerData<PEntity | null>(() => source.entity(entry.id), entry.id);
-  const e = { ...entry, ...(data ?? {}), realms: entry.realms, bloom: entry.bloom ?? data?.bloom };
+  const e = { ...entry, ...data, realms: entry.realms, bloom: entry.bloom ?? data?.bloom };
   const places = where(e);
   return (
     <article className="panel elev-1 gilt-corners p-4 sm:p-6 space-y-4">

@@ -105,7 +105,7 @@ export function setWorldCalendar(db: DB, worldId: string, body: unknown) {
     db.prepare('UPDATE realms SET calendar_id = ? WHERE id = ?').run(b.calendar_id, worldId);
     return worldCalendar(db, worldId);
   }
-  const def = b.preset ? CALENDAR_PRESETS.find((p) => p.key === b.preset)?.def : b.def ? (calendarSchema.parse(b.def) as CalendarDef) : undefined;
+  const def = b.preset ? CALENDAR_PRESETS.find((p) => p.key === b.preset)?.def : b.def ? calendarSchema.parse(b.def) : undefined;
   if (!def) throw badRequest('Choose a preset or write the calendar');
   const id = `world:${worldId}`;
   db.prepare(
