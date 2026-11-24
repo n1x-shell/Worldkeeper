@@ -22,7 +22,17 @@ npm run start:player
 
 The separate process listens by default on port `4320` on all interfaces (`0.0.0.0`) and mounts no DM routes. Players on the same trusted network can open `http://<your-computer>:4320`.
 
-**Network precautions:** LAN exposure is not authentication. Use a trusted network and firewall restrictions; do not forward the port to the public internet. The DM server should remain bound to `127.0.0.1`. Do not set its `HOST` to `0.0.0.0` on a shared or untrusted network.
+### Each campaign's handbook address
+
+Every campaign has its own address on the table server, `http://<your-computer>:4320/player/c/<code>`, with a short private code. The campaign's overview page (**Campaign → Overview → The players' handbook**) shows the code, the full address on this computer's network and a QR code to scan at the table. That handbook shows what's revealed to everyone plus what that campaign has learned, and its campaign's quests, recaps, handouts, treasure, map, faction web and live session; nothing of any other campaign. Two groups can use the table server at the same time, each at its own address.
+
+- **New code** makes a fresh address; the old one and its QR code stop working (for an address shared too widely).
+- An archived campaign's address stops working. An unknown code shows "This handbook address isn't open".
+- On a campaign's address, a character page opens only for that campaign's characters. A character's page links to its campaign's handbook.
+- The plain address, `http://<your-computer>:4320/player`, keeps showing the active campaign, as before.
+- If the table server runs on another port, set `WORLDKEEPER_TABLE_PORT` for the GM app so the address and QR code match.
+
+**Network precautions:** LAN exposure is not authentication. A handbook code keeps one group from wandering into another's handbook by accident; it is not a password. Use a trusted network and firewall restrictions; do not forward the port to the public internet. The DM server should remain bound to `127.0.0.1`. Do not set its `HOST` to `0.0.0.0` on a shared or untrusted network.
 
 
 ### Character sheets

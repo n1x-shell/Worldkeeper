@@ -1,7 +1,7 @@
 import { useModules } from '../lib/modules';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import { KeyRound, Printer, UserRound } from 'lucide-react';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { BookOpen, KeyRound, Printer, UserRound } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Loading, SaveStatus } from '../components/ui/feedback';
 import { usePlayer } from './context';
@@ -146,6 +146,12 @@ function MyPage({ code }: { code: string }) {
     <div className="mx-auto max-w-6xl space-y-3">
       <div className="flex min-h-10 flex-wrap items-center gap-x-3 gap-y-1 print:hidden">
         <h1 className="section-title">My Character</h1>
+        {/* Their own campaign's handbook (what their group has learned), unless they're already reading it. */}
+        {page.handbook && !base.startsWith(`/player/c/${page.handbook}`) && (
+          <Link className="btn-ghost text-sm max-sm:min-h-10" to={`/player/c/${page.handbook}`}>
+            <BookOpen size={14} /> My campaign’s handbook
+          </Link>
+        )}
         {status && <SaveStatus state={status === 'Saving…' ? 'saving' : status === 'Saved' ? 'saved' : 'error'} error={status} />}
         <button className="btn ml-auto max-sm:min-h-10" onClick={() => window.print()}>
           <Printer size={14} /> Print

@@ -1,3 +1,4 @@
+import { handbookCode } from '../repo/handbookCodes.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { renewCharacterCode } from '../repo/characterPages.js';
@@ -210,8 +211,11 @@ export function importFullWorldZip(db: DB, paths: Paths, buffer: Buffer) {
 }
 
 export function exportCampaign(db: DB, campaignId: number, uploadsDir?: string) {
-  const c = db.prepare('SELECT * FROM campaigns WHERE id = ?').get(campaignId);
-  if (!c) throw badRequest('Unknown campaign');
+  const row = db.prepare('SELECT * FROM campaigns WHERE id = ?').get(campaignId) as Record<string, unknown> | undefined;
+  if (!row) throw badRequest('Unknown campaign');
+  // The handbook code is this table's private address: it never leaves in an export.
+  const { handbook_code: _code, ...c } = row;
+  void _code;
   const advIds = (db.prepare('SELECT id FROM adventures WHERE campaign_id = ?').all(campaignId) as { id: number }[]).map((a) => a.id);
   const sesIds = (db.prepare('SELECT id FROM sessions WHERE campaign_id = ?').all(campaignId) as { id: number }[]).map((a) => a.id);
   const inList = (ids: number[]) => (ids.length ? ids.join(',') : '-1');
@@ -377,7 +381,9 @@ export function importCampaign(db: DB, data: ReturnType<typeof exportCampaign>, 
       );
     };
     const c = data.campaign as Record<string, unknown>;
-    const cid = insert('campaigns', c, { title: `${c.title} (imported)` });
+    // A new handbook address for the copy: the original's code stays with the original.
+    const cid = insert('campaigns', c, { title: `${c.title} (imported)`, handbook_code: null });
+    handbookCode(db, cid);
     const advMap = new Map<number, number>();
     const sesMap = new Map<number, number>();
     const sceneMap = new Map<number, number>();

@@ -75,6 +75,7 @@ const RealmsPage = page(() => import('./pages/Realms'), 'RealmsPage');
 const TemplatesPage = page(() => import('./pages/Templates'), 'TemplatesPage');
 const SettingPacksPage = page(() => import('./pages/SettingPacks'), 'SettingPacksPage');
 const PlayerApp = page(() => import('./player/PlayerApp'), 'PlayerApp');
+const CampaignHandbook = page(() => import('./player/CampaignHandbook'), 'CampaignHandbook');
 const PublishPage = page(() => import('./pages/Publish'), 'PublishPage');
 const StyleGuidePage = page(() => import('./pages/StyleGuide'), 'StyleGuidePage');
 
@@ -90,6 +91,15 @@ export function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* A campaign's own handbook address on the table server (each group sees only what it has learned). */}
+        <Route
+          path="/player/c/:code/*"
+          element={
+            <Suspense fallback={<Loading />}>
+              <CampaignHandbook />
+            </Suspense>
+          }
+        />
         <Route
           path="/player/*"
           element={

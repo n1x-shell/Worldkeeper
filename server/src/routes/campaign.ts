@@ -71,6 +71,20 @@ import { factionWeb, revealTie } from '../repo/factionWeb.js';
 import { deleteLibraryStatblock, setLibraryStatblock, statblockFor, statblockIndex } from '../repo/statblocks.js';
 import { bookCounts, bookCreature, bookTreasure, bookCreatureIndex, bookCreatures, bookItems, creatureByName, itemByName, requireBookCreature } from '../repo/bookData.js';
 import { characterPage, renewCharacterCode, updateCharacterPage } from '../repo/characterPages.js';
+import { handbookCode, renewHandbookCode } from '../repo/handbookCodes.js';
+import { networkInterfaces } from 'node:os';
+
+/**
+ * Where players reach the table server: this computer's network addresses and the table server's port (4320 unless
+ * WORLDKEEPER_TABLE_PORT says otherwise). The table server is a separate process (npm run start:player).
+ */
+function tableAddress() {
+  const addresses = Object.values(networkInterfaces())
+    .flat()
+    .filter((a): a is NonNullable<typeof a> => !!a && a.family === 'IPv4' && !a.internal)
+    .map((a) => a.address);
+  return { addresses, port: Number(process.env.WORLDKEEPER_TABLE_PORT) || 4320 };
+}
 
 export function campaignRoutes(ctx: AppContext) {
   const r = Router();
@@ -89,6 +103,15 @@ export function campaignRoutes(ctx: AppContext) {
   r.put(
     '/campaigns/:id/modules',
     h((req) => setCampaignModules(ctx.db, intParam(req.params.id), req.body)),
+  );
+  // Each campaign's handbook address on the table server (docs/LIBRARIES_PLAN.md §2.3): its code, and a new one.
+  r.get(
+    '/campaigns/:id/handbook',
+    h((req) => ({ code: handbookCode(ctx.db, intParam(req.params.id)), ...tableAddress() })),
+  );
+  r.post(
+    '/campaigns/:id/handbook/new-code',
+    h((req) => ({ code: renewHandbookCode(ctx.db, intParam(req.params.id)), ...tableAddress() })),
   );
   r.get(
     '/campaigns/:id/overview',

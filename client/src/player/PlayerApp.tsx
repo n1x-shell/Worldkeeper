@@ -34,12 +34,12 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
     modulesFrom = source;
     setModulesLoader(() => source.info().then(modulesFromInfo));
   }
-  const [info, setInfo] = useState<{ appName: string; publishedAt?: string; realms?: RealmInfo[]; types?: RecordTypeDef[] }>({ appName: 'The Worldkeeper' });
+  const [info, setInfo] = useState<{ appName: string; publishedAt?: string; campaign?: { title: string }; realms?: RealmInfo[]; types?: RecordTypeDef[] }>({ appName: 'The Worldkeeper' });
   useEffect(() => {
     void source.info().then((i) => {
       setHandbookTypes(i.types);
       setInfo(i);
-      document.title = `${i.appName} · Player Handbook`;
+      document.title = `${i.appName} · ${i.campaign ? `${i.campaign.title} · Handbook` : 'Player Handbook'}`;
     });
   }, [source]);
   return (
@@ -47,7 +47,7 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
       <RealmsProvider realms={info.realms}>
         <RecordTypesProvider types={info.types}>
           <Routes>
-            <Route element={<PlayerLayout appName={info.appName} publishedAt={info.publishedAt} />}>
+            <Route element={<PlayerLayout appName={info.appName} publishedAt={info.publishedAt} campaign={info.campaign?.title} />}>
               <Route index element={<PlayerHome />} />
               <Route path="browse/:group" element={<PlayerBrowse />} />
               <Route path="realm/:realm" element={<PlayerRealm />} />

@@ -11,6 +11,7 @@ import type { Campaign, Session, StateRow } from '../lib/types';
 import { ask, askText, AutoTextarea, Badge, Card, Check as CheckBox, DataTable, Empty, EntityLink, ErrorBox, Field, GmOnly, HpBar, KeyValue, Loading, Modal, PageHeader, SaveStatus, Section, Skeleton, Tabs, Toggle, useToast, type Tone } from '../components/ui';
 import { DatePicker } from '../components/DatePicker';
 import { GettingStarted } from '../components/GettingStarted';
+import { HandbookAddress } from '../components/HandbookAddress';
 import { formatDate, type CalendarDef, type WDate } from '../../../shared/calendar';
 import { EntityMultiPicker, EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
@@ -306,6 +307,7 @@ export function ActiveCampaign() {
               ]}
             />
           </Card>
+          <HandbookAddress campaignId={c.id} title={c.title} />
           <StateTable rows={data.state} onChange={reload} />
         </div>
       </div>

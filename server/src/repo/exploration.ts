@@ -18,8 +18,7 @@ export interface TravelStop {
 }
 
 /** The active campaign and its live session, when one is being played. */
-export function inPlay(db: DB): { campaignId: number; sessionId: number } | null {
-  const campaignId = getActiveCampaignId(db);
+export function inPlay(db: DB, campaignId: number | null = getActiveCampaignId(db)): { campaignId: number; sessionId: number } | null {
   if (campaignId == null) return null;
   const s = db.prepare(`SELECT id FROM sessions WHERE campaign_id = ? AND status = 'live' ORDER BY number DESC LIMIT 1`).get(campaignId) as { id: number } | undefined;
   return s ? { campaignId, sessionId: s.id } : null;
