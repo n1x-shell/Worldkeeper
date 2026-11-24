@@ -2,12 +2,14 @@
  * Prepare everything the desktop (Tauri) app ships:
  *
  *   desktop/build/server/index.mjs        the API server bundled into one file (esbuild)
- *   desktop/build/server/node_modules/    the native SQLite driver (better-sqlite3 + its runtime deps)
+ *   desktop/build/server/node_modules/    the native SQLite driver (better-sqlite3, with this platform's build only)
  *   desktop/build/client/                 the built web client
  *   desktop/build/player-site/            the static Player Handbook (published by "Publish for Players")
  *   src-tauri/binaries/node-<triple>      the Node.js runtime, shipped as a Tauri sidecar
  *
- * The Node binary is the one running this script, so the native module ABI always matches.
+ * The Node binary is the one running this script. It must be an LTS release (the app ships it to GMs for years):
+ * the build stops on a Current or odd-numbered release unless WORLDKEEPER_ALLOW_NON_LTS=1 (for trying one out).
+ * better-sqlite3 uses Node-API, so its build works with any Node.js it supports.
  * Run on each target OS (Tauri does not cross-compile the WebView shell):  npm run desktop:prepare
  */
 import { build } from 'esbuild';
@@ -19,6 +21,15 @@ import { fileURLToPath } from 'node:url';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = path.join(root, 'desktop', 'build');
 const log = (m) => console.log(`[desktop] ${m}`);
+
+// 0. Only an LTS Node.js goes into the app.
+if (!process.release.lts && process.env.WORLDKEEPER_ALLOW_NON_LTS !== '1') {
+  console.error(
+    `[desktop] Node.js ${process.version} is not an LTS release. Build the desktop app with the Active LTS Node.js (see .nvmrc and https://nodejs.org/en/about/previous-releases), or set WORLDKEEPER_ALLOW_NON_LTS=1 to try this one anyway.`,
+  );
+  process.exit(1);
+}
+log(`Node.js ${process.version} (LTS ${process.release.lts ?? 'no'})`);
 
 fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(path.join(out, 'server'), { recursive: true });
@@ -57,17 +68,24 @@ await build({
   logLevel: 'warning',
 });
 
-// 3. Native SQLite driver with its runtime dependencies only
-const copyPkg = (name, filter) => {
-  const src = path.join(root, 'node_modules', name);
-  const dst = path.join(out, 'server', 'node_modules', name);
-  fs.cpSync(src, dst, { recursive: true, filter: filter ?? (() => true) });
-};
-copyPkg('better-sqlite3', (p) => !/[\\/](src|deps|docs|benchmark)([\\/]|$)/.test(path.relative(path.join(root, 'node_modules', 'better-sqlite3'), p)) && !p.endsWith('.o') && !/[\\/]obj(\.target)?([\\/]|$)/.test(p));
-copyPkg('bindings');
-copyPkg('file-uri-to-path');
-const nativeOk = fs.existsSync(path.join(out, 'server/node_modules/better-sqlite3/build/Release/better_sqlite3.node'));
-if (!nativeOk) throw new Error('better_sqlite3.node is missing; run npm install first');
+// 3. Native SQLite driver: better-sqlite3 13+ needs no runtime dependencies, and ships prebuilt Node-API builds for
+// every platform in prebuilds/; only this platform's goes into the app (or a local build, if npm compiled one).
+const sqliteSrc = path.join(root, 'node_modules', 'better-sqlite3');
+const sqliteOut = path.join(out, 'server', 'node_modules', 'better-sqlite3');
+const musl = process.platform === 'linux' && !process.report.getReport().header.glibcVersionRuntime;
+const target = `${musl ? 'linuxmusl' : process.platform}-${process.arch}.node`;
+fs.cpSync(sqliteSrc, sqliteOut, {
+  recursive: true,
+  filter: (p) => {
+    const rel = path.relative(sqliteSrc, p).split(path.sep);
+    if (['src', 'deps', 'docs', 'benchmark', 'test'].includes(rel[0])) return false;
+    if (rel[0] === 'prebuilds' && rel[1] && rel[1] !== target) return false;
+    if (rel[0] === 'build' && rel.length > 1 && rel[1] !== 'Release') return false;
+    return !p.endsWith('.o') && !rel.some((r) => r === 'obj' || r === 'obj.target');
+  },
+});
+const nativeOk = fs.existsSync(path.join(sqliteOut, 'prebuilds', target)) || fs.existsSync(path.join(sqliteOut, 'build', 'Release', 'better_sqlite3.node'));
+if (!nativeOk) throw new Error(`No better-sqlite3 build for ${target}; run npm install first`);
 
 // 4. Node runtime as the Tauri sidecar (named with the Rust target triple, as Tauri requires)
 const triple =
@@ -85,6 +103,18 @@ const sidecar = path.join(binDir, `worldkeeper-node-${triple}${ext}`);
 fs.copyFileSync(process.execPath, sidecar);
 fs.chmodSync(sidecar, 0o755);
 log(`node ${process.version} → ${path.relative(root, sidecar)}`);
+// On Linux, the official Node.js binary carries debug symbols the app never uses: strip them (about 30 MB). The dynamic
+// symbols native modules link against are kept, and the smoke check below runs this very binary. Not on macOS, where
+// stripping would break the binary's signature, nor Windows (its symbols are in separate files).
+if (process.platform === 'linux' && process.env.WORLDKEEPER_NO_STRIP !== '1') {
+  const before = fs.statSync(sidecar).size;
+  try {
+    execFileSync('strip', [sidecar]);
+    log(`stripped debug symbols: ${(before / 1048576).toFixed(1)} MB → ${(fs.statSync(sidecar).size / 1048576).toFixed(1)} MB`);
+  } catch {
+    log('strip is not installed: the runtime keeps its debug symbols');
+  }
+}
 
 // 5. Smoke check: the bundle must start with plain Node (no tsx, no repository node_modules)
 log('checking that the bundled server starts');

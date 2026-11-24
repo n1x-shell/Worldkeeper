@@ -33,7 +33,8 @@ jobs:
           ref: ${{ inputs.tag || github.ref }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # The Active LTS Node.js (.nvmrc); the desktop build refuses one that isn't LTS.
+          node-version-file: .nvmrc
           cache: npm
       - uses: dtolnay/rust-toolchain@stable
       - name: Linux system libraries

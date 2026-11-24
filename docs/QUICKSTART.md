@@ -6,7 +6,7 @@ This walkthrough takes you from a fresh install to your first tracked session, e
 
 ## 1. Install and start
 
-Requires Node.js 20 or later; Node.js 22 is recommended.
+Requires Node.js 22 or later; Node.js 26, the current LTS, is recommended.
 
 ```bash
 git clone https://github.com/n1x-shell/Worldkeeper.git

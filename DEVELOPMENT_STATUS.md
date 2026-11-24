@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.6.4_
+_Last updated: 2026-11-24 · v0.6.5_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,17 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.6.5: Node.js LTS
+
+Checked against the Node.js project's own schedule (`nodejs/Release` schedule.json, 24 November 2026): **Node.js 26 “Lithium” is the Active LTS** (since 28 October 2026, end of life 30 April 2029); 24 and 22 are in maintenance; 20 reached end of life on 30 April 2026.
+
+- **The desktop app is built with Node.js 26.** `.nvmrc` says 26; CI and the desktop workflow read it (`node-version-file`). `scripts/desktop-prepare.mjs` stops on a Node.js that isn't an LTS release (`process.release.lts`), unless `WORLDKEEPER_ALLOW_NON_LTS=1`.
+- **`engines`:** `>=22` (was `>=20`, past end of life).
+- **better-sqlite3 11.10 → 13.0.3.** 11.x doesn't build on Node 26 (V8 functions it used were removed). 13.x uses Node-API, with prebuilt builds for Windows, macOS and Linux (x64 and ARM) in the package, which work across Node.js versions; it needs no runtime dependencies (`bindings`, `file-uri-to-path` and the `prebuild-install` chain, 32 packages, are gone). The desktop bundle copies only its own platform's build. No API changes affect the app (12.0 and 13.0 dropped old Node.js versions and moved to Node-API).
+- **Size:** Node 26's runtime is larger than 22's (143.4 MB against 119.1 MB; about 47 against 41 MB compressed with gzip). On Linux the desktop build now strips the runtime's debug symbols (dynamic symbols kept; the smoke check runs the stripped binary): 111.6 MB, so the Linux app is smaller than before (about 128 MB against 135 MB). Not on macOS (stripping breaks the binary's signature) or Windows (symbols are separate there).
+- **Node 26's npm** doesn't run packages' install scripts unless approved: nothing needs them now (the SQLite driver uses its prebuilt build; esbuild uses its platform package).
+- **Checked on Node 26.13.1** (in a separate copy, dependencies installed fresh): typecheck, the full suite (379 tests, all passing apart from 1 skipped), both builds, `desktop:prepare` with its smoke check (also with a stripped runtime), the suite with a stripped runtime, and the own-world first-run and archive smoke browser tests against a Node 26 server. On Node 22: the same suite, builds and `desktop:prepare`.
 
 ## v0.6.4: housekeeping
 
@@ -520,7 +531,7 @@ The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are n
 
 ## Known issues
 
-- The desktop app is about 140 MB, most of it the bundled Node.js runtime.
+- The desktop app is about 130 MB on Linux, most of it the bundled Node.js 26 runtime (stripped); more on macOS and Windows, where the runtime isn't stripped.
 - A handbook code keeps groups apart; it is not a password. (With two groups at once, turn on **Only campaign addresses on the table**.)
 - The QR codes come from a small encoder in the app (`shared/qr.ts`), checked against the standard's worked example and a reader in the tests; scan one with a phone before relying on it at the table.
 - A library's backups hold its own database and pictures, not `shared/`; **Back up everything** holds both.
@@ -565,7 +576,7 @@ The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are n
 
 The queue agreed with the owner, one PR each:
 
-1. **v0.6.5, Node.js LTS:** build the desktop app with the current Active LTS Node.js (checked against the Node.js release schedule at the time), raise `engines` from `>=20` (Node 20 is past end of life), make `desktop:prepare` refuse a Node.js that isn't LTS, and measure the app's size before and after.
+1. ~~**v0.6.5, Node.js LTS**~~ (done: Node.js 26).
 2. **v0.6.6, undo:** faction plans and campaign-state changes get a history, so a change can be undone in one click, like records.
 3. **v0.6.7, large imports:** read a ZIP's listing first (sizes are known before anything is unpacked) and warn only when an archive is large for this computer's free memory; then offer to import it in parts (the text records, then the pictures in batches), each previewed and confirmed.
 
