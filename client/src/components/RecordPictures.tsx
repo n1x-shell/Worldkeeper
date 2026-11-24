@@ -23,6 +23,7 @@ export function RecordPictures({ entityId, name }: { entityId: string; name: str
   const [open, setOpen] = useState<number | null>(null);
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [over, setOver] = useState(false);
   const pictures = data ?? [];
   const shown = open == null ? null : pictures.find((p) => p.id === open);
 
@@ -59,8 +60,27 @@ export function RecordPictures({ entityId, name }: { entityId: string; name: str
     return (
       <div data-testid="record-pictures">
         {picker}
-        <button type="button" className="btn-ghost w-full justify-center border border-dashed border-line text-dim" disabled={busy} onClick={() => input.current?.click()}>
-          <ImagePlus size={14} /> {busy ? 'Adding…' : 'Add a picture'}
+        {/* A picture-shaped frame where the record's picture will be: click it, or drop pictures on it. */}
+        <button
+          type="button"
+          className={`flex h-44 w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed text-dim transition-colors hover:border-gold hover:text-ink ${over ? 'border-gold bg-gold/10 text-ink' : 'border-line bg-raised/40'}`}
+          disabled={busy}
+          aria-label={`Add a picture of ${name}`}
+          onClick={() => input.current?.click()}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setOver(true);
+          }}
+          onDragLeave={() => setOver(false)}
+          onDrop={(e) => {
+            e.preventDefault();
+            setOver(false);
+            void add(e.dataTransfer.files);
+          }}
+        >
+          <ImagePlus size={28} strokeWidth={1.5} />
+          <span className="text-sm">{busy ? 'Adding…' : 'Add a picture'}</span>
+          {!busy && <span className="text-xs">Click, or drop one here</span>}
         </button>
       </div>
     );
