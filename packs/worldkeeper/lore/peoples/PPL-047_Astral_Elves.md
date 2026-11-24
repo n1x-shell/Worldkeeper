@@ -31,4 +31,4 @@ Starlight, devotion, and courts that keep the calendars of years nobody else rem
 Common names: Aelith, Corvanne, Ilsarion, Myrrel, Sennith, Tavarre, Velis, Zhaerin.
 
 ## D&D adaptation
-Use the astral elf rules. Source: Spelljammer: Adventures in Space (Astral Adventurer's Guide).
+Use the astral elf rules. Source: Spelljammer: Adventures in Space (Astral Adventurer's Guide). Without the book, use the starlit elf rules (the world's own, open to all).

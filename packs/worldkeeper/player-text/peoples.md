@@ -18,7 +18,7 @@ In Kaelmar they roost on the cliffs of the Eastern Mountains and the northern ic
 
 **Common names.** Aeka, Kirru, Pell, Quill, Sarrik, Tiriel, Ulla, Zephi
 
-**At the table.** Use the aarakocra rules.
+**At the table.** Use the aarakocra rules. Without the book, use the bird-folk rules (the world's own, open to all).
 
 ## Aasimar
 
@@ -34,7 +34,7 @@ In Kaelmar aasimar are rare and quietly watched. Kaelholm records every one in i
 
 **Common names.** Aurel, Cassiel, Ilyra, Lumen, Orlaith, Seren, Theron, Veyra
 
-**At the table.** Use the aasimar rules.
+**At the table.** Use the aasimar rules. Without the book, use the dawn-touched rules (the world's own, open to all).
 
 ## Stormborn
 
@@ -50,7 +50,7 @@ In Kaelmar storms are just weather, and a Stormborn is rare enough that sailors 
 
 **Common names.** Aeris, Galen, Kesta, Lyre, Siro, Talric, Tamsin, Velka
 
-**At the table.** Stormborn are this world's air genasi: use the air genasi rules from Monsters of the Multiverse.
+**At the table.** Stormborn are this world's air genasi: use the air genasi rules from Monsters of the Multiverse. Without the book, use the stormborn rules (the world's own, open to all).
 
 ## Bugbears
 
@@ -98,7 +98,7 @@ In Kaelmar changelings are rare, and Kaelholm's rolls make them nervous: a name 
 
 **Common names.** Ash, Cael, Ivy, Lark, Nim, Quill, Sev, Tam
 
-**At the table.** Use the changeling rules.
+**At the table.** Use the changeling rules. Without the book, use the many-faced rules (the world's own, open to all).
 
 ## Deep Gnomes
 
@@ -146,7 +146,7 @@ In Kaelmar duergar live under the northern highlands, below the dwarf holds, and
 
 **Common names.** Brakka, Duren, Gorm, Hilde, Korra, Morn, Thrain, Vessa
 
-**At the table.** Use the duergar rules.
+**At the table.** Use the duergar rules. Without the book, use the grey dwarf rules (the world's own, open to all).
 
 ## Earth Genasi
 
@@ -162,7 +162,7 @@ In Kaelmar earth genasi are born in the Eastern Mountains and under the highland
 
 **Common names.** Basalt, Dorra, Garnet, Hollis, Krag, Mica, Ronan, Slate
 
-**At the table.** Use the earth genasi rules.
+**At the table.** Use the earth genasi rules. Without the book, use the stoneblood rules (the world's own, open to all).
 
 ## Eladrin
 
@@ -178,7 +178,7 @@ In Kaelmar eladrin are almost unknown. The Spore Circle's eldest say the Bloom h
 
 **Common names.** Aerith, Faen, Ilsevel, Lirael, Naivara, Sylas, Thaelon, Vaelis
 
-**At the table.** Use the eladrin rules.
+**At the table.** Use the eladrin rules. Without the book, use the seasonal elf rules (the world's own, open to all).
 
 ## Fairies
 
@@ -210,7 +210,7 @@ In Kaelmar firbolgs live alongside the Bloomborn in the Deepwood, and people who
 
 **Common names.** Alder, Brennick, Dunna, Gethin, Hulda, Mossa, Oakes, Tull
 
-**At the table.** Use the firbolg rules.
+**At the table.** Use the firbolg rules. Without the book, use the hidden giant rules (the world's own, open to all).
 
 ## Fire Genasi
 
@@ -226,7 +226,7 @@ In Kaelmar fire genasi are born in the ash barrens, and the orc herders there co
 
 **Common names.** Ash, Cinder, Ember, Ignis, Kaela, Pyra, Sol, Yvara
 
-**At the table.** Use the fire genasi rules.
+**At the table.** Use the fire genasi rules. Without the book, use the emberborn rules (the world's own, open to all).
 
 ## Githyanki
 
@@ -242,7 +242,7 @@ In Kaelmar githyanki are almost unknown, and the few who've crossed say the Rift
 
 **Common names.** Kaaltis, Lazhar, Marrak, Seraine, Tavra, Vaelith, Xarra, Zhessa
 
-**At the table.** Use the githyanki rules.
+**At the table.** Use the githyanki rules. Without the book, use the riftborn warrior rules (the world's own, open to all).
 
 ## Githzerai
 
@@ -258,7 +258,7 @@ In Kaelmar githzerai are rare, and Kaelholm's archive-monks have welcomed the fe
 
 **Common names.** Althros, Dak, Ilsa, Kalthis, Lirian, Mezzar, Vhalek, Zerra
 
-**At the table.** Use the githzerai rules.
+**At the table.** Use the githzerai rules. Without the book, use the riftborn seeker rules (the world's own, open to all).
 
 ## Gnomes
 
@@ -370,7 +370,7 @@ In Kaelmar harengon are one of the peoples the spore-storms rewrote, and they li
 
 **Common names.** Bramble, Clover, Dash, Fern, Hopper, Juniper, Celith, Tansy
 
-**At the table.** Use the harengon rules.
+**At the table.** Use the harengon rules. Without the book, use the rabbit-folk rules (the world's own, open to all).
 
 ## Hobgoblins
 
@@ -402,7 +402,7 @@ In Kaelmar kenku are another people the spore-storms rewrote, and they roost in 
 
 **Common names.** Bellchime, Creak, Ink, Marrow, Rattle, Scratch, Tidewash, Whistle
 
-**At the table.** Use the kenku rules.
+**At the table.** Use the kenku rules. Without the book, use the crow-folk rules (the world's own, open to all).
 
 ## Kobolds
 
@@ -466,7 +466,7 @@ In Kaelmar shifters are one of the peoples the spore-storms rewrote, and the Blo
 
 **Common names.** Brynn, Fang, Grey, Kirra, Orana, Rook, Tavi, Wolfe
 
-**At the table.** Use the shifter rules.
+**At the table.** Use the shifter rules. Without the book, use the bloodbound rules (the world's own, open to all).
 
 ## Tabaxi
 
@@ -482,7 +482,7 @@ In Kaelmar tabaxi are another people the spore-storms rewrote, and they live in 
 
 **Common names.** Cloud, Ember-Eyes, Five Dawns, Moss-in-Rain, Selene, Smoke, Thorn, Whisper
 
-**At the table.** Use the tabaxi rules.
+**At the table.** Use the tabaxi rules. Without the book, use the cat-folk rules (the world's own, open to all).
 
 ## Tieflings
 
@@ -514,7 +514,7 @@ In Kaelmar tortles live in the southern fens and the river country, where they t
 
 **Common names.** Drennal, Gura, Jappa, Krull, Nulka, Odran, Tibor, Xopa
 
-**At the table.** Use the tortle rules.
+**At the table.** Use the tortle rules. Without the book, use the shell-folk rules (the world's own, open to all).
 
 ## Tritons
 
@@ -530,7 +530,7 @@ In Kaelmar tritons are rare. The few who have come say there's something in the 
 
 **Common names.** Corrin, Iskar, Jorvas, Lhossa, Marnis, Nalla, Torven, Vodos
 
-**At the table.** Use the triton rules.
+**At the table.** Use the triton rules. Without the book, use the deepwarden rules (the world's own, open to all).
 
 ## Warforged
 
@@ -546,7 +546,7 @@ In Kaelmar, a warforged would be one of Kaelith's guardians or vessels, woken. A
 
 **Common names.** Anvil, Bastion, Echo, Lantern, Sentinel, Seraphis, Tally, Vessel
 
-**At the table.** Use the warforged rules.
+**At the table.** Use the warforged rules. Without the book, use the made rules (the world's own, open to all).
 
 ## Water Genasi
 
@@ -562,7 +562,7 @@ In Kaelmar water genasi are born along the southern fens and lakes, and the liza
 
 **Common names.** Althisa, Brine, Coral, Ilythis, Marin, Nerys, Pearl, Tide
 
-**At the table.** Use the water genasi rules.
+**At the table.** Use the water genasi rules. Without the book, use the saltborn rules (the world's own, open to all).
 
 ## Yuan-ti
 
@@ -578,7 +578,7 @@ In Kaelmar yuan-ti are almost unknown, and the few who have crossed keep their d
 
 **Common names.** Asha, Riven, Selka, Ssera, Tazzen, Vashti, Xaliss, Zehra
 
-**At the table.** Use the yuan-ti rules.
+**At the table.** Use the yuan-ti rules. Without the book, use the serpent-folk rules (the world's own, open to all).
 
 ## Shadowkin
 
@@ -592,7 +592,7 @@ In Kaelmar the same people are called shadar-kai, and they tell their own story 
 
 **Common names.** Ash, Eris, Kell, Nira, Orren, Seth, Vey, Zara
 
-**At the table.** Use the shadar-kai rules, or elf rules with the drow lineage.
+**At the table.** Use the shadar-kai rules, or elf rules with the drow lineage. Without the book, use the shadowkin rules (the world's own, open to all).
 
 ## Taur'n
 
@@ -606,7 +606,7 @@ In Kaelmar the same people are called minotaurs, and they tell their own story o
 
 **Common names.** Arrok, Bera, Dorran, Kala, Mhor, Sava, Torren, Yara
 
-**At the table.** Use the minotaur rules, or goliath rules with horns.
+**At the table.** Use the minotaur rules, or goliath rules with horns. Without the book, use the taur'n rules (the world's own, open to all).
 
 ## Moonborn
 
@@ -634,7 +634,7 @@ The silver void left a spark of light in them, which shows as stars in their eye
 
 **Common names.** Aelith, Corvanne, Ilsarion, Myrrel, Sennith, Tavarre, Velis, Zhaerin
 
-**At the table.** Use the astral elf rules.
+**At the table.** Use the astral elf rules. Without the book, use the starlit elf rules (the world's own, open to all).
 
 ## Autognomes
 
@@ -652,7 +652,7 @@ The realm makes people forget. Some autognomes' makers died, some vanished, and 
 
 **Common names.** Bolt, Cog, Fennick, Gauge, Pip, Spindle, Tock, Wren
 
-**At the table.** Use the autognome rules. Ask your GM about the autognome history table: did your maker die, go missing, or set you free?
+**At the table.** Use the autognome rules. Ask your GM about the autognome history table: did your maker die, go missing, or set you free? Without the book, use the clockwork gnome rules (the world's own, open to all).
 
 ## Giff
 
@@ -670,7 +670,7 @@ The giff don't know why the deep realm calls to them, but it does. Something of 
 
 **Common names.** Brannoc, Dunmore, Halloway, Kettering, Mabry, Pemberton, Stroud, Wexley
 
-**At the table.** Use the giff rules.
+**At the table.** Use the giff rules. Without the book, use the ironhide rules (the world's own, open to all).
 
 ## Hadozee
 
@@ -688,7 +688,7 @@ Half the driftships in the Fields have a hadozee crew. Hadozee read the void's c
 
 **Common names.** Akko, Bannu, Chiri, Doma, Kesh, Moro, Tunni, Zaza
 
-**At the table.** Use the hadozee rules.
+**At the table.** Use the hadozee rules. Without the book, use the glidefolk rules (the world's own, open to all).
 
 ## Plasmoids
 
@@ -706,7 +706,7 @@ Around people, plasmoids firm up into a head, a body and arms, so they can wear 
 
 **Common names.** Bloop, Ember, Glim, Ooma, Quiver, Shale, Sip, Velle
 
-**At the table.** Use the plasmoid rules.
+**At the table.** Use the plasmoid rules. Without the book, use the silverflow rules (the world's own, open to all).
 
 ## Thri-kreen
 
@@ -724,4 +724,4 @@ Thri-kreen never sleep. They speak with clacking mandibles, waving antennae and 
 
 **Common names.** Chak'ta, Kik'reth, Ssa-tik, Tch'kala, Vrik, Zaktik, Kkhai, T'chess
 
-**At the table.** Use the thri-kreen rules.
+**At the table.** Use the thri-kreen rules. Without the book, use the mantis-folk rules (the world's own, open to all).

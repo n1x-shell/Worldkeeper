@@ -6,8 +6,8 @@
 import { useEffect, useState } from 'react';
 import { playerApiBase, type PEntity } from '../source';
 import { CLASSES } from '../../../../shared/rules2024';
-import { rulesSpeciesName, type SrdText, type WorldBackground } from './srd';
-import { addRule, byName, emptyRulesView, srdRulesView, type RuleKind } from '../../../../shared/rulesView';
+import { type SrdText, type WorldBackground } from './srd';
+import { addRule, byName, emptyRulesView, rulesSpeciesNames, speciesInRules, srdRulesView, type RuleKind } from '../../../../shared/rulesView';
 import { handbookTypesWith } from '../categories';
 
 export * from './srd';
@@ -31,18 +31,24 @@ export interface PeopleOption {
   name: string;
   plural: string;
   tagline: string;
-  /** The SRD species whose rules it uses, if it says so ("Use the halfling rules"). */
+  /** The species whose rules it uses, if it says so ("Use the halfling rules"): the first named that the rules in use have. */
   rules: string | null;
   /** What the page says to use at the table, in its own words. */
   atTable: string;
   summary: string;
 }
-export function peoplesFrom(entities: PEntity[]): PeopleOption[] {
+/**
+ * The peoples players can be, from the handbook's records. A people can name more than one species ("Use the tabaxi
+ * rules. Without the book, use the cat-folk rules."): the first the rules in use have is its rules (the book's, where
+ * the GM has it; the world's own otherwise).
+ */
+export function peoplesFrom(entities: PEntity[], species?: Record<string, unknown>): PeopleOption[] {
   return entities
     .filter((e) => handbookTypesWith('folk').includes(e.type))
     .map((e) => {
       const atTable = plain(/\*\*At the table\.\*\*\s*([^\n]+)/.exec(e.summary ?? '')?.[1] ?? '');
-      const rules = rulesSpeciesName(atTable);
+      const names = rulesSpeciesNames(atTable);
+      const rules = species ? speciesInRules(names, species) : (names[0] ?? null);
       return { id: e.id, name: singular(e.name), plural: e.name, tagline: /^\*([^*\n]+)\*/.exec(e.summary?.trim() ?? '')?.[1] ?? '', rules, atTable, summary: e.summary ?? '' };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
@@ -142,7 +148,8 @@ export function useSheetOptions(): SheetOptions | null {
         .catch(() => fallback);
     cached ??= get<PEntity[]>(`${playerApiBase()}/entities`, []).then(async (es) => {
       const tables = await Promise.all(es.filter(isBackgroundTable).map((e) => get<PEntity | null>(`${playerApiBase()}/entities/${encodeURIComponent(e.id)}`, null)));
-      return { peoples: peoplesFrom(es), classes: classesFrom(es), backgrounds: backgroundsFrom(tables.filter((x): x is PEntity => !!x)) };
+      const text = await loadRulesText().catch(() => null);
+      return { peoples: peoplesFrom(es, text?.species), classes: classesFrom(es), backgrounds: backgroundsFrom(tables.filter((x): x is PEntity => !!x)) };
     });
     let live = true;
     void cached.then((o) => live && setOpts(o));

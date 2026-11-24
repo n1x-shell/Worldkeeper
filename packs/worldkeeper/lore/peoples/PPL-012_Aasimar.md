@@ -28,4 +28,4 @@ No culture of their own; they take their family's. Most carry a guide they hear 
 Common names: Aurel, Cassiel, Ilyra, Lumen, Orlaith, Seren, Theron, Veyra.
 
 ## D&D adaptation
-Use the aasimar rules.
+Use the aasimar rules. Without the book, use the dawn-touched rules (the world's own, open to all).

@@ -28,4 +28,4 @@ Packs, hunts, and a fierce love for family.
 Common names: Brynn, Fang, Grey, Kirra, Orana, Rook, Tavi, Wolfe.
 
 ## D&D adaptation
-Use the shifter rules.
+Use the shifter rules. Without the book, use the bloodbound rules (the world's own, open to all).

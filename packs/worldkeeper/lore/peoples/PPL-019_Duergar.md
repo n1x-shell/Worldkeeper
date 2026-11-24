@@ -28,4 +28,4 @@ Forge-clans, hard bargains, and long grudges kept in iron ledgers.
 Common names: Brakka, Duren, Gorm, Hilde, Korra, Morn, Thrain, Vessa.
 
 ## D&D adaptation
-Use the duergar rules.
+Use the duergar rules. Without the book, use the grey dwarf rules (the world's own, open to all).

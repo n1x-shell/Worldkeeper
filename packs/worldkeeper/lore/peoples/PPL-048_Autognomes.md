@@ -31,4 +31,4 @@ A maker's mark, a mission, and a name they chose themselves.
 Common names: Bolt, Cog, Fennick, Gauge, Pip, Spindle, Tock, Wren.
 
 ## D&D adaptation
-Use the autognome rules. Ask your GM about the autognome history table: did your maker die, go missing, or set you free? Source: Spelljammer: Adventures in Space (Astral Adventurer's Guide).
+Use the autognome rules. Ask your GM about the autognome history table: did your maker die, go missing, or set you free? Source: Spelljammer: Adventures in Space (Astral Adventurer's Guide). Without the book, use the clockwork gnome rules (the world's own, open to all).

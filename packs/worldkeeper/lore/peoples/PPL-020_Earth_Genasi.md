@@ -28,4 +28,4 @@ Patient, practical, and not easily impressed.
 Common names: Basalt, Dorra, Garnet, Hollis, Krag, Mica, Ronan, Slate.
 
 ## D&D adaptation
-Use the earth genasi rules.
+Use the earth genasi rules. Without the book, use the stoneblood rules (the world's own, open to all).

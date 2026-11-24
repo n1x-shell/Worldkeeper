@@ -59,7 +59,6 @@ export function CharacterBuilder() {
   const tables = useMemo(() => (entities ?? []).filter(isBackgroundTable), [entities]);
   const { data: full } = usePlayerData(() => Promise.all(tables.map((e) => source.entity(e.id))), tables.map((e) => e.id).join(','));
   const fullTables = useMemo(() => (full ?? []).filter((x): x is PEntity => !!x), [full]);
-  const peoples = useMemo(() => peoplesFrom(entities ?? []), [entities]);
   const classes = useMemo(() => classesFrom(entities ?? []), [entities]);
   const world = useMemo(() => backgroundsFrom(fullTables), [fullTables]);
   const factions = useMemo(() => (entities ?? []).filter((e) => e.type === 'faction' || e.type === 'cult').sort((a, b) => a.name.localeCompare(b.name)), [entities]);
@@ -84,6 +83,8 @@ export function CharacterBuilder() {
       .map(([where, what]) => ({ where, what }));
   }, [fullTables]);
   const text = useLoaded(loadRulesText);
+  // A people's rules: the first species it names that the rules in use have (the book's, else the world's own).
+  const peoples = useMemo(() => peoplesFrom(entities ?? [], text?.species), [entities, text]);
   const spells = useLoaded(loadSpells);
   // Species in the rules packs that no people of the world is named for, to play as themselves.
   const otherSpecies = useMemo(

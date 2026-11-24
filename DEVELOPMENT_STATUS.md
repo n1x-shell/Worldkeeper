@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.8.3_
+_Last updated: 2026-11-24 · v0.9.0_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,16 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.0: the world's own species
+
+Completes [docs/PLAN_0.9.md](docs/PLAN_0.9.md) (v0.8.1 to v0.8.3 below). The owner approved all 40 drafts as written.
+
+- **40 species** (`packs/worldkeeper/rules/species/*.md`, rules-pack Markdown, CC BY 4.0) for the peoples that played only as a book species: written fresh, balanced against the SRD's nine, granting only SRD spells (levels 0 to 2, at character levels 3 and 5). Named after the world's own names (Stormborn, Shadowkin, Taur'n, Reptilian; alternate names such as Cat-folk, Crow-folk, Made; open names kept: Bugbear, Goblin, Sea Elf…; and eleven proposed names the owner accepted: Starlit Elf, Clockwork Gnome, Hidden Giant, Ironhide, Riftborn Warrior and Seeker, Glidefolk, Silverflow, Mantis-folk, Shell-folk, Deepwarden).
+- **Loaded** with the world's rules pack (`worldSpecies` in `server/src/repo/rulesPacks.ts`): in `rulesView` while the pack is on and the open rules count for species (Books only sets them aside), and in `publishedRuleEntries`, so the published handbook's builder has them. Rules packs lists them (40 species).
+- **The book wins:** the 29 peoples whose world species has a name of its own now say both ("Use the tabaxi rules. Without the book, use the cat-folk rules (the world's own, open to all)."), in their records and player text (57 lines). `rulesSpeciesNames` reads every name in order and `speciesInRules` picks the first the rules in use have, with its own spelling; `peoplesFrom` (builder and sheet) uses it. The eleven with the book's open name (Bugbear, Goblin…) need nothing: a book's species of that name replaces the world's.
+- **What a world names** counts a people's first species that the rules have, and the world's species resolve as the world's: adding the Worldkeeper world no longer reports any species missing.
+- **Tests:** `tests/worldSpecies.test.ts` (40 well-formed; both names read and the right one picked; with the world's pack the 9 + 40 species, the Tabaxi people as Cat-folk, the handbook gets them; with the book the book's; Books only and the pack off set them aside), and the Worldkeeper report in `tests/worldbookBooks.test.ts`. Browser: the builder shows the Tabaxi people as Cat-folk without the book.
 
 ## v0.8.3: stand-ins for creatures
 

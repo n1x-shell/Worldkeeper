@@ -28,4 +28,4 @@ Clan nests, sky-songs, and a long memory for which way the wind blew on importan
 Common names: Aeka, Kirru, Pell, Quill, Sarrik, Tiriel, Ulla, Zephi.
 
 ## D&D adaptation
-Use the aarakocra rules.
+Use the aarakocra rules. Without the book, use the bird-folk rules (the world's own, open to all).

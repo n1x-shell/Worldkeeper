@@ -28,4 +28,4 @@ Flocks, borrowed voices, and a collector's love of sounds.
 Common names: Bellchime, Creak, Ink, Marrow, Rattle, Scratch, Tidewash, Whistle.
 
 ## D&D adaptation
-Use the kenku rules.
+Use the kenku rules. Without the book, use the crow-folk rules (the world's own, open to all).

@@ -28,4 +28,4 @@ Duty, rank, and the long watch of the deep.
 Common names: Corrin, Iskar, Jorvas, Lhossa, Marnis, Nalla, Torven, Vodos.
 
 ## D&D adaptation
-Use the triton rules.
+Use the triton rules. Without the book, use the deepwarden rules (the world's own, open to all).

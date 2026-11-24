@@ -28,4 +28,4 @@ Large, scattered families, and a habit of never staying anywhere too long.
 Common names: Bramble, Clover, Dash, Fern, Hopper, Juniper, Celith, Tansy.
 
 ## D&D adaptation
-Use the harengon rules.
+Use the harengon rules. Without the book, use the rabbit-folk rules (the world's own, open to all).

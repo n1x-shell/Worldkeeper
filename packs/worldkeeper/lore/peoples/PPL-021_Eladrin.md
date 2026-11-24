@@ -28,4 +28,4 @@ No homeland they can name. Many keep a token from each season of their lives.
 Common names: Aerith, Faen, Ilsevel, Lirael, Naivara, Sylas, Thaelon, Vaelis.
 
 ## D&D adaptation
-Use the eladrin rules.
+Use the eladrin rules. Without the book, use the seasonal elf rules (the world's own, open to all).
