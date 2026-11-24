@@ -10,6 +10,7 @@ import { usePacks } from '../lib/packs';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { LibraryMenuSection } from './Libraries';
+import { TableIndicator } from './HandbookAddress';
 import { BookMarked, Check, ChevronDown, ChevronsLeft, ChevronsRight, Compass, Eye, Map as MapIcon, MapPinned, Menu, Moon, Plus, Search, Settings, Sun, X } from 'lucide-react';
 import { newMenu } from '@shared/newRecord';
 import { useRecordTypes } from './recordTypes';
@@ -341,7 +342,7 @@ export function Layout() {
           </nav>
           <button
             onClick={() => setSearchOpen(true)}
-            className="ml-auto md:ml-3 flex items-center gap-2 rounded-md border border-line bg-raised px-2.5 h-8 text-sm text-dim hover:border-gold/60 min-w-0 shrink-0 lg:w-48 xl:w-72"
+            className="ml-auto md:ml-3 flex items-center gap-2 rounded-md border border-line bg-raised px-2.5 h-8 text-sm text-dim hover:border-gold/60 min-w-[2rem] shrink lg:w-48 xl:w-72"
             aria-label="Search"
             title="Search (Ctrl K)"
           >
@@ -393,6 +394,7 @@ export function Layout() {
                 </>
               )}
             </Dropdown>
+            <TableIndicator />
             <a href="/player" target="_blank" rel="noreferrer" className="btn-ghost" title="Open the player view in a new tab" aria-label="Player View">
               <Eye size={16} /> <span className="hidden 2xl:inline whitespace-nowrap">Player View</span>
             </a>

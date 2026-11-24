@@ -72,18 +72,12 @@ import { deleteLibraryStatblock, setLibraryStatblock, statblockFor, statblockInd
 import { bookCounts, bookCreature, bookTreasure, bookCreatureIndex, bookCreatures, bookItems, creatureByName, itemByName, requireBookCreature } from '../repo/bookData.js';
 import { characterPage, renewCharacterCode, updateCharacterPage } from '../repo/characterPages.js';
 import { handbookCode, renewHandbookCode } from '../repo/handbookCodes.js';
-import { networkInterfaces } from 'node:os';
+import { tableStatus } from '../table.js';
 
-/**
- * Where players reach the table server: this computer's network addresses and the table server's port (4320 unless
- * WORLDKEEPER_TABLE_PORT says otherwise). The table server is a separate process (npm run start:player).
- */
+/** Where players reach the table server: this computer's network addresses, the port, and whether it's open. */
 function tableAddress() {
-  const addresses = Object.values(networkInterfaces())
-    .flat()
-    .filter((a): a is NonNullable<typeof a> => !!a && a.family === 'IPv4' && !a.internal)
-    .map((a) => a.address);
-  return { addresses, port: Number(process.env.WORLDKEEPER_TABLE_PORT) || 4320 };
+  const t = tableStatus();
+  return { addresses: t.addresses, port: t.port, table_open: t.open };
 }
 
 export function campaignRoutes(ctx: AppContext) {

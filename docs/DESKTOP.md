@@ -20,6 +20,10 @@ The Worldkeeper (Tauri window)
 - No Tauri commands are exposed to the page, so the page has no native access beyond a normal browser tab.
 - Everything works offline. Nothing is sent anywhere.
 
+### Your table
+
+Players can use the handbook on their phones while you play: on a campaign's overview, **Open the table**, then they scan its QR code or open its address. The app serves them on your network until you **Close the table** (or quit). The first time, your system may ask whether to allow network connections; allow it on your home network only.
+
 ### Libraries
 
 The app opens the library you used last. With more than one, its start shows them to pick from, the last opened first (once per window). Switch any time from the Library menu (the gear), and manage them in **Library → Libraries**, where **Show in folder** opens a library's folder.
