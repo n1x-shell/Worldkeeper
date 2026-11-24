@@ -1,7 +1,7 @@
 {
   "id": "worldkeeper",
   "name": "The Worldkeeper setting",
-  "version": "0.6.11",
+  "version": "0.6.12",
   "description": "A shattered world of two continents and the Ethereal Realm between them: Aetheris, broken into five dominions around a lawless middle, and Kaelmar, where forest and old spellwork have grown together.",
   "licence": "The setting text is the Worldkeeper contributors'; its rules (creatures, hazards, items) are CC BY 4.0.",
   "realms": [

@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.6.11_
+_Last updated: 2026-11-24 · v0.6.12_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,11 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.6.12: the first run in a browser, in CI
+
+- **`.github/workflows/ci.yml`, job `e2e`:** builds the app, installs Playwright (pinned in the workflow; it isn't a project dependency) and its Chromium, then runs `scripts/e2e-first-run.mjs` twice, each against a server on an empty data folder: your own world, and the Worldkeeper setting (without the archive). On failure it prints the servers' logs and keeps the screenshots as an artifact. Runs beside the `test` job, so it doesn't slow it.
+- The smoke test (`e2e-smoke.mjs`) needs the Worldkeeper archive, which never goes on GitHub, so it stays a local check.
 
 ## v0.6.11: Tailwind CSS 4
 
@@ -638,6 +643,5 @@ The queue agreed with the owner, one PR each:
 After that, candidates (not yet agreed):
 
 - **Desktop builds for macOS and Windows:** run `desktop.yml` on both and fix what comes up; code signing, so the system's warnings go away.
-- **The browser tests in CI:** `e2e:first-run` (own world) needs no archive and could run on every PR; it needs Playwright's browser on the runner.
 - **Sessions on the timeline**, by their in-world dates, and **a player timeline** of what's been revealed.
 - **Optional AI assistant** that cites records and only makes PROPOSED drafts (deferred until the core is in daily use).
