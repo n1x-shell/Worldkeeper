@@ -18,6 +18,7 @@ const errors = [];
 const step = (m) => console.log('✓', m);
 const shot = async (page, name) => shots && (fs.mkdirSync(shots, { recursive: true }), await page.screenshot({ path: path.join(shots, `${name}.png`) }));
 const api = (url, init) => fetch(`${base}${url}`, init).then((r) => r.json());
+const post = (url, body) => api(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
 
 /** A small PNG to upload as the world's map. */
 function mapPng() {
@@ -122,6 +123,41 @@ try {
     const left = (await api('/api/entities')).map((e) => e.name);
     if (left.join() !== 'Harrowgate') throw new Error(`after removing the tutorial records: ${left}`);
     step('the records that teach: Start Here links to them, and they go in one click; the town stays');
+    // A record of each kind a GM makes opens (an item of one's own once broke its page), and the workshop works:
+    // a stat block of its own on a creature, and rules of its own on an item.
+    const realm = (await api('/api/entities'))[0].realm;
+    const make = (name, type) => post('/api/entities', { name, type, realm, body: '## A first look\n\nSeen once.' });
+    for (const [name, type] of [
+      ['The Gate Warden', 'creature'],
+      ['The Ost Blade', 'item'],
+      ['The Crown of Ost', 'artifact'],
+      ['Mother Ilse', 'npc'],
+      ['The Hall of Blades', 'landmark'],
+      ['The Wardens', 'faction'],
+    ]) {
+      const e = await make(name, type);
+      await page.goto(`${base}/e/${e.id}`);
+      await page.getByRole('button', { name: 'More actions' }).waitFor();
+      if (await page.getByText('This screen hit an error').count()) throw new Error(`the page of a ${type} of one's own hit an error`);
+      if (type === 'creature') {
+        await page.getByRole('button', { name: 'Give it a stat block' }).click();
+        await page.getByRole('radio', { name: 'Its own' }).click();
+        await page.getByLabel('Armor Class').fill('17');
+        await page.getByLabel('Hit Points').fill('9d10+27');
+        await page.getByRole('button', { name: 'Save' }).click();
+        await page.getByTestId('statblock-editor').waitFor({ state: 'detached' });
+        await page.getByText('76 (9d10 + 27)').waitFor();
+      }
+      if (type === 'item') {
+        await page.getByRole('button', { name: 'Give it rules' }).click();
+        await page.getByLabel('What it does').fill('You have a +1 bonus to attack and damage rolls made with it.');
+        await page.getByRole('button', { name: 'Save' }).click();
+        await page.getByTestId('homebrew-editor').waitFor({ state: 'detached' });
+        await page.getByText('You have a +1 bonus').waitFor();
+        if (!(await api('/api/books/items?q=ost%20blade')).some((i) => i.source === 'Your own')) throw new Error('the item of one’s own is not among the items');
+      }
+    }
+    step('records of one’s own open (creature, item, artifact, person, place, group); a stat block and an item’s rules are made');
   } else {
     await page.getByRole('button', { name: /Play in the Worldkeeper world/ }).click();
     await page.getByRole('button', { name: /Add the Worldkeeper worldbook/ }).click();

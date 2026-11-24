@@ -11,6 +11,7 @@ import { StatBlockById } from '../components/StatBlock';
 import { ItemCard, type BookItem } from '../components/ItemRules';
 import { EncounterIdeas } from '../components/EncounterIdeas';
 import { useAppState } from '../lib/store';
+import { YourOwn } from '../components/Homebrew';
 
 interface Creature {
   id: string;
@@ -23,11 +24,11 @@ const crNum = (cr: string | null) => (!cr ? -1 : cr.includes('/') ? Number(cr.sp
 const RARITIES = ['common', 'uncommon', 'rare', 'very rare', 'legendary', 'artifact'];
 
 export function BooksPage() {
-  const [tab, setTab] = useState<'creatures' | 'items' | 'encounters'>('creatures');
+  const [tab, setTab] = useState<'creatures' | 'items' | 'encounters' | 'own'>('creatures');
   const { data: counts } = useApi<{ creatures: number; items: number }>('/api/books');
   return (
     <div className="space-y-4">
-      <PageHeader title="Your Books" subtitle="Creatures, items and hazards from the SRD 5.2.1 and the books you imported. Only you see these." />
+      <PageHeader title="Your Books" subtitle="Creatures, items and hazards from the SRD 5.2.1 and the books you imported, and the items and spells you made. Only you see these." />
       {counts && !counts.creatures && !counts.items ? (
         <Empty
           title="Nothing imported yet"
@@ -45,16 +46,16 @@ export function BooksPage() {
             label="Book section"
             value={tab}
             onChange={setTab}
-            options={(['creatures', 'items', 'encounters'] as const).map((t) => ({
+            options={(['creatures', 'items', 'encounters', 'own'] as const).map((t) => ({
               value: t,
               label: (
                 <span className="capitalize">
-                  {t} {counts && t !== 'encounters' && <span className="text-xs num">({t === 'creatures' ? counts.creatures : counts.items})</span>}
+                  {t === 'own' ? 'Your own' : t} {counts && (t === 'creatures' || t === 'items') && <span className="text-xs num">({t === 'creatures' ? counts.creatures : counts.items})</span>}
                 </span>
               ),
             }))}
           />
-          {tab === 'creatures' ? <Creatures /> : tab === 'items' ? <Items /> : <Encounters />}
+          {tab === 'creatures' ? <Creatures /> : tab === 'items' ? <Items /> : tab === 'own' ? <YourOwn /> : <Encounters />}
         </>
       )}
     </div>

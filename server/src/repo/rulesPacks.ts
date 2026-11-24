@@ -23,6 +23,7 @@ import { addRule, emptyRulesView, srdRulesView, type RulesView } from '../../../
 import { isOpenSource, openRulesFor } from './booksOnly.js';
 import { standIns, standInSource } from './standIns.js';
 import { byName } from '../../../shared/rulesView.js';
+import { HOMEBREW_SOURCE, homebrewSpells } from './homebrew.js';
 
 type DB = Database.Database;
 export const RULE_KINDS = ['spell', 'species', 'class', 'subclass', 'background', 'feat'] as const;
@@ -274,7 +275,9 @@ export function publishedRuleEntries(db: DB): { kind: RuleKind; name: string; cl
       isOpenSource(p.source),
     );
     const rows = db.prepare('SELECT kind, name, cls, data FROM rules_entries WHERE pack_id = ?');
-    return [...world, ...packs.flatMap((p) =>
+    // The GM's own spells are theirs to give their players.
+    const own = homebrewSpells(db).map((h) => ({ ...h, source: HOMEBREW_SOURCE }));
+    return [...world, ...own, ...packs.flatMap((p) =>
       (rows.all(p.id) as { kind: RuleKind; name: string; cls: string; data: string }[])
         .filter((r) => ['spell', 'species', 'class', 'subclass', 'background', 'feat'].includes(r.kind))
         .map((r) => ({ ...r, data: JSON.parse(r.data) as Record<string, unknown>, source: p.source || p.name })),
@@ -316,6 +319,8 @@ export function rulesView(db: DB): RulesView {
     for (const r of rows.all(p.id) as { kind: RuleKind; name: string; cls: string; data: string }[])
       if (!openPack || open(r.kind)) addRule(view, r.kind, r.name, r.cls, JSON.parse(r.data), p.source || p.name);
   }
+  // The GM's own spells (and a worldbook's own): theirs to use whatever the books are set to, and they win a name.
+  for (const h of homebrewSpells(db)) addRule(view, h.kind, h.name, h.cls, h.data, HOMEBREW_SOURCE);
   // Safe mode's stand-ins: where the original isn't in this library's rules, its open stand-in takes its name.
   for (const s of standIns(db)) {
     if (s.kind === 'species' && !byName(view.species, s.name)) {

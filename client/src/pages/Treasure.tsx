@@ -322,7 +322,8 @@ interface CatalogueInfo {
 /** On an item's or artifact's page (GM): its rarity, rules where the archive gave none, where it turns up, and who wants it. */
 export function TreasurePanel({ entityId, type }: { entityId: string; type: string }) {
   const { data } = useApi<CatalogueInfo | null>(type === 'item' || type === 'artifact' ? `/api/treasure/catalogue/${encodeURIComponent(entityId)}` : null);
-  if (!data) return null;
+  // An item the worldbook's catalogue doesn't list (any item of the GM's own) has no treasure notes.
+  if (!data?.rarity) return null;
   return (
     <Card title="Treasure" className="space-y-2 text-sm">
       <div className="flex flex-wrap gap-1.5">

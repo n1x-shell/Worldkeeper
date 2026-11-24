@@ -188,7 +188,7 @@ function SharePanel({ onClose }: { onClose: () => void }) {
       <Card title="Share as a worldbook" icon={<Share2 size={14} />} className="space-y-3">
         <p className="text-sm text-dim">
           A file another GM adds to their app: this library&apos;s own world (its realms, record types, templates, calendar and modules, every record, its links and timeline, its adventures, random
-          tables and stat blocks, its maps with their pins, routes and outlines). Never your campaigns, characters, sessions or what your players have been shown. Worldbooks you added to this library
+          tables and stat blocks, your own items and spells, its pictures, its maps with their pins, routes and outlines). Never your campaigns, characters, sessions or what your players have been shown. Worldbooks you added to this library
           aren&apos;t included; the other GM adds those themselves.
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
@@ -206,8 +206,8 @@ function SharePanel({ onClose }: { onClose: () => void }) {
           </Field>
         </div>
         <BooksChoice mode={mode} setMode={setMode} swaps={swaps} setSwaps={setSwaps} />
-        <Check checked={f.gmOnly} onChange={(v) => setF({ ...f, gmOnly: v })} label="Leave out GM-only sections, adventures and stat blocks">
-          <span className="text-sm">Leave out GM-only sections, adventures and stat blocks (for a world shared with players in mind)</span>
+        <Check checked={f.gmOnly} onChange={(v) => setF({ ...f, gmOnly: v })} label="Leave out GM-only sections, adventures, stat blocks and your own items">
+          <span className="text-sm">Leave out GM-only sections, adventures, stat blocks and your own items (for a world shared with players in mind)</span>
         </Check>
         <div className="flex flex-wrap gap-2">
           <a className={`btn-primary ${f.name.trim() ? '' : 'pointer-events-none opacity-60'}`} href={href} download aria-disabled={!f.name.trim()}>

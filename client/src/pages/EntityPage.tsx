@@ -21,6 +21,7 @@ import { SecretsPanel } from './Mysteries';
 import { PartyTiesPanel } from './Campaign';
 import { TreasurePanel } from './Treasure';
 import { StatBlockPanel } from '../components/StatBlock';
+import { ItemRulesPanel } from '../components/Homebrew';
 import { Dev, useDebug } from '../components/Dev';
 import { useRealms } from '../components/realms';
 import {
@@ -516,6 +517,7 @@ function RecordTab({
         {layout !== 'one' && glance}
         <StatBlockPanel entityId={e.id} name={e.name} fights={e.type === 'creature' || e.type === 'npc'} asked={askedBlock} onClosed={onBlockClosed} />
         {details && <section className="panel elev-1 p-4" aria-label="Record details">{details}</section>}
+        {(e.type === 'item' || e.type === 'artifact') && <ItemRulesPanel entityId={e.id} name={e.name} />}
         <TreasurePanel entityId={e.id} type={e.type} />
         <PartyTiesPanel entityId={e.id} />
         <SecretsPanel entityId={e.id} />
