@@ -29,6 +29,8 @@ import { forgetPacks, installedPacks } from './registry.js';
 import { BUNDLED_PACKS_DIR, installedPacksDir } from './paths.js';
 import type { PackManifest, PackRealm } from '../../../shared/packs.js';
 import { worldbookRulesFor, type WorldbookRules } from './worldbookRules.js';
+import { adventureToMarkdown } from '../adventureAdditions.js';
+import { tablesToMarkdown } from '../tableAdditions.js';
 import pkg from '../../../package.json' with { type: 'json' };
 
 /** What a shared worldbook's manifest adds to a worldbook's. */
@@ -192,16 +194,22 @@ export function buildWorldbook(db: DB, uploadsDir: string, o: ShareOptions): { f
     const image = `${base}${path.extname(m.image_file).toLowerCase()}`;
     add(`maps/${image}`, fs.readFileSync(file));
     const pins = (
-      db.prepare(`SELECT entity_id, label, x, y, category FROM map_markers WHERE map_id = ? AND entity_id IS NOT NULL`).all(m.id) as {
-        entity_id: string;
+      db.prepare(`SELECT entity_id, label, x, y, category, hidden FROM map_markers WHERE map_id = ?`).all(m.id) as {
+        entity_id: string | null;
         label: string;
         x: number;
         y: number;
         category: string;
+        hidden: number;
       }[]
     )
-      .filter((p) => ids.has(p.entity_id))
-      .map((p) => ({ id: p.entity_id, label: p.label, x: Math.round(p.x), y: Math.round(m.height - p.y), category: p.category }));
+      // Pins on the shared records, and labels with no record ("Here be dragons"); pins on other worldbooks' records stay.
+      .filter((p) => (p.entity_id ? ids.has(p.entity_id) : !!p.label.trim()))
+      .map((p) =>
+        p.entity_id
+          ? { id: p.entity_id, label: p.label, x: Math.round(p.x), y: Math.round(m.height - p.y), category: p.category }
+          : { label: p.label, x: Math.round(p.x), y: Math.round(m.height - p.y), category: p.category, hidden: !!p.hidden },
+      );
     add(`maps/${base}.pins.json`, JSON.stringify({ name: m.name, image, realm: m.realm_id ?? 'world', ...(m.scale_miles ? { scale_miles: m.scale_miles } : {}), pins }, null, 1));
     const shapes = db.prepare(`SELECT kind, label, color, points, entity_id FROM map_shapes WHERE map_id = ? AND kind = ?`);
     const flip = (pts: string) => (JSON.parse(pts) as [number, number][]).map(([x, y]) => [Math.round(x), Math.round(m.height - y)]);
@@ -214,6 +222,58 @@ export function buildWorldbook(db: DB, uploadsDir: string, o: ShareOptions): { f
     mapCount++;
   }
   counts.maps = mapCount;
+
+  // Adventures with their scenes (the library's own, not another worldbook's). Left out of a world shared with players
+  // in mind: an adventure is the GM's.
+  let advCount = 0;
+  if (!o.leaveOutGmOnly) {
+    const advs = db.prepare(`SELECT id, title, arc, source_hook_id, linked_ids, data FROM adventures WHERE pack_id IS NULL ORDER BY id`).all() as {
+      id: number;
+      title: string;
+      arc: string;
+      source_hook_id: string | null;
+      linked_ids: string;
+      data: string;
+    }[];
+    const sceneRows = db.prepare(`SELECT title, kind, linked_ids, read_aloud, body FROM scenes WHERE adventure_id = ? ORDER BY sort_order, id`);
+    const onlyShared = (json: string) => (JSON.parse(json || '[]') as string[]).filter((x) => ids.has(x));
+    const used = new Set<string>();
+    for (const a of advs) {
+      let base = fileSlug(a.title);
+      while (used.has(base)) base += '_2';
+      used.add(base);
+      const data = JSON.parse(a.data || '{}') as Record<string, unknown>;
+      add(
+        `adventures/${base}.md`,
+        adventureToMarkdown({
+          title: a.title,
+          arc: a.arc,
+          source_hook_id: a.source_hook_id && ids.has(a.source_hook_id) ? a.source_hook_id : null,
+          linked_ids: onlyShared(a.linked_ids),
+          data,
+          scenes: (sceneRows.all(a.id) as { title: string; kind: string; linked_ids: string; read_aloud: string; body: string }[]).map((x) => ({ ...x, linked_ids: onlyShared(x.linked_ids) })),
+        }),
+      );
+      advCount++;
+    }
+  }
+  counts.adventures = advCount;
+
+  // Random tables (the GM's own and the ones generated for its places).
+  const tables = (
+    db.prepare(`SELECT name, region_id, kind, level_min, level_max, entries FROM random_tables WHERE pack_id IS NULL ORDER BY id`).all() as {
+      name: string;
+      region_id: string | null;
+      kind: string;
+      level_min: number | null;
+      level_max: number | null;
+      entries: string;
+    }[]
+  )
+    .map((t) => ({ ...t, region_id: t.region_id && ids.has(t.region_id) ? t.region_id : null, entries: JSON.parse(t.entries || '[]') as { weight?: number; text: string }[] }))
+    .filter((t) => t.entries.length);
+  if (tables.length) add('tables/tables.md', tablesToMarkdown(tables));
+  counts.tables = tables.length;
 
   // The rules it names: the books it draws on, how they count, and the open rules that travel with it.
   const { rules, openFiles } = worldbookRulesFor(db, o.books ?? 'optional', o.swaps);

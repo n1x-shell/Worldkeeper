@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.8.1_
+_Last updated: 2026-11-24 · v0.8.2_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,16 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.8.2: adventures, random tables and loose pins in shared worldbooks
+
+Step 2 of [docs/PLAN_0.9.md](docs/PLAN_0.9.md).
+
+- **Adventures** (`adventureToMarkdown` in `server/src/adventureAdditions.ts`, the format `parseAdventure` reads): the library's own adventures (no `pack_id`), with their header (title, arc, hook, levels, linked records), sections, clues (found or not is the GM's, so it comes back unfound) and scenes in order (kind, linked records, read-aloud as `> ` lines, notes), into `adventures/<title>.md`; links and the hook only to records the worldbook carries. Left out of a world shared with players in mind.
+- **Random tables** (`tablesToMarkdown` in `server/src/tableAdditions.ts`): every table of the library's own into `tables/tables.md`; the format gains optional `Kind:`, `Levels:` and per-row weights (`3. [x2] …`), which `parseTables` and `applyTableSpecs` now read (the die is the weights' total; older files read as before). A worldbook's tables are labelled with its name (the Worldkeeper world's still "Worldkeeper additions").
+- **Loose pins:** a map pin with no record travels in `pins.json` with its label and whether players see it, and comes back as a label, once (`applyMaps`); the handbook build adds only those players see.
+- **Share panel:** names adventures and tables; "Leave out GM-only sections and adventures".
+- **Tests:** `tests/worldbookShare.test.ts` round-trips an adventure (header, premise, a clue, two scenes with read-aloud), a weighted encounter table (die, kind, levels, weights) and a label pin, and checks a players-in-mind share leaves adventures out.
 
 ## v0.8.1: remove a worldbook from this computer
 

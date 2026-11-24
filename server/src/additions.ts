@@ -25,6 +25,7 @@ import { applyAdventures } from './adventureAdditions.js';
 import { applyTables, applyTableSpecs } from './tableAdditions.js';
 import { itemTables, treasureData } from './repo/treasure.js';
 import { worldkeeperPath } from './packs/paths.js';
+import { findPack } from './packs/registry.js';
 
 /** The Worldkeeper pack's lore folder (packs/worldkeeper/lore, or the installed copy). */
 export const DEFAULT_ADDITIONS_DIR = worldkeeperPath('lore');
@@ -175,7 +176,7 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?:
   const adventuresAdded = applyAdventures(db, path.resolve(dir, '../adventures'));
   // Random encounter tables, added to the GM's Random Tables (ones the library already has are left alone).
   const tablesAdded = [
-    ...applyTables(db, path.resolve(dir, '../tables')),
+    ...applyTables(db, path.resolve(dir, '../tables'), packId === 'worldkeeper' ? 'Worldkeeper additions' : (findPack(packId)?.manifest.name ?? packId)),
     // Magic item tables by region and rarity, from the treasure pools.
     ...applyTableSpecs(
       db,
