@@ -238,6 +238,25 @@ export function discardNewLibrary(root: string, id: string) {
   fs.rmSync(libraryDir(root, e), { recursive: true, force: true });
 }
 
+/** The libraries (archived ones too) that have a worldbook, read without opening them for use. */
+export function librariesWithPack(root: string, packId: string): LibraryEntry[] {
+  return (readIndex(root)?.libraries ?? []).filter((e) => {
+    const file = path.join(libraryDir(root, e), 'worldkeeper.db');
+    if (!fs.existsSync(file)) return false;
+    try {
+      const db = new Database(file, { readonly: true, fileMustExist: true });
+      try {
+        return !!db.prepare('SELECT 1 FROM setting_packs WHERE id = ?').get(packId);
+      } finally {
+        db.close();
+      }
+    } catch {
+      // A library that can't be read is counted as using it: never remove what might still be needed.
+      return true;
+    }
+  });
+}
+
 /** How many records a library holds, read without opening it for use (null if it can't be read). */
 export function recordCount(root: string, e: LibraryEntry): number | null {
   const file = path.join(libraryDir(root, e), 'worldkeeper.db');

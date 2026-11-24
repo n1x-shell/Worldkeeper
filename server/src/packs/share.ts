@@ -315,6 +315,19 @@ export function readWorldbook(buf: Buffer): { manifest: SharedManifest; files: {
   return { manifest: m, files };
 }
 
+/**
+ * Remove a worldbook added to this computer (never one that comes with the app). The caller checks first that no
+ * library has it: removing it from the computer never touches a library.
+ */
+export function removeWorldbookFile(id: string) {
+  if (bundledIds().includes(id)) throw badRequest('That worldbook comes with the app: it can be removed from a library, not from the computer.');
+  const into = installedPacksDir();
+  const dir = into && path.join(into, id);
+  if (!dir || !/^[a-z0-9][a-z0-9-]{0,40}$/.test(id) || !fs.existsSync(path.join(dir, 'pack.json'))) throw badRequest('That worldbook isn’t on this computer.');
+  fs.rmSync(dir, { recursive: true, force: true });
+  forgetPacks();
+}
+
 /** Add a `.worldbook` to this computer's worldbooks (replacing an earlier version of the same one). */
 export function addWorldbookFile(buf: Buffer): SharedManifest {
   const { manifest, files } = readWorldbook(buf);

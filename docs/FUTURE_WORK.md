@@ -40,12 +40,15 @@ Ideas for what comes next, after the lore checklist (`LORE_CHECKLIST.md`) was fi
 ## Housekeeping
 
 - [x] **Speed up the handbook's first load.** It's about 610 KB of code; splitting it would make the first load faster on phones. *Done: the map, builder, faction web and print pages load when opened. In v0.5.1 the GM app's pages do too: its first load went from 1.4 MB to 330 kB.*
-- [ ] **Refresh the GM's own app.** Rebuild the desktop app so it carries all the latest additions, and apply them to the laptop library (Library → Worldbooks → Update).
+- [x] **Refresh the GM's own app.** Rebuild the desktop app so it carries all the latest additions, and apply them to the laptop library (Library → Worldbooks → Update). *Done: v0.8.0 published; the Worldkeeper world now ships whole in the app.*
 
 ## Worldbooks (after v0.8.0)
 
+Planned in [PLAN_0.9.md](PLAN_0.9.md): v0.8.1 to v0.9.0, in this order.
+
+
 - [ ] **Share adventures and random tables** in a `.worldbook` (they aren't yet), and pins that aren't on a record.
 - [ ] **Stand-ins for stat blocks and encounter tables**: they name creatures in ways the app doesn't read as rules yet.
-- [ ] **Open species rules for the Worldkeeper world's book-only peoples** (Tabaxi, Tortle, Kenku…), so it's whole on the SRD alone: writing work, the owner's call.
-- [ ] **Remove a worldbook from this computer** (today it stays on the computer once added; removing it from a library is there).
+- [ ] **Open species rules for the Worldkeeper world's book-only peoples** (Tabaxi, Tortle, Kenku…), so it's whole on the SRD alone: 40 species, named after the world's own names, the book winning when the GM has it (v0.9.0).
+- [x] **Remove a worldbook from this computer.** *Done in v0.8.1: once no library has it.*
 
