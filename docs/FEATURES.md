@@ -9,7 +9,7 @@ This document describes Worldkeeper's features as of v0.6. For implementation co
 A fresh library opens on **Start your world**. Choose how to begin; every step can be skipped and everything it makes can be changed later.
 
 - **Build my own world:** your world's name, a line about it and the name the app goes by; the calendar now (the months, the year it starts and the year's name, as in "1247 AR") or later; and its shape: one continent, several, a world and another plane, or nothing yet, each renamed or added to as you like.
-- **Play in the Worldkeeper setting:** installs the setting (its realms, records, rules and modules), with your copy of its archive if you have one, and shows what came in.
+- **Play in the Worldkeeper world:** adds the Worldkeeper worldbook (its realms, records, rules and modules), with your copy of its archive if you have one, and shows what came in.
 
 Both ways then go through the same steps: **rules** (the SRD is always on; import your books or open content now or later; the setting's rules and modules, any of which you can untick), **a first campaign** (its name, where it starts, a place you pick or a town made for you, and the party's names, each a blank character ready for the builder), **a map** of the world if you have one, and **Finish**, which shows what will be made. **Restore a backup** is on the first page too.
 
@@ -64,13 +64,13 @@ Relationships include Lives in, Leads, Member of, Allied with, Opposes, Controls
 
 ## Worlds & Realms
 
-Your cosmos is yours to define (**Codex → Worlds & Realms**): realms (planes of existence) hold worlds or domains, worlds hold continents, continents can hold region groups, and domains can hold deeper domains. The app keeps that nesting. Each has a name, colour, icon and one-line description, a page, and a place in the sidebar under what holds it; records, maps and timeline events belong to one, and a campaign is set in a world. Rename a realm and everything follows; archive one to hide it without touching its records. In the Worldkeeper setting, The World sits in the realm of Evershroud with Aetheris and Kaelmar as its continents, and the Ethereal Realm is a realm beside Evershroud, holding the Hollow Verge with its six deeper domains beneath it, all built the same way. Players only ever see realms that hold something you've revealed.
+Your cosmos is yours to define (**Codex → Worlds & Realms**): realms (planes of existence) hold worlds or domains, worlds hold continents, continents can hold region groups, and domains can hold deeper domains. The app keeps that nesting. Each has a name, colour, icon and one-line description, a page, and a place in the sidebar under what holds it; records, maps and timeline events belong to one, and a campaign is set in a world. Rename a realm and everything follows; archive one to hide it without touching its records. In the Worldkeeper world, The World sits in the realm of Evershroud with Aetheris and Kaelmar as its continents, and the Ethereal Realm is a realm beside Evershroud, holding the Hollow Verge with its six deeper domains beneath it, all built the same way. Players only ever see realms that hold something you've revealed.
 
 ## Record types and templates
 
 Every kind of record (settlement, NPC, faction, deity...) knows what it is: a place, a group, a person, something you can carry. The app uses that, not a fixed list, so a type you add yourself works everywhere a built-in one does: on maps, in pickers, on the handbook. Add your own in **Library → Templates** (a Tavern, a Starship), with its own ID prefix.
 
-Each type has a **template**: the facts it should have (a town's population and who rules it; an NPC's pronouns, looks and manner) and its sections, each with guidance on what to write and an example from the Worldkeeper setting. Sections marked GM only are never shown to players. Duplicate any template to make it your own and change it as you like; a change affects only new records.
+Each type has a **template**: the facts it should have (a town's population and who rules it; an NPC's pronouns, looks and manner) and its sections, each with guidance on what to write and an example from the Worldkeeper world. Sections marked GM only are never shown to players. Duplicate any template to make it your own and change it as you like; a change affects only new records.
 
 ## Making a record
 
@@ -85,13 +85,13 @@ Either way you get the same record. A section you skipped stays as its heading w
 
 **Canon.** In a world of your own, new records are Canon at once; you can still mark one Proposed while you're unsure of it. A library built from an imported archive keeps **Canon Review**: new records start Proposed until you approve them, which protects the source. Change it in **Settings → Canon → Approve new records in Canon Review**.
 
-## Setting packs
+## Worldbooks
 
-A setting is a pack you can add to your library or leave out: its realms, record types, templates, records, maps, adventures, tables and tools. **Library → Setting packs** installs, updates and removes them, taking a backup first each time. Updating brings in what's new without touching your own records; removing takes out only what the pack brought. If one of your records already has an ID the pack uses, yours is kept and the page tells you. The Worldkeeper setting is the first pack; a library without it is plain D&D, with none of its tools in the menus.
+A worldbook is a whole world you can add to your library or leave out: its realms, record types, templates, records, maps, adventures, tables and tools. **Library → Worldbooks** adds, updates and removes them, taking a backup first each time. Updating brings in what's new without touching your own records; removing takes out only what the pack brought. If one of your records already has an ID the pack uses, yours is kept and the page tells you. The Worldkeeper worldbook is the first; a library without it is plain D&D, with none of its tools in the menus.
 
 ## Calendars
 
-Each world has its own calendar: its months and how long they are, days outside the months (an equinox, a festival day), weekdays, seasons, moons, how years are written ("1247 AR", or "300 AB" with "Year 31 Unbound" alongside), and its yearly festivals. A setting pack brings its own (the Worldkeeper setting's 363-day year of Aetheris and Kaelmar); a world of your own starts with twelve months of thirty days, and **Campaign → Calendar → The world's calendar** switches it to one like ours, back to a pack's, or to one you write out yourself, line by line.
+Each world has its own calendar: its months and how long they are, days outside the months (an equinox, a festival day), weekdays, seasons, moons, how years are written ("1247 AR", or "300 AB" with "Year 31 Unbound" alongside), and its yearly festivals. A setting pack brings its own (the Worldkeeper world's 363-day year of Aetheris and Kaelmar); a world of your own starts with twelve months of thirty days, and **Campaign → Calendar → The world's calendar** switches it to one like ours, back to a pack's, or to one you write out yourself, line by line.
 
 A campaign's date is kept as a year and a day, so changing the calendar keeps every campaign where it was; only how the date reads changes. The campaign's page sets where it started and where it is now with the calendar's own months; the Calendar page, travel, the session briefing, the players' calendar and the party export all read the world's calendar.
 
@@ -183,21 +183,21 @@ Other table tools include a DM screen, NPC quick-reference cards, faction agenda
 
 Rules reference entries use labels: `OFFICIAL`, `HOMEBREW`, `OUTSIDE 2024 CORE` or `UNVERIFIED`. Worldkeeper does not bundle purchased rulebooks or licensed monster stat blocks.
 
-## Modules: a standard D&D campaign, or the Worldkeeper setting
+## Modules: a standard D&D campaign, or the Worldkeeper world
 
-The app runs as a plain D&D 2024 campaign tool with whatever books you import. Optional features are **modules**: a setting pack switches on its own, and you can switch any of them on or off for your own world in **Settings → Modules**, for the whole library or for one campaign.
+The app runs as a plain D&D 2024 campaign tool with whatever books you import. Optional features are **modules**: a worldbook switches on its own, and you can switch any of them on or off for your own world in **Settings → Modules**, for the whole library or for one campaign.
 
 | Module | What it covers |
 | --- | --- |
 | Thinning, true names and memories | The Thinning tab on sheets and character pages, with true names, named memories and Shardscarred |
-| The Return (a clock) | A clock for the GM, with stages, omens and a jump from the setting pack; its signs and omens for players |
+| The Return (a clock) | A clock for the GM, with stages, omens and a jump from the worldbook; its signs and omens for players |
 | Fading salvage | Treasure from some regions fades unless it's anchored |
 | The setting's treasure | The Treasure tool's regional tables and the world's own items. Off: it rolls from your books |
 | Vaults | The sealed vaults page: keys, conditions and state per campaign |
 | Shards | The shards page: holders, locations and state per campaign |
 | Depths explorer | A realm of layered domains, from the border to the deep |
 | Quick reference | The setting's own one-page reference |
-| Renown | Faction standing, with ranks from the setting pack (or a plain ladder: Hostile, Unfriendly, Neutral, Friendly, Honoured, Revered) |
+| Renown | Faction standing, with ranks from the worldbook (or a plain ladder: Hostile, Unfriendly, Neutral, Friendly, Honoured, Revered) |
 
 A switched-off module leaves the menus, the sheets, the player view and the published handbook, and its pages and actions are refused. Nothing is deleted: its data stays, and comes back when you switch it on. A library without a setting pack starts with every module off. Your players' own notes are always on their character page, in their own tab.
 
@@ -205,10 +205,10 @@ A switched-off module leaves the menus, the sheets, the player view and the publ
 
 - **Character options.** The sheet and the builder list the world's peoples, classes and backgrounds first, then every other species, class, subclass and background in your rules packs. With no world pages, the books' options are the whole list.
 - **Species and Classes in the handbook.** The Classes tab lists every class in the rules in use: a class with a page of its own (the setting's callings) shows that page; the others show their hit die, saves, skills, features by level and subclasses from the rules. A handbook with nothing revealed yet still offers Species and Classes and the character builder.
-- **Treasure.** The Treasure tool rolls at any place in your world: a place your setting pack covers uses its regional tables (when the setting's treasure is on); anywhere else rolls magic items by tier and rarity from the SRD and your books, with gems and art objects for goods, scaled by the place's **Wealth** (a poor place has half the coin and an item fewer; a rich one double the coin and an item more). The 2024 treasure tiers belong to the rules, not to any setting.
-- **Encounters.** Your Books → Encounters, and "Suggest from your books" in a live session, offer groups of creatures for the party's level within the Dungeon Master's Guide (2024) XP budget, in a place's terrain. A place's **Terrain**, **Danger** and **Wealth** are facts on its record (forest, hills, coast…; safe, risky or deadly; poor, modest or rich), and a place takes any it doesn't give from the place it's in; a setting pack can give terrain for its own places (the Worldkeeper setting's `encounters/terrain.json`). Danger sets the difficulty. "Put in the tracker" makes it an encounter, with HP, AC, initiative and stat blocks filled in.
+- **Treasure.** The Treasure tool rolls at any place in your world: a place your worldbook covers uses its regional tables (when the setting's treasure is on); anywhere else rolls magic items by tier and rarity from the SRD and your books, with gems and art objects for goods, scaled by the place's **Wealth** (a poor place has half the coin and an item fewer; a rich one double the coin and an item more). The 2024 treasure tiers belong to the rules, not to any setting.
+- **Encounters.** Your Books → Encounters, and "Suggest from your books" in a live session, offer groups of creatures for the party's level within the Dungeon Master's Guide (2024) XP budget, in a place's terrain. A place's **Terrain**, **Danger** and **Wealth** are facts on its record (forest, hills, coast…; safe, risky or deadly; poor, modest or rich), and a place takes any it doesn't give from the place it's in; a setting pack can give terrain for its own places (the Worldkeeper world's `encounters/terrain.json`). Danger sets the difficulty. "Put in the tracker" makes it an encounter, with HP, AC, initiative and stat blocks filled in.
 - **Encounter tables for any region.** A region's panel on the map has **Make a table**: eight rows of creatures from the rules packs you have on, for its terrain and danger and the party's level. **Regenerate** rebuilds it; **Copy to edit** makes it your own. Hand-made tables (a pack's or yours) come first, and a journey that rolls encounters where there is no table gets one made. Random tables now belong to a region and a band of levels.
-- **The setting's rules.** The Worldkeeper setting brings its own rules pack (84 creatures, 8 hazards and 34 items, CC BY 4.0), switched on when you install the setting and off when you remove it; you can also turn it on in any library in Settings → Rules packs. Its stat block cards show only while it's on. With Thinning switched off, its few Thinning-based entries use standard-rules versions.
+- **The worldbook's rules.** The Worldkeeper worldbook brings its own rules pack (84 creatures, 8 hazards and 34 items, CC BY 4.0), switched on when you add the worldbook and off when you remove it; you can also turn it on in any library in Settings → Rules packs. Its stat block cards show only while it's on. With Thinning switched off, its few Thinning-based entries use standard-rules versions.
 - **Stat blocks of your own.** A creature or NPC of yours can have a stat block: a block from the SRD or your books, with what's different about this one and how it fights. It shows on its page and in the encounter tracker.
 - **Open rules for players.** An openly licensed pack (CC BY, OGL, CC0, ORC) can be published: tick Publish to players, and its options join the SRD in the published handbook's character builder. Packs from your own books never are.
 - **Open content.** Settings → Rules packs → Add open content from Open5e brings in openly licensed sources (Level Up A5E, Kobold Press and others), each as its own pack with its licence.
@@ -218,11 +218,11 @@ A switched-off module leaves the menus, the sheets, the player view and the publ
 
 ## Libraries: more than one world
 
-One installation holds several **libraries**. Each is a world (or set of worlds) of its own: its own records, campaigns, settings, backups and handbook. Your books' rules and installed setting packs are shared, so they're imported once; each library chooses which it uses. A book you import is on in the library that's open and off in the others until you tick it there.
+One installation holds several **libraries**. Each is a world (or set of worlds) of its own: its own records, campaigns, settings, backups and handbook. Your books' rules and worldbooks are shared, so they're imported once; each library chooses which it uses. A book you import is on in the library that's open and off in the others until you tick it there.
 
 - **The Library menu** (the gear, top right) names the open library and lists the others to open. **New library…** makes one and opens it with **Start your world**.
 - **Library → Libraries** manages them: rename, **Duplicate** (a copy of the records, campaigns, settings and pictures, to try something risky in), **Archive** (hidden from the list, its files kept; **Restore** brings it back), and **Show in folder** in the desktop app.
-- **Open a library from a file** turns a full-world ZIP (**Import and Export → Full world**) into a new library: how a world goes to a co-GM or another computer.
+- **Open a library from a file** turns a full-world ZIP (**Add and Share → Full world**) into a new library: how a world goes to a co-GM or another computer.
 - Backups and restores are each library's own. **Back up everything** keeps every library and your books' rules and packs in one file; **Open everything from a file** adds them to another installation. The table server serves the library that's open.
 - **The desktop app** opens the last library; with several, its start asks which.
 
@@ -230,13 +230,13 @@ One installation holds several **libraries**. Each is a world (or set of worlds)
 
 The **Library** menu (the gear, top right) holds import preview, confirmation and history, exports, Canon Review, broken-reference reporting, change history, backup and restore, and app settings.
 
-**Canon controls:** Changes are versioned with reasons. Edited canonical records can be reviewed using diffs and either approved or reverted. Where Canon Review is on (an imported archive or the Worldkeeper setting, or by choice in **Settings → Canon**), new entries start `PROPOSED`; in your own world they are Canon at once. Campaign overlays do not silently promote local developments to universal canon. Protected setting bibles and original references are retained verbatim.
+**Canon controls:** Changes are versioned with reasons. Edited canonical records can be reviewed using diffs and either approved or reverted. Where Canon Review is on (an imported archive or the Worldkeeper world, or by choice in **Settings → Canon**), new entries start `PROPOSED`; in your own world they are Canon at once. Campaign overlays do not silently promote local developments to universal canon. Protected setting bibles and original references are retained verbatim.
 
 **Import controls:** Preview handles duplicates, source precedence, redirects, templates, edits made locally, and unavailable references. Unchanged entries stay untouched, and disappearing source entries are not automatically removed.
 
 **Exports are complete:** the JSON export holds every table; a Markdown export brings back its realms, templates, canon flags and reveals when imported again; a full-world ZIP loads into an empty library with its pictures; a campaign export carries everything the campaign keeps, names what it needs, and reports what an importing library lacks.
 
-**Setting packs:** **Library → Setting packs** installs, updates and removes a whole setting. What a pack ships is marked as the pack's, so an update or an uninstall never touches your own records. See [Writing a setting pack](SETTING_PACKS.md).
+**Worldbooks:** **Library → Worldbooks** adds, updates and removes a whole world. What a pack ships is marked as the pack's, so an update or an uninstall never touches your own records. See [Writing a worldbook](WORLDBOOKS.md).
 
 For the detailed import/export and restore workflow, see [Data, Imports, Backups & Exports](DATA.md).
 

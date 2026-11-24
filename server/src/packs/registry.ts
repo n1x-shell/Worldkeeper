@@ -150,7 +150,7 @@ export function syncInstalledPacks(db: DB) {
 /** Add a pack to this library: its definitions now; its content with its first update (packs/content.ts). */
 export function installPack(db: DB, id: string): PackManifest {
   const found = findPack(id);
-  if (!found) throw notFound('Setting pack');
+  if (!found) throw notFound('Worldbook');
   if (!isInstalled(db, id)) {
     db.prepare('INSERT INTO setting_packs (id, name, version) VALUES (?, ?, ?)').run(id, found.manifest.name, found.manifest.version);
     // A setting brings its own rules (creatures, hazards, items): on with it, unless the GM had already chosen.
@@ -231,5 +231,5 @@ export function roles(db: DB): Record<string, string> {
 
 /** Whether a pack's own action (its update, its handbook match...) may run here: only with the pack installed. */
 export function requirePack(db: DB, id: string) {
-  if (!isInstalled(db, id)) throw badRequest(`This needs the setting pack "${findPack(id)?.manifest.name ?? id}", which this library doesn't have. Install it in Library → Setting packs.`);
+  if (!isInstalled(db, id)) throw badRequest(`This needs the worldbook "${findPack(id)?.manifest.name ?? id}", which this library doesn't have. Add it in Library → Worldbooks.`);
 }

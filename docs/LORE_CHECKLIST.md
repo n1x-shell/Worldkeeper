@@ -32,7 +32,7 @@ Everything found in the lore audit (November 2026), as one list. Ticked items ar
 
 ## 4. Things to start tracking
 
-- [x] Bring the Worldkeeper additions into your own app: **Import and Export → Apply additions** (backs up first; archive records are untouched). The desktop app carries the additions with it
+- [x] Bring the Worldkeeper additions into your own app: **Add and Share → Apply additions** (backs up first; archive records are untouched). The desktop app carries the additions with it
 
 - [x] Rumours (see "Do first")
 - [x] Secrets, their clues, and which NPC knows what: Mysteries and Secrets (World → Mysteries and Secrets, and a Secrets panel on every record). 10 mysteries, 50 secrets and 99 drafted clues (rumours, people who know, places, items), with the party's progress per campaign: unknown, suspected or known, and clues found.

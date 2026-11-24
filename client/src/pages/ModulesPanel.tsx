@@ -46,7 +46,7 @@ export function ModulesPanel() {
   return (
     <Card title="Modules" icon={<Puzzle size={14} />} className="space-y-3">
       <p className="text-sm text-dim">
-        Optional features. A setting pack switches on its own; switch any of them on or off for your world. A switched-off module leaves the menus, sheets, the player view and the handbook, and
+        Optional features. A worldbook switches on its own; switch any of them on or off for your world. A switched-off module leaves the menus, sheets, the player view and the handbook, and
         nothing is deleted: switch it back on and it&apos;s all still there.
       </p>
       <ul className="space-y-3">
@@ -56,7 +56,7 @@ export function ModulesPanel() {
           return (
             <li key={m.key} className="space-y-1">
               <Toggle checked={libOn} disabled={busy} onChange={(v) => void change(() => api.put('/api/modules', { [m.key]: v === m.fromPack ? null : v }))} hint={m.about}>
-                <span className="font-medium">{m.label}</span> {m.fromPack && <Badge tone="arcane">From your setting pack</Badge>}
+                <span className="font-medium">{m.label}</span> {m.fromPack && <Badge tone="arcane">From your worldbook</Badge>}
               </Toggle>
               {campaign && (
                 <div className="flex flex-wrap items-center gap-2 pl-12 text-xs text-dim">

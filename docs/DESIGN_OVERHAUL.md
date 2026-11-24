@@ -104,7 +104,7 @@ Every one of today's 66 sidebar links has a home. URLs don't change; only where 
 - *Reference:* Rules Reference, Quick Reference (when on), Random Tables
 
 **Library menu (gear, top right): maintenance**
-- Search (full page), Publish for Players, Import and Export, Canon Review, Consistency Check, Open Questions, Change History, Backups, Settings
+- Search (full page), Publish for Players, Add and Share, Canon Review, Consistency Check, Open Questions, Change History, Backups, Settings
 - In debug mode only: Broken References, Source Documents
 
 Mechanics gating stays as it is: pages for the setting's mechanics appear only while those mechanics are switched on.

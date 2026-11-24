@@ -143,7 +143,7 @@ export function TemplatesPage() {
               <div className="flex flex-wrap items-center gap-1.5 text-sm">
                 <Badge>New IDs: {current.prefix}-0001</Badge>
                 <Badge>{(current.records ?? 0).toLocaleString('en')} records</Badge>
-                {current.pack && <Badge tone="gold">Worldkeeper setting</Badge>}
+                {current.pack && <Badge tone="gold">Worldkeeper worldbook</Badge>}
                 {(Object.keys(TRAIT_LABEL) as (keyof TypeTraits)[])
                   .filter((k) => current.traits[k])
                   .map((k) => (

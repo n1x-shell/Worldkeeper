@@ -83,7 +83,7 @@ export function libraryRoutes(ctx: AppContext) {
       const source = req.file.originalname.replace(/[^\w. -]/g, '_') + (part ? ` (part ${part[1]} of ${part[2]})` : '');
       // A part names the setting the whole archive belongs to (the check found it), so every part reads the same way.
       const pack = typeof req.query.pack === 'string' && req.query.pack ? req.query.pack : undefined;
-      if (pack && !findPack(pack)) throw badRequest('Unknown setting pack');
+      if (pack && !findPack(pack)) throw badRequest('Unknown worldbook');
       const plan = buildPlan(ctx.db, files, source, pack ? { packId: pack } : {});
       const token = randomBytes(12).toString('hex');
       staging.set(token, { files, plan, created: Date.now(), sidecar: readSidecar(req.file.buffer) });

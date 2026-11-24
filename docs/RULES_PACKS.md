@@ -51,11 +51,11 @@ Any combination of books works, from one book to every book in the copy, adventu
 
 Items are found by the names people write: "Weapon, +1" finds "+1 Weapon", "Moon-Touched Sword (XGE)" drops the book code, "2 Daggers" finds the Dagger, and "Flame Tongue Longsword" finds Flame Tongue, with the Longsword's own rules.
 
-## The Worldkeeper setting pack
+## The Worldkeeper worldbook's rules
 
-A second built-in pack, **The Worldkeeper setting**, holds the setting's own creatures and items for use in any campaign: 84 creatures and 8 hazards, and 34 items (the Aetheris and Kaelmar treasures, with their rules). It's off until you turn it on in **Settings → Rules packs**.
+A second built-in pack, **The Worldkeeper worldbook**, holds the world's own creatures and items for use in any campaign: 84 creatures and 8 hazards, and 34 items (the Aetheris and Kaelmar treasures, with their rules). It's off until you turn it on in **Settings → Rules packs**.
 
-When the **Thinning** mechanic is switched off, the few entries that use Thinning, true names or Shardscarred use standard-rules versions instead (for example, the Glass's Thinning save becomes a DC 15 Charisma save that costs a level of Exhaustion and a memory). The pack is licensed CC BY 4.0, credited "The Worldkeeper setting pack, by the Worldkeeper contributors"; see `packs/worldkeeper/rules/README.md`.
+When the **Thinning** mechanic is switched off, the few entries that use Thinning, true names or Shardscarred use standard-rules versions instead (for example, the Glass's Thinning save becomes a DC 15 Charisma save that costs a level of Exhaustion and a memory). The pack is licensed CC BY 4.0, credited "The Worldkeeper worldbook, by the Worldkeeper contributors"; see `packs/worldkeeper/rules/README.md`.
 
 ## Open content from Open5e
 

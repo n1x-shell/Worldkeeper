@@ -66,7 +66,7 @@ export function StandingPage() {
       <PageHeader
         title="Faction Standing"
         subtitle="The party's Renown with each faction, and what each rank brings."
-        note={`Ranks: ${ladder.ranks.map((k) => `${k.name} ${Number.isFinite(k.from) ? k.from : `${k.to} or less`}`).join(', ')}. Your setting pack sets the ladder; edit what a rank brings in the faction's Standing record.`}
+        note={`Ranks: ${ladder.ranks.map((k) => `${k.name} ${Number.isFinite(k.from) ? k.from : `${k.to} or less`}`).join(', ')}. Your worldbook sets the ladder; edit what a rank brings in the faction's Standing record.`}
       />
       <div className="flex flex-wrap items-end gap-2">
         <div className="w-72">

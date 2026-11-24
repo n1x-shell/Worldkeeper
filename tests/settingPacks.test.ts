@@ -196,7 +196,7 @@ describe('setting packs', () => {
     ] as const) {
       const res = await request(app)[method](url);
       expect(res.status, url).toBe(400);
-      expect(res.body.error).toMatch(/setting pack/);
+      expect(res.body.error).toMatch(/worldbook/);
     }
     // The consistency checker still runs, without the pack's treasure checks.
     const report = await request(app).get('/api/library/consistency');

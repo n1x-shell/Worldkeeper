@@ -15,7 +15,7 @@ The data folder (`./data` by default) holds one or more **libraries**. Each is a
 | `data/libraries/<id>/uploads/` | Its uploaded images |
 | `data/libraries/<id>/backups/` | Its versioned `.wkbackup.zip` backup archives |
 | `data/shared/rules.db` | Your books' rules (rules packs), imported once for every library |
-| `data/shared/packs/` | Installed setting packs, shared by every library |
+| `data/shared/packs/` | Worldbooks added to this computer, shared by every library |
 | `data/shared/secrets.json` | The publishing token, shared by every library |
 
 The base path is controlled by `WORLDKEEPER_DATA_DIR` (default `./data` for the Node-based run). Desktop installations use the OS application-data location described in [DESKTOP.md](DESKTOP.md). The local data directory is git-ignored.
@@ -24,13 +24,13 @@ The base path is controlled by `WORLDKEEPER_DATA_DIR` (default `./data` for the 
 
 Make, open, rename, duplicate and archive libraries in **Library → Libraries** (and switch from the Library menu). **Open a library from a file** makes a new library from a full-world ZIP. Backups and restores are per library: restoring one never touches another. A library's backup holds its own database and pictures, not what's in `shared/`.
 
-**Back up everything** (**Library → Libraries**) downloads one file with every library (its database and pictures) and what they share: your books' rules and installed setting packs. It leaves out the publishing token and each library's own backups. **Open everything from a file** adds, never replaces: each library in it becomes a new library (named "… (from file)" where the name is taken), books' rules this installation lacks or has an older copy of are added (each library's own switches kept), and setting packs it lacks are added. That's how a whole installation moves to a new computer. From v0.5.6, a library's rules from before (or in a backup made then) move into `shared/rules.db` when it opens, its switches staying with it; packs and the token move from the data folder into `shared/` on the first start. The table server (`npm run start:player`) serves whichever library is open in the GM app, and switches when it does.
+**Back up everything** (**Library → Libraries**) downloads one file with every library (its database and pictures) and what they share: your books' rules and worldbooks. It leaves out the publishing token and each library's own backups. **Open everything from a file** adds, never replaces: each library in it becomes a new library (named "… (from file)" where the name is taken), books' rules this installation lacks or has an older copy of are added (each library's own switches kept), and setting packs it lacks are added. That's how a whole installation moves to a new computer. From v0.5.6, a library's rules from before (or in a backup made then) move into `shared/rules.db` when it opens, its switches staying with it; packs and the token move from the data folder into `shared/` on the first start. The table server (`npm run start:player`) serves whichever library is open in the GM app, and switches when it does.
 
 GitHub publishing credentials are held separately in `shared/secrets.json` in the data folder and are not intended to be included in ordinary database backups and exports. Protect this file from unauthorized access.
 
 ## Importing Markdown lore
 
-In **Library (the gear, top right) → Import and Export**, select a ZIP archive, preview changes, and confirm only after examining the report.
+In **Library (the gear, top right) → Add and Share**, select a ZIP archive, preview changes, and confirm only after examining the report.
 
 **Large archives:** before uploading, the app reads the ZIP's listing (from the end of the file; nothing is unpacked) and checks whether its text is too much to import in one go on this computer, or past an import's limits (300 MB of text, 20,000 files). Only then does it say so, and offer to **import it in parts**: the browser builds each part from the archive's own compressed bytes, so neither it nor the app holds the whole archive. Files stay with their folder, every part is read as the same setting and carries what all parts need (a setting's locator, a Worldkeeper export's realms and reveals), each part is previewed and confirmed like any import, one backup is made before the first, and the links between records in different parts are made after the last. The result is the same library as one import (checked on the Worldkeeper archive: records, links, timeline, source documents and realms identical). A single file over 8 MB can't be imported either way.
 

@@ -29,7 +29,7 @@ export function WorldCalendar({ onChanged }: { onChanged: () => void }) {
     <Card title="The world's calendar" icon={<CalendarCog size={14} />} className="space-y-3">
       {data.worlds.map((w) => {
         const c = w.calendar;
-        const source = c.pack_id ? 'From your setting pack' : c.id ? 'Your own' : 'The default';
+        const source = c.pack_id ? 'From your worldbook' : c.id ? 'Your own' : 'The default';
         return (
           <div key={w.id} className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">

@@ -13,7 +13,7 @@ describe('the Worldkeeper setting pack', () => {
       request(gm)
         .get('/api/rules/packs')
         .then((r) => r.body.find((p: { id: string }) => p.id === 'worldkeeper'));
-    expect(await pack()).toMatchObject({ name: 'The Worldkeeper setting', enabled: false, builtin: true, source: 'The Worldkeeper contributors, CC BY 4.0 (built in)' });
+    expect(await pack()).toMatchObject({ name: 'The Worldkeeper worldbook', enabled: false, builtin: true, source: 'The Worldkeeper contributors, CC BY 4.0 (built in)' });
     expect(bookCreature(ctx.db, 'wk:CRE-313')).toBeNull();
     await request(gm).patch('/api/rules/packs/worldkeeper').send({ enabled: true });
     const p = await pack();
@@ -21,7 +21,7 @@ describe('the Worldkeeper setting pack', () => {
     expect(p.counts.creature).toBe(92);
     expect(p.counts.item).toBe(34);
     expect((await request(gm).delete('/api/rules/packs/worldkeeper')).status).toBe(400);
-    expect(itemByName(ctx.db, "Widow's Ring")).toMatchObject({ rarity: 'uncommon', attunement: 'requires attunement', source: 'The Worldkeeper setting pack (CC BY 4.0)' });
+    expect(itemByName(ctx.db, "Widow's Ring")).toMatchObject({ rarity: 'uncommon', attunement: 'requires attunement', source: "The Worldkeeper worldbook's rules (CC BY 4.0)" });
     expect(itemByName(ctx.db, 'Name-thread')?.type).toBe('Wondrous Item');
   });
 
