@@ -1,3 +1,4 @@
+import { buildPart, commonRoot, listZip, measure, planParts, type ZipEntry, type ZipSource } from '@shared/zipParts';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Archive, Check, Download, RotateCcw, Upload, AlertTriangle, X, Pencil } from 'lucide-react';
@@ -34,10 +35,32 @@ interface PreviewResp {
   entities: { id: string; name: string; type: string; realm: string; action: string; note?: string }[];
 }
 
+/** A large archive imported in parts (v0.6.7): the parts, which one is showing, and what every part names. */
+interface PartsRun {
+  parts: ZipEntry[][];
+  index: number;
+  root: string;
+  pack: string | null;
+}
+interface ImportCheck {
+  large: boolean;
+  possible: boolean;
+  reason: string | null;
+  partTextBytes: number;
+  parts: number;
+  pack?: string | null;
+  everyPart?: string[];
+}
+
+const fileSource = (f: File): ZipSource => ({ size: f.size, read: async (o, l) => new Uint8Array(await f.slice(o, o + l).arrayBuffer()) });
+
 export function ImportExportPage() {
   const debug = useDebug();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<PreviewResp | null>(null);
+  // Large archives: what the check found, and the parts being imported.
+  const [large, setLarge] = useState<{ check: ImportCheck; entries: ZipEntry[]; root: string } | null>(null);
+  const [run, setRun] = useState<PartsRun | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [resolutions, setResolutions] = useState<Record<string, 'keep-local' | 'take-source'>>({});
@@ -45,6 +68,13 @@ export function ImportExportPage() {
   const [tab, setTab] = useState<'import' | 'export'>('import');
   const { reloadIndex, reloadMeta } = useAppState();
   const { data: runs, reload: reloadRuns } = useApi<{ id: number; source_name: string; status: string; started_at: string; backup_file: string | null }[]>('/api/import/runs');
+  /** Build one part in the browser (its files' compressed bytes copied as they are) and preview it. */
+  const previewPart = async (r: PartsRun) => {
+    const chunks = await buildPart(fileSource(file!), r.parts[r.index]);
+    const part = new File(chunks as BlobPart[], file!.name, { type: 'application/zip' });
+    const q = `root=${encodeURIComponent(r.root)}&part=${r.index + 1}/${r.parts.length}${r.pack ? `&pack=${encodeURIComponent(r.pack)}` : ''}`;
+    setPreview(await api.upload<PreviewResp>(`/api/import/preview?${q}`, 'archive', part));
+  };
 
   return (
     <div className="space-y-4">
@@ -64,7 +94,7 @@ export function ImportExportPage() {
           <AdditionsPanel onDone={(msg) => (setDone(msg), reloadIndex(), reloadMeta(), void reloadRuns())} />
           <Card className="flex flex-wrap items-end gap-3">
             <Field label="World archive (.zip of Markdown files)">
-              <input type="file" accept=".zip,application/zip" onChange={(e) => (setFile(e.target.files?.[0] ?? null), setPreview(null), setDone(null))} />
+              <input type="file" accept=".zip,application/zip" onChange={(e) => (setFile(e.target.files?.[0] ?? null), setPreview(null), setDone(null), setLarge(null), setRun(null))} />
             </Field>
             <button
               className="btn-primary"
@@ -73,6 +103,22 @@ export function ImportExportPage() {
                 setBusy(true);
                 setErr(null);
                 try {
+                  // First the archive's listing (read from the end of the file; nothing is unpacked or uploaded): is
+                  // it too big to import in one go on this computer?
+                  let entries: ZipEntry[] | null = null;
+                  try {
+                    entries = await listZip(fileSource(file!));
+                  } catch {
+                    entries = null; // not readable here: let the server say what's wrong with it
+                  }
+                  if (entries) {
+                    const root = commonRoot(entries);
+                    const check = await api.post<ImportCheck>('/api/import/check', { ...measure(entries, file!.size), root, paths: entries.map((e) => e.name) });
+                    if (check.large) {
+                      setLarge({ check, entries, root });
+                      return;
+                    }
+                  }
                   setPreview(await api.upload<PreviewResp>('/api/import/preview', 'archive', file!));
                 } catch (x) {
                   setErr((x as Error).message);
@@ -87,6 +133,56 @@ export function ImportExportPage() {
               Also available from the command line: <code>npm run import -- path/to/archive.zip</code> (add <code>--dry-run</code> to preview only).
             </p>
           </Card>
+          {large && !run && (
+            <div data-testid="large-import">
+              <Card className="space-y-2 border-warn/50">
+                <div className="font-display text-gold">A large archive</div>
+                <p className="text-sm">
+                  {large.check.reason}{' '}
+                  {large.check.possible
+                    ? `Import it in ${planParts(large.entries, { textBytes: large.check.partTextBytes, root: large.root, everyPart: large.check.everyPart }).length} parts: each is previewed and confirmed like any import, one after another, and the links between records in different parts are made at the end.`
+                    : 'It can’t be imported as it is.'}
+                </p>
+                <div className="flex gap-2">
+                  {large.check.possible && (
+                    <button
+                      className="btn-primary"
+                      disabled={busy}
+                      onClick={async () => {
+                        const r: PartsRun = {
+                          parts: planParts(large.entries, { textBytes: large.check.partTextBytes, root: large.root, everyPart: large.check.everyPart }),
+                          index: 0,
+                          root: large.root,
+                          pack: large.check.pack ?? null,
+                        };
+                        setBusy(true);
+                        setErr(null);
+                        try {
+                          setRun(r);
+                          await previewPart(r);
+                        } catch (x) {
+                          setErr((x as Error).message);
+                          setRun(null);
+                        } finally {
+                          setBusy(false);
+                        }
+                      }}
+                    >
+                      <Upload size={14} /> Import in parts
+                    </button>
+                  )}
+                  <button className="btn" onClick={() => setLarge(null)}>
+                    Cancel
+                  </button>
+                </div>
+              </Card>
+            </div>
+          )}
+          {run && preview && (
+            <div className="text-sm text-gold" data-testid="import-part">
+              Part {run.index + 1} of {run.parts.length}
+            </div>
+          )}
           {preview && <ImportPreview p={preview} resolutions={resolutions} setResolutions={setResolutions} />}
           {preview && (
             <div className="flex gap-2">
@@ -100,9 +196,23 @@ export function ImportExportPage() {
                     const r = await api.post<{
                       result: { created: number; updated: number; unchanged: number; conflictsKept: number; conflictsReplaced: number; relationships: number };
                       backup: { file: string } | null;
-                    }>('/api/import/commit', { token: preview.token, resolutions });
+                    }>('/api/import/commit', { token: preview.token, resolutions, ...(run ? { part: run.index + 1 } : {}) });
+                    if (run && run.index + 1 < run.parts.length) {
+                      // On to the next part: built and previewed the same way.
+                      const next = { ...run, index: run.index + 1 };
+                      setRun(next);
+                      setResolutions({});
+                      await previewPart(next);
+                      return;
+                    }
+                    if (run) {
+                      // The last part: links between records in different parts are made now.
+                      await api.post('/api/import/relink', {});
+                      setRun(null);
+                      setLarge(null);
+                    }
                     setDone(
-                      `Import complete: ${r.result.created} created, ${r.result.updated} updated, ${r.result.unchanged} unchanged, ${r.result.conflictsKept} conflicts kept local, ${r.result.conflictsReplaced} replaced from source. ${r.result.relationships} relationships.${r.backup ? ` Backup first: ${r.backup.file}.` : ''}`,
+                      `${run ? `All ${run.parts.length} parts imported, and the links between them made. Last part: ` : ''}Import complete: ${r.result.created} created, ${r.result.updated} updated, ${r.result.unchanged} unchanged, ${r.result.conflictsKept} conflicts kept local, ${r.result.conflictsReplaced} replaced from source. ${r.result.relationships} relationships.${r.backup ? ` Backup first: ${r.backup.file}.` : ''}`,
                     );
                     setPreview(null);
                     await reloadIndex();
@@ -117,10 +227,10 @@ export function ImportExportPage() {
                   }
                 }}
               >
-                <Check size={14} /> Confirm import
+                <Check size={14} /> {run ? (run.index + 1 < run.parts.length ? `Confirm part ${run.index + 1} and go on` : 'Confirm the last part') : 'Confirm import'}
               </button>
-              <button className="btn" onClick={() => setPreview(null)}>
-                Cancel
+              <button className="btn" onClick={() => (setPreview(null), run && (setRun(null), setLarge(null), void api.post('/api/import/relink', {})))}>
+                {run ? 'Stop here' : 'Cancel'}
               </button>
             </div>
           )}

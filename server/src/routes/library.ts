@@ -5,6 +5,9 @@ import { consistencyReport } from '../repo/consistency.js';
 import { openQuestions } from '../repo/openQuestions.js';
 import multer from 'multer';
 import { libraryEntry } from '../libraries.js';
+import { assessImport } from '../import/largeImport.js';
+import { packForFiles } from '../import/importer.js';
+import { rebuildAllDerivedRelationships } from '../repo/relationships.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { randomBytes } from 'node:crypto';
@@ -24,7 +27,7 @@ import { listModules, setLibraryModules } from '../repo/modules.js';
 import { importOpen5e, open5eDocuments } from '../repo/open5e.js';
 import { isDesktop, openInBrowser } from '../lib/desktop.js';
 import { handbookReveals } from '../player/handbookReveals.js';
-import { installPack, isInstalled, listPacks as listSettingPacks, requirePack, roles, uninstallPack } from '../packs/registry.js';
+import { findPack, installPack, isInstalled, listPacks as listSettingPacks, requirePack, roles, uninstallPack } from '../packs/registry.js';
 import { updatePack } from '../packs/content.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 300 * 1024 * 1024, files: 1 } });
@@ -68,13 +71,20 @@ export function libraryRoutes(ctx: AppContext) {
       sweep();
       if (!req.file) throw badRequest('Choose a ZIP archive of Markdown files');
       let files: SourceFile[];
+      // A part of a large archive (v0.6.7) names the whole archive's root folder and which part it is.
+      const root = typeof req.query.root === 'string' ? req.query.root.slice(0, 300) : undefined;
+      const part = /^(\d+)\/(\d+)$/.exec(String(req.query.part ?? ''));
       try {
-        files = readZip(req.file.buffer);
+        files = readZip(req.file.buffer, root === undefined ? {} : { root });
       } catch (e) {
         throw badRequest(`Could not read archive: ${(e as Error).message}`);
       }
       if (!files.length) throw badRequest('No Markdown (.md) files were found in the archive');
-      const plan = buildPlan(ctx.db, files, req.file.originalname.replace(/[^\w. -]/g, '_'));
+      const source = req.file.originalname.replace(/[^\w. -]/g, '_') + (part ? ` (part ${part[1]} of ${part[2]})` : '');
+      // A part names the setting the whole archive belongs to (the check found it), so every part reads the same way.
+      const pack = typeof req.query.pack === 'string' && req.query.pack ? req.query.pack : undefined;
+      if (pack && !findPack(pack)) throw badRequest('Unknown setting pack');
+      const plan = buildPlan(ctx.db, files, source, pack ? { packId: pack } : {});
       const token = randomBytes(12).toString('hex');
       staging.set(token, { files, plan, created: Date.now(), sidecar: readSidecar(req.file.buffer) });
       return {
@@ -91,7 +101,9 @@ export function libraryRoutes(ctx: AppContext) {
       const staged = staging.get(String(req.body?.token ?? ''));
       if (!staged) throw badRequest('Import preview expired. Upload the archive again.');
       const hasData = (ctx.db.prepare('SELECT COUNT(*) n FROM entities').get() as { n: number }).n > 0;
-      const backup = hasData ? createBackup(ctx.db, ctx.paths, 'pre-import') : null;
+      // A large archive in parts: one backup, before its first part.
+      const laterPart = Number(req.body?.part) > 1;
+      const backup = hasData && !laterPart ? createBackup(ctx.db, ctx.paths, 'pre-import') : null;
       // A Worldkeeper Markdown export brings its realms (before the records) and its templates, canon and reveals (after).
       if (staged.sidecar) applySidecarRealms(ctx.db, staged.sidecar);
       const result = commitPlan(ctx.db, staged.files, staged.plan, { resolutions: req.body?.resolutions ?? {}, backupFile: backup?.file ?? null });
@@ -99,6 +111,28 @@ export function libraryRoutes(ctx: AppContext) {
       staging.delete(String(req.body.token));
       return { result, backup, ...(restored ? { restored } : {}) };
     }),
+  );
+  // Large imports: is this archive too big to import in one go here, and if so, how big should each part be?
+  r.post(
+    '/import/check',
+    h((req) => {
+      const b = (req.body ?? {}) as Record<string, unknown>;
+      const n = (k: string) => Math.max(0, Number(b[k]) || 0);
+      const a = assessImport({ files: n('files'), textBytes: n('textBytes'), archiveBytes: n('archiveBytes'), largestFile: n('largestFile') });
+      if (!a.large || !Array.isArray(b.paths)) return a;
+      // In parts: which setting's archive it is (from its file names only), and the files every part needs (its locator).
+      const root = typeof b.root === 'string' ? b.root : '';
+      const paths = (b.paths as unknown[]).map(String).slice(0, 200000);
+      const rel = (p: string) => (root && p.startsWith(root) ? p.slice(root.length) : p);
+      const pack = packForFiles(paths.map((p) => ({ path: rel(p), content: '' })));
+      const locator = pack?.importProfile?.locator ? new RegExp(pack.importProfile.locator, 'i') : null;
+      return { ...a, pack: pack?.id ?? null, everyPart: locator ? paths.filter((p) => locator.test(rel(p))) : [] };
+    }),
+  );
+  // After a large archive's last part: links between records in different parts, worked out again.
+  r.post(
+    '/import/relink',
+    h(() => ({ records: rebuildAllDerivedRelationships(ctx.db) })),
   );
   r.get(
     '/import/runs',
