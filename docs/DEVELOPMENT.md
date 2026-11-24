@@ -77,7 +77,7 @@ npm run audit
 npm run build
 ```
 
-CI runs all of these on every pull request. The linter is Oxlint because typescript-eslint doesn't support TypeScript 7 yet; rules that don't fit the codebase are switched off in `.oxlintrc.json` with the reason. Dependabot (`.github/dependabot.yml`) opens update pull requests: npm weekly, Cargo and GitHub Actions monthly, minor and patch updates grouped.
+CI runs all of these on every pull request, and the first-run wizard in a browser both ways (`e2e:first-run`, own world and the Worldkeeper setting without the archive, each on an empty data folder; screenshots and server logs are kept when it fails). The smoke test needs the archive, so it's run locally. The linter is Oxlint because typescript-eslint doesn't support TypeScript 7 yet; rules that don't fit the codebase are switched off in `.oxlintrc.json` with the reason. Dependabot (`.github/dependabot.yml`) opens update pull requests: npm weekly, Cargo and GitHub Actions monthly, minor and patch updates grouped.
 
 The second command adds import testing against a real archive, where configured. The regular tests use synthetic fixtures for import planning, deduplication, rollback, idempotency, edit/source protection, relationships, revision history, campaigns, recaps, player projection, backups and exports, maps, dice and initiative.
 

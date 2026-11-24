@@ -26,3 +26,39 @@ jobs:
       - run: npm test
       # Both builds: the GM app and the player site (npm run build typechecks first).
       - run: npm run build
+
+  # The first-run wizard in a real browser, both ways, each on an empty data folder: build your own world, and the
+  # Worldkeeper setting (without the archive, which never goes on GitHub). The smoke test needs the archive, so it stays
+  # a local check (docs/DEVELOPMENT.md).
+  e2e:
+    runs-on: ubuntu-latest
+    env:
+      PLAYWRIGHT_VERSION: 1.63.0
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # Playwright isn't a project dependency (it's installed where the tests run); its browser comes with it.
+      - run: npm install --no-save "playwright@$PLAYWRIGHT_VERSION" && npx playwright install --with-deps chromium
+      - name: First run, your own world
+        run: |
+          PORT=4310 WORLDKEEPER_DATA_DIR="$RUNNER_TEMP/own" NODE_ENV=production npx tsx server/src/index.ts > "$RUNNER_TEMP/own.log" 2>&1 &
+          for i in $(seq 60); do curl -sf http://127.0.0.1:4310/api/health > /dev/null && break; sleep 1; done
+          node scripts/e2e-first-run.mjs http://127.0.0.1:4310 own e2e-shots/own
+      - name: First run, the Worldkeeper setting
+        run: |
+          PORT=4311 WORLDKEEPER_DATA_DIR="$RUNNER_TEMP/setting" NODE_ENV=production npx tsx server/src/index.ts > "$RUNNER_TEMP/setting.log" 2>&1 &
+          for i in $(seq 60); do curl -sf http://127.0.0.1:4311/api/health > /dev/null && break; sleep 1; done
+          node scripts/e2e-first-run.mjs http://127.0.0.1:4311 setting e2e-shots/setting
+      - name: Server logs
+        if: failure()
+        run: cat "$RUNNER_TEMP"/*.log
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: e2e-screenshots
+          path: e2e-shots
