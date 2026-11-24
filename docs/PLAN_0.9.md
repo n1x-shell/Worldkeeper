@@ -40,6 +40,8 @@ Done in v0.8.3, for the creatures encounter tables roll. Stat blocks aren't shar
 
 ### v0.9.0: the world's own species
 
+Drafts written (November 2026): `packs/worldkeeper/lore/drafts/species/` (40 files and a review sheet, README.md), waiting for the owner's review.
+
 - **Drafts** (`packs/worldkeeper/lore/drafts/species/`): 40 open species rules in the 2024 format (creature type, size, speed, three or four traits, as the SRD's species are), written fresh in the world's voice and balanced against the SRD's nine. Never book text; each follows what its people page already says the people are like. Names: the people's alternate name where it has one (Cat-folk, Crow-folk, the Made); a proposed world name where it hasn't, for the owner to accept or change.
 - **Owner's review** of all 40 at once, before anything ships.
 - **Then:** the approved species join the Worldkeeper world's rules (CC BY 4.0, `packs/worldkeeper/rules/`), each people page names both ("Use the tabaxi rules; without the book, the cat-folk rules"), and the sheet and builder use the book's species when the GM has it, else the world's.
