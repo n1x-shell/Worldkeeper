@@ -1,6 +1,6 @@
 import { ItemRulesList, equipmentNames } from '../../components/ItemRules';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Camera, ChevronDown, Moon, Plus, Sun, Trash2, Wand2, X } from 'lucide-react';
+import { ArrowUpCircle, Camera, ChevronDown, Moon, Plus, Sun, Trash2, Wand2, X } from 'lucide-react';
 import { proficiencyBonus } from '@shared/play';
 import { CONDITIONS_2024 } from '@shared/domain';
 import {
@@ -27,6 +27,8 @@ import { ChoiceSelect, Diamond, Field, LABEL, NO_SPIN, Pips, Rule, STAT_INPUT, S
 import { SpellsTab } from './SpellsTab';
 import { FeaturesTab } from './FeaturesTab';
 import { LogTab, type LogEntry } from './LogTab';
+import { LevelUpBanner } from './LevelUp';
+import { levelForXp, readyToLevel, xpForNext } from '@shared/progression';
 import { loadRulesText, portraitFromFile, subclassChoices, useLoaded, useSheetOptions } from './options';
 import { ask } from '../../components/ui/overlays';
 import { Badge } from '../../components/ui/badges';
@@ -97,6 +99,7 @@ export function FullSheet(props: FullSheetProps) {
   return (
     <div className="ledger">
       <Band value={value} set={set} put={put} readOnly={readOnly} status={props.status} portraitUrl={props.portraitUrl ?? null} onPortrait={readOnly ? undefined : props.onPortrait} />
+      {!readOnly && <LevelUpBanner value={value} onChange={onChange} speciesRules={speciesRules} />}
       <div className="grid gap-6 p-4 sm:p-5 lg:grid-cols-[17rem_minmax(0,1fr)]">
         {/* On a phone the tabs come straight after the band; this side column follows them. */}
         <aside className="order-2 space-y-4 lg:order-0 lg:sticky lg:top-4 lg:self-start" aria-label="Rests, Hit Dice and identity">
@@ -415,12 +418,27 @@ function Identity({
               disabled={readOnly || levelLocked}
               title={levelLocked ? 'Your GM sets your level' : undefined}
               aria-label={levelLocked ? 'Level (your GM sets this)' : 'Level'}
-              onChange={(e) => set({ level: Number(e.target.value) })}
+              // A level set here is set by hand: nothing is offered for it, and a level lowered takes the sheet's mark down with it.
+              onChange={(e) => {
+                const level = Number(e.target.value);
+                set({ level, ...(s.builtLevel !== undefined && level < s.builtLevel ? { sheet: { ...s, builtLevel: level } } : {}) });
+              }}
             >
               {Array.from({ length: 20 }, (_, i) => (
                 <option key={i + 1}>{i + 1}</option>
               ))}
             </select>
+            {!readOnly && !levelLocked && value.level < 20 && (
+              <button
+                type="button"
+                className="btn mt-1 w-full justify-center text-xs max-sm:min-h-10"
+                title={`Raise the level to ${value.level + 1}; the sheet then offers what the new level gives`}
+                aria-label={`Level up to ${value.level + 1}`}
+                onClick={() => set({ level: value.level + 1, sheet: { ...s, builtLevel: Math.min(s.builtLevel ?? value.level, value.level) } })}
+              >
+                <ArrowUpCircle size={13} /> Level up
+              </button>
+            )}
           </Field>
         </div>
         <Field label="Subclass" hint={sub?.known ? `Known in the world as a ${sub.known}` : value.level < 3 && info ? 'Chosen at level 3' : undefined}>
@@ -463,7 +481,7 @@ function Identity({
               ))}
             </select>
           </Field>
-          <Field label="XP">
+          <Field label="XP" hint={xpForNext(value.level) ? (readyToLevel(value.level, s.xp ?? 0) ? `Enough for level ${levelForXp(s.xp ?? 0)}: ask your GM` : `${xpForNext(value.level)!.toLocaleString()} for level ${value.level + 1}`) : undefined}>
             <input type="number" min={0} className="input num max-sm:min-h-10" value={s.xp ?? ''} disabled={readOnly} onChange={(e) => put({ xp: num(e.target.value) })} />
           </Field>
         </div>

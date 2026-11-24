@@ -154,7 +154,7 @@ export interface PlayerSource {
   myPage?(code: string): Promise<PCharacterPage | null>;
   saveMyPage?(
     code: string,
-    patch: Partial<Pick<PCharacterPage, 'true_name' | 'memories' | 'known_by' | 'notes'>> & { character?: Partial<Pick<PCharacterPage, 'name' | 'species' | 'class_name' | 'sheet'>> },
+    patch: Partial<Pick<PCharacterPage, 'true_name' | 'memories' | 'known_by' | 'notes'>> & { character?: Partial<Pick<PCharacterPage, 'name' | 'species' | 'class_name' | 'sheet' | 'sheet_at'>> },
   ): Promise<PCharacterPage>;
   /** The character's change log, without the GM's own notes. */
   myLog?(code: string): Promise<import('./sheet/LogTab').LogEntry[]>;
@@ -183,6 +183,8 @@ export interface PCharacterPage {
   updated_at: string;
   /** The character's D&D 2024 sheet (without the GM's own notes). */
   sheet: Sheet;
+  /** When the sheet was last changed, by anyone (the GM's awards included). */
+  sheet_at?: string;
 }
 
 async function getJson<T>(url: string): Promise<T> {

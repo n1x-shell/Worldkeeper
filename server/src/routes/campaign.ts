@@ -68,6 +68,7 @@ import { types as typeRegistry } from '../repo/recordTypes.js';
 import { parseJson } from '../lib/json.js';
 import { returnClock, setReturnStage } from '../repo/returnClock.js';
 import { factionWeb, revealTie } from '../repo/factionWeb.js';
+import { attendance, attendanceCounts, giveAward, listAwards, removeAward, setAttendance } from '../repo/progress.js';
 import { deleteHomebrew, homebrewForRecord, listHomebrew, saveHomebrew } from '../repo/homebrew.js';
 import { deleteLibraryStatblock, setLibraryStatblock, statblockFor, statblockIndex, type StatBlock } from '../repo/statblocks.js';
 import { bookCounts, bookCreature, bookTreasure, bookCreatureIndex, bookCreatures, bookItems, creatureByName, itemByName, requireBookCreature } from '../repo/bookData.js';
@@ -156,6 +157,27 @@ export function campaignRoutes(ctx: AppContext) {
       logged(ctx.db, id, 'gm', () => removePortrait(ctx.db, ctx.paths.uploadsDir, id));
       return characters.get(ctx.db, id);
     }),
+  );
+  // Party progression: awards of experience or a level, and who was at each session.
+  r.get(
+    '/campaigns/:id/awards',
+    h((req) => ({ awards: listAwards(ctx.db, intParam(req.params.id)), attendance: attendanceCounts(ctx.db, intParam(req.params.id)) })),
+  );
+  r.post(
+    '/campaigns/:id/awards',
+    h((req) => giveAward(ctx.db, intParam(req.params.id), req.body)),
+  );
+  r.delete(
+    '/campaigns/:id/awards/:batch',
+    h((req) => removeAward(ctx.db, intParam(req.params.id), String(req.params.batch))),
+  );
+  r.get(
+    '/sessions/:id/attendance',
+    h((req) => ({ present: attendance(ctx.db, intParam(req.params.id)) })),
+  );
+  r.put(
+    '/sessions/:id/attendance',
+    h((req) => ({ present: setAttendance(ctx.db, intParam(req.params.id), req.body) })),
   );
   mountCrud(r, ctx, '/characters', characters, ['campaign_id']);
   mountCrud(r, ctx, '/quests', quests, ['campaign_id', 'status']);

@@ -1,7 +1,7 @@
 import { useRealms } from '../components/realms';
 import { useModules } from '../lib/modules';
 import { briefingFill, type Briefing } from './Briefing';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ReactFlow, Background, Controls, MarkerType, type Connection, type Edge, type Node, type NodeChangeset } from '@xyflow/react';
 import { BookOpen, CalendarDays, Check, Compass, Copy, Dices, Download, Eye, FileText, Flag, Hourglass, MapPin, Play, Plus, ScrollText, Search, Shield as ShieldIcon, Sun, Swords, Trash2, Upload, UserPlus, Users, Wand2, ArrowUp, ArrowDown, X } from 'lucide-react';
@@ -17,6 +17,7 @@ import { formatDate, type CalendarDef, type WDate } from '../../../shared/calend
 import { EntityMultiPicker, EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
 import { FullSheet } from '../player/sheet/FullSheet';
+import { Attendance, PartyProgress } from './PartyProgress';
 import { NotesTab, ThinningTab } from '../player/sheet/ThinningTab';
 import type { LogEntry } from '../player/sheet/LogTab';
 import { passive, type Sheet } from '@shared/sheet';
@@ -490,6 +491,9 @@ export function PartyPage() {
   // Edits made on the sheet, so the roster and the summary follow them before the next reload.
   const [edited, setEdited] = useState<Record<number, Character>>({});
   const [adding, setAdding] = useState(false);
+  // An award changes characters on the server: the open sheet saves what's on its way first, then is read afresh.
+  const flushSheet = useRef<() => Promise<void>>(async () => {});
+  const [fresh, setFresh] = useState(0);
   const setSel = (id: number) => {
     setSelState(id);
     setSp(
@@ -554,6 +558,17 @@ export function PartyPage() {
       ) : (
         <>
           <PartySummary chars={chars} />
+          <PartyProgress
+            campaign={data.campaign}
+            chars={chars}
+            sessions={data.sessions}
+            beforeChange={() => flushSheet.current()}
+            onChanged={async () => {
+              await reload();
+              setEdited({});
+              setFresh((n) => n + 1);
+            }}
+          />
           <section aria-label="The party">
             <div className="grid gap-3 grid-cols-[repeat(auto-fill,minmax(15rem,1fr))]">
               {chars.map((c) => (
@@ -563,8 +578,9 @@ export function PartyPage() {
           </section>
           {ch && (
             <CharacterSheet
-              key={ch.id}
+              key={`${ch.id}:${fresh}`}
               ch={ch}
+              flushRef={flushSheet}
               onEdited={(c) => setEdited((m) => ({ ...m, [c.id]: c }))}
               onDeleted={() => {
                 setSelState(null);
@@ -578,7 +594,17 @@ export function PartyPage() {
   );
 }
 
-function CharacterSheet({ ch: initial, onDeleted, onEdited }: { ch: Character; onDeleted: () => void; onEdited: (c: Character) => void }) {
+function CharacterSheet({
+  ch: initial,
+  onDeleted,
+  onEdited,
+  flushRef,
+}: {
+  ch: Character;
+  onDeleted: () => void;
+  onEdited: (c: Character) => void;
+  flushRef: React.MutableRefObject<() => Promise<void>>;
+}) {
   const mech = useModules();
   const [ch, setChState] = useState(initial);
   const setCh = (f: Character | ((c: Character) => Character)) =>
@@ -593,6 +619,9 @@ function CharacterSheet({ ch: initial, onDeleted, onEdited }: { ch: Character; o
     setCh(n);
     auto.schedule(n);
   };
+  useEffect(() => {
+    flushRef.current = auto.flush;
+  }, [flushRef, auto.flush]);
   const sh = ch.sheet;
   const setSheet = (p: Partial<Character['sheet']>) => set({ sheet: { ...sh, ...p } });
   const page = useCharacterPage(ch.id);
@@ -1531,6 +1560,7 @@ export function SessionPage() {
           </Field>
           <SessionDate campaignId={s.campaign_id} session={s} onChange={set} />
         </div>
+        {overview && <Attendance sessionId={s.id} chars={overview.characters} />}
       </header>
       <Tabs
         value={tab}

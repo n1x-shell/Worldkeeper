@@ -46,6 +46,8 @@ export interface PlayerCharacterPage extends Omit<CharacterPage, 'character_id' 
   level: number;
   /** The character's 2024 sheet, without the GM's own notes (setting mechanics, world ties, hometown). */
   sheet: Record<string, unknown>;
+  /** When the sheet was last changed, by anyone. Sent back with an edit, so the server knows what the edit was made on. */
+  sheet_at: string;
 }
 
 interface Row {
@@ -114,6 +116,8 @@ const playerCharacterSchema = z
     species: z.string().max(200).optional(),
     class_name: z.string().max(200).optional(),
     sheet: characterSheetSchema.optional(),
+    /** The stamp of the sheet this edit was made on (`sheet_at` of the page as loaded). */
+    sheet_at: z.string().max(40).optional(),
   })
   .strict();
 const playerEditSchema = playerSchema.extend({ character: playerCharacterSchema.optional() }).strict();
@@ -162,13 +166,14 @@ export const characterIdByCode = (db: DB, code: string) => byCode(db, code).char
 const withoutGmNotes = (sheet: Record<string, unknown>) => Object.fromEntries(Object.entries(sheet).filter(([k]) => !(GM_ONLY_SHEET_KEYS as readonly string[]).includes(k)));
 
 function forPlayer(db: DB, page: CharacterPage): PlayerCharacterPage {
-  const { campaign_id, ...c } = db.prepare('SELECT name, species, class_name, level, sheet, campaign_id FROM characters WHERE id = ?').get(page.character_id) as {
+  const { campaign_id, ...c } = db.prepare('SELECT name, species, class_name, level, sheet, campaign_id, updated_at AS sheet_at FROM characters WHERE id = ?').get(page.character_id) as {
     name: string;
     species: string;
     class_name: string;
     level: number;
     sheet: string;
     campaign_id: number;
+    sheet_at: string;
   };
   const archived = (db.prepare('SELECT status FROM campaigns WHERE id = ?').get(campaign_id) as { status: string } | undefined)?.status === 'archived';
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -206,12 +211,28 @@ export function updatePlayerCharacterPage(db: DB, code: string, body: unknown): 
   });
   if (patch.character) {
     // The sheet the player sends replaces theirs, but the GM's own notes are kept as they were.
-    const row = db.prepare('SELECT name, species, class_name, sheet FROM characters WHERE id = ?').get(page.character_id) as { name: string; species: string; class_name: string; sheet: string };
+    const row = db.prepare('SELECT name, species, class_name, level, sheet, updated_at FROM characters WHERE id = ?').get(page.character_id) as {
+      name: string;
+      species: string;
+      class_name: string;
+      level: number;
+      sheet: string;
+      updated_at: string;
+    };
     const old = JSON.parse(row.sheet || '{}') as Record<string, unknown>;
     // The portrait changes only through its own route, too.
     const kept = Object.fromEntries([...(GM_ONLY_SHEET_KEYS as readonly string[]), 'portrait'].filter((k) => k in old).map((k) => [k, old[k]]));
     const sent = patch.character.sheet ? withoutGmNotes(patch.character.sheet) : null;
     if (sent) delete sent.portrait;
+    // What the GM gives stays given. A sheet open since before an award would otherwise write over it: the experience
+    // awarded, and the mark that a level is waiting. The player can only move that mark up, by taking the level.
+    if (sent) {
+      const stale = patch.character.sheet_at !== undefined && patch.character.sheet_at !== row.updated_at;
+      const mark = typeof sent.builtLevel === 'number' ? Math.min(sent.builtLevel, row.level) : undefined;
+      if (typeof old.builtLevel === 'number') sent.builtLevel = stale || mark === undefined ? old.builtLevel : Math.max(old.builtLevel, mark);
+      else if (mark !== undefined) sent.builtLevel = mark;
+      if (stale && typeof old.xp === 'number') sent.xp = old.xp;
+    }
     const sheet = sent ? { ...sent, ...kept } : old;
     db.prepare('UPDATE characters SET name = ?, species = ?, class_name = ?, sheet = ?, updated_at = ? WHERE id = ?').run(
       patch.character.name ?? row.name,
