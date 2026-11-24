@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.tag || github.ref }}
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           # The Active LTS Node.js (.nvmrc); the desktop build refuses one that isn't LTS.
           node-version-file: .nvmrc
