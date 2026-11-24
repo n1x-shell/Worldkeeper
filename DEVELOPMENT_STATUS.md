@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.6.9_
+_Last updated: 2026-11-24 · v0.6.10_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,12 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.6.10: Dependabot's first round
+
+- **Merged from Dependabot** (by the owner): the npm minor-and-patch group (better-sqlite3 13.2, lucide-react, React Router, Tauri CLI, autoprefixer, PostCSS, Vite, Vitest), Tauri 2.12.7 and tauri-build 2.7.6, and the GitHub Actions majors (checkout 7, setup-node 7, upload-artifact 7, download-artifact 8, action-gh-release 3).
+- **@xyflow/react 13** (Dependabot's PR failed CI): `onNodesChange` now receives a `NodeChangeset` (`changes.applyTo(nodes)` replaces `applyNodeChanges`), and `colorMode` is `forceColorMode`. Checked in a browser: a scene dragged in an adventure's flow diagram moves and saves its place; the relationship graph follows the theme.
+- **Tailwind 4** (Dependabot's PR fails the build): not taken. Version 4 moves the configuration into CSS and changes the PostCSS plugin; it's a migration of its own.
 
 ## v0.6.9: a linter, dead code and dependency checks
 

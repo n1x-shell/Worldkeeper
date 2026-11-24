@@ -3,7 +3,7 @@ import { useModules } from '../lib/modules';
 import { briefingFill, type Briefing } from './Briefing';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ReactFlow, Background, Controls, MarkerType, type Connection, type Edge, type Node, type NodeChange, applyNodeChanges } from '@xyflow/react';
+import { ReactFlow, Background, Controls, MarkerType, type Connection, type Edge, type Node, type NodeChangeset } from '@xyflow/react';
 import { BookOpen, CalendarDays, Check, Compass, Copy, Dices, Download, Eye, FileText, Flag, Hourglass, MapPin, Play, Plus, ScrollText, Search, Shield as ShieldIcon, Sun, Swords, Trash2, Upload, UserPlus, Users, Wand2, ArrowUp, ArrowDown, X } from 'lucide-react';
 import { api, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
@@ -2097,7 +2097,7 @@ function SceneFlow({ adventureId }: { adventureId: number }) {
       );
   }, [scenes]);
   const edges: Edge[] = (links ?? []).map((l) => ({ id: String(l.id), source: String(l.from_scene), target: String(l.to_scene), label: l.label, markerEnd: { type: MarkerType.ArrowClosed }, style: { stroke: 'rgb(var(--gold))' }, labelStyle: { fill: 'rgb(var(--ink))' }, labelBgStyle: { fill: 'rgb(var(--panel))' } }));
-  const onNodesChange = useCallback((ch: NodeChange[]) => setNodes((n) => applyNodeChanges(ch, n)), []);
+  const onNodesChange = useCallback((ch: NodeChangeset) => setNodes((n) => ch.applyTo(n)), []);
   return (
     <div className="space-y-2">
       <p className="text-sm text-dim">Drag scenes to arrange them. Drag from one scene's edge to another to connect them; click a connection to remove it.</p>
@@ -2118,7 +2118,7 @@ function SceneFlow({ adventureId }: { adventureId: number }) {
             void reloadLinks();
           }}
           fitView
-          colorMode="dark"
+          forceColorMode="dark"
         >
           <Background gap={20} color="rgb(var(--line))" />
           <Controls />
