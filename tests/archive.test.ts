@@ -1,6 +1,6 @@
 /**
- * Integration test against the real world archive. Skipped unless WORLDKEEPER_TEST_ARCHIVE points to the ZIP or folder:
- *   WORLDKEEPER_TEST_ARCHIVE=~/Amsel_Unified_World_Lore_Reference_v10.zip npm test
+ * The world's archive, as the Worldkeeper worldbook ships it (packs/worldkeeper/archive, v0.7.2), imported on its own.
+ * WORLDKEEPER_TEST_ARCHIVE can point to another copy (a ZIP or folder) instead.
  */
 import { describe, expect, it } from 'vitest';
 import { tempContext } from './helpers.js';
@@ -8,13 +8,14 @@ import { readSource } from '../server/src/import/scan.js';
 import { buildPlan, commitPlan, summarisePlan } from '../server/src/import/importer.js';
 import { getEntity } from '../server/src/repo/entities.js';
 import { brokenReferences } from '../server/src/repo/relationships.js';
+import { worldkeeperPath } from '../server/src/packs/paths.js';
 
-const archive = process.env.WORLDKEEPER_TEST_ARCHIVE;
+const archive = process.env.WORLDKEEPER_TEST_ARCHIVE ?? worldkeeperPath('archive');
 
-describe.skipIf(!archive)('real world archive', () => {
+describe('the Worldkeeper archive', () => {
   it('imports every stable ID once, with intact references, idempotently', () => {
     const ctx = tempContext();
-    const files = readSource(archive!);
+    const files = readSource(archive);
     const plan = buildPlan(ctx.db, files, 'archive');
     const s = summarisePlan(plan);
     const sourceIds = new Set<string>();

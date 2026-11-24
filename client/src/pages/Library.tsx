@@ -91,7 +91,6 @@ export function ImportExportPage() {
       {done && <Card className="border-ok/50 bg-ok/10 text-sm text-ok">{done}</Card>}
       {tab === 'import' && (
         <div className="space-y-4">
-          <AdditionsPanel onDone={(msg) => (setDone(msg), reloadIndex(), reloadMeta(), void reloadRuns())} />
           <Card className="flex flex-wrap items-end gap-3">
             <Field label="Records from files (a .zip of Markdown files)">
               <input type="file" accept=".zip,application/zip" onChange={(e) => (setFile(e.target.files?.[0] ?? null), setPreview(null), setDone(null), setLarge(null), setRun(null))} />
@@ -1198,44 +1197,3 @@ function DebugToggle() {
   );
 }
 
-/** Bring in the Worldkeeper additions: lore written for this world on top of the archive. */
-function AdditionsPanel({ onDone }: { onDone: (msg: string) => void }) {
-  const { data } = useApi<{ available: boolean; installed: boolean; records: number }>('/api/additions');
-  const [busy, setBusy] = useState(false);
-  // Only in a library with the Worldkeeper pack (Library → Setting packs installs it).
-  if (!data?.available || !data.installed) return null;
-  return (
-    <Card className="flex flex-wrap items-center gap-3">
-      <div className="flex-1 min-w-[16rem]">
-        <div className="font-display text-gold">Worldkeeper additions</div>
-        <p className="text-sm text-dim">
-          New lore written for this world: {data.records} records (people, places, peoples, families, history, creatures), their links, the years on the World Timeline, the handbook's rumours, the
-          mysteries with their secrets and clues, the maps, ready-to-run adventures and random encounter tables. Your archive records are never changed, and anything you've edited is kept. Safe to run
-          again after an update.
-        </p>
-      </div>
-      <button
-        className="btn-primary"
-        disabled={busy}
-        onClick={async () => {
-          setBusy(true);
-          try {
-            const r = await api.post<{ records: number; links: { added: number }; rumours: { total: number }; mysteries: { secrets: number }; adventures?: string[]; tables?: string[]; maps?: { name: string; moved?: number }[] }>(
-              '/api/additions/apply',
-              {},
-            );
-            onDone(
-              `Additions applied: ${r.records} records, ${r.links.added} new links, ${r.rumours.total} rumours and ${r.mysteries.secrets} secrets${r.adventures?.length ? `, ${r.adventures.length} new adventures` : ''}${r.tables?.length ? `, ${r.tables.length} new random tables` : ''}${
-                (r.maps ?? []).some((m) => m.moved) ? `; on the maps, ${(r.maps ?? []).reduce((n, m) => n + (m.moved ?? 0), 0)} pins, routes and outlines updated to the map's scale` : ''
-              }. A backup was taken first.`,
-            );
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        {busy ? 'Applying…' : 'Apply additions'}
-      </button>
-    </Card>
-  );
-}

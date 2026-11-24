@@ -47,10 +47,14 @@ Internally the code keeps its names (`packs/`, `setting_packs`, `installPack`): 
 
 ### W1 (v0.7.1): the words
 
+Done in v0.7.1.
+
 - Rename in the GM app, the wizard, the handbook's help text and the docs: setting pack → worldbook, import → add (for worlds and records). `docs/SETTING_PACKS.md` becomes `docs/WORLDBOOKS.md`.
 - No behaviour changes. Screens checked with the screenshot comparison from v0.6.11 (only the words differ).
 
 ### W2 (v0.7.2): the Worldkeeper worldbook, complete
+
+Done in v0.7.2. The maps were already in the pack; the archive's 472 files are in `packs/worldkeeper/archive/`; "Apply additions" went, as Library → Worldbooks → Update does the same.
 
 - The Worldkeeper archive's records, its two maps and its source documents move into `packs/worldkeeper/` (about 12 MB of Markdown and two pictures), so the worldbook carries the whole world.
 - Adding the Worldkeeper worldbook to a library (the wizard's "Play in the Worldkeeper world", New library, or Library → Worldbooks) brings in every record, map and pin, with no file to choose. The wizard's "add your archive" step goes.

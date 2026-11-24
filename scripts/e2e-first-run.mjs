@@ -2,9 +2,9 @@
  * The first run in a real browser (docs/OWN_WORLD_PLAN.md §2.6): a fresh install, one way or the other, Next, Next, Finish.
  * Start the app on an empty data folder first, then:
  *   node scripts/e2e-first-run.mjs <baseUrl> own [screenshotDir]
- *   WORLDKEEPER_TEST_ARCHIVE=path/to/archive.zip node scripts/e2e-first-run.mjs <baseUrl> setting [screenshotDir]
+ *   node scripts/e2e-first-run.mjs <baseUrl> setting [screenshotDir]
  * "own" builds a world of one's own (shape, calendar, a campaign with a town and party, a map, the records that teach,
- * then removes them); "setting" adds the Worldkeeper worldbook (with the archive, if given) and starts a campaign in it.
+ * then removes them); "setting" adds the Worldkeeper worldbook (the whole world, with no file to choose) and starts a campaign in it.
  */
 import { createRequire } from 'node:module';
 const { chromium } = createRequire(import.meta.url)('playwright');
@@ -14,7 +14,6 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 
 const [base = 'http://127.0.0.1:4310', mode = 'own', shots = null] = process.argv.slice(2);
-const archive = process.env.WORLDKEEPER_TEST_ARCHIVE;
 const errors = [];
 const step = (m) => console.log('✓', m);
 const shot = async (page, name) => shots && (fs.mkdirSync(shots, { recursive: true }), await page.screenshot({ path: path.join(shots, `${name}.png`) }));
@@ -125,7 +124,6 @@ try {
     step('the records that teach: Start Here links to them, and they go in one click; the town stays');
   } else {
     await page.getByRole('button', { name: /Play in the Worldkeeper world/ }).click();
-    if (archive) await page.getByLabel('Archive').setInputFiles(archive);
     await page.getByRole('button', { name: /Add the Worldkeeper worldbook/ }).click();
     await page.getByText('Added', { exact: true }).waitFor({ timeout: 180000 });
     await shot(page, '02-installed');
@@ -142,11 +140,14 @@ try {
     await page.getByRole('button', { name: /Start playing/ }).click();
     await page.waitForURL(`${base}/`);
     const meta = await api('/api/meta');
+    // The whole world came with the app: the archive's records and the new ones, the maps and the adventures.
+    if (meta.entities < 878) throw new Error(`setting: ${meta.entities} records`);
+    if ((await api('/api/maps')).length < 2) throw new Error('setting: the maps');
     const mods = (await api('/api/modules')).modules.filter((m) => m.on).map((m) => m.key);
     if (!meta.canonReview || !mods.includes('thinning') || mods.includes('the-return')) throw new Error(`setting: canonReview ${meta.canonReview}, modules ${mods}`);
     if ((await api(`/api/campaigns/${(await api('/api/campaigns/active')).id}`)).title !== 'The Loose Thread') throw new Error('campaign');
     await shot(page, '05-dashboard');
-    step(`the Worldkeeper world: added${archive ? ' with the archive' : ''}, a module unticked, a campaign started, Canon Review on`);
+    step(`the Worldkeeper world: added whole (${meta.entities} records, its maps), a module unticked, a campaign started, Canon Review on`);
   }
 } catch (e) {
   errors.push(`FAILED: ${e.message}`);

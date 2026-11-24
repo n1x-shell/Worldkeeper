@@ -188,7 +188,6 @@ describe('setting packs', () => {
   it('refuses the Worldkeeper pack’s own actions in a library without it', async () => {
     const app = createApp(tempContext());
     for (const [method, url] of [
-      ['post', '/api/additions/apply'],
       ['post', '/api/mysteries/sync'],
       ['post', '/api/rumours/sync'],
       ['get', '/api/handbook-reveals'],

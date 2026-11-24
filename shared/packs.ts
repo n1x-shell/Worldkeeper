@@ -48,6 +48,8 @@ export interface ImportProfile {
   timelineFile?: string;
   /** Records that are a domain's own record, by realm (their landmarks follow them). */
   domainRecords?: Record<string, string>;
+  /** The world's eras in order (era/ tag keys), when no file in the archive lists them. */
+  eras?: string[];
 }
 
 /** The archive's notes about its own sources, hidden outside debug mode on this pack's records only. */

@@ -16,7 +16,6 @@ import { h, intParam } from './util.js';
 import { readZip, type SourceFile } from '../import/scan.js';
 import { buildPlan, commitPlan, listImportRuns, summarisePlan, type ImportPlan } from '../import/importer.js';
 import { backupPath, createBackup, listBackups, stageRestore } from '../backup/backup.js';
-import { DEFAULT_ADDITIONS_DIR, loreFiles } from '../additions.js';
 import { chosenBooks, importFivetools, scanFivetools } from '../repo/fivetools.js';
 import { deletePack, importPack, listPacks, setPackEnabled, setPackPublished } from '../repo/rulesPacks.js';
 import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, exportPlayerZip, importCampaignWithReport, importFullWorldZip, importJson } from '../backup/exporter.js';
@@ -27,7 +26,7 @@ import { listModules, setLibraryModules } from '../repo/modules.js';
 import { importOpen5e, open5eDocuments } from '../repo/open5e.js';
 import { isDesktop, openInBrowser } from '../lib/desktop.js';
 import { handbookReveals } from '../player/handbookReveals.js';
-import { findPack, installPack, isInstalled, listPacks as listSettingPacks, requirePack, roles, uninstallPack } from '../packs/registry.js';
+import { findPack, installPack, listPacks as listSettingPacks, requirePack, roles, uninstallPack } from '../packs/registry.js';
 import { updatePack } from '../packs/content.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 300 * 1024 * 1024, files: 1 } });
@@ -292,19 +291,6 @@ export function libraryRoutes(ctx: AppContext) {
       requirePack(ctx.db, id);
       const backup = createBackup(ctx.db, ctx.paths, `pre-uninstall-${id}`);
       return { backup: backup.file, removed: uninstallPack(ctx.db, id) };
-    }),
-  );
-  // The Worldkeeper pack's update, as "Apply additions" (only in a library that has the pack).
-  r.get(
-    '/additions',
-    h(() => ({ available: fs.existsSync(DEFAULT_ADDITIONS_DIR), installed: isInstalled(ctx.db, 'worldkeeper'), records: loreFiles().length })),
-  );
-  r.post(
-    '/additions/apply',
-    h(() => {
-      requirePack(ctx.db, 'worldkeeper');
-      const backup = createBackup(ctx.db, ctx.paths, 'pre-additions');
-      return { backup: backup.file, ...updatePack(ctx.db, 'worldkeeper', ctx.paths.uploadsDir) };
     }),
   );
   r.post(
