@@ -97,6 +97,16 @@ A light that guides ships, or lures them.
 > Guidance: What the keeper hides.
 ```
 
+## Sharing your world as a worldbook
+
+You don't have to write a worldbook by hand. **Library → Worldbooks → Share as a worldbook…** makes one from the open library: a `.worldbook` file (a ZIP of this folder format) another GM adds with **Add a worldbook…**.
+
+- **What goes in:** the library's own world: its realms (the world takes its name), record types, templates, calendar and switched-on modules, every record as Markdown (`lore/`), the links you made by hand (`lore/links.json`), the World Timeline (`lore/timeline.json`), and its maps with their pins (those on records), routes and region outlines (`maps/`). The manifest says who made it, when, and what it holds.
+- **What never goes in:** campaigns, characters, sessions, what players were shown, and worldbooks you added to the library (the other GM adds those; the manifest lists them).
+- **Leave out GM-only sections** for a world shared with players in mind.
+- **Adding one** checks it first (only the folders and kinds of file a worldbook holds, nothing outside its folder, sizes, an id the app's own worldbooks don't use) and puts it with this computer's worldbooks, for every library. Then **Start a library with it** (a new library named after the world, opened) or **Add to this library**. A shared worldbook never carries an import profile, cleaning or handbook rules: only the worldbooks that come with the app may.
+- Adventures and random tables aren't shared yet.
+
 ## Adding and testing it
 
 - **While you write it:** put the folder in the data folder, under `shared/packs/` (run from source, that's `data/shared/packs/the-isle`, or wherever `WORLDKEEPER_DATA_DIR` points; every library sees it, and each adds it or not; with **Technical details** on, **Settings → Installation** shows the data folder). It appears in **Library → Worldbooks**. A copy there takes precedence over a bundled pack with the same id.

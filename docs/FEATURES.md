@@ -87,7 +87,7 @@ Either way you get the same record. A section you skipped stays as its heading w
 
 ## Worldbooks
 
-A worldbook is a whole world you can add to your library or leave out: its realms, record types, templates, records, maps, adventures, tables and tools. **Library → Worldbooks** adds, updates and removes them, taking a backup first each time. Updating brings in what's new without touching your own records; removing takes out only what the pack brought. If one of your records already has an ID the pack uses, yours is kept and the page tells you. The Worldkeeper worldbook is the first; a library without it is plain D&D, with none of its tools in the menus.
+A worldbook is a whole world you can add to your library or leave out (and **Share as a worldbook…** makes one from your own world, a `.worldbook` file another GM adds with **Add a worldbook…**, to start a library with it or add it to one): its realms, record types, templates, records, maps, adventures, tables and tools. **Library → Worldbooks** adds, updates and removes them, taking a backup first each time. Updating brings in what's new without touching your own records; removing takes out only what the pack brought. If one of your records already has an ID the pack uses, yours is kept and the page tells you. The Worldkeeper worldbook is the first; a library without it is plain D&D, with none of its tools in the menus.
 
 ## Calendars
 

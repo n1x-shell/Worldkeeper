@@ -1,0 +1,132 @@
+/** Sharing a world as a .worldbook and adding one (docs/WORLDBOOKS_PLAN.md, W3b). */
+import fs from 'node:fs';
+import path from 'node:path';
+import AdmZip from 'adm-zip';
+import { describe, expect, it } from 'vitest';
+import request from 'supertest';
+import { tempContext } from './helpers.js';
+import { createApp } from '../server/src/app.js';
+import { maps, markers, shapes } from '../server/src/repo/maps.js';
+import { leaveOutGmOnly, readWorldbook } from '../server/src/packs/share.js';
+
+const binary = (res: request.Response, cb: (e: Error | null, b: Buffer) => void) => {
+  const chunks: Buffer[] = [];
+  res.on('data', (c: Buffer) => chunks.push(c));
+  res.on('end', () => cb(null, Buffer.concat(chunks)));
+};
+
+/** Enough of a PNG for the app to read its size. */
+function png(width: number, height: number) {
+  const b = Buffer.alloc(33);
+  Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]).copy(b, 0);
+  b.writeUInt32BE(13, 8);
+  b.write('IHDR', 12, 'ascii');
+  b.writeUInt32BE(width, 16);
+  b.writeUInt32BE(height, 20);
+  return b;
+}
+
+const zipOf = (files: Record<string, string>) => {
+  const z = new AdmZip();
+  for (const [p, t] of Object.entries(files)) z.addFile(p, Buffer.from(t));
+  return z.toBuffer();
+};
+
+describe('worldbooks shared between GMs', () => {
+  it('share a world, add it on another computer, and start a library with it', async () => {
+    // GM A builds Ostmark: its shape and calendar, records, a link, a timeline row and a map.
+    const a = tempContext();
+    const gmA = createApp(a);
+    await request(gmA)
+      .post('/api/setup/finish')
+      .send({
+        path: 'own',
+        world: { name: 'Ostmark', pitch: 'A cold world of iron kings.' },
+        calendar: { preset: 'twelve-thirty', year: 1247, era: 'AR' },
+        realms: [{ key: 'c1', name: 'Vael', kind: 'continent', parent: 'world' }],
+        modules: { thinning: true },
+        campaign: { title: 'The Iron Crown', town: 'Harrowgate', party: ['Ash'] },
+        tutorial: false,
+      })
+      .expect(200);
+    const town = (await request(gmA).get('/api/entities')).body.find((e: { name: string }) => e.name === 'Harrowgate');
+    const keep = (
+      await request(gmA)
+        .post('/api/entities')
+        .send({ name: 'Brennhold', type: 'settlement', realm: 'vael', body: '## A first look\n\nA keep on a cliff.\n\n## The truth (GM only)\n\nThe lord is dead.\n' })
+    ).body;
+    await request(gmA).post('/api/relationships').send({ source_id: keep.id, target_id: town.id, type: 'allied_with', label: 'old friends' }).expect(200);
+    await request(gmA).post('/api/timeline').send({ time_label: '1200 AR', event: 'Brennhold is built', entity_ids: [keep.id] });
+    fs.writeFileSync(path.join(a.paths.uploadsDir, 'ostmark.png'), png(400, 300));
+    const m = maps.create(a.db, { name: 'Ostmark', kind: 'image', image_file: 'ostmark.png', width: 400, height: 300, realm_id: 'world' }) as { id: number };
+    markers.create(a.db, { map_id: m.id, entity_id: keep.id, label: 'Brennhold', x: 100, y: 200, category: 'settlement' });
+    markers.create(a.db, { map_id: m.id, label: 'Here be dragons', x: 10, y: 10 });
+    shapes.create(a.db, { map_id: m.id, kind: 'route', label: 'The cliff road', color: '#c9a24a', points: [[100, 200], [150, 250]] });
+
+    // Share it, leaving out GM-only sections.
+    const res = await request(gmA).get('/api/worldbooks/share').query({ name: 'Ostmark', description: 'Iron kings.', author: 'GM A', gmOnly: 'leave-out' }).buffer(true).parse(binary);
+    expect(res.status).toBe(200);
+    expect(res.headers['content-disposition']).toContain('Ostmark.worldbook');
+    const file = res.body as Buffer;
+    const { manifest, files } = readWorldbook(file);
+    expect(manifest).toMatchObject({ id: 'ostmark', name: 'Ostmark', description: 'Iron kings.', author: 'GM A', modules: expect.arrayContaining(['thinning']), calendar: { file: 'calendar.json', worlds: ['world'] } });
+    expect(manifest.realms.map((r) => r.id)).toEqual(expect.arrayContaining(['world', 'vael']));
+    expect(manifest.shared).toMatchObject({ format: 1, gm_only_left_out: true, counts: { records: 2, links: 1, timeline: 1, maps: 1 } });
+    const lore = files.filter((f) => f.path.startsWith('lore/') && f.path.endsWith('.md')).map((f) => f.data.toString('utf8'));
+    expect(lore.join('\n')).toContain('A keep on a cliff.');
+    expect(lore.join('\n')).not.toContain('The lord is dead');
+    // Never campaigns, characters or sessions.
+    expect(files.map((f) => f.path).join('\n')).not.toMatch(/campaign|character|session/i);
+    const pins = JSON.parse(files.find((f) => f.path === 'maps/ostmark.pins.json')!.data.toString('utf8'));
+    // Only pins of records travel; positions from the top-left.
+    expect(pins).toMatchObject({ name: 'Ostmark', image: 'ostmark.png', pins: [{ id: keep.id, label: 'Brennhold', x: 100, y: 100 }] });
+
+    // GM B, on another computer, adds it and starts a library with it.
+    const b = tempContext();
+    const gmB = createApp(b);
+    const added = (await request(gmB).post('/api/worldbooks/add').attach('file', file, 'Ostmark.worldbook')).body;
+    expect(added.worldbook).toMatchObject({ id: 'ostmark', name: 'Ostmark', counts: { records: 2 } });
+    expect(added.packs.find((p: { id: string }) => p.id === 'ostmark')).toMatchObject({ source: 'installed', installed: null });
+    const started = (await request(gmB).post('/api/libraries/from-worldbook/ostmark').send({})).body;
+    expect(started.library.name).toBe('Ostmark');
+    expect(started.result.imported).toMatchObject({ created: 2 });
+    // The new library is open, named after the world, with its shape, records, link, timeline, calendar and map.
+    const realms = (await request(gmB).get('/api/realms')).body as { id: string; name: string }[];
+    expect(realms.find((r) => r.id === 'world')?.name).toBe('Ostmark');
+    expect(realms.find((r) => r.id === 'vael')).toBeTruthy();
+    const recs = (await request(gmB).get('/api/entities')).body as { id: string; name: string }[];
+    expect(recs.map((r) => r.name).sort()).toEqual(['Brennhold', 'Harrowgate']);
+    const rels = b.db.prepare(`SELECT * FROM relationships WHERE source_id = ? AND target_id = ? AND type = 'allied_with'`).all(keep.id, town.id);
+    expect(rels).toHaveLength(1);
+    expect(b.db.prepare(`SELECT event FROM timeline_rows`).all()).toEqual([{ event: 'Brennhold is built' }]);
+    const bMaps = (await request(gmB).get('/api/maps')).body as { id: number; name: string }[];
+    expect(bMaps.map((x) => x.name)).toEqual(['Ostmark']);
+    expect(b.db.prepare('SELECT entity_id, x, y FROM map_markers').all()).toEqual([{ entity_id: keep.id, x: 100, y: 200 }]);
+    expect(b.db.prepare(`SELECT label FROM map_shapes WHERE kind = 'route'`).all()).toEqual([{ label: 'The cliff road' }]);
+    expect((await request(gmB).get('/api/calendars')).status).toBe(200);
+    // No campaign came with it.
+    expect((await request(gmB).get('/api/campaigns')).body).toEqual([]);
+    // It is the library's worldbook: it can be removed like any other, taking its records with it.
+    expect((await request(gmB).delete('/api/setting-packs/ostmark')).status).toBe(200);
+    expect((await request(gmB).get('/api/entities')).body).toEqual([]);
+  });
+
+  it('refuses a file that is not a worldbook, or one that reaches outside its folder', () => {
+    const pack = JSON.stringify({ id: 'isle', name: 'The Isle', version: '1', realms: [], types: [], roles: {}, modules: [] });
+    expect(() => readWorldbook(Buffer.from('not a zip'))).toThrow(/isn’t a ZIP/);
+    expect(() => readWorldbook(zipOf({ 'lore/a.md': 'x' }))).toThrow(/no pack.json/);
+    expect(() => readWorldbook(zipOf({ 'pack.json': pack, 'lore/../../evil.md': 'x' }))).toThrow(/That worldbook has a file/);
+    expect(() => readWorldbook(zipOf({ 'pack.json': pack, 'server/index.js': 'x' }))).toThrow(/doesn't hold/);
+    expect(() => readWorldbook(zipOf({ 'pack.json': pack, 'lore/run.sh': 'x' }))).toThrow(/kind of file/);
+    expect(() => readWorldbook(zipOf({ 'pack.json': pack.replace('"isle"', '"worldkeeper"') }))).toThrow(/comes with the app/);
+    expect(() => readWorldbook(zipOf({ 'pack.json': pack.replace('"isle"', '"../x"') }))).toThrow(/id/);
+    // Zipped with its folder is fine; patterns the app would run are dropped.
+    const ok = readWorldbook(zipOf({ 'The Isle/pack.json': pack.replace('"modules":[]', '"modules":[],"cleaning":{"citation":{"pattern":"(a+)+$"}}'), 'The Isle/lore/a.md': 'x' }));
+    expect(ok.files.map((f) => f.path).sort()).toEqual(['lore/a.md', 'pack.json']);
+    expect(ok.manifest.cleaning).toBeUndefined();
+  });
+
+  it('leaves out GM-only sections, keeping the rest', () => {
+    expect(leaveOutGmOnly('Intro.\n\n## Seen\n\nYes.\n\n## Secret (GM only)\n\nNo.\n\n### Deeper (DM-only)\n\nNo.\n\n## Also seen\n\nYes.')).toBe('Intro.\n\n## Seen\n\nYes.\n\n## Also seen\n\nYes.');
+  });
+});

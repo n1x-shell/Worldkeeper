@@ -29,6 +29,7 @@ import { isDesktop, openInBrowser } from '../lib/desktop.js';
 import { handbookReveals } from '../player/handbookReveals.js';
 import { findPack, installPack, listPacks as listSettingPacks, requirePack, roles, uninstallPack } from '../packs/registry.js';
 import { updatePack } from '../packs/content.js';
+import { addWorldbookFile, buildWorldbook } from '../packs/share.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 300 * 1024 * 1024, files: 1 } });
 
@@ -297,6 +298,38 @@ export function libraryRoutes(ctx: AppContext) {
       requirePack(ctx.db, id);
       const backup = createBackup(ctx.db, ctx.paths, `pre-update-${id}`);
       return { backup: backup.file, ...updatePack(ctx.db, id, ctx.paths.uploadsDir) };
+    }),
+  );
+  // Share the open library's own world as a .worldbook file (docs/WORLDBOOKS_PLAN.md, W3b).
+  r.get(
+    '/worldbooks/share',
+    h((req, res) => {
+      const q = (k: string) => {
+        const v = req.query[k];
+        return typeof v === 'string' ? v.slice(0, 2000) : undefined;
+      };
+      const { file, manifest } = buildWorldbook(ctx.db, ctx.paths.uploadsDir, {
+        name: q('name') ?? '',
+        description: q('description'),
+        author: q('author'),
+        licence: q('licence'),
+        version: q('version'),
+        leaveOutGmOnly: q('gmOnly') === 'leave-out',
+      });
+      const fileName = manifest.name.replace(/[^\w '-]/g, '').trim() || 'world';
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', `attachment; filename="${fileName}.worldbook"`);
+      res.send(file);
+    }),
+  );
+  // Add a .worldbook to this computer's worldbooks; then it's added to a library like any other.
+  r.post(
+    '/worldbooks/add',
+    upload.single('file'),
+    h((req) => {
+      if (!req.file) throw badRequest('Choose a .worldbook file');
+      const manifest = addWorldbookFile(req.file.buffer);
+      return { worldbook: { id: manifest.id, name: manifest.name, version: manifest.version, description: manifest.description, counts: manifest.shared?.counts ?? {} }, packs: listSettingPacks(ctx.db) };
     }),
   );
   r.delete(
