@@ -12,6 +12,7 @@ import { settingPack, settingPackOn } from './settingPack.js';
 import { moduleOn } from './modules.js';
 import { booksOnly, isOpenSource, openRulesFor } from './booksOnly.js';
 import { standIns, standInSource } from './standIns.js';
+import { homebrewItems, homebrewStamp } from './homebrew.js';
 
 type DB = Database.Database;
 type J = Record<string, unknown>;
@@ -56,6 +57,8 @@ function entries(db: DB, kind: 'creature' | 'item'): J[] {
     for (const e of kind === 'creature' ? sp.creatures : sp.items) m.set(String(e.name).toLowerCase(), e);
   }
   for (const r of rows) if (open || !isOpenSource(r.source)) m.set(r.name.toLowerCase(), JSON.parse(r.data) as J);
+  // The GM's own items (and a worldbook's own), which win over a book's of the same name.
+  if (kind === 'item') for (const i of homebrewItems(db)) m.set(i.name.toLowerCase(), i);
   // Safe mode's stand-ins: an item or creature the library's rules don't have goes by its open stand-in.
   for (const s of standIns(db).filter((x) => x.kind === kind)) {
     const names = kind === 'item' ? itemNameCandidates(s.name) : [s.name.toLowerCase()];
@@ -71,7 +74,7 @@ function entries(db: DB, kind: 'creature' | 'item'): J[] {
 let cache: { stamp: string; creatures: J[]; items: BookItem[] } | null = null;
 function data(db: DB) {
   const s = db.prepare(`SELECT group_concat(id || ':' || enabled || ':' || imported_at) s FROM rules_packs`).get() as { s: string | null };
-  const stamp = `${db.name}|${s.s ?? ''}|${srdOn(db)}|${JSON.stringify(booksOnly(db))}|${JSON.stringify(standIns(db))}|${settingPackOn(db)}|${moduleOn(db, 'thinning')}`;
+  const stamp = `${db.name}|${s.s ?? ''}|${srdOn(db)}|${JSON.stringify(booksOnly(db))}|${JSON.stringify(standIns(db))}|${settingPackOn(db)}|${moduleOn(db, 'thinning')}|${homebrewStamp(db)}`;
   if (cache?.stamp !== stamp) cache = { stamp, creatures: entries(db, 'creature'), items: entries(db, 'item') as unknown as BookItem[] };
   return cache;
 }

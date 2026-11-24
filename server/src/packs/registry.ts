@@ -171,7 +171,7 @@ export function uninstallPack(db: DB, id: string) {
   const run = (label: string, sql: string, ...args: unknown[]) => (removed[label] = db.prepare(sql).run(...args).changes);
   db.transaction(() => {
     run('links', `DELETE FROM relationships WHERE pack_id = ? OR source_id IN (SELECT id FROM entities WHERE pack_id = ?) OR target_id IN (SELECT id FROM entities WHERE pack_id = ?)`, id, id, id);
-    for (const t of ['timeline_rows', 'rumours', 'clues', 'secrets', 'mysteries', 'map_markers', 'map_shapes', 'random_tables', 'adventures', 'eras'])
+    for (const t of ['timeline_rows', 'rumours', 'clues', 'secrets', 'mysteries', 'map_markers', 'map_shapes', 'random_tables', 'adventures', 'eras', 'homebrew'])
       try {
         run(t, `DELETE FROM ${t} WHERE pack_id = ?`, id);
       } catch {

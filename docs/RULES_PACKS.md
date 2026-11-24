@@ -51,6 +51,10 @@ Any combination of books works, from one book to every book in the copy, adventu
 
 Items are found by the names people write: "Weapon, +1" finds "+1 Weapon", "Moon-Touched Sword (XGE)" drops the book code, "2 Daggers" finds the Dagger, and "Flame Tongue Longsword" finds Flame Tongue, with the Longsword's own rules.
 
+## Your own items and spells
+
+Magic items and spells you write yourself don't need a pack: make them in **Your Books → Your own** (or give an item record rules from its page). They are kept in the library, join the books' items and spells everywhere those are read, and travel with the library's backups and shared worldbooks. See [Features](FEATURES.md).
+
 ## The Worldkeeper worldbook's rules
 
 A second built-in pack, **The Worldkeeper worldbook**, holds the world's own creatures and items for use in any campaign: 84 creatures and 8 hazards, and 34 items (the Aetheris and Kaelmar treasures, with their rules). Since v0.9.0 it also holds **40 species of the world's own** (`packs/worldkeeper/rules/species/`), open rules for its peoples that play as a book species, named after the world's own names (Cat-folk, Crow-folk, Taur'n, Shadowkin…), so the world is whole on the SRD alone. Each people names the book species first and the world's second ("Use the tabaxi rules. Without the book, use the cat-folk rules."): a GM who has the book gets the book's; the rest get the world's. They are open rules, so Books only sets them aside, and they go into the published handbook with the pack. It's off until you turn it on in **Settings → Rules packs**.

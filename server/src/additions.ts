@@ -28,6 +28,7 @@ import { applyTables, applyTableSpecs } from './tableAdditions.js';
 import { itemTables, treasureData } from './repo/treasure.js';
 import { worldkeeperPath } from './packs/paths.js';
 import { findPack } from './packs/registry.js';
+import { applyHomebrew } from './repo/homebrew.js';
 
 /** The Worldkeeper pack's lore folder (packs/worldkeeper/lore, or the installed copy). */
 export const DEFAULT_ADDITIONS_DIR = worldkeeperPath('lore');
@@ -201,6 +202,9 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?:
   const mapsAdded = uploadsDir ? applyMaps(db, uploadsDir, path.resolve(dir, '../maps'), { onlyRevealed: false }) : [];
   // The records' pictures (lore/pictures.json and the pictures folder), each added once.
   const picturesAdded = uploadsDir ? applyPictures(db, dir, uploadsDir) : 0;
+  // The world's own magic items and spells (homebrew/homebrew.json), each added once.
+  const brewFile = path.resolve(dir, '../homebrew/homebrew.json');
+  const homebrewAdded = fs.existsSync(brewFile) ? applyHomebrew(db, (JSON.parse(fs.readFileSync(brewFile, 'utf8')) as { homebrew?: object[] }).homebrew ?? [], packId) : 0;
   // Ready-to-run adventures, added to the GM's Adventures (ones the library already has are left alone).
   const adventuresAdded = applyAdventures(db, path.resolve(dir, '../adventures'));
   // Random encounter tables, added to the GM's Random Tables (ones the library already has are left alone).
@@ -225,6 +229,7 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?:
     timeline,
     maps: mapsAdded,
     pictures: picturesAdded,
+    homebrew: homebrewAdded,
     adventures: adventuresAdded,
     tables: tablesAdded,
     errata: { records: errata.records + adventureErrata.records, adventures: errata.adventures + adventureErrata.adventures },

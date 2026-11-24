@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.9.4_
+_Last updated: 2026-11-24 · v0.9.5_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,19 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.5: items and spells of the GM's own
+
+The second part of `docs/BETA_PLAN.md` B2.
+
+- **Fixed: the page of an item record the GM made crashed** ("This screen hit an error"). `GET /api/treasure/catalogue/:id` answers `{ ok: true }` for an item the Worldkeeper catalogue doesn't list (the route helper `h` turns `null` into that), and `TreasurePanel` read it as catalogue notes. Every Item or Artifact record of a GM's own was affected, in every earlier version with the panel. The panel now needs a rarity to show.
+- **Data:** migration 35, `homebrew` (kind `item` or `spell`, name unique per kind, optional `entity_id` for an item record's rules, `pack_id` for one a worldbook brought, `data`). In the backup table list. Per library, not in `shared/rules.db`: these are the world's, and travel with it.
+- **Server** (`server/src/repo/homebrew.ts`): `listHomebrew`, `homebrewForRecord`, `saveHomebrew`, `deleteHomebrew`; routes `GET/POST /api/homebrew`, `PUT/DELETE /api/homebrew/:id`, `GET /api/homebrew/record/:id`. Items join `entries(db, 'item')` in `bookData.ts` after the packs (so Your Books, `itemByName`, sheets, and the Treasure tool's rarity pools have them; the cache stamp includes `homebrewStamp`); spells join `rulesView` and `publishedRuleEntries`. Both count whatever Books only is set to. Rules linked to a record go by the record's current name.
+- **GM app** (`client/src/components/Homebrew.tsx`): **Your Books → Your own** (items and spells, New item, New spell, change, remove), the editor with the card as it will read, and **Give it rules** on an Item's or Artifact's page.
+- **Worldbooks:** shared in `homebrew/homebrew.json` (with players in mind: spells only); added once each by name (`applyHomebrew`), marked with the worldbook's id; a changed one becomes the GM's; the rest leave when the worldbook is removed from the library (`uninstallPack`).
+- **First-run check in CI** (`scripts/e2e-first-run.mjs`, own world): opens the page of a creature, item, artifact, person, place and group of the GM's own, makes a stat block of its own and an item's rules.
+- **Not done:** feats, species, classes and backgrounds of the GM's own (a Markdown rules pack still does those); a picker for a base weapon or armor; charges or other tracked state on a sheet.
+- **Tests:** `tests/homebrew.test.ts`.
 
 ## v0.9.4: a stat block editor
 

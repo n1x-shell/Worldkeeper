@@ -78,6 +78,7 @@ export const TABLES = [
   'module_data',
   'statblocks',
   'entity_images',
+  'homebrew',
   'handouts',
   'bastions',
   'bastion_turns',

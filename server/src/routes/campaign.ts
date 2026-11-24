@@ -68,6 +68,7 @@ import { types as typeRegistry } from '../repo/recordTypes.js';
 import { parseJson } from '../lib/json.js';
 import { returnClock, setReturnStage } from '../repo/returnClock.js';
 import { factionWeb, revealTie } from '../repo/factionWeb.js';
+import { deleteHomebrew, homebrewForRecord, listHomebrew, saveHomebrew } from '../repo/homebrew.js';
 import { deleteLibraryStatblock, setLibraryStatblock, statblockFor, statblockIndex, type StatBlock } from '../repo/statblocks.js';
 import { bookCounts, bookCreature, bookTreasure, bookCreatureIndex, bookCreatures, bookItems, creatureByName, itemByName, requireBookCreature } from '../repo/bookData.js';
 import { characterPage, renewCharacterCode, updateCharacterPage } from '../repo/characterPages.js';
@@ -224,6 +225,30 @@ export function campaignRoutes(ctx: AppContext) {
   r.get(
     '/books/items',
     h((req) => bookItems(ctx.db, String(req.query.q ?? ''), Number(req.query.limit ?? 2000))),
+  );
+  // The GM's own magic items and spells (kept in the library; they join the books' in every list).
+  r.get(
+    '/homebrew',
+    h((req) => listHomebrew(ctx.db, req.query.kind === 'item' || req.query.kind === 'spell' ? req.query.kind : undefined)),
+  );
+  r.get(
+    '/homebrew/record/:id',
+    h((req) => ({ rules: homebrewForRecord(ctx.db, String(req.params.id)) })),
+  );
+  r.post(
+    '/homebrew',
+    h((req) => saveHomebrew(ctx.db, req.body)),
+  );
+  r.put(
+    '/homebrew/:id',
+    h((req) => saveHomebrew(ctx.db, req.body, intParam(req.params.id))),
+  );
+  r.delete(
+    '/homebrew/:id',
+    h((req) => {
+      deleteHomebrew(ctx.db, intParam(req.params.id));
+      return { ok: true };
+    }),
   );
   // Encounters from the books: groups for the party's level, in a terrain or one of the world's regions.
   r.get(

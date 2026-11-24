@@ -32,6 +32,7 @@ import { worldbookRulesFor, type WorldbookRules } from './worldbookRules.js';
 import { adventureToMarkdown } from '../adventureAdditions.js';
 import { tablesToMarkdown } from '../tableAdditions.js';
 import pkg from '../../../package.json' with { type: 'json' };
+import { listHomebrew } from '../repo/homebrew.js';
 
 /** What a shared worldbook's manifest adds to a worldbook's. */
 export interface SharedManifest extends PackManifest {
@@ -279,6 +280,15 @@ export function buildWorldbook(db: DB, uploadsDir: string, o: ShareOptions): { f
   if (Object.keys(blocks).length) add('statblocks/statblocks.json', JSON.stringify({ statblocks: blocks }, null, 1));
   counts.statblocks = Object.keys(blocks).length;
 
+  // The GM's own magic items and spells (not a worldbook's they added). A world shared with players in mind keeps
+  // the spells, which players read, and leaves out the items, which the GM hands out.
+  const brew = listHomebrew(db)
+    .filter((h) => h.pack_id === null && (!o.leaveOutGmOnly || h.kind === 'spell'))
+    .map((h) => ({ kind: h.kind, name: h.name, entity_id: h.entity_id && ids.has(h.entity_id) ? h.entity_id : null, data: h.data }));
+  if (brew.length) add('homebrew/homebrew.json', JSON.stringify({ homebrew: brew }, null, 1));
+  counts.items = brew.filter((h) => h.kind === 'item').length;
+  counts.spells = brew.filter((h) => h.kind === 'spell').length;
+
   // Random tables (the GM's own and the ones generated for its places).
   const tables = (
     db.prepare(`SELECT name, region_id, kind, level_min, level_max, entries FROM random_tables WHERE pack_id IS NULL ORDER BY id`).all() as {
@@ -340,7 +350,7 @@ export function adoptWorldbookRealms(db: DB, m: PackManifest) {
 // ---- Adding one --------------------------------------------------------------------------------------------------
 
 const LIMITS = { files: 20_000, bytes: 500 * 1024 * 1024, file: 50 * 1024 * 1024 };
-const FOLDERS = ['lore', 'templates', 'maps', 'adventures', 'tables', 'treasure', 'statblocks', 'encounters', 'player-text', 'archive', 'open-rules', 'pictures'];
+const FOLDERS = ['lore', 'templates', 'maps', 'adventures', 'tables', 'treasure', 'statblocks', 'encounters', 'player-text', 'archive', 'open-rules', 'pictures', 'homebrew'];
 const ROOT_FILES = ['pack.json', 'calendar.json', 'README.md'];
 const EXT = /\.(md|json|webp|png|jpe?g|gif)$/i;
 

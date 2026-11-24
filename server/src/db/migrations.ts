@@ -1153,6 +1153,26 @@ SELECT p.entity_id, json_extract(p.data, '$.portrait') FROM profiles p
 WHERE p.campaign_id = 0 AND COALESCE(json_extract(p.data, '$.portrait'), '') <> '' AND p.entity_id IN (SELECT id FROM entities);
 `,
   },
+  {
+    version: 35,
+    name: 'the GM’s own items and spells',
+    // Kept in the library (not with the books' rules, which every library shares), so they travel with the world.
+    // `pack_id` is the worldbook one came with; null for the GM's own.
+    sql: `
+CREATE TABLE homebrew (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  kind TEXT NOT NULL CHECK (kind IN ('item', 'spell')),
+  name TEXT NOT NULL COLLATE NOCASE,
+  entity_id TEXT REFERENCES entities(id) ON DELETE SET NULL,
+  pack_id TEXT,
+  data TEXT NOT NULL DEFAULT '{}',
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  UNIQUE (kind, name)
+);
+CREATE INDEX homebrew_entity ON homebrew(entity_id);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {
