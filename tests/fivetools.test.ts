@@ -8,7 +8,7 @@ import { setSettingPack } from '../server/src/repo/settingPack.js';
 import { createApp } from '../server/src/app.js';
 import { AppContext } from '../server/src/context.js';
 import { createEntity } from '../server/src/repo/entities.js';
-import { plainTags, renderEntries } from '../server/src/repo/fivetools.js';
+import { creatureBlock, plainTags, renderEntries } from '../server/src/repo/fivetools.js';
 import { playerSnapshot } from '../server/src/player/projection.js';
 
 describe('importing from 5etools', () => {
@@ -182,5 +182,30 @@ describe('importing from 5etools', () => {
           .attach('data', z.toBuffer(), 'x.zip')
       ).status,
     ).toBe(400);
+  });
+
+  it('keeps a score given in words as a note, not as a number', () => {
+    // As a shape-change form gives its scores (synthetic, not from a book).
+    const words = { special: 'Equal to your {@b Wisdom} score.' };
+    const b = creatureBlock({
+      name: 'Test Form',
+      source: 'X',
+      size: ['M'],
+      type: 'beast',
+      ac: [12],
+      hp: { average: 9, formula: '2d8' },
+      speed: { walk: 30 },
+      str: words,
+      dex: words,
+      con: 12,
+      int: 3,
+      wis: 10,
+      cha: 5,
+      cr: '1',
+    });
+    expect(b.ab).toEqual([null, null, 12, 3, 10, 5]);
+    expect(b.abNote).toBe('Equal to your Wisdom score.');
+    expect(b.init).toBeNull();
+    expect(JSON.stringify(b)).not.toContain('[object Object]');
   });
 });

@@ -692,7 +692,10 @@ export function creatureBlock(m: J): J {
   const hp = (m.hp as J) ?? {};
   const cr = typeof m.cr === 'string' ? m.cr : (((m.cr as J)?.cr as string) ?? '0');
   const pb = crPb(cr);
-  const ab = ['str', 'dex', 'con', 'int', 'wis', 'cha'].map((k) => (m[k] as number) ?? 10);
+  // A score can be words instead of a number (a shape-change "form": "equal to your Wisdom score"): kept as a note.
+  const scores = ['str', 'dex', 'con', 'int', 'wis', 'cha'].map((k) => m[k] ?? 10);
+  const ab = scores.map((v) => (typeof v === 'number' ? v : null));
+  const abNote = [...new Set(scores.filter((v) => typeof v !== 'number').map((v) => plainTags(String((v as J)?.special ?? v))))].join(' ');
   const initProf = ((m.initiative as J)?.proficiency as number) ?? 0;
   const speed = Object.entries((m.speed as J) ?? {})
     .filter(([k, v]) => !['choose', 'alternate', 'canHover'].includes(k) && (typeof v === 'number' || (v && typeof v === 'object')))
@@ -729,9 +732,10 @@ export function creatureBlock(m: J): J {
     ac: acNum,
     hp: hp.special ? plainTags(String(hp.special)) : hp.average != null ? `${hp.average} (${plainTags(String(hp.formula ?? ''))})` : '',
     hpAvg: hp.average,
-    init: amod(ab[1]) + initProf * pb,
+    init: ab[1] == null ? null : amod(ab[1]) + initProf * pb,
     speed,
     ab,
+    ...(abNote ? { abNote } : {}),
     cr,
     xp: XP_BY_CR[cr],
     pb,

@@ -15,9 +15,11 @@ export interface StatBlockData {
   ac?: number;
   hp?: string;
   hpAvg?: number;
-  init?: number;
+  init?: number | null;
   speed?: string;
-  ab?: number[];
+  /** A score is null where the book gives words instead (abNote). */
+  ab?: (number | null)[];
+  abNote?: string;
   cr?: string;
   xp?: number;
   pb?: number;
@@ -213,13 +215,12 @@ export function StatBlock({ s }: { s: StatBlockData }) {
           {['Str', 'Dex', 'Con', 'Int', 'Wis', 'Cha'].map((k, i) => (
             <div key={k} className="py-1">
               <div className="text-[10px] uppercase tracking-wider text-dim">{k}</div>
-              <div className="num">
-                {s.ab![i]} ({sg(mod(s.ab![i]))})
-              </div>
+              <div className="num">{typeof s.ab![i] === 'number' ? `${s.ab![i]} (${sg(mod(s.ab![i]))})` : '—'}</div>
             </div>
           ))}
         </div>
       )}
+      {s.abNote && <p className="text-xs italic text-dim">{s.abNote}</p>}
       <div className="space-y-0.5">
         {lines.map(([k, v]) => (
           <div key={k}>
