@@ -7,6 +7,7 @@ import request from 'supertest';
 import { tempContext } from './helpers.js';
 import { createApp } from '../server/src/app.js';
 import { maps, markers, shapes } from '../server/src/repo/maps.js';
+import { adventures, randomTables, scenes } from '../server/src/repo/campaigns.js';
 import { leaveOutGmOnly, readWorldbook } from '../server/src/packs/share.js';
 
 const binary = (res: request.Response, cb: (e: Error | null, b: Buffer) => void) => {
@@ -60,26 +61,66 @@ describe('worldbooks shared between GMs', () => {
     fs.writeFileSync(path.join(a.paths.uploadsDir, 'ostmark.png'), png(400, 300));
     const m = maps.create(a.db, { name: 'Ostmark', kind: 'image', image_file: 'ostmark.png', width: 400, height: 300, realm_id: 'world' }) as { id: number };
     markers.create(a.db, { map_id: m.id, entity_id: keep.id, label: 'Brennhold', x: 100, y: 200, category: 'settlement' });
-    markers.create(a.db, { map_id: m.id, label: 'Here be dragons', x: 10, y: 10 });
+    markers.create(a.db, { map_id: m.id, label: 'Here be dragons', x: 10, y: 10, hidden: false });
+    // An adventure with its scenes, and a weighted table.
+    const adv = adventures.create(a.db, {
+      title: 'The Cliff Road',
+      status: 'draft',
+      arc: 'Salt and smoke',
+      linked_ids: [keep.id],
+      data: { premise: 'Someone lights fires on the cliff road.', clues: [{ text: 'Soot on the gate', found: true }], levels: '1 to 3' },
+    }) as { id: number };
+    scenes.create(a.db, { adventure_id: adv.id, title: 'The gate', kind: 'location', body: 'The guards are tired.', read_aloud: 'Salt wind.\nA cold gate.', linked_ids: [keep.id], sort_order: 0 });
+    scenes.create(a.db, { adventure_id: adv.id, title: 'The fire', kind: 'climax', body: 'It was the lord all along.', read_aloud: '', linked_ids: [], sort_order: 1 });
+    randomTables.create(a.db, {
+      name: 'Cliff road',
+      die: 'd3',
+      entries: [
+        { weight: 2, text: 'Gulls, screaming' },
+        { weight: 1, text: 'A smuggler with a lantern' },
+      ],
+      source: 'user',
+      kind: 'encounter',
+      level_min: 1,
+      level_max: 4,
+    });
     shapes.create(a.db, { map_id: m.id, kind: 'route', label: 'The cliff road', color: '#c9a24a', points: [[100, 200], [150, 250]] });
 
-    // Share it, leaving out GM-only sections.
-    const res = await request(gmA).get('/api/worldbooks/share').query({ name: 'Ostmark', description: 'Iron kings.', author: 'GM A', gmOnly: 'leave-out' }).buffer(true).parse(binary);
+    // Shared with players in mind: GM-only sections and adventures are left out.
+    const forPlayers = readWorldbook(
+      (await request(gmA).get('/api/worldbooks/share').query({ name: 'Ostmark', gmOnly: 'leave-out' }).buffer(true).parse(binary)).body as Buffer,
+    );
+    expect(forPlayers.manifest.shared).toMatchObject({ gm_only_left_out: true, counts: { records: 2, adventures: 0 } });
+    const playerLore = forPlayers.files.filter((f) => f.path.startsWith('lore/') && f.path.endsWith('.md')).map((f) => f.data.toString('utf8'));
+    expect(playerLore.join('\n')).toContain('A keep on a cliff.');
+    expect(playerLore.join('\n')).not.toContain('The lord is dead');
+    expect(forPlayers.files.some((f) => f.path.startsWith('adventures/'))).toBe(false);
+
+    // Shared whole.
+    const res = await request(gmA).get('/api/worldbooks/share').query({ name: 'Ostmark', description: 'Iron kings.', author: 'GM A' }).buffer(true).parse(binary);
     expect(res.status).toBe(200);
     expect(res.headers['content-disposition']).toContain('Ostmark.worldbook');
     const file = res.body as Buffer;
     const { manifest, files } = readWorldbook(file);
     expect(manifest).toMatchObject({ id: 'ostmark', name: 'Ostmark', description: 'Iron kings.', author: 'GM A', modules: expect.arrayContaining(['thinning']), calendar: { file: 'calendar.json', worlds: ['world'] } });
     expect(manifest.realms.map((r) => r.id)).toEqual(expect.arrayContaining(['world', 'vael']));
-    expect(manifest.shared).toMatchObject({ format: 1, gm_only_left_out: true, counts: { records: 2, links: 1, timeline: 1, maps: 1 } });
+    expect(manifest.shared).toMatchObject({ format: 1, gm_only_left_out: false, counts: { records: 2, links: 1, timeline: 1, maps: 1 } });
     const lore = files.filter((f) => f.path.startsWith('lore/') && f.path.endsWith('.md')).map((f) => f.data.toString('utf8'));
     expect(lore.join('\n')).toContain('A keep on a cliff.');
-    expect(lore.join('\n')).not.toContain('The lord is dead');
+    expect(lore.join('\n')).toContain('The lord is dead');
     // Never campaigns, characters or sessions.
     expect(files.map((f) => f.path).join('\n')).not.toMatch(/campaign|character|session/i);
     const pins = JSON.parse(files.find((f) => f.path === 'maps/ostmark.pins.json')!.data.toString('utf8'));
     // Only pins of records travel; positions from the top-left.
-    expect(pins).toMatchObject({ name: 'Ostmark', image: 'ostmark.png', pins: [{ id: keep.id, label: 'Brennhold', x: 100, y: 100 }] });
+    expect(pins).toMatchObject({
+      name: 'Ostmark',
+      image: 'ostmark.png',
+      pins: [
+        { id: keep.id, label: 'Brennhold', x: 100, y: 100 },
+        { label: 'Here be dragons', x: 10, y: 290, hidden: false },
+      ],
+    });
+    expect(manifest.shared?.counts).toMatchObject({ adventures: 1, tables: 1 });
 
     // Added back to the computer it came from, it isn't offered to the library it was made from.
     await request(gmA).post('/api/worldbooks/add').attach('file', file, 'Ostmark.worldbook');
@@ -105,7 +146,27 @@ describe('worldbooks shared between GMs', () => {
     expect(b.db.prepare(`SELECT event FROM timeline_rows`).all()).toEqual([{ event: 'Brennhold is built' }]);
     const bMaps = (await request(gmB).get('/api/maps')).body as { id: number; name: string }[];
     expect(bMaps.map((x) => x.name)).toEqual(['Ostmark']);
-    expect(b.db.prepare('SELECT entity_id, x, y FROM map_markers').all()).toEqual([{ entity_id: keep.id, x: 100, y: 200 }]);
+    expect(b.db.prepare('SELECT entity_id, label, x, y, hidden FROM map_markers ORDER BY id').all()).toEqual([
+      // A record's pin stays hidden until the record is revealed; a label keeps what it was.
+      { entity_id: keep.id, label: 'Brennhold', x: 100, y: 200, hidden: 1 },
+      { entity_id: null, label: 'Here be dragons', x: 10, y: 10, hidden: 0 },
+    ]);
+    // The adventure, its scenes in order with their read-aloud text, and the table with its weights.
+    const bAdv = b.db.prepare('SELECT id, title, arc, linked_ids, data, pack_id FROM adventures').all() as { id: number; title: string; arc: string; linked_ids: string; data: string; pack_id: string }[];
+    expect(bAdv).toHaveLength(1);
+    expect(bAdv[0]).toMatchObject({ title: 'The Cliff Road', arc: 'Salt and smoke', pack_id: 'ostmark' });
+    expect(JSON.parse(bAdv[0].linked_ids)).toEqual([keep.id]);
+    expect(JSON.parse(bAdv[0].data)).toMatchObject({ premise: 'Someone lights fires on the cliff road.', clues: [{ text: 'Soot on the gate', found: false }], levels: '1 to 3' });
+    expect(b.db.prepare('SELECT title, kind, read_aloud, body FROM scenes WHERE adventure_id = ? ORDER BY sort_order').all(bAdv[0].id)).toEqual([
+      { title: 'The gate', kind: 'location', read_aloud: 'Salt wind.\nA cold gate.', body: 'The guards are tired.' },
+      { title: 'The fire', kind: 'climax', read_aloud: '', body: 'It was the lord all along.' },
+    ]);
+    const bTable = b.db.prepare(`SELECT name, die, entries, kind, level_min, level_max, source, pack_id FROM random_tables`).get() as Record<string, unknown>;
+    expect(bTable).toMatchObject({ name: 'Cliff road', die: 'd3', kind: 'encounter', level_min: 1, level_max: 4, source: 'Ostmark', pack_id: 'ostmark' });
+    expect(JSON.parse(bTable.entries as string)).toEqual([
+      { weight: 2, text: 'Gulls, screaming' },
+      { weight: 1, text: 'A smuggler with a lantern' },
+    ]);
     expect(b.db.prepare(`SELECT label FROM map_shapes WHERE kind = 'route'`).all()).toEqual([{ label: 'The cliff road' }]);
     expect((await request(gmB).get('/api/calendars')).status).toBe(200);
     // No campaign came with it.

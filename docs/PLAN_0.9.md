@@ -23,6 +23,8 @@ Done in v0.8.1.
 
 ### v0.8.2: share adventures, random tables and loose pins
 
+Done in v0.8.2. Adventures are left out, with GM-only sections, of a world shared with players in mind; tables gained optional `Kind:`, `Levels:` and `[x2]` weights (older files read as before).
+
 - **Adventures** travel in `adventures/` in the format the Worldkeeper worldbook already uses (a header, sections, scenes and their links), written from the library's own adventures (not another worldbook's), with GM-only sections left out when asked.
 - **Random tables** travel in `tables/` (`# Name`, a `Region:` line, numbered rows), the GM's own and generated ones alike.
 - **Pins that aren't on a record** (labels such as "Here be dragons") travel in the map's `pins.json` with no record id, and come back as labels.

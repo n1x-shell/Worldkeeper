@@ -101,11 +101,10 @@ A light that guides ships, or lures them.
 
 You don't have to write a worldbook by hand. **Library → Worldbooks → Share as a worldbook…** makes one from the open library: a `.worldbook` file (a ZIP of this folder format) another GM adds with **Add a worldbook…**.
 
-- **What goes in:** the library's own world: its realms (the world takes its name), record types, templates, calendar and switched-on modules, every record as Markdown (`lore/`), the links you made by hand (`lore/links.json`), the World Timeline (`lore/timeline.json`), and its maps with their pins (those on records), routes and region outlines (`maps/`). The manifest says who made it, when, and what it holds.
+- **What goes in:** the library's own world: its realms (the world takes its name), record types, templates, calendar and switched-on modules, every record as Markdown (`lore/`), the links you made by hand (`lore/links.json`), the World Timeline (`lore/timeline.json`), its adventures with their scenes (`adventures/`), its random tables with their weights (`tables/tables.md`), and its maps with their pins (on records, and labels with none), routes and region outlines (`maps/`). The manifest says who made it, when, and what it holds.
 - **What never goes in:** campaigns, characters, sessions, what players were shown, and worldbooks you added to the library (the other GM adds those; the manifest lists them).
-- **Leave out GM-only sections** for a world shared with players in mind.
+- **Leave out GM-only sections** for a world shared with players in mind: adventures are left out too.
 - **Adding one** checks it first (only the folders and kinds of file a worldbook holds, nothing outside its folder, sizes, an id the app's own worldbooks don't use) and puts it with this computer's worldbooks, for every library. Then **Start a library with it** (a new library named after the world, opened) or **Add to this library**. A shared worldbook never carries an import profile, cleaning or handbook rules: only the worldbooks that come with the app may.
-- Adventures and random tables aren't shared yet.
 - **Remove from this computer** (the bin on its card) takes a worldbook you added out of the ones you can add, once no library has it; the app names any library that still does. The app's own worldbooks stay.
 
 ## Worldbooks and the GM's books
@@ -120,7 +119,6 @@ A worldbook never holds book text: it names rules, and the app finds each name i
   - Open rules it uses beyond the SRD (an Open5e pack) travel with it (`open-rules/<pack>.json`, only the entries it names, with their credit).
 - **Adding says what's missing**, by book where it knows ("Xanathar's Guide to Everything: 23 items"), switches on in that library the books of yours it draws on, and refuses a worldbook whose required books you don't have.
 - **Every book there:** a new library started from a worldbook whose books you all have uses your books alone (Books only), the open rules kept for what your books don't cover, and it says so once.
-
 
 ## Adding and testing it
 
@@ -160,7 +158,7 @@ Each folder is optional. The Worldkeeper pack has all of them, and is the fulles
 | `player-text/`            | Rumours and player-facing text.                                                                                                                                                                                                                                                                                                               |
 | `maps/`                   | A map image and `<name>.pins.json` (its name, image, realm, scale and pins by record ID, in pixels), with optional `.routes.json` and `.regions.json`.                                                                                                                                                                                        |
 | `adventures/`             | Ready-to-run adventures: a header (`Title`, `Arc`, `Hook`, `Levels`, `Linked`), then sections (Premise, Hook, Stakes, Clues, Encounters, Rewards…) and scenes.                                                                                                                                                                                |
-| `tables/`                 | Random tables: `# Encounters: Place, levels 1 to 4`, a `Region:` line with the region's ID, then numbered rows.                                                                                                                                                                                                                               |
+| `tables/`                 | Random tables: `# Encounters: Place, levels 1 to 4`, a `Region:` line with the region's ID, optional `Kind:` (encounter, treasure, other) and `Levels: 1 to 4` lines, then numbered rows (`3. [x2] Wolves` for a row that counts twice).                                                                                                      |
 | `treasure/`               | Treasure pools by region and tier.                                                                                                                                                                                                                                                                                                            |
 | `statblocks/`             | Stat blocks for its creatures and people, by record ID (`{ "statblocks": { "BCN-0001": { "name": …, "meta": …, "ac": …, "hpAvg": …, "cr": … } } }`; the fields are in `server/src/repo/statblocks.ts`). Shown on each record's page and in the encounter tracker while the pack is installed; a GM's own stat block for a record comes first. |
 | `encounters/terrain.json` | Terrain for its places, where their records don't give it.                                                                                                                                                                                                                                                                                    |

@@ -24,7 +24,8 @@ interface PinsSpec {
   scale_miles?: number;
   /** The realm the map shows (a realm id of the pack's). */
   realm?: string;
-  pins: { id: string; label: string; x: number; y: number; category: string }[];
+  /** Pins on records (by id), and labels with no record ("Here be dragons"; `hidden` from players or not). */
+  pins: { id?: string; label: string; x: number; y: number; category: string; hidden?: boolean }[];
 }
 
 export interface MapApplyResult {
@@ -103,7 +104,15 @@ export function applyMaps(db: DB, uploadsDir: string, mapsDir: string, opts: { o
     }
     const onMap = new Set((db.prepare('SELECT entity_id FROM map_markers WHERE map_id = ? AND entity_id IS NOT NULL').all(mapId) as { entity_id: string }[]).map((r) => r.entity_id));
     let pins = 0;
+    const labelHere = db.prepare('SELECT 1 FROM map_markers WHERE map_id = ? AND entity_id IS NULL AND label = ? AND abs(x - ?) < 1 AND abs(y - ?) < 1');
     for (const p of spec.pins) {
+      if (!p.id) {
+        // A label with no record: added once, where it was.
+        if ((opts.onlyRevealed && p.hidden !== false) || labelHere.get(mapId, p.label, p.x, size.height - p.y)) continue;
+        markers.create(db, { map_id: mapId, entity_id: null, label: p.label, x: p.x, y: size.height - p.y, category: p.category, layer: 'Locations', hidden: p.hidden !== false });
+        pins++;
+        continue;
+      }
       const e = entity.get(p.id) as { revealed: number } | undefined;
       if (!e || onMap.has(p.id)) continue;
       if (opts.onlyRevealed && !e.revealed) continue;

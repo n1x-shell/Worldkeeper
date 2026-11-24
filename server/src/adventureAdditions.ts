@@ -111,6 +111,40 @@ export function parseAdventure(text: string): AdventureSpec {
   return out;
 }
 
+/** Write an adventure and its scenes in the format parseAdventure reads (for a shared worldbook). */
+export function adventureToMarkdown(a: {
+  title: string;
+  arc: string;
+  source_hook_id: string | null;
+  linked_ids: string[];
+  data: Record<string, unknown>;
+  scenes: { title: string; kind: string; linked_ids: string[]; read_aloud: string; body: string }[];
+}): string {
+  const one = (s: string) => s.replace(/\r?\n/g, ' ').trim();
+  const out: string[] = [`Title: ${one(a.title)}`];
+  if (a.arc) out.push(`Arc: ${one(a.arc)}`);
+  if (a.source_hook_id) out.push(`Hook: ${a.source_hook_id}`);
+  if (typeof a.data.levels === 'string' && a.data.levels) out.push(`Levels: ${one(a.data.levels)}`);
+  if (a.linked_ids.length) out.push(`Linked: ${a.linked_ids.join(', ')}`);
+  out.push('');
+  for (const [heading, key] of Object.entries(FIELDS)) {
+    const v = a.data[key];
+    if (typeof v === 'string' && v.trim()) out.push(`## ${heading[0].toUpperCase()}${heading.slice(1)}`, '', v.trim(), '');
+    if (heading === 'opposition') {
+      const clues = (a.data.clues as { text: string }[] | undefined) ?? [];
+      if (clues.length) out.push('## Clues', '', ...clues.map((c) => `- ${one(c.text)}`), '');
+    }
+  }
+  for (const s of a.scenes) {
+    out.push(`# Scene: ${one(s.title)}`, `Kind: ${(KINDS as readonly string[]).includes(s.kind) ? s.kind : 'scene'}`);
+    if (s.linked_ids.length) out.push(`Linked: ${s.linked_ids.join(', ')}`);
+    out.push('');
+    if (s.read_aloud.trim()) out.push(...s.read_aloud.trim().split('\n').map((l) => `> ${l}`), '');
+    if (s.body.trim()) out.push(s.body.trim(), '');
+  }
+  return `${out.join('\n').trimEnd()}\n`;
+}
+
 export function adventureFiles(dir: string) {
   if (!fs.existsSync(dir)) return [];
   return fs
