@@ -46,6 +46,23 @@ function walk(dir: string, prefix = ''): SiteFile[] {
 }
 
 /**
+ * The uploaded pictures a handbook needs, and no others: its maps' images, and the pictures of the records it shows
+ * that are marked for players.
+ */
+export function siteUploads(snap: { maps: { image_file?: string | null }[]; entities: { images?: { file: string }[] }[] }, uploadsDir: string): SiteFile[] {
+  const names = new Set<string>();
+  for (const m of snap.maps) if (m.image_file) names.add(m.image_file);
+  for (const e of snap.entities) for (const i of e.images ?? []) names.add(i.file);
+  const out: SiteFile[] = [];
+  for (const name of names) {
+    if (!/^[\w.-]+$/.test(name)) continue;
+    const full = path.join(uploadsDir, name);
+    if (fs.existsSync(full)) out.push({ path: `uploads/${name}`, data: fs.readFileSync(full) });
+  }
+  return out;
+}
+
+/**
  * Assemble the Player Handbook: the static player app + ONE data file built by the player-safe projection
  * + the images of maps published to players. Nothing else from the library is included.
  */
@@ -60,19 +77,7 @@ export function buildPlayerSite(db: DB, paths: Paths, previous?: { contentHash: 
   const snap = { ...fresh, appName, generated_at };
   const files: SiteFile[] = walk(playerSiteDir()).filter((f) => !f.path.startsWith('data/') && !f.path.startsWith('uploads/'));
   files.push({ path: 'data/player.json', data: Buffer.from(JSON.stringify(snap)) });
-  for (const m of snap.maps) {
-    if (!m.image_file || !/^[\w.-]+$/.test(m.image_file)) continue;
-    const full = path.join(paths.uploadsDir, m.image_file);
-    if (fs.existsSync(full)) files.push({ path: `uploads/${m.image_file}`, data: fs.readFileSync(full) });
-  }
-  // The pictures of the records it shows (only those marked for players).
-  const seen = new Set(files.map((f) => f.path));
-  for (const e of snap.entities)
-    for (const i of e.images ?? []) {
-      if (!/^[\w.-]+$/.test(i.file) || seen.has(`uploads/${i.file}`)) continue;
-      const full = path.join(paths.uploadsDir, i.file);
-      if (fs.existsSync(full)) (files.push({ path: `uploads/${i.file}`, data: fs.readFileSync(full) }), seen.add(`uploads/${i.file}`));
-    }
+  files.push(...siteUploads(snap, paths.uploadsDir));
   // GitHub Pages: serve files as-is (no Jekyll); keep the handbook out of search engines.
   files.push({ path: '.nojekyll', data: Buffer.alloc(0) });
   files.push({ path: 'robots.txt', data: Buffer.from('User-agent: *\nDisallow: /\n') });

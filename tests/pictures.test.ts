@@ -7,7 +7,8 @@ import { tempContext } from './helpers.js';
 import { createApp } from '../server/src/app.js';
 import { AppContext } from '../server/src/context.js';
 import { readWorldbook } from '../server/src/packs/share.js';
-import { buildPlayerSite } from '../server/src/publish/site.js';
+import { siteUploads } from '../server/src/publish/site.js';
+import { playerSnapshot } from '../server/src/player/projection.js';
 import { peekEntity } from '../server/src/repo/peek.js';
 import { migrate } from '../server/src/db/migrations.js';
 
@@ -78,8 +79,7 @@ describe('pictures on records', () => {
     expect((await request(table).get(`/api/player/uploads/${shown.file}`)).status).toBe(200);
     expect((await request(table).get(`/api/player/uploads/${secret.file}`)).status).toBe(404);
     // The published handbook carries the shown picture, not the other.
-    const site = buildPlayerSite(ctx.db, ctx.paths, null);
-    const paths = site.files.map((f) => f.path);
+    const paths = siteUploads(playerSnapshot(ctx.db), ctx.paths.uploadsDir).map((f) => f.path);
     expect(paths).toContain(`uploads/${shown.file}`);
     expect(paths).not.toContain(`uploads/${secret.file}`);
   });
