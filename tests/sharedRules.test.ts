@@ -9,7 +9,8 @@ import { tempContext } from './helpers.js';
 import { createApp } from '../server/src/app.js';
 import { AppContext } from '../server/src/context.js';
 import { resolvePaths } from '../server/src/config.js';
-import { writeIndex } from '../server/src/libraries.js';
+import Database from 'better-sqlite3';
+import { libraryDir, readIndex, writeIndex } from '../server/src/libraries.js';
 import { adoptSharedRules } from '../server/src/repo/sharedRules.js';
 
 function pack(name: string, source: string, spell: string) {
@@ -43,9 +44,11 @@ describe('rules shared by every library', () => {
     expect((ctx.db.prepare('SELECT COUNT(*) AS n FROM main.rules_entries').get() as { n: number }).n).toBe(0);
     await request(gm).patch('/api/rules/packs/open-book').send({ publish: true });
 
-    // A second library has the book at once, in use, and not published until it says so.
+    // A second library has the book at once, but off, and not published, until it says so.
     const second = (await request(gm).post('/api/libraries').send({ name: 'Second', open: true })).body.open;
-    expect(await packs(gm)).toMatchObject([{ id: 'open-book', enabled: true, publish: false }]);
+    expect(await packs(gm)).toMatchObject([{ id: 'open-book', enabled: false, publish: false }]);
+    expect(await spells(gm)).not.toContain('Glimmer Bolt');
+    await request(gm).patch('/api/rules/packs/open-book').send({ enabled: true });
     expect(await spells(gm)).toContain('Glimmer Bolt');
     // Its switches are its own.
     await request(gm).patch('/api/rules/packs/open-book').send({ enabled: false });
@@ -69,6 +72,65 @@ describe('rules shared by every library', () => {
     expect((await request(gm).delete('/api/rules/packs/open-book')).status).toBe(200);
     await request(gm).post(`/api/libraries/${first}/open`);
     expect(await packs(gm)).toEqual([]);
+  });
+
+  it('a book is on only in the library it was imported in; libraries from before v0.6.8 keep the books they used', async () => {
+    const ctx = tempContext();
+    const root = ctx.paths.rootDir;
+    let gm = createApp(ctx);
+    const first = ctx.paths.libraryId;
+    const second = (await request(gm).post('/api/libraries').send({ name: 'Second' })).body.library.id as string;
+    await request(gm)
+      .post('/api/rules/packs')
+      .attach('pack', pack('Old Book', 'Homebrew, CC BY 4.0', 'Old Bolt'), 'p.zip');
+    await request(gm).post(`/api/libraries/${second}/open`);
+    await request(gm).post(`/api/libraries/${first}/open`);
+    ctx.db.close();
+
+    // Make the folder as v0.6.7 left it: no switches (every book was in use), no migration 32, no mark in the rules.
+    const file = (id: string) => path.join(libraryDir(root, readIndex(root)!.libraries.find((l) => l.id === id)!), 'worldkeeper.db');
+    const asBefore = (id: string) => {
+      const db = new Database(file(id));
+      db.exec('DELETE FROM rules_pack_switches; DROP TABLE rules_switches_pending; DELETE FROM schema_migrations WHERE version = 32;');
+      db.close();
+    };
+    asBefore(first);
+    asBefore(second);
+    const rules = new Database(path.join(ctx.paths.sharedDir, 'rules.db'));
+    rules.exec('DROP TABLE rules_meta');
+    rules.close();
+
+    // The new version opens it: both libraries keep the book, the one not open as well.
+    const after = new AppContext(resolvePaths(root));
+    gm = createApp(after);
+    expect(await packs(gm)).toMatchObject([{ id: 'old-book', enabled: true, publish: false }]);
+    // A book imported now is on here, and off in the other library.
+    await request(gm)
+      .post('/api/rules/packs')
+      .attach('pack', pack('New Book', 'Homebrew, CC BY 4.0', 'New Bolt'), 'p.zip');
+    expect(await packs(gm)).toMatchObject([
+      { id: 'old-book', enabled: true },
+      { id: 'new-book', enabled: true },
+    ]);
+    await request(gm).post(`/api/libraries/${second}/open`);
+    expect(await packs(gm)).toMatchObject([
+      { id: 'old-book', enabled: true },
+      { id: 'new-book', enabled: false },
+    ]);
+    expect(await spells(gm)).toContain('Old Bolt');
+    expect(await spells(gm)).not.toContain('New Bolt');
+
+    // A library from before v0.6.8 that arrives later (a backup restored) keeps the books, as it used them all.
+    await request(gm).post(`/api/libraries/${first}/open`);
+    after.db.close();
+    asBefore(second);
+    const again = new AppContext(resolvePaths(root));
+    again.openLibrary(second);
+    expect(await packs(createApp(again))).toMatchObject([
+      { id: 'old-book', enabled: true },
+      { id: 'new-book', enabled: true },
+    ]);
+    again.db.close();
   });
 
   it('moves the rules a library kept itself into the shared rules, with its switches', () => {
