@@ -28,6 +28,7 @@ import {
   Scale,
   Library,
   Eclipse,
+  History,
   Network,
   UserPlus,
   Menu as MenuIcon,
@@ -112,6 +113,7 @@ export function PlayerLayout({ appName, publishedAt, campaign }: { appName: stri
   const count = (f: (c: NonNullable<typeof campaigns>[number]) => number) => (campaigns ?? []).reduce((n, c) => n + f(c), 0);
   const quests = count((c) => c.quests.length);
   const recaps = count((c) => c.recaps.length);
+  const timeline = count((c) => c.timeline?.length ?? 0);
   const standing = count((c) => c.standing?.length ?? 0);
   const treasure = count((c) => c.treasure?.length ?? 0);
   const handouts = count((c) => c.handouts?.length ?? 0);
@@ -154,6 +156,7 @@ export function PlayerLayout({ appName, publishedAt, campaign }: { appName: stri
       items: [
         ...(quests ? [{ to: `${base}/quests`, label: 'Quests', icon: <ListChecks size={I} /> }] : []),
         ...(recaps ? [{ to: `${base}/recaps`, label: 'Session Recaps', icon: <Feather size={I} /> }] : []),
+        ...(timeline ? [{ to: `${base}/timeline`, label: 'Timeline', icon: <History size={I} /> }] : []),
         ...(standing ? [{ to: `${base}/standing`, label: 'Faction Standing', icon: <Scale size={I} /> }] : []),
         ...(treasure ? [{ to: `${base}/treasure`, label: 'Party Treasure', icon: <Gem size={I} /> }] : []),
         ...(handouts ? [{ to: `${base}/handouts`, label: 'Handouts', icon: <Gift size={I} /> }] : []),

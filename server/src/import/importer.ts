@@ -1,4 +1,5 @@
 import type { DB } from '../db/connection.js';
+import { keepTimelineReveals } from '../repo/timeline.js';
 import { sha256 } from '../lib/hash.js';
 import { now, parseJson } from '../lib/json.js';
 import { parseMarkdownFile, parsePipeTable, splitSections, type ParsedFile } from './parseMarkdown.js';
@@ -440,6 +441,8 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
           (r) => [`${r.time_label}\u0000${r.event}`, r.era],
         ),
       );
+      // And what players were shown of them (repo/timeline.ts).
+      const restoreReveals = keepTimelineReveals(db);
       db.prepare(`DELETE FROM timeline_rows WHERE origin = 'import'`).run();
       const ins = db.prepare(
         `INSERT INTO timeline_rows (sort_order, time_label, event, realm_label, realm_ids, source, access, entity_ids, origin, era, era_origin, pack_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'import', ?, ?, ?)`,
@@ -450,6 +453,7 @@ export function commitPlan(db: DB, files: SourceFile[], plan: ImportPlan, opts: 
         ins.run(r.sort_order, r.time_label, r.event, r.realm_label, JSON.stringify(timelineRealms(db, r.realm_label)), r.source, r.access, JSON.stringify(r.entity_ids), userEra ?? null, userEra !== undefined ? 'user' : null, pack?.id ?? null);
         result.timelineRows++;
       }
+      restoreReveals();
     }
 
     // 4b. Eras: vocabulary from the library's own tag documentation and era tags; then derive row eras.

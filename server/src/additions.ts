@@ -8,6 +8,7 @@
  * Applying them never changes or removes archive records. Links are stored as curated links, so the GM can edit or
  * delete them in the app like any other.
  */
+import { keepTimelineReveals } from './repo/timeline.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { applyErrata } from './errata.js';
@@ -110,6 +111,8 @@ export function applyTimeline(db: DB, dir = DEFAULT_ADDITIONS_DIR): number {
   const ins = db.prepare(
     `INSERT INTO timeline_rows (sort_order, time_label, event, realm_label, source, access, entity_ids, origin, era, era_origin) VALUES (?, ?, ?, ?, '', ?, ?, 'additions', ?, ?)`,
   );
+  // What players were shown of these rows, kept across the replacement (repo/timeline.ts).
+  const restoreReveals = keepTimelineReveals(db, 'additions');
   db.transaction(() => {
     db.prepare(`DELETE FROM timeline_rows WHERE origin = 'additions'`).run();
     for (const r of specs) {
@@ -125,6 +128,7 @@ export function applyTimeline(db: DB, dir = DEFAULT_ADDITIONS_DIR): number {
         kept.has(r.event) ? 'user' : null,
       );
     }
+    restoreReveals();
   })();
   deriveTimelineEras(db);
   return specs.length;

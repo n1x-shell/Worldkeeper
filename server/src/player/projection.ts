@@ -20,6 +20,9 @@ import { playerTreasure } from '../repo/treasure.js';
 import { playerHandouts } from '../repo/handouts.js';
 import { campaignDate, comingUp } from '../repo/calendar.js';
 import { campaignCalendar } from '../repo/calendars.js';
+import { revealedTimelineRows } from '../repo/timeline.js';
+import { mergeByDate } from '../../../shared/timeline.js';
+import { formatDate, formatYear } from '../../../shared/calendar.js';
 import { playerRegions } from '../repo/regionState.js';
 import type { DB } from '../db/connection.js';
 import { SECRET_HEADING_RE, ENTITY_TYPE_LABELS } from '../../../shared/domain.js';
@@ -355,7 +358,8 @@ export function playerMaps(db: DB, scope: RevealScope = null) {
   }));
 }
 
-export function playerCampaign(db: DB, campaignId: number) {
+/** `published`: for the published handbook, which shows history revealed to everyone only (as it does records). */
+export function playerCampaign(db: DB, campaignId: number, published = false) {
   const c = db.prepare('SELECT id, title, "current_date" FROM campaigns WHERE id = ?').get(campaignId) as { id: number; title: string; current_date: string } | undefined;
   if (!c) return null;
   const quests = db.prepare(`SELECT id, title, status, description FROM quests WHERE campaign_id = ? AND player_visible = 1 ORDER BY status = 'completed', id`).all(campaignId) as {
@@ -406,11 +410,62 @@ export function playerCampaign(db: DB, campaignId: number) {
     // The faction web as the party knows it: public rivalries, and the ties the GM has revealed.
     factionWeb: playerFactionWeb(db, c.id),
     standing: (moduleOn(db, 'renown', c.id) ? playerStanding(db, c.id) : []).map((f) => ({ ...f, earned: f.earned.map((e) => ({ rank: e.rank, text: scrubRefs(e.text, revealed, index) })) })),
+    // The campaign's story among the world's history, by in-world date.
+    timeline: playerTimeline(db, c.id, revealed, index, published ? null : c.id),
   };
 }
 
-export function playerCampaigns(db: DB) {
-  return (db.prepare(`SELECT id FROM campaigns WHERE status != 'archived' ORDER BY id`).all() as { id: number }[]).map((c) => playerCampaign(db, c.id)!);
+export type PlayerTimelineEntry =
+  | { kind: 'history'; id: number; when: string; year: number | null; day: number | null; text: string }
+  | { kind: 'session'; id: number; when: string; year: number; day: number | null; number: number; title: string; recap: boolean }
+  | { kind: 'event'; id: number; when: string; year: number; day: number; title: string };
+
+/**
+ * What a campaign's players see on their timeline (v0.7): the world's history rows revealed to them (to everyone or to
+ * this campaign; never a SECRET one), and among them by in-world date the sessions they've played and the dated events
+ * the GM has shown them. A session's title shows once its recap does (a title can give something away); before that,
+ * it's "Session N". Sessions without a date aren't placed.
+ */
+export function playerTimeline(db: DB, campaignId: number, revealed: Set<string>, index: MentionIndex, historyScope: RevealScope = campaignId): PlayerTimelineEntry[] {
+  const def = campaignCalendar(db, campaignId);
+  const when = (year: number, day: number | null) => (day != null ? formatDate(def, { year, day }, 'short') : formatYear(def, year));
+  const history: PlayerTimelineEntry[] = revealedTimelineRows(db, historyScope).map((r) => ({
+    kind: 'history',
+    id: r.id,
+    when: r.time_label,
+    year: r.year,
+    day: r.day,
+    text: scrubRefs(r.event, revealed, index),
+  }));
+  const sessions = (
+    db
+      .prepare(`SELECT id, number, title, date_year, date_day, recap_player_visible FROM sessions WHERE campaign_id = ? AND status IN ('live', 'completed') AND date_year IS NOT NULL ORDER BY number`)
+      .all(campaignId) as { id: number; number: number; title: string; date_year: number; date_day: number | null; recap_player_visible: number }[]
+  ).map(
+    (x): PlayerTimelineEntry => ({
+      kind: 'session',
+      id: x.id,
+      when: when(x.date_year, x.date_day),
+      year: x.date_year,
+      day: x.date_day,
+      number: x.number,
+      title: x.recap_player_visible ? x.title : '',
+      recap: !!x.recap_player_visible,
+    }),
+  );
+  const events = (
+    db.prepare(`SELECT id, year, day, title FROM calendar_events WHERE campaign_id = ? AND player_visible = 1 AND yearly = 0 AND year IS NOT NULL`).all(campaignId) as {
+      id: number;
+      year: number;
+      day: number;
+      title: string;
+    }[]
+  ).map((e): PlayerTimelineEntry => ({ kind: 'event', id: e.id, when: when(e.year, e.day), year: e.year, day: e.day, title: e.title }));
+  return mergeByDate(history, [...sessions, ...events]);
+}
+
+export function playerCampaigns(db: DB, published = false) {
+  return (db.prepare(`SELECT id FROM campaigns WHERE status != 'archived' ORDER BY id`).all() as { id: number }[]).map((c) => playerCampaign(db, c.id, published)!);
 }
 
 /** The active campaign, if there is one, for what players know across the handbook. */
@@ -428,7 +483,7 @@ export function playerSnapshot(db: DB) {
     realms: playerRealms(db),
     types: playerTypes(db),
     maps: playerMaps(db),
-    campaigns: playerCampaigns(db),
+    campaigns: playerCampaigns(db, true),
     factionWeb: playerFactionWeb(db, activeCampaignId(db)),
     // Whether the published handbook's builder may use the SRD rules it ships with (the GM can turn the SRD off).
     // The GM's own rules packs are never published.

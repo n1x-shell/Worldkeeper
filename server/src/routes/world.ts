@@ -35,7 +35,8 @@ import { createRecordType, deleteRecordType, listRecordTypes, updateRecordType }
 import { createTemplate, deleteTemplate, duplicateTemplate, listTemplates, updateTemplate } from '../repo/templates.js';
 import { TYPE_GROUPS } from '../../../shared/domain.js';
 import { revealDuringPlay } from '../repo/reveal.js';
-import { onlyToCampaign, promoteToEveryone, recordReveals, revealToCampaign, unrevealFromCampaign, whoKnows } from '../repo/reveals.js';
+import { defaultRevealTarget, onlyToCampaign, promoteToEveryone, recordReveals, revealCampaigns, revealToCampaign, unrevealFromCampaign, whoKnows } from '../repo/reveals.js';
+import { revealTimelineRow, timelineCampaignReveals } from '../repo/timeline.js';
 import { createEra, listEras, setRowEra, updateEra } from '../repo/eras.js';
 import { getProfile, influenceMatrix, saveProfile } from '../repo/profiles.js';
 import { makeNames, namePeoples } from '../repo/names.js';
@@ -321,12 +322,30 @@ export function worldRoutes(ctx: AppContext) {
   r.get(
     '/timeline',
     h(() =>
-      (ctx.db.prepare('SELECT * FROM timeline_rows ORDER BY sort_order, id').all() as { entity_ids: string; realm_ids: string | null }[]).map((t) => ({
-        ...t,
-        entity_ids: parseJson(t.entity_ids, []),
-        realm_ids: parseJson(t.realm_ids ?? '[]', []),
-      })),
+      {
+        const shown = timelineCampaignReveals(ctx.db);
+        return (ctx.db.prepare('SELECT * FROM timeline_rows ORDER BY sort_order, id').all() as { id: number; entity_ids: string; realm_ids: string | null; player_visible: number }[]).map((t) => ({
+          ...t,
+          entity_ids: parseJson(t.entity_ids, []),
+          realm_ids: parseJson(t.realm_ids ?? '[]', []),
+          // Who has been shown the row: everyone, and each campaign (repo/timeline.ts).
+          player_visible: !!t.player_visible,
+          campaigns: shown.get(t.id) ?? [],
+        }));
+      },
     ),
+  );
+  // Revealing a row: to everyone (campaign_id null) or to one campaign. The campaigns a reveal can go to, and the default.
+  r.get(
+    '/timeline/reveal-choices',
+    h(() => ({ choices: revealCampaigns(ctx.db), default: defaultRevealTarget(ctx.db) })),
+  );
+  r.post(
+    '/timeline/:id/reveal',
+    h((req) => {
+      const c = req.body?.campaign_id;
+      return revealTimelineRow(ctx.db, intParam(req.params.id), c == null || c === '' ? null : intParam(c, 'campaign_id'), req.body?.on !== false);
+    }),
   );
   r.post(
     '/timeline',

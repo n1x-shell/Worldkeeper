@@ -84,6 +84,7 @@ export const TABLES = [
   'calendar_events',
   'campaign_reveals',
   'campaign_map_reveals',
+  'campaign_timeline_reveals',
 ];
 
 const slug = (s: string) =>
@@ -251,6 +252,10 @@ export function exportCampaign(db: DB, campaignId: number, uploadsDir?: string) 
          LEFT JOIN map_shapes sh ON r.kind = 'shape' AND sh.id = r.ref_id LEFT JOIN maps sm ON sm.id = sh.map_id
          WHERE r.campaign_id = ?`,
       )
+      .all(campaignId),
+    // History rows shown only to this campaign, by their time and event (ids differ from library to library).
+    campaign_timeline_reveals: db
+      .prepare('SELECT t.time_label, t.event FROM campaign_timeline_reveals r JOIN timeline_rows t ON t.id = r.row_id WHERE r.campaign_id = ?')
       .all(campaignId),
     // Modules' data about the party's treasure (fading salvage).
     treasure_module_data: db.prepare(`SELECT * FROM module_data WHERE owner = 'treasure' AND owner_id IN (${inList(treasureIds)})`).all(),
@@ -489,6 +494,11 @@ export function importCampaign(db: DB, data: ReturnType<typeof exportCampaign>, 
         r.entity_id ? idBy(`SELECT id FROM ${table} WHERE map_id = ? AND entity_id = ?`, map, r.entity_id) : idBy(`SELECT id FROM ${table} WHERE map_id = ? AND label = ?`, map, r.label);
       const ref = r.kind === 'map' ? map : r.kind === 'marker' ? part('map_markers') : r.kind === 'shape' ? part('map_shapes') : undefined;
       if (ref) db.prepare('INSERT OR IGNORE INTO campaign_map_reveals (campaign_id, kind, ref_id) VALUES (?, ?, ?)').run(cid, r.kind, ref);
+    }
+    // History rows this campaign had been shown, found by their time and event (never one marked SECRET).
+    for (const r of list('campaign_timeline_reveals')) {
+      const row = idBy(`SELECT id FROM timeline_rows WHERE time_label = ? AND event = ? AND upper(access) NOT LIKE '%SECRET%'`, r.time_label, r.event);
+      if (row) db.prepare('INSERT OR IGNORE INTO campaign_timeline_reveals (campaign_id, row_id) VALUES (?, ?)').run(cid, row);
     }
     for (const t of ['map_discoveries', 'map_travel'] as const)
       for (const r of list(t)) {

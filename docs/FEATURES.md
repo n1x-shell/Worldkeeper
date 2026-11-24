@@ -115,6 +115,8 @@ An explorer distinguishes the border layer from deep domains. It connects crossi
 
 World views connect the timeline, cosmology, pantheon, peoples, magical systems and mysteries. **300 AB = Year 31 Unbound** in the documented chronology. Events without documented dates are not assigned invented ones. Timeline eras are drawn from the library's `era/` tags where possible. Linked records can supply an event's era; other events can be manually classified. Eras can be renamed, ordered and filtered.
 
+**Sessions on the timeline.** The World Timeline shows the active campaign's sessions among the world's history at their in-world dates, each linking to its session; **The campaign's sessions** hides them, and sessions without a date are listed so you can give them one. **Showing history to players:** each event has **Players:** controls: **Everyone**, or (with two or more campaigns) each campaign, as records are revealed. An event marked SECRET can't be shown. In the handbook, **Campaign → Timeline** gives each group its story: the history shown to it, the sessions it has played at their dates (a session's title, and a link to its recap, once the recap is shown), and the dated calendar events it has been shown. The published handbook shows history revealed to everyone only.
+
 ## World Atlas
 
 Import maps in PNG, JPEG, WEBP or GIF format, or create abstract diagrams for unusual spaces such as the Ethereal Realm. Navigate World → Continent → Region → Settlement → Building, including drill-down from markers to more detailed maps.
