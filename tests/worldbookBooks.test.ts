@@ -5,8 +5,10 @@ import request from 'supertest';
 import { tempContext } from './helpers.js';
 import { createApp } from '../server/src/app.js';
 import { readWorldbook } from '../server/src/packs/share.js';
-import { itemByName } from '../server/src/repo/bookData.js';
+import { creatureByName, itemByName } from '../server/src/repo/bookData.js';
 import { ruleRefs } from '../server/src/packs/worldbookRules.js';
+import { saveRulesPack } from '../server/src/repo/sharedRules.js';
+import { randomTables } from '../server/src/repo/campaigns.js';
 
 const binary = (res: request.Response, cb: (e: Error | null, b: Buffer) => void) => {
   const chunks: Buffer[] = [];
@@ -141,6 +143,50 @@ describe('worldbooks and the books', () => {
     const added = (await request(gmB).post('/api/setting-packs/inkmark/install')).body;
     expect(added.books.switchedOn).toEqual(['Test Book']);
     expect((await request(gmB).get('/api/player/rules')).body.species.Bookfolk).toBeTruthy();
+  });
+
+  it('creatures its encounter tables roll: found in the rules, stood in for by type and challenge, reported', async () => {
+    const a = tempContext();
+    const gm = createApp(a);
+    // A book creature (from a 5etools import, as books' creatures are) and an encounter table that rolls it.
+    saveRulesPack(a.db, { id: 'test-bestiary', name: 'Test Bestiary', source: 'Test Bestiary of Testing' }, [
+      { kind: 'creature', name: 'Inkdrake', cls: '', data: { name: 'Inkdrake', meta: 'Large Dragon, Neutral', cr: '3', ac: 15, hpAvg: 60 } },
+    ]);
+    randomTables.create(a.db, {
+      name: 'Encounters: the Ink Coast, levels 1 to 4',
+      die: 'd2',
+      entries: [
+        { weight: 1, text: '**Fight.** Two Inkdrakes circle the lighthouse.' },
+        { weight: 1, text: '**Fight.** 4 Bandits and a Bandit Captain [NPC-0001] on the road.' },
+      ],
+      source: 'user',
+      kind: 'encounter',
+    });
+    expect(ruleRefs(a.db, null)).toEqual([
+      { kind: 'creature', name: 'Bandit' },
+      { kind: 'creature', name: 'Bandit Captain' },
+      { kind: 'creature', name: 'Inkdrake' },
+    ]);
+    const s = (await request(gm).get('/api/worldbooks/share/books')).body;
+    expect(s.books).toEqual([{ name: 'Test Bestiary', things: [{ kind: 'creature', name: 'Inkdrake' }] }]);
+    // A large dragon of challenge 3 stands in with an SRD dragon of the nearest challenge.
+    const standIn = s.standIns.find((x: { name: string }) => x.name === 'Inkdrake').standIn as string;
+    expect(standIn).toMatch(/Dragon/);
+    expect(creatureByName(a.db, standIn)).toMatchObject({ meta: expect.stringMatching(/Dragon/) });
+
+    // Shared in safe mode, added where there's no bestiary: the table's Inkdrake is the stand-in, saying so.
+    const file = (await request(gm).get('/api/worldbooks/share').query({ name: 'Ink Coast', books: 'safe' }).buffer(true).parse(binary)).body as Buffer;
+    const b = tempContext();
+    const gmB = createApp(b);
+    await request(gmB).post('/api/worldbooks/add').attach('file', file, 'Ink Coast.worldbook');
+    const started = (await request(gmB).post('/api/libraries/from-worldbook/ink-coast').send({})).body;
+    expect(started.books.missing).toEqual([{ book: 'Test Bestiary', things: [{ kind: 'creature', name: 'Inkdrake' }] }]);
+    expect(creatureByName(b.db, 'Inkdrake')).toMatchObject({ name: 'Inkdrake', source: expect.stringContaining('standing in for Inkdrake (Test Bestiary)'), meta: expect.stringMatching(/Dragon/) });
+    // Where the bestiary is, the original.
+    saveRulesPack(b.db, { id: 'test-bestiary', name: 'Test Bestiary', source: 'Test Bestiary of Testing' }, [
+      { kind: 'creature', name: 'Inkdrake', cls: '', data: { name: 'Inkdrake', meta: 'Large Dragon, Neutral', cr: '3', ac: 15, hpAvg: 60 } },
+    ]);
+    expect(creatureByName(b.db, 'Inkdrake')).toMatchObject({ ac: 15, hpAvg: 60 });
   });
 
   it('the Worldkeeper worldbook says which of its species and treasure aren’t in the SRD, by book where it knows', async () => {

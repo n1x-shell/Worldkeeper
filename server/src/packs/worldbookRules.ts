@@ -99,7 +99,37 @@ export function ruleRefs(db: DB, packId: string | null, packDir?: string): RuleR
     const p = (JSON.parse(fs.readFileSync(pools, 'utf8')) as { pools?: Record<string, Record<string, string[]>> }).pools ?? {};
     for (const tiers of Object.values(p)) for (const list of Object.values(tiers)) for (const name of list) add('item', name);
   }
+  // The creatures its encounter tables roll ("2 Briar Wolves", "4 bandits and a bandit captain"), by the creature names
+  // the GM's rules know, longest first, plurals too.
+  const rows = db.prepare(`SELECT entries FROM random_tables WHERE kind = 'encounter' AND ${owner}`).all(...args) as { entries: string }[];
+  if (rows.length) {
+    const match = creatureMatcher(db);
+    for (const r of rows) for (const e of JSON.parse(r.entries || '[]') as { text: string }[]) for (const name of match(e.text)) add('creature', name);
+  }
   return [...out.values()].sort((a, b) => a.kind.localeCompare(b.kind) || a.name.localeCompare(b.name));
+}
+
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** Finds the creatures a line of text names, by every creature name the GM's rules know (the SRD, the world's, every pack). */
+function creatureMatcher(db: DB): (text: string) => string[] {
+  const names = new Map<string, string>();
+  for (const c of (SRD_CREATURES as unknown as { creatures: { name: string }[] }).creatures) names.set(lc(c.name), c.name);
+  for (const c of settingPack(db).creatures) names.set(lc(String(c.name)), String(c.name));
+  for (const r of db.prepare(`SELECT DISTINCT name FROM rules_entries WHERE kind = 'creature'`).all() as { name: string }[]) names.set(lc(r.name), r.name);
+  // Plurals as they're written: wolves, harpies, wolfmen, swarms of bats.
+  for (const [n, name] of [...names]) {
+    const forms = [`${n}s`, `${n}es`, n.replace(/fe?$/, 'ves'), n.replace(/([^aeiou])y$/, '$1ies'), n.replace(/man$/, 'men')];
+    for (const f of forms) if (f !== n && !names.has(f)) names.set(f, name);
+  }
+  const list = [...names.keys()].filter((n) => n.length >= 3).sort((a, b) => b.length - a.length);
+  if (!list.length) return () => [];
+  const re = new RegExp(`\\b(${list.map(escapeRe).join('|')})\\b`, 'gi');
+  return (text) => {
+    const found = new Set<string>();
+    for (const m of lc(text.replace(/\[[A-Z]{2,5}-\d{3,4}\]/g, '')).matchAll(re)) found.add(names.get(m[1].toLowerCase())!);
+    return [...found];
+  };
 }
 
 const SRD = {
@@ -164,7 +194,19 @@ export function closestStandIn(db: DB, r: Resolved): string {
     const items = srdItems().filter((i) => i.magic);
     return (items.find((i) => lc(i.rarity) === rarity && lc(i.type).startsWith(kind)) ?? items.find((i) => lc(i.rarity) === rarity) ?? items.find((i) => lc(i.rarity) === 'common') ?? items[0]).name;
   }
-  return 'Commoner';
+  // A creature: the same type and challenge rating, else the same type and the nearest, else the nearest.
+  const crOf = (x: unknown) => {
+    const v = String(x ?? '').trim();
+    const f = /^(\d+)\/(\d+)$/.exec(v);
+    return f ? Number(f[1]) / Number(f[2]) : Number.isFinite(Number(v)) && v !== '' ? Number(v) : null;
+  };
+  const typeOf = (meta: unknown) => /^(?:Tiny|Small|Medium|Large|Huge|Gargantuan)(?: or \w+)? ([A-Za-z]+)/.exec(String(meta ?? ''))?.[1]?.toLowerCase() ?? null;
+  const cr = crOf(data.cr) ?? 1;
+  const type = typeOf(data.meta);
+  const srd = (SRD_CREATURES as unknown as { creatures: { name: string; meta: string; cr: string }[] }).creatures.map((c) => ({ name: c.name, type: typeOf(c.meta), cr: crOf(c.cr) ?? 0 }));
+  const nearest = (list: typeof srd) => [...list].sort((a, b) => Math.abs(a.cr - cr) - Math.abs(b.cr - cr) || a.name.localeCompare(b.name))[0];
+  const pick = (type ? nearest(srd.filter((c) => c.type === type)) : undefined) ?? nearest(srd);
+  return pick?.name ?? 'Commoner';
 }
 
 /** What Share as a worldbook asks about: the books the world draws on, and the stand-ins safe mode would use. */
