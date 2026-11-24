@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.6.3_
+_Last updated: 2026-11-24 · v0.6.4_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,13 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.6.4: housekeeping
+
+- **Next development steps** rewritten: the v0.6.5 to v0.6.7 queue, then candidates. The old list (written for v0.4) had mostly shipped: the single-instance lock (v0.5.1), the table switch (v0.6.1), per-campaign handbooks (v0.6), handouts, session dates (v0.5.1), code splitting (v0.5.1) and keyboard save (v0.4.7).
+- **Partially completed:** the editor note now describes the Markdown editor.
+- **CI** runs `npm run build` (both builds: the GM app and the player site, after typechecking) instead of `npx vite build` alone, so a broken player build fails the PR.
+- **No linter is set up:** recorded under Next steps. (Earlier PR descriptions said "lint passes": `npm run lint` doesn't exist, and its error was hidden; typecheck, tests, build and the browser tests were the checks that ran.)
 
 ## v0.6.3: back up everything
 
@@ -499,7 +506,7 @@ The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are n
 
 ## Partially completed
 
-- **Editor:** Markdown text area with live preview, `Name [ID]` linking and `[[` suggestions. There is no WYSIWYG editor. Undo is the browser's text-area undo, which is kept for inserted links where the browser supports `insertText`, plus revision restore.
+- **Editor:** a Markdown editor (CodeMirror 6, v0.4.7) with highlighting, a toolbar and shortcuts (Ctrl/Cmd+S saves), `@` record links, GM-only sections and Write/Preview/Split; there is no WYSIWYG editor. Undo is the editor's own, plus revision restore.
 - **Desktop builds:** the Linux build was compiled, launched and tested here (see Tests). The macOS and Windows builds are configured (`desktop.yml`, platform-specific code paths in `lib.rs`) but have **not been built or run yet**. Builds are unsigned.
 - **Resizable panels:** layouts are responsive but panels are not drag-resizable.
 - **Relationship era filter:** the graph filters by type/realm/canon/relationship; there is no structured "historical era" field in the source to filter on (era tags exist on some records only).
@@ -554,11 +561,18 @@ The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are n
 - Browser (Playwright/Chromium) `scripts/e2e-smoke.mjs`: import through UI, dashboard, search → record, edit persists across reload, relationships, graph, vaults, Ethereal explorer, campaign → live session → log + encounter → end → recap draft, player view empty until reveal, atlas. Additional sweep of 61 routes with zero console/page errors; atlas upload + marker placement; mobile width (390px) without horizontal overflow.
 - `npm run typecheck` clean (client and server); production build succeeds.
 
-## Next development steps (suggested milestone: v0.4)
+## Next development steps (after v0.6.4)
 
-1. Run the `desktop.yml` workflow and fix any macOS or Windows issues. Add code signing. Add a single-instance lock and an in-app "share with players on my network" toggle.
-2. Player view: per-campaign publication, handout records, a player-facing timeline filtered by revealed eras and events.
-3. Timeline: place campaign sessions on the timeline, with in-world dates per session.
-4. Editor: side-by-side section editing, keyboard save, link suggestions inside the record picker.
-5. Code-split the client; run the Playwright smoke test in CI.
-6. Optional provider-independent AI assistant that cites records and only creates PROPOSED drafts.
+The queue agreed with the owner, one PR each:
+
+1. **v0.6.5, Node.js LTS:** build the desktop app with the current Active LTS Node.js (checked against the Node.js release schedule at the time), raise `engines` from `>=20` (Node 20 is past end of life), make `desktop:prepare` refuse a Node.js that isn't LTS, and measure the app's size before and after.
+2. **v0.6.6, undo:** faction plans and campaign-state changes get a history, so a change can be undone in one click, like records.
+3. **v0.6.7, large imports:** read a ZIP's listing first (sizes are known before anything is unpacked) and warn only when an archive is large for this computer's free memory; then offer to import it in parts (the text records, then the pictures in batches), each previewed and confirmed.
+
+After that, candidates (not yet agreed):
+
+- **Desktop builds for macOS and Windows:** run `desktop.yml` on both and fix what comes up; code signing, so the system's warnings go away.
+- **A linter:** there is none (`npm run lint` doesn't exist; only Prettier's settings, `.prettierrc.json`). Adding ESLint means new development dependencies.
+- **The browser tests in CI:** `e2e:first-run` (own world) needs no archive and could run on every PR; it needs Playwright's browser on the runner.
+- **Sessions on the timeline**, by their in-world dates, and **a player timeline** of what's been revealed.
+- **Optional AI assistant** that cites records and only makes PROPOSED drafts (deferred until the core is in daily use).
