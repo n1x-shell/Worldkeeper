@@ -28,4 +28,4 @@ Coast and river folk, sailors, and a deep pull towards the sea.
 Common names: Althisa, Brine, Coral, Ilythis, Marin, Nerys, Pearl, Tide.
 
 ## D&D adaptation
-Use the water genasi rules.
+Use the water genasi rules. Without the book, use the saltborn rules (the world's own, open to all).

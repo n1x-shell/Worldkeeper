@@ -1,6 +1,6 @@
 # After Worldbooks: plan for v0.8.1 to v0.9.0
 
-Status: agreed with the owner, November 2026. Decisions are in DEC-910 ("After Worldbooks"). Picks up the open items of [FUTURE_WORK.md](FUTURE_WORK.md) after v0.8.0.
+Status: done, v0.9.0 (November 2026). Decisions are in DEC-910 ("After Worldbooks"). Picks up the open items of [FUTURE_WORK.md](FUTURE_WORK.md) after v0.8.0.
 
 ## Decided (owner, November 2026)
 
@@ -39,6 +39,8 @@ Done in v0.8.3, for the creatures encounter tables roll. Stat blocks aren't shar
 - Stand-ins apply wherever a creature is looked up (encounter tables, the tracker, stat blocks), labelled "standing in for …", as items already are.
 
 ### v0.9.0: the world's own species
+
+Done in v0.9.0: the owner approved all 40 drafts as written; they are in `packs/worldkeeper/rules/species/`.
 
 - **Drafts** (`packs/worldkeeper/lore/drafts/species/`): 40 open species rules in the 2024 format (creature type, size, speed, three or four traits, as the SRD's species are), written fresh in the world's voice and balanced against the SRD's nine. Never book text; each follows what its people page already says the people are like. Names: the people's alternate name where it has one (Cat-folk, Crow-folk, the Made); a proposed world name where it hasn't, for the owner to accept or change.
 - **Owner's review** of all 40 at once, before anything ships.

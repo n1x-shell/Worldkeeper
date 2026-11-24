@@ -113,11 +113,35 @@ export function byName<T>(rec: Record<string, T>, name: string | null | undefine
  * Moonborn as an elf with…" is Elf, "use the air genasi rules from…" is Air Genasi. The first one named, if several.
  */
 export function rulesSpeciesName(atTable: string): string | null {
-  const m = /use the ([a-z][a-z' -]*?) rules/i.exec(atTable) ?? /\bas an? ([a-z][a-z-]*) (?:with|using)\b/i.exec(atTable);
-  if (!m) return null;
-  return m[1]
-    .trim()
-    .split(/([ -])/)
-    .map((w) => (w === ' ' || w === '-' ? w : w[0].toUpperCase() + w.slice(1)))
-    .join('');
+  return rulesSpeciesNames(atTable)[0] ?? null;
 }
+
+/**
+ * Every species rules a people page names, in order: "Use the tabaxi rules. Without the book, use the cat-folk rules."
+ * is Tabaxi, then Cat-folk (the world's own, v0.9.0). The first the GM's rules have is the one to use.
+ */
+export function rulesSpeciesNames(atTable: string): string[] {
+  const title = (s: string) =>
+    s
+      .trim()
+      .split(/([ -])/)
+      .map((w) => (w === ' ' || w === '-' ? w : w[0].toUpperCase() + w.slice(1)))
+      .join('');
+  const out: string[] = [];
+  for (const m of atTable.matchAll(/use the ([a-z][a-z' -]*?) rules/gi)) if (!out.some((x) => x.toLowerCase() === m[1].trim().toLowerCase())) out.push(title(m[1]));
+  if (!out.length) {
+    const m = /\bas an? ([a-z][a-z-]*) (?:with|using)\b/i.exec(atTable);
+    if (m) out.push(title(m[1]));
+  }
+  return out;
+}
+
+/** The first of a people's species rules that these rules have (else the first named). */
+export function speciesInRules(names: string[], species: Record<string, unknown>): string | null {
+  for (const n of names) {
+    const key = Object.keys(species).find((k) => k.toLowerCase() === n.trim().toLowerCase());
+    if (key) return key;
+  }
+  return names[0] ?? null;
+}
+

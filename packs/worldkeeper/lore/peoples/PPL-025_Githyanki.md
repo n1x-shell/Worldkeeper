@@ -28,4 +28,4 @@ War-bands, silver swords, and a long, angry history nobody else knows.
 Common names: Kaaltis, Lazhar, Marrak, Seraine, Tavra, Vaelith, Xarra, Zhessa.
 
 ## D&D adaptation
-Use the githyanki rules.
+Use the githyanki rules. Without the book, use the riftborn warrior rules (the world's own, open to all).

@@ -28,4 +28,4 @@ Monasteries, order, and the patient study of the mind.
 Common names: Althros, Dak, Ilsa, Kalthis, Lirian, Mezzar, Vhalek, Zerra.
 
 ## D&D adaptation
-Use the githzerai rules.
+Use the githzerai rules. Without the book, use the riftborn seeker rules (the world's own, open to all).

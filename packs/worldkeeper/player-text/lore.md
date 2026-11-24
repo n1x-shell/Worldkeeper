@@ -66,7 +66,7 @@ Reptilians, also called lizardfolk, are scaled hunters of swamp, desert and jung
 
 **Common names.** Issik, Karra, Reth, Saal, Serek, Tass, Vesh, Zikka
 
-**At the table.** Use the lizardfolk rules, or dragonborn rules described as scaled hunters.
+**At the table.** Use the lizardfolk rules, or dragonborn rules described as scaled hunters. Without the book, use the reptilian rules (the world's own, open to all).
 
 ## Bloomborn
 
@@ -84,7 +84,7 @@ Bloomborn grow no husk against the Bloom, since they are already part of it. The
 
 **Common names.** Alder, Bracken, Corrin, Fennick, Hollin, Rue, Sedge, Tansy, Thistle, Wren
 
-**At the table.** Use the firbolg rules, or a custom lineage.
+**At the table.** Use the firbolg rules, or a custom lineage. Without the book, use the hidden giant rules (the world's own, open to all).
 
 ## Kaelholm (Faction)
 

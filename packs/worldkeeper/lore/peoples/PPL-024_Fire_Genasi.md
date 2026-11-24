@@ -28,4 +28,4 @@ Passionate, direct, and drawn to forges, kitchens and fights.
 Common names: Ash, Cinder, Ember, Ignis, Kaela, Pyra, Sol, Yvara.
 
 ## D&D adaptation
-Use the fire genasi rules.
+Use the fire genasi rules. Without the book, use the emberborn rules (the world's own, open to all).

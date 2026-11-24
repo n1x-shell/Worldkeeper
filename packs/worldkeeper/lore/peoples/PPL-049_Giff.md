@@ -31,4 +31,4 @@ Regiments, ranks, songs about battles, and a sense of honour that doesn't bend.
 Common names: Brannoc, Dunmore, Halloway, Kettering, Mabry, Pemberton, Stroud, Wexley.
 
 ## D&D adaptation
-Use the giff rules. Source: Spelljammer: Adventures in Space (Astral Adventurer's Guide).
+Use the giff rules. Source: Spelljammer: Adventures in Space (Astral Adventurer's Guide). Without the book, use the ironhide rules (the world's own, open to all).

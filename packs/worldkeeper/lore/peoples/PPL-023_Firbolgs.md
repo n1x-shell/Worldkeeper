@@ -28,4 +28,4 @@ Forest clans, quiet stewardship, and the habit of leaving no trace.
 Common names: Alder, Brennick, Dunna, Gethin, Hulda, Mossa, Oakes, Tull.
 
 ## D&D adaptation
-Use the firbolg rules.
+Use the firbolg rules. Without the book, use the hidden giant rules (the world's own, open to all).

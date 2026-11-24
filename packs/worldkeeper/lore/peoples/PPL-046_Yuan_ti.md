@@ -28,4 +28,4 @@ Old families, older grudges, and a long view of everything.
 Common names: Asha, Riven, Selka, Ssera, Tazzen, Vashti, Xaliss, Zehra.
 
 ## D&D adaptation
-Use the yuan-ti rules.
+Use the yuan-ti rules. Without the book, use the serpent-folk rules (the world's own, open to all).

@@ -31,4 +31,4 @@ Hunting clutches, colour-speech and a long patience.
 Common names: Chak'ta, Kik'reth, Ssa-tik, Tch'kala, Vrik, Zaktik, Kkhai, T'chess.
 
 ## D&D adaptation
-Use the thri-kreen rules. Source: Spelljammer: Adventures in Space (Astral Adventurer's Guide).
+Use the thri-kreen rules. Source: Spelljammer: Adventures in Space (Astral Adventurer's Guide). Without the book, use the mantis-folk rules (the world's own, open to all).

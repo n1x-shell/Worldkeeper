@@ -28,4 +28,4 @@ Chosen family, private names, and a habit of keeping one face only for friends.
 Common names: Ash, Cael, Ivy, Lark, Nim, Quill, Sev, Tam.
 
 ## D&D adaptation
-Use the changeling rules.
+Use the changeling rules. Without the book, use the many-faced rules (the world's own, open to all).

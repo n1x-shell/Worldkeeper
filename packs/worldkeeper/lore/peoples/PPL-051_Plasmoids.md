@@ -31,4 +31,4 @@ Borrowed shapes, borrowed names, and a habit of trying everything once.
 Common names: Bloop, Ember, Glim, Ooma, Quiver, Shale, Sip, Velle.
 
 ## D&D adaptation
-Use the plasmoid rules. Source: Spelljammer: Adventures in Space (Astral Adventurer's Guide).
+Use the plasmoid rules. Source: Spelljammer: Adventures in Space (Astral Adventurer's Guide). Without the book, use the silverflow rules (the world's own, open to all).

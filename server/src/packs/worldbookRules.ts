@@ -18,7 +18,8 @@ import { badRequest } from '../lib/errors.js';
 import SRD_TEXT from '../../../shared/srd/text.json' with { type: 'json' };
 import SRD_ITEMS from '../../../shared/srd/items.json' with { type: 'json' };
 import SRD_CREATURES from '../../../shared/srd/creatures.json' with { type: 'json' };
-import { rulesSpeciesName } from '../../../shared/rulesView.js';
+import { rulesSpeciesNames } from '../../../shared/rulesView.js';
+import { worldSpecies } from '../repo/rulesPacks.js';
 import { itemNameCandidates } from '../repo/bookData.js';
 import { settingPack } from '../repo/settingPack.js';
 import { types } from '../repo/recordTypes.js';
@@ -83,9 +84,16 @@ export function ruleRefs(db: DB, packId: string | null, packDir?: string): RuleR
   const folk = types(db).with('folk');
   if (folk.length) {
     const rows = db.prepare(`SELECT body FROM entities WHERE archived = 0 AND ${owner} AND type IN (${folk.map(() => '?').join(',')})`).all(...args, ...folk) as { body: string }[];
+    // A people can name more than one ("Use the tabaxi rules. Without the book, use the cat-folk rules."): the first
+    // these rules have counts, else the first named.
     for (const r of rows) {
-      const s = rulesSpeciesName(r.body);
-      if (s) add('species', s);
+      const names = rulesSpeciesNames(r.body);
+      if (!names.length) continue;
+      const found = resolveRefs(
+        db,
+        names.map((name) => ({ kind: 'species' as const, name })),
+      ).find((x) => x.from !== 'missing');
+      add('species', found?.name ?? names[0]);
     }
   }
   // The classes people have ("Class: Warlock (Great Old One Patron)", "Fighter/Wizard").
@@ -143,6 +151,7 @@ const names = (kind: RefKind, raw: string) => (kind === 'item' ? itemNameCandida
 /** Where each named rule comes from in this GM's rules. */
 export function resolveRefs(db: DB, refs: RuleRef[]): Resolved[] {
   const world = settingPack(db);
+  const worldSpeciesNames = new Set(worldSpecies().map((s) => lc(s.name)));
   const worldNames = { item: new Set(world.items.map((i) => lc(String(i.name)))), creature: new Set(world.creatures.map((c) => lc(String(c.name)))) };
   const entry = db.prepare(
     `SELECT p.id, p.name, p.source FROM rules_entries e JOIN rules_packs p ON p.id = e.pack_id WHERE e.kind = ? AND lower(e.name) = ? ORDER BY p.imported_at DESC`,
@@ -151,6 +160,7 @@ export function resolveRefs(db: DB, refs: RuleRef[]): Resolved[] {
     const cands = names(r.kind, r.name);
     if (cands.some((c) => SRD[r.kind].has(c))) return { ...r, from: 'srd' };
     if ((r.kind === 'item' || r.kind === 'creature') && cands.some((c) => worldNames[r.kind as 'item' | 'creature'].has(c))) return { ...r, from: 'world' };
+    if (r.kind === 'species' && worldSpeciesNames.has(lc(r.name))) return { ...r, from: 'world' };
     // A book of the GM's wins over an open pack with the same name.
     const found = cands.flatMap((c) => entry.all(r.kind, c) as { id: string; name: string; source: string }[]);
     const book = found.find((p) => !isOpenSource(p.source));

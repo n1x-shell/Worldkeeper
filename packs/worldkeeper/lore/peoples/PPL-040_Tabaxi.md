@@ -28,4 +28,4 @@ Stories, travel, and the joy of finding out.
 Common names: Cloud, Ember-Eyes, Five Dawns, Moss-in-Rain, Selene, Smoke, Thorn, Whisper.
 
 ## D&D adaptation
-Use the tabaxi rules.
+Use the tabaxi rules. Without the book, use the cat-folk rules (the world's own, open to all).

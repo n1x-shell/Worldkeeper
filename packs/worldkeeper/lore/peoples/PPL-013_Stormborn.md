@@ -28,4 +28,4 @@ No culture of their own: they belong to the family that raised them, and to wher
 Common names: Aeris, Galen, Kesta, Lyre, Siro, Talric, Tamsin, Velka.
 
 ## D&D adaptation
-Stormborn are this world's air genasi: use the air genasi rules (Mordenkainen Presents: Monsters of the Multiverse).
+Stormborn are this world's air genasi: use the air genasi rules (Mordenkainen Presents: Monsters of the Multiverse). Without the book, use the stormborn rules (the world's own, open to all).

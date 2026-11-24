@@ -197,7 +197,9 @@ describe('worldbooks and the books', () => {
     const xge = books.find((x) => x.book === "Xanathar's Guide to Everything");
     expect(xge?.things).toEqual(expect.arrayContaining([{ kind: 'item', name: 'Moon-Touched Sword (XGE)' }]));
     const other = books.find((x) => x.book === 'Not in your rules');
-    expect(other?.things).toEqual(expect.arrayContaining([{ kind: 'species', name: 'Tabaxi' }, { kind: 'class', name: 'Artificer' }]));
+    expect(other?.things).toEqual(expect.arrayContaining([{ kind: 'class', name: 'Artificer' }]));
+    // The world's own species (v0.9.0) cover its peoples: none is missing.
+    expect(books.flatMap((x) => x.things).filter((t) => t.kind === 'species')).toEqual([]);
     // SRD species and items aren't listed.
     expect(books.flatMap((x) => x.things).map((t) => t.name)).not.toContain('Halfling');
     expect(itemByName(ctx.db, 'Bag of Holding')).toBeTruthy();

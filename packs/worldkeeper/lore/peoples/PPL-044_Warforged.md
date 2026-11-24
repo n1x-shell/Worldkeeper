@@ -28,4 +28,4 @@ No culture but what they've chosen, and a careful way with words.
 Common names: Anvil, Bastion, Echo, Lantern, Sentinel, Seraphis, Tally, Vessel.
 
 ## D&D adaptation
-Use the warforged rules.
+Use the warforged rules. Without the book, use the made rules (the world's own, open to all).

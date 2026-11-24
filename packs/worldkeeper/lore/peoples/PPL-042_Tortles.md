@@ -28,4 +28,4 @@ Long wanderings, few possessions, and a love of quiet.
 Common names: Drennal, Gura, Jappa, Krull, Nulka, Odran, Tibor, Xopa.
 
 ## D&D adaptation
-Use the tortle rules.
+Use the tortle rules. Without the book, use the shell-folk rules (the world's own, open to all).

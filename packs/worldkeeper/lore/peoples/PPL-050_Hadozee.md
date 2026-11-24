@@ -31,4 +31,4 @@ Ship-families, rope-lore, and a song for every current.
 Common names: Akko, Bannu, Chiri, Doma, Kesh, Moro, Tunni, Zaza.
 
 ## D&D adaptation
-Use the hadozee rules. Source: Spelljammer: Adventures in Space (Astral Adventurer's Guide).
+Use the hadozee rules. Source: Spelljammer: Adventures in Space (Astral Adventurer's Guide). Without the book, use the glidefolk rules (the world's own, open to all).

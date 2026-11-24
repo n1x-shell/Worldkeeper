@@ -53,7 +53,7 @@ Items are found by the names people write: "Weapon, +1" finds "+1 Weapon", "Moon
 
 ## The Worldkeeper worldbook's rules
 
-A second built-in pack, **The Worldkeeper worldbook**, holds the world's own creatures and items for use in any campaign: 84 creatures and 8 hazards, and 34 items (the Aetheris and Kaelmar treasures, with their rules). It's off until you turn it on in **Settings → Rules packs**.
+A second built-in pack, **The Worldkeeper worldbook**, holds the world's own creatures and items for use in any campaign: 84 creatures and 8 hazards, and 34 items (the Aetheris and Kaelmar treasures, with their rules). Since v0.9.0 it also holds **40 species of the world's own** (`packs/worldkeeper/rules/species/`), open rules for its peoples that play as a book species, named after the world's own names (Cat-folk, Crow-folk, Taur'n, Shadowkin…), so the world is whole on the SRD alone. Each people names the book species first and the world's second ("Use the tabaxi rules. Without the book, use the cat-folk rules."): a GM who has the book gets the book's; the rest get the world's. They are open rules, so Books only sets them aside, and they go into the published handbook with the pack. It's off until you turn it on in **Settings → Rules packs**.
 
 When the **Thinning** mechanic is switched off, the few entries that use Thinning, true names or Shardscarred use standard-rules versions instead (for example, the Glass's Thinning save becomes a DC 15 Charisma save that costs a level of Exhaustion and a memory). The pack is licensed CC BY 4.0, credited "The Worldkeeper worldbook, by the Worldkeeper contributors"; see `packs/worldkeeper/rules/README.md`.
 

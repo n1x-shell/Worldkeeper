@@ -16,6 +16,9 @@ import SRD_SPELLS from '../../../shared/srd/spells.json' with { type: 'json' };
 import SRD_TEXT from '../../../shared/srd/text.json' with { type: 'json' };
 import { srdCounts } from './bookData.js';
 import { SETTING_PACK, setSettingPack, settingPackCounts, settingPackOn } from './settingPack.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { worldkeeperPath } from '../packs/paths.js';
 import { addRule, emptyRulesView, srdRulesView, type RulesView } from '../../../shared/rulesView.js';
 import { isOpenSource, openRulesFor } from './booksOnly.js';
 import { standIns, standInSource } from './standIns.js';
@@ -181,6 +184,29 @@ export function importPack(db: DB, buf: Buffer) {
   return { pack: listPacks(db).find((x) => x.id === p.id)!, problems: p.problems };
 }
 
+/**
+ * The Worldkeeper world's own species (v0.9.0, packs/worldkeeper/rules/species): open (CC BY 4.0) rules for its peoples
+ * that play as a book species, named after the world's own names. They come with the world's rules pack, as open rules
+ * (Books only sets them aside); a GM who has the book gets the book's species, since each people names it first.
+ */
+const WORLD_SPECIES_CREDIT = "The Worldkeeper worldbook's rules (CC BY 4.0)";
+let speciesCache: ReturnType<typeof entryData>[] | null = null;
+export function worldSpecies(): ReturnType<typeof entryData>[] {
+  if (speciesCache) return speciesCache;
+  const dir = worldkeeperPath('rules', 'species');
+  speciesCache = fs.existsSync(dir)
+    ? fs
+        .readdirSync(dir)
+        .filter((f) => f.endsWith('.md'))
+        .sort()
+        .map((f) => {
+          const e = parseEntry(fs.readFileSync(path.join(dir, f), 'utf8'), 'species');
+          return entryData(e.kind, e.fields, e.body);
+        })
+    : [];
+  return speciesCache;
+}
+
 const srdEnabled = (db: DB) => (db.prepare(`SELECT value FROM settings WHERE key = 'rules_srd'`).get() as { value: string } | undefined)?.value !== 'off';
 
 export function listPacks(db: DB): PackSummary[] {
@@ -202,7 +228,7 @@ export function listPacks(db: DB): PackSummary[] {
       ...srdCounts(),
     },
   };
-  const wk: PackSummary = { ...SETTING_PACK, enabled: settingPackOn(db), builtin: true, imported_at: null, counts: settingPackCounts() };
+  const wk: PackSummary = { ...SETTING_PACK, enabled: settingPackOn(db), builtin: true, imported_at: null, counts: { species: worldSpecies().length, ...settingPackCounts() } };
   const rows = db.prepare('SELECT * FROM rules_packs ORDER BY imported_at').all() as { id: string; name: string; source: string; enabled: number; imported_at: string; publish?: number }[];
   const counts = db.prepare('SELECT kind, COUNT(*) n FROM rules_entries WHERE pack_id = ? GROUP BY kind');
   return [
@@ -241,18 +267,20 @@ export function setPackPublished(db: DB, id: string, publish: boolean) {
 
 /** The rules of the packs the GM publishes (in use, and openly licensed), for the players' handbook. */
 export function publishedRuleEntries(db: DB): { kind: RuleKind; name: string; cls: string; data: Record<string, unknown>; source: string }[] {
+  // The world's own species are open (CC BY 4.0): they go with its rules pack, so players can build with them.
+  const world = settingPackOn(db) && openRulesFor(db, 'species') ? worldSpecies().map((s) => ({ ...s, source: WORLD_SPECIES_CREDIT })) : [];
   try {
     const packs = (db.prepare('SELECT id, name, source FROM rules_packs WHERE enabled = 1 AND publish = 1 ORDER BY imported_at').all() as { id: string; name: string; source: string }[]).filter((p) =>
       isOpenSource(p.source),
     );
     const rows = db.prepare('SELECT kind, name, cls, data FROM rules_entries WHERE pack_id = ?');
-    return packs.flatMap((p) =>
+    return [...world, ...packs.flatMap((p) =>
       (rows.all(p.id) as { kind: RuleKind; name: string; cls: string; data: string }[])
         .filter((r) => ['spell', 'species', 'class', 'subclass', 'background', 'feat'].includes(r.kind))
         .map((r) => ({ ...r, data: JSON.parse(r.data) as Record<string, unknown>, source: p.source || p.name })),
-    );
+    )];
   } catch {
-    return [];
+    return world;
   }
 }
 
@@ -278,6 +306,8 @@ export function rulesView(db: DB): RulesView {
     if (!open('class')) view.classes = {};
     else if (!open('subclass')) for (const c of Object.values(view.classes)) c.subclasses = {};
   }
+  // The world's own species, with its rules pack (open rules, so Books only sets them aside).
+  if (settingPackOn(db) && open('species')) for (const s of worldSpecies()) addRule(view, s.kind, s.name, s.cls, s.data, WORLD_SPECIES_CREDIT);
   const packs = db.prepare('SELECT id, name, source FROM rules_packs WHERE enabled = 1 ORDER BY imported_at').all() as { id: string; name: string; source: string }[];
   const rows = db.prepare('SELECT kind, name, cls, data FROM rules_entries WHERE pack_id = ?');
   for (const p of packs) {
