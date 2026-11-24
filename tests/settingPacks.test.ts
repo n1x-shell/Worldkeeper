@@ -31,7 +31,7 @@ const record = (id: string, name: string, body: string) =>
 
 /** A small pack of its own, installed into the library's data folder (SYNTHETIC TEST DATA). */
 function writeTestPack(ctx: AppContext) {
-  const dir = path.join(ctx.paths.rootDir, 'packs', 'testpack');
+  const dir = path.join(ctx.paths.sharedDir, 'packs', 'testpack');
   fs.mkdirSync(path.join(dir, 'lore'), { recursive: true });
   fs.mkdirSync(path.join(dir, 'templates'), { recursive: true });
   fs.writeFileSync(

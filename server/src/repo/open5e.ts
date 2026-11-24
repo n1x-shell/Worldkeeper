@@ -4,6 +4,7 @@
  * pack (creatures, magic items, gear, spells, feats and backgrounds), named with its publisher and licence, and kept in
  * the GM's library like any other pack (see docs/RULES_PACKS.md). Nothing from Open5e is part of the app.
  */
+import { saveRulesPack } from './sharedRules.js';
 import type Database from 'better-sqlite3';
 import { badRequest } from '../lib/errors.js';
 import { listPacks } from './rulesPacks.js';
@@ -254,15 +255,7 @@ export async function importOpen5e(db: DB, keys: string[], get: Fetcher = defaul
     for (const f of await all(get, 'feats', d.key)) entries.push({ kind: 'feat', name: f.name, cls: '', data: featFrom(f, cite) });
     for (const b of await all(get, 'backgrounds', d.key)) entries.push({ kind: 'background', name: b.name, cls: '', data: backgroundFrom(b, cite) });
     const id = `open5e-${d.key}`;
-    db.transaction(() => {
-      db.prepare('DELETE FROM rules_entries WHERE pack_id = ?').run(id);
-      db.prepare(
-        `INSERT INTO rules_packs (id, name, source, enabled, imported_at) VALUES (?, ?, ?, 1, ?)
-         ON CONFLICT(id) DO UPDATE SET name = excluded.name, source = excluded.source, imported_at = excluded.imported_at`,
-      ).run(id, d.name, `${d.publisher}, ${d.licences.join(' or ')}, from Open5e`, new Date().toISOString());
-      const ins = db.prepare('INSERT OR REPLACE INTO rules_entries (pack_id, kind, name, cls, data) VALUES (?, ?, ?, ?, ?)');
-      for (const e of entries) ins.run(id, e.kind, e.name, e.cls, JSON.stringify(e.data));
-    })();
+    saveRulesPack(db, { id, name: d.name, source: `${d.publisher}, ${d.licences.join(' or ')}, from Open5e` }, entries);
     const counts: Record<string, number> = {};
     for (const e of entries) counts[e.kind] = (counts[e.kind] ?? 0) + 1;
     results.push({ key: d.key, name: d.name, counts });

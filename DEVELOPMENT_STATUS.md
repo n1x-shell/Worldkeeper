@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.5.5_
+_Last updated: 2026-11-24 · v0.5.6_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -73,16 +73,27 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
 
+## v0.5.6: shared rules and packs (v0.6 step B2)
+
+Step B2 of [docs/LIBRARIES_PLAN.md](docs/LIBRARIES_PLAN.md).
+
+- **`shared/`** in the data folder holds what every library shares: the books' rules (`rules.db`), installed setting packs (`packs/`) and the publishing token (`secrets.json`). `Paths.sharedDir`. Packs and the token move there from the data folder on the first start (`moveIntoShared`, safe to repeat, never overwrites).
+- **The books' rules** (`server/src/repo/sharedRules.ts`): `shared/rules.db` is attached to each library's connection as `shared` (WAL), with `rules_packs (id, name, source, imported_at)` and `rules_entries`. Each library keeps its switches in `rules_pack_switches (pack_id, enabled, publish)` (migration 30); a pack it has no switch for is in use and not published. Reads are unchanged: `rules_packs` and `rules_entries` are temporary views over the shared tables and the library's switches. Writes go through `saveRulesPack` (the 5etools, Open5e and Markdown importers), `setPackSwitch` and `removeRulesPack` (removes a pack from every library).
+- **Rules a library kept itself** (v0.5.5 and earlier, or a backup made then) move into `shared/rules.db` when it opens (`adoptSharedRules`), its switches staying with it; where the shared rules already have the pack, the more recently imported copy is kept.
+- **Settings → Rules packs** says a pack is imported once for all libraries, and **Remove** asks to remove it from all of them (untick to stop using it in one).
+- Backups hold a library's own database and pictures, not `shared/`; exports never held rules. The SRD and the setting's rules switches (`rules_srd`, `rules_worldkeeper`) were already each library's.
+- **Tests:** `tests/sharedRules.test.ts`: books imported once and in a second library at once (in use, unpublished); each library's switches its own; the table server reading them; a newer import for every library; removal from every library; old rules moved with their switches, older and newer copies; packs and the token moved into `shared/`.
+
 ## v0.5.5: the library root (v0.6 step B1)
 
 Step B1 of [docs/LIBRARIES_PLAN.md](docs/LIBRARIES_PLAN.md).
 
-- **The data folder is a library root** (`server/src/libraries.ts`): `libraries.json` (format 1: the libraries with id, name, folder, created, last opened, archived; which one is open) and `libraries/<id>/` with each library's `worldkeeper.db`, `uploads/`, `backups/` and `staging/`. Installed packs (`packs/`) and the publishing token (`secrets.json`) stay in the root, shared by every library (B2 moves them into `shared/`, with the books' rules).
+- **The data folder is a library root** (`server/src/libraries.ts`): `libraries.json` (format 1: the libraries with id, name, folder, created, last opened, archived; which one is open) and `libraries/<id>/` with each library's `worldkeeper.db`, `uploads/`, `backups/` and `staging/`. Installed packs (`packs/`) and the publishing token (`secrets.json`) stay in the root, shared by every library (B2, in v0.5.6, moves them into `shared/`, with the books' rules).
 - **`Paths`** (`server/src/config.ts`) gains `rootDir` and `libraryId`; `dataDir`, `dbFile` and the rest are the open library's. `resolvePaths(root)` makes sure the root holds libraries and returns the open one's paths.
 - **The upgrade** (§3.4): a data folder with `worldkeeper.db` in it becomes its first library, named after its app name, else its world, else "My library". First a normal backup of the untouched database and pictures (`…-before-libraries.wkbackup.zip`, not migrated); then `libraries.json` is written with `moving` set, and the database (with its `-wal`/`-shm`), `uploads/`, `backups/` and `staging/` move into the library's folder. An interrupted start finishes the move on the next; a folder already there that isn't empty stops it rather than overwrite.
 - **Opening another library:** `AppContext.openLibrary(id)` closes the database and opens the other, bringing it up to date the way a start does (types, templates, packs, dates, codes, eras), and records it in `libraries.json`. The table server follows: `followOpenLibrary` watches `libraries.json` and switches when the GM does (`syncOpenLibrary`).
 - **Routes** (GM only): `GET /api/libraries`, `POST /api/libraries` (`name`, `open`), `POST /api/libraries/:id/open`, `PATCH /api/libraries/:id` (`name`). `/api/meta` names the open library; **Settings → Installation** (debug) shows it.
-- **Not yet:** the switcher, New library with the wizard, Manage libraries and open from a file (B3); shared rules (B2).
+- **Not yet:** the switcher, New library with the wizard, Manage libraries and open from a file (B3); shared rules (B2, in v0.5.6).
 - **Tests:** `tests/libraries.test.ts`: a new data folder; an old installation upgraded with its records, settings, pictures and backups, a backup made first, and a second start changing nothing; an interrupted move finished; a second library opened and closed, with records, settings, pictures and backups each its own; the table server following; rename; unknown, blank and archived refused; no library routes on the table server.
 
 ## v0.5.4: each campaign's handbook address (v0.6 step A3)

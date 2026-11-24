@@ -197,7 +197,7 @@ describe('publishing to GitHub Pages', () => {
   it('keeps the token out of the database, API responses, exports and backups', async () => {
     const { ctx, app } = seeded();
     await request(app).put('/api/publish/config').send({ repo: 'me/handbook', token: 'super-secret-token' });
-    const secretsFile = path.join(ctx.paths.rootDir, 'secrets.json');
+    const secretsFile = path.join(ctx.paths.sharedDir, 'secrets.json');
     expect(fs.existsSync(secretsFile)).toBe(true);
     if (process.platform !== 'win32') expect(fs.statSync(secretsFile).mode & 0o077).toBe(0);
     for (const url of ['/api/publish', '/api/settings', '/api/meta']) expect(JSON.stringify((await request(app).get(url)).body)).not.toContain('super-secret-token');

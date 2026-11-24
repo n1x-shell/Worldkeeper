@@ -4,7 +4,8 @@
  *
  *   libraries.json        the libraries, and which one is open
  *   libraries/<id>/       each library's worldkeeper.db, uploads/, backups/, staging/
- *   packs/, secrets.json  shared by every library (installed setting packs, the publishing token)
+ *   shared/               what every library shares: the books' rules (rules.db), installed setting packs
+ *                         (packs/) and the publishing token (secrets.json)
  *
  * One library is open at a time. An installation from before libraries (worldkeeper.db in the data folder itself)
  * becomes the first library on the first start, after a backup (§3.4).
@@ -153,7 +154,28 @@ export function ensureLibraries(root: string, backup: (dbFile: string, backupsDi
     writeIndex(root, idx);
   }
   for (const e of idx.libraries.filter((l) => !l.archived)) makeFolders(root, e);
+  moveIntoShared(root);
   return idx;
+}
+
+/**
+ * What every library shares goes in shared/ (docs/LIBRARIES_PLAN.md §3.3): installed setting packs and the publishing
+ * token, from where v0.5.5 and earlier kept them. Safe to repeat; never overwrites.
+ */
+function moveIntoShared(root: string) {
+  const shared = path.join(root, 'shared');
+  fs.mkdirSync(shared, { recursive: true });
+  for (const item of ['packs', 'secrets.json']) {
+    const from = path.join(root, item);
+    const to = path.join(shared, item);
+    if (!fs.existsSync(from)) continue;
+    if (fs.existsSync(to)) {
+      const empty = fs.statSync(to).isDirectory() && fs.readdirSync(to).length === 0;
+      if (!empty) continue;
+      fs.rmdirSync(to);
+    }
+    fs.renameSync(from, to);
+  }
 }
 
 export function libraryEntry(root: string, id: string): LibraryEntry {

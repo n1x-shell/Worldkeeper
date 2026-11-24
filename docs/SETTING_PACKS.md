@@ -99,7 +99,7 @@ A light that guides ships, or lures them.
 
 ## Installing and testing it
 
-- **While you write it:** put the folder in your library's data folder, under `packs/` (run from source, that's `data/packs/the-isle`, or wherever `WORLDKEEPER_DATA_DIR` points; with **Technical details** on, **Settings → Installation** shows the data folder). It appears in **Library → Setting packs**. An installed copy takes precedence over a bundled pack with the same id.
+- **While you write it:** put the folder in the data folder, under `shared/packs/` (run from source, that's `data/shared/packs/the-isle`, or wherever `WORLDKEEPER_DATA_DIR` points; every library sees it, and each installs it or not; with **Technical details** on, **Settings → Installation** shows the data folder). It appears in **Library → Setting packs**. An installed copy takes precedence over a bundled pack with the same id.
 - **Install** adds its realms, types, templates and roles, then its content. **Update** brings in a changed version. **Uninstall** removes what it shipped. Each makes a backup first.
 - **What's yours stays yours.** Everything a pack ships is marked as the pack's (`pack_id`), and update and uninstall touch only that. Records the GM made, or edited, are kept. If the GM already has a record with an ID the pack uses, the update reports the clash and keeps the GM's record.
 - **Two packs side by side** work: each updates and uninstalls without touching the other (see `tests/settingPacks.test.ts`, which installs a small test pack beside the Worldkeeper setting).

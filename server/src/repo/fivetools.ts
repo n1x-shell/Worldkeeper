@@ -6,6 +6,7 @@
  * it ("Use the half-orc rules"), and is marked as an older printing. 5etools' own formatting tags are turned into
  * plain text. Like every rules pack, the result stays in the GM's library and is never published or exported.
  */
+import { saveRulesPack } from './sharedRules.js';
 import AdmZip from 'adm-zip';
 import type Database from 'better-sqlite3';
 import { badRequest } from '../lib/errors.js';
@@ -531,15 +532,7 @@ export function importFivetools(db: DB, buf: Buffer, books: string[] = DEFAULT_B
   if (!entries.length) throw badRequest('Nothing from the chosen books was found in that 5etools copy.');
   db.prepare(`INSERT INTO settings (key, value) VALUES ('fivetools_books', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`).run(JSON.stringify(ORDER));
   const id = '5etools';
-  db.transaction(() => {
-    db.prepare('DELETE FROM rules_entries WHERE pack_id = ?').run(id);
-    db.prepare(
-      `INSERT INTO rules_packs (id, name, source, enabled, imported_at) VALUES (?, ?, ?, 1, ?)
-       ON CONFLICT(id) DO UPDATE SET name = excluded.name, source = excluded.source, imported_at = excluded.imported_at`,
-    ).run(id, 'Your books (from 5etools)', Object.values(BOOKS).join('; '), new Date().toISOString());
-    const ins = db.prepare('INSERT OR REPLACE INTO rules_entries (pack_id, kind, name, cls, data) VALUES (?, ?, ?, ?, ?)');
-    for (const e of entries) ins.run(id, e.kind, e.name, e.cls, JSON.stringify(e.data));
-  })();
+  saveRulesPack(db, { id, name: 'Your books (from 5etools)', source: Object.values(BOOKS).join('; ') }, entries);
   const counts: Record<string, number> = {};
   for (const e of entries) counts[e.kind] = (counts[e.kind] ?? 0) + 1;
   return { pack: listPacks(db).find((p) => p.id === id)!, result: { counts, books: Object.values(BOOKS), legacySpecies, missingSpecies } };
