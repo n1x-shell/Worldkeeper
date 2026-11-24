@@ -318,7 +318,7 @@ export function AtlasExplorer() {
         typeLabel: mk.entity_type ? recordTypes.label(mk.entity_type) : undefined,
         hidden: mk.hidden,
       })),
-    [data],
+    [data, recordTypes],
   );
   const exploration = useMemo(() => (ex && showFog ? { discovered: new Set(ex.discovered.map(String)), trail: ex.trail } : null), [ex, showFog]);
 
@@ -389,7 +389,7 @@ export function AtlasExplorer() {
     setPlacing({
       prompt: `Click the map to place ${u.name}.`,
       onPlace: (x, y) =>
-        act(async () => {
+        void act(async () => {
           await api.post('/api/markers', {
             map_id: m.id,
             entity_id: u.id,

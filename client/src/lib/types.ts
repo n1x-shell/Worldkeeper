@@ -1,4 +1,4 @@
-export type { Entity, EntitySummary, Relationship, Realm, EntityType, CanonStatus } from '@shared/domain';
+export type { Entity, EntitySummary, Relationship } from '@shared/domain';
 
 export interface RelationshipView {
   id: number;

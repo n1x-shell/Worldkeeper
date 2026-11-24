@@ -17,10 +17,6 @@ export const CANON_FLAGS = [
   'OUTSIDE 2024 CORE',
   'UNVERIFIED',
 ] as const;
-export type CanonFlag = (typeof CANON_FLAGS)[number];
-
-export const MECHANICS_STATUSES = ['OFFICIAL', 'HOMEBREW', 'OUTSIDE 2024 CORE', 'UNVERIFIED'] as const;
-export type MechanicsStatus = (typeof MECHANICS_STATUSES)[number];
 
 /** A realm's key (see shared/realms.ts: realms are the library's own data, not a fixed list). */
 export type Realm = string;
@@ -30,7 +26,6 @@ export type Realm = string;
  * no library at hand. A library can hold more (its own, or a pack's), so a type is any string the library's registry
  * knows; features ask the registry by trait, never by listing types here.
  */
-export const ENTITY_TYPES = BUILTIN_TYPES.map((t) => t.key);
 export type EntityType = string;
 
 /** The built-in types' labels (the library's registry has its own types' too). */

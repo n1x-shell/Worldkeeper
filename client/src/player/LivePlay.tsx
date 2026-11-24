@@ -81,14 +81,14 @@ export function PlayerLiveCard() {
           to={`${base}/handouts`}
           onClick={markSeen}
           className="panel elev-3 gilt-corners flex min-h-14 items-center gap-3 border-gold/60 px-4 py-3 transition-colors hover:bg-raised"
-          aria-label={`The GM hands you something: ${handout!.title}. Open your handouts.`}
+          aria-label={`The GM hands you something: ${handout.title}. Open your handouts.`}
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gold/50 bg-gold/10 text-gold">
             <Gift size={20} />
           </span>
           <span className="min-w-0 flex-1">
             <span className="block text-xs font-medium uppercase tracking-[0.12em] text-dim">The GM hands you something</span>
-            <span className="block truncate font-display text-lg text-gold">{handout!.title}</span>
+            <span className="block truncate font-display text-lg text-gold">{handout.title}</span>
           </span>
           <span className="text-sm font-medium text-gold">Open</span>
         </Link>

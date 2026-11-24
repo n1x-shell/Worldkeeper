@@ -16,7 +16,13 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # Known security holes in the packages (high or critical).
+      - run: npm run audit
       - run: npm run typecheck
+      # Oxlint (with type-aware rules); any warning fails.
+      - run: npm run lint -- --deny-warnings
+      # knip: unused files, exports and packages.
+      - run: npm run deadcode
       - run: npm test
       # Both builds: the GM app and the player site (npm run build typechecks first).
       - run: npm run build

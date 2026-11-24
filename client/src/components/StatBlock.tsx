@@ -15,9 +15,11 @@ export interface StatBlockData {
   ac?: number;
   hp?: string;
   hpAvg?: number;
-  init?: number;
+  init?: number | null;
   speed?: string;
-  ab?: number[];
+  /** A score is null where the book gives words instead (abNote). */
+  ab?: (number | null)[];
+  abNote?: string;
   cr?: string;
   xp?: number;
   pb?: number;
@@ -213,13 +215,12 @@ export function StatBlock({ s }: { s: StatBlockData }) {
           {['Str', 'Dex', 'Con', 'Int', 'Wis', 'Cha'].map((k, i) => (
             <div key={k} className="py-1">
               <div className="text-[10px] uppercase tracking-wider text-dim">{k}</div>
-              <div className="num">
-                {s.ab![i]} ({sg(mod(s.ab![i]))})
-              </div>
+              <div className="num">{typeof s.ab![i] === 'number' ? `${s.ab![i]} (${sg(mod(s.ab![i]))})` : '—'}</div>
             </div>
           ))}
         </div>
       )}
+      {s.abNote && <p className="text-xs italic text-dim">{s.abNote}</p>}
       <div className="space-y-0.5">
         {lines.map(([k, v]) => (
           <div key={k}>
@@ -266,12 +267,12 @@ export function StatBlockPanel({ entityId }: { entityId: string }) {
   const has = !!data && !!data.name;
   return (
     <Card
-      title={has && data!.kind === 'hazard' ? 'Hazard' : 'Stat block'}
+      title={has && data.kind === 'hazard' ? 'Hazard' : 'Stat block'}
       icon={<Swords size={15} className="text-gold" />}
       actions={
         <span className="flex items-center gap-2 text-xs text-dim">
           GM only
-          {(!has || data!.own) && (
+          {(!has || data.own) && (
             <button className="btn-ghost text-xs py-0.5" onClick={() => setEditing(true)}>
               {has ? 'Change' : 'Give it a stat block'}
             </button>
@@ -279,15 +280,15 @@ export function StatBlockPanel({ entityId }: { entityId: string }) {
         </span>
       }
     >
-      {has ? <StatBlock s={data!} /> : <p className="text-sm text-dim">None yet. Use a stat block from your rules packs, with what's different about this one.</p>}
+      {has ? <StatBlock s={data} /> : <p className="text-sm text-dim">None yet. Use a stat block from your rules packs, with what's different about this one.</p>}
       {editing && (
         <OwnStatBlock
           entityId={entityId}
-          current={has && data!.own ? data! : null}
+          current={has && data.own ? data : null}
           onClose={() => setEditing(false)}
           onSaved={() => {
             setEditing(false);
-            reload();
+            void reload();
           }}
         />
       )}

@@ -1,0 +1,54 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "react", "oxc", "import", "unicorn"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2024": true
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "warn",
+    "typescript/no-floating-promises": "warn",
+    "typescript/no-misused-promises": [
+      "warn",
+      {
+        "checksVoidReturn": {
+          "attributes": false
+        }
+      }
+    ],
+    "typescript/await-thenable": "error",
+    "eqeqeq": ["warn", "smart"],
+    "no-unused-vars": "warn",
+    "react/react-in-jsx-scope": "off",
+    "typescript/no-unsafe-type-assertion": "off",
+    "unicorn/no-array-sort": "off",
+    "unicorn/no-array-reverse": "off",
+    "unicorn/consistent-function-scoping": "off",
+    "no-underscore-dangle": "off",
+    "no-shadow": "off",
+    "typescript/consistent-return": "off",
+    "import/no-unassigned-import": "off",
+    "react/set-state-in-effect": "off",
+    "react/preserve-manual-memoization": "off",
+    "react/refs": "off",
+    "react/exhaustive-effect-dependencies": "off",
+    "react/memo-dependencies": "off",
+    "react/globals": "off",
+    "no-unused-expressions": "off",
+    "typescript/no-base-to-string": "off",
+    "typescript/restrict-template-expressions": "off",
+    "unicorn/no-useless-spread": "off",
+    "unicorn/no-new-array": "off",
+    "unicorn/prefer-add-event-listener": "off",
+    "typescript/no-redundant-type-constituents": "off",
+    "typescript/no-unnecessary-type-conversion": "off",
+    "typescript/unbound-method": "off"
+  },
+  "ignorePatterns": ["dist/**", "dist-player/**", "node_modules/**", "src-tauri/**", "packs/**", "data/**"]
+}

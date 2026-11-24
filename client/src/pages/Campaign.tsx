@@ -153,7 +153,7 @@ export function CampaignsPage() {
               // It starts on the first day of its world's starting year; set the date on the campaign's page.
               const c = await api.post<Campaign>('/api/campaigns', form);
               await setActiveCampaignId(c.id);
-              nav('/campaign');
+              void nav('/campaign');
             } catch (x) {
               setErr((x as Error).message);
             }
@@ -191,7 +191,7 @@ export function CampaignsPage() {
                   className="btn"
                   onClick={async () => {
                     await setActiveCampaignId(c.id);
-                    nav('/campaign');
+                    void nav('/campaign');
                   }}
                 >
                   Open
@@ -637,7 +637,7 @@ function CharacterSheet({ ch: initial, onDeleted, onEdited }: { ch: Character; o
         </button>
       </div>
       <FullSheet
-        value={{ name: ch.name, species: ch.species, class_name: ch.class_name, level: ch.level, sheet: sh as Sheet }}
+        value={{ name: ch.name, species: ch.species, class_name: ch.class_name, level: ch.level, sheet: sh }}
         onChange={(next) => set({ name: next.name, species: next.species, class_name: next.class_name, level: next.level, sheet: next.sheet as Character['sheet'] })}
         storeKey="wk.gm.sheet.tab"
         portraitUrl={portrait ? `/api/uploads/${encodeURIComponent(portrait)}` : null}
@@ -938,7 +938,7 @@ export function SessionsPage() {
             className="btn-primary"
             onClick={async () => {
               const s = await api.post<Session>('/api/sessions/next', { campaignId: activeCampaignId });
-              nav(`/session/${s.id}`);
+              void nav(`/session/${s.id}`);
             }}
           >
             <Plus size={14} /> Prepare next session
@@ -1476,7 +1476,7 @@ export function SessionPage() {
     set({ prep: prep as Session['prep'] });
     toast(n ? `Filled ${n} empty field${n === 1 ? '' : 's'}.` : 'Every field already has something in it.');
   };
-  const filled = PREP_FIELDS.filter(([k]) => ((s.prep[k] as string) ?? '').trim()).length;
+  const filled = PREP_FIELDS.filter(([k]) => (s.prep[k] ?? '').trim()).length;
   return (
     <div className="space-y-5">
       {node}
@@ -1510,7 +1510,7 @@ export function SessionPage() {
                 onClick={async () => {
                   await auto.flush();
                   await api.post(`/api/sessions/${s.id}/start`);
-                  nav('/campaign/live');
+                  void nav('/campaign/live');
                 }}
               >
                 <Play size={14} /> {s.status === 'completed' ? 'Reopen live' : 'Start live session'}
@@ -1568,7 +1568,7 @@ export function SessionPage() {
             <div className="grid gap-x-4 gap-y-3 md:grid-cols-2 xl:grid-cols-3">
               {PREP_FIELDS.map(([k, label]) => (
                 <Field key={k} label={label}>
-                  <AutoTextarea minRows={2} value={(s.prep[k] as string) ?? ''} onChange={(e) => setPrep(k, e.target.value)} />
+                  <AutoTextarea minRows={2} value={s.prep[k] ?? ''} onChange={(e) => setPrep(k, e.target.value)} />
                 </Field>
               ))}
             </div>
@@ -1740,7 +1740,7 @@ export function EncountersPage() {
           disabled={!title.trim()}
           onClick={async () => {
             const e = await api.post<{ id: number }>('/api/encounters', { campaign_id: activeCampaignId, title });
-            nav(`/tracker/${e.id}`);
+            void nav(`/tracker/${e.id}`);
           }}
         >
           <Plus size={14} /> Prepare encounter
@@ -1814,7 +1814,7 @@ export function AdventuresPage({ byArc = false }: { byArc?: boolean }) {
           disabled={!title.trim()}
           onClick={async () => {
             const a = await api.post<Adventure>('/api/adventures', { title, campaign_id: activeCampaignId });
-            nav(`/adventure/${a.id}`);
+            void nav(`/adventure/${a.id}`);
           }}
         >
           <Plus size={14} /> Create
@@ -1827,7 +1827,7 @@ export function AdventuresPage({ byArc = false }: { byArc?: boolean }) {
           disabled={!hook}
           onClick={async () => {
             const a = await api.post<Adventure>('/api/adventures/from-hook', { hookId: hook, campaignId: activeCampaignId });
-            nav(`/adventure/${a.id}`);
+            void nav(`/adventure/${a.id}`);
           }}
         >
           From hook
@@ -2224,7 +2224,7 @@ function CampaignDates({ campaignId }: { campaignId: number }) {
                 if (editing === 'start') await api.put('/api/calendar/start', { campaign_id: campaignId, date: value });
                 else await api.post('/api/calendar/date', { campaign_id: campaignId, date: value });
                 setEditing(null);
-                reload();
+                void reload();
               }}
             >
               Set it

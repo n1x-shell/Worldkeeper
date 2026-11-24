@@ -27,7 +27,7 @@ const creatures = bestiary
     return { name: typeof m.srd52 === 'string' ? m.srd52 : m.name, environment: b.environment, ab: b.ab };
   });
 const item = (i: J, name: string) => {
-  const e = itemEntry({ ...i, entries: [] }) as J; // the app's own summary: weapon damage and properties, armor AC
+  const e = itemEntry({ ...i, entries: [] }); // the app's own summary: weapon damage and properties, armor AC
   return { name: srdName(name), type: e.type, rarity: e.rarity, magic: e.magic, value: e.value, weight: e.weight, text: e.text, ...(e.prefix !== undefined ? { prefix: e.prefix, suffix: e.suffix } : {}) };
 };
 const items = [

@@ -8,7 +8,7 @@ import {
   type Realm,
 } from '../../../shared/domain.js';
 import { metaValue, type ParsedBlock } from './parseMarkdown.js';
-import { realmKey, type RealmColor, type RealmIcon, type RealmKind } from '../../../shared/realms.js';
+import { realmKey, type RealmKind } from '../../../shared/realms.js';
 import { BUILTIN_REGISTRY, type TypeRegistry } from '../../../shared/recordTypes.js';
 import type { ImportProfile } from '../../../shared/packs.js';
 

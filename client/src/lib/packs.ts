@@ -14,7 +14,7 @@ export interface PacksState {
 }
 
 const EMPTY: PacksState = { packs: [], roles: {} };
-let loader: () => Promise<PacksState | undefined> = () =>
+const loader: () => Promise<PacksState | undefined> = () =>
   fetch('/api/setting-packs')
     .then((r) => (r.ok && (r.headers.get('content-type') ?? '').includes('json') ? (r.json() as Promise<PacksState>) : undefined))
     .catch(() => undefined);
@@ -22,11 +22,6 @@ let current: Promise<PacksState> | null = null;
 let known: PacksState | null = null;
 const listeners = new Set<(p: PacksState) => void>();
 
-/** For the player app: where the roles come from (the table server, or the published snapshot). */
-export function setPacksLoader(load: () => Promise<PacksState | undefined>) {
-  loader = load;
-  current = null;
-}
 const load = () => (current ??= loader().then((p) => (known = p ?? EMPTY)));
 
 /** After a pack is installed, updated or removed. */

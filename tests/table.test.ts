@@ -5,7 +5,7 @@ import request from 'supertest';
 import { tempContext } from './helpers.js';
 import { createApp } from '../server/src/app.js';
 import { AppContext } from '../server/src/context.js';
-import { closeTable, openTable, tableStatus } from '../server/src/table.js';
+import { closeTable, tableStatus } from '../server/src/table.js';
 
 const freePort = () =>
   new Promise<number>((resolve) => {

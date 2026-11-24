@@ -50,7 +50,9 @@ export function PeekProvider({ live, children }: { live: boolean; children: Reac
         if (d.id !== id) cache.current.set(d.id, d);
         return d;
       });
-      p.finally(() => pending.current.delete(id));
+      // Forget the request either way (a failed peek is retried next time); the caller handles the failure.
+      const done = () => void pending.current.delete(id);
+      p.then(done, done);
       pending.current.set(id, p);
     }
     return p;

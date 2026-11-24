@@ -644,7 +644,7 @@ function LiveMap() {
         typeLabel: mk.entity_type ? recordTypes.label(mk.entity_type) : undefined,
         hidden: mk.hidden,
       })),
-    [data],
+    [data, recordTypes],
   );
   const exploration = useMemo(() => (ex ? { discovered: new Set(ex.discovered.map(String)), trail: ex.trail } : null), [ex]);
   if (error) return <ErrorBox error={error} />;
@@ -888,7 +888,7 @@ function RevealPanel({ sessionId, campaignId, onRevealed }: { sessionId: number;
           </div>
           {e.canon_flags.includes('SECRET') && <div className="text-[11px] text-warn">Contains secrets: check a section before revealing it.</div>}
           <div className="flex flex-wrap gap-1.5">
-            {data!.sections
+            {data.sections
               .filter((s) => s.heading && (debug || !cleanerFor(e.pack_id).editorial(s.heading)))
               .map((s) => {
                 const shown = (e.revealed && e.revealed_sections.includes(s.heading)) || !!mine?.sections.includes(s.heading);

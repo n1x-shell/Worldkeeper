@@ -7,13 +7,11 @@ import {
   RELATIONSHIP_LABELS,
   RELATIONSHIP_TYPES,
   relationshipLabel,
-  type EntityType,
-  type RelationshipType,
 } from '@shared/domain';
 import { api, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary, RelationshipView, StateRow } from '../lib/types';
-import { displaySections, splitSections, type Section } from '../lib/sections';
+import { displaySections, type Section } from '../lib/sections';
 import { AS_WRITTEN, type Cleaner } from '@shared/loreText';
 import { addHere } from '@shared/newRecord';
 import { useCleaners } from '../lib/packs';
@@ -110,7 +108,7 @@ export function EntityPage() {
 
   useEffect(() => setTab('record'), [id]);
   useEffect(() => {
-    if (data?.redirectedFrom) nav(`/e/${encodeURIComponent(data.entity.id)}`, { replace: true });
+    if (data?.redirectedFrom) void nav(`/e/${encodeURIComponent(data.entity.id)}`, { replace: true });
   }, [data, nav]);
 
   if (loading && !data) return <Loading />;
@@ -216,7 +214,7 @@ export function EntityPage() {
                   onSelect: async () => {
                     const d = await api.post<Entity>(`/api/entities/${encodeURIComponent(e.id)}/duplicate`);
                     await reloadIndex();
-                    nav(`/e/${d.id}`);
+                    void nav(`/e/${d.id}`);
                   },
                 },
                 { label: 'Export', icon: <Download size={14} />, href: `/api/entities/${encodeURIComponent(e.id)}/export.md`, hint: 'Download as Markdown' },
@@ -647,13 +645,13 @@ function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; 
       }
       // The parent and the children are listed on their own.
       if (other === data.parent?.id || childIds.has(other)) continue;
-      const label = relationshipLabel(r.type as RelationshipType, out);
+      const label = relationshipLabel(r.type, out);
       const list = groups.get(label) ?? [];
       if (!list.some((x) => x.id === other)) list.push({ id: other, name: (out ? r.target_name : r.source_name) ?? other });
       groups.set(label, list);
     }
     return { groups: [...groups.entries()], mentionedIn: [...mentioned.values()].sort((a, b) => a.name.localeCompare(b.name)) };
-  }, [data.relationships, data.children, data.parent, e.id]);
+  }, [data.relationships, data.children, data.parent, e.id, recordTypes]);
   const kids = allChildren ? data.children : data.children.slice(0, 8);
   const mentions = allMentions ? mentionedIn : mentionedIn.slice(0, 8);
   const more = (n: number, open: boolean, set: (v: boolean) => void) =>
@@ -884,7 +882,7 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
             </Field>
           )}
           <Field label="Type">
-            <select className="input" value={draft.type} onChange={(e) => update({ type: e.target.value as Entity['type'] })}>
+            <select className="input" value={draft.type} onChange={(e) => update({ type: e.target.value })}>
               {[...recordTypes.offered.map((t) => t.key), ...(recordTypes.offered.some((t) => t.key === draft.type) ? [] : [draft.type])].map((t) => (
                 <option key={t} value={t}>
                   {recordTypes.label(t)}
@@ -893,7 +891,7 @@ export function EntityEditor({ entity, onSaved, onDone }: { entity: Entity; onSa
             </select>
           </Field>
           <Field label="Realm">
-            <select className="input" value={draft.realm} onChange={(e) => update({ realm: e.target.value as Entity['realm'] })}>
+            <select className="input" value={draft.realm} onChange={(e) => update({ realm: e.target.value })}>
               {realms.list
                 .filter((r) => !r.archived || r.id === draft.realm)
                 .map((r) => (

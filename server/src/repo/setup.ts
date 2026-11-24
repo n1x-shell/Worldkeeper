@@ -85,7 +85,6 @@ export const setupPlan = z.object({
     .optional(),
   tutorial: z.boolean().default(false),
 });
-export type SetupPlan = z.input<typeof setupPlan>;
 
 const PLACE_REALM_KINDS = new Set(['continent', 'region_group']);
 

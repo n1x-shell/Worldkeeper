@@ -152,7 +152,7 @@ export function FeaturesTab({
         list={s.classFeatures ?? []}
         onChange={(l) => put({ classFeatures: l })}
         readOnly={readOnly}
-        fill={srdClass ? () => put({ classFeatures: merge(s.classFeatures ?? [], classFeaturesFor(text!, info!.name, level, s.subclass)) }) : undefined}
+        fill={srdClass ? () => put({ classFeatures: merge(s.classFeatures ?? [], classFeaturesFor(text, info.name, level, s.subclass)) }) : undefined}
         fillLabel={info ? `${info.name} features to level ${level}` : undefined}
       />
       <FeatureList

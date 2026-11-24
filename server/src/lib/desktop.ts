@@ -19,7 +19,7 @@ export function openInBrowser(raw: string, run: typeof spawn = spawn) {
   if (url.protocol !== 'http:' && url.protocol !== 'https:') throw badRequest('Only web addresses can be opened');
   const href = url.toString();
   const [cmd, args] = process.platform === 'win32' ? ['rundll32', ['url.dll,FileProtocolHandler', href]] : process.platform === 'darwin' ? ['open', [href]] : ['xdg-open', [href]];
-  const child = run(cmd, args as string[], { detached: true, stdio: 'ignore', windowsHide: true });
+  const child = run(cmd, args, { detached: true, stdio: 'ignore', windowsHide: true });
   child.on('error', () => undefined);
   child.unref();
   return { opened: href };
@@ -28,7 +28,7 @@ export function openInBrowser(raw: string, run: typeof spawn = spawn) {
 /** Show a folder in the system's file manager (desktop app only; the folder is the app's own, never one asked for). */
 export function openFolder(dir: string, run: typeof spawn = spawn) {
   const [cmd, args] = process.platform === 'win32' ? ['explorer', [dir]] : process.platform === 'darwin' ? ['open', [dir]] : ['xdg-open', [dir]];
-  const child = run(cmd, args as string[], { detached: true, stdio: 'ignore', windowsHide: true });
+  const child = run(cmd, args, { detached: true, stdio: 'ignore', windowsHide: true });
   child.on('error', () => undefined);
   child.unref();
   return { opened: dir };

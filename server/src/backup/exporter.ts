@@ -6,7 +6,7 @@ import AdmZip from 'adm-zip';
 import type { DB } from '../db/connection.js';
 import type { Paths } from '../config.js';
 import { schemaVersion } from '../db/migrations.js';
-import { getEntity, rowToEntity, type EntityRow } from '../repo/entities.js';
+import { rowToEntity, type EntityRow } from '../repo/entities.js';
 import { parseJson } from '../lib/json.js';
 import { playerSnapshot } from '../player/projection.js';
 import { reindexAll } from '../repo/search.js';
@@ -438,7 +438,7 @@ export function importCampaign(db: DB, data: ReturnType<typeof exportCampaign>, 
 
     // Everything else the campaign keeps (an export from before format 2 has none of it).
     const more = data as unknown as Record<string, Record<string, unknown>[] | Record<string, string> | undefined>;
-    const list = (k: string) => (Array.isArray(more[k]) ? (more[k] as Record<string, unknown>[]) : []);
+    const list = (k: string) => (Array.isArray(more[k]) ? more[k] : []);
     const ses = (r: Record<string, unknown>) => (r.session_id ? (sesMap.get(r.session_id as number) ?? null) : null);
     for (const t of ['faction_standing', 'renown_log', 'return_clock', 'return_log', 'faction_ties_revealed', 'downtime', 'calendar_events', 'profiles'] as const)
       for (const r of list(t)) insert(t, r, { campaign_id: cid, ...('session_id' in r ? { session_id: ses(r) } : {}) });
@@ -523,9 +523,6 @@ export function exportPlayerZip(db: DB): Buffer {
   return zip.toBuffer();
 }
 
-export function entityExportMarkdown(db: DB, id: string) {
-  return entityToMarkdown(getEntity(db, id), db);
-}
 
 export { parseJson };
 

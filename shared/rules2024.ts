@@ -9,12 +9,10 @@
  * Backgrounds outside the SRD are listed by their mechanics only (ability scores, skills, tool and feat).
  */
 import TABLES from './srd/tables.json';
-import { ABILITIES, type Ability, type Sheet, mod } from './sheet';
+import { type Ability, type Sheet, mod } from './sheet';
 import { proficiencyBonus } from './play';
 
 export const ABILITY_NAMES: Record<Ability, string> = { STR: 'Strength', DEX: 'Dexterity', CON: 'Constitution', INT: 'Intelligence', WIS: 'Wisdom', CHA: 'Charisma' };
-export const abilityFromName = (n: string): Ability | undefined =>
-  (Object.entries(ABILITY_NAMES).find(([, v]) => v.toLowerCase() === n.trim().toLowerCase())?.[0] as Ability) ?? (ABILITIES.includes(n as Ability) ? (n as Ability) : undefined);
 
 export const STANDARD_ARRAY = [15, 14, 13, 12, 10, 8];
 /** Point buy: 27 points, scores 8 to 15 before bonuses. */
@@ -453,7 +451,7 @@ const W = (category: Weapon['category'], ranged: boolean, rows: string) =>
     .split('\n')
     .map((row) => {
       const [name, damage, type, props, mastery] = row.split('|').map((x) => x.trim());
-      return { name, category, ranged, damage, type, properties: props ? props.split(';').map((p) => p.trim()) : [], mastery } as Weapon;
+      return { name, category, ranged, damage, type, properties: props ? props.split(';').map((p) => p.trim()) : [], mastery };
     });
 export const WEAPONS: Weapon[] = [
   ...W(
@@ -592,34 +590,6 @@ export function attackFor(w: Weapon, s: Sheet, cls: string, level: number) {
   };
 }
 
-/** Artisan's tools, other tools and the gaming sets and instruments in the SRD, for proficiency lists. */
-export const TOOLS = [
-  "Alchemist's Supplies",
-  "Brewer's Supplies",
-  "Calligrapher's Supplies",
-  "Carpenter's Tools",
-  "Cartographer's Tools",
-  "Cobbler's Tools",
-  "Cook's Utensils",
-  "Glassblower's Tools",
-  "Jeweler's Tools",
-  "Leatherworker's Tools",
-  "Mason's Tools",
-  "Painter's Supplies",
-  "Potter's Tools",
-  "Smith's Tools",
-  "Tinker's Tools",
-  "Weaver's Tools",
-  "Woodcarver's Tools",
-  'Disguise Kit',
-  'Forgery Kit',
-  'Gaming Set',
-  'Herbalism Kit',
-  'Musical Instrument',
-  "Navigator's Tools",
-  "Poisoner's Kit",
-  "Thieves' Tools",
-];
 export const STANDARD_LANGUAGES = ['Common', 'Common Sign Language', 'Draconic', 'Dwarvish', 'Elvish', 'Giant', 'Gnomish', 'Goblin', 'Halfling', 'Orc'];
 export const RARE_LANGUAGES = ['Abyssal', 'Celestial', 'Deep Speech', 'Druidic', 'Infernal', 'Primordial', 'Sylvan', "Thieves' Cant", 'Undercommon'];
 export const ORIGIN_FEATS = [
@@ -636,6 +606,3 @@ export const ORIGIN_FEATS = [
   'Tavern Brawler',
   'Tough',
 ];
-
-/** The SRD's species, with size and speed; every people page in the world names which rules it uses. */
-export const SRD_SPECIES = ['Dragonborn', 'Dwarf', 'Elf', 'Gnome', 'Goliath', 'Halfling', 'Human', 'Orc', 'Tiefling'];

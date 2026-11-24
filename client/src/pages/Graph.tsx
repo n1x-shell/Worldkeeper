@@ -2,7 +2,7 @@ import { useRecordTypes } from '../components/recordTypes';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ReactFlow, Background, Controls, MarkerType, type Edge, type Node } from '@xyflow/react';
-import { CANON_STATUSES, RELATIONSHIP_LABELS, RELATIONSHIP_TYPES, type EntityType, type RelationshipType } from '@shared/domain';
+import { CANON_STATUSES, RELATIONSHIP_LABELS, RELATIONSHIP_TYPES, type RelationshipType } from '@shared/domain';
 import { qs, useApi } from '../lib/api';
 import { Card, Check, Empty, ErrorBox, Loading, PageHeader } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';

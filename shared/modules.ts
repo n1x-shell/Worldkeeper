@@ -106,7 +106,6 @@ export const MODULES: ModuleDef[] = [
   },
 ];
 
-export const moduleDef = (key: string) => MODULES.find((m) => m.key === key);
 export const isModuleKey = (key: string): key is ModuleKey => (MODULE_KEYS as readonly string[]).includes(key);
 
 /** Switches as stored: on, off, or absent (follow the level above). */

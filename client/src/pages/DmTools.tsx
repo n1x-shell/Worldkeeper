@@ -9,7 +9,7 @@ import { api, qs, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary, StateRow } from '../lib/types';
 import { RecentChanges } from '../components/RecentChanges';
-import { ask, askText, AutoTextarea, Badge, CanonFlags, Card, ConditionChips, DataTable, Empty, EntityLink, ErrorBox, Field, HpBar, HpStepper, Loading, PageHeader, SaveStatus, Section, Segmented, Toggle } from '../components/ui';
+import { ask, askText, AutoTextarea, Badge, CanonFlags, Card, ConditionChips, DataTable, Empty, EntityLink, ErrorBox, Field, HpBar, HpStepper, Loading, PageHeader, SaveStatus, Section, Segmented, toast, Toggle } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { StatBlockById } from '../components/StatBlock';
 import { Markdown } from '../components/Markdown';
@@ -432,8 +432,8 @@ export function TrackerPage() {
     (async () => {
       const existing = list.find((e) => e.title === 'Quick initiative');
       const id = existing?.id ?? (await api.post<Encounter>('/api/encounters', { title: 'Quick initiative', campaign_id: activeCampaignId })).id;
-      nav(`/tracker/${id}`, { replace: true });
-    })();
+      void nav(`/tracker/${id}`, { replace: true });
+    })().catch((x: Error) => toast(`Couldn't start quick initiative: ${x.message}`, 'danger'));
   }, [encounterId, list, activeCampaignId, nav]);
   if (encounterId && encounterId !== 'quick')
     return (
@@ -452,7 +452,7 @@ export function TrackerPage() {
             onClick={async () => {
               const e = await api.post<Encounter>('/api/encounters', { title: 'New encounter', campaign_id: activeCampaignId });
               void reload();
-              nav(`/tracker/${e.id}`);
+              void nav(`/tracker/${e.id}`);
             }}
           >
             <Plus size={14} /> New encounter

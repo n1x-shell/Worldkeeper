@@ -13,7 +13,7 @@ import { parseJson } from '../lib/json.js';
 import { collectRefs } from '../../../shared/mentions.js';
 import { loadMentionIndex } from './mentions.js';
 import { normName } from './nameMatch.js';
-import { ENTITY_TYPE_LABELS, type EntityType } from '../../../shared/domain.js';
+import { ENTITY_TYPE_LABELS } from '../../../shared/domain.js';
 import { worldkeeperPath } from '../packs/paths.js';
 
 export const TRUTHS = ['true', 'false', 'partly', 'unknown'] as const;
@@ -179,7 +179,7 @@ export function extractRumours(db: DB, markdown: string): RumourSource[] {
     if (!m) return null;
     const kind = m[2].trim().toLowerCase();
     const hits = (byName.all(m[1]) as { id: string; type: string }[]).filter(
-      (r) => r.type === kind || (ENTITY_TYPE_LABELS[r.type as EntityType] ?? '').toLowerCase() === kind,
+      (r) => r.type === kind || (ENTITY_TYPE_LABELS[r.type] ?? '').toLowerCase() === kind,
     );
     return hits.length === 1 ? hits[0].id : null;
   };
@@ -191,7 +191,7 @@ export function extractRumours(db: DB, markdown: string): RumourSource[] {
     let inSay = false;
     for (const line of part.slice(nl + 1).split('\n')) {
       if (/^\*\*What people say\*\*/i.test(line.trim())) inSay = true;
-      else if (/^\*\*[^*]+\*\*/.test(line.trim()) || /^#/.test(line)) inSay = false;
+      else if (/^\*\*[^*]+\*\*/.test(line.trim()) || line.startsWith('#')) inSay = false;
       else if (inSay) {
         const b = /^\s*[-*]\s+(.+)$/.exec(line);
         if (b) out.push({ sourceId, text: b[1].trim() });

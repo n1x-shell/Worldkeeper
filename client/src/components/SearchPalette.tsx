@@ -77,7 +77,7 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
     return () => clearTimeout(t);
   }, [q, debug]);
   const go = (h: Hit) => {
-    nav(hitPath(h));
+    void nav(hitPath(h));
     onClose();
   };
   return (
@@ -96,7 +96,7 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
               else if (e.key === 'Enter') {
                 if (hits[hi]) go(hits[hi]);
                 else if (q.trim()) {
-                  nav(`/search?q=${encodeURIComponent(q)}`);
+                  void nav(`/search?q=${encodeURIComponent(q)}`);
                   onClose();
                 }
               }

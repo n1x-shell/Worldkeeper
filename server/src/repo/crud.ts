@@ -28,7 +28,7 @@ export function makeCrud<S extends z.ZodObject<z.ZodRawShape>>(opts: CrudOptions
   const decode = (row: Record<string, unknown> | undefined) => {
     if (!row) return row;
     const out: Record<string, unknown> = { ...row };
-    for (const c of jsonCols) if (typeof out[c] === 'string') out[c] = parseJson(out[c] as string, null);
+    for (const c of jsonCols) if (typeof out[c] === 'string') out[c] = parseJson(out[c], null);
     for (const c of boolCols) if (c in out) out[c] = !!out[c];
     return out;
   };
@@ -57,7 +57,7 @@ export function makeCrud<S extends z.ZodObject<z.ZodRawShape>>(opts: CrudOptions
       return row;
     },
     create(db: DB, input: unknown) {
-      const data = encode(opts.schema.parse(input) as Record<string, unknown>);
+      const data = encode(opts.schema.parse(input));
       const keys = Object.keys(data);
       const res = db
         .prepare(`INSERT INTO ${opts.table} (${keys.join(', ')}) VALUES (${keys.map((k) => '@' + k).join(', ')})`)
@@ -72,7 +72,7 @@ export function makeCrud<S extends z.ZodObject<z.ZodRawShape>>(opts: CrudOptions
       api.get(db, id);
       const parsed = opts.schema.partial().parse(input) as Record<string, unknown>;
       // Only write keys the caller actually sent (zod defaults must never overwrite stored values).
-      const provided = new Set(Object.keys((input ?? {}) as object));
+      const provided = new Set(Object.keys(input ?? {}));
       for (const k of Object.keys(parsed)) if (!provided.has(k)) delete parsed[k];
       const data = encode(parsed);
       const keys = Object.keys(data);

@@ -11,15 +11,12 @@ import {
   Gem,
   Gift,
   CalendarDays,
-  Ghost,
   Globe2,
   Home,
   Landmark,
   ListChecks,
   Map as MapIcon,
   Moon,
-  Mountain,
-  Flame,
   ScrollText,
   Search,
   Skull,
@@ -282,7 +279,7 @@ export function PlayerLayout({ appName, publishedAt, campaign }: { appName: stri
           role="search"
           onSubmit={(e) => {
             e.preventDefault();
-            if (q.trim()) nav(`${base}/search?q=${encodeURIComponent(q.trim())}`);
+            if (q.trim()) void nav(`${base}/search?q=${encodeURIComponent(q.trim())}`);
           }}
         >
           <Search size={14} className="text-dim shrink-0" />

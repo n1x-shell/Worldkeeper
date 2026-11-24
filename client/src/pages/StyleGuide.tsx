@@ -3,59 +3,34 @@
  * with each text colour's contrast measured live. Use the switch at the top to compare Warm Parchment and Dark Codex.
  */
 import { Fragment, useEffect, useState, type ReactNode } from 'react';
-import { Moon, Sun, Sword, Shield, Plus, Trash2 } from 'lucide-react';
+import { Moon, Sun, Sword } from 'lucide-react';
 import { useAppState } from '../lib/store';
 import {
   ask,
   askText,
-  Badge,
-  CanonBadge,
   Card,
-  Check,
   ConditionChips,
   EntityLink,
   DataTable,
   Drawer,
   Empty,
   ErrorBox,
-  Field,
-  GmOnly,
   HpBar,
   HpStepper,
   KeyValue,
   Loading,
   Modal,
   PageHeader,
-  RarityTag,
-  RealmBadge,
-  SaveStatus,
   Segmented,
   Skeleton,
-  Tabs,
   toast,
   Toggle,
-  TypeBadge,
-  VisibilityBadge,
 } from '../components/ui';
 import { CONDITIONS_2024 } from '@shared/domain';
 import { StatBlockById } from '../components/StatBlock';
 
 const SURFACES = ['bg', 'panel', 'raised'] as const;
-const TEXT = ['ink', 'dim', 'gold', 'arcane', 'danger', 'ok', 'warn'] as const;
 // Full class names, so the stylesheet build keeps them.
-const RARITY = [
-  ['rarity-common', 'Common'],
-  ['rarity-uncommon', 'Uncommon'],
-  ['rarity-rare', 'Rare'],
-  ['rarity-very-rare', 'Very rare'],
-  ['rarity-legendary', 'Legendary'],
-  ['rarity-artifact', 'Artifact'],
-] as const;
-const ELEVATION = [
-  ['elev-1', 'Elevation 1', 'Panels and cards'],
-  ['elev-2', 'Elevation 2', 'Hover cards, menus'],
-  ['elev-3', 'Elevation 3', 'Drawers, dialogs'],
-] as const;
 const ROLE: Record<string, string> = {
   bg: 'Page',
   panel: 'Cards and bars',

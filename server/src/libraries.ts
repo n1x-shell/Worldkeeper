@@ -142,12 +142,12 @@ export function ensureLibraries(root: string, backup: (dbFile: string, backupsDi
     writeIndex(root, idx);
   }
   if (idx.moving) {
-    const e = idx.libraries.find((l) => l.id === idx!.moving);
+    const e = idx.libraries.find((l) => l.id === idx.moving);
     if (e) moveIntoLibrary(root, e);
     delete idx.moving;
     writeIndex(root, idx);
   }
-  if (!idx.libraries.some((l) => l.id === idx!.open && !l.archived)) {
+  if (!idx.libraries.some((l) => l.id === idx.open && !l.archived)) {
     const first = idx.libraries.find((l) => !l.archived);
     if (!first) throw new Error('No library to open: every library is archived');
     idx.open = first.id;

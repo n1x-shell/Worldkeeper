@@ -26,7 +26,7 @@ export function HandoutsPage() {
   if (!data) return <Loading />;
   const create = async () => {
     await api.post('/api/handouts', { campaign_id: activeCampaignId, title: 'A new handout' });
-    reload();
+    void reload();
   };
   return (
     <div className="space-y-4">

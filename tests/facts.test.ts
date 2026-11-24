@@ -16,7 +16,7 @@ describe('structured facts', () => {
     const { db } = tempContext();
     const guild = createEntity(db, rec('The Salt Guild', 'faction', 'world'));
     const region = createEntity(db, rec('The Salt Flats', 'region', 'world', [['Ruling faction', `The Salt Guild [${guild.id}]`]]));
-    const c = campaigns.create(db, { title: 'Test' } as never) as { id: number };
+    const c = campaigns.create(db, { title: 'Test' }) as { id: number };
     expect(regionState(db, c.id, region.id).holder).toMatchObject({ id: guild.id, name: 'The Salt Guild' });
     // By name, too.
     const marsh = createEntity(db, rec('The Marsh', 'region', 'world', [['Ruling faction', 'The Salt Guild']]));
@@ -39,7 +39,7 @@ describe('structured facts', () => {
     createEntity(db, rec('Saltmere', 'settlement', 'westreach'));
     const p = createEntity(db, rec('Fenfolk', 'people', 'world', [['Found in', 'Westreach']], '## Overview\nFound all over Ostmark and Westreach.'));
     db.prepare('UPDATE entities SET revealed = 1').run();
-    updateEntity(db, p.id, { player_summary: 'Marsh people of Ostmark and Westreach.' } as never);
+    updateEntity(db, p.id, { player_summary: 'Marsh people of Ostmark and Westreach.' });
     const realms = playerEntity(db, p.id)!.realms;
     expect(realms).toContain('westreach');
     expect(realms).not.toContain('ostmark');

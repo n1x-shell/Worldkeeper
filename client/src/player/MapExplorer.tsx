@@ -1,7 +1,7 @@
 import { useRecordTypes } from '../components/recordTypes';
 import { useMemo } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import ReactMarkdown, { defaultUrlTransform } from 'react-markdown';
+import ReactMarkdown, { defaultUrlTransform, type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { BookOpen, Map as MapIcon, Radio, X } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
@@ -10,6 +10,8 @@ import { MapView, kindOf } from '../components/map/MapView';
 import { Badge, RealmBadge } from '../components/ui/badges';
 import { Empty, Loading } from '../components/ui/feedback';
 import { useSidebarSlot } from '../components/sidebarSlot';
+
+const MD_PLUGINS = [remarkGfm];
 
 /**
  * The handbook's map, filling the page under the top bar; its legend goes in the sidebar while that is open. Only player-safe data reaches it. Fog of war and the party's trail appear only when
@@ -21,33 +23,35 @@ function Codex({ id, fallback, onClose, onPlace, pinned }: { id: string; fallbac
   const { base, source } = usePlayer();
   // The index may carry only a summary; fetch the whole page.
   const { data } = usePlayerData<PEntity | null>(() => source.entity(id), `codex:${id}`);
+  // Made once per page and its pins, so the links keep their identity between renders.
+  const components = useMemo<Components>(
+    () => ({
+      // oxlint-disable-next-line react/no-unstable-nested-components -- made once per pin set, not on every render
+      a: ({ href, children }) => {
+        const to = href?.startsWith('/player/e/') ? decodeURIComponent(href.slice('/player/e/'.length)) : null;
+        if (to && pinned.has(to))
+          return (
+            <button type="button" className="wk-ref" onClick={() => onPlace(to)}>
+              {children}
+            </button>
+          );
+        return href?.startsWith('/player/') ? (
+          <Link to={`${base}${href.slice('/player'.length)}`} className="wk-ref" data-peek={to ?? undefined}>
+            {children}
+          </Link>
+        ) : (
+          <a href={href} target="_blank" rel="noreferrer noopener" className="text-arcane underline">
+            {children}
+          </a>
+        );
+      },
+    }),
+    [base, pinned, onPlace],
+  );
   const e = data ?? fallback;
   if (!e) return null;
   const md = (text: string) => (
-    <ReactMarkdown
-      remarkPlugins={[remarkGfm]}
-      urlTransform={defaultUrlTransform}
-      components={{
-        a: ({ href, children }) => {
-          const to = href?.startsWith('/player/e/') ? decodeURIComponent(href.slice('/player/e/'.length)) : null;
-          if (to && pinned.has(to))
-            return (
-              <button type="button" className="wk-ref" onClick={() => onPlace(to)}>
-                {children}
-              </button>
-            );
-          return href?.startsWith('/player/') ? (
-            <Link to={`${base}${href.slice('/player'.length)}`} className="wk-ref" data-peek={to ?? undefined}>
-              {children}
-            </Link>
-          ) : (
-            <a href={href} target="_blank" rel="noreferrer noopener" className="text-arcane underline">
-              {children}
-            </a>
-          );
-        },
-      }}
-    >
+    <ReactMarkdown remarkPlugins={MD_PLUGINS} urlTransform={defaultUrlTransform} components={components}>
       {text}
     </ReactMarkdown>
   );
@@ -98,7 +102,7 @@ export function MapExplorer() {
             return { ...mk, kind: kindOf(e?.type, recordTypes), typeLabel: e?.typeLabel };
           })
         : [],
-    [m, byId],
+    [m, byId, recordTypes],
   );
   const pinned = useMemo(() => new Set(pins.map((p) => p.entity_id).filter((x): x is string => !!x)), [pins]);
   const exploration = useMemo(() => (m?.exploration ? { discovered: new Set(m.exploration.discovered), trail: m.exploration.trail } : null), [m]);

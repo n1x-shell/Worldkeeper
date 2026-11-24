@@ -131,8 +131,8 @@ export function AbilitiesStep({ b, set, feats, nav }: { b: Build; set: SetB; fea
   };
   const choose = (m: Build['method']) => {
     if (m === 'pointbuy') set({ method: m, base: { STR: 8, DEX: 8, CON: 8, INT: 8, WIS: 8, CHA: 8 } });
-    else if (m === 'roll') set({ method: m, rolls: Array.from({ length: 6 }, rollScore), base: { STR: 0, DEX: 0, CON: 0, INT: 0, WIS: 0, CHA: 0 } as Record<Ability, number> });
-    else if (m === 'standard') set({ method: m, base: { STR: 0, DEX: 0, CON: 0, INT: 0, WIS: 0, CHA: 0 } as Record<Ability, number> });
+    else if (m === 'roll') set({ method: m, rolls: Array.from({ length: 6 }, rollScore), base: { STR: 0, DEX: 0, CON: 0, INT: 0, WIS: 0, CHA: 0 } });
+    else if (m === 'standard') set({ method: m, base: { STR: 0, DEX: 0, CON: 0, INT: 0, WIS: 0, CHA: 0 } });
     else set({ method: m, base: { STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 } });
   };
   const imps = improvementSlots(b);

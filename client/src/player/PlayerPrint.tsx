@@ -28,7 +28,7 @@ export function PlayerPrint() {
   const chosen = useMemo(() => {
     const all = entities ?? [];
     if (choice === 'cards') return CARD_NAMES.map((n) => all.find((e) => e.name === n)).filter((e): e is PEntity => !!e);
-    if (choice === 'all') return [...groups.flatMap((x) => [...x.list].sort(byName))];
+    if (choice === 'all') return groups.flatMap((x) => [...x.list].sort(byName));
     return [...(groups.find((x) => x.g.key === choice)?.list ?? [])].sort(byName);
   }, [choice, entities, groups]);
 

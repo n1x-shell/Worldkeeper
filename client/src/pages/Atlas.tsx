@@ -245,7 +245,7 @@ export function AtlasPage() {
                 }}
                 onDeleted={() => {
                   void reloadMaps();
-                  nav('/atlas');
+                  void nav('/atlas');
                 }}
                 onDeleteShape={async (id) => {
                   await api.del(`/api/shapes/${id}`);
@@ -277,7 +277,7 @@ export function AtlasPage() {
             setCreating(false);
             void reloadMaps();
             void reloadIndex();
-            nav(`/atlas/${id}`);
+            void nav(`/atlas/${id}`);
           }}
         />
       )}
@@ -323,7 +323,7 @@ function MapCanvas({
           const pts = s.points.map(([x, y]) => [y, x] as [number, number]);
           const opts = { color: s.color, weight: 2, dashArray: s.hidden ? '6 6' : undefined, fillOpacity: 0.12 };
           return s.kind === 'region' ? (
-            <Polygon key={s.id} positions={pts} pathOptions={opts} eventHandlers={{ click: () => s.entity_id && nav(`/e/${s.entity_id}`) }}>
+            <Polygon key={s.id} positions={pts} pathOptions={opts} eventHandlers={{ click: () => void (s.entity_id && nav(`/e/${s.entity_id}`)) }}>
               {s.label && <Tooltip sticky>{s.label}</Tooltip>}
             </Polygon>
           ) : (

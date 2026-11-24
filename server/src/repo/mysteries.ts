@@ -4,7 +4,6 @@
  * unknown, suspected or known to the party, and each clue is found or not. GM-only: never part of player data.
  */
 import fs from 'node:fs';
-import path from 'node:path';
 import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { badRequest, notFound } from '../lib/errors.js';

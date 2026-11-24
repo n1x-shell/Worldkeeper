@@ -72,7 +72,7 @@ export function BastionsPage() {
                 name: 'A new Bastion',
                 facilities: BASIC_FACILITIES.slice(0, 2).map((name, i) => ({ id: `b${i}`, name, kind: 'basic', space: 'Roomy' })),
               });
-              reload();
+              void reload();
             }}
           >
             <Plus size={14} /> New Bastion
@@ -252,7 +252,7 @@ function BastionCard({ b: init, level, onDelete }: { b: Bastion; level: number; 
               await api.post(`/api/bastions/${b.id}/turn`, { event });
               setEvent('');
               setB({ ...b, facilities: b.facilities.map((f) => ({ ...f, order: '' })) });
-              reloadTurns();
+              void reloadTurns();
             }}
           >
             <Hourglass size={14} /> Take the turn
@@ -315,7 +315,7 @@ function DowntimeLog({ campaignId, characters }: { campaignId: number; character
           if (!draft.character.trim() || !draft.activity.trim()) return;
           await api.post('/api/downtime', { campaign_id: campaignId, ...draft });
           setDraft({ ...draft, activity: '', result: '' });
-          reload();
+          void reload();
         }}
       >
         <Field label="Who">

@@ -40,7 +40,7 @@ describe('Quick-Peek', () => {
   });
 
   it('cuts a long first paragraph at a sentence', () => {
-    const long = `${'One sentence here. '.repeat(30)}`;
+    const long = 'One sentence here. '.repeat(30);
     const s = firstParagraph(long, 100);
     expect(s.length).toBeLessThanOrEqual(100);
     expect(s.endsWith('.')).toBe(true);

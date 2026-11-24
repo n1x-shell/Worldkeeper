@@ -129,7 +129,7 @@ export function StartWorld() {
 
   const skip = async () => {
     await api.post('/api/setup/skip');
-    nav('/', { replace: true });
+    void nav('/', { replace: true });
   };
 
   const install = async () => {
@@ -201,7 +201,7 @@ export function StartWorld() {
         if (tower) await api.post('/api/markers', { map_id: m.id, entity_id: tower, label: 'The Old Watchtower', x: Math.round((up.width ?? 2000) / 2), y: Math.round((up.height ?? 1400) / 2) });
       }
       await Promise.all([reloadIndex(), reloadRealms(), reloadTypes(), reloadMeta(), packsChanged(), reloadModules()]);
-      nav('/', { replace: true });
+      void nav('/', { replace: true });
     } catch (x) {
       setErr((x as Error).message);
     } finally {

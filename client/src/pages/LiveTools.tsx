@@ -363,7 +363,7 @@ function QuickHandouts({ campaignId, onLogged }: { campaignId: number; onLogged:
                 className={`btn h-10 text-xs ${h.pushed_at ? '' : 'border-gold/60 text-gold'}`}
                 onClick={async () => {
                   await api.post(`/api/handouts/${h.id}/push`, { pushed: !h.pushed_at });
-                  reload();
+                  void reload();
                   onLogged();
                 }}
               >

@@ -41,7 +41,7 @@ export function CalendarPage() {
     const reason = days >= 7 ? await askText({ title: 'Why does the time pass? (for the session log; optional)', confirmLabel: 'Pass the time' }) : '';
     if (reason === null) return;
     await api.post('/api/calendar/date', { campaign_id: activeCampaignId, days, reason });
-    reload();
+    void reload();
   };
   const refresh = () => (reload(), reloadEvents());
   return (

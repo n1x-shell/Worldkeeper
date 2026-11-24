@@ -129,8 +129,8 @@ function slots(def: CalendarDef): Slot[] {
   const extrasAfter = (i: number) => (def.extraDays ?? []).filter((e) => e.after === i);
   for (const e of extrasAfter(-1)) s.push({ month: -1, dom: 0, extra: e.name, season: e.season });
   def.months.forEach((m, i) => {
-    for (let d = 1; d <= m.days; d++) s!.push({ month: i, dom: d, season: m.season });
-    for (const e of extrasAfter(i)) s!.push({ month: i, dom: 0, extra: e.name, season: e.season ?? m.season });
+    for (let d = 1; d <= m.days; d++) s.push({ month: i, dom: d, season: m.season });
+    for (const e of extrasAfter(i)) s.push({ month: i, dom: 0, extra: e.name, season: e.season ?? m.season });
   });
   slotCache.set(def, s);
   return s;
@@ -160,9 +160,6 @@ export function monthDay(def: CalendarDef, day: number): { month: number; dom: n
 export function seasonOf(def: CalendarDef, day: number): string {
   return slots(def)[Math.min(Math.max(day, 1), yearDays(def)) - 1]?.season ?? '';
 }
-
-/** The seasons, in the order the year meets them. */
-export const seasonsOf = (def: CalendarDef) => [...new Set(def.months.map((m) => m.season).filter((s): s is string => !!s))];
 
 // ---------------------------------------------------------------- years
 
@@ -237,9 +234,6 @@ export function addDays(def: CalendarDef, d: WDate, n: number): WDate {
   const total = absolute(def, d) + n;
   return { year: Math.floor(total / yd) + 1, day: (((total % yd) + yd) % yd) + 1 };
 }
-
-/** Days from a to b (negative if b is earlier). */
-export const daysBetween = (def: CalendarDef, a: WDate, b: WDate) => absolute(def, b) - absolute(def, a);
 
 /** Day of the week, 0-based, counting from the first day of year 1. */
 export function weekday(def: CalendarDef, d: WDate): number {
