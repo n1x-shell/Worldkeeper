@@ -57,6 +57,7 @@ On a record's **Player view** tab, enable **Players know this record exists** be
 - The GM-authored player summary.
 - Facts explicitly revealed through the application.
 - Sections deliberately selected for publication, excluding sections identified as GM-only or secret.
+- The record's pictures you ticked **Players see it** for (on the record's own page, under **Edit pictures**). A picture is GM only until ticked, and shows to players only once the record itself is revealed, to every group that knows the record.
 
 **Campaign → Timeline** shows the world's history the GM has shown the group (to everyone, or to that campaign; never an event marked SECRET), the sessions it has played at their in-world dates (titled, with a link to the recap, once the recap is shown; until then just "Session N"), and dated calendar events shown to players. Planned sessions and sessions without a date aren't on it.
 

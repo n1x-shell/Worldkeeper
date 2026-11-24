@@ -1,6 +1,15 @@
 # The road to 1.0-BETA
 
-Status: **draft for the owner's decisions**, November 2026 (after v0.9.2). Nothing here is agreed yet.
+Status: **under way**, November 2026. The audit below was made at v0.9.2.
+
+**Decided by the owner (24 November 2026):** all of this happens in v0.9.x releases, one step each, starting with section B (what a GM would expect and not find); then 1.0-BETA. The release grouping in section 4 is replaced by that order. The five decisions in section 5 are still open.
+
+| Step | Release | Status |
+| --- | --- | --- |
+| B1 Pictures on records | v0.9.3 | Done, except pictures inside a record's text |
+| B2 Homebrew workshop | | Next |
+| B3 to B9 | | To do |
+| A1 to A7, then C | | To do |
 
 ## 1. What "beta" should mean
 
@@ -38,7 +47,7 @@ Each was checked in the code, not assumed. "None" means no trace of it.
 
 | # | Gap | What I found |
 | --- | --- | --- |
-| B1 | **Pictures on records** | None. Characters have portraits and handouts have pictures, but an NPC, a place or an item can't have an image, and text can't embed one. For a worldbuilding tool this is the most visible hole. |
+| B1 | **Pictures on records** | **Done in v0.9.3**, except pictures inside a record's text. (Found: characters had portraits and handouts had pictures; an NPC's or faction's profile had one GM-only portrait that players never saw; a place, an item or any other record could have no picture, and text couldn't embed one. The first draft of this audit said "none", missing the profile portrait.) |
 | B2 | **Homebrew workshop** | A GM's stat block is "a book creature plus what's different" and four numbers; there is no full stat block editor, and no way to make a magic item or spell in the app. Markdown rules packs can't hold creatures or items at all. |
 | B3 | **Party progression** | No XP or milestone tracking, no level-up flow for an existing character (the builder builds at any level, but levelling up is editing by hand), no real-world session date or attendance. |
 | B4 | **A live table** | Nothing pushes: players' phones poll. Players can't roll from their sheet into a shared log. No "table display" for a TV or second screen (map, handout, turn order). |
@@ -62,7 +71,9 @@ Each is weeks of work. None is needed to call it a beta; any could be its headli
 | C6 | **A rich-text editor** | Markdown with a toolbar and preview today. |
 | C7 | **A home** | A name ("The Worldkeeper" is a working title that is also the bundled world's name), a website with the manual, a place to find and post worldbooks. |
 
-## 4. Proposed shape (for discussion)
+## 4. Proposed shape (replaced: see the status at the top)
+
+Kept as the first proposal. The owner chose one line of v0.9.x releases instead, section B first.
 
 - **0.10, Trust:** A1 to A7. The least exciting release and the one that makes the rest worth doing.
 - **0.11, The missing basics:** B1 pictures, B2 homebrew workshop, B3 progression, B7 bulk tools.

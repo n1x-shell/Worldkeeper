@@ -41,6 +41,8 @@ Record pages provide facts, identified GM-only text, child records, connections,
 
 To cross-link records in natural prose, use `@[Mara Venn]` or type `@` and select a suggested record. If names collide, a suggestion can include a distinguishing type, such as `@[Kaelholm (Settlement)]`. Links feed the relationship graph. Existing `Name [ID]` references remain supported and render using the record name.
 
+**Pictures:** any record can have pictures (PNG, JPEG, WebP or GIF, up to 60 MB each), added from the top of its page. The first is the record's picture: it shows large on the page, on hover cards and in the inspector. Each picture can have a caption, and each is **GM only until you tick "Players see it"**; a ticked picture shows on the record's handbook page once the record itself is revealed (in the app's Player View, on the table server and in a published handbook). Removing a picture deletes its file. Pictures travel with backups, full-world exports and shared worldbooks.
+
 IDs, source citations, filenames, tags and editorial annotations are hidden by default in normal play-focused screens. Enable **Settings → Technical details**, or launch with `WORLDKEEPER_DEBUG=1`, to show them. New records start from library templates; unsupported facts remain `UNDEFINED`, and likely duplicates trigger a warning.
 
 
@@ -48,7 +50,7 @@ IDs, source citations, filenames, tags and editorial annotations are hidden by d
 
 ### NPCs
 
-Structured fields include pronouns, species, role, appearance, voice, home, factions, goals, pressures, secrets, knowledge, disguise, game statistics and portrait. Each field shows the corresponding source-library text read-only alongside your own value; fields with no source fact show `UNDEFINED`.
+Structured fields include pronouns, species, role, appearance, voice, home, factions, goals, pressures, secrets, knowledge, disguise and game statistics. Each field shows the corresponding source-library text read-only alongside your own value; fields with no source fact show `UNDEFINED`. A portrait is one of the record's pictures (see Encyclopedia); a portrait set on a profile before v0.9.3 became the record's first picture.
 
 Campaign-specific fields track attitude toward the party, status, current location, last encounter (updated from the session log), known information, promises, debts and recent actions. These do not rewrite the canonical character record.
 

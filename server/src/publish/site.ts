@@ -65,6 +65,14 @@ export function buildPlayerSite(db: DB, paths: Paths, previous?: { contentHash: 
     const full = path.join(paths.uploadsDir, m.image_file);
     if (fs.existsSync(full)) files.push({ path: `uploads/${m.image_file}`, data: fs.readFileSync(full) });
   }
+  // The pictures of the records it shows (only those marked for players).
+  const seen = new Set(files.map((f) => f.path));
+  for (const e of snap.entities)
+    for (const i of e.images ?? []) {
+      if (!/^[\w.-]+$/.test(i.file) || seen.has(`uploads/${i.file}`)) continue;
+      const full = path.join(paths.uploadsDir, i.file);
+      if (fs.existsSync(full)) (files.push({ path: `uploads/${i.file}`, data: fs.readFileSync(full) }), seen.add(`uploads/${i.file}`));
+    }
   // GitHub Pages: serve files as-is (no Jekyll); keep the handbook out of search engines.
   files.push({ path: '.nojekyll', data: Buffer.alloc(0) });
   files.push({ path: 'robots.txt', data: Buffer.from('User-agent: *\nDisallow: /\n') });

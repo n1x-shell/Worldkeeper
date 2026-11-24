@@ -9,7 +9,7 @@ import { h, intParam, mountCrud } from './util.js';
 import { mapDetail, maps, markers, shapes, unplacedLocations } from '../repo/maps.js';
 import { defaultRevealTarget, mapRevealsFor, revealCampaigns, revealMapPart } from '../repo/reveals.js';
 import { badRequest, notFound } from '../lib/errors.js';
-import { kindOf, saveProfile } from '../repo/profiles.js';
+import { addImage, deleteImage, listImages, updateImage } from '../repo/entityImages.js';
 import { clearTrail, explorationFor, inPlay, removeTravel, setDiscovered, travel } from '../repo/exploration.js';
 import { getActiveCampaignId } from '../repo/campaigns.js';
 import { campaignLayers, regionPanel } from '../repo/mapLayers.js';
@@ -102,19 +102,34 @@ export function atlasRoutes(ctx: AppContext) {
       return maps.update(ctx.db, id, { image_file: name, kind: 'image', width: size.width, height: size.height });
     }),
   );
+  // Pictures on records (v0.9.3): any record's pictures, the first being the record's picture.
+  r.get(
+    '/entities/:id/images',
+    h((req) => listImages(ctx.db, String(req.params.id))),
+  );
   r.post(
-    '/profiles/:id/portrait',
+    '/entities/:id/images',
     upload.single('image'),
     h((req) => {
       const id = String(req.params.id);
-      kindOf(ctx.db, id);
-      if (!req.file) throw badRequest('Choose an image file');
+      if (!req.file) throw badRequest('Choose a picture');
       const ext = sniffImage(req.file.buffer);
-      if (!ext || !IMAGE_TYPES[req.file.mimetype]) throw badRequest('Portraits must be PNG, JPEG, WEBP or GIF images');
-      const name = `portrait-${id.replace(/[^\w-]/g, '')}-${randomBytes(6).toString('hex')}${ext}`;
+      if (!ext || !IMAGE_TYPES[req.file.mimetype]) throw badRequest('Pictures must be PNG, JPEG, WEBP or GIF images');
+      const name = `record-${id.replace(/[^\w-]/g, '')}-${randomBytes(6).toString('hex')}${ext}`;
+      const body = (req.body ?? {}) as { caption?: unknown; player_visible?: unknown };
+      // The row first: an unknown record is refused before anything is written.
+      const image = addImage(ctx.db, id, name, { caption: typeof body.caption === 'string' ? body.caption : '', player_visible: body.player_visible === 'true' || body.player_visible === true });
       fs.writeFileSync(path.join(ctx.paths.uploadsDir, name), req.file.buffer);
-      return saveProfile(ctx.db, id, 'world', null, { portrait: name });
+      return image;
     }),
+  );
+  r.patch(
+    '/entity-images/:id',
+    h((req) => updateImage(ctx.db, intParam(req.params.id), req.body)),
+  );
+  r.delete(
+    '/entity-images/:id',
+    h((req) => deleteImage(ctx.db, intParam(req.params.id), ctx.paths.uploadsDir)),
   );
   // Exploration: what the active campaign's party has discovered on a map, and where it has travelled.
   const campaignOf = (v: unknown) => {

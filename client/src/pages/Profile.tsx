@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Lock, Plus, Trash2, Upload, BookOpen } from 'lucide-react';
+import { Lock, Plus, Trash2, BookOpen } from 'lucide-react';
 import { INFLUENCE_LEVELS, type ProfileData, type ProfileField, type ProfileKind, type ProfileValue } from '@shared/profiles';
 import { api, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
@@ -53,7 +53,7 @@ export function ProfilePanel({ entityId, entityName }: { entityId: string; entit
   return (
     <div className="space-y-6">
       <p className="text-sm text-dim max-w-[72ch]">What your lore says about {entityName} sits beside your own notes. Your notes never change the record itself.</p>
-      <ScopeEditor key={`w-${entityId}`} title="In every campaign" subtitle="Your notes about who they are." fields={world} data={data} scope="world" campaignId={null} onSaved={reload} />
+      <ScopeEditor key={`w-${entityId}`} title="In every campaign" subtitle="Your notes about who they are." fields={world} data={data} scope="world" campaignId={null} />
       {activeCampaignId ? (
         <ScopeEditor
           key={`c-${entityId}-${activeCampaignId}`}
@@ -63,7 +63,6 @@ export function ProfilePanel({ entityId, entityName }: { entityId: string; entit
           data={data}
           scope="campaign"
           campaignId={activeCampaignId}
-          onSaved={reload}
         />
       ) : (
         <Card>
@@ -91,7 +90,6 @@ function ScopeEditor({
   data,
   scope,
   campaignId,
-  onSaved,
 }: {
   title: string;
   subtitle: string;
@@ -99,15 +97,13 @@ function ScopeEditor({
   data: ProfileResponse;
   scope: 'world' | 'campaign';
   campaignId: number | null;
-  onSaved: () => void;
 }) {
   const initial = (scope === 'world' ? data.world : data.campaign) ?? {};
   const [values, setValues] = useState<ProfileData>(initial);
-  const [err, setErr] = useState<string | null>(null);
   const auto = useAutosave(async (v: ProfileData) => {
     // Send every field of this scope; empty values remove a key on the server.
     const patch: Record<string, ProfileValue> = {};
-    for (const f of fields) if (f.type !== 'image') patch[f.key] = v[f.key] ?? (['refs', 'list', 'influence'].includes(f.type) ? [] : '');
+    for (const f of fields) patch[f.key] = v[f.key] ?? (['refs', 'list', 'influence'].includes(f.type) ? [] : '');
     await api.put(`/api/profiles/${encodeURIComponent(data.entityId)}`, { scope, campaign_id: campaignId, data: patch });
   });
   useEffect(() => setValues(initial), [data.entityId]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -120,7 +116,6 @@ function ScopeEditor({
   const cols = scope === 'world' ? 'lg:grid-cols-[180px_minmax(0,1fr)_minmax(0,1fr)]' : 'lg:grid-cols-[180px_minmax(0,1fr)]';
   return (
     <Card flush title={title} aside={subtitle} actions={<SaveStatus state={auto.state} error={auto.error} />}>
-      {err && <ErrorBox error={err} />}
       {scope === 'world' && (
         <div className={`hidden lg:grid gap-3 ${cols} border-t border-line bg-raised/40 px-4 py-1.5 text-[11px] uppercase tracking-wider text-dim`} aria-hidden>
           <span />
@@ -142,12 +137,6 @@ function ScopeEditor({
                   field={f}
                   value={values[f.key]}
                   onChange={(v) => set(f.key, v)}
-                  entityId={data.entityId}
-                  onUploaded={(file) => {
-                    setValues({ ...values, portrait: file });
-                    onSaved();
-                  }}
-                  onError={setErr}
                 />
                 {f.key === 'lastEncountered' && data.lastLogged && (
                   <div className="text-xs text-dim mt-1">
@@ -211,16 +200,10 @@ function FieldEditor({
   field,
   value,
   onChange,
-  entityId,
-  onUploaded,
-  onError,
 }: {
   field: ProfileField;
   value: ProfileValue | undefined;
   onChange: (v: ProfileValue) => void;
-  entityId: string;
-  onUploaded: (file: string) => void;
-  onError: (e: string) => void;
 }) {
   const placeholder = 'Your note';
   switch (field.type) {
@@ -276,30 +259,6 @@ function FieldEditor({
         </div>
       );
     }
-    case 'image':
-      return (
-        <div className="flex items-center gap-3">
-          {value ? <img src={`/api/uploads/${value as string}`} alt="Portrait" className="w-24 h-24 object-cover rounded-md border border-line" /> : <div className="text-xs text-dim">No portrait</div>}
-          <label className="btn cursor-pointer">
-            <Upload size={13} /> {value ? 'Replace' : 'Upload'}
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp,image/gif"
-              className="sr-only"
-              onChange={async (e) => {
-                const f = e.target.files?.[0];
-                if (!f) return;
-                try {
-                  const r = await api.upload<{ world: ProfileData }>(`/api/profiles/${encodeURIComponent(entityId)}/portrait`, 'image', f);
-                  onUploaded(r.world.portrait as string);
-                } catch (x) {
-                  onError((x as Error).message);
-                }
-              }}
-            />
-          </label>
-        </div>
-      );
   }
 }
 

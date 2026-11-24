@@ -10,6 +10,8 @@
  */
 import { keepTimelineReveals } from './repo/timeline.js';
 import fs from 'node:fs';
+import { randomBytes } from 'node:crypto';
+import { addImage } from './repo/entityImages.js';
 import path from 'node:path';
 import { applyErrata } from './errata.js';
 import type { DB } from './db/connection.js';
@@ -153,6 +155,31 @@ export function archiveFiles(dir: string): SourceFile[] {
   return out.sort((a, b) => a.path.localeCompare(b.path));
 }
 
+/**
+ * A worldbook's pictures of its records: lore/pictures.json lists them (`{ id, file, caption, player_visible }`), the
+ * files are in the pictures folder beside lore. A picture the library already has from this worldbook (by its file
+ * name there) isn't added again, so the GM's captions and choices are kept.
+ */
+export function applyPictures(db: DB, dir: string, uploadsDir: string): number {
+  const list = path.join(dir, 'pictures.json');
+  const folder = path.resolve(dir, '../pictures');
+  if (!fs.existsSync(list) || !fs.existsSync(folder)) return 0;
+  const { pictures } = JSON.parse(fs.readFileSync(list, 'utf8')) as { pictures: { id: string; file: string; caption?: string; player_visible?: boolean }[] };
+  const have = db.prepare('SELECT 1 FROM entity_images WHERE entity_id = ? AND origin = ?');
+  const exists = db.prepare('SELECT 1 FROM entities WHERE id = ?');
+  let added = 0;
+  for (const p of pictures ?? []) {
+    if (typeof p.file !== 'string' || !/^[\w.-]+\.(png|jpe?g|webp|gif)$/i.test(p.file) || !exists.get(p.id) || have.get(p.id, p.file)) continue;
+    const from = path.join(folder, p.file);
+    if (!fs.existsSync(from)) continue;
+    const name = `record-${String(p.id).replace(/[^\w-]/g, '')}-${randomBytes(6).toString('hex')}${path.extname(p.file).toLowerCase()}`;
+    fs.copyFileSync(from, path.join(uploadsDir, name));
+    addImage(db, p.id, name, { caption: typeof p.caption === 'string' ? p.caption : '', player_visible: !!p.player_visible, origin: p.file });
+    added++;
+  }
+  return added;
+}
+
 /** Bring the worldbook into a library: its archive and new records first (one import), then the links and the rest. */
 export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?: string, packId = 'worldkeeper') {
   const archive = archiveFiles(path.resolve(dir, '../archive'));
@@ -172,6 +199,8 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?:
   const errata = applyErrata(db, path.join(dir, 'errata.json'));
   // The world's maps (pins, routes, region outlines). Maps the library already has are only topped up.
   const mapsAdded = uploadsDir ? applyMaps(db, uploadsDir, path.resolve(dir, '../maps'), { onlyRevealed: false }) : [];
+  // The records' pictures (lore/pictures.json and the pictures folder), each added once.
+  const picturesAdded = uploadsDir ? applyPictures(db, dir, uploadsDir) : 0;
   // Ready-to-run adventures, added to the GM's Adventures (ones the library already has are left alone).
   const adventuresAdded = applyAdventures(db, path.resolve(dir, '../adventures'));
   // Random encounter tables, added to the GM's Random Tables (ones the library already has are left alone).
@@ -195,6 +224,7 @@ export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?:
     mysteries,
     timeline,
     maps: mapsAdded,
+    pictures: picturesAdded,
     adventures: adventuresAdded,
     tables: tablesAdded,
     errata: { records: errata.records + adventureErrata.records, adventures: errata.adventures + adventureErrata.adventures },

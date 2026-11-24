@@ -77,6 +77,7 @@ export const TABLES = [
   'party_treasure',
   'module_data',
   'statblocks',
+  'entity_images',
   'handouts',
   'bastions',
   'bastion_turns',

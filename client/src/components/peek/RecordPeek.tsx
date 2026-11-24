@@ -53,6 +53,7 @@ export function RecordPeek({ id, mode, onClose }: { id: string; mode: 'inspector
   return (
     <article className="space-y-4" aria-label={d.name}>
       <header className="space-y-2">
+        {d.image && <img src={`/api/uploads/${encodeURIComponent(d.image)}`} alt="" className="max-h-56 w-full rounded object-cover" />}
         <PeekBadges d={d} />
         <div className="flex items-start gap-2">
           <h2 className={`font-display text-gold ${mode === 'beside' ? 'text-2xl' : 'text-xl'} leading-tight flex-1 min-w-0`}>{d.name}</h2>

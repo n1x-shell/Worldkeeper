@@ -1,4 +1,5 @@
 import { useRecordTypes } from '../components/recordTypes';
+import { RecordPictures } from '../components/RecordPictures';
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Archive, ArchiveRestore, Copy, Download, Network, Pencil, Star, AlertTriangle, ChevronRight, Undo2, Plus, Trash2, MoreHorizontal, Lock, History } from 'lucide-react';
@@ -495,6 +496,7 @@ function RecordTab({
         </div>
       </article>
       <aside className="space-y-4 min-w-0" aria-label="Record facts">
+        <RecordPictures entityId={e.id} name={e.name} />
         {layout !== 'one' && glance}
         {(e.type === 'creature' || e.type === 'npc') && <StatBlockPanel entityId={e.id} />}
         {details && <section className="panel elev-1 p-4" aria-label="Record details">{details}</section>}

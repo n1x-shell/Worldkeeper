@@ -1127,6 +1127,32 @@ CREATE TABLE campaign_timeline_reveals (
 );
 `,
   },
+  {
+    version: 34,
+    name: 'pictures on records',
+    // Any record can have pictures; the first is the record's picture. `origin` is a worldbook's own name for one, so
+    // an update doesn't add it twice; `removed` marks one of those the GM removed, so an update doesn't bring it back.
+    sql: `
+CREATE TABLE entity_images (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  entity_id TEXT NOT NULL REFERENCES entities(id) ON DELETE CASCADE,
+  file TEXT NOT NULL,
+  caption TEXT NOT NULL DEFAULT '',
+  player_visible INTEGER NOT NULL DEFAULT 0,
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  origin TEXT,
+  removed INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE INDEX entity_images_entity ON entity_images(entity_id, sort_order);
+`,
+    // The portrait an NPC's or faction's profile had becomes the record's first picture (GM-only, as it was).
+    onUpgrade: `
+INSERT INTO entity_images (entity_id, file)
+SELECT p.entity_id, json_extract(p.data, '$.portrait') FROM profiles p
+WHERE p.campaign_id = 0 AND COALESCE(json_extract(p.data, '$.portrait'), '') <> '' AND p.entity_id IN (SELECT id FROM entities);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

@@ -8,7 +8,7 @@
  */
 
 export type ProfileKind = 'npc' | 'faction';
-export type ProfileFieldType = 'short' | 'text' | 'ref' | 'refs' | 'list' | 'influence' | 'image' | 'stats';
+export type ProfileFieldType = 'short' | 'text' | 'ref' | 'refs' | 'list' | 'influence' | 'stats';
 export type ProfileScope = 'world' | 'campaign';
 
 export interface ProfileField {
@@ -44,7 +44,6 @@ export const NPC_PROFILE: ProfileField[] = [
   { key: 'npcKnows', label: 'What the NPC knows', type: 'text', scope: 'world', secret: true, source: { sections: 'what they know|knows' } },
   { key: 'disguise', label: 'Disguise or alternate identity', type: 'text', scope: 'world', secret: true, source: { sections: 'disguise|alternate identity|true identity' } },
   { key: 'stats', label: 'Game statistics', type: 'stats', scope: 'world', source: { sections: 'statistic|stat block|combat|mechanic', fields: 'stat' }, hint: 'Your own numbers, or where to find them.' },
-  { key: 'portrait', label: 'Portrait', type: 'image', scope: 'world' },
   // Campaign scope
   { key: 'status', label: 'Current status', type: 'short', scope: 'campaign', hint: 'e.g. alive, missing, imprisoned, dead' },
   { key: 'attitude', label: 'Attitude toward the party', type: 'short', scope: 'campaign' },
