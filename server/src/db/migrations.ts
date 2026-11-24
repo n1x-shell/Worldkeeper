@@ -4,7 +4,8 @@ import type Database from 'better-sqlite3';
  * Ordered, append-only schema migrations.
  * NEVER edit a migration that has shipped; add a new one instead.
  */
-export const MIGRATIONS: { version: number; name: string; sql: string }[] = [
+/** `onUpgrade` runs only in a database made by an earlier version, not in a new one. */
+export const MIGRATIONS: { version: number; name: string; sql: string; onUpgrade?: string }[] = [
   {
     version: 1,
     name: 'core encyclopedia',
@@ -1101,6 +1102,17 @@ CREATE TABLE undo_recording (singleton INTEGER PRIMARY KEY CHECK (singleton = 1)
 INSERT INTO undo_recording (singleton, recording) VALUES (1, 0);
 `,
   },
+  {
+    version: 32,
+    name: "a library uses only the books it's switched on for",
+    // From v0.6.8 a book's rules are off in a library until it's switched on there (importing a book switches it on
+    // in the open library). A library from before used every book it had no switch for: when it opens, those books
+    // get a switch, on, so it keeps them (repo/sharedRules.ts keepOldDefaults). A new library has nothing to keep.
+    sql: `
+CREATE TABLE rules_switches_pending (singleton INTEGER PRIMARY KEY CHECK (singleton = 1));
+`,
+    onUpgrade: `INSERT INTO rules_switches_pending (singleton) VALUES (1);`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {
@@ -1110,11 +1122,13 @@ export function migrate(db: Database.Database): number {
     applied_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
   )`);
   const applied = new Set((db.prepare('SELECT version FROM schema_migrations').all() as { version: number }[]).map((r) => r.version));
+  const upgrading = applied.size > 0;
   let count = 0;
   for (const m of MIGRATIONS) {
     if (applied.has(m.version)) continue;
     const run = db.transaction(() => {
       db.exec(m.sql);
+      if (upgrading && m.onUpgrade) db.exec(m.onUpgrade);
       db.prepare('INSERT INTO schema_migrations (version, name) VALUES (?, ?)').run(m.version, m.name);
     });
     run();

@@ -216,7 +216,7 @@ A switched-off module leaves the menus, the sheets, the player view and the publ
 
 ## Libraries: more than one world
 
-One installation holds several **libraries**. Each is a world (or set of worlds) of its own: its own records, campaigns, settings, backups and handbook. Your books' rules and installed setting packs are shared, so they're imported once; each library chooses which it uses.
+One installation holds several **libraries**. Each is a world (or set of worlds) of its own: its own records, campaigns, settings, backups and handbook. Your books' rules and installed setting packs are shared, so they're imported once; each library chooses which it uses. A book you import is on in the library that's open and off in the others until you tick it there.
 
 - **The Library menu** (the gear, top right) names the open library and lists the others to open. **New library…** makes one and opens it with **Start your world**.
 - **Library → Libraries** manages them: rename, **Duplicate** (a copy of the records, campaigns, settings and pictures, to try something risky in), **Archive** (hidden from the list, its files kept; **Restore** brings it back), and **Show in folder** in the desktop app.

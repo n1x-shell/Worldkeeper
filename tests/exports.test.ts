@@ -18,6 +18,7 @@ const NOT_EXPORTED: Record<string, string> = {
   undo_actions: 'the last changes to plans and campaign state, for Undo: about this computer, not the world',
   undo_rows: 'what each of those changes did (as above)',
   undo_recording: 'a switch the undo triggers read while a change runs',
+  rules_switches_pending: 'set in a library from before v0.6.8 until it has kept the books it used (as rules_pack_switches)',
   schema_migrations: 'the database version, written by the app itself',
 };
 const SEARCH = /^search_index/;

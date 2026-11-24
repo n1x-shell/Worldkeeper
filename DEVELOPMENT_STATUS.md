@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.6.7_
+_Last updated: 2026-11-24 · v0.6.8_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,13 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.6.8: books off until a library switches them on
+
+- **The owner's decision:** a rules pack is on in the library it's imported in, and off in the other libraries until the GM ticks it there (DEC-910). Before, a library with no switch for a pack used it. The SRD and the setting's rules pack are unchanged.
+- **`server/src/repo/sharedRules.ts`:** the `rules_packs` view reads a missing switch as off; `setPackSwitch` makes a new switch off unless it says otherwise (so publishing alone doesn't switch a pack on); `saveRulesPack` still switches the pack on in the open library.
+- **Libraries keep what they used** (migration 32, `keepOldDefaults`): a migration may now have `onUpgrade` SQL, run only in a database made by an earlier version. Migration 32 marks such a library (`rules_switches_pending`); when it opens, every shared pack it has no switch for gets one, on. The first time v0.6.8 opens a data folder (no `switches_kept` in `shared.rules_meta`), it does this for every other library at once, so a book imported afterwards stays off in them. A library from before that arrives later (a restored backup, or one in a "back up everything" file) is marked the same way and keeps every book when it opens.
+- **Tests:** `tests/sharedRules.test.ts`: a second library has a new book off until switched on; a v0.6.7 folder with two libraries keeps the book in both, the one not open too; a book imported afterwards is on only in the open library; a restored old library keeps every book.
 
 ## v0.6.7: large imports
 

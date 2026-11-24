@@ -2,12 +2,16 @@
  * Your books' rules, shared by every library (docs/LIBRARIES_PLAN.md §3.3). The rules packs you import (5etools,
  * Open5e, your own) live in the data folder's shared/rules.db, attached to the open library's database as `shared`,
  * so they're imported once per installation. Each library keeps its own switches: whether it uses a pack and whether
- * it publishes it (rules_pack_switches); a pack it has no switch for is in use, as a newly imported one is.
+ * it publishes it (rules_pack_switches). A pack it has no switch for is off: importing a pack switches it on in the
+ * library that's open, and the others leave it off until the GM switches it on there (v0.6.8).
  *
  * Reads keep their old names: `rules_packs` and `rules_entries` are temporary views over the shared tables and this
  * library's switches. Writes go through the functions here.
  */
-import type { DB } from '../db/connection.js';
+import fs from 'node:fs';
+import path from 'node:path';
+import { openDatabase, type DB } from '../db/connection.js';
+import { libraryDir, readIndex } from '../libraries.js';
 
 /** Attach the shared rules to a library's connection, make their tables if new, and the views reads use. */
 export function attachSharedRules(db: DB, file: string) {
@@ -28,8 +32,9 @@ CREATE TABLE IF NOT EXISTS shared.rules_entries (
   data TEXT NOT NULL,
   PRIMARY KEY (pack_id, kind, cls, name)
 );
+CREATE TABLE IF NOT EXISTS shared.rules_meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 CREATE TEMP VIEW rules_packs AS
-  SELECT p.id, p.name, p.source, COALESCE(s.enabled, 1) AS enabled, p.imported_at, COALESCE(s.publish, 0) AS publish
+  SELECT p.id, p.name, p.source, COALESCE(s.enabled, 0) AS enabled, p.imported_at, COALESCE(s.publish, 0) AS publish
   FROM shared.rules_packs p LEFT JOIN main.rules_pack_switches s ON s.pack_id = p.id;
 CREATE TEMP VIEW rules_entries AS SELECT pack_id, kind, name, cls, data FROM shared.rules_entries;
 `);
@@ -60,7 +65,7 @@ export const sharedPackExists = (db: DB, id: string) => !!db.prepare('SELECT 1 F
 
 /** This library's switches for a pack. */
 export function setPackSwitch(db: DB, id: string, s: { enabled?: boolean; publish?: boolean }) {
-  db.prepare(`INSERT INTO main.rules_pack_switches (pack_id) VALUES (?) ON CONFLICT(pack_id) DO NOTHING`).run(id);
+  db.prepare(`INSERT INTO main.rules_pack_switches (pack_id, enabled, publish) VALUES (?, 0, 0) ON CONFLICT(pack_id) DO NOTHING`).run(id);
   if (s.enabled !== undefined) db.prepare('UPDATE main.rules_pack_switches SET enabled = ? WHERE pack_id = ?').run(s.enabled ? 1 : 0, id);
   if (s.publish !== undefined) db.prepare('UPDATE main.rules_pack_switches SET publish = ? WHERE pack_id = ?').run(s.publish ? 1 : 0, id);
 }
@@ -100,4 +105,36 @@ export function adoptSharedRules(db: DB) {
     db.prepare('DELETE FROM main.rules_entries').run();
     db.prepare('DELETE FROM main.rules_packs').run();
   })();
+}
+
+/** Give a library from before v0.6.8 a switch, on, for every book it has none for: it used them all (migration 32). */
+function keepOldDefaultsIn(db: DB) {
+  if (!db.prepare('SELECT 1 FROM main.rules_switches_pending').get()) return;
+  db.transaction(() => {
+    db.prepare(`INSERT OR IGNORE INTO main.rules_pack_switches (pack_id, enabled, publish) SELECT id, 1, 0 FROM shared.rules_packs`).run();
+    db.prepare('DELETE FROM main.rules_switches_pending').run();
+  })();
+}
+
+/**
+ * Libraries keep the books they used before v0.6.8. The open library, whenever it's one from before (also a backup
+ * from then, restored); and, the first time this version opens the data folder, every other library too, at once,
+ * so a book imported later stays off in them as in any library that isn't open.
+ */
+export function keepOldDefaults(db: DB, rootDir: string, openId: string) {
+  keepOldDefaultsIn(db);
+  if (db.prepare(`SELECT 1 FROM shared.rules_meta WHERE key = 'switches_kept'`).get()) return;
+  for (const e of readIndex(rootDir)?.libraries ?? []) {
+    if (e.id === openId) continue;
+    const file = path.join(libraryDir(rootDir, e), 'worldkeeper.db');
+    if (!fs.existsSync(file)) continue;
+    const other = openDatabase(file);
+    try {
+      attachSharedRules(other, db.prepare(`SELECT file FROM pragma_database_list WHERE name = 'shared'`).pluck().get() as string);
+      keepOldDefaultsIn(other);
+    } finally {
+      other.close();
+    }
+  }
+  db.prepare(`INSERT INTO shared.rules_meta (key, value) VALUES ('switches_kept', ?)`).run(new Date().toISOString());
 }
