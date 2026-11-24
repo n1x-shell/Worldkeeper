@@ -27,7 +27,7 @@ import { badRequest, notFound } from '../lib/errors.js';
 import { canonReview, baselineFor, reviewDecision } from '../repo/review.js';
 import { decideProposal } from '../repo/campaigns.js';
 import { splitSections } from '../import/parseMarkdown.js';
-import { isSecretHeading } from '../player/projection.js';
+import { isSecretHeading, playerEntity } from '../player/projection.js';
 import { peekEntity } from '../repo/peek.js';
 import { createRealm, deleteRealm, getRealm, listRealms, realmExists, reorderRealms, updateRealm } from '../repo/realms.js';
 import { timelineRealms } from '../import/importer.js';
@@ -35,6 +35,7 @@ import { createRecordType, deleteRecordType, listRecordTypes, updateRecordType }
 import { createTemplate, deleteTemplate, duplicateTemplate, listTemplates, updateTemplate } from '../repo/templates.js';
 import { TYPE_GROUPS } from '../../../shared/domain.js';
 import { revealDuringPlay } from '../repo/reveal.js';
+import { onlyToCampaign, promoteToEveryone, recordReveals, revealToCampaign, unrevealFromCampaign, whoKnows } from '../repo/reveals.js';
 import { createEra, listEras, setRowEra, updateEra } from '../repo/eras.js';
 import { getProfile, influenceMatrix, saveProfile } from '../repo/profiles.js';
 import { makeNames, namePeoples } from '../repo/names.js';
@@ -100,6 +101,7 @@ export function worldRoutes(ctx: AppContext) {
         campaignState: stateForEntity(ctx.db, id),
         activeCampaignId: getActiveCampaignId(ctx.db),
         sections,
+        knownTo: whoKnows(ctx.db, id).map((c) => ({ id: c.campaign_id, title: c.title })),
         baseline: e.modified_since_import ? baselineFor(ctx.db, id) : null,
       };
     }),
@@ -223,6 +225,42 @@ export function worldRoutes(ctx: AppContext) {
   r.post(
     '/entities/:id/reveal',
     h((req) => revealDuringPlay(ctx.db, String(req.params.id), req.body)),
+  );
+  // Who knows what (docs/LIBRARIES_PLAN.md §2.2): a record's reveals to everyone and to each campaign.
+  r.get(
+    '/entities/:id/reveals',
+    h((req) => recordReveals(ctx.db, String(req.params.id))),
+  );
+  // Reveal to one campaign, or take back from it: { campaign_id, sections?, facts?, remove_sections?, remove_facts?, hide? }.
+  r.post(
+    '/entities/:id/reveals',
+    h((req) => {
+      const id = String(req.params.id);
+      const b = (req.body ?? {}) as Record<string, unknown>;
+      const cid = intParam(b.campaign_id, 'campaign_id');
+      const list = (v: unknown) => (Array.isArray(v) ? v.map(String) : undefined);
+      ctx.db.transaction(() => {
+        if (b.hide) revealToCampaign(ctx.db, cid, id, { hide: true });
+        else {
+          if (list(b.remove_sections) || list(b.remove_facts)) unrevealFromCampaign(ctx.db, cid, id, { sections: list(b.remove_sections), facts: list(b.remove_facts) });
+          if (list(b.sections)?.length || list(b.facts)?.length || b.revealed) revealToCampaign(ctx.db, cid, id, { sections: list(b.sections), facts: list(b.facts) });
+        }
+      })();
+      return recordReveals(ctx.db, id);
+    }),
+  );
+  // Exactly what a campaign's players see of a record (or everyone's, with no campaign_id): the GM's Player view preview.
+  r.get(
+    '/entities/:id/player-preview',
+    h((req) => playerEntity(ctx.db, String(req.params.id), req.query.campaign_id ? intParam(req.query.campaign_id, 'campaign_id') : null)),
+  );
+  r.post(
+    '/entities/:id/reveals/everyone',
+    h((req) => promoteToEveryone(ctx.db, String(req.params.id), intParam(req.body?.campaign_id, 'campaign_id'))),
+  );
+  r.post(
+    '/entities/:id/reveals/only',
+    h((req) => onlyToCampaign(ctx.db, String(req.params.id), intParam(req.body?.campaign_id, 'campaign_id'))),
   );
 
   // Eras

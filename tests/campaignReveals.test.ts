@@ -123,4 +123,81 @@ describe('reveals per campaign', () => {
       expect((await request(player).get('/api/player/entities/SET-0009')).body.sections).toEqual([{ heading: 'Overview', content: 'Old.' }]);
     }
   });
+
+  it('reveals in a live session to that session’s group by default; the other group’s handbook doesn’t change', async () => {
+    const { ctx, a, b, player } = twoGroups();
+    const gm = createApp(ctx);
+    setActiveCampaign(ctx.db, a);
+    const s = (await request(gm).post('/api/sessions/next').send({ campaignId: b })).body;
+    setActiveCampaign(ctx.db, a);
+    const before = (await request(player).get('/api/player/entities')).body;
+    // Table B's session: the reveal goes to Table B, not the active campaign and not everyone.
+    expect((await request(gm).post('/api/entities/SET-0002/reveal').send({ section: 'A first look', session_id: s.id })).status).toBe(200);
+    expect((await request(gm).post('/api/entities/SET-0002/reveal').send({ fact: 'The well is poisoned.', session_id: s.id })).status).toBe(200);
+    expect((await request(player).get('/api/player/entities')).body).toEqual(before);
+    setActiveCampaign(ctx.db, b);
+    expect((await request(player).get('/api/player/entities/SET-0002')).body.facts).toEqual(['The well is poisoned.']);
+    const log = ctx.db.prepare(`SELECT text FROM session_log WHERE session_id = ? AND kind = 'reveal'`).all(s.id) as { text: string }[];
+    expect(log[0].text).toMatch(/^Revealed to Table B: record made known to them; section “A first look”/);
+    // Everyone, when the GM says so.
+    await request(gm).post('/api/entities/SET-0003/reveal').send({ revealed: true, to: 'everyone', session_id: s.id });
+    expect(
+      playerSnapshot(ctx.db)
+        .entities.map((e) => e.name)
+        .sort(),
+    ).toEqual(['Coldwater', 'Harrowgate']);
+    // GM-only stays refused either way.
+    expect((await request(gm).post('/api/entities/SET-0001/reveal').send({ section: 'Secrets (GM only)', session_id: s.id })).status).toBe(400);
+    // Who knows what, and the default.
+    const r = (await request(gm).get('/api/entities/SET-0002/reveals')).body;
+    expect(r.everyone.revealed).toBe(false);
+    expect(r.campaigns.map((c: { title: string }) => c.title)).toEqual(['Table A', 'Table B']);
+    expect(r.default).toBe(b);
+  });
+
+  it('promotes a campaign’s reveal to everyone, and takes one back to a campaign', async () => {
+    const { ctx, a, b } = twoGroups();
+    const gm = createApp(ctx);
+    let r = (await request(gm).post('/api/entities/SET-0002/reveals/everyone').send({ campaign_id: a })).body;
+    expect(r.everyone).toEqual({ revealed: true, sections: ['A first look'], facts: ['Ashford burned two winters ago.'] });
+    expect(r.campaigns).toEqual([]);
+    r = (await request(gm).post('/api/entities/SET-0002/reveals/only').send({ campaign_id: b })).body;
+    expect(r.everyone.revealed).toBe(false);
+    expect(r.campaigns).toEqual([{ campaign_id: b, title: 'Table B', sections: ['A first look'], facts: ['Ashford burned two winters ago.'] }]);
+    // Reveal and take back a section for one campaign.
+    r = (
+      await request(gm)
+        .post('/api/entities/SET-0001/reveals')
+        .send({ campaign_id: b, sections: ['The docks'] })
+    ).body;
+    expect(r.campaigns.find((c: { campaign_id: number }) => c.campaign_id === b).sections).toEqual(['The docks']);
+    r = (
+      await request(gm)
+        .post('/api/entities/SET-0001/reveals')
+        .send({ campaign_id: b, remove_sections: ['The docks'] })
+    ).body;
+    expect(r.campaigns.find((c: { campaign_id: number }) => c.campaign_id === b).sections).toEqual([]);
+    expect(
+      (
+        await request(gm)
+          .post('/api/entities/SET-0001/reveals')
+          .send({ campaign_id: b, sections: ['Secrets (GM only)'] })
+      ).status,
+    ).toBe(400);
+  });
+
+  it('shows a map part to one campaign or to everyone from the Atlas', async () => {
+    const { ctx, a } = twoGroups();
+    const gm = createApp(ctx);
+    const map = Number(ctx.db.prepare(`INSERT INTO maps (name, kind, width, height, player_visible) VALUES ('The Downs', 'image', 100, 100, 0)`).run().lastInsertRowid);
+    const pin = Number(ctx.db.prepare(`INSERT INTO map_markers (map_id, label, x, y, hidden) VALUES (?, 'Ashford', 10, 10, 1)`).run(map).lastInsertRowid);
+    await request(gm).post('/api/map-reveals').send({ kind: 'marker', ref_id: pin, campaign_id: a, on: true });
+    let r = (await request(gm).get(`/api/maps/${map}/reveals`)).body;
+    expect(r.marker).toEqual({ [pin]: [a] });
+    await request(gm).post('/api/map-reveals').send({ kind: 'map', ref_id: map, campaign_id: null, on: true });
+    expect(ctx.db.prepare('SELECT player_visible FROM maps WHERE id = ?').get(map)).toEqual({ player_visible: 1 });
+    r = (await request(gm).get(`/api/maps/${map}/reveals`)).body;
+    expect(r.default).toBe(null);
+    expect((await request(gm).post('/api/map-reveals').send({ kind: 'nope', ref_id: map, on: true })).status).toBe(400);
+  });
 });

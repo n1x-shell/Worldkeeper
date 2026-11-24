@@ -45,6 +45,8 @@ import {
   Toggle,
   TypeBadge,
   VisibilityBadge,
+  ask,
+  toast,
   useToast,
 } from '../components/ui';
 import { Markdown } from '../components/Markdown';
@@ -61,6 +63,7 @@ interface Detail {
   parent: EntitySummary | null;
   campaignState: StateRow[];
   activeCampaignId: number | null;
+  knownTo?: { id: number; title: string }[];
   sections: { heading: string; secret: boolean }[];
   baseline: { revisionId: number; created_at: string } | null;
 }
@@ -167,7 +170,12 @@ export function EntityPage() {
               <TypeBadge type={e.type} />
               <RealmBadge realm={e.realm} />
               <CanonFlags status={e.canon_status} flags={e.canon_flags} />
-              <VisibilityBadge revealed={e.revealed} />
+              {(e.revealed || !data.knownTo?.length) && <VisibilityBadge revealed={e.revealed} />}
+              {!e.revealed && data.knownTo && data.knownTo.length > 0 && (
+                <Badge tone="arcane" title="Campaigns that learned of this record">
+                  Known to {data.knownTo.map((c) => c.title).join(', ')}
+                </Badge>
+              )}
               {e.modified_since_import && (
                 <Link to="/review" title="Open Canon Review">
                   <Badge tone="warn" icon={<AlertTriangle size={11} />}>
@@ -266,7 +274,7 @@ export function EntityPage() {
       )}
       {tab === 'profile' && <ProfilePanel entityId={e.id} entityName={e.name} />}
       {tab === 'relationships' && <RelationshipsTab entityId={e.id} rels={data.relationships} onChange={reload} />}
-      {tab === 'player' && <PlayerTab entity={e} sections={data.sections} onPatch={patch} />}
+      {tab === 'player' && <PlayerTab entity={e} sections={data.sections} onPatch={patch} onReload={reload} />}
       {tab === 'campaign' && <CampaignTab entity={e} rows={data.campaignState} activeCampaignId={data.activeCampaignId} onChange={reload} />}
       {tab === 'history' && (
         <HistoryTab
@@ -1126,25 +1134,139 @@ function RelationshipsTab({ entityId, rels, onChange }: { entityId: string; rels
 // ------------------------------------------------------------------ Player view
 /** Lore on the parchment card stays dark-on-paper in both themes. */
 const ON_PAPER = '[&_h2]:!text-parchink [&_h2]:!border-parchink/20 [&_strong]:!text-parchink [&_a]:!text-parchlink [&_blockquote]:!text-parchink/80 [&_table]:!border-parchink/25 [&_th]:!border-parchink/25 [&_td]:!border-parchink/25 [&_th]:!bg-parchink/10 [&_th]:!text-parchink';
-function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { heading: string; secret: boolean }[]; onPatch: (b: Record<string, unknown>, m?: string) => Promise<void> }) {
+/** A record's reveals for the GM: to everyone, and to each campaign (docs/LIBRARIES_PLAN.md §2.2). */
+export interface RecordReveals {
+  everyone: { revealed: boolean; sections: string[]; facts: string[] };
+  campaigns: { campaign_id: number; title: string; sections: string[]; facts: string[] }[];
+  choices: { id: number; title: string }[];
+  default: number | null;
+}
+
+/** Who knows a section or fact: everyone, or the campaigns that learned it. */
+function KnownTo({ names }: { names: string[] }) {
+  if (!names.length) return null;
+  return (
+    <span className="inline-flex flex-wrap gap-1 ml-1 align-middle">
+      {names.map((n) => (
+        <Badge key={n} tone={n === 'Everyone' ? 'ok' : 'arcane'}>
+          {n}
+        </Badge>
+      ))}
+    </span>
+  );
+}
+
+function PlayerTab({
+  entity,
+  sections,
+  onPatch,
+  onReload,
+}: {
+  entity: Entity;
+  sections: { heading: string; secret: boolean }[];
+  onPatch: (b: Record<string, unknown>, m?: string) => Promise<void>;
+  onReload: () => void;
+}) {
   const debug = useDebug();
   const clean = useCleaners()(entity.pack_id);
   const [summary, setSummary] = useState(entity.player_summary);
   const [fact, setFact] = useState('');
+  const eid = encodeURIComponent(entity.id);
+  const { data: rv, reload: reloadReveals } = useApi<RecordReveals>(`/api/entities/${eid}/reveals`);
+  // Who learns what's revealed here: undefined follows the library's default (the active campaign once there are two).
+  const [picked, setPicked] = useState<number | null | undefined>(undefined);
+  const many = (rv?.choices.length ?? 0) >= 2;
+  const to = !many ? null : picked === undefined ? (rv?.default ?? null) : picked;
+  const toTitle = rv?.choices.find((c) => c.id === to)?.title ?? '';
+  const mine = to == null ? undefined : rv?.campaigns.find((c) => c.campaign_id === to);
+  const known = entity.revealed || !!mine;
   const { data: preview, reload } = useApi<{ name: string; summary: string; facts: string[]; sections: { heading: string; content: string }[] } | null>(
-    entity.revealed ? `/api/player/entities/${encodeURIComponent(entity.id)}` : null,
+    known ? `/api/entities/${eid}/player-preview${to != null ? `?campaign_id=${to}` : ''}` : null,
   );
   useEffect(() => {
     void reload();
-  }, [entity.version, reload]);
+    void reloadReveals();
+  }, [entity.version, reload, reloadReveals]);
+  const toCampaign = async (path: string, body: Record<string, unknown>, done: string) => {
+    try {
+      await api.post(`/api/entities/${eid}/${path}`, body);
+      await reloadReveals();
+      await reload();
+      toast(done, 'ok');
+      onReload();
+    } catch (x) {
+      toast((x as Error).message, 'danger');
+    }
+  };
+  const whoKnowsSection = (h: string) =>
+    !many || !rv ? [] : rv.everyone.revealed && rv.everyone.sections.includes(h) ? ['Everyone'] : rv.campaigns.filter((c) => c.sections.includes(h)).map((c) => c.title);
   const secretRecord = entity.canon_flags.includes('SECRET');
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <div className="space-y-4">
+        {many && rv && (
+          <Card className="space-y-2">
+            <Field label="Who learns what you reveal here">
+              <select className="input" aria-label="Who learns this" value={to == null ? '' : String(to)} onChange={(e) => setPicked(e.target.value ? Number(e.target.value) : null)}>
+                {rv.choices.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.title} only
+                  </option>
+                ))}
+                <option value="">Everyone (common knowledge)</option>
+              </select>
+            </Field>
+            <p className="text-xs text-dim">
+              {to == null
+                ? 'Every campaign’s players will see it.'
+                : `Only ${toTitle}’s players will see it. What’s revealed to everyone, they see too.`}
+            </p>
+            <div className="text-xs">
+              <span className="text-dim">Known to: </span>
+              <KnownTo names={[...(entity.revealed ? ['Everyone'] : []), ...rv.campaigns.map((c) => c.title)]} />
+              {!entity.revealed && !rv.campaigns.length && <span className="text-dim">no one yet</span>}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {mine && (
+                <button className="btn text-xs" onClick={() => void toCampaign('reveals/everyone', { campaign_id: to }, `What ${toTitle} learned of ${entity.name} is now common knowledge.`)}>
+                  Reveal to everyone
+                </button>
+              )}
+              {entity.revealed &&
+                rv.choices.map((c) => (
+                  <button
+                    key={c.id}
+                    className="btn-ghost text-xs"
+                    onClick={async () => {
+                      const ok = await ask({
+                        title: `Only ${c.title}?`,
+                        body: `${entity.name} and what’s revealed of it will be known to ${c.title} only. Every other campaign’s players lose it.`,
+                        confirmLabel: `Only ${c.title}`,
+                      });
+                      if (ok) await toCampaign('reveals/only', { campaign_id: c.id }, `${entity.name} is now known to ${c.title} only.`);
+                    }}
+                  >
+                    Only {c.title}
+                  </button>
+                ))}
+            </div>
+          </Card>
+        )}
         <Card className="space-y-3">
-          <Toggle checked={entity.revealed} onChange={(on) => onPatch({ revealed: on, reason: on ? 'Revealed to players' : 'Hidden from players' }, on ? 'Revealed to players' : 'Hidden from players')}>
-            <span className="font-medium">Players know this record exists</span>
-          </Toggle>
+          {to == null ? (
+            <Toggle checked={entity.revealed} onChange={(on) => onPatch({ revealed: on, reason: on ? 'Revealed to players' : 'Hidden from players' }, on ? 'Revealed to players' : 'Hidden from players')}>
+              <span className="font-medium">{many ? 'Everyone knows this record exists' : 'Players know this record exists'}</span>
+            </Toggle>
+          ) : (
+            <Toggle
+              checked={known}
+              disabled={entity.revealed}
+              onChange={(on) => void toCampaign('reveals', on ? { campaign_id: to, revealed: true } : { campaign_id: to, hide: true }, on ? `${toTitle} knows of ${entity.name}.` : `Hidden from ${toTitle}.`)}
+              hint={entity.revealed ? 'Known to everyone.' : undefined}
+            >
+              <span className="font-medium">{toTitle} knows this record exists</span>
+            </Toggle>
+          )}
           <p className="text-xs text-dim">
             Players see only the name, your summary, the facts you reveal and the sections you tick. GM-only sections can't be shown; write a fact instead.
           </p>
@@ -1158,36 +1280,70 @@ function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { 
           <Field label="Player summary (what the party knows)">
             <AutoTextarea full minRows={4} aria-label="Player summary" value={summary} onChange={(e) => setSummary(e.target.value)} onBlur={() => summary !== entity.player_summary && onPatch({ player_summary: summary }, 'Player summary saved')} />
           </Field>
+          {many && <p className="text-xs text-dim">One summary for every campaign that knows the record.</p>}
         </Card>
         <Card>
-          <div className="label">Reveal sections</div>
+          <div className="label">Reveal sections{to != null ? ` to ${toTitle}` : ''}</div>
           <ul className="space-y-1 text-sm">
             {sections
               .filter((s) => s.heading && (debug || !clean.editorial(s.heading)))
-              .map((s) => (
-                <li key={s.heading}>
-                  <Check
-                    disabled={s.secret}
-                    checked={entity.revealed_sections.includes(s.heading)}
-                    onChange={(on) => onPatch({ revealed_sections: on ? [...entity.revealed_sections, s.heading] : entity.revealed_sections.filter((h) => h !== s.heading) })}
-                  >
-                    {s.heading} {s.secret && <Badge tone="danger">GM only</Badge>}
-                  </Check>
-                </li>
-              ))}
+              .map((s) => {
+                const everyone = entity.revealed_sections.includes(s.heading);
+                return (
+                  <li key={s.heading}>
+                    {to == null ? (
+                      <Check
+                        disabled={s.secret}
+                        checked={everyone}
+                        onChange={(on) => onPatch({ revealed_sections: on ? [...entity.revealed_sections, s.heading] : entity.revealed_sections.filter((h) => h !== s.heading) })}
+                      >
+                        {s.heading} {s.secret && <Badge tone="danger">GM only</Badge>}
+                        <KnownTo names={whoKnowsSection(s.heading)} />
+                      </Check>
+                    ) : (
+                      <Check
+                        disabled={s.secret || (everyone && entity.revealed)}
+                        checked={(everyone && entity.revealed) || !!mine?.sections.includes(s.heading)}
+                        onChange={(on) =>
+                          void toCampaign('reveals', on ? { campaign_id: to, sections: [s.heading] } : { campaign_id: to, remove_sections: [s.heading] }, on ? `Revealed “${s.heading}” to ${toTitle}.` : `Took “${s.heading}” back from ${toTitle}.`)
+                        }
+                      >
+                        {s.heading} {s.secret && <Badge tone="danger">GM only</Badge>}
+                        <KnownTo names={whoKnowsSection(s.heading)} />
+                      </Check>
+                    )}
+                  </li>
+                );
+              })}
           </ul>
         </Card>
         <Card className="space-y-2">
           <div className="label">Revealed facts (written for players)</div>
           <ul className="text-sm space-y-1">
             {entity.revealed_facts.map((f, i) => (
-              <li key={i} className="flex gap-2">
-                <span className="flex-1">• {f}</span>
+              <li key={`e${i}`} className="flex gap-2">
+                <span className="flex-1">
+                  • {f}
+                  {many && <KnownTo names={['Everyone']} />}
+                </span>
                 <button className="btn-ghost" onClick={() => onPatch({ revealed_facts: entity.revealed_facts.filter((_, j) => j !== i) })} aria-label="Remove fact">
                   <Trash2 size={13} />
                 </button>
               </li>
             ))}
+            {(rv?.campaigns ?? []).flatMap((c) =>
+              c.facts.map((f, i) => (
+                <li key={`c${c.campaign_id}-${i}`} className="flex gap-2">
+                  <span className="flex-1">
+                    • {f}
+                    <KnownTo names={[c.title]} />
+                  </span>
+                  <button className="btn-ghost" onClick={() => void toCampaign('reveals', { campaign_id: c.campaign_id, remove_facts: [f] }, `Took the fact back from ${c.title}.`)} aria-label="Remove fact">
+                    <Trash2 size={13} />
+                  </button>
+                </li>
+              )),
+            )}
           </ul>
           <div className="flex gap-2">
             <input className="input" value={fact} onChange={(e) => setFact(e.target.value)} placeholder="e.g. The party learned the inn has a locked room." />
@@ -1195,7 +1351,8 @@ function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { 
               className="btn"
               disabled={!fact.trim()}
               onClick={() => {
-                void onPatch({ revealed_facts: [...entity.revealed_facts, fact.trim()], reason: 'Fact revealed' }, 'Fact revealed');
+                if (to == null) void onPatch({ revealed_facts: [...entity.revealed_facts, fact.trim()], reason: 'Fact revealed' }, 'Fact revealed');
+                else void toCampaign('reveals', { campaign_id: to, facts: [fact.trim()] }, `Fact revealed to ${toTitle}.`);
                 setFact('');
               }}
             >
@@ -1204,9 +1361,9 @@ function PlayerTab({ entity, sections, onPatch }: { entity: Entity; sections: { 
           </div>
         </Card>
       </div>
-      <Card title="Exactly what players see">
-        {!entity.revealed ? (
-          <Empty compact title="Hidden. This record does not exist for players." />
+      <Card title={to == null ? (many ? 'Exactly what every campaign sees' : 'Exactly what players see') : `Exactly what ${toTitle}’s players see`}>
+        {!known ? (
+          <Empty compact title={`Hidden. This record does not exist for ${to == null ? 'players' : `${toTitle}’s players`}.`} />
         ) : preview ? (
           <div className={`parchment p-4 ${ON_PAPER}`}>
             <h2 className="text-xl">{preview.name}</h2>
