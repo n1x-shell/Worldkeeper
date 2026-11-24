@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.9.3_
+_Last updated: 2026-11-24 · v0.9.4_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,19 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.4: a stat block editor
+
+The first part of `docs/BETA_PLAN.md` B2 (the homebrew workshop). Next: the GM's own magic items and spells, then creatures and items in Markdown rules packs.
+
+- **Editor** (`client/src/components/StatBlockEditor.tsx`, replacing the three-field form): "A book's stat block" (a creature and what's different, as before), "Its own" (every field of the 2024 layout, with entry lists that add, remove and move up, and the block shown as it will read), or "A hazard" (trigger, effect, countermeasures). "Start from a creature" copies an open creature (ids `srd:`, `wk:`, `open5e:`) into the form; a `book:` creature isn't copied, so a book's text doesn't end up in a block that can be shared.
+- **Server** (`setLibraryStatblock` in `server/src/repo/statblocks.ts`): one schema for the three kinds; a card keeps only a card's fields, a hazard only a hazard's. Filled in: Hit Points from dice (`hitPoints`), XP and Proficiency Bonus from Challenge Rating, initiative from Dexterity. Refused: a Challenge Rating that isn't one, Hit Points that are neither a number nor dice, fewer than six ability scores, nothing at all.
+- **Shared arithmetic** (`shared/statblock.ts`): `XP_BY_CR` (moved from the 5etools importer), `CHALLENGE_RATINGS`, `crPb`, `abilityMod`, `hitPoints`; used by the server, the editor and both importers.
+- **Cards take their numbers from the book block** (`GET /api/statblocks/:id`): a card with no AC, Hit Points, initiative or Challenge Rating of its own shows the named creature's, so the tracker fills in from a card too. A stat block goes by its record's current name (it kept the name it was made under).
+- **Any record** can have one: creatures and people show the panel always; other records show it once they have a block, and **More → Stat block or hazard** opens the editor (starting as a hazard). A worldbook's block has **Write your own**, which starts from it; the GM's own comes first, and removing it brings the worldbook's back.
+- **Tests clean up:** `tempContext` and the new `tempDir` (`tests/helpers.ts`) remove their folders when a test file is done. A full run left about 2 GB in the system's temp folder.
+- **Not done:** the GM's own magic items and spells; a list of all the GM's stat blocks in one place; attack rolls from a block in the tracker (B9).
+- **Tests:** `tests/statblockEditor.test.ts`.
 
 ## v0.9.3: pictures on records
 

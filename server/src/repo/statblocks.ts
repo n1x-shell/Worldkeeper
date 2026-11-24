@@ -13,6 +13,7 @@ import { parseJson } from '../lib/json.js';
 import { WORLDKEEPER, worldkeeperPath } from '../packs/paths.js';
 import { findPack, installedPacks } from '../packs/registry.js';
 import { settingPackOn } from './settingPack.js';
+import { XP_BY_CR, abilityMod, crPb, hitPoints } from '../../../shared/statblock.js';
 
 export interface StatEntry {
   name: string;
@@ -100,8 +101,11 @@ function packBlocks(db: DB): Record<string, StatBlock> {
 /** The GM's own stat block for a record. */
 export function libraryStatblock(db: DB, id: string): StatBlock | null {
   try {
-    const r = db.prepare('SELECT data FROM statblocks WHERE entity_id = ?').get(id) as { data: string } | undefined;
-    return r ? { ...parseJson<StatBlock>(r.data, { id, name: id, meta: '' }), id, own: true } : null;
+    const r = db.prepare('SELECT s.data, e.name FROM statblocks s LEFT JOIN entities e ON e.id = s.entity_id WHERE s.entity_id = ?').get(id) as { data: string; name: string | null } | undefined;
+    if (!r) return null;
+    const block = parseJson<StatBlock>(r.data, { id, name: id, meta: '' });
+    // The record's name as it is now (it may have been renamed since).
+    return { ...block, id, name: r.name ?? block.name, own: true };
   } catch {
     return null; // a library from before migration 26
   }
@@ -131,29 +135,89 @@ export function statblockIndex(db: DB) {
   }));
 }
 
+const line = z.string().trim().max(600).optional();
+const long = z.string().trim().max(5000).optional();
+const entryList = z
+  .array(z.object({ name: z.string().trim().max(120).default(''), text: z.string().trim().max(5000).default('') }))
+  .max(40)
+  .optional()
+  .transform((l) => l?.filter((e) => e.name || e.text));
+
 const ownSchema = z.object({
+  kind: z.enum(['creature', 'npc', 'hazard']).default('npc'),
   /** The book stat block it uses (by name), and what's different. */
   base: z.string().trim().max(200).optional(),
   changes: z.string().max(5000).default(''),
   tactics: z.string().max(5000).default(''),
+  looks: long,
+  // A stat block of its own, in the books' layout.
+  meta: z.string().trim().max(200).optional(),
   ac: z.number().int().min(0).max(40).optional(),
-  hpAvg: z.number().int().min(0).max(2000).optional(),
-  init: z.number().int().min(-10).max(20).optional(),
-  cr: z.string().max(10).optional(),
-  kind: z.enum(['creature', 'npc', 'hazard']).default('npc'),
+  hp: z.string().trim().max(60).optional(),
+  hpAvg: z.number().int().min(0).max(5000).optional(),
+  init: z.number().int().min(-10).max(30).optional(),
+  speed: line,
+  ab: z.array(z.number().int().min(1).max(30)).length(6).optional(),
+  cr: z.string().trim().max(10).optional(),
+  saves: line,
+  skills: line,
+  vuln: line,
+  res: line,
+  imm: line,
+  cimm: line,
+  gear: line,
+  senses: line,
+  languages: line,
+  traits: entryList,
+  actions: entryList,
+  bonus: entryList,
+  reactions: entryList,
+  legendary: entryList,
+  // A hazard: a trap, a sickness, a dangerous place.
+  trigger: long,
+  effect: long,
+  counter: long,
 });
 
-/** Give a record of the GM's a stat block (a book block and its changes, with numbers for the tracker). */
+/**
+ * Give a record of the GM's a stat block: a book block and its changes (a short card), a whole stat block of its own,
+ * or a hazard. What follows from what was written is filled in: average Hit Points from the dice, XP and Proficiency
+ * Bonus from the Challenge Rating, initiative from Dexterity.
+ */
 export function setLibraryStatblock(db: DB, id: string, body: unknown): StatBlock {
   const e = db.prepare('SELECT name FROM entities WHERE id = ?').get(id) as { name: string } | undefined;
   if (!e) throw notFound('Record');
   const d = ownSchema.parse(body ?? {});
-  if (!d.base && !d.changes.trim()) throw badRequest('Name a stat block from your books, or say how it fights');
-  const block = { id, name: e.name, meta: d.base ? `Uses the ${d.base} stat block` : '', ...d };
+  // Nothing typed is nothing kept.
+  const kept = Object.fromEntries(Object.entries(d).filter(([, v]) => v !== undefined && v !== '' && !(Array.isArray(v) && !v.length))) as typeof d;
+  let block: Omit<StatBlock, 'id' | 'name'> & { meta: string };
+  if (d.kind === 'hazard') {
+    if (!d.trigger && !d.effect) throw badRequest('Say what sets the hazard off, or what it does');
+    block = { kind: 'hazard', meta: d.meta ?? 'Hazard', trigger: d.trigger, effect: d.effect, counter: d.counter };
+  } else if (d.base) {
+    const { meta: _meta, hp: _hp, ab: _ab, speed: _speed, trigger: _t, effect: _e, counter: _c, ...card } = kept;
+    block = { ...card, meta: `Uses the ${d.base} stat block`, changes: d.changes, tactics: d.tactics };
+  } else {
+    const written = d.ab || d.hp || d.ac !== undefined || d.actions?.length || d.traits?.length;
+    if (!written && !d.changes.trim()) throw badRequest('Name a stat block from your books, or write its own');
+    if (d.cr && XP_BY_CR[d.cr] === undefined) throw badRequest(`"${d.cr}" isn't a Challenge Rating (0, 1/8, 1/4, 1/2, or 1 to 30)`);
+    const hp = d.hp ? hitPoints(d.hp) : null;
+    if (d.hp && !hp) throw badRequest('Write Hit Points as a number, or as dice such as 7d8 + 7');
+    const { trigger: _t, effect: _e, counter: _c, base: _b, ...own } = kept;
+    block = {
+      ...own,
+      meta: d.meta ?? '',
+      changes: d.changes,
+      tactics: d.tactics,
+      ...(hp ? { hp: hp.hp, hpAvg: hp.avg } : d.hpAvg !== undefined ? { hp: String(d.hpAvg) } : {}),
+      ...(d.init === undefined && d.ab ? { init: abilityMod(d.ab[1]) } : {}),
+      ...(d.cr ? { xp: XP_BY_CR[d.cr], pb: crPb(d.cr) } : {}),
+    };
+  }
   db.prepare(
     `INSERT INTO statblocks (entity_id, data, updated_at) VALUES (?, ?, strftime('%Y-%m-%dT%H:%M:%fZ','now'))
      ON CONFLICT(entity_id) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at`,
-  ).run(id, JSON.stringify(block));
+  ).run(id, JSON.stringify({ id, name: e.name, ...block }));
   return libraryStatblock(db, id)!;
 }
 

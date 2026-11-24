@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Swords } from 'lucide-react';
-import { api, useApi } from '../lib/api';
-import { Card, Empty, ErrorBox, Field, GmOnly, Modal } from './ui';
+import { useApi } from '../lib/api';
+import { Card, Empty, GmOnly } from './ui';
+import { StatBlockEditor } from './StatBlockEditor';
 
 interface Entry {
   name: string;
@@ -259,12 +260,32 @@ export function StatBlockById({ id }: { id: string }) {
   return <StatBlock s={data} />;
 }
 
-/** On a record's page (GM): its stat block, or a way to give it one from the books (kept in the library). */
-export function StatBlockPanel({ entityId }: { entityId: string }) {
+/**
+ * On a record's page (GM): its stat block, and a way to give it one or change it (kept in the library). A creature
+ * or a person always has the panel; any other record has it once it has a stat block, or when one is asked for.
+ */
+export function StatBlockPanel({ entityId, name, fights, asked, onClosed }: { entityId: string; name: string; fights: boolean; asked: boolean; onClosed: () => void }) {
   const { data, reload } = useApi<(StatBlockData & { own?: boolean }) | null>(`/api/statblocks/${encodeURIComponent(entityId)}`);
   const [editing, setEditing] = useState(false);
   if (data === undefined) return null;
   const has = !!data && !!data.name;
+  const open = editing || asked;
+  const close = () => (setEditing(false), onClosed());
+  const editor = open && (
+    <StatBlockEditor
+      entityId={entityId}
+      name={name}
+      start={has ? data : null}
+      mine={has && !!data.own}
+      hazardFirst={!fights}
+      onClose={close}
+      onSaved={() => {
+        close();
+        void reload();
+      }}
+    />
+  );
+  if (!has && !fights) return editor || null;
   return (
     <Card
       title={has && data.kind === 'hazard' ? 'Hazard' : 'Stat block'}
@@ -272,77 +293,14 @@ export function StatBlockPanel({ entityId }: { entityId: string }) {
       actions={
         <span className="flex items-center gap-2 text-xs text-dim">
           GM only
-          {(!has || data.own) && (
-            <button className="btn-ghost text-xs py-0.5" onClick={() => setEditing(true)}>
-              {has ? 'Change' : 'Give it a stat block'}
-            </button>
-          )}
+          <button className="btn-ghost text-xs py-0.5" onClick={() => setEditing(true)} title={has && !data.own ? 'Yours is used instead of the worldbook’s; remove yours to have the worldbook’s back' : undefined}>
+            {!has ? 'Give it a stat block' : data.own ? 'Change' : 'Write your own'}
+          </button>
         </span>
       }
     >
-      {has ? <StatBlock s={data} /> : <p className="text-sm text-dim">None yet. Use a stat block from your rules packs, with what's different about this one.</p>}
-      {editing && (
-        <OwnStatBlock
-          entityId={entityId}
-          current={has && data.own ? data : null}
-          onClose={() => setEditing(false)}
-          onSaved={() => {
-            setEditing(false);
-            void reload();
-          }}
-        />
-      )}
+      {has ? <StatBlock s={data} /> : <p className="text-sm text-dim">None yet. Use a stat block from the SRD or your books and say what's different, or write its own.</p>}
+      {editor}
     </Card>
-  );
-}
-
-function OwnStatBlock({ entityId, current, onClose, onSaved }: { entityId: string; current: StatBlockData | null; onClose: () => void; onSaved: () => void }) {
-  const [base, setBase] = useState(current?.base ?? '');
-  const [changes, setChanges] = useState(current?.changes ?? '');
-  const [tactics, setTactics] = useState(current?.tactics ?? '');
-  const [err, setErr] = useState<string | null>(null);
-  const { data: options } = useApi<{ id: string; name: string; cr?: string | null }[]>(`/api/books/creatures?q=${encodeURIComponent(base)}&limit=40`);
-  return (
-    <Modal title="Its stat block" onClose={onClose}>
-      <div className="space-y-3">
-        {err && <ErrorBox error={err} />}
-        <Field label="Uses the stat block of" hint="A creature from the SRD or your books.">
-          <input className="input" list={`sb-${entityId}`} value={base} onChange={(e) => setBase(e.target.value)} placeholder="Bandit Captain" />
-          <datalist id={`sb-${entityId}`}>
-            {(options ?? []).map((o) => (
-              <option key={o.id} value={o.name}>
-                {o.cr ? `CR ${o.cr}` : ''}
-              </option>
-            ))}
-          </datalist>
-        </Field>
-        <Field label="With these changes">
-          <textarea className="input" rows={3} value={changes} onChange={(e) => setChanges(e.target.value)} placeholder="Wields a halberd (reach); speaks Elvish." />
-        </Field>
-        <Field label="How it fights">
-          <textarea className="input" rows={2} value={tactics} onChange={(e) => setTactics(e.target.value)} />
-        </Field>
-        <div className="flex gap-2">
-          <button
-            className="btn-primary"
-            onClick={async () => {
-              try {
-                await api.put(`/api/statblocks/${encodeURIComponent(entityId)}`, { base: base || undefined, changes, tactics });
-                onSaved();
-              } catch (x) {
-                setErr((x as Error).message);
-              }
-            }}
-          >
-            Save
-          </button>
-          {current && (
-            <button className="btn" onClick={async () => (await api.del(`/api/statblocks/${encodeURIComponent(entityId)}`), onSaved())}>
-              Remove
-            </button>
-          )}
-        </div>
-      </div>
-    </Modal>
   );
 }

@@ -1,13 +1,12 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import express from 'express';
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import type { AddressInfo } from 'node:net';
 import { createHash } from 'node:crypto';
 import request from 'supertest';
 import AdmZip from 'adm-zip';
-import { fixtureFiles, tempContext, zipOf } from './helpers.js';
+import { fixtureFiles, tempContext, tempDir, zipOf } from './helpers.js';
 import { readZip } from '../server/src/import/scan.js';
 import { buildPlan, commitPlan } from '../server/src/import/importer.js';
 import { createApp } from '../server/src/app.js';
@@ -82,7 +81,7 @@ function fakeGitHub(opts: { token: string; pagesAllowed: boolean }) {
   return { app, calls, authSeen, refs, commits, filesOn };
 }
 
-const siteDir = fs.mkdtempSync(path.join(os.tmpdir(), 'wk-site-'));
+const siteDir = tempDir('wk-site-');
 fs.mkdirSync(path.join(siteDir, 'assets'));
 fs.writeFileSync(path.join(siteDir, 'index.html'), '<!doctype html><div id="root"></div>');
 fs.writeFileSync(path.join(siteDir, 'assets', 'app.js'), 'console.log("player app")');

@@ -1,10 +1,9 @@
 /** The timeline (v0.7): sessions among the world's history, history revealed like records, and the players' timeline. */
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import request from 'supertest';
-import { fixtureFiles, tempContext } from './helpers.js';
+import { fixtureFiles, tempContext, tempDir } from './helpers.js';
 import { createApp } from '../server/src/app.js';
 import { AppContext } from '../server/src/context.js';
 import { campaigns, sessions, setActiveCampaign } from '../server/src/repo/campaigns.js';
@@ -117,7 +116,7 @@ describe('the timeline', () => {
     expect(ctx.db.prepare('SELECT player_visible FROM timeline_rows WHERE id = ?').get(row('The tower falls'))).toEqual({ player_visible: 1 });
     expect(ctx.db.prepare('SELECT campaign_id FROM campaign_timeline_reveals WHERE row_id = ?').all(row('Play begins'))).toEqual([{ campaign_id: a }]);
 
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wk-tl-add-'));
+    const dir = tempDir('wk-tl-add-');
     fs.writeFileSync(path.join(dir, 'timeline.json'), JSON.stringify({ rows: [{ sort_order: 50, time_label: 'Year 9', event: 'The bridge opens', entity_ids: [] }] }));
     applyAdditions(ctx.db, dir);
     ctx.db.prepare('UPDATE timeline_rows SET player_visible = 1 WHERE id = ?').run(row('The bridge opens'));

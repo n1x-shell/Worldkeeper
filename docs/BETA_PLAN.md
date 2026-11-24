@@ -7,7 +7,8 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | Step | Release | Status |
 | --- | --- | --- |
 | B1 Pictures on records | v0.9.3 | Done, except pictures inside a record's text |
-| B2 Homebrew workshop | | Next |
+| B2 Homebrew workshop: a whole stat block, hazards | v0.9.4 | Done |
+| B2 Homebrew workshop: your own magic items and spells; creatures and items in Markdown rules packs | | Next |
 | B3 to B9 | | To do |
 | A1 to A7, then C | | To do |
 
@@ -48,7 +49,7 @@ Each was checked in the code, not assumed. "None" means no trace of it.
 | # | Gap | What I found |
 | --- | --- | --- |
 | B1 | **Pictures on records** | **Done in v0.9.3**, except pictures inside a record's text. (Found: characters had portraits and handouts had pictures; an NPC's or faction's profile had one GM-only portrait that players never saw; a place, an item or any other record could have no picture, and text couldn't embed one. The first draft of this audit said "none", missing the profile portrait.) |
-| B2 | **Homebrew workshop** | A GM's stat block is "a book creature plus what's different" and four numbers; there is no full stat block editor, and no way to make a magic item or spell in the app. Markdown rules packs can't hold creatures or items at all. |
+| B2 | **Homebrew workshop** | **The stat block editor is done in v0.9.4;** items, spells and Markdown packs are next. Found: a GM's stat block is "a book creature plus what's different" and four numbers; there is no full stat block editor, and no way to make a magic item or spell in the app. Markdown rules packs can't hold creatures or items at all. |
 | B3 | **Party progression** | No XP or milestone tracking, no level-up flow for an existing character (the builder builds at any level, but levelling up is editing by hand), no real-world session date or attendance. |
 | B4 | **A live table** | Nothing pushes: players' phones poll. Players can't roll from their sheet into a shared log. No "table display" for a TV or second screen (map, handout, turn order). |
 | B5 | **Generators** | Names, treasure, encounters and tables exist. No NPC generator, no shops with stock and prices, no weather (the calendar has moons and festivals, not weather). |

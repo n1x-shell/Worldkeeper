@@ -3,10 +3,9 @@
  * copies in campaigns), applied only where the old wording is still there. The records below are SYNTHETIC TEST DATA.
  */
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { tempContext } from './helpers';
+import { tempContext, tempDir } from './helpers';
 import { buildPlan, commitPlan } from '../server/src/import/importer';
 import type { SourceFile } from '../server/src/import/scan';
 import { getEntity, updateEntity, listRevisions } from '../server/src/repo/entities';
@@ -27,7 +26,7 @@ describe('errata', () => {
     const c = campaigns.create(ctx.db, { title: 'C' }) as { id: number };
     const a = adventures.create(ctx.db, { title: 'The Walk', campaign_id: c.id, data: { premise: 'He walks for half a day.' } }) as { id: number };
     scenes.create(ctx.db, { adventure_id: a.id, title: 'Road', body: 'He walks for half a day.', read_aloud: '' });
-    const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'wk-errata-')), 'errata.json');
+    const file = path.join(tempDir('wk-errata-'), 'errata.json');
     fs.writeFileSync(
       file,
       JSON.stringify({

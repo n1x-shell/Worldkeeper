@@ -4,10 +4,9 @@
  * The world map itself is checked against the approved plan. The records below are SYNTHETIC TEST DATA.
  */
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { tempContext } from './helpers';
+import { tempContext, tempDir } from './helpers';
 import { buildPlan, commitPlan } from '../server/src/import/importer';
 import type { SourceFile } from '../server/src/import/scan';
 import { applyMaps } from '../server/src/mapAdditions';
@@ -35,7 +34,7 @@ describe('shipped maps put to scale', () => {
       [rec('SET-001', 'Town'), rec('SET-002', 'Village'), rec('SET-003', 'Keep')],
       buildPlan(ctx.db, [rec('SET-001', 'Town'), rec('SET-002', 'Village'), rec('SET-003', 'Keep')], 'test'),
     );
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wk-maps-'));
+    const dir = tempDir('wk-maps-');
     fs.writeFileSync(path.join(dir, 'w.png'), png());
     const pins = (v: [number, number], k: [number, number]) => ({
       name: 'World',
