@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.6.12_
+_Last updated: 2026-11-24 · v0.7.0_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,18 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.7.0: the timeline, for the GM and for players
+
+- **The owner's choices:** the players' timeline holds their campaign's story (sessions and shown calendar events) and the history the GM reveals; the GM's timeline shows the active campaign's sessions, with a switch.
+- **Storage** (migration 33): `timeline_rows.player_visible` (to everyone) and `campaign_timeline_reveals` (to one campaign), as records have. Nothing was revealed before, so older libraries need nothing done.
+- **`server/src/repo/timeline.ts`:** `revealTimelineRow` (refuses a SECRET row), `revealedTimelineRows` (never a SECRET row, even if flagged by hand), `keepTimelineReveals` (re-importing the archive and Apply additions replace their rows; reveals are carried across by time and event, never onto a row the new source marks SECRET).
+- **`shared/timeline.ts` `mergeByDate`:** history rows keep their order; each dated item goes after the last dated row on or before its date, else before the first after it. Undated rows stay where they are.
+- **Routes:** `GET /api/timeline` adds `player_visible` and `campaigns` per row; `GET /api/timeline/reveal-choices`; `POST /api/timeline/:id/reveal` (`campaign_id` or null for everyone, `on`).
+- **Players** (`playerTimeline` in `server/src/player/projection.ts`, `timeline` on each campaign): revealed history (scrubbed of links to unrevealed records), sessions `live` or `completed` with a date (titled only once the recap is shown), and one-off calendar events shown to players (titles only, as the calendar). The published handbook passes no campaign for the history (everyone's only), as with records. Page **Campaign → Timeline** (`PlayerTimeline`).
+- **GM** (`TimelinePage`): sessions among the rows (not while grouped by era), undated ones listed, **Players:** chips per row.
+- **Exports:** the JSON export has `campaign_timeline_reveals`; a campaign export carries its timeline reveals by time and event, and its import finds the rows again (never a SECRET one).
+- **Tests:** `tests/timeline.test.ts` (merge order; reveal to everyone and to a campaign, SECRET refused and never shown; the published handbook; sessions and events placed, titles hidden until the recap, planned and undated left out; re-import and additions keep reveals; campaign export round trip). Browser check on the archive library with two campaigns: the GM's timeline and chips, the players' timeline on desktop and phone.
 
 ## v0.6.12: the first run in a browser, in CI
 
@@ -643,5 +655,4 @@ The queue agreed with the owner, one PR each:
 After that, candidates (not yet agreed):
 
 - **Desktop builds for macOS and Windows:** run `desktop.yml` on both and fix what comes up; code signing, so the system's warnings go away.
-- **Sessions on the timeline**, by their in-world dates, and **a player timeline** of what's been revealed.
 - **Optional AI assistant** that cites records and only makes PROPOSED drafts (deferred until the core is in daily use).

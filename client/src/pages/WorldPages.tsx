@@ -3,11 +3,13 @@ import { RealmIconOf, realmClass, useRealms } from '../components/realms';
 import { REALM_KIND_LABELS } from '@shared/realms';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { Gem, KeyRound, Ghost, Plus, Map as MapIcon, Network } from 'lucide-react';
+import { Feather, Gem, KeyRound, Ghost, Plus, Map as MapIcon, Network } from 'lucide-react';
 import { CANON_STATUSES } from '@shared/domain';
 import { api, qs, useApi } from '../lib/api';
 import type { Entity, EntitySummary } from '../lib/types';
-import { Badge, CanonBadge, Card, Empty, ErrorBox, Field, Loading, PageHeader, RealmBadge, Segmented, Toggle, TypeBadge } from '../components/ui';
+import { Badge, CanonBadge, Card, Empty, ErrorBox, Field, Loading, PageHeader, RealmBadge, Segmented, toast, Toggle, TypeBadge } from '../components/ui';
+import { useAppState } from '../lib/store';
+import { mergeByDate } from '@shared/timeline';
 import { Markdown } from '../components/Markdown';
 import { Snippet, hitPath, type Hit } from '../components/SearchPalette';
 import { EntityTable } from './EntityList';
@@ -190,6 +192,26 @@ interface TimelineRow {
   origin: string;
   era: string | null;
   era_origin: string | null;
+  year: number | null;
+  day: number | null;
+  /** Shown to every campaign's players, and to which campaigns besides (v0.7). */
+  player_visible: boolean;
+  campaigns: number[];
+}
+/** A session of the active campaign, placed among the rows by its in-world date. */
+interface SessionLine {
+  kind: 'session';
+  id: number;
+  number: number;
+  title: string;
+  status: string;
+  in_world_date: string;
+  year: number | null;
+  day: number | null;
+}
+interface RevealChoices {
+  choices: { id: number; title: string }[];
+  default: number | null;
 }
 interface Era {
   key: string;
@@ -203,7 +225,13 @@ export function TimelinePage() {
   const realms = useRealms();
   const { data, error, reload } = useApi<TimelineRow[]>('/api/timeline');
   const { data: eras, reload: reloadEras } = useApi<Era[]>('/api/eras');
+  const { activeCampaignId } = useAppState();
+  const { data: rc } = useApi<RevealChoices>('/api/timeline/reveal-choices');
+  const { data: sessionRows } = useApi<{ id: number; number: number; title: string; status: string; in_world_date: string; date_year: number | null; date_day: number | null }[]>(
+    activeCampaignId ? `/api/sessions?campaign_id=${activeCampaignId}` : null,
+  );
   const [sp, setSp] = useSearchParams();
+  const showSessions = sp.get('sessions') !== '0';
   const realm = sp.get('realm') ?? '';
   const eraFilter = (sp.get('era') ?? '').split(',').filter(Boolean);
   const grouped = sp.get('group') === '1';
@@ -225,9 +253,15 @@ export function TimelinePage() {
   const timelineRealms = realms.list.filter((x) => (data ?? []).some((r) => r.realm_ids.includes(x.id)));
   const counts = new Map<string, number>();
   for (const r of data ?? []) counts.set(r.era ?? '__none', (counts.get(r.era ?? '__none') ?? 0) + 1);
-  const groups: [string | null, TimelineRow[]][] = grouped
+  // The active campaign's sessions among the rows, by in-world date (not when grouped by era: sessions have none).
+  const sessions: SessionLine[] = [...(sessionRows ?? [])]
+    .sort((x, y) => x.number - y.number)
+    .map((x) => ({ kind: 'session', id: x.id, number: x.number, title: x.title, status: x.status, in_world_date: x.in_world_date, year: x.date_year, day: x.date_day }));
+  const placing = !!activeCampaignId && showSessions && !grouped;
+  const undated = placing ? sessions.filter((x) => x.year == null) : [];
+  const groups: [string | null, (TimelineRow | SessionLine)[]][] = grouped
     ? ([...(eras ?? []).map((e) => [e.key, rows.filter((r) => r.era === e.key)]), [null, rows.filter((r) => !r.era)]] as [string | null, TimelineRow[]][]).filter((g) => g[1].length > 0)
-    : [[null, rows]];
+    : [[null, placing ? mergeByDate<TimelineRow, SessionLine>(rows, sessions) : rows]];
 
   const setRowEra = async (row: TimelineRow, era: string) => {
     await api.patch(`/api/timeline/${row.id}/era`, { era });
@@ -334,7 +368,26 @@ export function TimelinePage() {
           <Toggle checked={grouped} onChange={(v) => setParam('group', v ? '1' : '')} className="ml-3 text-dim">
             Group by era
           </Toggle>
+          {activeCampaignId != null && (
+            <Toggle checked={showSessions} onChange={(v) => setParam('sessions', v ? '' : '0')} className="ml-3 text-dim">
+              The campaign's sessions
+            </Toggle>
+          )}
         </div>
+        {undated.length > 0 && (
+          <p className="text-xs text-dim">
+            No in-world date yet, so not placed:{' '}
+            {undated.map((x, i) => (
+              <span key={x.id}>
+                {i > 0 && ', '}
+                <Link to={`/session/${x.id}`} className="text-arcane underline">
+                  Session {x.number}
+                </Link>
+              </span>
+            ))}
+            . Give a session its date on its page.
+          </p>
+        )}
       </div>
       {!data ? (
         <Loading />
@@ -345,7 +398,10 @@ export function TimelinePage() {
           <section key={era ?? 'none'}>
             {grouped && <h2 className="section-title mb-2">{eraName(era)}</h2>}
             <ol className="relative border-l border-gold/40 ml-3 space-y-4 mb-6">
-              {list.map((r) => (
+              {list.map((r) =>
+                'kind' in r ? (
+                  <SessionOnTimeline key={`s${r.id}`} s={r} />
+                ) : (
                 <li key={r.id} className="ml-5">
                   <span className="absolute left-[-7px] mt-1.5 h-3 w-3 rounded-full border-2 border-gold bg-bg" />
                   <Card>
@@ -372,6 +428,7 @@ export function TimelinePage() {
                       </select>
                     </div>
                     <Markdown text={r.event} className="prose-lore text-[16px]" />
+                    <RowReveals row={r} rc={rc} onChange={() => void reload()} />
                     <Dev>
                       <div className="text-xs text-dim">
                         {r.access} · {r.source}
@@ -379,7 +436,8 @@ export function TimelinePage() {
                     </Dev>
                   </Card>
                 </li>
-              ))}
+                ),
+              )}
             </ol>
           </section>
         ))
@@ -387,6 +445,60 @@ export function TimelinePage() {
       <Card title={`Event records${eraFilter.length ? ' in the selected eras' : ''}`}>
         <EventList eras={eraFilter} />
       </Card>
+    </div>
+  );
+}
+
+/** A session of the active campaign on the timeline, linking to its page. */
+function SessionOnTimeline({ s }: { s: SessionLine }) {
+  return (
+    <li className="ml-5" data-kind="session">
+      <span className="absolute left-[-7px] mt-1.5 h-3 w-3 rounded-full border-2 border-arcane bg-arcane" aria-hidden />
+      <Link to={`/session/${s.id}`} className="flex flex-wrap items-baseline gap-x-2 rounded-md border border-arcane/40 bg-arcane/5 px-3 py-2 hover:border-arcane">
+        <span className="font-display text-gold text-sm">{s.in_world_date || `Year ${s.year}`}</span>
+        <Feather size={13} className="text-arcane self-center" aria-hidden />
+        <span className="text-ink">
+          Session <span className="num">{s.number}</span>
+          {s.title ? `: ${s.title}` : ''}
+        </span>
+        {s.status === 'planned' && <Badge>Planned</Badge>}
+        {s.status === 'live' && <Badge tone="danger">Live</Badge>}
+      </Link>
+    </li>
+  );
+}
+
+/**
+ * Who has been shown a history row: everyone, or (with two or more campaigns) each campaign. A row marked SECRET is for
+ * the GM only and offers nothing.
+ */
+function RowReveals({ row, rc, onChange }: { row: TimelineRow; rc: RevealChoices | undefined; onChange: () => void }) {
+  if (/SECRET/i.test(row.access)) return null;
+  const set = async (campaignId: number | null, on: boolean) => {
+    try {
+      await api.post(`/api/timeline/${row.id}/reveal`, { campaign_id: campaignId, on });
+      onChange();
+    } catch (x) {
+      toast((x as Error).message, 'danger');
+    }
+  };
+  const several = (rc?.choices.length ?? 0) >= 2;
+  const chip = (on: boolean, label: string, title: string, click: () => void) => (
+    <button key={label} aria-pressed={on} title={title} onClick={click} className={`chip min-h-7 px-2 ${on ? 'border-ok/60 text-ok' : 'border-line text-dim hover:border-gold'}`}>
+      {on ? '✓ ' : ''}
+      {label}
+    </button>
+  );
+  return (
+    <div className="mt-1 flex flex-wrap items-center gap-1 text-xs" aria-label="Shown to players">
+      <span className="text-dim">Players:</span>
+      {chip(row.player_visible, several ? 'Everyone' : 'Shown', row.player_visible ? 'Hide from players' : 'Show to players (every campaign)', () => void set(null, !row.player_visible))}
+      {several &&
+        !row.player_visible &&
+        rc!.choices.map((c) => {
+          const on = row.campaigns.includes(c.id);
+          return chip(on, c.title, on ? `Hide from ${c.title}` : `Show to ${c.title}`, () => void set(c.id, !on));
+        })}
     </div>
   );
 }

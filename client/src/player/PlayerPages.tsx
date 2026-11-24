@@ -14,6 +14,7 @@ import {
   Feather,
   Flag,
   Gem,
+  History,
   Landmark,
   Library,
   ListChecks,
@@ -28,7 +29,7 @@ import {
   Users,
 } from 'lucide-react';
 import { usePlayer, usePlayerIndex } from './context';
-import { usePlayerData, type PEntity } from './source';
+import { usePlayerData, type PEntity, type PTimelineEntry } from './source';
 import { SpeciesBuilder } from './SpeciesBuilder';
 import { OTHER_GROUP, PLAYER_GROUPS, groupOf, handbookTypesWith, linkedIds, previewText } from './categories';
 import { Badge, RarityTag, RealmBadge, type Tone } from '../components/ui/badges';
@@ -1050,5 +1051,65 @@ export function PlayerRecaps() {
         ))}
       </div>
     </div>
+  );
+}
+
+// ------------------------------------------------------------------ Timeline
+
+/**
+ * The campaign's story among the world's history (v0.7): history the GM has revealed, the sessions played at their
+ * in-world dates (with the recap once it's out), and dated events the GM has shown. One timeline per campaign.
+ */
+export function PlayerTimeline() {
+  const { campaigns } = usePlayerIndex();
+  const { base } = usePlayer();
+  if (!campaigns) return <Loading />;
+  const withTimeline = campaigns.filter((c) => c.timeline?.length);
+  return (
+    <div className="space-y-6">
+      <PlayerPageTitle eyebrow="Campaign" icon={<History size={14} />} title="Timeline" subtitle="Your story, among the world's history as you know it." />
+      {!withTimeline.length && <Empty icon={<History size={22} />} title="Nothing on the timeline yet." />}
+      {withTimeline.map((c) => (
+        <section key={c.id} aria-label={c.title}>
+          {withTimeline.length > 1 && <h2 className="section-title mb-3">{c.title}</h2>}
+          <ol className="relative border-l border-gold/40 ml-3 space-y-3">
+            {c.timeline!.map((t) => (
+              <TimelineItem key={`${t.kind}-${t.id}`} t={t} recaps={`${base}/recaps`} />
+            ))}
+          </ol>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+function TimelineItem({ t, recaps }: { t: PTimelineEntry; recaps: string }) {
+  const dot = t.kind === 'history' ? 'border-gold bg-bg' : t.kind === 'session' ? 'border-arcane bg-arcane' : 'border-ok bg-bg';
+  return (
+    <li className="ml-5" data-kind={t.kind}>
+      <span className={`absolute left-[-7px] mt-1.5 h-3 w-3 rounded-full border-2 ${dot}`} aria-hidden />
+      <div className="font-display text-gold text-sm">{t.when}</div>
+      {t.kind === 'history' && <Md text={t.text} className="prose-lore text-[16px] max-w-[72ch]" />}
+      {t.kind === 'session' && (
+        <div className="flex flex-wrap items-baseline gap-x-2 text-[16px]">
+          <Feather size={14} className="text-arcane self-center" aria-hidden />
+          <span className="text-ink">
+            Session <span className="num">{t.number}</span>
+            {t.title ? `: ${t.title}` : ''}
+          </span>
+          {t.recap && (
+            <Link to={recaps} className="text-sm text-arcane underline">
+              Read the recap
+            </Link>
+          )}
+        </div>
+      )}
+      {t.kind === 'event' && (
+        <div className="flex items-center gap-2 text-[16px] text-ink">
+          <CalendarDays size={14} className="text-ok" aria-hidden />
+          {t.title}
+        </div>
+      )}
+    </li>
   );
 }

@@ -10,7 +10,7 @@ import type { RecordTypeDef } from '@shared/recordTypes';
 import type { RealmInfo } from '@shared/realms';
 import { PlayerLayout } from './PlayerLayout';
 import { PlayerCalendar, PlayerHandouts, PlayerRegions } from './LivePlay';
-import { PlayerBrowse, PlayerEntry, PlayerHome, PlayerQuests, PlayerRealm, PlayerRecaps, PlayerSearch, PlayerStanding, PlayerTreasure } from './PlayerPages';
+import { PlayerBrowse, PlayerEntry, PlayerHome, PlayerQuests, PlayerRealm, PlayerRecaps, PlayerSearch, PlayerTimeline, PlayerStanding, PlayerTreasure } from './PlayerPages';
 
 // Pages that pull in big libraries (the map) or are rarely opened load only when first visited.
 const MapExplorer = lazy(() => import('./MapExplorer').then((m) => ({ default: m.MapExplorer })));
@@ -71,6 +71,7 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
               />
               <Route path="quests" element={<PlayerQuests />} />
               <Route path="recaps" element={<PlayerRecaps />} />
+              <Route path="timeline" element={<PlayerTimeline />} />
               <Route path="standing" element={<PlayerStanding />} />
               <Route path="treasure" element={<PlayerTreasure />} />
               <Route path="handouts" element={<PlayerHandouts />} />

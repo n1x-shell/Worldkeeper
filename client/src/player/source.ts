@@ -37,12 +37,19 @@ export interface PMap {
   /** Fog of war and the party's trail, sent only while the active campaign has a live session. */
   exploration?: { discovered: string[]; trail: { x: number; y: number; label: string }[] } | null;
 }
+/** One line of the players' timeline: a history row revealed to them, a session they played, or an event they were shown. */
+export type PTimelineEntry =
+  | { kind: 'history'; id: number; when: string; year: number | null; day: number | null; text: string }
+  | { kind: 'session'; id: number; when: string; year: number; day: number | null; number: number; title: string; recap: boolean }
+  | { kind: 'event'; id: number; when: string; year: number; day: number; title: string };
 export interface PCampaign {
   id: number;
   title: string;
   current_date: string;
   quests: { id: number; title: string; status: string; description: string }[];
   recaps: { id: number; number: number; title: string; played_on: string; recap: string }[];
+  /** The campaign's story among the world's history, by in-world date (v0.7). */
+  timeline?: PTimelineEntry[];
   /** The campaign's date and what's coming (festivals, and events the GM shares). */
   calendar?: {
     def: CalendarDef;

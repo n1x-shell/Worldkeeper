@@ -1113,6 +1113,20 @@ CREATE TABLE rules_switches_pending (singleton INTEGER PRIMARY KEY CHECK (single
 `,
     onUpgrade: `INSERT INTO rules_switches_pending (singleton) VALUES (1);`,
   },
+  {
+    version: 33,
+    name: 'timeline rows players know',
+    // A history row can be revealed like a record: to everyone (player_visible) or to one campaign. Nothing was
+    // revealed before, so older libraries need nothing done.
+    sql: `
+ALTER TABLE timeline_rows ADD COLUMN player_visible INTEGER NOT NULL DEFAULT 0;
+CREATE TABLE campaign_timeline_reveals (
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  row_id INTEGER NOT NULL REFERENCES timeline_rows(id) ON DELETE CASCADE,
+  PRIMARY KEY (campaign_id, row_id)
+);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

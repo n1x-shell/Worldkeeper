@@ -58,6 +58,8 @@ On a record's **Player view** tab, enable **Players know this record exists** be
 - Facts explicitly revealed through the application.
 - Sections deliberately selected for publication, excluding sections identified as GM-only or secret.
 
+**Campaign → Timeline** shows the world's history the GM has shown the group (to everyone, or to that campaign; never an event marked SECRET), the sessions it has played at their in-world dates (titled, with a link to the recap, once the recap is shown; until then just "Session N"), and dated calendar events shown to players. Planned sessions and sessions without a date aren't on it.
+
 References to unrevealed records are designed to be removed. Other player-visible content includes only maps, markers, regions, quests and session recaps that meet publication controls. **Inspect maps, marker labels, relationship names, links, recaps, and uploaded images manually before publishing**, as those surfaces may reveal information indirectly.
 
 ## Reveal during a live session
