@@ -219,7 +219,7 @@ One installation holds several **libraries**. Each is a world (or set of worlds)
 - **The Library menu** (the gear, top right) names the open library and lists the others to open. **New library…** makes one and opens it with **Start your world**.
 - **Library → Libraries** manages them: rename, **Duplicate** (a copy of the records, campaigns, settings and pictures, to try something risky in), **Archive** (hidden from the list, its files kept; **Restore** brings it back), and **Show in folder** in the desktop app.
 - **Open a library from a file** turns a full-world ZIP (**Import and Export → Full world**) into a new library: how a world goes to a co-GM or another computer.
-- Backups and restores are each library's own. The table server serves the library that's open.
+- Backups and restores are each library's own. **Back up everything** keeps every library and your books' rules and packs in one file; **Open everything from a file** adds them to another installation. The table server serves the library that's open.
 - **The desktop app** opens the last library; with several, its start asks which.
 
 ## Library management

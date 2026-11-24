@@ -8,6 +8,7 @@ import { h } from './util.js';
 import { badRequest } from '../lib/errors.js';
 import { createLibrary, discardNewLibrary, libraryDir, libraryEntry, readIndex, recordCount, renameLibrary, setArchived } from '../libraries.js';
 import { importFullWorldZip } from '../backup/exporter.js';
+import { exportInstallation, importInstallation } from '../backup/installation.js';
 import { isDesktop, openFolder } from '../lib/desktop.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 300 * 1024 * 1024, files: 1 } });
@@ -117,6 +118,26 @@ export function librariesRoutes(ctx: AppContext) {
         discardNewLibrary(root(), e.id);
         throw err;
       }
+    }),
+  );
+  // Back up everything: every library and what they share, in one file (not the publishing token).
+  r.get(
+    '/libraries/everything',
+    h((_req, res) => {
+      const day = new Date().toISOString().slice(0, 10);
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', `attachment; filename="worldkeeper-everything-${day}.zip"`);
+      res.send(exportInstallation(ctx));
+    }),
+  );
+  // Open everything from such a file: its libraries are added as new ones; books' rules and packs merged.
+  r.post(
+    '/libraries/everything',
+    upload.single('file'),
+    h((req) => {
+      if (!req.file) throw badRequest('Choose a "back up everything" file');
+      const result = importInstallation(ctx, req.file.buffer);
+      return { result, ...list(true) };
     }),
   );
   // In the desktop app: show the library's folder in the file manager.
