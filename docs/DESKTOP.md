@@ -51,7 +51,7 @@ Build on each operating system you want to ship for. Tauri builds the window she
 
 ### Prerequisites
 
-- Node.js 20+ and `npm install` completed. The Node version you build with is the one that ships inside the app.
+- Node.js 26 (the Active LTS, as in `.nvmrc`) and `npm install` completed. The Node version you build with is the one that ships inside the app, so `desktop:prepare` stops on one that isn't an LTS release (set `WORLDKEEPER_ALLOW_NON_LTS=1` to try one anyway). On Linux it strips the runtime's debug symbols, which keeps the app smaller (`WORLDKEEPER_NO_STRIP=1` keeps them).
 - Rust (stable) through [rustup](https://rustup.rs).
 - System libraries:
   - **Linux (Debian/Ubuntu):**

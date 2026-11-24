@@ -4,7 +4,7 @@
 
 ## Requirements and stack
 
-Node.js 20 or newer (22 recommended). Application stack: React, TypeScript, Vite, Tailwind CSS, Lucide, React Flow, Leaflet, Express, SQLite via `better-sqlite3` and FTS5, zod, plus a Tauri desktop wrapper.
+Node.js 22 or newer (26, the current LTS, recommended; `.nvmrc`). Application stack: React, TypeScript, Vite, Tailwind CSS, Lucide, React Flow, Leaflet, Express, SQLite via `better-sqlite3` and FTS5, zod, plus a Tauri desktop wrapper.
 
 ```bash
 git clone https://github.com/n1x-shell/Worldkeeper.git

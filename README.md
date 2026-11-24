@@ -120,7 +120,7 @@ Worldkeeper has a Tauri desktop build path for Linux, macOS and Windows. **Downl
 
 ### Run from source
 
-Requires **Node.js 20 or later** (22 recommended).
+Requires **Node.js 22 or later**; **26**, the current LTS, is recommended (`.nvmrc`).
 
 ```bash
 git clone https://github.com/n1x-shell/Worldkeeper.git
