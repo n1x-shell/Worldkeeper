@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.8.2_
+_Last updated: 2026-11-24 · v0.8.3_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,16 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.8.3: stand-ins for creatures
+
+Step 3 of [docs/PLAN_0.9.md](docs/PLAN_0.9.md).
+
+- **What a world names** (`ruleRefs` in `server/src/packs/worldbookRules.ts`) now includes the creatures its encounter tables roll: `creatureMatcher` matches every creature name the GM's rules know (the SRD, the world's, every pack on the computer) against each row, longest first, with written plurals (wolves, harpies, wolfmen), after taking out `[ID]` references.
+- **Safe mode's creature stand-in** (`closestStandIn`): an SRD creature of the same type (read from the block's meta, "Large Dragon") and the nearest challenge rating, else the nearest challenge rating of any type. The review list offers every SRD creature.
+- **Applied** where a creature is looked up (`bookData` entries since v0.7.5: stat blocks, the encounter tracker, encounter ideas), labelled "standing in for …"; adding reports a missing creature under its book.
+- **Not yet:** stat blocks aren't shared in a worldbook, so the creatures they're built on aren't counted (FUTURE_WORK).
+- **Tests:** `tests/worldbookBooks.test.ts` (a book creature and SRD ones found in a table's rows; the dragon stand-in; added without the book, the stand-in; with it, the original). Adding the Worldkeeper world still takes under four seconds.
 
 ## v0.8.2: adventures, random tables and loose pins in shared worldbooks
 

@@ -111,11 +111,11 @@ You don't have to write a worldbook by hand. **Library → Worldbooks → Share 
 
 A worldbook never holds book text: it names rules, and the app finds each name in the rules the GM has (the SRD, open packs, the GM's own books).
 
-- **What a world names:** the species its peoples play as (a people record's "Use the tabaxi rules"), the classes its people have (a **Class** fact), and the items in its treasure pools.
+- **What a world names:** the species its peoples play as (a people record's "Use the tabaxi rules"), the classes its people have (a **Class** fact), the items in its treasure pools, and the creatures its encounter tables roll (found by the creature names your rules know, plurals too: "2 Briar Wolves").
 - **Sharing asks how the books count**, when the world names something only a closed book has:
   - **Books required:** it can't be added without those books.
   - **Books optional:** it can, with a warning; those things show by name only.
-  - **Safe mode:** anyone can add it. Each thing only a book has gets an open stand-in of the same kind (a species of the same size and speed, an item of the same rarity and kind), in a list you review and can change. The original is kept: a GM who has the book gets it; one who hasn't gets the stand-in, labelled "standing in for Tabaxi (Monsters of the Multiverse)".
+  - **Safe mode:** anyone can add it. Each thing only a book has gets an open stand-in of the same kind (a species of the same size and speed, an item of the same rarity and kind, a creature of the same type and nearest challenge rating), in a list you review and can change. The original is kept: a GM who has the book gets it; one who hasn't gets the stand-in, labelled "standing in for Tabaxi (Monsters of the Multiverse)".
   - Open rules it uses beyond the SRD (an Open5e pack) travel with it (`open-rules/<pack>.json`, only the entries it names, with their credit).
 - **Adding says what's missing**, by book where it knows ("Xanathar's Guide to Everything: 23 items"), switches on in that library the books of yours it draws on, and refuses a worldbook whose required books you don't have.
 - **Every book there:** a new library started from a worldbook whose books you all have uses your books alone (Books only), the open rules kept for what your books don't cover, and it says so once.

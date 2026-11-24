@@ -32,6 +32,8 @@ Done in v0.8.2. Adventures are left out, with GM-only sections, of a world share
 
 ### v0.8.3: stand-ins for creatures
 
+Done in v0.8.3, for the creatures encounter tables roll. Stat blocks aren't shared in a worldbook yet, so the creatures they're built on aren't counted (FUTURE_WORK).
+
 - **What a world names** grows to creatures: the creatures its random tables roll, and the creatures its stat blocks are built on (a GM's block "based on" a book creature).
 - **Safe mode** swaps a book-only creature for an open one of the **same type and challenge rating** (the closest CR when none matches), in the same review list as species, classes and items; adding a worldbook reports missing creatures by book.
 - Stand-ins apply wherever a creature is looked up (encounter tables, the tracker, stat blocks), labelled "standing in for …", as items already are.
