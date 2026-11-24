@@ -8,7 +8,7 @@ import { saveRulesPack } from './sharedRules.js';
 import type Database from 'better-sqlite3';
 import { badRequest } from '../lib/errors.js';
 import { listPacks } from './rulesPacks.js';
-import { XP_BY_CR } from './fivetools.js';
+import { XP_BY_CR } from '../../../shared/statblock.js';
 
 type DB = Database.Database;
 type J = Record<string, any>;

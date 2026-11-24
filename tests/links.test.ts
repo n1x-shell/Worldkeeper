@@ -2,10 +2,9 @@
  * Links derived from list sections, and the Worldkeeper additions. The records below are SYNTHETIC TEST DATA.
  */
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { tempContext } from './helpers';
+import { tempContext, tempDir } from './helpers';
 import { buildPlan, commitPlan } from '../server/src/import/importer';
 import { applyAdditions } from '../server/src/additions';
 import { listItems } from '../server/src/repo/nameMatch';
@@ -61,7 +60,7 @@ describe('Worldkeeper additions', () => {
   it('adds new records and curated links to a library, without repeating links and safely more than once', () => {
     const ctx = tempContext();
     commitPlan(ctx.db, files, buildPlan(ctx.db, files, 'test'));
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wk-additions-'));
+    const dir = tempDir('wk-additions-');
     fs.writeFileSync(path.join(dir, 'SET-010_New_Town.md'), rec('SET-010', 'New Town', 'Settlement', 'A new town.').content);
     fs.mkdirSync(path.join(dir, 'drafts'));
     fs.writeFileSync(path.join(dir, 'drafts', 'SET-099_Draft.md'), rec('SET-099', 'Draft Town', 'Settlement', 'Not yet.').content);
@@ -106,7 +105,7 @@ describe('names in prose', () => {
 describe('timeline additions', () => {
   it('adds the additions’ timeline rows, replaces them on a second run, and keeps an era the GM set', () => {
     const ctx = tempContext();
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wk-timeline-'));
+    const dir = tempDir('wk-timeline-');
     const rows = [{ sort_order: 15.01, time_label: 'Year 1 Unbound', event: 'The First Morning', entity_ids: [] }];
     fs.writeFileSync(path.join(dir, 'timeline.json'), JSON.stringify({ rows }));
     fs.mkdirSync(path.join(dir, 'drafts'));

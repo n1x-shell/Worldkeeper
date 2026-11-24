@@ -6,14 +6,34 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import AdmZip from 'adm-zip';
+import { afterAll } from 'vitest';
 import { resolvePaths } from '../server/src/config.js';
 import { AppContext } from '../server/src/context.js';
 import type { SourceFile } from '../server/src/import/scan.js';
 import { installPack } from '../server/src/packs/registry.js';
 
 /** A fresh, empty library. `settingRealms` installs the Worldkeeper setting's pack (its realms and types), for tests that write its records. */
+const made: string[] = [];
+// Each test file's temporary folders are removed when the file is done (a run used to leave about 2 GB behind).
+afterAll(() => {
+  for (const dir of made.splice(0)) {
+    try {
+      fs.rmSync(dir, { recursive: true, force: true });
+    } catch {
+      /* still open on Windows: left for the system's own clean-up */
+    }
+  }
+});
+
+/** A temporary folder that is removed when the test file is done. */
+export function tempDir(prefix = 'wk-test-'): string {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), prefix));
+  made.push(dir);
+  return dir;
+}
+
 export function tempContext(opts: { settingRealms?: boolean } = {}): AppContext {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wk-test-'));
+  const dir = tempDir();
   const ctx = new AppContext(resolvePaths(dir));
   if (opts.settingRealms) installPack(ctx.db, 'worldkeeper');
   return ctx;

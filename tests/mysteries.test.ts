@@ -2,10 +2,9 @@
  * Mysteries, secrets and clues. The records, text and mysteries below are SYNTHETIC TEST DATA.
  */
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { tempContext } from './helpers';
+import { tempContext, tempDir } from './helpers';
 import { buildPlan, commitPlan } from '../server/src/import/importer';
 import { syncRumours } from '../server/src/repo/rumours';
 import { deleteClue, listMysteries, setClueFound, setSecretState, syncMysteries, updateSecret } from '../server/src/repo/mysteries';
@@ -47,7 +46,7 @@ function setup() {
   const ctx = tempContext();
   commitPlan(ctx.db, files, buildPlan(ctx.db, files, 'test'));
   syncRumours(ctx.db, [{ path: 'a.md', content: handbook }]);
-  const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'wk-myst-')), 'mysteries.json');
+  const file = path.join(tempDir('wk-myst-'), 'mysteries.json');
   fs.writeFileSync(file, JSON.stringify(spec));
   return { ctx, file };
 }

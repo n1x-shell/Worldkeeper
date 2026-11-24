@@ -1,10 +1,9 @@
 /** Record templates (docs/OWN_WORLD_PLAN.md §2.2): facts and sections with guidance, examples and GM-only marks. */
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import request from 'supertest';
 import { describe, expect, it } from 'vitest';
-import { tempContext } from './helpers.js';
+import { tempContext, tempDir } from './helpers.js';
 import { createApp } from '../server/src/app.js';
 import { BUILTIN_TEMPLATES_DIR, listTemplates, syncBuiltinTemplates } from '../server/src/repo/templates.js';
 import { parseTemplate, recordFromTemplate, templateToMarkdown } from '../shared/templates.js';
@@ -58,7 +57,7 @@ describe('record templates', () => {
   });
 
   it('come built in, and the GM can duplicate, write, change and delete their own', async () => {
-    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wk-tpl-'));
+    const dir = tempDir('wk-tpl-');
     fs.writeFileSync(path.join(dir, 'settlement.md'), SAMPLE);
     const ctx = tempContext();
     syncBuiltinTemplates(ctx.db, dir);

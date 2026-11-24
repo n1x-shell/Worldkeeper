@@ -1,11 +1,10 @@
 /** Your books' rules and installed packs, shared by every library (docs/LIBRARIES_PLAN.md step B2). */
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import request from 'supertest';
 import AdmZip from 'adm-zip';
-import { tempContext } from './helpers.js';
+import { tempContext, tempDir } from './helpers.js';
 import { createApp } from '../server/src/app.js';
 import { AppContext } from '../server/src/context.js';
 import { resolvePaths } from '../server/src/config.js';
@@ -157,7 +156,7 @@ describe('rules shared by every library', () => {
 
   it('moves installed packs and the publishing token into shared/', () => {
     // A data folder as v0.5.5 left it: libraries, with packs and the token beside them.
-    const root = fs.mkdtempSync(path.join(os.tmpdir(), 'wk-test-'));
+    const root = tempDir('wk-test-');
     const id = 'lib-aaaaaa';
     writeIndex(root, { format: 1, open: id, libraries: [{ id, name: 'One', folder: id, created_at: '2026-11-24T00:00:00Z', last_opened_at: null }] });
     fs.mkdirSync(path.join(root, 'packs', 'the-isle'), { recursive: true });

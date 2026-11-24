@@ -68,7 +68,7 @@ import { types as typeRegistry } from '../repo/recordTypes.js';
 import { parseJson } from '../lib/json.js';
 import { returnClock, setReturnStage } from '../repo/returnClock.js';
 import { factionWeb, revealTie } from '../repo/factionWeb.js';
-import { deleteLibraryStatblock, setLibraryStatblock, statblockFor, statblockIndex } from '../repo/statblocks.js';
+import { deleteLibraryStatblock, setLibraryStatblock, statblockFor, statblockIndex, type StatBlock } from '../repo/statblocks.js';
 import { bookCounts, bookCreature, bookTreasure, bookCreatureIndex, bookCreatures, bookItems, creatureByName, itemByName, requireBookCreature } from '../repo/bookData.js';
 import { characterPage, renewCharacterCode, updateCharacterPage } from '../repo/characterPages.js';
 import { handbookCode, renewHandbookCode } from '../repo/handbookCodes.js';
@@ -190,7 +190,10 @@ export function campaignRoutes(ctx: AppContext) {
       const id = String(req.params.id);
       if (/^(book|srd|wk|open5e):/.test(id)) return bookCreature(ctx.db, id);
       const s = statblockFor(ctx.db, id);
-      return s?.base ? { ...s, baseBlock: creatureByName(ctx.db, s.base) } : s;
+      if (!s?.base) return s;
+      // A short card takes the numbers it doesn't give from the book block it names (the tracker reads them).
+      const baseBlock = creatureByName(ctx.db, s.base) as Partial<StatBlock> | null;
+      return { ...s, ac: s.ac ?? baseBlock?.ac, hp: s.hp ?? baseBlock?.hp, hpAvg: s.hpAvg ?? baseBlock?.hpAvg, init: s.init ?? baseBlock?.init, cr: s.cr ?? baseBlock?.cr, baseBlock };
     }),
   );
   // The GM's own stat block for a record of theirs: a book block and its changes.

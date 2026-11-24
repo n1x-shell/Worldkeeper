@@ -2,7 +2,7 @@ import { useRecordTypes } from '../components/recordTypes';
 import { RecordPictures } from '../components/RecordPictures';
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Archive, ArchiveRestore, Copy, Download, Network, Pencil, Star, AlertTriangle, ChevronRight, Undo2, Plus, Trash2, MoreHorizontal, Lock, History } from 'lucide-react';
+import { Archive, ArchiveRestore, Copy, Download, Network, Pencil, Star, AlertTriangle, ChevronRight, Undo2, Plus, Trash2, MoreHorizontal, Lock, History, Swords } from 'lucide-react';
 import {
   CANON_STATUSES,
   RELATIONSHIP_LABELS,
@@ -94,6 +94,8 @@ export function EntityPage() {
   const [tab, setTab] = useState<Tab>('record');
   const { toast, node: toastNode } = useToast();
   const [confirmArchive, setConfirmArchive] = useState(false);
+  // A stat block or hazard asked for from More, on a record that isn't a creature or a person.
+  const [askedBlock, setAskedBlock] = useState(false);
   // The record's details (links, mentions, revisions) go to the inspector while it is docked beside the page.
   const inspector = useInspectorPanel('Record details');
   const entityId = data?.entity.id ?? null;
@@ -218,6 +220,16 @@ export function EntityPage() {
                     void nav(`/e/${d.id}`);
                   },
                 },
+                ...(e.type === 'creature' || e.type === 'npc'
+                  ? []
+                  : [
+                      {
+                        label: 'Stat block or hazard',
+                        icon: <Swords size={14} />,
+                        hint: 'For a trap, a guardian or a dangerous place',
+                        onSelect: () => (setTab('record'), setAskedBlock(true)),
+                      },
+                    ]),
                 { label: 'Export', icon: <Download size={14} />, href: `/api/entities/${encodeURIComponent(e.id)}/export.md`, hint: 'Download as Markdown' },
                 e.archived
                   ? { label: 'Unarchive', icon: <ArchiveRestore size={14} />, onSelect: () => patch({ archived: false }, 'Restored from archive'), divider: true }
@@ -256,7 +268,7 @@ export function EntityPage() {
 
       {/* In the inspector while it is docked; otherwise in the record tab's side column. */}
       {inspector.inInspector && inspector.render(details)}
-      {tab === 'record' && <RecordTab data={data} debug={debug} fieldMap={fieldMap} details={inspector.inInspector ? null : details} onEdit={() => setTab('edit')} />}
+      {tab === 'record' && <RecordTab data={data} debug={debug} fieldMap={fieldMap} details={inspector.inInspector ? null : details} onEdit={() => setTab('edit')} askedBlock={askedBlock} onBlockClosed={() => setAskedBlock(false)} />}
       {tab === 'edit' && (
         <EntityEditor
           key={e.id}
@@ -426,12 +438,16 @@ function RecordTab({
   fieldMap,
   details,
   onEdit,
+  askedBlock,
+  onBlockClosed,
 }: {
   data: Detail;
   debug: boolean;
   fieldMap: [string, string][];
   details: ReactNode;
   onEdit: () => void;
+  askedBlock: boolean;
+  onBlockClosed: () => void;
 }) {
   const e = data.entity;
   const [ref, w] = useWidth<HTMLDivElement>();
@@ -498,7 +514,7 @@ function RecordTab({
       <aside className="space-y-4 min-w-0" aria-label="Record facts">
         <RecordPictures entityId={e.id} name={e.name} />
         {layout !== 'one' && glance}
-        {(e.type === 'creature' || e.type === 'npc') && <StatBlockPanel entityId={e.id} />}
+        <StatBlockPanel entityId={e.id} name={e.name} fights={e.type === 'creature' || e.type === 'npc'} asked={askedBlock} onClosed={onBlockClosed} />
         {details && <section className="panel elev-1 p-4" aria-label="Record details">{details}</section>}
         <TreasurePanel entityId={e.id} type={e.type} />
         <PartyTiesPanel entityId={e.id} />

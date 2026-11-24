@@ -1,10 +1,9 @@
 /** Matching the published Player Handbook's reveals, and opening links from the desktop app. */
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import request from 'supertest';
-import { tempContext } from './helpers';
+import { tempContext, tempDir } from './helpers';
 import { buildPlan, commitPlan } from '../server/src/import/importer';
 import type { SourceFile } from '../server/src/import/scan';
 import { getEntity, updateEntity } from '../server/src/repo/entities';
@@ -22,7 +21,7 @@ function library() {
   const ctx = tempContext();
   const files = [rec('SET-901', 'Tollbridge', 'vis/player', BODY), rec('SET-902', 'Gloam', 'vis/gm', BODY), rec('SET-903', 'Reedmarch', 'vis/player', BODY)];
   commitPlan(ctx.db, files, buildPlan(ctx.db, files, 'test'));
-  const textDir = fs.mkdtempSync(path.join(os.tmpdir(), 'wk-text-'));
+  const textDir = tempDir('wk-text-');
   fs.writeFileSync(path.join(textDir, 'towns.md'), '# Towns\n\n## Gloam\nA town of lamps.\n\n## Reedmarch\nReeds and herons.\n\n## Nowhere\nNo such place.\n');
   return { ctx, textDir };
 }

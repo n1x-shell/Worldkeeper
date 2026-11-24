@@ -1,6 +1,5 @@
 /** The library root (docs/LIBRARIES_PLAN.md step B1): libraries in one data folder, the upgrade, opening and switching. */
 import fs from 'node:fs';
-import os from 'node:os';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import request from 'supertest';
@@ -14,9 +13,9 @@ import { createEntity } from '../server/src/repo/entities.js';
 import { readIndex, writeIndex } from '../server/src/libraries.js';
 import { createBackup, listBackups } from '../server/src/backup/backup.js';
 import { exportFullWorldZip } from '../server/src/backup/exporter.js';
-import { tempContext } from './helpers.js';
+import { tempContext, tempDir } from './helpers.js';
 
-const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'wk-test-'));
+const tmp = () => tempDir('wk-test-');
 const rec = (name: string) => ({ name, type: 'settlement', realm: 'world', canon_status: 'CANON', aliases: [], tags: [], fields: [], body: `## A first look\n\n${name}.`, notes: '' }) as never;
 
 /** A data folder as v0.5 left it: the database, pictures and backups in the folder itself. */
