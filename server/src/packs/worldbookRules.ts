@@ -107,6 +107,23 @@ export function ruleRefs(db: DB, packId: string | null, packDir?: string): RuleR
     const p = (JSON.parse(fs.readFileSync(pools, 'utf8')) as { pools?: Record<string, Record<string, string[]>> }).pools ?? {};
     for (const tiers of Object.values(p)) for (const list of Object.values(tiers)) for (const name of list) add('item', name);
   }
+  // The creatures its stat blocks are built on ("uses the Owlbear stat block"): the GM's own for the library's records,
+  // or a worldbook's statblocks/ folder.
+  const base = (b: { base?: unknown }) => (typeof b.base === 'string' ? b.base.replace(/\s*\(.*\)\s*$/, '').trim() : '');
+  if (packId === null) {
+    for (const r of db.prepare(`SELECT s.data FROM statblocks s JOIN entities e ON e.id = s.entity_id WHERE e.pack_id IS NULL`).all() as { data: string }[]) {
+      const n = base(JSON.parse(r.data || '{}') as { base?: unknown });
+      if (n) add('creature', n);
+    }
+  } else if (packDir && fs.existsSync(path.join(packDir, 'statblocks'))) {
+    for (const f of fs.readdirSync(path.join(packDir, 'statblocks')).filter((x) => x.endsWith('.json'))) {
+      const d = (JSON.parse(fs.readFileSync(path.join(packDir, 'statblocks', f), 'utf8')) as { statblocks?: Record<string, { base?: unknown }> }).statblocks ?? {};
+      for (const b of Object.values(d)) {
+        const n = base(b);
+        if (n) add('creature', n);
+      }
+    }
+  }
   // The creatures its encounter tables roll ("2 Briar Wolves", "4 bandits and a bandit captain"), by the creature names
   // the GM's rules know, longest first, plurals too.
   const rows = db.prepare(`SELECT entries FROM random_tables WHERE kind = 'encounter' AND ${owner}`).all(...args) as { entries: string }[];

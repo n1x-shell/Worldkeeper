@@ -189,6 +189,35 @@ describe('worldbooks and the books', () => {
     expect(creatureByName(b.db, 'Inkdrake')).toMatchObject({ ac: 15, hpAvg: 60 });
   });
 
+  it('stat blocks travel, and the book creature one is built on counts like any other', async () => {
+    const a = tempContext();
+    const gm = createApp(a);
+    saveRulesPack(a.db, { id: 'test-bestiary', name: 'Test Bestiary', source: 'Test Bestiary of Testing' }, [
+      { kind: 'creature', name: 'Inkdrake', cls: '', data: { name: 'Inkdrake', meta: 'Large Dragon, Neutral', cr: '3', ac: 15, hpAvg: 60 } },
+    ]);
+    const warden = (await request(gm).post('/api/entities').send({ name: 'The Lighthouse Warden', type: 'npc', realm: 'world', body: '' })).body as { id: string };
+    await request(gm).put(`/api/statblocks/${warden.id}`).send({ base: 'Inkdrake', changes: 'Breathes ink, not fire.', tactics: 'Circles the lamp.', kind: 'creature' }).expect(200);
+    expect(ruleRefs(a.db, null)).toEqual([{ kind: 'creature', name: 'Inkdrake' }]);
+
+    // With players in mind, stat blocks stay home; shared whole, they travel.
+    const forPlayers = readWorldbook((await request(gm).get('/api/worldbooks/share').query({ name: 'Ink Coast', gmOnly: 'leave-out' }).buffer(true).parse(binary)).body as Buffer);
+    expect(forPlayers.files.some((f) => f.path.startsWith('statblocks/'))).toBe(false);
+    const file = (await request(gm).get('/api/worldbooks/share').query({ name: 'Ink Coast', books: 'safe' }).buffer(true).parse(binary)).body as Buffer;
+    const { manifest, files } = readWorldbook(file);
+    expect(manifest.shared?.counts.statblocks).toBe(1);
+    expect(JSON.parse(files.find((f) => f.path === 'statblocks/statblocks.json')!.data.toString('utf8')).statblocks[warden.id]).toMatchObject({ base: 'Inkdrake', changes: 'Breathes ink, not fire.' });
+
+    // Added where there's no bestiary: the warden's block is there, built on the stand-in.
+    const b = tempContext();
+    const gmB = createApp(b);
+    await request(gmB).post('/api/worldbooks/add').attach('file', file, 'Ink Coast.worldbook');
+    const started = (await request(gmB).post('/api/libraries/from-worldbook/ink-coast').send({})).body;
+    expect(started.books.missing).toEqual([{ book: 'Test Bestiary', things: [{ kind: 'creature', name: 'Inkdrake' }] }]);
+    const block = (await request(gmB).get(`/api/statblocks/${warden.id}`)).body;
+    expect(block).toMatchObject({ base: 'Inkdrake', changes: 'Breathes ink, not fire.', tactics: 'Circles the lamp.' });
+    expect(block.baseBlock).toMatchObject({ name: 'Inkdrake', source: expect.stringContaining('standing in for Inkdrake'), meta: expect.stringMatching(/Dragon/) });
+  });
+
   it('the Worldkeeper worldbook says which of its species and treasure aren’t in the SRD, by book where it knows', async () => {
     const ctx = tempContext();
     const gm = createApp(ctx);
