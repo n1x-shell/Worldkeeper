@@ -29,7 +29,8 @@ import { isDesktop, openInBrowser } from '../lib/desktop.js';
 import { handbookReveals } from '../player/handbookReveals.js';
 import { findPack, installPack, listPacks as listSettingPacks, requirePack, roles, uninstallPack } from '../packs/registry.js';
 import { updatePack } from '../packs/content.js';
-import { addWorldbookFile, buildWorldbook } from '../packs/share.js';
+import { addWorldbookFile, buildWorldbook, type SharedManifest } from '../packs/share.js';
+import { forgetStandIns, requireBooks, settleBooks, shareBooks } from '../packs/worldbookRules.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 300 * 1024 * 1024, files: 1 } });
 
@@ -286,9 +287,14 @@ export function libraryRoutes(ctx: AppContext) {
     '/setting-packs/:id/install',
     h((req) => {
       const id = String(req.params.id);
+      const found = findPack(id);
+      if (!found) throw notFound('Worldbook');
+      const rules = (found.manifest as SharedManifest).rules;
+      requireBooks(ctx.db, rules);
       const backup = createBackup(ctx.db, ctx.paths, `pre-install-${id}`);
       installPack(ctx.db, id);
-      return { backup: backup.file, ...updatePack(ctx.db, id, ctx.paths.uploadsDir) };
+      const result = updatePack(ctx.db, id, ctx.paths.uploadsDir);
+      return { backup: backup.file, ...result, books: settleBooks(ctx.db, id, found.dir, rules) };
     }),
   );
   r.post(
@@ -315,12 +321,26 @@ export function libraryRoutes(ctx: AppContext) {
         licence: q('licence'),
         version: q('version'),
         leaveOutGmOnly: q('gmOnly') === 'leave-out',
+        books: (q('books') ?? 'optional') as 'required' | 'optional' | 'safe',
+        swaps: (() => {
+          try {
+            const v = JSON.parse(q('swaps') ?? '{}') as unknown;
+            return v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, String(x)])) : {};
+          } catch {
+            return {};
+          }
+        })(),
       });
       const fileName = manifest.name.replace(/[^\w '-]/g, '').trim() || 'world';
       res.setHeader('Content-Type', 'application/zip');
       res.setHeader('Content-Disposition', `attachment; filename="${fileName}.worldbook"`);
       res.send(file);
     }),
+  );
+  // What sharing asks about: the books the world draws on, and safe mode's stand-ins.
+  r.get(
+    '/worldbooks/share/books',
+    h(() => shareBooks(ctx.db)),
   );
   // Add a .worldbook to this computer's worldbooks; then it's added to a library like any other.
   r.post(
@@ -338,6 +358,7 @@ export function libraryRoutes(ctx: AppContext) {
       const id = String(req.params.id);
       requirePack(ctx.db, id);
       const backup = createBackup(ctx.db, ctx.paths, `pre-uninstall-${id}`);
+      forgetStandIns(ctx.db, id);
       return { backup: backup.file, removed: uninstallPack(ctx.db, id) };
     }),
   );

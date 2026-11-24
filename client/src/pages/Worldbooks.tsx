@@ -7,7 +7,7 @@
 import { useRef, useState } from 'react';
 import { BookCopy, Download, LibraryBig, RefreshCw, Share2, Trash2, Upload } from 'lucide-react';
 import type { PackInfo } from '@shared/packs';
-import { api } from '../lib/api';
+import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { packsChanged, usePacks } from '../lib/packs';
 import { PageHeader } from '../components/ui/pageHeader';
@@ -17,10 +17,46 @@ import { ask, toast } from '../components/ui/overlays';
 import { Empty, ErrorBox, Loading } from '../components/ui/feedback';
 import { Check, Field } from '../components/ui/inputs';
 
+interface BooksReport {
+  mode: 'required' | 'optional' | 'safe' | null;
+  missing: { book: string; things: { kind: string; name: string }[] }[];
+  switchedOn: string[];
+  standIns: number;
+}
+
 interface UpdateResult {
   backup: string;
   records: number;
   clashes: { id: string; name: string }[];
+  books?: BooksReport;
+}
+
+const KIND_WORD: Record<string, [string, string]> = { species: ['species', 'species'], class: ['class', 'classes'], item: ['item', 'items'], creature: ['creature', 'creatures'] };
+/** "6 items, 2 species" */
+const thingCounts = (things: { kind: string }[]) =>
+  Object.entries(things.reduce<Record<string, number>>((n, t) => ((n[t.kind] = (n[t.kind] ?? 0) + 1), n), {}))
+    .map(([k, n]) => `${n} ${(KIND_WORD[k] ?? [k, `${k}s`])[n === 1 ? 0 : 1]}`)
+    .join(', ');
+
+/** What adding said about the books: what's missing, what was switched on, the stand-ins in use. */
+function booksSummary(b: BooksReport | undefined): string[] {
+  if (!b) return [];
+  const out: string[] = [];
+  if (b.switchedOn.length) out.push(`Switched on in this library: ${b.switchedOn.join(', ')}.`);
+  for (const m of b.missing)
+    out.push(
+      m.book === 'Not in your rules'
+        ? `Not in your rules: ${m.things
+            .map((t) => t.name)
+            .slice(0, 12)
+            .join(', ')}${m.things.length > 12 ? '…' : ''}. They show by name only.`
+        : `${m.book}, which you don't have: ${thingCounts(m.things)} (${m.things
+            .map((t) => t.name.replace(/\s*\([A-Za-z]{2,5}\)$/, ''))
+            .slice(0, 6)
+            .join(', ')}${m.things.length > 6 ? '…' : ''}).`,
+    );
+  if (b.standIns) out.push(`${b.standIns} open stand-in${b.standIns === 1 ? '' : 's'} in use until you have the book.`);
+  return out;
 }
 
 const MODULE_LABEL: Record<string, string> = {
@@ -42,10 +78,92 @@ interface Added {
   counts: Record<string, number>;
 }
 
-/** Start a new library with a worldbook, and open it. */
+/** Start a new library with a worldbook, and open it (saying first what it found about the books, once). */
 async function startLibrary(id: string) {
-  await api.post(`/api/libraries/from-worldbook/${encodeURIComponent(id)}`, {});
+  const r = await api.post<{ books: BooksReport; booksOnly: { on: boolean; keep: string[] } | null }>(`/api/libraries/from-worldbook/${encodeURIComponent(id)}`, {});
+  const lines = booksSummary(r.books);
+  if (r.booksOnly?.on)
+    lines.unshift(
+      `You have every book this world draws on, so the new library uses your books alone${r.booksOnly.keep.length ? `; the open rules stay for ${r.booksOnly.keep.map((k) => KIND_WORD[k]?.[1] ?? `${k}s`).join(', ')}, which your books don't have` : ''}. Change it in Settings → Rules packs → Books only.`,
+    );
+  if (lines.length)
+    await ask({
+      title: 'Your books',
+      body: (
+        <ul className="list-disc pl-5 space-y-1 text-sm">
+          {lines.map((l) => (
+            <li key={l}>{l}</li>
+          ))}
+        </ul>
+      ),
+      confirmLabel: 'Open the library',
+    });
   window.location.assign('/');
+}
+
+interface ShareBooks {
+  books: { name: string; things: { kind: string; name: string }[] }[];
+  standIns: { kind: string; name: string; book: string; standIn: string }[];
+  choices: Record<string, string[]>;
+  open: { id: string; name: string; source: string }[];
+  missing: { kind: string; name: string }[];
+}
+
+/** How the books a world draws on count when it's shared: required, optional, or safe mode with open stand-ins. */
+function BooksChoice({ mode, setMode, swaps, setSwaps }: { mode: string; setMode: (m: string) => void; swaps: Record<string, string>; setSwaps: (s: Record<string, string>) => void }) {
+  const { data } = useApi<ShareBooks>('/api/worldbooks/share/books');
+  if (!data) return null;
+  if (!data.books.length)
+    return (
+      <p className="text-sm text-dim" data-testid="share-books">
+        This world names nothing from a closed book, so anyone can add it.
+        {data.open.length ? ` The open rules it uses (${data.open.map((p) => p.name).join(', ')}) travel with it, with their credits.` : ''}
+      </p>
+    );
+  const opt = (key: string, label: string, hint: string) => (
+    <label className="flex items-start gap-2 text-sm cursor-pointer">
+      <input type="radio" name="books" checked={mode === key} onChange={() => setMode(key)} className="mt-1" />
+      <span>
+        <span className="font-medium">{label}</span>
+        <span className="block text-xs text-dim">{hint}</span>
+      </span>
+    </label>
+  );
+  return (
+    <div className="space-y-2 rounded-md border border-line/70 p-3" data-testid="share-books">
+      <div className="text-sm">
+        It draws on {data.books.length === 1 ? 'a book' : 'books'} of yours: {data.books.map((b) => `${b.name} (${thingCounts(b.things)})`).join('; ')}. A worldbook never holds book text, only names.
+        How should the books count?
+      </div>
+      {opt('required', 'Books required', 'It can’t be added without these books.')}
+      {opt('optional', 'Books optional', 'It can be added without them, with a warning; those things show by name only.')}
+      {opt('safe', 'Safe mode', 'Anyone can add it: each thing only a book has gets an open stand-in of the same kind. A GM with the book gets the original.')}
+      {mode === 'safe' && (
+        <ul className="divide-y divide-line/60 text-sm">
+          {data.standIns.map((x) => {
+            const key = `${x.kind}:${x.name}`;
+            return (
+              <li key={key} className="flex flex-wrap items-center gap-2 py-1.5">
+                <span className="flex-1 min-w-48">
+                  {x.name}{' '}
+                  <span className="text-xs text-dim">
+                    ({x.kind}, {x.book})
+                  </span>
+                </span>
+                <span className="text-dim">→</span>
+                <select className="input w-auto" aria-label={`Stand-in for ${x.name}`} value={swaps[key] ?? x.standIn} onChange={(e) => setSwaps({ ...swaps, [key]: e.target.value })}>
+                  {(data.choices[x.kind] ?? [x.standIn]).map((c) => (
+                    <option key={c}>{c}</option>
+                  ))}
+                </select>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      {!!data.open.length && <p className="text-xs text-dim">The open rules it uses ({data.open.map((p) => p.name).join(', ')}) travel with it, with their credits.</p>}
+    </div>
+  );
 }
 
 /** Share as a worldbook: the open library's own world, as a .worldbook file. */
@@ -53,12 +171,16 @@ function SharePanel({ onClose }: { onClose: () => void }) {
   const { realms } = useAppState();
   const world = realms.find((r) => r.id === 'world');
   const [f, setF] = useState({ name: world?.name && world.name !== 'The World' ? world.name : '', description: world?.description ?? '', author: '', licence: '', gmOnly: false });
+  const [mode, setMode] = useState('optional');
+  const [swaps, setSwaps] = useState<Record<string, string>>({});
   const href = `/api/worldbooks/share?${new URLSearchParams({
     name: f.name,
     description: f.description,
     author: f.author,
     licence: f.licence,
     gmOnly: f.gmOnly ? 'leave-out' : 'keep',
+    books: mode,
+    swaps: JSON.stringify(mode === 'safe' ? swaps : {}),
   }).toString()}`;
   return (
     <section data-testid="share-worldbook">
@@ -82,6 +204,7 @@ function SharePanel({ onClose }: { onClose: () => void }) {
             <input className="input" value={f.licence} onChange={(e) => setF({ ...f, licence: e.target.value })} />
           </Field>
         </div>
+        <BooksChoice mode={mode} setMode={setMode} swaps={swaps} setSwaps={setSwaps} />
         <Check checked={f.gmOnly} onChange={(v) => setF({ ...f, gmOnly: v })} label="Leave out GM-only sections">
           <span className="text-sm">Leave out GM-only sections (for a world shared with players in mind)</span>
         </Check>
@@ -106,6 +229,7 @@ export function WorldbooksPage() {
   const [sharing, setSharing] = useState(false);
   const [added, setAdded] = useState<Added | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [books, setBooks] = useState<{ pack: string; lines: string[] } | null>(null);
   const file = useRef<HTMLInputElement>(null);
 
   const after = async () => {
@@ -120,6 +244,7 @@ export function WorldbooksPage() {
       } else {
         const r = await api.post<UpdateResult>(`/api/setting-packs/${p.id}/${what}`, {});
         toast(`${p.name} ${what === 'install' ? 'added to this library' : 'updated'}: ${r.records} records. A backup was taken first.`);
+        setBooks(r.books && booksSummary(r.books).length ? { pack: p.name, lines: booksSummary(r.books) } : null);
         setClashes(r.clashes.length ? { pack: p.name, list: r.clashes } : null);
       }
       await after();
@@ -172,13 +297,17 @@ export function WorldbooksPage() {
           <Card className="space-y-2">
             <div className="font-display text-gold text-lg">{added.name} is on this computer now</div>
             <p className="text-sm text-dim">
-              {[added.description, added.counts.records != null && `${added.counts.records} record${added.counts.records === 1 ? '' : 's'}`, added.counts.maps ? `${added.counts.maps} map${added.counts.maps === 1 ? '' : 's'}` : null]
+              {[
+                added.description,
+                added.counts.records != null && `${added.counts.records} record${added.counts.records === 1 ? '' : 's'}`,
+                added.counts.maps ? `${added.counts.maps} map${added.counts.maps === 1 ? '' : 's'}` : null,
+              ]
                 .filter(Boolean)
                 .join(' · ')}
             </p>
             <div className="flex flex-wrap gap-2">
-              <button className="btn-primary" disabled={!!busy} onClick={() => (setBusy(added.id), void startLibrary(added.id).finally(() => setBusy(null)))}>
-                <LibraryBig size={14} /> {busy === added.id ? 'Starting…' : 'Start a library with it'}
+              <button className="btn-primary" disabled={!!busy} onClick={() => (setBusy(`start:${added.id}`), void startLibrary(added.id).finally(() => setBusy(null)))}>
+                <LibraryBig size={14} /> {busy === `start:${added.id}` ? 'Starting…' : 'Start a library with it'}
               </button>
               <button
                 className="btn"
@@ -232,7 +361,7 @@ export function WorldbooksPage() {
                 {!p.installed ? (
                   <>
                     {p.source === 'installed' && (
-                      <button className="btn" disabled={!!busy} onClick={() => (setBusy(p.id), void startLibrary(p.id).finally(() => setBusy(null)))}>
+                      <button className="btn" disabled={!!busy} onClick={() => (setBusy(`start:${p.id}`), void startLibrary(p.id).finally(() => setBusy(null)))}>
                         <LibraryBig size={14} /> Start a library with it
                       </button>
                     )}
@@ -268,6 +397,18 @@ export function WorldbooksPage() {
             </div>
           </Card>
         ))
+      )}
+      {books && (
+        <section data-testid="books-report">
+          <Card className="space-y-1">
+            <div className="font-display text-gold">{books.pack} and your books</div>
+            <ul className="text-sm list-disc pl-5 space-y-1">
+              {books.lines.map((l) => (
+                <li key={l}>{l}</li>
+              ))}
+            </ul>
+          </Card>
+        </section>
       )}
       {clashes && (
         <Card className="space-y-1">

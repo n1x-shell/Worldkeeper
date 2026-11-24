@@ -18,6 +18,8 @@ import { srdCounts } from './bookData.js';
 import { SETTING_PACK, setSettingPack, settingPackCounts, settingPackOn } from './settingPack.js';
 import { addRule, emptyRulesView, srdRulesView, type RulesView } from '../../../shared/rulesView.js';
 import { isOpenSource, openRulesFor } from './booksOnly.js';
+import { standIns, standInSource } from './standIns.js';
+import { byName } from '../../../shared/rulesView.js';
 
 type DB = Database.Database;
 export const RULE_KINDS = ['spell', 'species', 'class', 'subclass', 'background', 'feat'] as const;
@@ -283,6 +285,16 @@ export function rulesView(db: DB): RulesView {
     view.packs.push(p);
     for (const r of rows.all(p.id) as { kind: RuleKind; name: string; cls: string; data: string }[])
       if (!openPack || open(r.kind)) addRule(view, r.kind, r.name, r.cls, JSON.parse(r.data), p.source || p.name);
+  }
+  // Safe mode's stand-ins: where the original isn't in this library's rules, its open stand-in takes its name.
+  for (const s of standIns(db)) {
+    if (s.kind === 'species' && !byName(view.species, s.name)) {
+      const sub = byName(view.species, s.standIn);
+      if (sub) view.species[s.name] = { ...sub, source: standInSource(s, sub.source ?? s.standIn) };
+    } else if (s.kind === 'class' && !byName(view.classes, s.name)) {
+      const sub = byName(view.classes, s.standIn);
+      if (sub) view.classes[s.name] = { features: sub.features, subclasses: sub.subclasses };
+    }
   }
   view.spells.sort((a, b) => a.name.localeCompare(b.name));
   return view;

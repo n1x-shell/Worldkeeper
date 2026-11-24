@@ -93,7 +93,7 @@ export function StartWorld() {
   const [shape, setShape] = useState<Shape>('one');
   const [rows, setRows] = useState<Row[]>(SHAPES[0].rows);
   // The Worldkeeper world.
-  const [installed, setInstalled] = useState<{ records: number; realms: string[]; } | null>(null);
+  const [installed, setInstalled] = useState<{ records: number; realms: string[]; fromBooks: { book: string; n: number }[] } | null>(null);
   // Rules and modules.
   const [modules, setModules] = useState<ModuleRow[]>([]);
   const [settingRules, setSettingRules] = useState(true);
@@ -135,11 +135,11 @@ export function StartWorld() {
     setErr(null);
     setBusy(true);
     try {
-      await api.post('/api/setting-packs/worldkeeper/install');
+      const added = await api.post<{ books?: { missing: { book: string; things: unknown[] }[] } }>('/api/setting-packs/worldkeeper/install');
       await Promise.all([reloadIndex(), reloadRealms(), reloadTypes(), reloadMeta(), packsChanged(), reloadModules()]);
       const meta = await api.get<{ entities: number }>('/api/meta');
       const realms = await api.get<{ name: string }[]>('/api/realms');
-      setInstalled({ records: meta.entities, realms: realms.map((r) => r.name) });
+      setInstalled({ records: meta.entities, realms: realms.map((r) => r.name), fromBooks: (added.books?.missing ?? []).map((m) => ({ book: m.book, n: m.things.length })) });
       setModules([]);
     } catch (x) {
       setErr((x as Error).message);
@@ -363,8 +363,8 @@ export function StartWorld() {
       {step === 'setting' && (
         <Card className="space-y-4">
           <p className="text-sm">
-            The Worldkeeper worldbook brings the whole world: its realms (the world, Aetheris, Kaelmar and the Ethereal Realm), record types and templates, every record with its source documents,
-            the maps, adventures and tables, its own rules, and its systems as modules you can switch off.
+            The Worldkeeper worldbook brings the whole world: its realms (the world, Aetheris, Kaelmar and the Ethereal Realm), record types and templates, every record with its source documents, the
+            maps, adventures and tables, its own rules, and its systems as modules you can switch off.
           </p>
           {!installed ? (
             <button type="button" className="btn-primary" disabled={busy} onClick={() => void install()}>
@@ -375,10 +375,14 @@ export function StartWorld() {
               <div className="flex items-center gap-2 font-medium text-ink">
                 <Check size={15} className="text-good" /> Added
               </div>
-              <div>
-                {installed.records.toLocaleString()} records.
-              </div>
+              <div>{installed.records.toLocaleString()} records.</div>
               <div>Realms: {installed.realms.join(', ')}.</div>
+              {!!installed.fromBooks.length && (
+                <div className="text-dim">
+                  Some things come from books you haven&apos;t imported, and show by name only until you do (Settings → Rules packs):{' '}
+                  {installed.fromBooks.map((b) => `${b.book === 'Not in your rules' ? 'other books' : b.book} (${b.n})`).join(', ')}.
+                </div>
+              )}
             </div>
           )}
         </Card>
