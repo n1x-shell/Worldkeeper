@@ -371,6 +371,36 @@ export function WorldbooksPage() {
                         <Download size={14} /> {busy === p.id ? 'Adding…' : 'Add to this library'}
                       </button>
                     )}
+                    {p.source === 'installed' && (
+                      <button
+                        className="btn-ghost"
+                        disabled={!!busy}
+                        aria-label={`Remove ${p.name} from this computer`}
+                        title="Remove from this computer"
+                        onClick={async () => {
+                          if (
+                            !(await ask({
+                              title: `Remove ${p.name} from this computer?`,
+                              body: 'It goes from the worldbooks you can add, in every library. If a library still has it, you’ll be told which: remove it from that library first. You can add it again from its .worldbook file.',
+                              confirmLabel: 'Remove from this computer',
+                              danger: true,
+                            }))
+                          )
+                            return;
+                          setErr(null);
+                          try {
+                            await api.del(`/api/worldbooks/${encodeURIComponent(p.id)}`);
+                            if (added?.id === p.id) setAdded(null);
+                            toast(`${p.name} removed from this computer.`);
+                            await packsChanged();
+                          } catch (x) {
+                            setErr((x as Error).message);
+                          }
+                        }}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    )}
                   </>
                 ) : (
                   <>

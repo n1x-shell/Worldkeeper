@@ -106,6 +106,7 @@ You don't have to write a worldbook by hand. **Library → Worldbooks → Share 
 - **Leave out GM-only sections** for a world shared with players in mind.
 - **Adding one** checks it first (only the folders and kinds of file a worldbook holds, nothing outside its folder, sizes, an id the app's own worldbooks don't use) and puts it with this computer's worldbooks, for every library. Then **Start a library with it** (a new library named after the world, opened) or **Add to this library**. A shared worldbook never carries an import profile, cleaning or handbook rules: only the worldbooks that come with the app may.
 - Adventures and random tables aren't shared yet.
+- **Remove from this computer** (the bin on its card) takes a worldbook you added out of the ones you can add, once no library has it; the app names any library that still does. The app's own worldbooks stay.
 
 ## Worldbooks and the GM's books
 

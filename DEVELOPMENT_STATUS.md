@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.8.0_
+_Last updated: 2026-11-24 · v0.8.1_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,14 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.8.1: remove a worldbook from this computer
+
+First step of [docs/PLAN_0.9.md](docs/PLAN_0.9.md) (after Worldbooks; decisions in DEC-910, "After Worldbooks").
+
+- **`DELETE /api/worldbooks/:id`** (`server/src/routes/libraries.ts`): refused while any library has it (`librariesWithPack` in `server/src/libraries.ts` reads each library's database read-only, archived ones too; one that can't be read counts as having it), naming them; then `removeWorldbookFile` (`server/src/packs/share.ts`) deletes `data/shared/packs/<id>`. Never one that comes with the app; never anything in a library.
+- **Library → Worldbooks:** a bin on each worldbook added to the computer, asking first; the refusal names the libraries.
+- **Tests:** `tests/worldbookShare.test.ts` (refused while a library has it, gone once removed from it, the app's own refused, an unknown id).
 
 ## v0.8.0 “Worldbooks” (step W4)
 

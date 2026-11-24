@@ -15,6 +15,8 @@ Status: agreed with the owner, November 2026. Decisions are in DEC-910 ("After W
 
 ### v0.8.1: remove a worldbook from this computer
 
+Done in v0.8.1.
+
 - **Library → Worldbooks:** a worldbook added to the computer (not one that comes with the app) gets **Remove from this computer**.
 - **If a library uses it**, the app says which ("Ostmark is in 2 libraries: Ostmark, Test") and refuses, until it's removed from those libraries first; nothing is ever deleted from a library this way.
 - Its stand-ins and open rules stay with the libraries that had it; a backup isn't needed (the file came from somewhere), but the app asks first.

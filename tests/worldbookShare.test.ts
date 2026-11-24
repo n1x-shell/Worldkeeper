@@ -115,6 +115,30 @@ describe('worldbooks shared between GMs', () => {
     expect((await request(gmB).get('/api/entities')).body).toEqual([]);
   });
 
+  it('is removed from the computer only once no library has it', async () => {
+    const a = tempContext();
+    const gmA = createApp(a);
+    await request(gmA).post('/api/entities').send({ name: 'Brennhold', type: 'settlement', realm: 'world', body: '' });
+    const file = (await request(gmA).get('/api/worldbooks/share').query({ name: 'The Isle' }).buffer(true).parse(binary)).body as Buffer;
+    const b = tempContext();
+    const gmB = createApp(b);
+    await request(gmB).post('/api/worldbooks/add').attach('file', file, 'The Isle.worldbook');
+    // A library that has it: refused, naming the library.
+    const started = (await request(gmB).post('/api/libraries/from-worldbook/the-isle').send({})).body;
+    const refused = await request(gmB).delete('/api/worldbooks/the-isle');
+    expect(refused.status).toBe(400);
+    expect(refused.body.error).toContain(`is in a library: ${started.library.name}`);
+    // Removed from that library, it can go; the library keeps nothing of it and nothing else changes.
+    await request(gmB).delete('/api/setting-packs/the-isle').expect(200);
+    const gone = await request(gmB).delete('/api/worldbooks/the-isle');
+    expect(gone.status).toBe(200);
+    expect(gone.body.packs.map((p: { id: string }) => p.id)).not.toContain('the-isle');
+    expect((await request(gmB).post('/api/setting-packs/the-isle/install')).status).toBe(404);
+    // The app's own worldbooks can't be removed from the computer.
+    expect((await request(gmB).delete('/api/worldbooks/worldkeeper')).body.error).toMatch(/comes with the app/);
+    expect((await request(gmB).delete('/api/worldbooks/nothing-here')).status).toBe(400);
+  });
+
   it('refuses a file that is not a worldbook, or one that reaches outside its folder', () => {
     const pack = JSON.stringify({ id: 'isle', name: 'The Isle', version: '1', realms: [], types: [], roles: {}, modules: [] });
     expect(() => readWorldbook(Buffer.from('not a zip'))).toThrow(/isn’t a ZIP/);

@@ -6,12 +6,12 @@ import Database from 'better-sqlite3';
 import type { AppContext } from '../context.js';
 import { h } from './util.js';
 import { badRequest, notFound } from '../lib/errors.js';
-import { findPack, installPack } from '../packs/registry.js';
+import { findPack, installPack, listPacks as listWorldbooks } from '../packs/registry.js';
 import { updatePack } from '../packs/content.js';
-import { adoptWorldbookRealms, type SharedManifest } from '../packs/share.js';
+import { adoptWorldbookRealms, removeWorldbookFile, type SharedManifest } from '../packs/share.js';
 import { hasEveryBook, requireBooks, settleBooks } from '../packs/worldbookRules.js';
 import { checkBooksOnly, setBooksOnly } from '../repo/booksOnly.js';
-import { createLibrary, discardNewLibrary, libraryDir, libraryEntry, readIndex, recordCount, renameLibrary, setArchived } from '../libraries.js';
+import { createLibrary, discardNewLibrary, librariesWithPack, libraryDir, libraryEntry, readIndex, recordCount, renameLibrary, setArchived } from '../libraries.js';
 import { importFullWorldZip } from '../backup/exporter.js';
 import { exportInstallation, importInstallation } from '../backup/installation.js';
 import { isDesktop, openFolder } from '../lib/desktop.js';
@@ -131,7 +131,12 @@ export function librariesRoutes(ctx: AppContext) {
     h((req) => {
       const found = findPack(String(req.params.id));
       if (!found) throw notFound('Worldbook');
-      const e = createLibrary(root(), String(req.body?.name ?? '').trim().slice(0, 120) || found.manifest.name);
+      const e = createLibrary(
+        root(),
+        String(req.body?.name ?? '')
+          .trim()
+          .slice(0, 120) || found.manifest.name,
+      );
       const before = ctx.paths.libraryId;
       ctx.openLibrary(e.id);
       try {
@@ -151,6 +156,20 @@ export function librariesRoutes(ctx: AppContext) {
         discardNewLibrary(root(), e.id);
         throw err;
       }
+    }),
+  );
+  // Remove a worldbook from this computer, once no library has it (docs/PLAN_0.9.md, v0.8.1).
+  r.delete(
+    '/worldbooks/:id',
+    h((req) => {
+      const id = String(req.params.id);
+      const using = librariesWithPack(root(), id);
+      if (using.length)
+        throw badRequest(
+          `${findPack(id)?.manifest.name ?? id} is in ${using.length === 1 ? 'a library' : `${using.length} libraries`}: ${using.map((l) => l.name).join(', ')}. Remove it from ${using.length === 1 ? 'that library' : 'those'} first (Library → Worldbooks there).`,
+        );
+      removeWorldbookFile(id);
+      return { packs: listWorldbooks(ctx.db) };
     }),
   );
   // Back up everything: every library and what they share, in one file (not the publishing token).
