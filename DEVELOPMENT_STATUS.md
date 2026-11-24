@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.9.0_
+_Last updated: 2026-11-24 · v0.9.1_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,10 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.1: the Windows installer builds again
+
+- **The desktop build failed on Windows** for v0.8.0 and v0.9.0 (macOS and Linux built): `scripts/desktop-prepare.mjs` checks that the bundled server starts, then deleted the check's temporary data folder while the server process was still exiting, and Windows refuses to delete files a process still has open (`EPERM` on `wk-desktop-check-…`). It now waits for the server to exit, retries the delete while Windows releases the files, and never fails the build over that temporary folder.
 
 ## v0.9.0: the world's own species
 
