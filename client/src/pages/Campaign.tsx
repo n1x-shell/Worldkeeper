@@ -12,6 +12,7 @@ import { ask, askText, AutoTextarea, Badge, Card, Check as CheckBox, DataTable, 
 import { DatePicker } from '../components/DatePicker';
 import { GettingStarted } from '../components/GettingStarted';
 import { HandbookAddress } from '../components/HandbookAddress';
+import { RecentChanges } from '../components/RecentChanges';
 import { formatDate, type CalendarDef, type WDate } from '../../../shared/calendar';
 import { EntityMultiPicker, EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
@@ -308,18 +309,24 @@ export function ActiveCampaign() {
             />
           </Card>
           <HandbookAddress campaignId={c.id} title={c.title} />
-          <StateTable rows={data.state} onChange={reload} />
+          <StateTable rows={data.state} onChange={reload} campaignId={c.id} />
         </div>
       </div>
     </div>
   );
 }
 
-export function StateTable({ rows, onChange, title = 'Campaign-specific world changes' }: { rows: StateRow[]; onChange: () => void; title?: string }) {
+export function StateTable({ rows, onChange, title = 'Campaign-specific world changes', campaignId }: { rows: StateRow[]; onChange: () => void; title?: string; campaignId?: number }) {
+  const cid = campaignId ?? rows[0]?.campaign_id;
   const [msg, setMsg] = useState<string | null>(null);
   return (
     <Card title={title} className="text-sm">
       <p className="text-xs text-dim mb-2">Only true in this campaign.</p>
+      {cid != null && (
+        <div className="mb-2">
+          <RecentChanges campaignId={cid} watch={rows} onUndone={onChange} limit={3} />
+        </div>
+      )}
       {msg && <div className="text-ok text-xs mb-1">{msg}</div>}
       <ul className="space-y-1.5 max-h-96 overflow-auto">
         {rows

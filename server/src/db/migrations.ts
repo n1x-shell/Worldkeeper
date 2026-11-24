@@ -1074,6 +1074,33 @@ CREATE TABLE rules_pack_switches (
 );
 `,
   },
+  {
+    version: 31,
+    name: 'undo for faction plans and campaign changes',
+    // One GM action (record a change, advance a plan, edit or delete one) is one undo step: triggers (made when the
+    // library opens, repo/undo.ts) record each row's before and after while an action runs.
+    sql: `
+CREATE TABLE undo_actions (
+  id INTEGER PRIMARY KEY,
+  label TEXT NOT NULL,
+  campaign_id INTEGER,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  undone_at TEXT
+);
+CREATE TABLE undo_rows (
+  id INTEGER PRIMARY KEY,
+  action_id INTEGER REFERENCES undo_actions(id) ON DELETE CASCADE,
+  table_name TEXT NOT NULL,
+  row_id INTEGER NOT NULL,
+  op TEXT NOT NULL CHECK (op IN ('insert', 'update', 'delete')),
+  before TEXT,
+  after TEXT
+);
+CREATE INDEX undo_rows_action ON undo_rows(action_id);
+CREATE TABLE undo_recording (singleton INTEGER PRIMARY KEY CHECK (singleton = 1), recording INTEGER NOT NULL DEFAULT 0);
+INSERT INTO undo_recording (singleton, recording) VALUES (1, 0);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

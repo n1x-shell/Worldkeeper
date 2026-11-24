@@ -8,6 +8,7 @@ import { applyDamage, applyHealing, newCombatant, nextTurn, previousTurn, rollDi
 import { api, qs, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary, StateRow } from '../lib/types';
+import { RecentChanges } from '../components/RecentChanges';
 import { ask, askText, AutoTextarea, Badge, CanonFlags, Card, ConditionChips, DataTable, Empty, EntityLink, ErrorBox, Field, HpBar, HpStepper, Loading, PageHeader, SaveStatus, Section, Segmented, Toggle } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
 import { StatBlockById } from '../components/StatBlock';
@@ -744,6 +745,7 @@ export function AgendasPage() {
           <Plus size={14} /> Add plan
         </button>
       </Card>
+      <RecentChanges campaignId={activeCampaignId} watch={data} onUndone={() => void reload()} />
       {byFaction.map(([fid, plans]) => (
         <Card key={fid}>
           <EntityLink id={fid} className="font-display text-lg" />

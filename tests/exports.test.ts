@@ -15,6 +15,9 @@ const NOT_EXPORTED: Record<string, string> = {
   rules_packs: "your books' rules: imported again from your own copy, never carried with a world",
   rules_entries: "your books' rules (as above)",
   rules_pack_switches: "which of your books' rules this library uses: they're shared by every library, and never carried with a world",
+  undo_actions: 'the last changes to plans and campaign state, for Undo: about this computer, not the world',
+  undo_rows: 'what each of those changes did (as above)',
+  undo_recording: 'a switch the undo triggers read while a change runs',
   schema_migrations: 'the database version, written by the app itself',
 };
 const SEARCH = /^search_index/;

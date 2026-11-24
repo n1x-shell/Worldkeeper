@@ -13,6 +13,7 @@ import { adoptCampaignDates, adoptSessionDates, adoptTimelineDates } from './rep
 import { adoptTableBands } from './repo/tables.js';
 import { adoptHandbookCodes } from './repo/handbookCodes.js';
 import { adoptSharedRules, attachSharedRules } from './repo/sharedRules.js';
+import { ensureUndoTriggers } from './repo/undo.js';
 
 /** Holds the live database handle so a restore can swap it without restarting the server. */
 export class AppContext {
@@ -32,6 +33,7 @@ export class AppContext {
     // The books' rules every library shares; rules this library kept itself (from before) move there.
     attachSharedRules(db, path.join(this.paths.sharedDir, 'rules.db'));
     adoptSharedRules(db);
+    ensureUndoTriggers(db);
     syncBuiltinTypes(db);
     syncBuiltinTemplates(db);
     syncInstalledPacks(db);
