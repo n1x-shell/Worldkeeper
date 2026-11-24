@@ -3,7 +3,7 @@ import type { AppContext } from '../context.js';
 import { h, intParam } from './util.js';
 import { activeCampaignId, playerCampaign, playerCampaigns, playerEntities, playerEntity, playerMaps, playerRealms, playerSearch, playerTypes } from '../player/projection.js';
 import { playerFactionWeb } from '../repo/factionWeb.js';
-import { notFound } from '../lib/errors.js';
+import { HttpError, notFound } from '../lib/errors.js';
 import { playerLive } from '../repo/handouts.js';
 import { characterIdByCode, playerCharacterPage, updatePlayerCharacterPage } from '../repo/characterPages.js';
 import { characterLog, logged } from '../repo/characterLog.js';
@@ -12,6 +12,10 @@ import { itemByName } from '../repo/bookData.js';
 import { modulesOn } from '../repo/modules.js';
 import { removePortrait, savePortrait } from '../repo/portraits.js';
 import { campaignByHandbookCode } from '../repo/handbookCodes.js';
+
+const appName = (ctx: AppContext) => (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper';
+/** Whether the table answers only campaign addresses (Settings, per library). */
+export const addressesOnly = (ctx: AppContext) => (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'table_addresses_only'`).get() as { value: string } | undefined)?.value === 'on';
 
 /** The campaign a request's handbook address names (set for /c/:code only). */
 const codedCampaign = new WeakMap<Request, number>();
@@ -33,6 +37,18 @@ export function playerRoutes(ctx: AppContext) {
   });
   mountPlayerRoutes(ctx, coded, (req) => codedCampaign.get(req)!, true);
   r.use('/c/:handbook', coded);
+  // Campaign addresses only (a setting): the table answers the plain address only with what a player needs to find
+  // their own campaign's address: the app's name, their character's page (which names it), and pictures. The GM's own
+  // preview (/player in the GM app) is never limited.
+  r.use((req, res, next) => {
+    if (ctx.mode !== 'player' || !addressesOnly(ctx)) return next();
+    if (req.method === 'GET' && req.path === '/info') {
+      res.json({ mode: ctx.mode, appName: appName(ctx), addressesOnly: true, modules: [], realms: [], types: [] });
+      return;
+    }
+    if (req.path.startsWith('/me/') || req.path.startsWith('/uploads/')) return next();
+    next(new HttpError(403, "This table opens each campaign at its own address: ask your GM for your campaign's code."));
+  });
   // The plain address: the active campaign, as before campaigns had addresses of their own.
   mountPlayerRoutes(ctx, r, () => activeCampaignId(ctx.db), false);
   return r;

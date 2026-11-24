@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { Copy, Radio, RefreshCw } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { qrMatrix, qrSvgPath } from '@shared/qr';
-import { Card, ask, toast } from './ui';
+import { Card, Check, ask, toast } from './ui';
 
 interface Handbook {
   code: string;
@@ -15,6 +15,8 @@ interface Handbook {
   port: number;
   /** Whether the table (the player-only server on the network) is open. */
   table_open?: boolean;
+  /** Whether the table answers only campaign addresses (not the plain /player). */
+  addresses_only?: boolean;
 }
 
 /** Open or close the table from the GM app: the players' handbook on this computer's network. */
@@ -65,6 +67,16 @@ export function HandbookAddress({ campaignId, title }: { campaignId: number; tit
           {data.table_open ? 'Close the table' : 'Open the table'}
         </button>
       </div>
+      <Check
+        checked={!!data.addresses_only}
+        onChange={async (on) => {
+          await api.put('/api/settings', { table_addresses_only: on ? 'on' : 'off' });
+          setData({ ...data, addresses_only: on });
+        }}
+        hint="With two groups playing at once: the table's plain address shows no campaign, so no one lands in another group's handbook. A character's link still finds its campaign."
+      >
+        <span className="text-xs">Only campaign addresses on the table</span>
+      </Check>
       <div className="flex flex-wrap items-start gap-3">
         <QrCode text={url} label={`QR code for ${url}`} />
         <div className="min-w-0 flex-1 space-y-1.5">

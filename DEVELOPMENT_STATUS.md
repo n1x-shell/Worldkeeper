@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.6.1_
+_Last updated: 2026-11-24 · v0.6.2_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,12 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.6.2: campaign addresses only
+
+- **A setting per library**, `table_addresses_only` (Settings API allow-list; off by default): on the table (player mode, including the table opened from the GM app), the plain `/api/player` answers only `/info` (the app's name and `addressesOnly`, no realms or types), a character's page (`/me/…`, which names its campaign's handbook) and pictures; everything else is 403. Campaign addresses work as before; the GM's own `/player` preview is never limited.
+- **Client:** `PlainHandbookGate` (`client/src/player/CampaignHandbook.tsx`) wraps the plain handbook: on such a table, a character's link goes on to `/player/c/<handbook>/me/<code>`, and anyone else gets a box for their campaign's code. The campaign's handbook card has **Only campaign addresses on the table**; its data adds `addresses_only`.
+- **Tests:** `tests/handbookAddress.test.ts` adds the plain address refused but for info, a character's page and pictures; campaign addresses unchanged; the GM preview unlimited; off again. A browser check: the code box, a lower-case code, a character's link sent on to its campaign's address, the GM preview.
 
 ## v0.6.1: open the table
 
@@ -500,7 +506,7 @@ The first step of [docs/OWN_WORLD_PLAN.md](docs/OWN_WORLD_PLAN.md). Realms are n
 ## Known issues
 
 - The desktop app is about 140 MB, most of it the bundled Node.js runtime.
-- The plain table server address, `/player`, shows the active campaign; with two groups playing at once, each should use its campaign's own address. A handbook code keeps groups apart; it is not a password.
+- A handbook code keeps groups apart; it is not a password. (With two groups at once, turn on **Only campaign addresses on the table**.)
 - The QR codes come from a small encoder in the app (`shared/qr.ts`), checked against the standard's worked example and a reader in the tests; scan one with a phone before relying on it at the table.
 - A library's backups hold its own database and pictures, not `shared/` (your books' rules): import them again after restoring on another computer.
 

@@ -78,6 +78,7 @@ const TemplatesPage = page(() => import('./pages/Templates'), 'TemplatesPage');
 const SettingPacksPage = page(() => import('./pages/SettingPacks'), 'SettingPacksPage');
 const PlayerApp = page(() => import('./player/PlayerApp'), 'PlayerApp');
 const CampaignHandbook = page(() => import('./player/CampaignHandbook'), 'CampaignHandbook');
+const PlainHandbookGate = page(() => import('./player/CampaignHandbook'), 'PlainHandbookGate');
 const PublishPage = page(() => import('./pages/Publish'), 'PublishPage');
 const StyleGuidePage = page(() => import('./pages/StyleGuide'), 'StyleGuidePage');
 
@@ -106,7 +107,9 @@ export function App() {
           path="/player/*"
           element={
             <Suspense fallback={<Loading />}>
-              <PlayerApp />
+              <PlainHandbookGate>
+                <PlayerApp />
+              </PlainHandbookGate>
             </Suspense>
           }
         />

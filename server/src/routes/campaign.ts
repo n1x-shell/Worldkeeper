@@ -73,11 +73,12 @@ import { bookCounts, bookCreature, bookTreasure, bookCreatureIndex, bookCreature
 import { characterPage, renewCharacterCode, updateCharacterPage } from '../repo/characterPages.js';
 import { handbookCode, renewHandbookCode } from '../repo/handbookCodes.js';
 import { tableStatus } from '../table.js';
+import { addressesOnly } from './player.js';
 
 /** Where players reach the table server: this computer's network addresses, the port, and whether it's open. */
-function tableAddress() {
+function tableAddress(ctx: AppContext) {
   const t = tableStatus();
-  return { addresses: t.addresses, port: t.port, table_open: t.open };
+  return { addresses: t.addresses, port: t.port, table_open: t.open, addresses_only: addressesOnly(ctx) };
 }
 
 export function campaignRoutes(ctx: AppContext) {
@@ -101,11 +102,11 @@ export function campaignRoutes(ctx: AppContext) {
   // Each campaign's handbook address on the table server (docs/LIBRARIES_PLAN.md §2.3): its code, and a new one.
   r.get(
     '/campaigns/:id/handbook',
-    h((req) => ({ code: handbookCode(ctx.db, intParam(req.params.id)), ...tableAddress() })),
+    h((req) => ({ code: handbookCode(ctx.db, intParam(req.params.id)), ...tableAddress(ctx) })),
   );
   r.post(
     '/campaigns/:id/handbook/new-code',
-    h((req) => ({ code: renewHandbookCode(ctx.db, intParam(req.params.id)), ...tableAddress() })),
+    h((req) => ({ code: renewHandbookCode(ctx.db, intParam(req.params.id)), ...tableAddress(ctx) })),
   );
   r.get(
     '/campaigns/:id/overview',

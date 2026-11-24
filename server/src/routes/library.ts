@@ -358,7 +358,7 @@ export function libraryRoutes(ctx: AppContext) {
   r.put(
     '/settings',
     h((req) => {
-      const allowed = ['app_name', 'world_date', 'default_realm', 'player_note', 'debug', 'canon_review'];
+      const allowed = ['app_name', 'world_date', 'default_realm', 'player_note', 'debug', 'canon_review', 'table_addresses_only'];
       const body = (req.body ?? {}) as Record<string, unknown>;
       const up = ctx.db.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value');
       for (const [k, v] of Object.entries(body)) {
