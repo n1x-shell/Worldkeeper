@@ -101,9 +101,9 @@ A light that guides ships, or lures them.
 
 You don't have to write a worldbook by hand. **Library → Worldbooks → Share as a worldbook…** makes one from the open library: a `.worldbook` file (a ZIP of this folder format) another GM adds with **Add a worldbook…**.
 
-- **What goes in:** the library's own world: its realms (the world takes its name), record types, templates, calendar and switched-on modules, every record as Markdown (`lore/`), the links you made by hand (`lore/links.json`), the World Timeline (`lore/timeline.json`), its adventures with their scenes (`adventures/`), its random tables with their weights (`tables/tables.md`), and its maps with their pins (on records, and labels with none), routes and region outlines (`maps/`). The manifest says who made it, when, and what it holds.
+- **What goes in:** the library's own world: its realms (the world takes its name), record types, templates, calendar and switched-on modules, every record as Markdown (`lore/`), the links you made by hand (`lore/links.json`), the World Timeline (`lore/timeline.json`), its adventures with their scenes (`adventures/`), its random tables with their weights (`tables/tables.md`), your stat blocks for its records (`statblocks/statblocks.json`: a book creature to use and what's different, or the numbers), and its maps with their pins (on records, and labels with none), routes and region outlines (`maps/`). The manifest says who made it, when, and what it holds.
 - **What never goes in:** campaigns, characters, sessions, what players were shown, and worldbooks you added to the library (the other GM adds those; the manifest lists them).
-- **Leave out GM-only sections** for a world shared with players in mind: adventures are left out too.
+- **Leave out GM-only sections** for a world shared with players in mind: adventures and stat blocks are left out too.
 - **Adding one** checks it first (only the folders and kinds of file a worldbook holds, nothing outside its folder, sizes, an id the app's own worldbooks don't use) and puts it with this computer's worldbooks, for every library. Then **Start a library with it** (a new library named after the world, opened) or **Add to this library**. A shared worldbook never carries an import profile, cleaning or handbook rules: only the worldbooks that come with the app may.
 - **Remove from this computer** (the bin on its card) takes a worldbook you added out of the ones you can add, once no library has it; the app names any library that still does. The app's own worldbooks stay.
 
@@ -111,7 +111,7 @@ You don't have to write a worldbook by hand. **Library → Worldbooks → Share 
 
 A worldbook never holds book text: it names rules, and the app finds each name in the rules the GM has (the SRD, open packs, the GM's own books).
 
-- **What a world names:** the species its peoples play as (a people record's "Use the tabaxi rules"), the classes its people have (a **Class** fact), the items in its treasure pools, and the creatures its encounter tables roll (found by the creature names your rules know, plurals too: "2 Briar Wolves").
+- **What a world names:** the species its peoples play as (a people record's "Use the tabaxi rules"), the classes its people have (a **Class** fact), the items in its treasure pools, the creatures its stat blocks are built on ("uses the Owlbear stat block"), and the creatures its encounter tables roll (found by the creature names your rules know, plurals too: "2 Briar Wolves").
 - **Sharing asks how the books count**, when the world names something only a closed book has:
   - **Books required:** it can't be added without those books.
   - **Books optional:** it can, with a warning; those things show by name only.

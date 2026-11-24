@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.9.1_
+_Last updated: 2026-11-24 · v0.9.2_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,15 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.2: stat blocks in shared worldbooks
+
+The last open item of FUTURE_WORK's Worldbooks list.
+
+- **Sharing** (`buildWorldbook` in `server/src/packs/share.ts`): the GM's stat blocks for the shared records go into `statblocks/statblocks.json` (`{ "statblocks": { "<record id>": block } }`, the format a worldbook's statblocks folder already has), so they show on the added worldbook's records as its own (`packBlocks`); a GM's own block for a record still comes first. Left out, with adventures, of a world shared with players in mind.
+- **What a world names** (`ruleRefs`): the creature each block is built on (`base`, "uses the Owlbear stat block"), from the library's own blocks or a worldbook's statblocks folder, so a book creature is in the books list, gets a safe-mode stand-in and is reported when missing; the block's card shows the stand-in, labelled, where the book isn't (`GET /api/statblocks/:id` `baseBlock`). The Worldkeeper world's 30 blocks with a base use SRD creatures, so nothing changes for it.
+- **Share panel:** "its adventures, random tables and stat blocks"; "Leave out GM-only sections, adventures and stat blocks".
+- **Tests:** `tests/worldbookBooks.test.ts` (a block built on a book creature: counted, left out for players, shared whole, and on another computer shown with its stand-in).
 
 ## v0.9.1: the Windows installer builds again
 

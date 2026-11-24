@@ -259,6 +259,18 @@ export function buildWorldbook(db: DB, uploadsDir: string, o: ShareOptions): { f
   }
   counts.adventures = advCount;
 
+  // The GM's stat blocks for the shared records (a book creature to use and what's different, or the numbers), as a
+  // worldbook's statblocks/ folder holds them. Left out, like adventures, of a world shared with players in mind.
+  const blocks: Record<string, unknown> = {};
+  if (!o.leaveOutGmOnly)
+    for (const r of db.prepare('SELECT entity_id, data FROM statblocks').all() as { entity_id: string; data: string }[]) {
+      if (!ids.has(r.entity_id)) continue;
+      const { own: _own, ...b } = JSON.parse(r.data || '{}') as Record<string, unknown>;
+      blocks[r.entity_id] = { ...b, id: r.entity_id };
+    }
+  if (Object.keys(blocks).length) add('statblocks/statblocks.json', JSON.stringify({ statblocks: blocks }, null, 1));
+  counts.statblocks = Object.keys(blocks).length;
+
   // Random tables (the GM's own and the ones generated for its places).
   const tables = (
     db.prepare(`SELECT name, region_id, kind, level_min, level_max, entries FROM random_tables WHERE pack_id IS NULL ORDER BY id`).all() as {
