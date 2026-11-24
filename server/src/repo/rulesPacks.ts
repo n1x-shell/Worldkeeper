@@ -17,6 +17,7 @@ import SRD_TEXT from '../../../shared/srd/text.json' with { type: 'json' };
 import { srdCounts } from './bookData.js';
 import { SETTING_PACK, setSettingPack, settingPackCounts, settingPackOn } from './settingPack.js';
 import { addRule, emptyRulesView, srdRulesView, type RulesView } from '../../../shared/rulesView.js';
+import { isOpenSource, openRulesFor } from './booksOnly.js';
 
 type DB = Database.Database;
 export const RULE_KINDS = ['spell', 'species', 'class', 'subclass', 'background', 'feat'] as const;
@@ -36,8 +37,6 @@ export interface PackSummary {
   publish?: boolean;
 }
 
-/** A pack whose source names an open licence. */
-export const isOpenSource = (source: string) => /\b(CC[- ]?BY|CC0|OGL|ORC)\b/i.test(source);
 
 /** One Markdown entry: "Key: value" lines, a blank line, then the text (with "## " headings for features or traits). */
 export function parseEntry(md: string, fallbackKind?: string) {
@@ -262,14 +261,28 @@ export function deletePack(db: DB, id: string) {
   return listPacks(db);
 }
 
-/** Everything the enabled packs hold, merged: imported packs (most recently imported last, so they win) over the SRD. */
+/**
+ * Everything the enabled packs hold, merged: imported packs (most recently imported last, so they win) over the SRD.
+ * With Books only on, the open rules (the SRD, open packs) count only for the kinds the library keeps them for.
+ */
 export function rulesView(db: DB): RulesView {
+  const open = (kind: string) => openRulesFor(db, kind);
   const view = srdEnabled(db) ? srdRulesView(SRD_TEXT, SRD_SPELLS) : emptyRulesView(false);
+  if (view.srd) {
+    if (!open('spell')) view.spells = [];
+    if (!open('species')) view.species = {};
+    if (!open('feat')) view.feats = {};
+    if (!open('background')) view.backgrounds = {};
+    if (!open('class')) view.classes = {};
+    else if (!open('subclass')) for (const c of Object.values(view.classes)) c.subclasses = {};
+  }
   const packs = db.prepare('SELECT id, name, source FROM rules_packs WHERE enabled = 1 ORDER BY imported_at').all() as { id: string; name: string; source: string }[];
   const rows = db.prepare('SELECT kind, name, cls, data FROM rules_entries WHERE pack_id = ?');
   for (const p of packs) {
+    const openPack = isOpenSource(p.source);
     view.packs.push(p);
-    for (const r of rows.all(p.id) as { kind: RuleKind; name: string; cls: string; data: string }[]) addRule(view, r.kind, r.name, r.cls, JSON.parse(r.data), p.source || p.name);
+    for (const r of rows.all(p.id) as { kind: RuleKind; name: string; cls: string; data: string }[])
+      if (!openPack || open(r.kind)) addRule(view, r.kind, r.name, r.cls, JSON.parse(r.data), p.source || p.name);
   }
   view.spells.sort((a, b) => a.name.localeCompare(b.name));
   return view;

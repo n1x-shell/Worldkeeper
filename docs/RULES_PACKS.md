@@ -73,6 +73,15 @@ The licences, as Open5e lists them (November 2026):
 
 The SRD 5.2 is already built in, so it's shown but can't be ticked. Many of these sources were written for the 2014 rules: check them before your players use them. Like every pack, what you import stays in your library.
 
+## Books only
+
+**Settings → Rules packs → Books only** sets the open rules aside in this library, so the app uses only your books. The open rules are the built-in SRD and openly licensed packs (Open5e, or any pack whose source names CC BY, OGL, CC0 or ORC). A worldbook's own rules (the Worldkeeper world's creatures and items) are the world's, so they stay.
+
+- **It says what your books don't cover.** If your books have no classes, say, while the SRD has them, switching on tells you, and the open rules are kept for classes alone; everything else comes from your books.
+- **Nothing is switched off for good.** The pack switches below stay as they were. Turn Books only off and the open rules are back as before.
+- It needs at least one of your books in use in the library.
+- The published handbook is unaffected: your books never reach it either way.
+
 ## How packs combine
 
 - Where an imported pack and the SRD both have something, the pack wins.

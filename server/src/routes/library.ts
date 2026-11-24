@@ -18,6 +18,7 @@ import { buildPlan, commitPlan, listImportRuns, summarisePlan, type ImportPlan }
 import { backupPath, createBackup, listBackups, stageRestore } from '../backup/backup.js';
 import { chosenBooks, importFivetools, scanFivetools } from '../repo/fivetools.js';
 import { deletePack, importPack, listPacks, setPackEnabled, setPackPublished } from '../repo/rulesPacks.js';
+import { booksOnly, checkBooksOnly, setBooksOnly } from '../repo/booksOnly.js';
 import { exportCampaign, exportFullWorldZip, exportJson, exportMarkdownZip, exportPlayerZip, importCampaignWithReport, importFullWorldZip, importJson } from '../backup/exporter.js';
 import { applySidecarRealms, applySidecarState, readSidecar, type Sidecar } from '../backup/sidecar.js';
 import { badRequest, notFound } from '../lib/errors.js';
@@ -254,6 +255,20 @@ export function libraryRoutes(ctx: AppContext) {
   r.delete(
     '/rules/packs/:id',
     h((req) => deletePack(ctx.db, String(req.params.id))),
+  );
+  // Books only (docs/WORLDBOOKS_PLAN.md §2a): this library sets the open rules aside, keeping them for what the books lack.
+  r.get(
+    '/rules/books-only',
+    h(() => ({ ...booksOnly(ctx.db), check: checkBooksOnly(ctx.db) })),
+  );
+  r.put(
+    '/rules/books-only',
+    h((req) => {
+      const on = !!req.body?.on;
+      // Turning it on keeps the open rules for what the books don't cover, unless told otherwise.
+      const keep = Array.isArray(req.body?.keep) ? (req.body.keep as unknown[]).map(String) : checkBooksOnly(ctx.db).gaps;
+      return { ...setBooksOnly(ctx.db, on, keep), check: checkBooksOnly(ctx.db) };
+    }),
   );
 
   // ---- Backups ----

@@ -7,7 +7,7 @@ import { useRef, useState } from 'react';
 import { BookOpen, Trash2, Upload } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { reloadRules } from '../player/sheet/options';
-import { Badge, Card, Check, Loading, ask } from '../components/ui';
+import { Badge, Card, Check, Loading, Toggle, ask } from '../components/ui';
 
 interface Pack {
   id: string;
@@ -33,6 +33,53 @@ const KINDS: [string, string][] = [
   ['item', 'items'],
 ];
 
+interface BooksOnlyState {
+  on: boolean;
+  keep: string[];
+  check: { books: { id: string; name: string }[]; gaps: string[] };
+}
+
+const kindList = (kinds: string[]) => {
+  const words = kinds.map((k) => KINDS.find(([x]) => x === k)?.[1] ?? k);
+  return words.length > 1 ? `${words.slice(0, -1).join(', ')} and ${words[words.length - 1]}` : (words[0] ?? '');
+};
+
+/** Books only: the open rules (the SRD, open packs) set aside in this library, kept only for what the books lack. */
+function BooksOnlySwitch({ onChange }: { onChange: () => void }) {
+  const { data, setData } = useApi<BooksOnlyState>('/api/rules/books-only');
+  if (!data) return null;
+  const noBooks = !data.check.books.length;
+  return (
+    <div className="rounded-md border border-line/70 p-3" data-testid="books-only">
+      <Toggle
+        checked={data.on}
+        disabled={noBooks && !data.on}
+        onChange={async (on) => {
+          if (on && data.check.gaps.length) {
+            const go = await ask({
+              title: 'Books only',
+              body: `Your books have no ${kindList(data.check.gaps)}, which the open rules give. Books only keeps the open rules for those alone; everything else comes from your books.`,
+              confirmLabel: 'Use books only',
+            });
+            if (!go) return;
+          }
+          setData(await api.put<BooksOnlyState>('/api/rules/books-only', { on }));
+          onChange();
+        }}
+        hint={
+          noBooks
+            ? 'Import your books first: then this library can use them alone.'
+            : data.on
+              ? `Only your books: ${data.check.books.map((b) => b.name).join(', ')}.${data.keep.length ? ` The open rules are kept for ${kindList(data.keep)}, which your books don't have.` : ''} Turn it off to use the open rules again, as they were.`
+              : 'Set the open rules aside (the SRD, open packs) and use only your books. The switches below stay as they are, and come back when you turn it off.'
+        }
+      >
+        <span className="font-medium">Books only</span>
+      </Toggle>
+    </div>
+  );
+}
+
 export function RulesPacksPanel() {
   const { data, setData } = useApi<Pack[]>('/api/rules/packs');
   const input = useRef<HTMLInputElement>(null);
@@ -55,6 +102,8 @@ export function RulesPacksPanel() {
         pack. Packs reach your sheets and your table server, never a player export or a campaign export, and never the published handbook unless a pack is openly licensed (CC BY, OGL, CC0, ORC) and
         you choose Publish to players. Where packs overlap, the newest wins, and any pack wins over the SRD.
       </p>
+      {/* Read again when the packs change: a book imported or switched off changes what the books cover. */}
+      <BooksOnlySwitch key={(data ?? []).map((p) => `${p.id}:${p.enabled}`).join()} onChange={reloadRules} />
       <ul className="divide-y divide-line/60">
         {(data ?? []).map((p) => (
           <li key={p.id} className="flex flex-wrap items-center gap-3 py-2">
