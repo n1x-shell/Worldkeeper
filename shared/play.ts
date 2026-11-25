@@ -94,6 +94,38 @@ export interface Combatant {
   playerName?: string;
   notes: string;
   defeated: boolean;
+  /** A party member's character: its hit points are the sheet's, both ways. */
+  characterId?: number | null;
+  /** Creatures added together share a group: one initiative roll for all of them. */
+  group?: string | null;
+  /** What defeating it is worth, from its stat block. */
+  xp?: number | null;
+  /** Spells and other things with an end ("Bless", "Hold Person"), which end by themselves. */
+  effects?: Effect[];
+  /** Things that run out: legendary actions, uses each day, an ability that must recharge. */
+  counters?: Counter[];
+}
+
+/**
+ * Something on a combatant that ends. It ends at the start of the turn of whoever's turn it was when it began (the
+ * caster, usually), `rounds` rounds later, as "until the start of your turn" and "1 minute" run in the rules.
+ */
+export interface Effect {
+  id: string;
+  name: string;
+  endRound: number;
+  /** The combatant whose turn it ends on. */
+  anchor: string | null;
+}
+
+export interface Counter {
+  name: string;
+  max: number;
+  used: number;
+  /** Comes back at the start of its own turn (legendary actions). */
+  eachTurn?: boolean;
+  /** Once used, comes back on a d6 roll of this or more, rolled at the start of its turn (Recharge 5–6 is 5). */
+  recharge?: number | null;
 }
 
 export function newCombatant(partial: Partial<Combatant> & { name: string }): Combatant {
@@ -202,3 +234,66 @@ export function applyHealing(c: Combatant, amount: number): Combatant {
 export const abilityModifier = (score: number) => Math.floor((score - 10) / 2);
 /** 2024 proficiency bonus by character level. */
 export const proficiencyBonus = (level: number) => 2 + Math.floor((Math.max(1, Math.min(20, level)) - 1) / 4);
+
+/** Put an effect on a combatant for a number of rounds, counted from the turn it is now. */
+export function addEffect(c: Combatant, name: string, rounds: number, s: TurnState, list: Combatant[]): Combatant {
+  const effect: Effect = {
+    id: Math.random().toString(36).slice(2, 10),
+    name: name.trim(),
+    endRound: Math.max(1, s.round) + Math.max(1, Math.floor(rounds)),
+    anchor: s.round > 0 ? (list[s.turnIndex]?.id ?? c.id) : c.id,
+  };
+  return { ...c, effects: [...(c.effects ?? []), effect] };
+}
+
+/** How many more rounds an effect runs. */
+export const effectRoundsLeft = (e: Effect, s: TurnState) => Math.max(0, e.endRound - Math.max(1, s.round));
+
+/**
+ * What a turn starting brings: effects that end now are taken off, the one whose turn it is gets its each-turn uses
+ * back, and the GM is told what ended and what to roll a recharge for.
+ */
+export function startTurn(list: Combatant[], s: TurnState): { list: Combatant[]; notes: string[] } {
+  const who = list[s.turnIndex];
+  if (!who || s.round === 0) return { list, notes: [] };
+  const acting = new Set(list.filter((c) => !c.defeated).map((c) => c.id));
+  const notes: string[] = [];
+  const out = list.map((c) => {
+    let next = c;
+    if (c.effects?.length) {
+      // An effect whose own turn can't come any more (its caster is down or gone) ends when its round is reached.
+      const ends = (e: Effect) => e.endRound <= s.round && (e.anchor === who.id || !e.anchor || !acting.has(e.anchor));
+      const ended = c.effects.filter(ends);
+      if (ended.length) {
+        for (const e of ended) notes.push(`${e.name} ends on ${c.name}.`);
+        next = { ...next, effects: c.effects.filter((e) => !ends(e)) };
+      }
+    }
+    if (c.id === who.id && c.counters?.length) {
+      for (const k of c.counters) if (k.recharge && k.used >= k.max) notes.push(`${c.name}: roll to recharge ${k.name} (${k.recharge === 6 ? '6' : `${k.recharge}–6`}).`);
+      if (c.counters.some((k) => k.eachTurn && k.used)) next = { ...next, counters: c.counters.map((k) => (k.eachTurn ? { ...k, used: 0 } : k)) };
+    }
+    return next;
+  });
+  return { list: out, notes };
+}
+
+/**
+ * Roll initiative for everyone without one: a group (creatures added together) rolls once, and a party member whose
+ * player has already rolled takes that roll (`given`, by combatant id).
+ */
+export function rollInitiatives(list: Combatant[], given: Record<string, number> = {}, rng: Rng = Math.random): Combatant[] {
+  const groups = new Map<string, number>();
+  return list.map((c) => {
+    if (c.initiative != null) return c;
+    if (given[c.id] != null) return { ...c, initiative: given[c.id] };
+    const roll = () => Math.floor(rng() * 20) + 1 + c.initiativeBonus;
+    if (!c.group) return { ...c, initiative: roll() };
+    if (!groups.has(c.group)) groups.set(c.group, roll());
+    return { ...c, initiative: groups.get(c.group)! };
+  });
+}
+
+/** What the defeated are worth: the experience of every foe marked defeated. */
+export const defeatedXp = (list: Combatant[]) => list.filter((c) => !c.isPC && c.defeated).reduce((n, c) => n + (c.xp ?? 0), 0);
+

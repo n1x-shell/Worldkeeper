@@ -488,6 +488,16 @@ export const encounters = makeCrud({
           playerName: z.string().max(200).default(''),
           notes: z.string().max(5000).default(''),
           defeated: z.boolean().default(false),
+          /** A party member's character (its hit points are the sheet's), a group rolled for together, its XP. */
+          characterId: z.number().int().nullable().optional(),
+          group: z.string().max(40).nullable().optional(),
+          xp: z.number().int().min(0).max(1_000_000).nullable().optional(),
+          /** Things that end by themselves, and things that run out (shared/play.ts). */
+          effects: z.array(z.object({ id: z.string().max(40), name: z.string().max(100), endRound: z.number().int().min(0).max(100000), anchor: z.string().max(40).nullable() })).max(30).optional(),
+          counters: z
+            .array(z.object({ name: z.string().max(100), max: z.number().int().min(0).max(999), used: z.number().int().min(0).max(999), eachTurn: z.boolean().optional(), recharge: z.number().int().min(2).max(6).nullable().optional() }))
+            .max(30)
+            .optional(),
         }),
       )
       .max(200)

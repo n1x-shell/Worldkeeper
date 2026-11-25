@@ -209,6 +209,13 @@ Generate a recap draft from recorded events and edit it before sharing. Review p
 
 Roll or enter initiative, manage rounds and turns, track damage, healing, temporary HP, 15 conditions, 2024 concentration saving throw DC, defeated and hidden combatants, and add the complete party to an encounter.
 
+- **The party's hit points are their sheets'.** A party member in a fight shows the hit points on their sheet. Damage or healing in the tracker goes to the sheet, and what the player changes on their phone shows in the tracker.
+- **Initiative.** **Roll missing** rolls for everyone without one. Creatures added together (Count 3) roll once for all of them. A player who rolled Initiative from their sheet in the last quarter of an hour keeps that roll.
+- **Rolls from the stat block.** Open a combatant's stat block in its row: each attack has its **to hit** and its damage as buttons, and each ability score rolls a check. The roll shows above the turn order and goes to the table's roll log behind the screen; **Show the table** shows it to the players.
+- **What runs out.** A creature added from a stat block brings what it has that runs out: **legendary actions** (back at the start of its turn), uses each day (Legendary Resistance 3/Day) and abilities that **recharge** (Fire Breath, Recharge 5–6). Use one with the minus; at the start of its turn the tracker says which to roll a recharge for, and the die on the chip rolls it.
+- **Effects that end.** **Effect** on a combatant's row takes a name and a number of rounds (Bless, 10). It ends at the start of the turn of whoever's turn it was when it began (the caster's, as the rules run), and the tracker says so.
+- **Experience at the end.** **End combat** adds up what the foes marked defeated were worth, from their stat blocks, and **Award it** shares it among the party members who were in the fight (see Party progression).
+
 Other table tools include a DM screen, NPC quick-reference cards, faction agendas, world events, random tables and dice notation such as `2d6+3`, `1d20 adv`, `4d6kh3` and `d%`.
 
 Rules reference entries use labels: `OFFICIAL`, `HOMEBREW`, `OUTSIDE 2024 CORE` or `UNVERIFIED`. Worldkeeper does not bundle purchased rulebooks or licensed monster stat blocks.

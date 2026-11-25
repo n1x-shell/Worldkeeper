@@ -2,9 +2,11 @@ import { CreatureLinks } from '../components/CreatureLinks';
 import { useModules } from '../lib/modules';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ArrowDownWideNarrow, BookOpen, ChevronLeft, ChevronRight, Dice5, Plus, Shield, Skull, Trash2, Users, Sword, Eye, EyeOff, Brain, Pin } from 'lucide-react';
+import { ArrowDownWideNarrow, Award, BookOpen, ChevronLeft, ChevronRight, Dice5, Hourglass, Minus, Plus, Shield, Skull, Trash2, Users, Sword, Eye, EyeOff, Brain, Pin, X } from 'lucide-react';
 import { CONDITIONS_2024 } from '@shared/domain';
-import { applyDamage, applyHealing, newCombatant, nextTurn, previousTurn, rollDice, sortByInitiative, type Combatant, type DiceResult } from '@shared/play';
+import { addEffect, applyDamage, applyHealing, defeatedXp, effectRoundsLeft, newCombatant, nextTurn, previousTurn, rollDice, rollInitiatives, sortByInitiative, startTurn, type Combatant, type Counter, type DiceResult } from '@shared/play';
+import { countersFrom } from '@shared/statblock';
+import { onServerChange } from '../player/changes';
 import { api, qs, useApi, useAutosave } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Entity, EntitySummary, StateRow } from '../lib/types';
@@ -65,6 +67,34 @@ export interface CombatStatus {
   turn: string | null;
 }
 
+/** Put something that ends on a combatant: its name and how many rounds ("Bless", 10). */
+function EffectAdder({ onAdd, who }: { onAdd: (name: string, rounds: number) => void; who: string }) {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [rounds, setRounds] = useState('10');
+  if (!open)
+    return (
+      <button className="btn-ghost px-1.5 py-0.5 text-xs" onClick={() => setOpen(true)} aria-label={`Add an effect to ${who}`}>
+        <Hourglass size={11} /> Effect
+      </button>
+    );
+  const add = () => {
+    if (!name.trim()) return;
+    onAdd(name, Math.max(1, Number(rounds) || 1));
+    setName('');
+    setOpen(false);
+  };
+  return (
+    <span className="inline-flex items-center gap-1">
+      <input className="input h-8 w-28 text-xs" autoFocus value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => (e.key === 'Enter' ? add() : e.key === 'Escape' && setOpen(false))} placeholder="Bless" aria-label={`Effect on ${who}`} />
+      <input className="input num h-8 w-12 px-1 text-center text-xs" inputMode="numeric" value={rounds} onChange={(e) => setRounds(e.target.value.replace(/\D/g, ''))} onKeyDown={(e) => e.key === 'Enter' && add()} aria-label="Rounds" title="How many rounds (1 minute is 10)" />
+      <button className="btn h-8 px-2 text-xs" onClick={add}>
+        Add
+      </button>
+    </span>
+  );
+}
+
 export function EncounterTracker({
   encounterId,
   compact = false,
@@ -82,7 +112,10 @@ export function EncounterTracker({
   const [enc, setEnc] = useState<Encounter | null>(null);
   const [alert, setAlert] = useState<string | null>(null);
   const { activeCampaignId } = useAppState();
-  const { data: party } = useApi<Character[]>(activeCampaignId ? `/api/characters?campaign_id=${activeCampaignId}` : null);
+  const { data: party, reload: reloadParty } = useApi<Character[]>(activeCampaignId ? `/api/characters?campaign_id=${activeCampaignId}` : null);
+  // The last roll made from a stat block (behind the screen until shown), and what the defeated were worth.
+  const [lastRoll, setLastRoll] = useState<{ id?: number; label: string; total: number; detail: string; hidden: boolean } | null>(null);
+  const [spoils, setSpoils] = useState<{ xp: number; to: number[] } | null>(null);
   const auto = useAutosave((e: Encounter) => api.patch(`/api/encounters/${e.id}`, { title: e.title, notes: e.notes, round: e.round, turn_index: e.turn_index, status: e.status, combatants: e.combatants, location_id: e.location_id ?? null }), 400);
   const [newName, setNewName] = useState('');
   const [newEntity, setNewEntity] = useState<string | null>(null);
@@ -132,6 +165,29 @@ export function EncounterTracker({
     // Only when what it reports changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusKey]);
+  // Players change their own sheets (damage, healing): the party is read again when something changes, and a party
+  // member in the fight shows the sheet's hit points. One added before v0.9.10 is tied to its character by name.
+  useEffect(() => onServerChange('/api/events', () => void reloadParty()), [reloadParty]);
+  useEffect(() => {
+    if (!enc || !party) return;
+    let changed = false;
+    const combatants = enc.combatants.map((c) => {
+      if (!c.isPC) return c;
+      const ch = c.characterId ? party.find((p) => p.id === c.characterId) : party.filter((p) => p.name === c.name).length === 1 ? party.find((p) => p.name === c.name) : undefined;
+      if (!ch) return c;
+      const sheet = ch.sheet as { hp?: number; maxHp?: number; tempHp?: number };
+      const next = { ...c, characterId: ch.id, hp: sheet.hp ?? c.hp, maxHp: sheet.maxHp ?? c.maxHp, tempHp: sheet.tempHp ?? c.tempHp };
+      if (next.characterId === c.characterId && next.hp === c.hp && next.maxHp === c.maxHp && next.tempHp === c.tempHp) return c;
+      changed = true;
+      return next;
+    });
+    if (!changed) return;
+    const n = { ...enc, combatants };
+    setEnc(n);
+    auto.schedule(n);
+    // Only when the party's sheets change: the fight's own edits go the other way (to the sheet).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [party]);
   if (error) return <ErrorBox error={error} />;
   if (!enc) return <Loading />;
   const save = (p: Partial<Encounter>) => {
@@ -142,22 +198,75 @@ export function EncounterTracker({
   const setC = (id: string, f: (c: Combatant) => Combatant) => save({ combatants: enc.combatants.map((c) => (c.id === id ? f(c) : c)) });
   const list = enc.combatants;
   const active = enc.round > 0 ? list[enc.turn_index] : null;
+  const campaignId = enc.campaign_id ?? activeCampaignId;
+  const turn = { round: enc.round, turnIndex: enc.turn_index };
+
+  /** Roll for a combatant (from its stat block, or a recharge): into the table's log, behind the screen until shown. */
+  const rollFor = async (c: Combatant, label: string, expression: string): Promise<number | null> => {
+    const what = `${c.name}: ${label}`;
+    try {
+      if (!campaignId) {
+        const r = rollDice(expression);
+        setLastRoll({ label: what, total: r.total, detail: r.detail, hidden: true });
+        return r.total;
+      }
+      const r = await api.post<{ id: number; total: number; detail: string; hidden: boolean }>(`/api/campaigns/${campaignId}/rolls`, { label: what, expression, hidden: true });
+      setLastRoll({ id: r.id, label: what, total: r.total, detail: r.detail, hidden: r.hidden });
+      return r.total;
+    } catch (x) {
+      toast((x as Error).message, 'danger');
+      return null;
+    }
+  };
+  const showRoll = async () => {
+    if (!lastRoll?.id || !campaignId) return;
+    await api.patch(`/api/campaigns/${campaignId}/rolls/${lastRoll.id}`, { hidden: false });
+    setLastRoll({ ...lastRoll, hidden: false });
+  };
+  /** A party member's hit points are their sheet's: a change here goes to the sheet. */
+  const toSheet = (c: Combatant) => {
+    if (c.characterId) void api.patch(`/api/characters/${c.characterId}`, { sheet_patch: { set: { hp: c.hp, tempHp: c.tempHp } } }).catch(() => undefined);
+  };
+  const setCounter = (c: Combatant, name: string, f: (k: Counter) => Counter) => setC(c.id, (x) => ({ ...x, counters: (x.counters ?? []).map((k) => (k.name === name ? f(k) : k)) }));
+  const recharge = async (c: Combatant, k: Counter) => {
+    const total = await rollFor(c, `recharge ${k.name}`, '1d6');
+    if (total != null && total >= (k.recharge ?? 6)) setCounter(c, k.name, (x) => ({ ...x, used: 0 }));
+  };
 
   const addPCs = () => {
     const pcs = (party ?? []).filter((c) => c.kind === 'pc' && !list.some((x) => x.name === c.name));
     save({
       combatants: [
         ...list,
-        ...pcs.map((c) => newCombatant({ name: c.name, isPC: true, hp: c.sheet.hp ?? c.sheet.maxHp ?? 0, maxHp: c.sheet.maxHp ?? 0, ac: c.sheet.ac ?? null, initiativeBonus: c.sheet.initiativeBonus ?? 0 })),
+        ...pcs.map((c) => newCombatant({ name: c.name, isPC: true, characterId: c.id, hp: c.sheet.hp ?? c.sheet.maxHp ?? 0, maxHp: c.sheet.maxHp ?? 0, ac: c.sheet.ac ?? null, initiativeBonus: c.sheet.initiativeBonus ?? 0 })),
       ],
     });
   };
-  const add = () => {
+  const add = async () => {
     const name = newName.trim() || (newEntity ? index.get(newEntity)?.name ?? newEntity : '');
     if (!name) return;
     const n = Math.max(1, Math.min(20, Number(newCount) || 1));
+    // Its stat block says what it's worth and what it has that runs out (legendary actions, a breath to recharge).
+    const blockId = newBook || newEntity;
+    const block = blockId ? await api.get<(Parameters<typeof countersFrom>[0] & { name?: string; xp?: number; baseBlock?: Parameters<typeof countersFrom>[0] & { xp?: number } }) | null>(`/api/statblocks/${encodeURIComponent(blockId)}`).catch(() => null) : null;
+    const from = block?.name ? (block.baseBlock ?? block) : null;
+    const counters = from ? countersFrom(from) : [];
+    // Creatures added together roll initiative once.
+    const group = n > 1 ? Math.random().toString(36).slice(2, 8) : null;
     const extra = Array.from({ length: n }, (_, i) =>
-      newCombatant({ name: n > 1 ? `${name} ${i + 1}` : name, entityId: newEntity, statblockId: newBook, initiative: newInit ? Number(newInit) : null, initiativeBonus: newBonus, hp: Number(newHp) || 0, maxHp: Number(newHp) || 0, ac: newAc ? Number(newAc) : null }),
+      newCombatant({
+        name: n > 1 ? `${name} ${i + 1}` : name,
+        entityId: newEntity,
+        statblockId: newBook,
+        initiative: newInit ? Number(newInit) : null,
+        initiativeBonus: newBonus,
+        hp: Number(newHp) || 0,
+        maxHp: Number(newHp) || 0,
+        ac: newAc ? Number(newAc) : null,
+        group,
+        xp: from?.xp ?? null,
+        ...(counters.length ? { counters: counters.map((k) => ({ ...k })) } : {}),
+      }),
     );
     save({ combatants: [...list, ...extra] });
     setNewName('');
@@ -174,15 +283,27 @@ export function EncounterTracker({
     const sorted = sortByInitiative(list);
     save({ combatants: sorted, turn_index: cur ? Math.max(0, sorted.findIndex((c) => c.id === cur)) : enc.turn_index });
   };
-  const rollMissing = () =>
-    save({
-      combatants: sortByInitiative(list.map((c) => (c.initiative == null ? { ...c, initiative: rollDice(`1d20${c.initiativeBonus >= 0 ? '+' : ''}${c.initiativeBonus}`).total } : c))),
-    });
+  const rollMissing = async () => {
+    // A player who rolled Initiative from their sheet in the last quarter of an hour keeps that roll.
+    const given: Record<string, number> = {};
+    if (campaignId && list.some((c) => c.characterId && c.initiative == null)) {
+      const rolls = await api.get<{ character_id: number | null; label: string; total: number; created_at: string }[]>(`/api/campaigns/${campaignId}/rolls`).catch(() => []);
+      for (const c of list)
+        if (c.characterId && c.initiative == null) {
+          const r = rolls.find((x) => x.character_id === c.characterId && x.label === 'Initiative' && Date.now() - Date.parse(x.created_at) < 15 * 60 * 1000);
+          if (r) given[c.id] = r.total;
+        }
+    }
+    save({ combatants: sortByInitiative(rollInitiatives(list, given)) });
+  };
   const next = () => {
     const sorted = enc.round === 0 ? sortByInitiative(list) : list;
     const s = nextTurn(sorted, { round: enc.round, turnIndex: enc.turn_index });
     if (s.round !== enc.round) onLog?.(`Round ${s.round} begins in ${enc.title}.`);
-    save({ combatants: sorted, round: s.round, turn_index: s.turnIndex, status: 'running' });
+    // The turn starting: effects that end now come off, each-turn uses come back, and a spent recharge asks for its roll.
+    const started = startTurn(sorted, s);
+    if (started.notes.length) setAlert(started.notes.join('\n'));
+    save({ combatants: started.list, round: s.round, turn_index: s.turnIndex, status: 'running' });
   };
   const prev = () => {
     const s = previousTurn(list, { round: enc.round, turnIndex: enc.turn_index });
@@ -193,8 +314,30 @@ export function EncounterTracker({
     if (sign === 1) {
       const out = applyDamage(c, amt);
       setC(c.id, () => out.combatant);
+      toSheet(out.combatant);
       if (out.concentrationDC) setAlert(`${c.name} takes ${amt} damage while concentrating on ${c.concentration}: Constitution save DC ${out.concentrationDC}.`);
-    } else setC(c.id, (x) => applyHealing(x, amt));
+    } else {
+      const healed = applyHealing(c, amt);
+      setC(c.id, () => healed);
+      toSheet(healed);
+    }
+  };
+  const endCombat = () => {
+    onLog?.(`${enc.title} ended after ${enc.round} round(s).`);
+    const xp = defeatedXp(list);
+    const to = list.filter((c) => c.isPC && c.characterId).map((c) => c.characterId!);
+    setSpoils(xp > 0 ? { xp, to } : null);
+    save({ round: 0, turn_index: 0, status: 'finished' });
+  };
+  const awardSpoils = async () => {
+    if (!spoils || !campaignId) return;
+    try {
+      await api.post(`/api/campaigns/${campaignId}/awards`, { kind: 'xp', total: spoils.xp, character_ids: spoils.to, session_id: enc.session_id ?? null, reason: enc.title });
+      toast(`${Math.floor(spoils.xp / spoils.to.length).toLocaleString()} XP each to ${spoils.to.length} of the party`, 'ok');
+      setSpoils(null);
+    } catch (x) {
+      toast((x as Error).message, 'danger');
+    }
   };
 
   // Touch-sized controls (40px): the tracker is used on tablets at the table.
@@ -223,7 +366,7 @@ export function EncounterTracker({
           {enc.round === 0 ? 'Start combat' : 'Next turn'} <ChevronRight size={16} />
         </button>
         <span className="mx-0.5 hidden h-6 border-l border-line sm:block" aria-hidden />
-        <button className={`btn ${tap}`} onClick={rollMissing} title="Roll d20 + bonus for anyone without initiative">
+        <button className={`btn ${tap}`} onClick={() => void rollMissing()} title="Roll d20 + bonus for anyone without initiative: a group rolls once, and a player who rolled from their sheet keeps that roll">
           <Dice5 size={14} /> Roll missing
         </button>
         <button className={`btn ${tap}`} onClick={sort} title="Sort by initiative">
@@ -237,10 +380,7 @@ export function EncounterTracker({
         {enc.round > 0 && (
           <button
             className={`btn ${tap}`}
-            onClick={() => {
-              onLog?.(`${enc.title} ended after ${enc.round} round(s).`);
-              save({ round: 0, turn_index: 0, status: 'finished' });
-            }}
+            onClick={endCombat}
           >
             End combat
           </button>
@@ -251,10 +391,49 @@ export function EncounterTracker({
       </div>
       {alert && (
         <div className="panel border-warn/60 bg-warn/10 p-2 text-sm flex items-center gap-2" role="alert">
-          <Brain size={14} className="text-warn shrink-0" /> {alert}
+          <Brain size={14} className="text-warn shrink-0" /> <span className="whitespace-pre-line">{alert}</span>
           <button className={`btn-ghost ml-auto ${tap}`} onClick={() => setAlert(null)}>
             Dismiss
           </button>
+        </div>
+      )}
+      {lastRoll && (
+        <div className="panel flex flex-wrap items-center gap-2 p-2 text-sm" aria-live="polite" data-testid="tracker-roll">
+          <Dice5 size={14} className="shrink-0 text-gold" />
+          <span className="min-w-0">
+            {lastRoll.label}: <b className="num text-lg text-gold">{lastRoll.total}</b> <span className="num text-xs text-dim">{lastRoll.detail}</span>
+          </span>
+          <span className="ml-auto flex items-center gap-1 text-xs text-dim">
+            {lastRoll.id && lastRoll.hidden ? (
+              <button className="btn-ghost text-xs" onClick={() => void showRoll()} title="Only you see this roll. Show it to the table.">
+                <EyeOff size={12} /> Show the table
+              </button>
+            ) : lastRoll.id ? (
+              'The table sees it'
+            ) : null}
+            <button className="btn-ghost" onClick={() => setLastRoll(null)} aria-label="Put the roll away">
+              <X size={14} />
+            </button>
+          </span>
+        </div>
+      )}
+      {spoils && (
+        <div className="panel flex flex-wrap items-center gap-2 border-gold/50 bg-gold/10 p-2 text-sm" data-testid="tracker-spoils">
+          <Award size={14} className="shrink-0 text-gold" />
+          <span>
+            The defeated were worth <b className="num">{spoils.xp.toLocaleString()} XP</b>
+            {spoils.to.length > 0 && <> ({Math.floor(spoils.xp / spoils.to.length).toLocaleString()} each for {spoils.to.length} of the party)</>}.
+          </span>
+          <span className="ml-auto flex gap-1">
+            {campaignId && spoils.to.length > 0 && (
+              <button className="btn-primary text-xs" onClick={() => void awardSpoils()}>
+                Award it
+              </button>
+            )}
+            <button className="btn-ghost text-xs" onClick={() => setSpoils(null)}>
+              Not now
+            </button>
+          </span>
         </div>
       )}
       {/* The turn order: one row per combatant. The first line is what you read at a glance (initiative, name, AC, HP);
@@ -320,7 +499,16 @@ export function EncounterTracker({
                 <input className={cell} inputMode="numeric" value={c.ac ?? ''} onChange={(e) => setC(c.id, (x) => ({ ...x, ac: e.target.value === '' ? null : Number(e.target.value) }))} aria-label="AC" />
                 <div className="relative min-w-0">
                   <div className="flex items-center gap-1 text-dim">
-                    <input className={`${cell} w-full min-w-0`} inputMode="numeric" value={c.hp} onChange={(e) => setC(c.id, (x) => ({ ...x, hp: Number(e.target.value) || 0 }))} aria-label="HP" />/
+                    <input
+                      className={`${cell} w-full min-w-0`}
+                      inputMode="numeric"
+                      value={c.hp}
+                      onChange={(e) => setC(c.id, (x) => ({ ...x, hp: Number(e.target.value) || 0 }))}
+                      onBlur={() => toSheet(c)}
+                      aria-label="HP"
+                      title={c.characterId ? 'These are the hit points on the character’s sheet' : undefined}
+                    />
+                    /
                     <input className={`${cell} w-full min-w-0`} inputMode="numeric" value={c.maxHp} onChange={(e) => setC(c.id, (x) => ({ ...x, maxHp: Number(e.target.value) || 0 }))} aria-label="Max HP" />
                   </div>
                   <HpBar hp={c.hp} max={c.maxHp} temp={c.tempHp} className="absolute inset-x-0 top-full mt-1" />
@@ -329,7 +517,14 @@ export function EncounterTracker({
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <div className="[&_.btn]:h-10 [&_.btn]:w-10 [&_.btn]:justify-center [&_.input]:h-10">
-                  <HpStepper onDamage={(n) => hit(c, 1, n)} onHeal={(n) => hit(c, -1, n)} onTemp={(n) => setC(c.id, (x) => ({ ...x, tempHp: n }))} />
+                  <HpStepper
+                    onDamage={(n) => hit(c, 1, n)}
+                    onHeal={(n) => hit(c, -1, n)}
+                    onTemp={(n) => {
+                      setC(c.id, (x) => ({ ...x, tempHp: n }));
+                      toSheet({ ...c, tempHp: n });
+                    }}
+                  />
                 </div>
                 <div className="min-w-0 [&_.chip]:min-h-8 [&_select]:h-10">
                   <ConditionChips value={c.conditions} options={CONDITIONS_2024} onChange={(next) => setC(c.id, (x) => ({ ...x, conditions: next }))} />
@@ -349,9 +544,42 @@ export function EncounterTracker({
                 </div>
                 <input className="input h-10 w-28 min-w-28 flex-1 text-xs" placeholder="Concentration" value={c.concentration ?? ''} onChange={(e) => setC(c.id, (x) => ({ ...x, concentration: e.target.value || null }))} aria-label="Concentration" />
               </div>
+              {((c.effects?.length ?? 0) > 0 || (c.counters?.length ?? 0) > 0 || isTurn) && (
+                <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                  {(c.effects ?? []).map((e) => (
+                    <span key={e.id} className="chip gap-1" title={`Ends at the start of ${list.find((x) => x.id === e.anchor)?.name ?? 'the'} turn in round ${e.endRound}`}>
+                      <Hourglass size={11} className="text-arcane" /> {e.name} <span className="num text-dim">{effectRoundsLeft(e, turn)}</span>
+                      <button className="-mr-1 rounded-sm px-0.5 hover:text-danger" aria-label={`End ${e.name} on ${c.name}`} onClick={() => setC(c.id, (x) => ({ ...x, effects: (x.effects ?? []).filter((y) => y.id !== e.id) }))}>
+                        <X size={11} />
+                      </button>
+                    </span>
+                  ))}
+                  {(c.counters ?? []).map((k) => (
+                    <span key={k.name} className={`chip gap-1 ${k.used >= k.max ? 'opacity-60' : ''}`} title={k.eachTurn ? 'Back at the start of its turn' : k.recharge ? `Back on a d6 roll of ${k.recharge} or more, at the start of its turn` : 'Does not come back in the fight'}>
+                      {k.name}{' '}
+                      <span className="num">
+                        {k.max - k.used}/{k.max}
+                      </span>
+                      <button className="rounded-sm px-0.5 hover:text-gold disabled:opacity-40" aria-label={`Use ${k.name} (${c.name})`} disabled={k.used >= k.max} onClick={() => setCounter(c, k.name, (x) => ({ ...x, used: Math.min(x.max, x.used + 1) }))}>
+                        <Minus size={11} />
+                      </button>
+                      {k.recharge && k.used >= k.max ? (
+                        <button className="rounded-sm px-0.5 text-gold hover:bg-gold/15" aria-label={`Roll to recharge ${k.name} (${c.name})`} title={`Roll a d6: ${k.recharge} or more brings it back`} onClick={() => void recharge(c, k)}>
+                          <Dice5 size={12} />
+                        </button>
+                      ) : (
+                        <button className="rounded-sm px-0.5 hover:text-gold disabled:opacity-40" aria-label={`Give back ${k.name} (${c.name})`} disabled={!k.used} onClick={() => setCounter(c, k.name, (x) => ({ ...x, used: Math.max(0, x.used - 1) }))}>
+                          <Plus size={11} />
+                        </button>
+                      )}
+                    </span>
+                  ))}
+                  <EffectAdder onAdd={(name, rounds) => setC(c.id, (x) => addEffect(x, name, rounds, turn, list))} who={c.name} />
+                </div>
+              )}
               {openBlock === c.id && block && (
                 <div className="rounded-md border border-line p-3">
-                  <StatBlockById id={block} />
+                  <StatBlockById id={block} onRoll={(label, expression) => void rollFor(c, label, expression)} />
                 </div>
               )}
             </div>
@@ -365,7 +593,7 @@ export function EncounterTracker({
         <div className="flex flex-wrap gap-2 items-end [&_.input]:h-10">
           <div className="w-40 grow">
             <Field label="Name">
-              <input className="input" value={newName} onChange={(e) => setNewName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && add()} placeholder="Bandit, wolf…" />
+              <input className="input" value={newName} onChange={(e) => setNewName(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && void add()} placeholder="Bandit, wolf…" />
             </Field>
           </div>
           <div className="w-52 grow">
@@ -406,7 +634,7 @@ export function EncounterTracker({
                 <input className="input num text-center px-1" inputMode="numeric" value={newCount} onChange={(e) => setNewCount(e.target.value)} />
               </Field>
             </div>
-            <button className={`btn-primary ${tap}`} onClick={add}>
+            <button className={`btn-primary ${tap}`} onClick={() => void add()}>
               <Plus size={14} /> Add
             </button>
           </div>
