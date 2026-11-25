@@ -81,6 +81,7 @@ export const TABLES = [
   'homebrew',
   'progress_awards',
   'session_attendance',
+  'table_rolls',
   'handouts',
   'bastions',
   'bastion_turns',

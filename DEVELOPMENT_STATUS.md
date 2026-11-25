@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-25 · v0.9.7_
+_Last updated: 2026-11-25 · v0.9.8_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,18 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.8: rolls the whole table sees
+
+The second part of `docs/BETA_PLAN.md` B4. Next: a table display for a second screen.
+
+- **Data:** migration 37, `table_rolls` (campaign, character or none for the GM, `who`, label, expression, mode, total, detail, `hidden`). The latest 200 of a campaign are kept. In the backup table list; not in campaign exports (it is the table's evening, not the campaign's record).
+- **Server** (`server/src/repo/tableRolls.ts`): `makeRoll` rolls with `shared/play.ts` (`rollDice`, with `adv`/`dis`), so a result is never the client's word. Players: `POST /api/player/me/:code/roll` (their own character, never hidden). GM: `GET/POST/DELETE /api/campaigns/:id/rolls`, `PATCH /api/campaigns/:id/rolls/:roll` (show, or take back behind the screen); `character_id` rolls for one of the campaign's characters. The players' live view (`playerLive`) carries the newest twelve that aren't hidden, session running or not.
+- **Sheet** (`client/src/player/sheet/rolls.tsx`): `RollProvider`, `RollBar`, `Rollable`. `FullSheet` takes `onRoll`; without it (the builder's preview, the printed sheet, a read-only sheet) the numbers are plain. Advantage and Disadvantage apply to d20 rolls only and last one roll. `damageDice` and `attackDice` read what players write in the attack rows ("1d8 + 3 Slashing", "+5"; a save DC isn't a roll).
+- **Players' screens** (`TableRollsCard` in `LivePlay.tsx`): the newest roll in a line, the rest on a tap; rolls made since the page opened or in the last ten minutes.
+- **GM app** (`client/src/components/TableRolls.tsx`): the roll log with the GM's own dice, in the Dice Roller, the DM Screen and Live Session (the plain roller stays where no campaign is open).
+- **Not done:** rolling Hit Dice and spell attacks or damage from the Spells tab; the tracker taking a rolled initiative or damage by itself; a monster's attacks rolled from its stat block (B9).
+- **Tests:** `tests/tableRolls.test.ts`.
 
 ## v0.9.7: the table hears at once
 

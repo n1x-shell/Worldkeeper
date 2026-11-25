@@ -216,6 +216,7 @@ function MyPage({ code }: { code: string }) {
           value={{ name: page.name, species: page.species, class_name: page.class_name, level: page.level, sheet: page.sheet ?? {} }}
           onChange={(next) => void save({ ...page, name: next.name, species: next.species, class_name: next.class_name, sheet: next.sheet })}
           levelLocked
+          onRoll={source.rollMine ? (ask) => source.rollMine!(code, ask) : undefined}
           storeKey="wk.player.me.tab"
           portraitUrl={page.sheet.portrait && source.imageUrl ? source.imageUrl(page.sheet.portrait) : null}
           onPortrait={

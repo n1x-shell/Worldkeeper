@@ -13,6 +13,7 @@ import { modulesOn } from '../repo/modules.js';
 import { removePortrait, savePortrait } from '../repo/portraits.js';
 import { campaignByHandbookCode } from '../repo/handbookCodes.js';
 import { streamChanges } from '../live/feed.js';
+import { makeRoll } from '../repo/tableRolls.js';
 
 const appName = (ctx: AppContext) => (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper';
 /** Whether the table answers only campaign addresses (Settings, per library). */
@@ -160,6 +161,15 @@ function mountPlayerRoutes(ctx: AppContext, r: Router, campaignOf: (req: Request
     h((req) => {
       const id = characterOf(req);
       return logged(ctx.db, id, 'player', () => updatePlayerCharacterPage(ctx.db, String(req.params.code), req.body));
+    }),
+  );
+  // A roll from the character's sheet: the server rolls it, and the whole table sees the result.
+  r.post(
+    '/me/:code/roll',
+    h((req) => {
+      const id = characterOf(req);
+      const campaign = (ctx.db.prepare('SELECT campaign_id FROM characters WHERE id = ?').get(id) as { campaign_id: number }).campaign_id;
+      return makeRoll(ctx.db, campaign, { ...(req.body as object), hidden: false }, { characterId: id });
     }),
   );
   // The character's change log (without the GM's own notes), and their portrait.

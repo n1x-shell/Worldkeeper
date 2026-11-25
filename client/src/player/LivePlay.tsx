@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { CalendarDays, ChevronDown, Compass, Gift, Shield, Swords } from 'lucide-react';
+import { CalendarDays, ChevronDown, Compass, Dices, Gift, Shield, Swords, X } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { usePlayer, usePlayerIndex } from './context';
+import type { PRoll } from './source';
 import { PlayerPageTitle } from './PlayerPages';
 import { CalendarView, TodayCard } from '../components/CalendarView';
 import { formatDate } from '../../../shared/calendar';
@@ -42,6 +43,64 @@ function useMyName() {
   return name;
 }
 
+/** How long a roll stays on the players' screens. */
+const ROLL_SHOWN_MS = 10 * 60 * 1000;
+
+/**
+ * The table's rolls worth showing: those made since this page opened, and those of the last ten minutes (so a page
+ * opened mid-scene sees what was just rolled). By the server's order, not the phone's clock, where it can be.
+ */
+function useTableRolls(rolls: PRoll[] | undefined): PRoll[] {
+  const [since, setSince] = useState<number | null>(null);
+  // The time as of the last look at the table (each look brings the rolls anew).
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (rolls && since === null) setSince(rolls[0]?.id ?? 0);
+    setNow(Date.now());
+  }, [rolls, since]);
+  if (!rolls || since === null) return [];
+  return rolls.filter((r) => r.id > since || now - Date.parse(r.created_at) < ROLL_SHOWN_MS);
+}
+
+/** The table's rolls: the newest in one line, the rest on a tap. Put away until the next roll with the cross. */
+function TableRollsCard({ rolls, me }: { rolls: PRoll[]; me: string | null }) {
+  const [open, setOpen] = useState(false);
+  const [away, setAway] = useState<number | null>(null);
+  const newest = rolls[0];
+  if (!newest || newest.id === away) return null;
+  const who = (r: PRoll) => (me && r.who.trim().toLowerCase() === me.trim().toLowerCase() ? 'You' : r.who);
+  return (
+    <section className="panel elev-3 overflow-hidden" aria-label="The table’s rolls" data-testid="table-rolls-card">
+      <div className="flex items-center gap-1">
+        <button type="button" className="flex min-h-12 min-w-0 flex-1 items-center gap-3 px-4 py-2 text-left" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
+          <Dices size={18} className="shrink-0 text-gold" aria-hidden />
+          <span className="min-w-0 flex-1 truncate text-sm" aria-live="polite">
+            <b className="font-semibold text-ink">{who(newest)}</b> rolled <b className="num text-lg text-gold">{newest.total}</b>
+            {newest.label && <span className="text-dim"> · {newest.label}</span>}
+          </span>
+          <ChevronDown size={16} className={`shrink-0 text-dim transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden />
+        </button>
+        <button type="button" className="btn-ghost mr-1 h-10 w-10 shrink-0 justify-center" onClick={() => setAway(newest.id)} aria-label="Put the rolls away until the next one">
+          <X size={16} />
+        </button>
+      </div>
+      {open && (
+        <ol className="max-h-[40vh] overflow-y-auto border-t border-line py-1">
+          {rolls.map((r) => (
+            <li key={r.id} className="flex items-baseline gap-2 px-4 py-1 text-sm">
+              <span className="num w-8 shrink-0 text-right font-semibold text-ink">{r.total}</span>
+              <span className="min-w-0 flex-1">
+                <span className="font-medium">{who(r)}</span>
+                {r.label && <span className="text-dim"> · {r.label}</span>} <span className="num text-xs text-dim">{r.detail}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      )}
+    </section>
+  );
+}
+
 /**
  * Live play on the players' phones (the app only, never the published handbook): the running fight's turn order, and
  * a note when the GM hands them something. Made to be read at arm's length: whose turn it is, large, and your own
@@ -69,13 +128,15 @@ export function PlayerLiveCard() {
       /* remembered for this visit only */
     }
   };
-  if (!live?.live || (!fight && !fresh)) return null;
+  const rolls = useTableRolls(live?.rolls);
+  if ((!live?.live || (!fight && !fresh)) && !rolls.length) return null;
   const isMe = (n: string) => !!me && n.trim().toLowerCase() === me.trim().toLowerCase();
   const current = fight?.order.find((c) => c.current);
   const myTurn = !!current && isMe(current.name);
   const next = fight ? fight.order[(fight.order.findIndex((c) => c.current) + 1) % fight.order.length] : undefined;
   return (
     <div className="fixed inset-x-3 bottom-3 z-1400 space-y-2 sm:left-auto sm:w-96" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+      <TableRollsCard rolls={rolls} me={me} />
       {fresh && (
         <Link
           to={`${base}/handouts`}
