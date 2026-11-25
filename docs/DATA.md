@@ -56,6 +56,26 @@ The preview summarizes records to create, update or retain, duplicate ID resolut
 
 A database transaction cannot by itself provide an all-or-nothing guarantee for every external filesystem side effect. Retain independent backups, especially before importing unfamiliar archives.
 
+### Bringing your own notes (an Obsidian vault or plain Markdown)
+
+Notes that weren't written for this app come in through **Add and Share → Your notes**. Choose the folder they are in (only its `.md` notes and its pictures are read; hidden folders such as `.obsidian` are passed over), or a ZIP of it. The app lists each folder with a first guess at what it holds (`NPCs` → NPC, `Places` → Landmark, `Sessions` → left out), and you say what each really is, the type for everything else, and which world or realm the records are in. Then comes the same preview and confirmation as any import.
+
+What a note becomes:
+
+| In the note | In the record |
+| --- | --- |
+| Front matter `title` or `name`, else the first `# Heading`, else the file name | The name |
+| Front matter `type`, `category` or `kind` (a record type's name) | The type, over its folder's |
+| Front matter `aliases`, `tags`, and `#tags` in the text | Alternate names and tags |
+| Other front matter (`race: Elf`) | Facts on the record |
+| `[[Another note]]`, `[[Note\|shown words]]`, `[[Note#Heading]]` | A link to that record, and a relationship between the two. A link to a note that isn't there stays as plain words, and the preview counts them. |
+| `![[picture.png]]`, `![](pictures/map.jpg)` | The record's pictures, for the GM only until shown to players |
+| `%%a comment%%` | Left out |
+
+Records get this library's IDs. Bringing the same notes in again matches each note to its record by name and type: an unchanged note changes nothing, a changed one updates its record, and a record you have edited here (or made here under the same name) is asked about first and kept by default. Pictures aren't added twice. Your own notes don't switch Canon Review on.
+
+Not read: Obsidian canvases, Dataview queries (they stay as text), notes embedded in other notes (they become a link), and files that aren't Markdown or pictures.
+
 ### Command line
 
 ```bash

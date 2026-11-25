@@ -5,6 +5,7 @@
  *
  * Read-only: it never changes the session. The client can copy parts into empty prep fields.
  */
+import { campaignWeather } from './generators.js';
 import type { DB } from '../db/connection.js';
 import { notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
@@ -162,6 +163,8 @@ export function sessionBriefing(db: DB, sessionId: number) {
     location: here ? { id: here.id, name: here.name, type: here.type } : hereLabel ? { id: null, name: hereLabel, type: '' } : null,
     chain: chain.slice(1).map((e) => ({ id: e.id, name: e.name })),
     region: region ? { id: region.id, name: region.name } : null,
+    /** Today's weather where the party is (v0.9.12). */
+    weather: campaignWeather(db, c.id, 1).days[0]?.weather ?? null,
     nearby: nearbyRows,
     locals,
     met,

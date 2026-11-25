@@ -8,6 +8,7 @@ import { NeedCampaign } from './Campaign';
 import { dayName, formatDate, formatYear, yearDays, type CalendarDef, type WDate } from '../../../shared/calendar';
 import { DatePicker } from '../components/DatePicker';
 import { WorldCalendar } from './WorldCalendar';
+import { WeatherCard } from './Generators';
 
 /** The campaign calendar: today's date, time passing, festivals, moons and the GM's own events. */
 interface Coming {
@@ -66,6 +67,7 @@ export function CalendarPage() {
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
         <CalendarView def={data.def} date={data.date} events={events.map((e) => ({ day: e.day, year: e.yearly ? null : e.year, title: e.title, kind: 'event' }))} onDay={setAdding} />
         <div className="space-y-3">
+          <WeatherCard campaignId={activeCampaignId} today={data.date} />
           <Card title="The next 30 days">
             {data.coming.length ? (
               <ul className="text-sm space-y-2">

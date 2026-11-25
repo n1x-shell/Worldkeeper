@@ -227,3 +227,67 @@ export async function buildPart(src: ZipSource, files: ZipEntry[]): Promise<Uint
   ev.setUint32(16, offset, true);
   return [...chunks, ...central, end];
 }
+
+let crcTable: Uint32Array | null = null;
+function crc32(data: Uint8Array): number {
+  if (!crcTable) {
+    crcTable = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+      crcTable[n] = c >>> 0;
+    }
+  }
+  let x = 0xffffffff;
+  for (let i = 0; i < data.length; i++) x = crcTable[(x ^ data[i]) & 255] ^ (x >>> 8);
+  return (x ^ 0xffffffff) >>> 0;
+}
+
+/**
+ * Files as a ZIP, stored as they are (no compression): a folder chosen in the browser (v0.9.11, a GM's notes) goes
+ * to the server the same way an archive does.
+ */
+export function zipStored(files: { name: string; data: Uint8Array }[]): Uint8Array[] {
+  const chunks: Uint8Array[] = [];
+  const central: Uint8Array[] = [];
+  let offset = 0;
+  const enc = new TextEncoder();
+  for (const f of files) {
+    const name = enc.encode(f.name.replace(/\\/g, '/'));
+    const crc = crc32(f.data);
+    const local = new Uint8Array(30 + name.length);
+    const l = view(local);
+    l.setUint32(0, SIG_LOCAL, true);
+    l.setUint16(4, 20, true);
+    l.setUint16(6, 0x0800, true); // UTF-8 names
+    l.setUint32(14, crc, true);
+    l.setUint32(18, f.data.length, true);
+    l.setUint32(22, f.data.length, true);
+    l.setUint16(26, name.length, true);
+    local.set(name, 30);
+    const c = new Uint8Array(46 + name.length);
+    const cv = view(c);
+    cv.setUint32(0, SIG_CENTRAL, true);
+    cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0x0800, true);
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, f.data.length, true);
+    cv.setUint32(24, f.data.length, true);
+    cv.setUint16(28, name.length, true);
+    cv.setUint32(42, offset, true);
+    c.set(name, 46);
+    chunks.push(local, f.data);
+    central.push(c);
+    offset += local.length + f.data.length;
+    if (offset >= U32 || files.length > 0xfffe) throw new Error('That folder is too large to bring in at once');
+  }
+  const end = new Uint8Array(22);
+  const ev = view(end);
+  ev.setUint32(0, SIG_EOCD, true);
+  ev.setUint16(8, files.length, true);
+  ev.setUint16(10, files.length, true);
+  ev.setUint32(12, central.reduce((n, c) => n + c.length, 0), true);
+  ev.setUint32(16, offset, true);
+  return [...chunks, ...central, end];
+}

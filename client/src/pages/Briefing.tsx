@@ -6,6 +6,7 @@ export interface Briefing {
   previous: { number: number; title: string; recap: string } | null;
   location: { id: string | null; name: string; type: string } | null;
   chain: { id: string; name: string }[];
+  weather?: { summary: string; effects: string[] } | null;
   region: { id: string; name: string } | null;
   nearby: { id: string; name: string; type: string }[];
   locals: { id: string; name: string }[];

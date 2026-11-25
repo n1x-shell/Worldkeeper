@@ -31,6 +31,10 @@ import { findPack, installPack, listPacks as listSettingPacks, requirePack, role
 import { updatePack } from '../packs/content.js';
 import { addWorldbookFile, buildWorldbook, type SharedManifest } from '../packs/share.js';
 import { forgetStandIns, requireBooks, settleBooks, shareBooks } from '../packs/worldbookRules.js';
+import { z } from 'zod';
+import { types } from '../repo/recordTypes.js';
+import { listRealms } from '../repo/realms.js';
+import { attachNotePictures, convertNotes, looksLikeNotes, readNotesZip, scanNotes, type NotesArchive } from '../import/notes.js';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 300 * 1024 * 1024, files: 1 } });
 
@@ -40,6 +44,8 @@ interface Staged {
   created: number;
   /** A Worldkeeper Markdown export's realms, templates, canon and reveals. */
   sidecar?: Sidecar | null;
+  /** From someone's notes: the pictures to attach to the records once they exist. */
+  notePictures?: { entity_id: string; path: string; data: Buffer }[];
 }
 
 export function debugEnabled(ctx: AppContext): boolean {
@@ -108,10 +114,81 @@ export function libraryRoutes(ctx: AppContext) {
       const backup = hasData && !laterPart ? createBackup(ctx.db, ctx.paths, 'pre-import') : null;
       // A Worldkeeper Markdown export brings its realms (before the records) and its templates, canon and reveals (after).
       if (staged.sidecar) applySidecarRealms(ctx.db, staged.sidecar);
+      // The GM's own notes are their own world: bringing them in doesn't turn canon review on by itself (an import of
+      // a setting's files does, where the switch was never set).
+      const reviewBefore = staged.notePictures ? canonReview(ctx.db) : null;
       const result = commitPlan(ctx.db, staged.files, staged.plan, { resolutions: req.body?.resolutions ?? {}, backupFile: backup?.file ?? null });
+      if (reviewBefore === false && canonReview(ctx.db)) ctx.db.prepare(`INSERT INTO settings (key, value) VALUES ('canon_review', 'off') ON CONFLICT(key) DO UPDATE SET value = excluded.value`).run();
       const restored = staged.sidecar ? applySidecarState(ctx.db, staged.sidecar) : null;
+      const pictures = staged.notePictures?.length ? attachNotePictures(ctx.db, ctx.paths.uploadsDir, staged.notePictures) : 0;
       staging.delete(String(req.body.token));
-      return { result, backup, ...(restored ? { restored } : {}) };
+      return { result, backup, ...(restored ? { restored } : {}), ...(staged.notePictures ? { pictures } : {}) };
+    }),
+  );
+  // ---- Bring your notes: an Obsidian vault or a folder of plain Markdown, as a ZIP -----------------------------------
+  // First what is in it (folders, a guess at what each holds); then, with the GM's choices, the same preview as any
+  // import. Nothing is written until /import/commit.
+  const noteArchives = new Map<string, { archive: NotesArchive; name: string; created: number }>();
+  r.post(
+    '/import/notes/scan',
+    upload.single('archive'),
+    h((req) => {
+      sweep();
+      for (const [k, v] of noteArchives) if (Date.now() - v.created > 60 * 60 * 1000) noteArchives.delete(k);
+      if (!req.file) throw badRequest('Choose a ZIP of your notes');
+      let archive: NotesArchive;
+      try {
+        archive = readNotesZip(req.file.buffer);
+      } catch (e) {
+        throw badRequest(`Could not read the archive: ${(e as Error).message}`);
+      }
+      if (!archive.notes.length) throw badRequest('No Markdown (.md) notes were found in the archive');
+      const token = randomBytes(12).toString('hex');
+      // One archive of notes at a time: they can be large, and pictures are held until the import is confirmed.
+      noteArchives.clear();
+      noteArchives.set(token, { archive, name: req.file.originalname.replace(/[^\w. -]/g, '_'), created: Date.now() });
+      const reg = types(ctx.db);
+      return {
+        token,
+        ...scanNotes(archive, reg),
+        /** False when these look like this app's own record files, which Add records reads as they are. */
+        looksLikeNotes: looksLikeNotes(archive.notes),
+        types: reg.list.filter((t) => !t.traits.meta && t.key !== 'redirect').map((t) => ({ key: t.key, label: t.label })),
+        realms: listRealms(ctx.db).map((x) => ({ id: x.id, name: x.name, kind: x.kind })),
+        canonReview: canonReview(ctx.db),
+      };
+    }),
+  );
+  r.post(
+    '/import/notes/preview',
+    h((req) => {
+      const held = noteArchives.get(String(req.body?.token ?? ''));
+      if (!held) throw badRequest('Those notes are no longer held. Choose the ZIP again.');
+      const o = z
+        .object({
+          folders: z.record(z.string().max(500), z.string().max(40)).default({}),
+          fallback: z.string().max(40).default('custom'),
+          realm: z.string().trim().min(1).max(200),
+        })
+        .parse(req.body);
+      const reg = types(ctx.db);
+      const converted = convertNotes(ctx.db, held.archive, { ...o, canon: canonReview(ctx.db) ? 'PROPOSED' : 'CANON' }, reg);
+      if (!converted.files.length) throw badRequest('Every folder is left out: choose what at least one of them holds');
+      const plan = buildPlan(ctx.db, converted.files, `${held.name} (your notes)`);
+      const token = randomBytes(12).toString('hex');
+      staging.set(token, {
+        files: converted.files,
+        plan,
+        created: Date.now(),
+        notePictures: converted.pictures.map((p) => ({ ...p, data: held.archive.pictures.get(p.path)! })).filter((p) => p.data),
+      });
+      return {
+        token,
+        summary: summarisePlan(plan),
+        entities: plan.entities.map((e) => ({ id: e.draft.id, name: e.draft.name, type: e.draft.type, realm: e.draft.realm, action: e.action, note: e.note })),
+        files: plan.files,
+        notes: { skipped: converted.skipped, unresolvedLinks: converted.unresolved, pictures: converted.pictures.length },
+      };
     }),
   );
   // Large imports: is this archive too big to import in one go here, and if so, how big should each part be?

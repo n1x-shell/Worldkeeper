@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-25 · v0.9.10_
+_Last updated: 2026-11-25 · v0.9.12_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,38 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.12: generators
+
+`docs/BETA_PLAN.md` B5: somebody to meet, a shop and what it sells, and the weather.
+
+- **`shared/generators.ts`** holds the making, pure and seeded (the same seed gives the same result), with this app's own word lists:
+  - `npcIdea` (name and people from the name generator; a role, a look, a manner, a want and a secret) and `npcText` (the record's text, the secret under `## Secrets`).
+  - `NAME_STYLES`: eight built-in styles of first name, for worlds whose peoples have no common names yet.
+  - `SHOP_KINDS` (general store, smithy, apothecary, stable, tavern, tools and instruments, arcane shop: each a match on item types and names, and which magic items it might hold), `makeShop` (stock and prices from the item catalogue; a poor place has less and nothing over 50 gp, a rich one more and rarer magic; a shop's prices are cheap, fair or dear), `RARITY_VALUE` (a magic item with no price of its own: 100, 400, 4,000, 40,000, 200,000 gp; a potion half), `coins`, `shopText`.
+  - `weatherOn({ season, terrain, seed, day })`: warmth from the season's name (any words; unknown is mild) and the terrain, wind, rain or snow, fog, dust; a "front" shared by three days running so weather comes in spells; `effects` in rules terms (heavy precipitation, strong wind, extreme cold and heat, fog). Null where there is no sky (underdark, underwater, planar).
+- **Server** (`server/src/repo/generators.ts`): `nameSources` (the world's peoples with common names, then the styles), `namesFrom`, `npcIdeas`, `shopFor` (wealth from the place's facts via `placeProfile`, or the GM's choice; the keeper is an `npcIdea`), `shopPlaces`, `campaignWeather` (the campaign's date and calendar; the party's last stop on a map, else the starting place; seeded by the campaign, so a day's weather doesn't change).
+- **Routes:** `GET /api/generate/sources`, `/api/generate/npcs`, `/api/generate/shop`, `GET /api/campaigns/:id/weather`. `/api/names/peoples` and `/api/names` now include the built-in styles (`style:<key>`), so the Name Generator works in a blank world. The session briefing carries today's `weather`.
+- **Client:** `client/src/pages/Generators.tsx` (`GeneratorsPage` at `/generators`, under Characters → Reference as "People and Shops"; `WeatherCard` on the campaign calendar). **Keep as a record** makes an NPC or a Building (in its place) through `POST /api/entities`, GM only. The prep board's "Where the party is" shows today's weather.
+- Surnames from the name generator no longer come out with a letter three times running ("Millley").
+- **Not done:** a GM's own override of a day's weather; weather on the players' pages or the table display; shops' stock running down as the party buys; gems and art objects in shops (the SRD's item list has none); services and lodging prices.
+- **Tests:** `tests/generators.test.ts`.
+
+## v0.9.11: bring your notes
+
+`docs/BETA_PLAN.md` B6: an Obsidian vault or a folder of plain Markdown becomes records.
+
+- **The converter** (`server/src/import/notes.ts`) turns notes into the library's own record files and hands them to the importer that was already there, so the preview, the backup, conflicts with local edits and the history are the same as any import. `readNotesZip` reads `.md` and pictures (not dot-folders or `__MACOSX`); `scanNotes` lists the folders with `guessFolder`'s first guess; `convertNotes` takes the GM's choices (`folders`, `fallback`, `realm`).
+  - Name: front matter `title`/`name`, the first `# Heading`, the file name. Type: front matter `type`/`category`/`kind`, the nearest folder with a choice, the fallback. Aliases, tags (front matter and `#inline`), a `parent`, and other front matter keys as facts.
+  - `[[Target]]`, `[[Target|shown]]`, `[[Target#heading]]` become `Name [ID]` (or `shown [ID]`), which the importer already turns into relationships. Targets resolve by file name, path, name or alias, then against records already in the library. Unresolved links stay as words and are counted.
+  - `![[picture]]` and `![](local picture)` are taken out of the text and become the record's pictures (`attachNotePictures`, origin `notes:<path>`, so a second import adds none twice). `%%comments%%` are dropped.
+  - IDs: a note with the name and type of a record already here keeps that record's ID (so a re-import updates it, and a record the GM made here is a conflict, kept by default); otherwise the next free ID of its type.
+- **Routes** (`server/src/routes/library.ts`): `POST /api/import/notes/scan` (the archive; one held at a time, for an hour) and `POST /api/import/notes/preview` (`{ token, folders, fallback, realm }`), which stages a plan for the existing `POST /api/import/commit`; commit attaches the pictures and returns their count.
+- **Canon Review** defaults to on once any import has completed (where the switch was never set). A notes import doesn't count: commit pins the switch off if it was off before.
+- **A folder, not only a ZIP:** `zipStored` in `shared/zipParts.ts` writes a store-only ZIP in the browser from a folder chosen with `webkitdirectory` (notes and pictures only, up to 280 MB), which goes to the same route. The ZIP button stays for where a folder can't be chosen. `sniffImage` moved to `server/src/lib/images.ts`.
+- **Client:** `client/src/components/NotesImport.tsx` (`NotesImport`, `NotesReportCard`) on **Add and Share**, feeding the page's existing preview and confirm.
+- **Not done:** character import (B6's other half); creatures and items in Markdown rules packs (B2's leftover); Obsidian canvases and Dataview; embedded notes (they become links); choosing a folder in the desktop app is untested on macOS and Windows (the ZIP button is the fallback).
+- **Tests:** `tests/notesImport.test.ts` (front matter, folder guesses, the folder ZIP, scan → preview → commit through the routes, a second import, the canon switch).
 
 ## v0.9.10: combat depth
 

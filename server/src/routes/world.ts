@@ -39,20 +39,38 @@ import { defaultRevealTarget, onlyToCampaign, promoteToEveryone, recordReveals, 
 import { revealTimelineRow, timelineCampaignReveals } from '../repo/timeline.js';
 import { createEra, listEras, setRowEra, updateEra } from '../repo/eras.js';
 import { getProfile, influenceMatrix, saveProfile } from '../repo/profiles.js';
-import { makeNames, namePeoples } from '../repo/names.js';
+import { nameSources, namesFrom, npcIdeas, shopFor, shopPlaces } from '../repo/generators.js';
+import { SHOP_KINDS } from '../../../shared/generators.js';
 import { types as typeRegistry } from '../repo/recordTypes.js';
 
 export function worldRoutes(ctx: AppContext) {
   const r = Router();
 
-  // The name generator: peoples with common names, and new names in a people's style that nobody has yet.
+  // The name generator: the world's peoples with common names and the built-in styles, and new names in a style that
+  // nobody has yet.
   r.get(
     '/names/peoples',
-    h(() => namePeoples(ctx.db)),
+    h(() => nameSources(ctx.db)),
   );
   r.get(
     '/names',
-    h((req) => makeNames(ctx.db, String(req.query.people ?? ''), Math.min(40, Number(req.query.count) || 12), req.query.seed ? Number(req.query.seed) : undefined)),
+    h((req) => namesFrom(ctx.db, String(req.query.people ?? ''), Math.min(40, Number(req.query.count) || 12), req.query.seed ? Number(req.query.seed) : Date.now())),
+  );
+  // Generators (v0.9.12): people to meet, and a shop with its stock and prices. Nothing is saved: the GM keeps what
+  // they like as a record.
+  const text = (v: unknown) => (typeof v === 'string' && v ? v.slice(0, 200) : undefined);
+  const seedOf = (v: unknown) => (Number.isFinite(Number(v)) && v ? Number(v) : undefined);
+  r.get(
+    '/generate/sources',
+    h(() => ({ names: nameSources(ctx.db), shops: SHOP_KINDS.map((k) => ({ key: k.key, label: k.label })), places: shopPlaces(ctx.db) })),
+  );
+  r.get(
+    '/generate/npcs',
+    h((req) => npcIdeas(ctx.db, { source: text(req.query.source), role: text(req.query.role), count: Number(req.query.count) || 6, seed: seedOf(req.query.seed) })),
+  );
+  r.get(
+    '/generate/shop',
+    h((req) => shopFor(ctx.db, { kind: String(req.query.kind ?? ''), place: text(req.query.place), wealth: text(req.query.wealth), source: text(req.query.source), seed: seedOf(req.query.seed) })),
   );
 
   r.get(

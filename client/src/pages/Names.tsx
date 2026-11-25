@@ -9,7 +9,7 @@ import { Empty, Loading, PageHeader } from '../components/ui';
  * surname that anyone in the world already has is never offered.
  */
 export function NamesPage() {
-  const { data: peoples } = useApi<{ id: string; name: string; seeds: number }[]>('/api/names/peoples');
+  const { data: peoples } = useApi<{ id: string; name: string; builtIn: boolean }[]>('/api/names/peoples');
   const [people, setPeople] = useState('');
   const [seed, setSeed] = useState(() => Date.now());
   const chosen = people || peoples?.find((p) => p.name === 'Humans')?.id || peoples?.[0]?.id || '';
@@ -41,16 +41,36 @@ export function NamesPage() {
       <PageHeader title="Name Generator" subtitle="New names in a people's style. Nobody in the world already has any of these first names or surnames." />
       <div className="flex flex-wrap items-center gap-2">
         <select className="input max-w-xs" value={chosen} onChange={(e) => setPeople(e.target.value)} aria-label="People">
-          {peoples.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name}
-            </option>
-          ))}
+          {peoples.some((p) => !p.builtIn) && (
+            <optgroup label="This world's peoples">
+              {peoples
+                .filter((p) => !p.builtIn)
+                .map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+            </optgroup>
+          )}
+          <optgroup label="Built-in styles">
+            {peoples
+              .filter((p) => p.builtIn)
+              .map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+          </optgroup>
         </select>
         <button className="btn" onClick={() => setSeed(Date.now())}>
           <RefreshCw size={14} /> More names
         </button>
       </div>
+      {!peoples.some((p) => !p.builtIn) && (
+        <p className="text-xs text-dim">
+          These are built-in styles. Give a People or Species record its <b>Common names</b> (eight or so) and it appears here, with new names in its own style.
+        </p>
+      )}
       {data ? (
         data.names.length ? (
           <ul className="grid gap-1 sm:grid-cols-2">
