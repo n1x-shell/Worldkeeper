@@ -117,6 +117,9 @@ export const characterSheetSchema = z
   })
   .passthrough();
 
+/** Only what changed on a sheet (shared/sheetDiff.ts): the fields set, and the fields removed. */
+export const sheetPatchSchema = z.object({ set: z.record(z.string(), z.unknown()).default({}), unset: z.array(z.string().max(60)).max(200).default([]) });
+
 export const characters = makeCrud({
   table: 'characters',
   schema: z.object({

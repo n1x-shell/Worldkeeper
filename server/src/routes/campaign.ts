@@ -16,6 +16,7 @@ import {
   campaignState,
   campaigns,
   characters,
+  sheetPatchSchema,
   copyScene,
   createNextSession,
   decideState,
@@ -68,6 +69,8 @@ import { types as typeRegistry } from '../repo/recordTypes.js';
 import { parseJson } from '../lib/json.js';
 import { returnClock, setReturnStage } from '../repo/returnClock.js';
 import { factionWeb, revealTie } from '../repo/factionWeb.js';
+import { streamChanges } from '../live/feed.js';
+import { applySheetDiff } from '../../../shared/sheetDiff.js';
 import { attendance, attendanceCounts, giveAward, listAwards, removeAward, setAttendance } from '../repo/progress.js';
 import { deleteHomebrew, homebrewForRecord, listHomebrew, saveHomebrew } from '../repo/homebrew.js';
 import { deleteLibraryStatblock, setLibraryStatblock, statblockFor, statblockIndex, type StatBlock } from '../repo/statblocks.js';
@@ -135,7 +138,13 @@ export function campaignRoutes(ctx: AppContext) {
     '/characters/:id',
     h((req) => {
       const id = intParam(req.params.id);
-      return logged(ctx.db, id, 'gm', () => characters.update(ctx.db, id, keepPortrait(ctx.db, id, req.body)));
+      // A patch changes only the sheet's fields it names (shared/sheetDiff.ts): what the player changed meanwhile stays.
+      const { sheet_patch, ...body } = (req.body ?? {}) as { sheet_patch?: unknown } & Record<string, unknown>;
+      if (sheet_patch !== undefined) {
+        const d = sheetPatchSchema.parse(sheet_patch);
+        body.sheet = applySheetDiff(characters.get(ctx.db, id).sheet as Record<string, unknown>, d);
+      }
+      return logged(ctx.db, id, 'gm', () => characters.update(ctx.db, id, keepPortrait(ctx.db, id, body)));
     }),
   );
   r.get(
@@ -158,6 +167,8 @@ export function campaignRoutes(ctx: AppContext) {
       return characters.get(ctx.db, id);
     }),
   );
+  // "Something changed", for the GM's pages that show what players can change (their sheets).
+  r.get('/events', streamChanges(ctx));
   // Party progression: awards of experience or a level, and who was at each session.
   r.get(
     '/campaigns/:id/awards',

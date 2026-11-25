@@ -9,6 +9,8 @@ import type { PCharacterPage } from './source';
 import { FullSheet } from './sheet/FullSheet';
 import { NotesTab, ThinningTab, type ThinningPage } from './sheet/ThinningTab';
 import { PrintSheet } from './sheet/PrintSheet';
+import { onServerChange } from './changes';
+import { applySheetDiff, noChange, sheetDiff } from '@shared/sheetDiff';
 
 const KEY = 'wk.player.me';
 const remember = (code: string) => {
@@ -89,8 +91,8 @@ function MyPage({ code }: { code: string }) {
   const [page, setPage] = useState<PCharacterPage | null | undefined>(undefined);
   const [status, setStatus] = useState('');
   const timer = useRef<number | undefined>(undefined);
-  // The stamp of the sheet as the server last gave it, and whether an edit is still on its way.
-  const stamp = useRef<string | undefined>(undefined);
+  // The page as the server last gave it (edits are sent as what changed since), and whether an edit is on its way.
+  const known = useRef<PCharacterPage | null>(null);
   const waiting = useRef(false);
   const flying = useRef(0);
   const busy = () => waiting.current || flying.current > 0;
@@ -98,27 +100,24 @@ function MyPage({ code }: { code: string }) {
   useEffect(() => {
     void source.myPage!(code).then((p) => {
       setPage(p);
-      stamp.current = p?.sheet_at;
+      known.current = p;
       if (p) remember(code);
     });
   }, [code, source]);
-  // What the GM changes (experience awarded, a level given) shows without a reload: looked for when the page comes
-  // back into view and every 20 seconds, and only while nothing of the player's is waiting to be saved.
+  // What the GM changes (damage dealt, experience awarded, a level given) shows at once, without a reload: the server
+  // says when something changed. Not while an edit of the player's is on its way: its answer brings the rest.
   useEffect(() => {
     const look = () => {
       if (document.hidden || busy()) return;
       void source.myPage!(code).then((p) => {
-        if (!p || busy() || p.sheet_at === stamp.current) return;
-        stamp.current = p.sheet_at;
+        if (!p || busy() || p.sheet_at === known.current?.sheet_at) return;
+        known.current = p;
         setPage(p);
       });
     };
+    if (source.changes) return onServerChange(source.changes, look);
     const every = window.setInterval(look, 20000);
-    document.addEventListener('visibilitychange', look);
-    return () => {
-      window.clearInterval(every);
-      document.removeEventListener('visibilitychange', look);
-    };
+    return () => window.clearInterval(every);
   }, [code, source]);
 
   const save = async (next: PCharacterPage, now = false) => {
@@ -130,16 +129,34 @@ function MyPage({ code }: { code: string }) {
       flying.current++;
       setStatus('Saving…');
       try {
+        // Only what changed since the server's copy: the GM's own changes to other fields stay as they are.
+        const from = known.current ?? next;
+        const d = sheetDiff(from.sheet as Record<string, unknown>, next.sheet as Record<string, unknown>);
+        const character = {
+          ...(next.name !== from.name ? { name: next.name } : {}),
+          ...(next.species !== from.species ? { species: next.species } : {}),
+          ...(next.class_name !== from.class_name ? { class_name: next.class_name } : {}),
+          ...(noChange(d) ? {} : { sheet_patch: d }),
+        };
         const saved = await source.saveMyPage!(code, {
           true_name: next.true_name,
           memories: next.memories,
           known_by: next.known_by,
           notes: next.notes,
-          character: { name: next.name, species: next.species, class_name: next.class_name, sheet: next.sheet, sheet_at: stamp.current },
+          ...(Object.keys(character).length ? { character } : {}),
         });
-        stamp.current = saved.sheet_at;
-        // What the GM gave since this sheet was opened (experience, a level waiting) comes back with the save.
-        setPage((cur) => (cur ? { ...saved, sheet: { ...next.sheet, portrait: saved.sheet.portrait, xp: saved.sheet.xp, builtLevel: saved.sheet.builtLevel } } : saved));
+        known.current = saved;
+        // The server's answer has everyone's changes. Anything typed since this was sent is laid back on top.
+        setPage((cur) =>
+          !cur || cur === next
+            ? saved
+            : {
+                ...cur,
+                level: saved.level,
+                sheet_at: saved.sheet_at,
+                sheet: applySheetDiff(saved.sheet as Record<string, unknown>, sheetDiff(next.sheet as Record<string, unknown>, cur.sheet as Record<string, unknown>)) as PCharacterPage['sheet'],
+              },
+        );
         setStatus('Saved');
       } catch (e) {
         setStatus((e as Error).message);
@@ -206,6 +223,7 @@ function MyPage({ code }: { code: string }) {
               ? async (img) => {
                   window.clearTimeout(timer.current);
                   const saved = await source.myPortrait!(code, img);
+                  known.current = saved;
                   setPage((cur) => {
                     if (!cur) return saved;
                     const sheet = { ...cur.sheet };

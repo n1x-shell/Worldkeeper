@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { apiSource, usePlayerData, type PCampaign, type PEntity, type PLive, type PMap, type PlayerSource, type PTie } from './source';
+import { onServerChange } from './changes';
 
 /** Player data source + route prefix ('/player' inside the app, '' in the static handbook). */
 const Ctx = createContext<{ source: PlayerSource; base: string }>({ source: apiSource, base: '/player' });
@@ -42,9 +43,13 @@ export function PlayerProvider({ source, base, children }: { source: PlayerSourc
       }
     };
     void poll();
-    const t = window.setInterval(poll, 4000);
+    // Told at once when something changes (the turn moves, a handout is given); asking every few seconds is only for
+    // a server from before v0.9.7, or a browser without event streams.
+    const stop = source.changes && typeof EventSource !== 'undefined' ? onServerChange(source.changes, () => void poll()) : null;
+    const t = stop ? undefined : window.setInterval(poll, 4000);
     return () => {
       on = false;
+      stop?.();
       window.clearInterval(t);
     };
   }, [source]);

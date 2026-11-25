@@ -12,6 +12,7 @@ import { itemByName } from '../repo/bookData.js';
 import { modulesOn } from '../repo/modules.js';
 import { removePortrait, savePortrait } from '../repo/portraits.js';
 import { campaignByHandbookCode } from '../repo/handbookCodes.js';
+import { streamChanges } from '../live/feed.js';
 
 const appName = (ctx: AppContext) => (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper';
 /** Whether the table answers only campaign addresses (Settings, per library). */
@@ -37,6 +38,9 @@ export function playerRoutes(ctx: AppContext) {
   });
   mountPlayerRoutes(ctx, coded, (req) => codedCampaign.get(req)!, true);
   r.use('/c/:handbook', coded);
+  // "Something changed": pages look again at once instead of asking every few seconds. It carries nothing else, so
+  // it is the same at every address.
+  r.get('/events', streamChanges(ctx));
   // Campaign addresses only (a setting): the table answers the plain address only with what a player needs to find
   // their own campaign's address: the app's name, their character's page (which names it), and pictures. The GM's own
   // preview (/player in the GM app) is never limited.

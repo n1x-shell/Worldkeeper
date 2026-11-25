@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.9.6_
+_Last updated: 2026-11-25 · v0.9.7_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -73,6 +73,18 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
 
+## v0.9.7: the table hears at once
+
+The first part of `docs/BETA_PLAN.md` B4. Next: rolls from sheets into a shared log, then a table display.
+
+- **The change feed** (`server/src/live/feed.ts`): `GET /api/player/events` and `GET /api/events` are event streams (Server-Sent Events) that say only "changed". `ChangeFeed.stamp()` is `PRAGMA data_version` (another connection committed: the table server as its own process) with `total_changes()` (this connection wrote: the table opened inside the GM's app), looked at every 400 ms while someone listens. Each page then fetches what it shows through its usual routes, so the feed carries nothing those routes wouldn't.
+- **Client** (`client/src/player/changes.ts`): `onServerChange(url, listener)`: one connection for each address, shared; a few changes together count as one; a hidden page lets its connection go and looks again when it's back; every 30 seconds anyway. The players' live view (turn order, handouts) no longer asks every 4 seconds, and the player's sheet no longer every 20.
+- **Saves send what changed** (`shared/sheetDiff.ts`): the player's page and the GM's sheet keep the copy the server last gave them and send `sheet_patch` (`{ set, unset }`, the sheet's top-level fields), and of the name, class and so on only what changed. The server lays it onto the sheet as it is then and checks the result as before; the answer brings everyone's changes back, with anything typed since laid on top. A whole `sheet` still replaces it (the builder's Send to my sheet). The level isn't the player's to send, as before.
+- **The GM's party page** listens too: the party is read again when something changes, and the open sheet takes the server's copy in when nothing of the GM's is waiting to be saved.
+- v0.9.6's guard for a sheet left open (experience and the level mark kept) stays for whole-sheet saves.
+- **Not done:** the same for other pages two people can change (a character's memories and notes are still saved whole); what players read (records, maps) still refreshes only when a handout is given or the page is reloaded.
+- **Tests:** `tests/liveTable.test.ts`.
+
 ## v0.9.6: party progression
 
 `docs/BETA_PLAN.md` B3.
@@ -83,7 +95,7 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
 - **Taking a level** (`client/src/player/sheet/levelUp.ts`, pure and tested; `LevelUp.tsx`): `levelGain` (what a level gives, from `shared/rules2024.ts` and the rules in use) and `takeLevel` (the sheet with it taken). The banner is in `FullSheet`, so the player's sheet on the table server and the GM's both have it; the player's save needs no new route (the mark is part of the sheet).
 - **A sheet left open** (`updatePlayerCharacterPage`, `PlayerMe.tsx`): the player's page now carries `sheet_at` (the character row's stamp) and sends it back with an edit. An edit made on a sheet from before an award keeps the award: the experience given, and the mark that a level waits. The player can move the mark up to their level (taking a level), never down or past it. The player's page looks for the GM's changes when it comes back into view and every 20 seconds, while nothing of the player's is waiting to be saved.
 - **GM app:** `PartyProgress` on Party and Characters (mode, who has earned a level, awards and their list); `Attendance` on a session's page. An award first saves any edit on its way from the open sheet, then the sheet is read afresh, so neither writes over the other.
-- **Not done:** XP worked out from an encounter's creatures (the tracker knows them; B9); multiclassing (the sheet has one class); feats' own ability increases are left to the player; the GM's other edits to a sheet a player has open (hit points, say) can still be written over by the player's next save, and the other way round (B4, the live table, is where that is settled).
+- **Not done:** XP worked out from an encounter's creatures (the tracker knows them; B9); multiclassing (the sheet has one class); feats' own ability increases are left to the player; the GM's other edits to a sheet a player has open could still be written over by the player's next save, and the other way round (settled in v0.9.7).
 - **Tests:** `tests/progression.test.ts`.
 
 ## v0.9.5: items and spells of the GM's own
