@@ -170,6 +170,11 @@ Each character also has a **character page** for the world's own rules: their na
 
   **Take level N** fills the sheet in: hit points (and one more for each earlier level if Constitution's modifier rose), features, spell slots and rest uses (keeping what's spent), and the Armor Class and weapon attacks the sheet had worked out. Anything the player wrote or changed by hand is left alone, and **I'll do it by hand** changes nothing. A level set with the Level box on the sheet is set by hand and offers nothing.
 - **Who was there:** a session's page has a tick for each character. Award experience ticks those who were at the session, and the Progress panel shows how many sessions each character was at.
+- **Rolls the whole table sees.** On a character's sheet (the player's own on the table server, and yours), the numbers can be tapped to roll: an ability check, a saving throw, a skill, initiative, a death saving throw, and each attack's **Roll to hit** and **Roll damage**. **Advantage** or **Disadvantage** applies to the next d20 and then goes back to normal. The app rolls the dice (a result can't be typed in), and the roll goes to the table's log:
+  - on every player's phone, a line at the bottom shows the newest roll ("Ash rolled 17 · Stealth"); a tap opens the last few, and the cross puts it away until the next one;
+  - your **Dice Roller**, DM Screen and Live Session show everyone's rolls as they happen;
+  - your own rolls are **behind the screen** unless you untick it, and one made behind it can be shown to the table afterwards (**Show the table**);
+  - the log keeps the latest 200 rolls of a campaign; **Clear** empties it.
 - **One sheet, two people.** You and a player can both have a character's sheet open. What either changes shows on the other's screen at once, without reloading: damage you deal, an award, a spell slot they spend. A save sends only the fields that changed, so if you both change different things at the same moment, both stay. If you both change the same field, the later one stands.
 - Awards and attendance travel with a campaign export.
 

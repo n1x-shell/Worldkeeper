@@ -702,6 +702,7 @@ function CharacterSheet({
       <FullSheet
         value={{ name: ch.name, species: ch.species, class_name: ch.class_name, level: ch.level, sheet: sh }}
         onChange={(next) => set({ name: next.name, species: next.species, class_name: next.class_name, level: next.level, sheet: next.sheet as Character['sheet'] })}
+        onRoll={(ask) => api.post(`/api/campaigns/${ch.campaign_id}/rolls`, { ...ask, character_id: ch.id })}
         storeKey="wk.gm.sheet.tab"
         portraitUrl={portrait ? `/api/uploads/${encodeURIComponent(portrait)}` : null}
         onPortrait={async (image) => {

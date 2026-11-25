@@ -23,6 +23,7 @@ import { profileKindFor } from '@shared/profiles';
 import { INFLUENCE_LEVELS } from '@shared/profiles';
 import { usePeek } from '../components/peek/context';
 import { useRealms } from '../components/realms';
+import { TableRolls } from '../components/TableRolls';
 
 // ------------------------------------------------------------------ Encounter tracker (used standalone and in live mode)
 interface Encounter {
@@ -481,7 +482,7 @@ export function TrackerPage() {
 }
 
 // ------------------------------------------------------------------ Dice
-export function DiceRoller({ compact = false }: { compact?: boolean }) {
+function DiceRoller({ compact = false }: { compact?: boolean }) {
   const [expr, setExpr] = useState('1d20');
   const [results, setResults] = useState<DiceResult[]>([]);
   const [err, setErr] = useState<string | null>(null);
@@ -524,12 +525,18 @@ export function DiceRoller({ compact = false }: { compact?: boolean }) {
   );
 }
 
+/** The dice: with a campaign open, the table's roll log (players' rolls, and the GM's own behind the screen). */
+function Dice({ compact = false }: { compact?: boolean }) {
+  const { activeCampaignId } = useAppState();
+  return activeCampaignId ? <TableRolls campaignId={activeCampaignId} compact={compact} /> : <DiceRoller compact={compact} />;
+}
+
 export function DicePage() {
   return (
     <div className="max-w-xl">
-      <PageHeader title="Dice Roller" subtitle="Supports NdM±K, adv/dis on d20, keep/drop (kh, kl, dh, dl) and d%." />
+      <PageHeader title="Dice Roller" subtitle="Supports NdM±K, adv/dis on d20, keep/drop (kh, kl, dh, dl) and d%. With a campaign open, your players' rolls show here too." />
       <Card>
-        <DiceRoller />
+        <Dice />
       </Card>
     </div>
   );
@@ -1124,7 +1131,7 @@ export function DmScreen() {
       <PageHeader title="DM Screen" subtitle="Everything at hand during play. Alt+D opens this screen from anywhere." actions={<Link to="/campaign/live" className="btn-primary">Live session mode</Link>} />
       <div className="grid gap-4 lg:grid-cols-3">
         <Card title="Dice">
-          <DiceRoller compact />
+          <Dice compact />
         </Card>
         <Card title="Quick lookup">
           <input className="input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name or ID…" />

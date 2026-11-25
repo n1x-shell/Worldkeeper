@@ -8,7 +8,8 @@ import { useAppState } from '../lib/store';
 import type { Campaign, Session, StateRow } from '../lib/types';
 import { ask, askText, AutoTextarea, Badge, Empty, EntityLink, Field, Loading, ErrorBox, Segmented } from '../components/ui';
 import { EntityPicker } from '../components/EntityPicker';
-import { DiceRoller, EncounterTracker, type CombatStatus } from './DmTools';
+import { EncounterTracker, type CombatStatus } from './DmTools';
+import { TableRolls } from '../components/TableRolls';
 import { NeedCampaign, useActiveOverview, type Quest } from './Campaign';
 import { Markdown } from '../components/Markdown';
 import { useDebug } from '../components/Dev';
@@ -294,8 +295,8 @@ function LiveView({ session, campaign, quests, onEnd }: { session: Session; camp
           <RevealPanel sessionId={session.id} campaignId={session.campaign_id} onRevealed={() => void reloadLog()} />
         </ToolSection>
         <WorldChange sessionId={session.id} campaignId={activeCampaignId} />
-        <ToolSection id="dice" title="Dice" icon={<Dices size={15} />}>
-          <DiceRoller compact />
+        <ToolSection id="dice" title="Dice and the table's rolls" icon={<Dices size={15} />}>
+          <TableRolls campaignId={session.campaign_id} compact />
         </ToolSection>
         {activeCampaignId && <LiveTools sessionId={session.id} campaignId={activeCampaignId} onLogged={() => void reloadLog()} />}
       </section>

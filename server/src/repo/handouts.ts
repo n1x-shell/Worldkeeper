@@ -11,7 +11,9 @@ import { notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
 import { makeCrud, zText } from './crud.js';
 import { inPlay } from './exploration.js';
+import { getActiveCampaignId } from './campaigns.js';
 import { sortByInitiative, type Combatant } from '../../../shared/play.js';
+import { recentRolls } from './tableRolls.js';
 
 export const handouts = makeCrud({
   table: 'handouts',
@@ -60,7 +62,9 @@ export function playerHandouts(db: DB, campaignId: number) {
  */
 export function playerLive(db: DB, campaignId?: number | null) {
   const play = campaignId === undefined ? inPlay(db) : inPlay(db, campaignId);
-  if (!play) return { live: false as const };
+  // The table's rolls show whether or not a session is running (a roll made between sessions is still a roll).
+  const rolls = recentRolls(db, campaignId === undefined ? getActiveCampaignId(db) : campaignId, { limit: 12 });
+  if (!play) return { live: false as const, rolls };
   const enc = db.prepare(`SELECT id, title, round, turn_index, combatants FROM encounters WHERE session_id = ? AND status = 'running' ORDER BY updated_at DESC LIMIT 1`).get(play.sessionId) as
     | { id: number; title: string; round: number; turn_index: number; combatants: string }
     | undefined;
@@ -83,5 +87,5 @@ export function playerLive(db: DB, campaignId?: number | null) {
   const latest = db.prepare('SELECT id, title FROM handouts WHERE campaign_id = ? AND pushed_at IS NOT NULL ORDER BY pushed_at DESC LIMIT 1').get(play.campaignId) as
     | { id: number; title: string }
     | undefined;
-  return { live: true as const, fight, latest_handout: latest ?? null };
+  return { live: true as const, fight, latest_handout: latest ?? null, rolls };
 }

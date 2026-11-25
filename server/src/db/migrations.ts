@@ -1200,6 +1200,27 @@ CREATE TABLE session_attendance (
 );
 `,
   },
+  {
+    version: 37,
+    name: 'rolls the table sees',
+    // The campaign's roll log: who rolled what, for what, and whether it is behind the GM's screen.
+    sql: `
+CREATE TABLE table_rolls (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  character_id INTEGER REFERENCES characters(id) ON DELETE SET NULL,
+  who TEXT NOT NULL,
+  label TEXT NOT NULL DEFAULT '',
+  expression TEXT NOT NULL,
+  mode TEXT NOT NULL DEFAULT 'normal',
+  total INTEGER NOT NULL,
+  detail TEXT NOT NULL DEFAULT '',
+  hidden INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE INDEX table_rolls_campaign ON table_rolls(campaign_id, id);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {

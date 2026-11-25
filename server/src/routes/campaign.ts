@@ -70,6 +70,7 @@ import { parseJson } from '../lib/json.js';
 import { returnClock, setReturnStage } from '../repo/returnClock.js';
 import { factionWeb, revealTie } from '../repo/factionWeb.js';
 import { streamChanges } from '../live/feed.js';
+import { clearRolls, makeRoll, recentRolls, revealRoll } from '../repo/tableRolls.js';
 import { applySheetDiff } from '../../../shared/sheetDiff.js';
 import { attendance, attendanceCounts, giveAward, listAwards, removeAward, setAttendance } from '../repo/progress.js';
 import { deleteHomebrew, homebrewForRecord, listHomebrew, saveHomebrew } from '../repo/homebrew.js';
@@ -165,6 +166,30 @@ export function campaignRoutes(ctx: AppContext) {
       const id = intParam(req.params.id);
       logged(ctx.db, id, 'gm', () => removePortrait(ctx.db, ctx.paths.uploadsDir, id));
       return characters.get(ctx.db, id);
+    }),
+  );
+  // The table's roll log: everyone's rolls, the GM's own behind the screen unless shown.
+  r.get(
+    '/campaigns/:id/rolls',
+    h((req) => recentRolls(ctx.db, intParam(req.params.id), { hidden: true, limit: 60 })),
+  );
+  r.post(
+    '/campaigns/:id/rolls',
+    h((req) => {
+      const characterId = req.body?.character_id == null ? null : intParam(req.body.character_id, 'character');
+      const { character_id: _c, ...body } = (req.body ?? {}) as Record<string, unknown>;
+      return makeRoll(ctx.db, intParam(req.params.id), body, characterId == null ? { gm: true } : { characterId });
+    }),
+  );
+  r.patch(
+    '/campaigns/:id/rolls/:roll',
+    h((req) => revealRoll(ctx.db, intParam(req.params.id), intParam(req.params.roll), !!req.body?.hidden)),
+  );
+  r.delete(
+    '/campaigns/:id/rolls',
+    h((req) => {
+      clearRolls(ctx.db, intParam(req.params.id));
+      return { ok: true };
     }),
   );
   // "Something changed", for the GM's pages that show what players can change (their sheets).

@@ -68,7 +68,7 @@ describe('live play', () => {
 
   it('gives players the turn order during a live session, with no monster numbers or hidden foes', () => {
     const { ctx, campaignId, sessionId } = setup();
-    expect(playerLive(ctx.db)).toEqual({ live: false });
+    expect(playerLive(ctx.db)).toEqual({ live: false, rolls: [] });
     sessions.update(ctx.db, sessionId, { status: 'live' });
     const base = { initiativeBonus: 0, tempHp: 0, ac: 12, conditions: [], concentration: null, entityId: null, notes: '', defeated: false };
     encounters.create(ctx.db, {

@@ -28,6 +28,7 @@ import { SpellsTab } from './SpellsTab';
 import { FeaturesTab } from './FeaturesTab';
 import { LogTab, type LogEntry } from './LogTab';
 import { LevelUpBanner } from './LevelUp';
+import { RollBar, RollProvider, Rollable, attackDice, d20, damageDice, useCanRoll, type Roller } from './rolls';
 import { levelForXp, readyToLevel, xpForNext } from '@shared/progression';
 import { loadRulesText, portraitFromFile, subclassChoices, useLoaded, useSheetOptions } from './options';
 import { ask } from '../../components/ui/overlays';
@@ -53,6 +54,8 @@ export interface FullSheetProps {
   storeKey?: string;
   /** Shown under the name: save status and the like. */
   status?: ReactNode;
+  /** Rolls from the sheet (the server rolls, the table sees): given, the sheet's numbers can be tapped to roll. */
+  onRoll?: Roller;
 }
 
 /** The attribution the SRD's licence asks for, wherever its rules text is shown. */
@@ -96,10 +99,11 @@ export function FullSheet(props: FullSheetProps) {
     ...(loadLog ? [{ id: 'log', label: 'Log', content: <LogTab load={loadLog} refresh={logTick} /> }] : []),
   ];
 
-  return (
+  const sheet = (
     <div className="ledger">
       <Band value={value} set={set} put={put} readOnly={readOnly} status={props.status} portraitUrl={props.portraitUrl ?? null} onPortrait={readOnly ? undefined : props.onPortrait} />
       {!readOnly && <LevelUpBanner value={value} onChange={onChange} speciesRules={speciesRules} />}
+      <RollBar />
       <div className="grid gap-6 p-4 sm:p-5 lg:grid-cols-[17rem_minmax(0,1fr)]">
         {/* On a phone the tabs come straight after the band; this side column follows them. */}
         <aside className="order-2 space-y-4 lg:order-0 lg:sticky lg:top-4 lg:self-start" aria-label="Rests, Hit Dice and identity">
@@ -113,6 +117,7 @@ export function FullSheet(props: FullSheetProps) {
       </div>
     </div>
   );
+  return props.onRoll && !readOnly ? <RollProvider onRoll={props.onRoll}>{sheet}</RollProvider> : sheet;
 }
 
 /**
@@ -225,7 +230,11 @@ function Glance({ s, put, readOnly }: { s: Sheet; put: (p: Partial<Sheet>) => vo
         )}
         {hp === 0 && max > 0 && (
           <div className="flex flex-wrap items-center justify-between gap-2 border-t border-line pt-2 text-xs">
-            <span className="font-medium text-danger">Death saves</span>
+            <span className="font-medium text-danger">
+              <Rollable label="Death saving throw" expression="1d20">
+                Death saves
+              </Rollable>
+            </span>
             <span className="flex items-center gap-1">
               <span className="text-dim">Saved</span>
               <Pips max={3} used={ds.successes} label="Successes" onChange={readOnly ? undefined : (v) => put({ deathSaves: { ...ds, successes: v } })} />
@@ -256,7 +265,11 @@ function Glance({ s, put, readOnly }: { s: Sheet; put: (p: Partial<Sheet>) => vo
           onChange={(e) => put({ ac: num(e.target.value) })}
         />
       </Stat>
-      <Stat label="Initiative">{signed(initiative(s))}</Stat>
+      <Stat label="Initiative">
+        <Rollable label="Initiative" expression={d20(initiative(s))}>
+          {signed(initiative(s))}
+        </Rollable>
+      </Stat>
       <Stat label="Speed">
         <input className={`${STAT_INPUT} text-lg!`} value={s.speed ?? ''} placeholder="30 ft." aria-label="Speed" disabled={readOnly} onChange={(e) => put({ speed: e.target.value })} />
       </Stat>
@@ -576,7 +589,9 @@ function AbilitiesTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Par
           <section key={a} className="medallion" aria-label={ABILITY_NAMES[a]}>
             <h3 className="font-display text-[12px] uppercase tracking-[0.2em] text-gold">{ABILITY_NAMES[a]}</h3>
             <div className="num mt-1 text-3xl font-semibold leading-none text-ink" aria-label={`${ABILITY_NAMES[a]} modifier`}>
-              {signed(mod(s, a))}
+              <Rollable label={`${ABILITY_NAMES[a]} check`} expression={d20(mod(s, a))}>
+                {signed(mod(s, a))}
+              </Rollable>
             </div>
             <input
               type="number"
@@ -596,7 +611,9 @@ function AbilitiesTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Par
                   <span className="xl:hidden">Save</span>
                   <span className="max-xl:hidden">Saving throw</span>
                 </span>
-                <span className="num">{signed(saveBonus(s, level, a))}</span>
+                <Rollable label={`${ABILITY_NAMES[a]} saving throw`} expression={d20(saveBonus(s, level, a))} className="num">
+                  {signed(saveBonus(s, level, a))}
+                </Rollable>
               </li>
               {SKILLS_BY[a].map((k) => (
                 <li key={k} className={ROW}>
@@ -611,7 +628,9 @@ function AbilitiesTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Par
                     {k}
                     {s.expertise?.includes(k) && <span className="ml-1 text-[10px] font-semibold tracking-wider text-gold">EXP</span>}
                   </span>
-                  <span className="num text-[13px]">{signed(skillBonus(s, level, k))}</span>
+                  <Rollable label={k} expression={d20(skillBonus(s, level, k))} className="num text-[13px]">
+                    {signed(skillBonus(s, level, k))}
+                  </Rollable>
                 </li>
               ))}
             </ul>
@@ -703,6 +722,7 @@ function AbilitiesTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Par
 
 function CombatTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Partial<Sheet>) => void; level: number; cls: string; readOnly: boolean }) {
   const attacks = s.attacks ?? [];
+  const canRoll = useCanRoll();
   const resources = s.resources ?? [];
   const [weapon, setWeapon] = useState('');
   const setAttack = (i: number, p: Partial<Attack>) => put({ attacks: attacks.map((a, j) => (j === i ? { ...a, ...p } : a)) });
@@ -779,6 +799,20 @@ function CombatTab({ s, put, level, cls, readOnly }: { s: Sheet; put: (p: Partia
                     />
                   </label>
                 ))}
+                {canRoll && (attackDice(a.bonus) || damageDice(a.damage)) && (
+                  <span className="col-span-full flex flex-wrap gap-2 text-xs">
+                    {attackDice(a.bonus) && (
+                      <Rollable label={`${a.name || 'Attack'}: to hit`} expression={attackDice(a.bonus)!} className="btn no-underline">
+                        Roll to hit
+                      </Rollable>
+                    )}
+                    {damageDice(a.damage) && (
+                      <Rollable label={`${a.name || 'Attack'}: damage`} expression={damageDice(a.damage)!} d20={false} className="btn no-underline">
+                        Roll damage
+                      </Rollable>
+                    )}
+                  </span>
+                )}
                 {!readOnly ? (
                   <button
                     aria-label={`Remove ${a.name || 'attack'}`}

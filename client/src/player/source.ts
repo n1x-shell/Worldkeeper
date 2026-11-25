@@ -126,6 +126,19 @@ export interface PLive {
   live: boolean;
   fight?: { round: number; order: { name: string; pc: boolean; current: boolean; hp: { hp: number; max: number } | null }[] } | null;
   latest_handout?: { id: number; title: string } | null;
+  /** The table's newest rolls (never the GM's behind the screen), newest first. */
+  rolls?: PRoll[];
+}
+/** A roll in the table's log. */
+export interface PRoll {
+  id: number;
+  who: string;
+  label: string;
+  expression: string;
+  mode: 'normal' | 'adv' | 'dis';
+  total: number;
+  detail: string;
+  created_at: string;
 }
 
 export interface PlayerSource {
@@ -158,6 +171,8 @@ export interface PlayerSource {
     code: string,
     patch: Partial<Pick<PCharacterPage, 'true_name' | 'memories' | 'known_by' | 'notes'>> & { character?: Partial<Pick<PCharacterPage, 'name' | 'species' | 'class_name' | 'sheet' | 'sheet_at'>> & { sheet_patch?: import('../../../shared/sheetDiff').SheetDiff } },
   ): Promise<PCharacterPage>;
+  /** A roll from the character's sheet: the server rolls it and the table sees it. */
+  rollMine?(code: string, ask: { label: string; expression: string; mode: 'normal' | 'adv' | 'dis' }): Promise<PRoll>;
   /** The character's change log, without the GM's own notes. */
   myLog?(code: string): Promise<import('./sheet/LogTab').LogEntry[]>;
   /** Save a new portrait (a small data URL), or remove it (null). */
@@ -222,6 +237,12 @@ export function makeApiSource(api = '/api/player'): PlayerSource {
       const r = await fetch(`${api}/me/${encodeURIComponent(code)}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(patch) });
       const body = (await r.json().catch(() => ({}))) as PCharacterPage & { error?: string };
       if (!r.ok) throw new Error(body.error ?? `Couldn't save (${r.status})`);
+      return body;
+    },
+    rollMine: async (code, ask) => {
+      const r = await fetch(`${api}/me/${encodeURIComponent(code)}/roll`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(ask) });
+      const body = (await r.json().catch(() => ({}))) as PRoll & { error?: string };
+      if (!r.ok) throw new Error(body.error ?? `Couldn't roll (${r.status})`);
       return body;
     },
     myLog: (code) => getJson(`${api}/me/${encodeURIComponent(code)}/log`),
