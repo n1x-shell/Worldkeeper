@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-25 · v0.9.10_
+_Last updated: 2026-11-25 · v0.9.11_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,22 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.11: bring your notes
+
+`docs/BETA_PLAN.md` B6: an Obsidian vault or a folder of plain Markdown becomes records.
+
+- **The converter** (`server/src/import/notes.ts`) turns notes into the library's own record files and hands them to the importer that was already there, so the preview, the backup, conflicts with local edits and the history are the same as any import. `readNotesZip` reads `.md` and pictures (not dot-folders or `__MACOSX`); `scanNotes` lists the folders with `guessFolder`'s first guess; `convertNotes` takes the GM's choices (`folders`, `fallback`, `realm`).
+  - Name: front matter `title`/`name`, the first `# Heading`, the file name. Type: front matter `type`/`category`/`kind`, the nearest folder with a choice, the fallback. Aliases, tags (front matter and `#inline`), a `parent`, and other front matter keys as facts.
+  - `[[Target]]`, `[[Target|shown]]`, `[[Target#heading]]` become `Name [ID]` (or `shown [ID]`), which the importer already turns into relationships. Targets resolve by file name, path, name or alias, then against records already in the library. Unresolved links stay as words and are counted.
+  - `![[picture]]` and `![](local picture)` are taken out of the text and become the record's pictures (`attachNotePictures`, origin `notes:<path>`, so a second import adds none twice). `%%comments%%` are dropped.
+  - IDs: a note with the name and type of a record already here keeps that record's ID (so a re-import updates it, and a record the GM made here is a conflict, kept by default); otherwise the next free ID of its type.
+- **Routes** (`server/src/routes/library.ts`): `POST /api/import/notes/scan` (the archive; one held at a time, for an hour) and `POST /api/import/notes/preview` (`{ token, folders, fallback, realm }`), which stages a plan for the existing `POST /api/import/commit`; commit attaches the pictures and returns their count.
+- **Canon Review** defaults to on once any import has completed (where the switch was never set). A notes import doesn't count: commit pins the switch off if it was off before.
+- **A folder, not only a ZIP:** `zipStored` in `shared/zipParts.ts` writes a store-only ZIP in the browser from a folder chosen with `webkitdirectory` (notes and pictures only, up to 280 MB), which goes to the same route. The ZIP button stays for where a folder can't be chosen. `sniffImage` moved to `server/src/lib/images.ts`.
+- **Client:** `client/src/components/NotesImport.tsx` (`NotesImport`, `NotesReportCard`) on **Add and Share**, feeding the page's existing preview and confirm.
+- **Not done:** character import (B6's other half); creatures and items in Markdown rules packs (B2's leftover); Obsidian canvases and Dataview; embedded notes (they become links); choosing a folder in the desktop app is untested on macOS and Windows (the ZIP button is the fallback).
+- **Tests:** `tests/notesImport.test.ts` (front matter, folder guesses, the folder ZIP, scan → preview → commit through the routes, a second import, the canon switch).
 
 ## v0.9.10: combat depth
 

@@ -281,6 +281,8 @@ The **Library** menu (the gear, top right) holds import preview, confirmation an
 
 **Import controls:** Preview handles duplicates, source precedence, redirects, templates, edits made locally, and unavailable references. Unchanged entries stay untouched, and disappearing source entries are not automatically removed.
 
+**Your own notes:** **Add and Share → Your notes** brings in an Obsidian vault or any folder of Markdown: choose the folder (or a ZIP of it), say what each folder holds, and each note becomes a record. Links between notes (`[[Like this]]`) link the records, pictures a note embeds become its record's pictures, and front matter gives the name, alternate names, tags, type and facts. It goes through the same preview and confirmation, and bringing the same notes in again updates the records instead of doubling them. See [Data](DATA.md#bringing-your-own-notes-an-obsidian-vault-or-plain-markdown).
+
 **Exports are complete:** the JSON export holds every table; a Markdown export brings back its realms, templates, canon flags and reveals when imported again; a full-world ZIP loads into an empty library with its pictures; a campaign export carries everything the campaign keeps, names what it needs, and reports what an importing library lacks.
 
 **Worldbooks:** **Library → Worldbooks** adds, updates and removes a whole world. What a pack ships is marked as the pack's, so an update or an uninstall never touches your own records. See [Writing a worldbook](WORLDBOOKS.md).

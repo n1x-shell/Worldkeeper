@@ -9,13 +9,14 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | B1 Pictures on records | v0.9.3 | Done, except pictures inside a record's text |
 | B2 Homebrew workshop: a whole stat block, hazards | v0.9.4 | Done |
 | B2 Homebrew workshop: your own magic items and spells | v0.9.5 | Done |
-| B2 Homebrew workshop: creatures and items in Markdown rules packs | | Next (small; may fold into B6, imports) |
+| B2 Homebrew workshop: creatures and items in Markdown rules packs | | To do (small; not part of v0.9.11) |
 | B3 Party progression | v0.9.6 | Done, except XP worked out from an encounter |
 | B4 A live table: changes pushed, and sheets that two people can edit | v0.9.7 | Done |
 | B4 A live table: rolls from sheets into a shared log | v0.9.8 | Done |
 | B4 A live table: a table display for a second screen | v0.9.9 | Done |
 | B9 Combat depth | v0.9.10 | Done, except lair actions and a tracker for players' own effects |
-| B5 to B8 | | To do |
+| B6 Bring my notes: an Obsidian vault or a folder of Markdown | v0.9.11 | Done, except character import |
+| B5, B7, B8 | | To do |
 | A1 to A7, then C | | To do |
 
 ## 1. What "beta" should mean
@@ -59,7 +60,7 @@ Each was checked in the code, not assumed. "None" means no trace of it.
 | B3 | **Party progression** | **Done in v0.9.6.** (Found: sessions did have a real-world date, "Played on"; the first draft of this audit missed it. Attendance was missing.) Found: no XP or milestone tracking, no level-up flow for an existing character (the builder builds at any level, but levelling up is editing by hand), no real-world session date or attendance. |
 | B4 | **A live table** | **Done:** pushing in v0.9.7, shared rolls in v0.9.8, the table display in v0.9.9. Found: nothing pushes: players' phones poll. Players can't roll from their sheet into a shared log. No "table display" for a TV or second screen (map, handout, turn order). |
 | B5 | **Generators** | Names, treasure, encounters and tables exist. No NPC generator, no shops with stock and prices, no weather (the calendar has moons and festivals, not weather). |
-| B6 | **Bring my notes** | Import needs this app's own header format. No import of an Obsidian vault or a plain folder of Markdown (front matter, wiki-links, pictures), which is where most GMs' notes live. No character import. |
+| B6 | **Bring my notes** | **Done in v0.9.11 for notes** (a vault or a folder of Markdown: front matter, wiki-links, pictures); character import is not done. Found: import needs this app's own header format. No import of an Obsidian vault or a plain folder of Markdown (front matter, wiki-links, pictures), which is where most GMs' notes live. No character import. |
 | B7 | **Bulk tools** | No tag manager, no bulk edit, move or reveal, no merge of duplicates, no find-and-replace across records. |
 | B8 | **The GM on a tablet** | The GM app answers only on the computer it runs on, with no password option, so a GM can't run a session from a tablet at the table. |
 | B9 | **Combat depth** | **Done in v0.9.10.** Found: the tracker has initiative, HP, conditions and concentration. To check against a real fight: legendary and lair actions, recharge, groups of monsters, effect timers, monsters' attacks rolled from their blocks. |

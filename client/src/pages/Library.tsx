@@ -11,6 +11,7 @@ import { Dev, useDebug } from '../components/Dev';
 import type { Entity } from '../lib/types';
 import { RulesPacksPanel } from './RulesPacks';
 import { ModulesPanel } from './ModulesPanel';
+import { NotesImport, NotesReportCard, type NotesReport } from '../components/NotesImport';
 
 // ------------------------------------------------------------------ Import & export
 interface PreviewResp {
@@ -65,6 +66,8 @@ export function ImportExportPage() {
   const [err, setErr] = useState<string | null>(null);
   const [resolutions, setResolutions] = useState<Record<string, 'keep-local' | 'take-source'>>({});
   const [done, setDone] = useState<string | null>(null);
+  // A preview that came from the GM's own notes: what the conversion left out, shown with it.
+  const [notesReport, setNotesReport] = useState<NotesReport | null>(null);
   const [tab, setTab] = useState<'import' | 'export'>('import');
   const { reloadIndex, reloadMeta } = useAppState();
   const { data: runs, reload: reloadRuns } = useApi<{ id: number; source_name: string; status: string; started_at: string; backup_file: string | null }[]>('/api/import/runs');
@@ -93,7 +96,7 @@ export function ImportExportPage() {
         <div className="space-y-4">
           <Card className="flex flex-wrap items-end gap-3">
             <Field label="Records from files (a .zip of Markdown files)">
-              <input type="file" accept=".zip,application/zip" onChange={(e) => (setFile(e.target.files?.[0] ?? null), setPreview(null), setDone(null), setLarge(null), setRun(null))} />
+              <input type="file" accept=".zip,application/zip" onChange={(e) => (setFile(e.target.files?.[0] ?? null), setPreview(null), setNotesReport(null), setDone(null), setLarge(null), setRun(null))} />
             </Field>
             <button
               className="btn-primary"
@@ -118,6 +121,7 @@ export function ImportExportPage() {
                       return;
                     }
                   }
+                  setNotesReport(null);
                   setPreview(await api.upload<PreviewResp>('/api/import/preview', 'archive', file!));
                 } catch (x) {
                   setErr((x as Error).message);
@@ -132,6 +136,12 @@ export function ImportExportPage() {
               Also available from the command line: <code>npm run import -- path/to/archive.zip</code> (add <code>--dry-run</code> to preview only).
             </p>
           </Card>
+          <NotesImport
+            onReset={() => {
+              if (notesReport) (setPreview(null), setNotesReport(null));
+            }}
+            onPreview={(p, report) => (setRun(null), setLarge(null), setDone(null), setResolutions({}), setPreview(p as PreviewResp), setNotesReport(report))}
+          />
           {large && !run && (
             <div data-testid="large-import">
               <Card className="space-y-2 border-warn/50">
@@ -183,6 +193,7 @@ export function ImportExportPage() {
             </div>
           )}
           {preview && <ImportPreview p={preview} resolutions={resolutions} setResolutions={setResolutions} />}
+          {preview && notesReport && <NotesReportCard report={notesReport} />}
           {preview && (
             <div className="flex gap-2">
               <button
@@ -195,6 +206,7 @@ export function ImportExportPage() {
                     const r = await api.post<{
                       result: { created: number; updated: number; unchanged: number; conflictsKept: number; conflictsReplaced: number; relationships: number };
                       backup: { file: string } | null;
+                      pictures?: number;
                     }>('/api/import/commit', { token: preview.token, resolutions, ...(run ? { part: run.index + 1 } : {}) });
                     if (run && run.index + 1 < run.parts.length) {
                       // On to the next part: built and previewed the same way.
@@ -211,9 +223,10 @@ export function ImportExportPage() {
                       setLarge(null);
                     }
                     setDone(
-                      `${run ? `All ${run.parts.length} parts added, and the links between them made. Last part: ` : ''}Added: ${r.result.created} created, ${r.result.updated} updated, ${r.result.unchanged} unchanged, ${r.result.conflictsKept} conflicts kept local, ${r.result.conflictsReplaced} replaced from source. ${r.result.relationships} relationships.${r.backup ? ` Backup first: ${r.backup.file}.` : ''}`,
+                      `${run ? `All ${run.parts.length} parts added, and the links between them made. Last part: ` : ''}Added: ${r.result.created} created, ${r.result.updated} updated, ${r.result.unchanged} unchanged, ${r.result.conflictsKept} conflicts kept local, ${r.result.conflictsReplaced} replaced from source. ${r.result.relationships} relationships.${r.pictures ? ` ${r.pictures} ${r.pictures === 1 ? 'picture' : 'pictures'} put on their records.` : ''}${r.backup ? ` Backup first: ${r.backup.file}.` : ''}`,
                     );
                     setPreview(null);
+                    setNotesReport(null);
                     await reloadIndex();
                     await reloadMeta();
                     // A setting's archive installs its pack (its realms, types and tools).
@@ -228,7 +241,7 @@ export function ImportExportPage() {
               >
                 <Check size={14} /> {run ? (run.index + 1 < run.parts.length ? `Confirm part ${run.index + 1} and go on` : 'Confirm the last part') : 'Confirm and add'}
               </button>
-              <button className="btn" onClick={() => (setPreview(null), run && (setRun(null), setLarge(null), void api.post('/api/import/relink', {})))}>
+              <button className="btn" onClick={() => (setPreview(null), setNotesReport(null), run && (setRun(null), setLarge(null), void api.post('/api/import/relink', {})))}>
                 {run ? 'Stop here' : 'Cancel'}
               </button>
             </div>
