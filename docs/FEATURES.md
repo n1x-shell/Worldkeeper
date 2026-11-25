@@ -15,7 +15,7 @@ Both ways then go through the same steps: **rules** (the SRD is always on; impor
 
 In your own world the wizard can add a few **records that teach**, ticked by default: **Start Here**, an inn in your town, an NPC who keeps it with a GM-only secret, a faction allied with her and a landmark (pinned on your map, if you added one). They're real records, linked together and never shown to players unless you reveal them. The dashboard's **Getting started** card follows what you've tried (reading Start Here, peeking at a link, making a record, revealing a section, adding a map, planning a session) and has **Remove the tutorial records** for when you're done; a backup is made first, and your own records and town stay.
 
-Pages with nothing to show say so and point the way: the Name Generator asks for a people's common names, the setting's own pages (the dominions, Open Questions) say they come with the setting.
+Pages with nothing to show say so and point the way: the Name Generator offers built-in styles until a people has common names of its own, the setting's own pages (the dominions, Open Questions) say they come with the setting.
 
 ## Finding your way
 
@@ -217,6 +217,13 @@ Roll or enter initiative, manage rounds and turns, track damage, healing, tempor
 - **Experience at the end.** **End combat** adds up what the foes marked defeated were worth, from their stat blocks, and **Award it** shares it among the party members who were in the fight (see Party progression).
 
 Other table tools include a DM screen, NPC quick-reference cards, faction agendas, world events, random tables and dice notation such as `2d6+3`, `1d20 adv`, `4d6kh3` and `d%`.
+
+**Generators** (Characters → People and Shops) are for when the party goes where you hadn't planned:
+
+- **People:** six at a time, each with a name in one of your world's styles (or a built-in style: common folk, dwarven, elven, halfling, gnomish, orcish, draconic, infernal), what they do, a look, a manner, something they want and a secret. Say what they do yourself ("ferry keeper") or leave it to chance.
+- **Shops:** a general store, smithy, apothecary, stable, tavern, tool shop or arcane shop, with a name, a keeper, and its stock and prices from your rules' items. Put it in a place and its **Wealth** fact decides how much it has: a poor place has less and nothing costly, a rich one has more and rarer magic. A magic item with no price of its own is priced by its rarity.
+- **Keep as a record** turns either into an ordinary record (the shop inside its place), for you only until you reveal it. Nothing else is saved.
+- **Weather** is on the campaign calendar and the session prep board: today's and the six days after, from the season of the campaign's date and the **Terrain** of where the party is. A day's weather stays the same however often you look, it comes in spells of a few days, and it says what it does at the table (heavy rain, strong wind, extreme cold or heat, fog). Places with no sky have none.
 
 Rules reference entries use labels: `OFFICIAL`, `HOMEBREW`, `OUTSIDE 2024 CORE` or `UNVERIFIED`. Worldkeeper does not bundle purchased rulebooks or licensed monster stat blocks.
 

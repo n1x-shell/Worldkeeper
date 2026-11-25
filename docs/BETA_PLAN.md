@@ -16,7 +16,8 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | B4 A live table: a table display for a second screen | v0.9.9 | Done |
 | B9 Combat depth | v0.9.10 | Done, except lair actions and a tracker for players' own effects |
 | B6 Bring my notes: an Obsidian vault or a folder of Markdown | v0.9.11 | Done, except character import |
-| B5, B7, B8 | | To do |
+| B5 Generators: people, shops, weather | v0.9.12 | Done |
+| B7, B8 | | To do |
 | A1 to A7, then C | | To do |
 
 ## 1. What "beta" should mean
@@ -59,7 +60,7 @@ Each was checked in the code, not assumed. "None" means no trace of it.
 | B2 | **Homebrew workshop** | **The stat block editor is done in v0.9.4, and your own items and spells in v0.9.5;** Markdown packs are next. Found: a GM's stat block is "a book creature plus what's different" and four numbers; there is no full stat block editor, and no way to make a magic item or spell in the app. Markdown rules packs can't hold creatures or items at all. |
 | B3 | **Party progression** | **Done in v0.9.6.** (Found: sessions did have a real-world date, "Played on"; the first draft of this audit missed it. Attendance was missing.) Found: no XP or milestone tracking, no level-up flow for an existing character (the builder builds at any level, but levelling up is editing by hand), no real-world session date or attendance. |
 | B4 | **A live table** | **Done:** pushing in v0.9.7, shared rolls in v0.9.8, the table display in v0.9.9. Found: nothing pushes: players' phones poll. Players can't roll from their sheet into a shared log. No "table display" for a TV or second screen (map, handout, turn order). |
-| B5 | **Generators** | Names, treasure, encounters and tables exist. No NPC generator, no shops with stock and prices, no weather (the calendar has moons and festivals, not weather). |
+| B5 | **Generators** | **Done in v0.9.12.** Found: names, treasure, encounters and tables exist. No NPC generator, no shops with stock and prices, no weather (the calendar has moons and festivals, not weather). |
 | B6 | **Bring my notes** | **Done in v0.9.11 for notes** (a vault or a folder of Markdown: front matter, wiki-links, pictures); character import is not done. Found: import needs this app's own header format. No import of an Obsidian vault or a plain folder of Markdown (front matter, wiki-links, pictures), which is where most GMs' notes live. No character import. |
 | B7 | **Bulk tools** | No tag manager, no bulk edit, move or reveal, no merge of duplicates, no find-and-replace across records. |
 | B8 | **The GM on a tablet** | The GM app answers only on the computer it runs on, with no password option, so a GM can't run a session from a tablet at the table. |

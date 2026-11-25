@@ -1194,6 +1194,16 @@ function PrepBoard({ s, b, overview, advs, setPrep }: { s: Session; b: Briefing 
             <p className="font-display text-base">{b.location.id ? <EntityLink id={b.location.id} /> : b.location.name}</p>
             {b.chain.length > 0 && <p className="text-xs text-dim">{b.chain.map((c) => c.name).join(' · ')}</p>}
             {b.terrain?.length ? <p className="text-xs text-dim mt-1 capitalize">{b.terrain.join(', ')}</p> : null}
+            {b.weather && (
+              <p className="text-xs mt-1" data-testid="briefing-weather">
+                <span className="text-dim">Today:</span> {b.weather.summary}
+                {b.weather.effects.map((e) => (
+                  <span key={e} className="mt-1 block rounded border border-warn/50 bg-warn/10 px-2 py-1">
+                    {e}
+                  </span>
+                ))}
+              </p>
+            )}
             {b.nearby.length > 0 && (
               <>
                 <div className="label mt-3">Nearby</div>

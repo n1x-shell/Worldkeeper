@@ -1,5 +1,6 @@
 import { creatureMentions, suggestEncounters, TERRAINS, type Difficulty } from '../repo/encounters.js';
 import { placeProfile, placesWithTerrain, regionPlaces } from '../repo/places.js';
+import { campaignWeather } from '../repo/generators.js';
 import { copyTable, generateEncounterTable } from '../repo/tables.js';
 import { partyLevel } from '../repo/journey.js';
 import { difficultyFor } from '../../../shared/places.js';
@@ -170,6 +171,11 @@ export function campaignRoutes(ctx: AppContext) {
     }),
   );
   // The table display (a television at the table): what it shows, and what the GM can choose from.
+  // The weather where the party is, today and the days after (v0.9.12).
+  r.get(
+    '/campaigns/:id/weather',
+    h((req) => campaignWeather(ctx.db, intParam(req.params.id), Number(req.query.days) || 7)),
+  );
   r.get(
     '/campaigns/:id/display',
     h((req) => displayOptions(ctx.db, intParam(req.params.id))),

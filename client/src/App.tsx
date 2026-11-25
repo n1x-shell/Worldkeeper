@@ -15,6 +15,7 @@ const page = <M,>(load: () => Promise<M>, name: keyof M) => lazy(() => load().th
 const FactionWebPage = page(() => import('./pages/ReturnAndWeb'), 'FactionWebPage');
 const ReturnPage = page(() => import('./pages/ReturnAndWeb'), 'ReturnPage');
 const NamesPage = page(() => import('./pages/Names'), 'NamesPage');
+const GeneratorsPage = page(() => import('./pages/Generators'), 'GeneratorsPage');
 const StandingPage = page(() => import('./pages/Standing'), 'StandingPage');
 const TreasurePage = page(() => import('./pages/Treasure'), 'TreasurePage');
 const BooksPage = page(() => import('./pages/Books'), 'BooksPage');
@@ -529,6 +530,14 @@ export function App() {
             element={
               <Page>
                 <NamesPage />
+              </Page>
+            }
+          />
+          <Route
+            path="generators"
+            element={
+              <Page>
+                <GeneratorsPage />
               </Page>
             }
           />

@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-25 · v0.9.11_
+_Last updated: 2026-11-25 · v0.9.12_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,22 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.12: generators
+
+`docs/BETA_PLAN.md` B5: somebody to meet, a shop and what it sells, and the weather.
+
+- **`shared/generators.ts`** holds the making, pure and seeded (the same seed gives the same result), with this app's own word lists:
+  - `npcIdea` (name and people from the name generator; a role, a look, a manner, a want and a secret) and `npcText` (the record's text, the secret under `## Secrets`).
+  - `NAME_STYLES`: eight built-in styles of first name, for worlds whose peoples have no common names yet.
+  - `SHOP_KINDS` (general store, smithy, apothecary, stable, tavern, tools and instruments, arcane shop: each a match on item types and names, and which magic items it might hold), `makeShop` (stock and prices from the item catalogue; a poor place has less and nothing over 50 gp, a rich one more and rarer magic; a shop's prices are cheap, fair or dear), `RARITY_VALUE` (a magic item with no price of its own: 100, 400, 4,000, 40,000, 200,000 gp; a potion half), `coins`, `shopText`.
+  - `weatherOn({ season, terrain, seed, day })`: warmth from the season's name (any words; unknown is mild) and the terrain, wind, rain or snow, fog, dust; a "front" shared by three days running so weather comes in spells; `effects` in rules terms (heavy precipitation, strong wind, extreme cold and heat, fog). Null where there is no sky (underdark, underwater, planar).
+- **Server** (`server/src/repo/generators.ts`): `nameSources` (the world's peoples with common names, then the styles), `namesFrom`, `npcIdeas`, `shopFor` (wealth from the place's facts via `placeProfile`, or the GM's choice; the keeper is an `npcIdea`), `shopPlaces`, `campaignWeather` (the campaign's date and calendar; the party's last stop on a map, else the starting place; seeded by the campaign, so a day's weather doesn't change).
+- **Routes:** `GET /api/generate/sources`, `/api/generate/npcs`, `/api/generate/shop`, `GET /api/campaigns/:id/weather`. `/api/names/peoples` and `/api/names` now include the built-in styles (`style:<key>`), so the Name Generator works in a blank world. The session briefing carries today's `weather`.
+- **Client:** `client/src/pages/Generators.tsx` (`GeneratorsPage` at `/generators`, under Characters → Reference as "People and Shops"; `WeatherCard` on the campaign calendar). **Keep as a record** makes an NPC or a Building (in its place) through `POST /api/entities`, GM only. The prep board's "Where the party is" shows today's weather.
+- Surnames from the name generator no longer come out with a letter three times running ("Millley").
+- **Not done:** a GM's own override of a day's weather; weather on the players' pages or the table display; shops' stock running down as the party buys; gems and art objects in shops (the SRD's item list has none); services and lodging prices.
+- **Tests:** `tests/generators.test.ts`.
 
 ## v0.9.11: bring your notes
 

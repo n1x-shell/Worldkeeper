@@ -294,7 +294,7 @@ export function generateNames({ seeds, people, used, count = 12, seed = Date.now
         const end = pick(SURNAME_END, rnd);
         if (start.toLowerCase().includes(end) || end.includes(start.toLowerCase().slice(0, 4))) continue;
         const sur = start + end;
-        if (taken(sur) || sur.length > 12) continue;
+        if (taken(sur) || sur.length > 12 || /(.)\1\1/i.test(sur)) continue;
         name = `${first} ${sur}`;
       }
     }
