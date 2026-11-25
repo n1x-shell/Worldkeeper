@@ -11,9 +11,10 @@ import { randomInt } from 'node:crypto';
 import type Database from 'better-sqlite3';
 import { z } from 'zod';
 import { badRequest, notFound } from '../lib/errors.js';
-import { characterSheetSchema } from './campaigns.js';
+import { characterSheetSchema, sheetPatchSchema } from './campaigns.js';
 import { GM_ONLY_SHEET_KEYS } from '../../../shared/sheet.js';
 import { moduleData, setModuleData } from './modules.js';
+import { applySheetDiff } from '../../../shared/sheetDiff.js';
 
 type DB = Database.Database;
 
@@ -118,6 +119,8 @@ const playerCharacterSchema = z
     sheet: characterSheetSchema.optional(),
     /** The stamp of the sheet this edit was made on (`sheet_at` of the page as loaded). */
     sheet_at: z.string().max(40).optional(),
+    /** Only what changed on the sheet (shared/sheetDiff.ts), laid onto the sheet as it is now. */
+    sheet_patch: sheetPatchSchema.optional(),
   })
   .strict();
 const playerEditSchema = playerSchema.extend({ character: playerCharacterSchema.optional() }).strict();
@@ -222,12 +225,15 @@ export function updatePlayerCharacterPage(db: DB, code: string, body: unknown): 
     const old = JSON.parse(row.sheet || '{}') as Record<string, unknown>;
     // The portrait changes only through its own route, too.
     const kept = Object.fromEntries([...(GM_ONLY_SHEET_KEYS as readonly string[]), 'portrait'].filter((k) => k in old).map((k) => [k, old[k]]));
-    const sent = patch.character.sheet ? withoutGmNotes(patch.character.sheet) : null;
+    // A whole sheet replaces the player's part of it; a patch changes only the fields it names, so what the GM (or the
+    // player on another device) changed meanwhile stays.
+    const patched = patch.character.sheet_patch ? characterSheetSchema.parse(applySheetDiff(old, patch.character.sheet_patch)) : null;
+    const sent = patched ? withoutGmNotes(patched) : patch.character.sheet ? withoutGmNotes(patch.character.sheet) : null;
     if (sent) delete sent.portrait;
     // What the GM gives stays given. A sheet open since before an award would otherwise write over it: the experience
     // awarded, and the mark that a level is waiting. The player can only move that mark up, by taking the level.
     if (sent) {
-      const stale = patch.character.sheet_at !== undefined && patch.character.sheet_at !== row.updated_at;
+      const stale = !patched && patch.character.sheet_at !== undefined && patch.character.sheet_at !== row.updated_at;
       const mark = typeof sent.builtLevel === 'number' ? Math.min(sent.builtLevel, row.level) : undefined;
       if (typeof old.builtLevel === 'number') sent.builtLevel = stale || mark === undefined ? old.builtLevel : Math.max(old.builtLevel, mark);
       else if (mark !== undefined) sent.builtLevel = mark;

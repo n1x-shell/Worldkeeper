@@ -150,11 +150,13 @@ export interface PlayerSource {
   imageUrl(file: string): string;
   /** Only in the app (not the published handbook): the live session feed. */
   live?(): Promise<PLive>;
+  /** Only on the GM's servers: the address that says when something changed (see changes.ts). */
+  changes?: string;
   /** Only on the table server: a character's own page, by its private code. */
   myPage?(code: string): Promise<PCharacterPage | null>;
   saveMyPage?(
     code: string,
-    patch: Partial<Pick<PCharacterPage, 'true_name' | 'memories' | 'known_by' | 'notes'>> & { character?: Partial<Pick<PCharacterPage, 'name' | 'species' | 'class_name' | 'sheet' | 'sheet_at'>> },
+    patch: Partial<Pick<PCharacterPage, 'true_name' | 'memories' | 'known_by' | 'notes'>> & { character?: Partial<Pick<PCharacterPage, 'name' | 'species' | 'class_name' | 'sheet' | 'sheet_at'>> & { sheet_patch?: import('../../../shared/sheetDiff').SheetDiff } },
   ): Promise<PCharacterPage>;
   /** The character's change log, without the GM's own notes. */
   myLog?(code: string): Promise<import('./sheet/LogTab').LogEntry[]>;
@@ -211,6 +213,7 @@ export function makeApiSource(api = '/api/player'): PlayerSource {
     factionWeb: () => getJson(`${api}/faction-web`),
     imageUrl: (file) => `/api/player/uploads/${encodeURIComponent(file)}`,
     live: () => getJson(`${api}/live`),
+    changes: '/api/player/events',
     myPage: async (code) => {
       const r = await fetch(`${api}/me/${encodeURIComponent(code)}`);
       return r.ok ? ((await r.json()) as PCharacterPage) : null;

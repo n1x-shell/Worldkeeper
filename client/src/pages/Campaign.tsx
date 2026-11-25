@@ -18,6 +18,8 @@ import { EntityMultiPicker, EntityPicker } from '../components/EntityPicker';
 import { Markdown } from '../components/Markdown';
 import { FullSheet } from '../player/sheet/FullSheet';
 import { Attendance, PartyProgress } from './PartyProgress';
+import { onServerChange } from '../player/changes';
+import { applySheetDiff, noChange, sheetDiff } from '@shared/sheetDiff';
 import { NotesTab, ThinningTab } from '../player/sheet/ThinningTab';
 import type { LogEntry } from '../player/sheet/LogTab';
 import { passive, type Sheet } from '@shared/sheet';
@@ -62,6 +64,8 @@ export interface Character {
     shardscarred?: string;
   };
   notes: string;
+  /** When it was last changed, by anyone (ISO, so later is greater). */
+  updated_at: string;
 }
 export interface Quest {
   id: number;
@@ -494,6 +498,8 @@ export function PartyPage() {
   // An award changes characters on the server: the open sheet saves what's on its way first, then is read afresh.
   const flushSheet = useRef<() => Promise<void>>(async () => {});
   const [fresh, setFresh] = useState(0);
+  // Players change their own sheets: the party is read again when the server says something changed.
+  useEffect(() => onServerChange('/api/events', () => void reload()), [reload]);
   const setSel = (id: number) => {
     setSelState(id);
     setSp(
@@ -507,7 +513,11 @@ export function PartyPage() {
   };
   if (!activeCampaignId) return <NeedCampaign />;
   if (!data) return <Loading />;
-  const chars = data.characters.map((c) => edited[c.id] ?? c);
+  // An edit made here shows until the server's copy is newer (the player changed their sheet).
+  const chars = data.characters.map((c) => {
+    const e = edited[c.id];
+    return e && e.updated_at >= c.updated_at ? e : c;
+  });
   const ch = chars.find((c) => c.id === sel) ?? chars[0];
   const add = async () => {
     setAdding(true);
@@ -580,6 +590,7 @@ export function PartyPage() {
             <CharacterSheet
               key={`${ch.id}:${fresh}`}
               ch={ch}
+              server={data.characters.find((c) => c.id === ch.id)}
               flushRef={flushSheet}
               onEdited={(c) => setEdited((m) => ({ ...m, [c.id]: c }))}
               onDeleted={() => {
@@ -596,11 +607,14 @@ export function PartyPage() {
 
 function CharacterSheet({
   ch: initial,
+  server,
   onDeleted,
   onEdited,
   flushRef,
 }: {
   ch: Character;
+  /** The character as the server has it now (the list is read again when something changes). */
+  server: Character | undefined;
   onDeleted: () => void;
   onEdited: (c: Character) => void;
   flushRef: React.MutableRefObject<() => Promise<void>>;
@@ -613,7 +627,20 @@ function CharacterSheet({
       onEdited(n);
       return n;
     });
-  const auto = useAutosave((c: Character) => api.patch(`/api/characters/${c.id}`, { name: c.name, player: c.player, kind: c.kind, species: c.species, class_name: c.class_name, level: c.level, sheet: c.sheet, notes: c.notes }));
+  // The character as the server last gave it. A save sends only what changed since (shared/sheetDiff.ts), so what
+  // the player changed on their own sheet meanwhile stays; the answer brings everyone's changes back.
+  const known = useRef(initial);
+  const auto = useAutosave(async (c: Character) => {
+    const from = known.current;
+    const d = sheetDiff(from.sheet, c.sheet);
+    const body: Record<string, unknown> = Object.fromEntries((['name', 'player', 'kind', 'species', 'class_name', 'level', 'notes'] as const).filter((k) => c[k] !== from[k]).map((k) => [k, c[k]]));
+    if (!noChange(d)) body.sheet_patch = d;
+    if (!Object.keys(body).length) return;
+    const saved = await api.patch<Character>(`/api/characters/${c.id}`, body);
+    known.current = saved;
+    // Anything typed since this was sent is laid back on top of the answer.
+    setCh((cur) => (cur === c ? saved : { ...cur, updated_at: saved.updated_at, sheet: applySheetDiff(saved.sheet, sheetDiff(c.sheet, cur.sheet)) }));
+  });
   const set = (p: Partial<Character>) => {
     const n = { ...ch, ...p };
     setCh(n);
@@ -622,6 +649,13 @@ function CharacterSheet({
   useEffect(() => {
     flushRef.current = auto.flush;
   }, [flushRef, auto.flush]);
+  // A change made elsewhere (the player on their own sheet) is taken in when nothing of the GM's is waiting to be saved.
+  const dirty = auto.state === 'dirty' || auto.state === 'saving';
+  useEffect(() => {
+    if (dirty || !server || server.updated_at <= known.current.updated_at) return;
+    known.current = server;
+    setChState(server);
+  }, [server, dirty]);
   const sh = ch.sheet;
   const setSheet = (p: Partial<Character['sheet']>) => set({ sheet: { ...sh, ...p } });
   const page = useCharacterPage(ch.id);
