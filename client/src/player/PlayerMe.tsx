@@ -19,6 +19,8 @@ const remember = (code: string) => {
   } catch {
     /* private window */
   }
+  // The live card learns whose device this is ("You rolled", "Your turn") without waiting for a reload.
+  window.dispatchEvent(new Event('wk-player-me'));
 };
 const remembered = () => {
   try {

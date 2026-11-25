@@ -24,6 +24,7 @@ import { INFLUENCE_LEVELS } from '@shared/profiles';
 import { usePeek } from '../components/peek/context';
 import { useRealms } from '../components/realms';
 import { TableRolls } from '../components/TableRolls';
+import { TableDisplayControl } from '../components/TableDisplayControl';
 
 // ------------------------------------------------------------------ Encounter tracker (used standalone and in live mode)
 interface Encounter {
@@ -1132,6 +1133,11 @@ export function DmScreen() {
       <div className="grid gap-4 lg:grid-cols-3">
         <Card title="Dice">
           <Dice compact />
+          {activeCampaignId && (
+            <Section title="Table display" className="mt-4">
+              <TableDisplayControl campaignId={activeCampaignId} />
+            </Section>
+          )}
         </Card>
         <Card title="Quick lookup">
           <input className="input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Name or ID…" />

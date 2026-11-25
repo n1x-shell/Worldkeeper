@@ -14,6 +14,7 @@ import { removePortrait, savePortrait } from '../repo/portraits.js';
 import { campaignByHandbookCode } from '../repo/handbookCodes.js';
 import { streamChanges } from '../live/feed.js';
 import { makeRoll } from '../repo/tableRolls.js';
+import { playerDisplay } from '../repo/tableDisplay.js';
 
 const appName = (ctx: AppContext) => (ctx.db.prepare(`SELECT value FROM settings WHERE key = 'app_name'`).get() as { value: string } | undefined)?.value ?? 'The Worldkeeper';
 /** Whether the table answers only campaign addresses (Settings, per library). */
@@ -127,6 +128,11 @@ function mountPlayerRoutes(ctx: AppContext, r: Router, campaignOf: (req: Request
   r.get(
     '/live',
     h((req) => (only ? playerLive(ctx.db, campaignOf(req)) : playerLive(ctx.db))),
+  );
+  // The table display: what the GM chose to show on the screen at the table, as players may see it.
+  r.get(
+    '/display',
+    h((req) => playerDisplay(ctx.db, campaignOf(req))),
   );
   // The rules for character sheets: the SRD (unless the GM turned it off) and the GM's imported rules packs. Only on
   // the GM's own servers: never in the published handbook.

@@ -26,6 +26,13 @@ const read = (k: string) => {
 function useMyName() {
   const { source } = usePlayer();
   const [name, setName] = useState<string | null>(null);
+  // Counted up when this device opens a character's page, so the name is looked up again.
+  const [opened, setOpened] = useState(0);
+  useEffect(() => {
+    const on = () => setOpened((n) => n + 1);
+    window.addEventListener('wk-player-me', on);
+    return () => window.removeEventListener('wk-player-me', on);
+  }, []);
   useEffect(() => {
     const code = read('wk.player.me');
     if (!code || !source.myPage) return;
@@ -39,7 +46,7 @@ function useMyName() {
     return () => {
       live = false;
     };
-  }, [source]);
+  }, [source, opened]);
   return name;
 }
 

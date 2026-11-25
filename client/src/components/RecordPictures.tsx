@@ -3,10 +3,12 @@
  * The GM adds pictures, captions them, chooses the record's picture and which ones players see.
  */
 import { useRef, useState } from 'react';
-import { Eye, EyeOff, ImagePlus, Pencil, Star, Trash2 } from 'lucide-react';
+import { Eye, EyeOff, ImagePlus, MonitorPlay, Pencil, Star, Trash2 } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { Modal, ask, toast } from './ui/overlays';
 import { Check } from './ui/inputs';
+import { useAppState } from '../lib/store';
+import { showOnDisplay } from './TableDisplayControl';
 
 export interface RecordPicture {
   id: number;
@@ -23,6 +25,7 @@ export function RecordPictures({ entityId, name }: { entityId: string; name: str
   const [open, setOpen] = useState<number | null>(null);
   const [editing, setEditing] = useState(false);
   const [busy, setBusy] = useState(false);
+  const { activeCampaignId } = useAppState();
   const [over, setOver] = useState(false);
   const pictures = data ?? [];
   const shown = open == null ? null : pictures.find((p) => p.id === open);
@@ -139,6 +142,11 @@ export function RecordPictures({ entityId, name }: { entityId: string; name: str
                   <Check checked={p.player_visible} label="Players see this picture" onChange={(v) => void change(p.id, { player_visible: v })}>
                     <span className="text-xs">Players see it</span>
                   </Check>
+                  {p.player_visible && activeCampaignId && (
+                    <button type="button" className="btn-ghost text-xs" onClick={() => void showOnDisplay(activeCampaignId, { kind: 'picture', image_id: p.id }, p.caption || name)} title="Put this picture on the screen at the table">
+                      <MonitorPlay size={12} /> Show on the table display
+                    </button>
+                  )}
                   {i > 0 && (
                     <button type="button" className="btn-ghost text-xs" onClick={() => void change(p.id, { main: true })}>
                       <Star size={12} /> Make it the record&apos;s picture
