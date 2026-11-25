@@ -288,6 +288,15 @@ The **Library** menu (the gear, top right) holds import preview, confirmation an
 
 **Import controls:** Preview handles duplicates, source precedence, redirects, templates, edits made locally, and unavailable references. Unchanged entries stay untouched, and disappearing source entries are not automatically removed.
 
+**Bulk tools:**
+
+- **Select** on any list of records, tick the ones you mean (or the box at the top for all the list shows), then change them together: add or take off a tag, put them inside another record, move them to another world or realm, set their canon status, reveal them to players or hide them (everyone's, or only the active campaign's), or archive them.
+- **Tags** (Library → Tags) lists every tag with how many records carry it. Rename one everywhere, rename it onto another to merge the two, or remove it.
+- **Merge** (a record's **More → Merge another record into this**) is for two records of the same thing. The one you're on stays and takes the other's names, tags, facts, text, notes and pictures; whatever pointed at the other (records inside it, quests, map pins, what campaigns know, links in text) now points here, and the other's address leads here too.
+- **Find and Replace** (Library → Find and Replace) changes a word or a name wherever it is written in your records. You see each record's first change before and after, untick any you don't want, and then replace.
+
+Every record these change keeps its earlier state in its History, where it can be put back; merging and replacing also make a backup first.
+
 **Your own notes:** **Add and Share → Your notes** brings in an Obsidian vault or any folder of Markdown: choose the folder (or a ZIP of it), say what each folder holds, and each note becomes a record. Links between notes (`[[Like this]]`) link the records, pictures a note embeds become its record's pictures, and front matter gives the name, alternate names, tags, type and facts. It goes through the same preview and confirmation, and bringing the same notes in again updates the records instead of doubling them. See [Data](DATA.md#bringing-your-own-notes-an-obsidian-vault-or-plain-markdown).
 
 **Exports are complete:** the JSON export holds every table; a Markdown export brings back its realms, templates, canon flags and reveals when imported again; a full-world ZIP loads into an empty library with its pictures; a campaign export carries everything the campaign keeps, names what it needs, and reports what an importing library lacks.

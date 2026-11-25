@@ -618,7 +618,7 @@ export function ReviewPage() {
       {tab === 'proposed' && <SimpleList rows={data.proposed.map((r) => ({ id: r.id, name: r.name, extra: r.origin }))} empty="No PROPOSED records." />}
       {tab === 'duplicates' && (
         <div className="space-y-2">
-          <p className="text-sm text-dim">Records that share a name. Many are deliberate, such as a city and the faction of the same name; link them with “Same being as” instead of merging.</p>
+          <p className="text-sm text-dim">Records that share a name. Many are deliberate, such as a city and the faction of the same name; link them with “Same being as” instead of merging. Where two really are the same thing, open the one to keep and choose <b>More → Merge another record into this</b>.</p>
           {data.duplicates.map((d, i) => (
             <Card key={i} className="text-sm flex flex-wrap gap-3">
               {d.records.map((r) => (

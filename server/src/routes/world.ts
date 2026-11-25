@@ -39,6 +39,8 @@ import { defaultRevealTarget, onlyToCampaign, promoteToEveryone, recordReveals, 
 import { revealTimelineRow, timelineCampaignReveals } from '../repo/timeline.js';
 import { createEra, listEras, setRowEra, updateEra } from '../repo/eras.js';
 import { getProfile, influenceMatrix, saveProfile } from '../repo/profiles.js';
+import { bulkEdit, deleteTag, findInRecords, mergeRecords, renameTag, replaceInRecords, tagList } from '../repo/bulk.js';
+import { createBackup } from '../backup/backup.js';
 import { nameSources, namesFrom, npcIdeas, shopFor, shopPlaces } from '../repo/generators.js';
 import { SHOP_KINDS } from '../../../shared/generators.js';
 import { types as typeRegistry } from '../repo/recordTypes.js';
@@ -71,6 +73,43 @@ export function worldRoutes(ctx: AppContext) {
   r.get(
     '/generate/shop',
     h((req) => shopFor(ctx.db, { kind: String(req.query.kind ?? ''), place: text(req.query.place), wealth: text(req.query.wealth), source: text(req.query.source), seed: seedOf(req.query.seed) })),
+  );
+
+  // Bulk tools (v0.9.13): tags across the library, one change to many records, two records made one, and
+  // find-and-replace. Merging and replacing make a backup first; every record changed keeps its history.
+  r.get(
+    '/tags',
+    h(() => tagList(ctx.db)),
+  );
+  r.post(
+    '/tags/rename',
+    h((req) => renameTag(ctx.db, String(req.body?.from ?? ''), String(req.body?.to ?? ''))),
+  );
+  r.post(
+    '/tags/delete',
+    h((req) => deleteTag(ctx.db, String(req.body?.tag ?? ''))),
+  );
+  r.post(
+    '/entities/bulk',
+    h((req) => bulkEdit(ctx.db, req.body)),
+  );
+  r.post(
+    '/entities/:id/merge',
+    h((req) => {
+      const backup = createBackup(ctx.db, ctx.paths, 'pre-merge');
+      return { entity: mergeRecords(ctx.db, String(req.params.id), String(req.body?.from ?? '')), backup: backup.file };
+    }),
+  );
+  r.post(
+    '/find',
+    h((req) => findInRecords(ctx.db, req.body)),
+  );
+  r.post(
+    '/replace',
+    h((req) => {
+      const backup = createBackup(ctx.db, ctx.paths, 'pre-replace');
+      return { ...replaceInRecords(ctx.db, req.body), backup: backup.file };
+    }),
   );
 
   r.get(

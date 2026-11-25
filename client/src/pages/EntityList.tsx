@@ -1,8 +1,9 @@
 import { useRecordTypes } from '../components/recordTypes';
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Plus, Star } from 'lucide-react';
+import { ListChecks, Plus, Star } from 'lucide-react';
 import { CANON_STATUSES } from '@shared/domain';
+import { BulkBar } from './BulkTools';
 import { useApi, qs } from '../lib/api';
 import { Card, CanonFlags, Check, DataTable, Empty, ErrorBox, Loading, PageHeader, RealmBadge, TypeBadge, VisibilityBadge, type Column } from '../components/ui';
 import type { EntitySummary } from '../lib/types';
@@ -33,11 +34,22 @@ export const BROWSE_GROUPS: Record<string, { title: string; browse?: string; typ
   indexes: { title: 'Indexes and Registers', types: ['index', 'register'] },
 };
 
-export function EntityTable({ rows, showRealm = true }: { rows: EntitySummary[]; showRealm?: boolean }) {
+/** `pick`: the list is in Select mode: a tick box on each row, and a click on a row ticks it. */
+export function EntityTable({ rows, showRealm = true, pick }: { rows: EntitySummary[]; showRealm?: boolean; pick?: { picked: Set<string>; toggle: (id: string) => void; all: (on: boolean) => void } }) {
   const recordTypes = useRecordTypes();
   const nav = useNavigate();
   const debug = useDebug();
   const columns: Column<EntitySummary>[] = [
+    ...(pick
+      ? [
+          {
+            key: 'pick',
+            label: <input type="checkbox" aria-label="Select all shown" checked={rows.length > 0 && rows.every((r) => pick.picked.has(r.id))} onChange={(ev) => pick.all(ev.target.checked)} />,
+            headClassName: 'w-8',
+            render: (e: EntitySummary) => <input type="checkbox" aria-label={`Select ${e.name}`} checked={pick.picked.has(e.id)} onChange={() => pick.toggle(e.id)} onClick={(ev) => ev.stopPropagation()} />,
+          },
+        ]
+      : []),
     {
       key: 'name',
       label: 'Name',
@@ -85,7 +97,7 @@ export function EntityTable({ rows, showRealm = true }: { rows: EntitySummary[];
   ];
   return (
     <Card flush>
-      <DataTable columns={columns} rows={rows} rowKey={(e) => e.id} onRowClick={(e) => nav(`/e/${encodeURIComponent(e.id)}`)} />
+      <DataTable columns={columns} rows={rows} rowKey={(e) => e.id} onRowClick={(e) => (pick ? pick.toggle(e.id) : nav(`/e/${encodeURIComponent(e.id)}`))} rowClassName={pick ? (e) => (pick.picked.has(e.id) ? 'bg-gold/10' : '') : undefined} />
     </Card>
   );
 }
@@ -103,6 +115,9 @@ export function EntityList({ group: groupProp, realm: fixedRealm }: { group?: st
   const [type, setType] = useState('');
   const [q, setQ] = useState('');
   const [archived, setArchived] = useState(false);
+  // Select mode (v0.9.13): tick records, then change them all at once with the bar below the list.
+  const [selecting, setSelecting] = useState(false);
+  const [picked, setPicked] = useState<Set<string>>(new Set());
   const url = `/api/entities${qs({ type: type ? [type] : def.types, realm: realm || undefined, canon: canon || undefined, archived: archived ? '1' : undefined })}`;
   const { data, error, loading, reload } = useApi<EntitySummary[]>(url);
   const rows = useMemo(() => {
@@ -117,9 +132,14 @@ export function EntityList({ group: groupProp, realm: fixedRealm }: { group?: st
         title={def.title}
         subtitle={data ? `${rows.length} of ${data.length} records` : undefined}
         actions={
-          <Link to={`/new${qs({ type: def.types?.[0], realm: realm || undefined })}`} className="btn-primary">
-            <Plus size={14} /> New record
-          </Link>
+          <>
+            <button type="button" className="btn" aria-pressed={selecting} onClick={() => (setSelecting((v) => !v), setPicked(new Set()))}>
+              <ListChecks size={14} /> {selecting ? 'Done selecting' : 'Select'}
+            </button>
+            <Link to={`/new${qs({ type: def.types?.[0], realm: realm || undefined })}`} className="btn-primary">
+              <Plus size={14} /> New record
+            </Link>
+          </>
         }
       />
       {def.note && debug && <p className="text-sm text-dim mb-3">{def.note}</p>}
@@ -156,7 +176,28 @@ export function EntityList({ group: groupProp, realm: fixedRealm }: { group?: st
         </Check>
       </div>
       {error && <ErrorBox error={error} onRetry={reload} />}
-      {loading && !data ? <Loading /> : rows.length ? <EntityTable rows={rows} showRealm={!fixedRealm} /> : <Empty title="No records match">Adjust the filters, or import your library.</Empty>}
+      {loading && !data ? (
+        <Loading />
+      ) : rows.length ? (
+        <EntityTable
+          rows={rows}
+          showRealm={!fixedRealm}
+          pick={
+            selecting
+              ? {
+                  picked,
+                  toggle: (id) => setPicked((p) => (p.has(id) ? new Set([...p].filter((x) => x !== id)) : new Set([...p, id]))),
+                  // "All" is all that the filters show now.
+                  all: (on) => setPicked(on ? new Set(rows.map((r) => r.id)) : new Set()),
+                }
+              : undefined
+          }
+        />
+      ) : (
+        <Empty title="No records match">Adjust the filters, or import your library.</Empty>
+      )}
+      {selecting && picked.size > 0 && <BulkBar ids={[...picked]} onDone={() => (setPicked(new Set()), void reload())} onClear={() => setPicked(new Set())} />}
+      {selecting && picked.size === 0 && <p className="mt-3 text-sm text-dim">Tick the records to change, or the box at the top for all {rows.length} shown.</p>}
     </div>
   );
 }

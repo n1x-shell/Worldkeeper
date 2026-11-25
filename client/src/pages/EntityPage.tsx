@@ -2,7 +2,8 @@ import { useRecordTypes } from '../components/recordTypes';
 import { RecordPictures } from '../components/RecordPictures';
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Archive, ArchiveRestore, Copy, Download, Network, Pencil, Star, AlertTriangle, ChevronRight, Undo2, Plus, Trash2, MoreHorizontal, Lock, History, Swords } from 'lucide-react';
+import { MergeDialog } from './BulkTools';
+import { Archive, ArchiveRestore, Copy, Download, Network, Pencil, Star, AlertTriangle, ChevronRight, Undo2, Plus, Trash2, MoreHorizontal, Lock, History, Swords, Merge } from 'lucide-react';
 import {
   CANON_STATUSES,
   RELATIONSHIP_LABELS,
@@ -97,6 +98,7 @@ export function EntityPage() {
   const [confirmArchive, setConfirmArchive] = useState(false);
   // A stat block or hazard asked for from More, on a record that isn't a creature or a person.
   const [askedBlock, setAskedBlock] = useState(false);
+  const [merging, setMerging] = useState(false);
   // The record's details (links, mentions, revisions) go to the inspector while it is docked beside the page.
   const inspector = useInspectorPanel('Record details');
   const entityId = data?.entity.id ?? null;
@@ -231,6 +233,7 @@ export function EntityPage() {
                         onSelect: () => (setTab('record'), setAskedBlock(true)),
                       },
                     ]),
+                { label: 'Merge another record into this', icon: <Merge size={14} />, hint: 'For two records of the same thing', onSelect: () => setMerging(true) },
                 { label: 'Export', icon: <Download size={14} />, href: `/api/entities/${encodeURIComponent(e.id)}/export.md`, hint: 'Download as Markdown' },
                 e.archived
                   ? { label: 'Unarchive', icon: <ArchiveRestore size={14} />, onSelect: () => patch({ archived: false }, 'Restored from archive'), divider: true }
@@ -269,6 +272,7 @@ export function EntityPage() {
 
       {/* In the inspector while it is docked; otherwise in the record tab's side column. */}
       {inspector.inInspector && inspector.render(details)}
+      {merging && <MergeDialog keep={e} onClose={() => setMerging(false)} onMerged={() => (setMerging(false), void reload())} />}
       {tab === 'record' && <RecordTab data={data} debug={debug} fieldMap={fieldMap} details={inspector.inInspector ? null : details} onEdit={() => setTab('edit')} askedBlock={askedBlock} onBlockClosed={() => setAskedBlock(false)} />}
       {tab === 'edit' && (
         <EntityEditor

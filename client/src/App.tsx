@@ -72,6 +72,8 @@ const HistoryPage = page(() => import('./pages/Library'), 'HistoryPage');
 const ImportExportPage = page(() => import('./pages/Library'), 'ImportExportPage');
 const OpenQuestionsPage = page(() => import('./pages/Library'), 'OpenQuestionsPage');
 const ReviewPage = page(() => import('./pages/Library'), 'ReviewPage');
+const TagsPage = page(() => import('./pages/BulkTools'), 'TagsPage');
+const FindReplacePage = page(() => import('./pages/BulkTools'), 'FindReplacePage');
 const SettingsPage = page(() => import('./pages/Library'), 'SettingsPage');
 const RumoursPage = page(() => import('./pages/Rumours'), 'RumoursPage');
 const RealmsPage = page(() => import('./pages/Realms'), 'RealmsPage');
@@ -618,6 +620,22 @@ export function App() {
             element={
               <Page>
                 <ReviewPage />
+              </Page>
+            }
+          />
+          <Route
+            path="tags"
+            element={
+              <Page>
+                <TagsPage />
+              </Page>
+            }
+          />
+          <Route
+            path="find-replace"
+            element={
+              <Page>
+                <FindReplacePage />
               </Page>
             }
           />
