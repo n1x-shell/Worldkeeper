@@ -543,6 +543,16 @@
   .prose-lore strong {
     @apply text-ink font-semibold;
   }
+  /* On the paper (a handout), which stays light in both themes: bold and links keep the paper's own ink. In the dark
+     theme they took the page's light ink and vanished. */
+  .parchment.prose-lore strong,
+  .parchment .prose-lore strong {
+    @apply text-parchink;
+  }
+  .parchment.prose-lore a,
+  .parchment .prose-lore a {
+    @apply text-parchlink;
+  }
   .prose-lore a.wk-ref {
     @apply text-arcane underline decoration-dotted underline-offset-2 hover:text-gold;
   }

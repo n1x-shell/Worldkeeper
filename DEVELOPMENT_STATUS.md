@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-25 · v0.9.8_
+_Last updated: 2026-11-25 · v0.9.9_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,18 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.9: a table display
+
+The last part of `docs/BETA_PLAN.md` B4. The next release is 0.9.10 (versions stay 0.9.x until the beta).
+
+- **State** (`server/src/repo/tableDisplay.ts`): each campaign's choice is a setting (`table_display:<campaign id>`): `title`, `map` (`map_id`), `handout` (`handout_id`) or `picture` (`image_id`, an `entity_images` row). `setDisplay` refuses what players couldn't see (a map not shown to them, a picture not ticked or on a record they don't know); a handout shown is pushed if it wasn't. `playerDisplay` reads the choice through the players' projection each time, and falls back to the title card when it can no longer be seen. Routes: `GET/PUT /api/campaigns/:id/display` (GM; the GET lists the maps players see and the campaign's handouts), `GET /api/player/display` and `/api/player/c/<code>/display`.
+- **The page** (`client/src/player/TableDisplay.tsx`): `/player/table` and `/player/c/<code>/table`, outside the handbook's layout. Dark whatever the theme. The map is drawn whole in one SVG (`DisplayMap`: the image, fog with clear patches as on the players' map, the trail, pins by name, the party); a map's y runs up from its bottom edge. The turn order and the rolls of the last five minutes come from the live view; everything follows the change feed.
+- **GM app** (`client/src/components/TableDisplayControl.tsx`): in Live Session's tools and on the DM Screen; `showOnDisplay` is also behind "Show on the table display" on a record's player-visible pictures.
+- **Fixed:** bold text and links on a handout's paper were invisible in the dark theme (the paper stays light; they took the page's light ink). Players' Handouts page had this too.
+- **Fixed:** a player's own roll now reads "You rolled" on a device that opened its character's page in this visit.
+- **Not done:** zooming or panning the map on the display (the GM chooses which map; a region map is the zoom); showing a record's text; a battle map (C1).
+- **Tests:** `tests/tableDisplay.test.ts`.
 
 ## v0.9.8: rolls the whole table sees
 

@@ -175,6 +175,13 @@ Each character also has a **character page** for the world's own rules: their na
   - your **Dice Roller**, DM Screen and Live Session show everyone's rolls as they happen;
   - your own rolls are **behind the screen** unless you untick it, and one made behind it can be shown to the table afterwards (**Show the table**);
   - the log keeps the latest 200 rolls of a campaign; **Clear** empties it.
+- **A table display.** A page made for a television or second screen at the table: the campaign's handbook address followed by `/table` (**Open the display** in the GM app opens it in a new window to drag across; **Full screen** fills the screen). You choose what it shows, from **Live Session → Table display** or the DM Screen:
+  - the **title card** (the campaign's name and date);
+  - a **map** players can see, whole on the screen, with its pins by name, the party's trail and where it is now, and darkness over what it hasn't found while a session is running;
+  - a **handout** (its picture and text, large); showing one gives it to the players, as handing it out does;
+  - a **record's picture**, from the record's page (**Edit pictures → Show on the table display**), if you ticked "Players see it" and the players know the record.
+
+  Beside it, while there are any: the **turn order** of the running fight, and the table's **rolls** of the last five minutes. It follows what you do at once, and it can only show what players may see: something hidden again goes back to the title card.
 - **One sheet, two people.** You and a player can both have a character's sheet open. What either changes shows on the other's screen at once, without reloading: damage you deal, an award, a spell slot they spend. A save sends only the fields that changed, so if you both change different things at the same moment, both stay. If you both change the same field, the later one stands.
 - Awards and attendance travel with a campaign export.
 

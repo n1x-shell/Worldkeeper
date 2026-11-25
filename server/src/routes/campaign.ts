@@ -70,6 +70,7 @@ import { parseJson } from '../lib/json.js';
 import { returnClock, setReturnStage } from '../repo/returnClock.js';
 import { factionWeb, revealTie } from '../repo/factionWeb.js';
 import { streamChanges } from '../live/feed.js';
+import { displayOptions, setDisplay } from '../repo/tableDisplay.js';
 import { clearRolls, makeRoll, recentRolls, revealRoll } from '../repo/tableRolls.js';
 import { applySheetDiff } from '../../../shared/sheetDiff.js';
 import { attendance, attendanceCounts, giveAward, listAwards, removeAward, setAttendance } from '../repo/progress.js';
@@ -167,6 +168,15 @@ export function campaignRoutes(ctx: AppContext) {
       logged(ctx.db, id, 'gm', () => removePortrait(ctx.db, ctx.paths.uploadsDir, id));
       return characters.get(ctx.db, id);
     }),
+  );
+  // The table display (a television at the table): what it shows, and what the GM can choose from.
+  r.get(
+    '/campaigns/:id/display',
+    h((req) => displayOptions(ctx.db, intParam(req.params.id))),
+  );
+  r.put(
+    '/campaigns/:id/display',
+    h((req) => setDisplay(ctx.db, intParam(req.params.id), req.body)),
   );
   // The table's roll log: everyone's rolls, the GM's own behind the screen unless shown.
   r.get(

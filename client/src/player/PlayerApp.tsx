@@ -9,6 +9,7 @@ import { RecordTypesProvider } from '../components/recordTypes';
 import type { RecordTypeDef } from '@shared/recordTypes';
 import type { RealmInfo } from '@shared/realms';
 import { PlayerLayout } from './PlayerLayout';
+import { TableDisplay } from './TableDisplay';
 import { PlayerCalendar, PlayerHandouts, PlayerRegions } from './LivePlay';
 import { PlayerBrowse, PlayerEntry, PlayerHome, PlayerQuests, PlayerRealm, PlayerRecaps, PlayerSearch, PlayerTimeline, PlayerStanding, PlayerTreasure } from './PlayerPages';
 
@@ -128,6 +129,8 @@ export function PlayerApp({ source = apiSource, base = '/player' }: { source?: P
               <Route path="journal" element={<Navigate to={`${base}/quests`} replace />} />
               <Route path="*" element={<PlayerHome />} />
             </Route>
+            {/* The table display: the whole screen, with none of the handbook around it. */}
+            <Route path="table" element={<TableDisplay />} />
           </Routes>
         </RecordTypesProvider>
       </RealmsProvider>

@@ -2,7 +2,7 @@ import { useRecordTypes } from '../components/recordTypes';
 import { LiveTools, ToolSection } from './LiveTools';
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BookOpen, CalendarDays, Check, Dices, Eye, Flag, Globe2, Map as MapIcon, MapPin, Pin, Plus, ScrollText, Square, Swords } from 'lucide-react';
+import { BookOpen, CalendarDays, Check, Dices, Eye, Flag, Globe2, Map as MapIcon, MapPin, MonitorPlay, Pin, Plus, ScrollText, Square, Swords } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import type { Campaign, Session, StateRow } from '../lib/types';
@@ -10,6 +10,7 @@ import { ask, askText, AutoTextarea, Badge, Empty, EntityLink, Field, Loading, E
 import { EntityPicker } from '../components/EntityPicker';
 import { EncounterTracker, type CombatStatus } from './DmTools';
 import { TableRolls } from '../components/TableRolls';
+import { TableDisplayControl } from '../components/TableDisplayControl';
 import { NeedCampaign, useActiveOverview, type Quest } from './Campaign';
 import { Markdown } from '../components/Markdown';
 import { useDebug } from '../components/Dev';
@@ -297,6 +298,9 @@ function LiveView({ session, campaign, quests, onEnd }: { session: Session; camp
         <WorldChange sessionId={session.id} campaignId={activeCampaignId} />
         <ToolSection id="dice" title="Dice and the table's rolls" icon={<Dices size={15} />}>
           <TableRolls campaignId={session.campaign_id} compact />
+        </ToolSection>
+        <ToolSection id="display" title="Table display" icon={<MonitorPlay size={15} />}>
+          <TableDisplayControl campaignId={session.campaign_id} />
         </ToolSection>
         {activeCampaignId && <LiveTools sessionId={session.id} campaignId={activeCampaignId} onLogged={() => void reloadLog()} />}
       </section>
