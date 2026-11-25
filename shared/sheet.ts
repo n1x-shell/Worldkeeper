@@ -98,6 +98,8 @@ export interface Sheet {
   alignment?: string;
   size?: string;
   xp?: number;
+  /** The level the sheet has taken in: when the GM raises the level past it, the sheet offers what the new level gives. */
+  builtLevel?: number;
   armorProf?: string;
   weaponProf?: string;
   toolProf?: string;

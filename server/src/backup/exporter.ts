@@ -79,6 +79,8 @@ export const TABLES = [
   'statblocks',
   'entity_images',
   'homebrew',
+  'progress_awards',
+  'session_attendance',
   'handouts',
   'bastions',
   'bastion_turns',
@@ -290,6 +292,9 @@ export function exportCampaign(db: DB, campaignId: number, uploadsDir?: string) 
     faction_plans: db.prepare('SELECT * FROM faction_plans WHERE campaign_id = ?').all(campaignId),
     encounters: db.prepare('SELECT * FROM encounters WHERE campaign_id = ?').all(campaignId),
     notes: db.prepare('SELECT * FROM notes WHERE campaign_id = ?').all(campaignId),
+    // Awards of experience and levels, and who was at each session.
+    progress_awards: db.prepare('SELECT * FROM progress_awards WHERE campaign_id = ?').all(campaignId),
+    session_attendance: db.prepare(`SELECT * FROM session_attendance WHERE session_id IN (${inList(sesIds)})`).all(),
     ...more,
   };
   return { app: 'worldkeeper-campaign' as const, format: 2, exported_at: new Date().toISOString(), needs: campaignNeeds(db, base), ...base };
@@ -442,6 +447,14 @@ export function importCampaign(db: DB, data: ReturnType<typeof exportCampaign>, 
     for (const r of data.encounters as Record<string, unknown>[])
       insert('encounters', r, { campaign_id: cid, session_id: r.session_id ? (sesMap.get(r.session_id as number) ?? null) : null });
     for (const r of data.notes as Record<string, unknown>[]) insert('notes', r, { campaign_id: cid });
+    for (const r of (data.progress_awards ?? []) as Record<string, unknown>[]) {
+      const character = charMap.get(r.character_id as number);
+      if (character) insert('progress_awards', r, { campaign_id: cid, character_id: character, session_id: r.session_id ? (sesMap.get(r.session_id as number) ?? null) : null });
+    }
+    for (const r of (data.session_attendance ?? []) as Record<string, unknown>[]) {
+      const [session, character] = [sesMap.get(r.session_id as number), charMap.get(r.character_id as number)];
+      if (session && character) insert('session_attendance', r, { session_id: session, character_id: character });
+    }
 
     // Everything else the campaign keeps (an export from before format 2 has none of it).
     const more = data as unknown as Record<string, Record<string, unknown>[] | Record<string, string> | undefined>;

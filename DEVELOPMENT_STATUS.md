@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-24 · v0.9.5_
+_Last updated: 2026-11-24 · v0.9.6_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,19 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.6: party progression
+
+`docs/BETA_PLAN.md` B3.
+
+- **Data:** migration 36: `campaigns.advancement` (`milestone` or `xp`), `sessions.attendance_taken`, `progress_awards` (one row for each character an award went to; `batch` ties them), `session_attendance`. In the backup table list and in campaign exports (ids remapped on import).
+- **Awards** (`server/src/repo/progress.ts`): `giveAward` (XP each, or a total shared out; or a level), `listAwards`, `removeAward` (takes XP back; a milestone's level stays), `attendance`, `setAttendance`, `attendanceCounts`. Routes: `GET/POST /api/campaigns/:id/awards`, `DELETE /api/campaigns/:id/awards/:batch`, `GET/PUT /api/sessions/:id/attendance`. Each change is in the character's log as the GM's.
+- **The sheet's mark:** `sheet.builtLevel` is the level the sheet has taken in. A level given (not one set by hand) leaves it behind the level, and `pendingLevels` (`shared/progression.ts`) says which levels wait. A sheet with no mark is up to date, so nothing changes for existing characters.
+- **Taking a level** (`client/src/player/sheet/levelUp.ts`, pure and tested; `LevelUp.tsx`): `levelGain` (what a level gives, from `shared/rules2024.ts` and the rules in use) and `takeLevel` (the sheet with it taken). The banner is in `FullSheet`, so the player's sheet on the table server and the GM's both have it; the player's save needs no new route (the mark is part of the sheet).
+- **A sheet left open** (`updatePlayerCharacterPage`, `PlayerMe.tsx`): the player's page now carries `sheet_at` (the character row's stamp) and sends it back with an edit. An edit made on a sheet from before an award keeps the award: the experience given, and the mark that a level waits. The player can move the mark up to their level (taking a level), never down or past it. The player's page looks for the GM's changes when it comes back into view and every 20 seconds, while nothing of the player's is waiting to be saved.
+- **GM app:** `PartyProgress` on Party and Characters (mode, who has earned a level, awards and their list); `Attendance` on a session's page. An award first saves any edit on its way from the open sheet, then the sheet is read afresh, so neither writes over the other.
+- **Not done:** XP worked out from an encounter's creatures (the tracker knows them; B9); multiclassing (the sheet has one class); feats' own ability increases are left to the player; the GM's other edits to a sheet a player has open (hit points, say) can still be written over by the player's next save, and the other way round (B4, the live table, is where that is settled).
+- **Tests:** `tests/progression.test.ts`.
 
 ## v0.9.5: items and spells of the GM's own
 

@@ -25,6 +25,8 @@ export const campaigns = makeCrud({
     notes: zText().default(''),
     /** The world the campaign is set in (a realm of kind World). */
     world_id: z.string().regex(REALM_KEY_RE).nullable().default('world'),
+    /** How the party advances: milestones the GM calls, or experience points. */
+    advancement: z.enum(['milestone', 'xp']).default('milestone'),
   }),
   jsonColumns: ['players', 'active_factions'],
   orderBy: 'updated_at DESC',

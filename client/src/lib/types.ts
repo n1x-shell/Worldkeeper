@@ -30,6 +30,8 @@ export interface Campaign {
   notes: string;
   /** The world it's set in (a realm of kind World). */
   world_id: string | null;
+  /** How the party advances: milestones the GM calls, or experience points. */
+  advancement?: 'milestone' | 'xp';
   updated_at: string;
 }
 

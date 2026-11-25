@@ -127,6 +127,7 @@ const LABELS: Record<string, string> = {
   'sheet.alignment': 'Alignment',
   'sheet.size': 'Size',
   'sheet.xp': 'XP',
+  'sheet.builtLevel': 'Level taken on the sheet',
   'sheet.armorProf': 'Armor training notes',
   'sheet.weaponProf': 'Weapon proficiencies',
   'sheet.toolProf': 'Tool proficiencies',

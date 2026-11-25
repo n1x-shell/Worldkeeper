@@ -89,18 +89,45 @@ function MyPage({ code }: { code: string }) {
   const [page, setPage] = useState<PCharacterPage | null | undefined>(undefined);
   const [status, setStatus] = useState('');
   const timer = useRef<number | undefined>(undefined);
+  // The stamp of the sheet as the server last gave it, and whether an edit is still on its way.
+  const stamp = useRef<string | undefined>(undefined);
+  const waiting = useRef(false);
+  const flying = useRef(0);
+  const busy = () => waiting.current || flying.current > 0;
 
   useEffect(() => {
     void source.myPage!(code).then((p) => {
       setPage(p);
+      stamp.current = p?.sheet_at;
       if (p) remember(code);
     });
+  }, [code, source]);
+  // What the GM changes (experience awarded, a level given) shows without a reload: looked for when the page comes
+  // back into view and every 20 seconds, and only while nothing of the player's is waiting to be saved.
+  useEffect(() => {
+    const look = () => {
+      if (document.hidden || busy()) return;
+      void source.myPage!(code).then((p) => {
+        if (!p || busy() || p.sheet_at === stamp.current) return;
+        stamp.current = p.sheet_at;
+        setPage(p);
+      });
+    };
+    const every = window.setInterval(look, 20000);
+    document.addEventListener('visibilitychange', look);
+    return () => {
+      window.clearInterval(every);
+      document.removeEventListener('visibilitychange', look);
+    };
   }, [code, source]);
 
   const save = async (next: PCharacterPage, now = false) => {
     setPage(next);
     window.clearTimeout(timer.current);
+    waiting.current = true;
     const go = async () => {
+      waiting.current = false;
+      flying.current++;
       setStatus('Saving…');
       try {
         const saved = await source.saveMyPage!(code, {
@@ -108,12 +135,16 @@ function MyPage({ code }: { code: string }) {
           memories: next.memories,
           known_by: next.known_by,
           notes: next.notes,
-          character: { name: next.name, species: next.species, class_name: next.class_name, sheet: next.sheet },
+          character: { name: next.name, species: next.species, class_name: next.class_name, sheet: next.sheet, sheet_at: stamp.current },
         });
-        setPage((cur) => (cur ? { ...saved, sheet: { ...next.sheet, portrait: saved.sheet.portrait } } : saved));
+        stamp.current = saved.sheet_at;
+        // What the GM gave since this sheet was opened (experience, a level waiting) comes back with the save.
+        setPage((cur) => (cur ? { ...saved, sheet: { ...next.sheet, portrait: saved.sheet.portrait, xp: saved.sheet.xp, builtLevel: saved.sheet.builtLevel } } : saved));
         setStatus('Saved');
       } catch (e) {
         setStatus((e as Error).message);
+      } finally {
+        flying.current--;
       }
     };
     if (now) await go();

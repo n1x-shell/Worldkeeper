@@ -157,6 +157,22 @@ Species, class, subclass and background are dropdowns: the world's peoples (each
 
 Each character also has a **character page** for the world's own rules: their named memories, their true name and who knows it, and their Thinning track. Players keep their sheet and page up to date on the player server with a private code (they can change everything but level and Thinning); the GM is the only one who changes Thinning, and can give a sheet a new code. A struck memory stays struck. Portraits, sheets, pages and their change logs travel with campaign exports and backups, and never appear in the published handbook.
 
+**Party progression.** On **Party and Characters**, the **Progress** panel sets how the campaign's party advances: **Milestones** (you say when) or **Experience**.
+
+- **Award experience:** an amount shared between the characters you tick, or the amount for each; the session it was for and what for. Each character's XP goes up on their sheet, and the award is in the panel's list (**Take back** takes the XP off again). A character with enough XP for the next level (the 2024 rules' totals) is marked **Has earned level N**, with a **Level up** button.
+- **A milestone:** the characters you tick gain a level.
+- **Taking a level:** when a level is given (a milestone, the Level up button on the panel or on the GM's sheet), the character's sheet shows **Level N is waiting**, for the player on the table server and for you. **Level up** shows what the level gives and asks for the choices:
+  - hit points: the fixed value, or the Hit Die rolled (typed in, or rolled there), with Constitution;
+  - a subclass, at the level it is chosen;
+  - an Ability Score Improvement (two +1s, or one +2) or a feat instead; an Epic Boon at level 19;
+  - the level's class and subclass features, with their text;
+  - what else changes: Proficiency Bonus, spell slots, cantrips and prepared spells to choose, weapon masteries.
+
+  **Take level N** fills the sheet in: hit points (and one more for each earlier level if Constitution's modifier rose), features, spell slots and rest uses (keeping what's spent), and the Armor Class and weapon attacks the sheet had worked out. Anything the player wrote or changed by hand is left alone, and **I'll do it by hand** changes nothing. A level set with the Level box on the sheet is set by hand and offers nothing.
+- **Who was there:** a session's page has a tick for each character. Award experience ticks those who were at the session, and the Progress panel shows how many sessions each character was at.
+- A player whose sheet is open when you give an award sees it within 20 seconds, without reloading; an edit they make in the meantime doesn't write over the experience or the level you gave.
+- Awards and attendance travel with a campaign export.
+
 The handbook's **Make a Character** builder makes a complete character at any level from 1 to 20, step by step, with the sheet building itself alongside: people, class and subclass, background, ability scores (standard array, point buy, rolled or entered, then the background's increases and each Ability Score Improvement or feat), skills, Expertise, languages and weapon masteries, starting equipment or gold, spells, portrait, looks and personality, and ties to the world. It ends with the sheet on two printable pages laid out like the official one, and on the table server **Send to my sheet** fills in the player's sheet (at the level the GM set). In the GM's own app (Player View), **Save to Party and Characters** adds the finished character to a campaign's party, with its portrait, and opens it there; the table server and the published handbook never show this button.
 
 Quests support a **players see** flag. Adventures include premise, hook, stakes, opposition, clues, obstacles, rewards, approaches, consequences and an **if ignored** outcome. Story arcs connect related adventures. Scenes can be reordered, reused across adventures, and arranged in a branching visual flow editor.

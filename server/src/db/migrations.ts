@@ -1173,6 +1173,33 @@ CREATE TABLE homebrew (
 CREATE INDEX homebrew_entity ON homebrew(entity_id);
 `,
   },
+  {
+    version: 36,
+    name: 'party progression',
+    // How a campaign's party advances; awards of experience or a level, one row for each character an award went to
+    // (`batch` ties them together); and who was at each session, once the GM says (`attendance_taken`).
+    sql: `
+ALTER TABLE campaigns ADD COLUMN advancement TEXT NOT NULL DEFAULT 'milestone';
+ALTER TABLE sessions ADD COLUMN attendance_taken INTEGER NOT NULL DEFAULT 0;
+CREATE TABLE progress_awards (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  campaign_id INTEGER NOT NULL REFERENCES campaigns(id) ON DELETE CASCADE,
+  session_id INTEGER REFERENCES sessions(id) ON DELETE SET NULL,
+  character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+  kind TEXT NOT NULL CHECK (kind IN ('xp', 'milestone')),
+  amount INTEGER NOT NULL DEFAULT 0,
+  reason TEXT NOT NULL DEFAULT '',
+  batch TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+CREATE INDEX progress_awards_campaign ON progress_awards(campaign_id, id);
+CREATE TABLE session_attendance (
+  session_id INTEGER NOT NULL REFERENCES sessions(id) ON DELETE CASCADE,
+  character_id INTEGER NOT NULL REFERENCES characters(id) ON DELETE CASCADE,
+  PRIMARY KEY (session_id, character_id)
+);
+`,
+  },
 ];
 
 export function migrate(db: Database.Database): number {
