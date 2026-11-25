@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-25 · v0.9.9_
+_Last updated: 2026-11-25 · v0.9.10_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,17 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.10: combat depth
+
+`docs/BETA_PLAN.md` B9, and B3's leftover (experience from an encounter).
+
+- **Combatants** (`shared/play.ts`, and the encounter schema in `server/src/repo/campaigns.ts`): `characterId`, `group`, `xp`, `effects` (`{ id, name, endRound, anchor }`) and `counters` (`{ name, max, used, eachTurn?, recharge? }`). No migration: combatants are JSON on the encounter.
+- **Turns:** `startTurn` takes off effects that end now (at the start of their anchor's turn in their end round, or when that round comes if the anchor is down or gone), gives each-turn uses back, and returns what to tell the GM (what ended, which recharge to roll). `addEffect` anchors an effect to whoever's turn it is. `rollInitiatives` rolls once for a group and takes rolls already given. `defeatedXp` adds up defeated foes.
+- **From the stat block** (`shared/statblock.ts`): `countersFrom` reads legendary actions ("Legendary Action Uses: 3"), "(3/Day…)", "(Recharge 5–6)" and "(Recharge after a Short or Long Rest)" from entry names; `rollsIn` finds "Attack Roll: +7" and each "(2d8 + 4) Bludgeoning" in an entry's text. `StatBlock` takes `onRoll` and shows them as buttons, with ability checks; a card's book block opens with them.
+- **Tracker** (`EncounterTracker` in `client/src/pages/DmTools.tsx`): adding from a stat block fetches it for XP and counters; rolls go through `POST /api/campaigns/:id/rolls`, hidden, with "Show the table"; a recharge is a d6 through the same route. A party member is tied to its character (`characterId`; one added before is tied by name): the tracker writes hit points to the sheet with `sheet_patch` and takes the sheet's when the party changes (the change feed). Roll missing asks the roll log for players' Initiative rolls of the last 15 minutes. End combat offers the defeated's XP as an award.
+- **Not done:** lair actions and regional effects as their own turn in the order; effects on a player's own sheet; conditions with a duration (use an effect of the same name); damage types against resistances.
+- **Tests:** `tests/combatDepth.test.ts`.
 
 ## v0.9.9: a table display
 

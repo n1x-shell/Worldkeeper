@@ -66,3 +66,60 @@ export function hitPoints(text: string): { hp: string; avg: number } | null {
   const written = /^(\d{1,5})(?:\s*\(.+\))?$/.exec(t);
   return written ? { hp: t, avg: Number(written[1]) } : null;
 }
+
+interface BlockEntry {
+  name: string;
+  text: string;
+}
+interface BlockLists {
+  traits?: BlockEntry[];
+  actions?: BlockEntry[];
+  bonus?: BlockEntry[];
+  reactions?: BlockEntry[];
+  legendary?: BlockEntry[];
+}
+
+/**
+ * What a stat block has that runs out, for the encounter tracker: legendary actions (back at the start of its turn),
+ * uses each day ("Legendary Resistance (3/Day)"), and abilities that must recharge ("Fire Breath (Recharge 5–6)").
+ */
+export function countersFrom(b: BlockLists): { name: string; max: number; used: number; eachTurn?: boolean; recharge?: number | null }[] {
+  const out: ReturnType<typeof countersFrom> = [];
+  if (b.legendary?.length) {
+    const uses = b.legendary.map((e) => /\bUses?:?\s*(\d+)/i.exec(`${e.name} ${e.text}`)?.[1]).find(Boolean);
+    out.push({ name: 'Legendary actions', max: Number(uses) || 3, used: 0, eachTurn: true });
+  }
+  for (const e of [...(b.traits ?? []), ...(b.actions ?? []), ...(b.bonus ?? []), ...(b.reactions ?? [])]) {
+    const recharge = /\(Recharge (\d)(?:\s*[–-]\s*6)?\)/i.exec(e.name);
+    // "(3/Day)", "(3/Day, or 4/Day in Lair)", "(2/Day Each)"; "(Recharge after a Short or Long Rest)" is one use.
+    const daily = /\((\d+)\/Day\b/i.exec(e.name) ?? (/\(Recharge after\b/i.test(e.name) ? ['', '1'] : null);
+    const name = e.name.replace(/\s*\([^)]*\)\s*$/, '').trim();
+    if (recharge) out.push({ name, max: 1, used: 0, recharge: Number(recharge[1]) });
+    else if (daily) out.push({ name, max: Number(daily[1]), used: 0 });
+  }
+  return out;
+}
+
+/** A roll written into a stat block's text. */
+export interface BlockRoll {
+  /** "to hit", "Slashing", "damage". */
+  what: string;
+  expression: string;
+  /** A d20 test (Advantage and Disadvantage apply); not damage. */
+  d20: boolean;
+}
+
+/**
+ * The rolls in an entry's text as the 2024 books write them: "Melee Attack Roll: +7" is 1d20+7 to hit, and every
+ * "13 (2d8 + 4) Bludgeoning" is its dice, named for its damage type.
+ */
+export function rollsIn(text: string): BlockRoll[] {
+  const out: BlockRoll[] = [];
+  for (const m of text.matchAll(/Attack Roll:\s*([+−-])\s*(\d+)/gi)) out.push({ what: 'to hit', expression: `1d20${m[1] === '+' ? '+' : '-'}${m[2]}`, d20: true });
+  for (const m of text.matchAll(/\((\d+d\d+(?:\s*[+−-]\s*\d+)?)\)\s*([A-Z][a-z]+)?/g)) {
+    const type = m[2] && !/^(Hit|Miss|Failure|Success|Or)$/.test(m[2]) ? m[2] : 'damage';
+    out.push({ what: type, expression: m[1].replace(/\s/g, '').replace(/−/g, '-'), d20: false });
+  }
+  return out;
+}
+
