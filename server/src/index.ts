@@ -5,6 +5,7 @@ import { AppContext } from './context.js';
 import { createApp } from './app.js';
 import { createBackup, listBackups } from './backup/backup.js';
 import { closeTable, configureTable } from './table.js';
+import { closeRemote, configureRemote } from './remote.js';
 
 const mode = process.env.WORLDKEEPER_MODE === 'player' ? 'player' : 'dm';
 const port = Number(process.env.PORT ?? (mode === 'player' ? 4320 : 4310));
@@ -20,6 +21,8 @@ const staticDir = process.env.WORLDKEEPER_STATIC_DIR || path.join(root, 'dist');
 const app = createApp(ctx, { staticDir });
 // The GM can open the table (players' handbook on the network) from the app; it starts closed.
 configureTable({ staticDir });
+// The GM app for another device (a tablet at the table): behind a password, and closed until the GM opens it.
+configureRemote({ staticDir });
 
 function dailyBackup() {
   try {
@@ -42,6 +45,7 @@ app.listen(port, host, () => {
 });
 function shutdown() {
   void closeTable();
+  void closeRemote();
   try {
     ctx.db.close();
   } finally {

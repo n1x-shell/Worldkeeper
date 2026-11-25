@@ -26,7 +26,7 @@ Make, open, rename, duplicate and archive libraries in **Library → Libraries**
 
 **Back up everything** (**Library → Libraries**) downloads one file with every library (its database and pictures) and what they share: your books' rules and worldbooks. It leaves out the publishing token and each library's own backups. **Open everything from a file** adds, never replaces: each library in it becomes a new library (named "… (from file)" where the name is taken), books' rules this installation lacks or has an older copy of are added (each library's own switches kept), and setting packs it lacks are added. That's how a whole installation moves to a new computer. From v0.5.6, a library's rules from before (or in a backup made then) move into `shared/rules.db` when it opens, its switches staying with it; packs and the token move from the data folder into `shared/` on the first start. The table server (`npm run start:player`) serves whichever library is open in the GM app, and switches when it does.
 
-GitHub publishing credentials are held separately in `shared/secrets.json` in the data folder and are not intended to be included in ordinary database backups and exports. Protect this file from unauthorized access.
+GitHub publishing credentials are held separately in `shared/secrets.json` in the data folder and are not intended to be included in ordinary database backups and exports. Protect this file from unauthorized access. The password for the GM app on another device is kept there too, as a salted hash, never the password itself.
 
 ## Importing Markdown lore
 

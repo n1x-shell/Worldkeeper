@@ -280,6 +280,24 @@ One installation holds several **libraries**. Each is a world (or set of worlds)
 - Backups and restores are each library's own. **Back up everything** keeps every library and your books' rules and packs in one file; **Open everything from a file** adds them to another installation. The table server serves the library that's open.
 - **The desktop app** opens the last library; with several, its start asks which.
 
+## The GM app on another device
+
+The GM app normally answers only on the computer it runs on. To run a session from a tablet at the table, or prepare from a laptop in another room, open **Settings → The GM app on another device** on that computer:
+
+1. **Set a password** (at least 8 characters).
+2. **Open it to the network.** The card shows the address (and a QR code) for the other device, on a port of its own (4330).
+3. On the other device, open the address in its browser and give the password. It is the whole GM app, working on the same library.
+
+How it is kept safe:
+
+- Nothing of the library is sent to a device that hasn't signed in: only the app's sign-in page.
+- It is closed every time the app starts, until you open it. Closing it, changing the password or **Sign them all out** signs every device out at once. A device stays signed in for 12 hours after it was last used.
+- After five wrong passwords, signing in is locked for 30 seconds, then longer each time, up to 15 minutes.
+- The password, and opening and closing, can only be changed on the computer itself. Only a salted hash of the password is kept, outside the library, so it is never in a backup or an export.
+- The connection is not encrypted. Use it on your own network at home; don't open it on public Wi-Fi, and don't forward its port to the internet.
+
+Players never need this: they use the table's address.
+
 ## Library management
 
 The **Library** menu (the gear, top right) holds import preview, confirmation and history, exports, Canon Review, broken-reference reporting, change history, backup and restore, and app settings.

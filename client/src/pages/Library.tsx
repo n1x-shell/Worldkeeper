@@ -11,6 +11,7 @@ import { Dev, useDebug } from '../components/Dev';
 import type { Entity } from '../lib/types';
 import { RulesPacksPanel } from './RulesPacks';
 import { ModulesPanel } from './ModulesPanel';
+import { RemoteAccessPanel } from '../components/RemoteAccess';
 import { NotesImport, NotesReportCard, type NotesReport } from '../components/NotesImport';
 
 // ------------------------------------------------------------------ Import & export
@@ -1125,6 +1126,7 @@ export function SettingsPage() {
         </button>
       </Card>
       <CanonPanel settings={data} onChange={async () => (await reload(), await reloadMeta())} />
+      <RemoteAccessPanel />
       <ModulesPanel />
       <RulesPacksPanel />
       <DebugToggle />

@@ -1,5 +1,6 @@
 import { LibraryPicker } from './components/Libraries';
 import { lazy, Suspense, type ComponentType } from 'react';
+import { RemoteGate } from './components/RemoteAccess';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppStateProvider } from './lib/store';
 import { Layout } from './components/Layout';
@@ -118,11 +119,13 @@ export function App() {
         />
         <Route
           element={
-            <LibraryPicker>
-              <AppStateProvider>
-                <Layout />
-              </AppStateProvider>
-            </LibraryPicker>
+            <RemoteGate>
+              <LibraryPicker>
+                <AppStateProvider>
+                  <Layout />
+                </AppStateProvider>
+              </LibraryPicker>
+            </RemoteGate>
           }
         >
           <Route

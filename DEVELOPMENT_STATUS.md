@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-25 · v0.9.13_
+_Last updated: 2026-11-25 · v0.9.14_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,18 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.14: the GM app on another device
+
+`docs/BETA_PLAN.md` B8, the last step of section B.
+
+- **`server/src/remote.ts`:** a second listener (`openRemote`, `closeRemote`; port 4330 or `WORLDKEEPER_REMOTE_PORT`, on `0.0.0.0`) serving the same GM app as `createApp(ctx, { gate })`. `createApp` takes an optional `gate` that runs before anything else, the JSON body parser included.
+- **The gate** (`remoteGate`): requests outside `/api` (the built client) pass; under `/api`, only `health`, `GET /api/remote/session`, `POST /api/remote/login` (a body of at most 4 kB) and `POST /api/remote/logout` answer without a session; everything else is 401 `{ signIn: true }`. The path is compared in lower case, as Express routes it (`/API/entities` is `/api/entities`). With a session: `/api/remote…` is 403 (the password and the door are for the computer itself), and a change whose `Origin` isn't the listener's own host is 403.
+- **Password and sessions:** `setPassword` keeps `scrypt$salt$hash` in `shared/secrets.json` (`gm_remote_password`; not in the database, so not in backups or exports) and clears every session. A session is a random 32-byte token in an `HttpOnly; SameSite=Strict` cookie (`wk_gm`), kept in memory as its SHA-256 with a 12-hour sliding life; closing, restarting or `signEveryoneOut` ends them. `signIn` counts failures: from the fifth, a lockout of 30 seconds doubling to 15 minutes (429).
+- **Local routes** (`server/src/routes/table.ts`): `GET /api/remote`, `GET /api/remote/session` (`{ remote: false, signedIn: true }`), `PUT /api/remote/password`, `POST /api/remote` (`{ open }`), `POST /api/remote/sign-out-all`.
+- **Client:** `client/src/components/RemoteAccess.tsx`: `RemoteGate` around the GM app (asks `/api/remote/session`; shows the sign-in page on another device; a 401 with `signIn` anywhere raises `wk-sign-in`, from `client/src/lib/api.ts`), and `RemoteAccessPanel` in Settings (the controls on the computer; **Sign out** on the other device).
+- **Limits:** plain HTTP, so the password and the cookie can be read by someone listening on the same network; the lockout is for everyone at once, so a device on the network guessing passwords can keep others from signing in until the GM changes the password or closes the door. No per-device names or permissions: a signed-in device is the GM.
+- **Tests:** `tests/remote.test.ts`.
 
 ## v0.9.13: bulk tools
 

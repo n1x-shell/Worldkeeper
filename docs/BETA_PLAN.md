@@ -18,7 +18,7 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | B6 Bring my notes: an Obsidian vault or a folder of Markdown | v0.9.11 | Done, except character import |
 | B5 Generators: people, shops, weather | v0.9.12 | Done |
 | B7 Bulk tools: tags, many records at once, merging, find-and-replace | v0.9.13 | Done |
-| B8 The GM on a tablet | | To do |
+| B8 The GM on a tablet | v0.9.14 | Done (over plain HTTP, for the GM's own network) |
 | A1 to A7, then C | | To do |
 
 ## 1. What "beta" should mean
@@ -64,7 +64,7 @@ Each was checked in the code, not assumed. "None" means no trace of it.
 | B5 | **Generators** | **Done in v0.9.12.** Found: names, treasure, encounters and tables exist. No NPC generator, no shops with stock and prices, no weather (the calendar has moons and festivals, not weather). |
 | B6 | **Bring my notes** | **Done in v0.9.11 for notes** (a vault or a folder of Markdown: front matter, wiki-links, pictures); character import is not done. Found: import needs this app's own header format. No import of an Obsidian vault or a plain folder of Markdown (front matter, wiki-links, pictures), which is where most GMs' notes live. No character import. |
 | B7 | **Bulk tools** | **Done in v0.9.13.** Found: no tag manager, no bulk edit, move or reveal, no merge of duplicates, no find-and-replace across records. |
-| B8 | **The GM on a tablet** | The GM app answers only on the computer it runs on, with no password option, so a GM can't run a session from a tablet at the table. |
+| B8 | **The GM on a tablet** | **Done in v0.9.14.** Found: the GM app answers only on the computer it runs on, with no password option, so a GM can't run a session from a tablet at the table. |
 | B9 | **Combat depth** | **Done in v0.9.10.** Found: the tracker has initiative, HP, conditions and concentration. To check against a real fight: legendary and lair actions, recharge, groups of monsters, effect timers, monsters' attacks rolled from their blocks. |
 
 ### C. Big bets: what "the one tool" could mean

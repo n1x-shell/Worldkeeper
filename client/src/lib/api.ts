@@ -22,6 +22,8 @@ async function request<T>(method: string, url: string, body?: unknown): Promise<
     data = text;
   }
   if (!res.ok) {
+    // From another device (v0.9.14): the session has run out, so the app shows its sign-in page again.
+    if (res.status === 401 && (data as { signIn?: boolean })?.signIn) window.dispatchEvent(new Event('wk-sign-in'));
     const msg = (data as { error?: string })?.error ?? `Request failed (${res.status})`;
     const details = (data as { details?: { path?: string[]; message?: string }[] })?.details;
     const extra = Array.isArray(details) ? ': ' + details.map((d) => `${d.path?.join('.') ?? ''} ${d.message ?? ''}`.trim()).join('; ') : '';
