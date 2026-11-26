@@ -162,6 +162,20 @@ fn plain_path(p: &Path) -> PathBuf {
     }
 }
 
+/// What the server prints is kept in `logs/server.log` (the server's own log is `logs/worldkeeper.log`, which it keeps
+/// small itself). This one only grows, so at each start a large one is set aside as `server.log.1`, replacing the last.
+const MAX_LOG_BYTES: u64 = 1_000_000;
+fn set_aside_if_large(log: &Path, max: u64) {
+    if fs::metadata(log).map(|m| m.len() > max).unwrap_or(false) {
+        let mut old = log.as_os_str().to_owned();
+        old.push(".1");
+        let _ = fs::remove_file(&old);
+        if fs::rename(log, &old).is_err() {
+            let _ = fs::remove_file(log);
+        }
+    }
+}
+
 fn start_server(resources: &Path, data_dir: &Path, port: u16) -> Result<Child, String> {
     let resources = &plain_path(resources);
     let data_dir = &plain_path(data_dir);
@@ -173,6 +187,7 @@ fn start_server(resources: &Path, data_dir: &Path, port: u16) -> Result<Child, S
     }
     let logs = data_dir.join("logs");
     fs::create_dir_all(&logs).map_err(|e| e.to_string())?;
+    set_aside_if_large(&logs.join("server.log"), MAX_LOG_BYTES);
     let log = OpenOptions::new()
         .create(true)
         .append(true)
@@ -273,7 +288,7 @@ pub fn run() {
             match start_server(&resources, &data_dir, port) {
                 Ok(child) => {
                     *app.state::<ServerProcess>().0.lock().unwrap() = Some(child);
-                    let log_path = data_dir.join("logs").join("server.log");
+                    let log_path = data_dir.join("logs");
                     let running = app.package_info().version.to_string();
                     thread::spawn(move || {
                         if wait_for_port(port, Duration::from_secs(45)) {
@@ -290,7 +305,7 @@ pub fn run() {
                                 }
                             }
                         } else {
-                            show_error(&window, &format!("The local server did not answer in time.\nSee the log: {}", log_path.display()));
+                            show_error(&window, &format!("The local server did not answer in time.\n\nWhat went wrong is in the log files (worldkeeper.log and server.log) in:\n{}\n\nTo report it: github.com/n1x-shell/Worldkeeper/issues", log_path.display()));
                         }
                     });
                 }
@@ -313,7 +328,7 @@ pub fn run() {
 
 #[cfg(test)]
 mod tests {
-    use super::{plain_path, requested_update, valid_tag};
+    use super::{plain_path, requested_update, set_aside_if_large, valid_tag};
     use std::path::{Path, PathBuf};
     use tauri::Url;
 
@@ -325,6 +340,22 @@ mod tests {
         for bad in ["0.9.18", "v1.0", "v1.0.0.0", "v1.0.x", "v1.0.0-", "v1.0.0-beta/../x", "v1.0.0?x=1", "latest", "", "v1.0.0-beta 2", "v1.0.0/../../evil"] {
             assert!(!valid_tag(bad), "{bad}");
         }
+    }
+
+    #[test]
+    fn a_large_server_log_is_set_aside_at_start() {
+        let dir = std::env::temp_dir().join(format!("wk-log-test-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let log = dir.join("server.log");
+        std::fs::write(&log, "short").unwrap();
+        set_aside_if_large(&log, 100);
+        assert_eq!(std::fs::read_to_string(&log).unwrap(), "short");
+        std::fs::write(&log, "x".repeat(200)).unwrap();
+        std::fs::write(dir.join("server.log.1"), "older").unwrap();
+        set_aside_if_large(&log, 100);
+        assert!(!log.exists());
+        assert_eq!(std::fs::read_to_string(dir.join("server.log.1")).unwrap().len(), 200);
+        std::fs::remove_dir_all(&dir).unwrap();
     }
 
     #[test]

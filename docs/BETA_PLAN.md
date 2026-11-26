@@ -22,7 +22,8 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | A1 Safe upgrades | v0.9.15 | Done, except a test on library files kept from real old versions |
 | A2 Installers: an update check (on, switchable off) and clear instructions for unsigned installers | v0.9.17 | Done; the install steps are written from the systems' standard behaviour, not tried on a Mac or a Windows PC |
 | A2 Installers: the app updates itself ("Update and restart") | v0.9.18 | Built, and tried end to end on Linux; not tried on Windows or macOS. Needs the update key added to the repository's secrets, and a first signed release, before any GM sees it |
-| A3 to A7 | | To do |
+| A3 When something goes wrong: a log file, "Copy details for a bug report", issue forms, a troubleshooting guide | v0.9.19 | Done. The issue forms are checked as text; GitHub shows them once this is merged |
+| A4 to A7 | | To do |
 | C8 A location generator: ink-style maps of places from their records | | To do, before the beta (decided) |
 | The bundled world's own name: Oros | v0.9.16 | Done |
 | C2 play over the internet, C4 assistant, C5 sync and co-GMs, C6 rich-text editor, C3 other systems | | After the beta, if at all (decided) |
@@ -53,7 +54,7 @@ Each was checked in the code, not assumed. "None" means no trace of it.
 | --- | --- | --- |
 | A1 | **Safe upgrades** | **Done in v0.9.15.** Found: no automatic backup before an update changes a library's database, and no test that opens a library made by an older version. Agreed as fine before release; a beta can't lose a campaign to an update. |
 | A2 | **Installers people can trust** | **Done in v0.9.17 as decided** (unsigned with instructions; a daily update check). Found: unsigned: macOS and Windows warn or block. No update check: a GM never learns a fix exists. 130 MB. The Windows build broke for two releases without anyone noticing until a download was missing. |
-| A3 | **When something goes wrong** | No log file, no "copy details for a bug report", no issue templates. A beta lives on bug reports. |
+| A3 | **When something goes wrong** | **Done in v0.9.19.** Found: no log file, no "copy details for a bug report", no issue templates. A beta lives on bug reports. |
 | A4 | **Tested like a product** | CI drives only the first-run wizard. The full smoke test runs by hand; the table server, the installed desktop app and a large library (10,000 records) are never tested automatically. No client-side tests. |
 | A5 | **Help inside the app** | The manual is Markdown in the repository. In the app: a first-run wizard, a Getting started card, and nothing after. |
 | A6 | **Accessibility and devices** | Labels exist in places; there has been no keyboard-only, screen-reader or contrast pass, and no pass of the GM app on a tablet. |

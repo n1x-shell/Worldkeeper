@@ -1,0 +1,25 @@
+name: An idea
+description: Something the app could do, or do better.
+labels: [idea]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What are you trying to do?
+      description: The moment at the table or in prep where the app falls short. This matters more than the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help?
+      description: How you imagine it working, if you have something in mind.
+    validations:
+      required: false
+  - type: textarea
+    id: now
+    attributes:
+      label: What do you do today instead?
+      description: Another tool, paper, a workaround in the app.
+    validations:
+      required: false

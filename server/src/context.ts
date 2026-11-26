@@ -15,6 +15,8 @@ import { adoptTableBands } from './repo/tables.js';
 import { adoptHandbookCodes } from './repo/handbookCodes.js';
 import { adoptSharedRules, attachSharedRules, keepOldDefaults } from './repo/sharedRules.js';
 import { ensureUndoTriggers } from './repo/undo.js';
+import { schemaVersion } from './db/migrations.js';
+import { logError, logInfo } from './log.js';
 
 /** Holds the live database handle so a restore can swap it without restarting the server. */
 export class AppContext {
@@ -47,6 +49,8 @@ export class AppContext {
       db.close();
       throw e;
     }
+    const up = upgraded as { from: number; to: number; backup: string | null } | null;
+    logInfo(`library ${paths.libraryId} is open, schema ${schemaVersion(db)}${up ? ` (updated from ${up.from}; the copy from before is ${up.backup ?? 'none'})` : ''}`);
     return db;
   }
 
@@ -113,7 +117,7 @@ export class AppContext {
         seen = t;
         if (this.syncOpenLibrary()) console.log(`[worldkeeper] now serving library ${this.paths.libraryId}`);
       } catch (e) {
-        console.error('[worldkeeper] could not follow the open library', e);
+        logError('the table server could not follow the open library', e);
       }
     };
     check();

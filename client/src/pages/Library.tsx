@@ -13,6 +13,7 @@ import { RulesPacksPanel } from './RulesPacks';
 import { ModulesPanel } from './ModulesPanel';
 import { RemoteAccessPanel } from '../components/RemoteAccess';
 import { UpdatesPanel } from '../components/Updates';
+import { HelpPanel } from '../components/Help';
 import { NotesImport, NotesReportCard, type NotesReport } from '../components/NotesImport';
 
 // ------------------------------------------------------------------ Import & export
@@ -1148,6 +1149,7 @@ export function SettingsPage() {
       <UpdatesPanel />
       <ModulesPanel />
       <RulesPacksPanel />
+      <HelpPanel />
       <DebugToggle />
       <Dev>
         <Card title="Installation" className="text-sm space-y-1">

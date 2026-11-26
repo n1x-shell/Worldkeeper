@@ -5,6 +5,8 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppStateProvider } from './lib/store';
 import { Layout } from './components/Layout';
 import { ErrorBoundary, Loading } from './components/ui';
+import { screenErrorActions } from './components/Help';
+import { reportScreenError } from './lib/report';
 import { Dashboard } from './pages/Dashboard';
 
 /**
@@ -88,7 +90,7 @@ const StyleGuidePage = page(() => import('./pages/StyleGuide'), 'StyleGuidePage'
 
 function Page({ children }: { children: React.ReactNode }) {
   return (
-    <ErrorBoundary>
+    <ErrorBoundary onError={reportScreenError} actions={screenErrorActions}>
       <Suspense fallback={<Loading />}>{children}</Suspense>
     </ErrorBoundary>
   );

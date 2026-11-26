@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Installing and updating
+    url: https://github.com/n1x-shell/Worldkeeper/blob/main/docs/INSTALL.md
+    about: How to install the app (and get past the "unknown publisher" warnings), update it, and where your worlds are kept.
+  - name: When something goes wrong
+    url: https://github.com/n1x-shell/Worldkeeper/blob/main/docs/TROUBLESHOOTING.md
+    about: The app won't start, a library won't open, where the log is, and how to get your world back from a backup.
