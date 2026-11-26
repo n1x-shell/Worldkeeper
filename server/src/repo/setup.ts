@@ -18,6 +18,7 @@ import { campaigns, characters, setActiveCampaign } from './campaigns.js';
 import { listTemplates } from './templates.js';
 import { createRelationship, rebuildDerivedRelationships } from './relationships.js';
 import { types } from './recordTypes.js';
+import { unindexEntities } from './search.js';
 import { isInstalled } from '../packs/registry.js';
 
 const setting = (db: DB, key: string) => (db.prepare('SELECT value FROM settings WHERE key = ?').get(key) as { value: string } | undefined)?.value;
@@ -424,7 +425,7 @@ export function removeTutorial(db: DB) {
     ] as const)
       if (tables.includes(table)) db.prepare(`DELETE FROM ${table} WHERE ${col} IN (${marks})`).run(...ids);
     db.prepare(`UPDATE campaigns SET starting_location_id = NULL WHERE starting_location_id IN (${marks})`).run(...ids);
-    db.prepare(`DELETE FROM search_index WHERE kind = 'entity' AND ref IN (${marks})`).run(...ids);
+    unindexEntities(db, ids);
     db.prepare(`UPDATE entities SET parent_id = NULL WHERE parent_id IN (${marks})`).run(...ids);
     db.prepare(`DELETE FROM entities WHERE id IN (${marks})`).run(...ids);
   });

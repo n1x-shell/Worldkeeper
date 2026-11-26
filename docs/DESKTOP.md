@@ -81,6 +81,17 @@ Installers produced by `desktop:build`:
 
 The app's window can't open new tabs, so links meant for one (the **Player View** button, links to GitHub) open in your default web browser. The player view opens at the app's local address, for example `http://127.0.0.1:<port>/player`.
 
+### Trying a build
+
+```bash
+npm run desktop:smoke                                        # the app a release build made or installed on this system
+node scripts/desktop-smoke.mjs path/to/the/app [arguments]   # or any build's program (a debug build, an AppImage)
+```
+
+`scripts/desktop-smoke.mjs` starts the real app on an empty data folder and checks it from outside: its server starts (the bundled Node.js, the database's native code); its window loads the app (the page's own script asks the server for `/api/meta`, and the server logs "the app's page has loaded" the first time); pages, scripts and the API answer; a record is written and read back and a backup made; the rules and the Oros worldbook that ship inside it are there; nothing was logged as an error; and closing the app stops its server. On Linux it needs a display (`xvfb-run -a`).
+
+The release workflow runs it on every system before uploading anything: on Linux against the installed `.deb` and against the AppImage, on macOS against the program inside the `.app`, on Windows against the app as the installer installs it. A build that fails it is not published.
+
 ### Release builds
 
 The **Desktop installers** workflow (`.github/workflows/desktop.yml`) builds on Linux, macOS and Windows, because Tauri doesn't cross-compile:

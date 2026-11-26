@@ -101,6 +101,17 @@ export function logInfo(text: string) {
   write('INFO', `[worldkeeper] ${text}`);
 }
 
+let pageSeen = false;
+/**
+ * The app's page has started (it asked for /api/meta, which only its own script does). Said once: it tells "the server
+ * runs but the window stayed blank" apart from "the window came up", and the desktop smoke test waits for it.
+ */
+export function notePageLoaded() {
+  if (pageSeen) return;
+  pageSeen = true;
+  logInfo('the app’s page has loaded');
+}
+
 /**
  * An unexpected error, with what was being done (never what was sent). The stack says where in the code it happened.
  * Without a log file it goes to the terminal, as before.

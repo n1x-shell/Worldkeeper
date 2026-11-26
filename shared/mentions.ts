@@ -37,15 +37,46 @@ export class MentionIndex {
   private byAlias = new Map<string, MentionTarget[]>();
 
   constructor(targets: Iterable<MentionTarget>) {
-    for (const t of targets) {
-      this.byId.set(t.id, t);
-      if (t.type === 'redirect') continue;
-      for (const key of new Set([norm(t.name), bare(t.name)])) this.push(this.byName, key, t);
-      for (const a of t.aliases ?? []) {
-        const clean = a.replace(new RegExp(BRACKET_REF_RE().source, 'g'), '').trim();
-        if (clean) for (const key of new Set([norm(clean), bare(clean)])) this.push(this.byAlias, key, t);
-      }
+    for (const t of targets) this.add(t);
+  }
+
+  /** The names and aliases a record is found under. */
+  private keys(t: MentionTarget): { names: Set<string>; aliases: Set<string> } {
+    const names = new Set<string>();
+    const aliases = new Set<string>();
+    if (t.type === 'redirect') return { names, aliases };
+    names.add(norm(t.name)).add(bare(t.name));
+    for (const a of t.aliases ?? []) {
+      const clean = a.replace(new RegExp(BRACKET_REF_RE().source, 'g'), '').trim();
+      if (clean) aliases.add(norm(clean)).add(bare(clean));
     }
+    return { names, aliases };
+  }
+
+  /** Add a record (or put it back as it is now: a record already here is replaced). */
+  add(t: MentionTarget) {
+    if (this.byId.has(t.id)) this.remove(t.id);
+    this.byId.set(t.id, t);
+    const k = this.keys(t);
+    for (const key of k.names) this.push(this.byName, key, t);
+    for (const key of k.aliases) this.push(this.byAlias, key, t);
+  }
+
+  /** Take a record out: it was deleted, or is about to be added again with another name. */
+  remove(id: string) {
+    const t = this.byId.get(id);
+    if (!t) return;
+    this.byId.delete(id);
+    const k = this.keys(t);
+    for (const [m, keys] of [
+      [this.byName, k.names],
+      [this.byAlias, k.aliases],
+    ] as const)
+      for (const key of keys) {
+        const left = (m.get(key) ?? []).filter((x) => x !== t);
+        if (left.length) m.set(key, left);
+        else m.delete(key);
+      }
   }
 
   private push(m: Map<string, MentionTarget[]>, k: string, t: MentionTarget) {
@@ -68,7 +99,8 @@ export class MentionIndex {
     }
     const pick = (list: MentionTarget[] | undefined): Resolution => {
       if (!list?.length) return null;
-      const uniq = [...new Set(list.map((t) => t.id))];
+      // (In ID order, so the answer doesn't depend on the order the records were put in.)
+      const uniq = [...new Set(list.map((t) => t.id))].sort();
       return uniq.length === 1 ? { id: uniq[0] } : { ambiguous: uniq };
     };
     const exact = pick(this.byName.get(norm(label)) ?? this.byName.get(bare(label)));

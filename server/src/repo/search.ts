@@ -8,44 +8,76 @@ import { parseJson } from '../lib/json.js';
  *   kind 'session' ref = session id, 'quest' ref = quest id, 'note' ref = note id, 'adventure' ref = adventure id
  */
 
+/**
+ * Where each thing's entry in the index is (v0.9.20). The index can't be asked "which entry is this record's?" without
+ * reading every entry, so replacing one record's entry on each save read the whole index: the bigger the library, the
+ * slower every save. This keeps a small table of (kind, ref) to entry for the connection. It is a temporary table of
+ * the database itself, so a rolled-back transaction rolls it back too, and it is rebuilt (one read of the index) at
+ * the first use, after a change through another connection, or if it is ever found missing.
+ */
+const mapped = new WeakMap<DB, number>();
+function entries(db: DB) {
+  const dataVersion = db.pragma('data_version', { simple: true }) as number;
+  if (mapped.get(db) === dataVersion) {
+    // Made in a transaction that was rolled back? Then it isn't there, and is made again.
+    if (db.prepare(`SELECT 1 FROM temp.sqlite_master WHERE type = 'table' AND name = 'wk_search_entries'`).get()) return;
+  }
+  db.exec(`
+    DROP TABLE IF EXISTS temp.wk_search_entries;
+    CREATE TEMP TABLE wk_search_entries (kind TEXT NOT NULL, ref TEXT NOT NULL, entry INTEGER NOT NULL, PRIMARY KEY (kind, ref)) WITHOUT ROWID;
+    INSERT OR REPLACE INTO temp.wk_search_entries SELECT kind, ref, rowid FROM search_index ORDER BY rowid;
+  `);
+  // Two entries for one thing (left by an older version): only the newest is kept.
+  const { n } = db.prepare('SELECT (SELECT COUNT(*) FROM search_index) - (SELECT COUNT(*) FROM temp.wk_search_entries) n').get() as { n: number };
+  if (n > 0) db.exec('DELETE FROM search_index WHERE rowid NOT IN (SELECT entry FROM temp.wk_search_entries)');
+  mapped.set(db, dataVersion);
+}
+
+/** Take a thing's entry out of the index. */
+function drop(db: DB, kind: string, ref: string) {
+  entries(db);
+  const hit = db.prepare('SELECT entry FROM temp.wk_search_entries WHERE kind = ? AND ref = ?').get(kind, ref) as { entry: number } | undefined;
+  if (!hit) return;
+  db.prepare('DELETE FROM search_index WHERE rowid = ?').run(hit.entry);
+  db.prepare('DELETE FROM temp.wk_search_entries WHERE kind = ? AND ref = ?').run(kind, ref);
+}
+
+/** Put a thing's entry in, in place of the one it had. */
+function put(db: DB, kind: string, ref: string, title: string, aliases: string, tags: string, body: string) {
+  drop(db, kind, ref);
+  const made = db.prepare('INSERT INTO search_index (ref, kind, title, aliases, tags, body) VALUES (?, ?, ?, ?, ?, ?)').run(ref, kind, title, aliases, tags, body);
+  db.prepare('INSERT OR REPLACE INTO temp.wk_search_entries VALUES (?, ?, ?)').run(kind, ref, made.lastInsertRowid);
+}
+
 export function reindexEntity(db: DB, id: string) {
-  db.prepare(`DELETE FROM search_index WHERE kind = 'entity' AND ref = ?`).run(id);
   const e = db.prepare('SELECT id, name, aliases, tags, body, notes, fields, type FROM entities WHERE id = ?').get(id) as
     | { id: string; name: string; aliases: string; tags: string; body: string; notes: string; fields: string; type: string }
     | undefined;
-  if (!e || e.type === 'redirect') return;
+  if (!e || e.type === 'redirect') return drop(db, 'entity', id);
   const fields = parseJson<[string, string][]>(e.fields, [])
     .map(([k, v]) => `${k}: ${v}`)
     .join('\n');
-  db.prepare('INSERT INTO search_index (ref, kind, title, aliases, tags, body) VALUES (?, ?, ?, ?, ?, ?)').run(
-    e.id,
-    'entity',
-    e.name,
-    `${e.id} ${parseJson<string[]>(e.aliases, []).join(' ; ')}`,
-    parseJson<string[]>(e.tags, []).join(' '),
-    `${fields}\n${e.body}\n${e.notes}`,
-  );
+  put(db, 'entity', e.id, e.name, `${e.id} ${parseJson<string[]>(e.aliases, []).join(' ; ')}`, parseJson<string[]>(e.tags, []).join(' '), `${fields}\n${e.body}\n${e.notes}`);
+}
+
+/** Records that are gone: their entries go too. */
+export function unindexEntities(db: DB, ids: string[]) {
+  for (const id of ids) drop(db, 'entity', id);
 }
 
 export function indexAux(db: DB, kind: string, ref: string | number, title: string, body: string) {
-  db.prepare('DELETE FROM search_index WHERE kind = ? AND ref = ?').run(kind, String(ref));
-  db.prepare('INSERT INTO search_index (ref, kind, title, aliases, tags, body) VALUES (?, ?, ?, ?, ?, ?)').run(
-    String(ref),
-    kind,
-    title,
-    '',
-    '',
-    body,
-  );
+  put(db, kind, String(ref), title, '', '', body);
 }
 
 export function removeAux(db: DB, kind: string, ref: string | number) {
-  db.prepare('DELETE FROM search_index WHERE kind = ? AND ref = ?').run(kind, String(ref));
+  drop(db, kind, String(ref));
 }
 
 export function reindexAll(db: DB) {
   const tx = db.transaction(() => {
     db.prepare('DELETE FROM search_index').run();
+    entries(db);
+    db.exec('DELETE FROM temp.wk_search_entries');
     for (const { id } of db.prepare('SELECT id FROM entities').all() as { id: string }[]) reindexEntity(db, id);
     for (const d of db.prepare(`SELECT path, title, content, kind FROM source_documents`).all() as {
       path: string;
@@ -53,14 +85,7 @@ export function reindexAll(db: DB) {
       content: string;
       kind: string;
     }[]) {
-      db.prepare('INSERT INTO search_index (ref, kind, title, aliases, tags, body) VALUES (?, ?, ?, ?, ?, ?)').run(
-        d.path,
-        'doc',
-        d.title,
-        d.path,
-        d.kind,
-        d.content,
-      );
+      put(db, 'doc', d.path, d.title, d.path, d.kind, d.content);
     }
     for (const s of db.prepare('SELECT id, title, number, recap, prep FROM sessions').all() as {
       id: number;

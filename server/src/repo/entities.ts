@@ -272,11 +272,25 @@ const PLAY_STATE_KEYS = ['player_summary', 'revealed', 'revealed_sections', 'rev
  * (SET-001), so a record made here never takes an ID an archive could bring in later.
  */
 export function nextCustomId(db: DB, prefix = 'CUS'): string {
-  const rows = db.prepare(`SELECT id FROM entities WHERE id LIKE ?`).all(`${prefix}-____`) as { id: string }[];
+  // An unusual prefix (not plain capitals and digits): read them all, as before.
+  if (!/^[A-Z0-9]+$/.test(prefix)) {
+    const rows = db.prepare(`SELECT id FROM entities WHERE id LIKE ?`).all(`${prefix}-____`) as { id: string }[];
+    let max = 0;
+    for (const r of rows) {
+      const n = /^[A-Z0-9]+-(\d{4})$/.exec(r.id)?.[1];
+      if (n && Number(n) > max) max = Number(n);
+    }
+    return `${prefix}-${String(max + 1).padStart(4, '0')}`;
+  }
+  // The highest one, found through the index on IDs instead of by reading every ID of the type (which made each new
+  // record slower than the last). IDs with the same number of digits sort in number order; past 9999 they grow a digit.
+  const highest = db.prepare(`SELECT id FROM entities WHERE id >= ? AND id <= ? AND id GLOB ? ORDER BY id DESC LIMIT 1`);
   let max = 0;
-  for (const r of rows) {
-    const n = /^[A-Z]+-(\d{4})$/.exec(r.id)?.[1];
-    if (n && Number(n) > max) max = Number(n);
+  // Longer numbers are looked for only once the shorter ones are used up (SET-9999, then SET-10000).
+  for (let digits = 4; digits <= 9; digits++) {
+    const top = highest.get(`${prefix}-${'0'.repeat(digits)}`, `${prefix}-${'9'.repeat(digits)}`, `${prefix}-${'[0-9]'.repeat(digits)}`) as { id: string } | undefined;
+    if (top) max = Number(top.id.slice(prefix.length + 1));
+    if (max < 10 ** digits - 1) break;
   }
   return `${prefix}-${String(max + 1).padStart(4, '0')}`;
 }
