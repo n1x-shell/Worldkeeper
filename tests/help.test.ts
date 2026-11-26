@@ -87,6 +87,7 @@ describe('help for the screen you are on', () => {
     expect(helpFor('/campaign/calendar')).toEqual({ slug: 'features', anchor: 'calendars' });
     expect(helpFor('/campaign/party')).toEqual({ slug: 'features', anchor: 'campaigns' });
     expect(helpFor('/e/NPC-0001')).toEqual({ slug: 'features', anchor: 'encyclopedia' });
+    expect(helpFor('/e/DUN-0001/plan')).toEqual({ slug: 'features', anchor: 'plans-of-places' });
     expect(helpFor('/backups')).toEqual({ slug: 'data', anchor: 'backups' });
     expect(helpFor('/')).toEqual({ slug: 'start', anchor: '' });
     expect(helpFor('/somewhere-new')).toEqual({ slug: 'start', anchor: '' });

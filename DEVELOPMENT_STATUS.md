@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-26 · v0.9.23_
+_Last updated: 2026-11-26 · v0.9.24_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,36 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.24: plans of places
+
+docs/BETA_PLAN.md C8, the last step before 1.0-BETA. A dungeon, a cave, a building or a settlement laid out from its record and drawn as an ink line plan with a grid, to use as it is or dress up in a mapping tool.
+
+**The laying out and the drawing are pure and seeded** (`shared/plan/`, no dependencies, the same code on the server, in the page and in tests): the same settings give the same plan and the same SVG, byte for byte, so a plan is remembered by its settings alone.
+
+- `model.ts`: the plan types (`GridPlan`: a region number for every square, walls wherever neighbours differ, openings on square edges, features, numbered areas; `TownPlan`: roads, roofs, water, wall, trees, fields), a seeded random source, `noise` for the hand-drawn wobble.
+- `dungeon.ts`: rooms set down one after another beside one already there (so they are met roughly in key order), nothing past the entrance side of room 1; passages by cheapest path through solid ground (turning little, joining a passage already cut, not running beside one); extra ways round between near rooms, and only those carry secret doors; `furnish` puts into a room what its name says. A cave is the same with ragged chambers, wandering tunnels and no doors (`natural`).
+- `building.ts`: twelve uses, each with its storeys and rooms; the outline divided by weight (or rooms off a middle passage); stairs on the same squares of every storey; doors by a spanning tree from the stair room through the busiest rooms; windows; a storey with little in it covers part of the outline.
+- `settlement.ts`: worked in feet, handed over in squares (10, 10, 20, 30 ft to a square by size). Roads out from a market place, lanes off them that stop at another street, the water or the edge of town; a river with bridges or the sea with jetties; a wall with gates where the roads cross it (lanes are cut short of it); the named places as the larger buildings nearest the middle (a "market", "bridge", "gate", "docks" or "field" is that feature, not a building); then a house on every plot the streets have room for, thinning outward.
+- `draw.ts`, `drawTown.ts`: SVG at 100 units to a square. The floor's outline is traced once and used for the fill, the grid's clip and the walls, so they agree; rough walls are rounded through the same corners.
+- `index.ts`: `PlanSettings`, `makePlan`, `suggest` (the plan that suits a record: its type, name, Population, Terrain, Danger, Wealth, Rooms and Used for facts, and words in its description), `keyedNames` (the places a record's text names), `planKey` and `keyMarkdown`.
+
+**Server.** Migration 38, `place_plans` (the settings kept for a record, and the Atlas map made from them): in the backup table list and in record merging. `server/src/repo/plans.ts` and routes in `routes/atlas.ts`: `GET/PUT/DELETE /api/entities/:id/plan`, `POST …/plan/key` (writes a "Map key" section into the record's text, in place of the one there, through `updateEntity`, so History has it), `POST …/plan/map` (the players' copy as an Atlas map, a hidden pin per numbered place, the scale set; drawn again on the same map, the GM's own pins kept). `POST /api/plan-files` and `GET /api/plan-files/:token` (`server/src/lib/handBack.ts`) hand a picture made in the page back as a download with a name: every file the app offers to save comes from the server, which is the one way that works in the desktop app too. Six files at most, ten minutes, in memory; PNG or SVG only, served as an attachment under a sandbox policy.
+
+**Client.** `client/src/pages/PlacePlan.tsx`: `PlanMaker` (used at `/e/:id/plan` and as the Places tab of Generators), `PlanPanel` on place records. The PNG is made in the page (SVG to a canvas at the pixels asked for).
+
+**Tests.** `tests/plan.test.ts` (18): the same plan for the same settings; 60 dungeons and 60 caves each all of a piece, every named room numbered, every door in a wall; a dungeon still all of a piece without its secret doors; every building use on 12 seeds, each storey of a piece, with a way in and stairs; settlements of each size with each kind of water; the SVG whole and escaped; the players' copy without secrets, traps or numbers; reading a record; the key reading back as the same names; keeping, forgetting, the key written once, the map and its pins, the backup round trip, the download route. `scripts/e2e-first-run.mjs` now draws a plan in a real browser, keeps it, saves the picture and checks its size in pixels, and makes the map. `scripts/e2e-a11y.mjs` has the plan page (43 screens, none with a finding).
+
+**Looked at, not only tested.** The drawings were rendered to pictures and looked at through the work, and changed for what was seen: hatching too coarse; the entrance buried in the middle; caves that were one great hall; a town with thirty houses (plots were tried one stretch of road at a time); a river that read as a road; lanes through the wall. One fault only looking found: the Atlas measures a pin's place up from the bottom of a map, so the plan's pins were upside down.
+
+**What this is not, and what is left.**
+
+- Nobody has run a game from one of these, and no picture has been opened in Arkenforge or a virtual tabletop: that the grid lines up at the pixels given is arithmetic, not experience.
+- A plan cannot be edited by hand (move a wall, add a room): the choices are the settings, another seed, and the record's own list of rooms.
+- Rooms are oblongs; there are no round rooms, diagonal walls, or levels of a dungeon joined by stairs. A cave has one way in.
+- A settlement's streets and houses do not follow hills, and a city is a large town: there are no districts.
+- A plan's settings do not travel in a worldbook (the picture added to the record and the map made from it do).
+- `keyedNames` reads English headings ("Rooms", "Inside", "Places in town", "Map key"); `suggest` reads English words.
 
 ## v0.9.23: security, and publishing by GitHub's rules
 

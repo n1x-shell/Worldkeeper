@@ -19,6 +19,7 @@ const FactionWebPage = page(() => import('./pages/ReturnAndWeb'), 'FactionWebPag
 const ReturnPage = page(() => import('./pages/ReturnAndWeb'), 'ReturnPage');
 const NamesPage = page(() => import('./pages/Names'), 'NamesPage');
 const GeneratorsPage = page(() => import('./pages/Generators'), 'GeneratorsPage');
+const PlacePlanPage = page(() => import('./pages/PlacePlan'), 'PlacePlanPage');
 const StandingPage = page(() => import('./pages/Standing'), 'StandingPage');
 const TreasurePage = page(() => import('./pages/Treasure'), 'TreasurePage');
 const BooksPage = page(() => import('./pages/Books'), 'BooksPage');
@@ -258,6 +259,14 @@ export function App() {
             element={
               <Page>
                 <EntityPage />
+              </Page>
+            }
+          />
+          <Route
+            path="e/:id/plan"
+            element={
+              <Page>
+                <PlacePlanPage />
               </Page>
             }
           />

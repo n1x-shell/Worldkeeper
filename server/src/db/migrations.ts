@@ -1221,6 +1221,20 @@ CREATE TABLE table_rolls (
 CREATE INDEX table_rolls_campaign ON table_rolls(campaign_id, id);
 `,
   },
+  {
+    version: 38,
+    name: 'plans of places',
+    // The plan drawn for a place: what it was made from (its seed and the choices), so that it is drawn the same
+    // again; and the Atlas map made from it, if one was.
+    sql: `
+CREATE TABLE place_plans (
+  entity_id TEXT PRIMARY KEY REFERENCES entities(id) ON DELETE CASCADE,
+  settings TEXT NOT NULL,
+  map_id INTEGER REFERENCES maps(id) ON DELETE SET NULL,
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+`,
+  },
 ];
 
 export const LATEST_SCHEMA = () => MIGRATIONS[MIGRATIONS.length - 1].version;

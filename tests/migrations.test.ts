@@ -142,7 +142,8 @@ describe('in the app', () => {
   function setBack(ctx: AppContext): { paths: AppContext['paths']; step: number } {
     const paths = ctx.paths;
     const last = MIGRATIONS[MIGRATIONS.length - 1];
-    ctx.db.exec('DROP TABLE table_rolls');
+    // The newest step's own table (step 38: plans of places).
+    ctx.db.exec('DROP TABLE place_plans');
     ctx.db.prepare('DELETE FROM schema_migrations WHERE version = ?').run(last.version);
     ctx.db.close();
     return { paths, step: last.version - 1 };

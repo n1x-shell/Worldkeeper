@@ -1,16 +1,18 @@
 /**
- * Generators (v0.9.12): somebody to meet, and a shop with its shelves and prices. Nothing is saved until the GM keeps
- * one, which makes an ordinary record (for the GM only, until revealed). The weather card is for the campaign calendar.
+ * Generators (v0.9.12): somebody to meet, and a shop with its shelves and prices; and (v0.9.24) the plan of a place.
+ * Nothing is saved until the GM keeps one, which makes an ordinary record (for the GM only, until revealed). The
+ * weather card is for the campaign calendar.
  */
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BookmarkPlus, CloudSun, RefreshCw, Store, Users } from 'lucide-react';
+import { BookmarkPlus, CloudSun, Map as MapIcon, RefreshCw, Store, Users } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { useRealms } from '../components/realms';
 import { Card, Empty, Field, Loading, PageHeader, Tabs, toast } from '../components/ui';
 import { article, coins, npcText, shopText, type NpcIdea, type Shop, type Weather } from '../../../shared/generators';
 import type { Entity } from '../lib/types';
+import { PlanMaker } from './PlacePlan';
 
 interface Sources {
   names: { id: string; name: string; builtIn: boolean }[];
@@ -311,10 +313,10 @@ function Shops({ sources }: { sources: Sources }) {
 
 export function GeneratorsPage() {
   const { data } = useApi<Sources>('/api/generate/sources');
-  const [tab, setTab] = useState<'people' | 'shops'>('people');
+  const [tab, setTab] = useState<'people' | 'shops' | 'places'>('people');
   return (
     <div className="max-w-5xl space-y-4">
-      <PageHeader title="Generators" subtitle="Somebody to meet, or a shop and what it sells, when the party goes where you hadn't planned." note="Nothing is saved until you keep it; what you keep becomes a record only you see." />
+      <PageHeader title="Generators" subtitle="Somebody to meet, a shop and what it sells, or the plan of a place, when the party goes where you hadn't planned." note="Nothing is saved until you keep it; what you keep becomes a record only you see." />
       <Tabs
         value={tab}
         onChange={setTab}
@@ -335,9 +337,17 @@ export function GeneratorsPage() {
               </>
             ),
           },
+          {
+            id: 'places',
+            label: (
+              <>
+                <MapIcon size={14} className="mr-1 inline" /> Places
+              </>
+            ),
+          },
         ]}
       />
-      {!data ? <Loading /> : tab === 'people' ? <People sources={data} /> : <Shops sources={data} />}
+      {tab === 'places' ? <PlanMaker /> : !data ? <Loading /> : tab === 'people' ? <People sources={data} /> : <Shops sources={data} />}
     </div>
   );
 }

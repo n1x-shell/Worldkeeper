@@ -158,6 +158,41 @@ try {
       }
     }
     step('records of one’s own open (creature, item, artifact, person, place, group); a stat block and an item’s rules are made');
+
+    // The plan of a place (v0.9.24): drawn from the record's rooms, kept, and taken away as a picture of so many
+    // pixels to a square. The picture is made by the browser itself, which no other test can stand in for.
+    const vault = await post('/api/entities', { name: 'The Sunken Vault', type: 'dungeon', realm: (await api('/api/realms'))[0]?.id ?? 'world', body: '## Rooms\n\n1. **Entry stair**\n2. **Guard room**\n3. **Great hall**\n4. **Crypt**\n5. **Treasury**\n' });
+    await page.goto(`${base}/e/${vault.id}`);
+    await page.getByTestId('plan-panel').getByRole('link', { name: 'Draw a plan' }).click();
+    await page.getByTestId('plan-drawing').waitFor();
+    const keyed = await page.getByTestId('plan-key').locator('li').count();
+    if (keyed !== 5) throw new Error(`the plan has ${keyed} numbered places for a record that lists 5 rooms`);
+    await page.getByTestId('plan-keep').getByRole('button', { name: 'Keep this plan' }).click();
+    await page.getByTestId('plan-keep').getByRole('button', { name: 'Kept' }).waitFor();
+    const drawn = await page.getByTestId('plan-drawing').getAttribute('src');
+    await page.getByTestId('plan-another').click();
+    if ((await page.getByTestId('plan-drawing').getAttribute('src')) === drawn) throw new Error('"Draw another" drew the same plan');
+    await page.reload();
+    await page.getByTestId('plan-drawing').waitFor();
+    if ((await page.getByTestId('plan-drawing').getAttribute('src')) !== drawn) throw new Error('the plan kept is not the plan shown on coming back');
+    const plan = (await api(`/api/entities/${vault.id}/plan`)).saved;
+    if (!plan || plan.names.length !== 5) throw new Error('the plan was not kept with the record');
+    const [download] = await Promise.all([page.waitForEvent('download'), page.getByTestId('plan-png').click()]);
+    const file = path.join(os.tmpdir(), `wk-e2e-plan-${Date.now()}.png`);
+    await download.saveAs(file);
+    const png = fs.readFileSync(file);
+    fs.rmSync(file, { force: true });
+    const [across, down] = [png.readUInt32BE(16), png.readUInt32BE(20)];
+    const size = await page.getByTestId('plan-drawing').evaluate((img) => [img.naturalWidth, img.naturalHeight]);
+    if (png.subarray(1, 4).toString() !== 'PNG' || across !== size[0] || down !== size[1] || across % 70 || down % 70) throw new Error(`the plan's picture is ${across} × ${down} pixels, not the ${size.join(' × ')} of the drawing at 70 pixels to a square`);
+    if (download.suggestedFilename() !== 'The Sunken Vault.png') throw new Error(`the plan's picture is called ${download.suggestedFilename()}`);
+    await page.getByRole('button', { name: 'Make it a map in the Atlas' }).click();
+    await page.getByRole('link', { name: 'Open the map' }).waitFor();
+    const made = (await api(`/api/entities/${vault.id}/plan`)).map;
+    const detail = await api(`/api/maps/${made.id}/detail`);
+    if (detail.map.width !== across || detail.markers.length !== 5 || detail.markers.some((m) => !m.hidden)) throw new Error('the Atlas map of the plan: its size or its pins are wrong');
+    await shot(page, '08-plan');
+    step(`a plan: drawn from the record’s five rooms, kept, drawn the same on coming back, saved as a ${across} × ${down} picture, made a map with five hidden pins`);
   } else {
     await page.getByRole('button', { name: /Play in Oros/ }).click();
     await page.getByRole('button', { name: /Add the Oros worldbook/ }).click();

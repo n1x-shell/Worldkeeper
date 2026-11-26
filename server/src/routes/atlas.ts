@@ -15,6 +15,8 @@ import { getActiveCampaignId } from '../repo/campaigns.js';
 import { campaignLayers, regionPanel } from '../repo/mapLayers.js';
 import { journey } from '../repo/journey.js';
 import { sniffImage } from '../lib/images.js';
+import { forgetPlan, planInfo, planToMap, savePlan, writeKey } from '../repo/plans.js';
+import { handBack, hold } from '../lib/handBack.js';
 
 const IMAGE_TYPES: Record<string, string> = {
   'image/png': '.png',
@@ -122,6 +124,62 @@ export function atlasRoutes(ctx: AppContext) {
     '/entity-images/:id',
     h((req) => deleteImage(ctx.db, intParam(req.params.id), ctx.paths.uploadsDir)),
   );
+  // Plans of places (v0.9.24): what suits a record, the plan the GM kept, its key in the record's text, and a map of it.
+  r.get(
+    '/entities/:id/plan',
+    h((req) => planInfo(ctx.db, String(req.params.id))),
+  );
+  r.put(
+    '/entities/:id/plan',
+    h((req) => savePlan(ctx.db, String(req.params.id), req.body)),
+  );
+  r.delete(
+    '/entities/:id/plan',
+    h((req) => forgetPlan(ctx.db, String(req.params.id))),
+  );
+  r.post(
+    '/entities/:id/plan/key',
+    h((req) => writeKey(ctx.db, String(req.params.id), req.body)),
+  );
+  r.post(
+    '/entities/:id/plan/map',
+    upload.single('image'),
+    h((req) => {
+      if (!req.file) throw badRequest('The plan’s picture is missing');
+      const ext = sniffImage(req.file.buffer);
+      const size = ext ? imageSize(req.file.buffer) : null;
+      if (ext !== '.png' || !size) throw badRequest('The plan’s picture must be a PNG image');
+      let about: unknown;
+      try {
+        about = JSON.parse(String((req.body as { plan?: unknown })?.plan ?? ''));
+      } catch {
+        throw badRequest('The plan’s details are missing');
+      }
+      return planToMap(ctx.db, String(req.params.id), ctx.paths.uploadsDir, { buffer: req.file.buffer, ext, ...size }, about);
+    }),
+  );
+  // A plan's picture, made in the window, handed back as a file to save (the same way in a browser and the desktop app).
+  r.post(
+    '/plan-files',
+    upload.single('file'),
+    h((req) => {
+      if (!req.file) throw badRequest('Nothing to save');
+      const svg = req.file.mimetype === 'image/svg+xml' && req.file.buffer.subarray(0, 5).toString('utf8') === '<svg ';
+      if (!svg && sniffImage(req.file.buffer) !== '.png') throw badRequest('Only a plan’s picture can be saved this way');
+      return { token: hold(String((req.body as { name?: unknown })?.name ?? 'plan'), svg ? 'image/svg+xml' : 'image/png', req.file.buffer) };
+    }),
+  );
+  r.get('/plan-files/:token', (req, res) => {
+    const file = handBack(String(req.params.token));
+    if (!file) return void res.status(404).json({ error: 'That file is no longer waiting. Make it again.' });
+    res.setHeader('Content-Type', file.type);
+    res.setHeader('Content-Disposition', `attachment; filename="${file.name}"`);
+    // Only ever saved, never shown: a drawing has no business running anything.
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Content-Security-Policy', "sandbox; default-src 'none'");
+    res.setHeader('Cache-Control', 'no-store');
+    res.end(file.data);
+  });
   // Exploration: what the active campaign's party has discovered on a map, and where it has travelled.
   const campaignOf = (v: unknown) => {
     const id = v != null && v !== '' ? Number(v) : getActiveCampaignId(ctx.db);

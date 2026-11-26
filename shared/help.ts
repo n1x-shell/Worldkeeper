@@ -209,10 +209,13 @@ export const HELP_FOR_PAGE: [prefix: string, slug: string, anchor: string][] = [
   ['/books', 'rules', 'importing-your-books-from-5etools'],
   ['/settings', 'features', 'interface-and-technical-options'],
   ['/help', 'start', ''],
+  // A record's plan (/e/<id>/plan): `helpFor` sends it here, since its address begins as a record's does.
+  ['/plan', 'features', 'plans-of-places'],
 ];
 
 /** Where the "?" leads from a page: `/help/<guide>#<heading>`. */
 export function helpFor(pathname: string): { slug: string; anchor: string } {
+  if (/^\/e\/[^/]+\/plan$/.test(pathname)) pathname = '/plan';
   const best = HELP_FOR_PAGE.filter(([prefix]) => pathname === prefix || pathname.startsWith(`${prefix}/`)).sort((a, b) => b[0].length - a[0].length)[0];
   return best ? { slug: best[1], anchor: best[2] } : { slug: 'start', anchor: '' };
 }

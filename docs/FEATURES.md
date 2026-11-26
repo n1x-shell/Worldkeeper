@@ -145,6 +145,31 @@ Maps support draggable record-linked markers, categories, layers, region boundar
 
 **Disclosure caution:** Map assets, marker labels, and descriptive metadata should be reviewed before they are made available to players. A location name can disclose lore even when the associated record is hidden. See [Player View & Publishing](PLAYER_VIEW.md).
 
+## Plans of places
+
+A dungeon, a cave, a building or a settlement, laid out from what its record says and drawn in ink with a grid. Open a place's record and choose **Draw a plan** (in the panel beside its text), or draw one for no record yet under Characters → People, Shops and Places → **Places**.
+
+**What the plan is made from.** The app reads the record and offers a plan to suit it; you change what you like.
+
+- **The kind of plan** comes from the record's type and its name: a Settlement gets streets and roofs, a Building gets its storeys, "The Weeping Caves" gets a cave, "Old Garran Mine" a dungeon that is roughly cut.
+- **A settlement's size** comes from its **Population** fact (under 120 a hamlet, under 1,500 a village, under 8,000 a town, more a city). **Terrain** and the words of its description give it a river or the sea, a wall with gates, and fields or woods around it.
+- **A building's use** comes from its name and its **Used for** fact: tavern, temple, smithy, shop, keep, tower, warehouse, stable, manor, hall, cottage or house. Its **Wealth** makes it smaller or larger.
+- **A dungeon's rooms** number what its **Rooms** fact says; **Danger** decides whether it has secret doors and traps to begin with.
+- **The numbered places are the record's own.** They are read from the record's key: a section called **Rooms**, **Inside**, **Places in town**, **Map key** and the like, taking its numbered lines, its lines that begin in bold, or its smaller headings. Places kept as records under this one are added. A room's name shapes it: a "Great hall" is large and has pillars, a "Crypt" has tombs, a "Guard post" is small, a "Cellar" is below ground and a "Loft" upstairs. In a settlement, a "Market", a "Bridge", a "Gate" and "Docks" are the square, the bridge, a gate and the jetties, not buildings.
+- A record that names no places gets rooms made up to suit it. **Write the key into the record** puts them into its text as a **Map key** section (for the GM only, except a settlement's), with each room's size and the ways out of it. From then on they are the record's own: rename them there and the plan follows.
+
+**Drawing another.** **Draw another** lays the same place out differently. Every plan has a **plan number**: the same number and choices always give the same plan, on any computer. **Keep this plan** remembers it with the record, so it is there, the same, next time. If the record's text later names different places than the plan was kept for, the page says so and offers to draw it for the text as it is now.
+
+**How it is drawn.** Your copy has numbers, secret doors (an S in the wall) and traps; **the players' copy** has none of them. Choose the grid (on the floors, over the whole sheet, or none), the rock (hatched by hand, filled in, or left plain), the paper (white, parchment, or none, for laying over something else), and whether rooms have their furnishings. A dungeon, a cave or a building is drawn at 5 feet to a square; a hamlet or village at 10, a town at 20 and a city at 30.
+
+**Taking it away.**
+
+- **Picture (PNG)** at 50, 70, 100, 140 or 200 pixels to a square, as shown: your copy or the players'. Set the grid in a mapping tool or a virtual tabletop to the same number of pixels and it lines up. **Drawing (SVG)** is the same as line art, sharp at any size.
+- **Add to the record's pictures** puts the picture on the record, for you only until you show it to the players there.
+- **Make it a map in the Atlas** makes a map of the players' copy, with a hidden pin on each numbered place (a pin for a place that is a record of its own leads to that record) and the scale set, so the ruler measures true. Show the map and its pins to the players as you would any other, and put it on the table display. Drawn again from a new plan, the same map is updated and any pins you added are kept.
+
+The plans are made by the app itself, with no pictures or services from elsewhere: they work offline, and what you draw is yours to use as you like.
+
 ## Campaigns
 
 Create multiple campaigns within the same world, each with a premise, dates, status, players, active factions and notes. A **campaign state overlay** records campaign developments without overwriting encyclopedia records. Developments that should become shared lore are proposed through **Canon Review**, then approved or rejected separately.
@@ -236,11 +261,12 @@ Roll or enter initiative, manage rounds and turns, track damage, healing, tempor
 
 Other table tools include a DM screen, NPC quick-reference cards, faction agendas, world events, random tables and dice notation such as `2d6+3`, `1d20 adv`, `4d6kh3` and `d%`.
 
-**Generators** (Characters → People and Shops) are for when the party goes where you hadn't planned:
+**Generators** (Characters → People, Shops and Places) are for when the party goes where you hadn't planned:
 
 - **People:** six at a time, each with a name in one of your world's styles (or a built-in style: common folk, dwarven, elven, halfling, gnomish, orcish, draconic, infernal), what they do, a look, a manner, something they want and a secret. Say what they do yourself ("ferry keeper") or leave it to chance.
 - **Shops:** a general store, smithy, apothecary, stable, tavern, tool shop or arcane shop, with a name, a keeper, and its stock and prices from your rules' items. Put it in a place and its **Wealth** fact decides how much it has: a poor place has less and nothing costly, a rich one has more and rarer magic. A magic item with no price of its own is priced by its rarity.
-- **Keep as a record** turns either into an ordinary record (the shop inside its place), for you only until you reveal it. Nothing else is saved.
+- **Places:** the plan of a dungeon, a cave, a building or a settlement, drawn in ink with a grid (see [Plans of places](#plans-of-places)).
+- **Keep as a record** turns any of these into an ordinary record (the shop inside its place, the place with its plan and its key), for you only until you reveal it. Nothing else is saved.
 - **Weather** is on the campaign calendar and the session prep board: today's and the six days after, from the season of the campaign's date and the **Terrain** of where the party is. A day's weather stays the same however often you look, it comes in spells of a few days, and it says what it does at the table (heavy rain, strong wind, extreme cold or heat, fog). Places with no sky have none.
 
 Rules reference entries use labels: `OFFICIAL`, `HOMEBREW`, `OUTSIDE 2024 CORE` or `UNVERIFIED`. Worldkeeper does not bundle purchased rulebooks or licensed monster stat blocks.
