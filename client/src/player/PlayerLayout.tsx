@@ -38,6 +38,7 @@ import { usePlayer, usePlayerIndex } from './context';
 import { RealmIconOf, useRealms } from '../components/realms';
 import { PLAYER_GROUPS, OTHER_GROUP, playerWorkspaceFor, type PlayerWorkspace } from './categories';
 import { PlayerLiveCard } from './LivePlay';
+import { PageAnnouncer, SkipLink } from '../components/ui/feedback';
 import { ConfirmHost, ToastHost } from '../components/ui/overlays';
 import { PlayerHoverCards } from './PlayerPeek';
 import { SidebarSlotContext } from '../components/sidebarSlot';
@@ -249,6 +250,8 @@ export function PlayerLayout({ appName, publishedAt, campaign }: { appName: stri
 
   return (
     <div className="flex flex-col h-full">
+      <SkipLink />
+      <PageAnnouncer path={loc.pathname} app={campaign ? `${campaign} · ${appName}` : appName} />
       <header className="h-[52px] shrink-0 flex items-center gap-1 border-b border-line bg-panel px-2 md:px-3 elev-1 relative z-1500">
         <button className="btn-ghost md:hidden min-h-[40px]" onClick={() => setDrawer(true)} aria-label="Open menu">
           <MenuIcon size={18} />
@@ -338,7 +341,7 @@ export function PlayerLayout({ appName, publishedAt, campaign }: { appName: stri
               <nav className="flex-1 overflow-y-auto py-2" aria-label="Handbook">
                 {shown.map((w) => (
                   <div key={w.id} className="mb-2">
-                    <div className="px-4 pt-2 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim/80">{w.label}</div>
+                    <div className="px-4 pt-2 pb-1 text-[10px] uppercase tracking-[0.2em] text-dim">{w.label}</div>
                     {(w.items.length ? w.items : [{ to: w.to, label: w.label, icon: w.icon }]).map((it) => link(it, false))}
                   </div>
                 ))}
@@ -348,13 +351,13 @@ export function PlayerLayout({ appName, publishedAt, campaign }: { appName: stri
           </div>
         )}
         {fullBleed ? (
-          <main className="flex-1 relative overflow-hidden min-w-0" id="main">
+          <main className="flex-1 relative overflow-hidden min-w-0" id="main" tabIndex={-1}>
             <SidebarSlotContext.Provider value={slot}>
               <Outlet />
             </SidebarSlotContext.Provider>
           </main>
         ) : (
-          <main className="flex-1 overflow-y-auto min-w-0" id="main">
+          <main className="flex-1 overflow-y-auto min-w-0" id="main" tabIndex={-1}>
             <div className="mx-auto max-w-[1200px] p-4 md:p-6">
               <Outlet />
             </div>

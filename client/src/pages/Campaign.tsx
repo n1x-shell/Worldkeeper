@@ -98,7 +98,7 @@ export function useActiveOverview() {
 export function NeedCampaign() {
   return (
     <Empty title="No active campaign">
-      <Link to="/campaigns" className="text-arcane">
+      <Link to="/campaigns" className="text-arcane underline">
         Create or choose a campaign
       </Link>{' '}
       first. Campaigns never change the world encyclopedia directly.
@@ -666,7 +666,7 @@ function CharacterSheet({
       <div className="title-band flex flex-wrap items-end gap-x-4 gap-y-3 py-3!">
         <div className="min-w-0 basis-full sm:basis-auto sm:mr-2 self-center">
           {/* The sheet's own header names the character; this band holds the GM's settings for it. */}
-          <h2 className="text-[11px] uppercase tracking-wider text-dim">
+          <h2 className="text-[11px] uppercase tracking-wider opacity-80">
             For the GM<span className="sr-only">: {ch.name || 'Unnamed'}</span>
           </h2>
         </div>
@@ -888,7 +888,7 @@ export function PartyTiesPanel({ entityId }: { entityId: string }) {
       <ul className="text-sm space-y-1">
         {data.map((t, i) => (
           <li key={i}>
-            <Link to="/campaign/party" className="text-arcane">
+            <Link to="/campaign/party" className="text-arcane underline">
               {t.name}
             </Link>{' '}
             <span className="text-dim">· {t.tie}</span>
@@ -1323,7 +1323,7 @@ function PrepBoard({ s, b, overview, advs, setPrep }: { s: Session; b: Briefing 
             className="space-y-2"
             render={(c) => (
               <li key={c.id} className="leading-snug">
-                {c.mystery && <div className="text-[11px] uppercase tracking-wider text-dim">{c.mystery}</div>}
+                {c.mystery && <div className="text-[11px] uppercase tracking-wider opacity-80">{c.mystery}</div>}
                 {c.note || c.secret}
                 {c.entity_id && (
                   <>
@@ -1455,7 +1455,7 @@ function PrepBoard({ s, b, overview, advs, setPrep }: { s: Session; b: Briefing 
           <Empty compact title="No adventure in play yet.">Choose one below; its scenes show here and in live mode.</Empty>
         ) : (
           <Empty compact title="No adventures in this campaign yet.">
-            <Link to="/campaign/adventures" className="text-arcane">
+            <Link to="/campaign/adventures" className="text-arcane underline">
               Adventures
             </Link>
           </Empty>

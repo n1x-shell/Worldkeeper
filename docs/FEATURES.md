@@ -27,6 +27,14 @@ The guides are part of the app, so they work without the internet and describe t
 - After an update, a line at the top says which version you now have and leads to **What's new**. It goes once you have looked or closed it.
 - [Keyboard shortcuts](SHORTCUTS.md) has its own guide.
 
+## Accessibility
+
+- **Keyboard:** everything can be reached and used without a mouse. The first `Tab` on a screen offers **Skip to the page**; what has the focus is ringed; a dialog keeps `Tab` inside it and closes on `Esc`. See [Keyboard shortcuts](SHORTCUTS.md).
+- **Screen readers:** controls have names, going to another screen says which screen it is, and the window's title follows. This has been checked by machine on the app's main screens, not yet by someone who uses a screen reader every day; if something gets in your way, please [say so](TROUBLESHOOTING.md#reporting-a-bug).
+- **Reading:** in both themes text meets the WCAG AA contrast level, and links in a sentence are underlined. Your browser's zoom works throughout (the desktop app: `Ctrl` and `+`).
+- **Motion:** with "reduce motion" set on your device, nothing slides or fades.
+- **Tablets:** the GM's app fits a tablet held either way, and what you press is finger-sized. The players' handbook is laid out for phones.
+
 ## Finding your way
 
 The top bar holds the five workspaces: **Codex** (the world and its records), **Campaign** (the active campaign, its prep and the state of the world), **Characters** (the party, the builder and reference), **Atlas** (the full map view; its sidebar holds the map switcher and the map's legend and tools, and Manage maps) and **Live** (running the session; a red dot shows while a session is live). The sidebar lists only the current workspace's pages, and collapses to an icon rail (`[`); below 1280px wide it starts as the rail. Search (`Ctrl+K`), the active campaign (switch it from its menu), Player View, the theme and the **Library** menu (the gear: import and export, Canon Review, backups, Settings and the other maintenance pages) are on the right. The app opens on the active campaign's overview when there is one; the app mark always goes to the World Dashboard.

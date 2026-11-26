@@ -32,7 +32,7 @@ export function Stat({ label, children, foot, className = '', title }: { label: 
 export const NO_SPIN = '[-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none';
 
 /** The bare input inside a Stat: it takes the box's figure style. */
-export const STAT_INPUT = 'num w-full bg-transparent text-center text-xl font-semibold leading-tight text-ink placeholder:text-dim/60 focus:outline-hidden disabled:opacity-100';
+export const STAT_INPUT = 'num w-full bg-transparent text-center text-xl font-semibold leading-tight text-ink placeholder:text-dim focus:outline-hidden disabled:opacity-100';
 
 /** A section heading in the ledger's style, with optional actions on the right. */
 export function Rule({ children, actions }: { children: ReactNode; actions?: ReactNode }) {
@@ -132,7 +132,7 @@ export function Tabs({ tabs, storeKey }: { tabs: Tab[]; storeKey: string }) {
               aria-controls={`panel-${t.id}`}
               tabIndex={on ? 0 : -1}
               className={`relative min-h-10 whitespace-nowrap rounded-md border px-2 text-sm font-medium transition-colors sm:-mb-px sm:min-h-0 sm:rounded-none sm:border-0 sm:border-b-2 sm:px-3 sm:py-2 ${
-                on ? 'border-gold/60 bg-gold/15 text-gold sm:border-gold sm:bg-transparent' : 'border-line bg-raised/50 text-dim hover:text-ink sm:border-transparent sm:bg-transparent'
+                on ? 'border-gold/60 bg-gold/10 text-gold sm:border-gold sm:bg-transparent' : 'border-line bg-raised/50 text-dim hover:text-ink sm:border-transparent sm:bg-transparent'
               }`}
               onClick={() => choose(t.id)}
               onKeyDown={(e) => {

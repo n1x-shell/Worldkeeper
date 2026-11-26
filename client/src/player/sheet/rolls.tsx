@@ -105,13 +105,14 @@ export function Rollable({ label, expression, d20: isD20 = true, className = '',
       // Above a row's own tap target (the proficiency diamond covers its row).
       className={`relative z-10 rounded-sm px-1 underline decoration-gold/60 decoration-dotted underline-offset-4 hover:bg-gold/15 focus-visible:bg-gold/15 disabled:opacity-60 max-sm:min-h-9 max-sm:min-w-9 ${className}`}
       disabled={ctx.busy}
-      aria-label={`Roll ${label}`}
       title={`Roll ${label} (${expression})`}
       onClick={(e) => {
         e.stopPropagation();
         ctx.roll(label, expression, isD20);
       }}
     >
+      {/* Its name says what it rolls and ends with the number shown, so it can be asked for by either. */}
+      <span className="sr-only">Roll {label}: </span>
       {children}
     </button>
   );

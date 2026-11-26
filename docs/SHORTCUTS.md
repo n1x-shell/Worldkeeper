@@ -16,6 +16,17 @@ On a Mac, use **⌘** where this says **Ctrl**.
 
 `/`, `?`, `[` and `]` do nothing while you are typing in a box, so they can be typed as usual.
 
+## With the keyboard alone
+
+| Keys | What they do |
+| --- | --- |
+| `Tab`, `Shift+Tab` | To the next thing you can use, or the one before. What has the focus is ringed in gold |
+| The first `Tab` on a screen, then `Enter` | **Skip to the page**: past the bars and the menu, straight to the screen's own content |
+| `Enter` or `Space` | Press what has the focus |
+| `Esc` | Close the dialog or panel you are in; the focus goes back to where it was |
+
+In a dialog, `Tab` goes round the dialog and not out to the page behind it.
+
 ## While writing
 
 | Keys | What they do |

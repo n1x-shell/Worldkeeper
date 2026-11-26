@@ -2,6 +2,14 @@
 
 What changed in each version, newest first. Every update keeps your worlds as they are, and makes a backup of a library before changing how it is stored.
 
+## 0.9.22
+
+- **Easier to read.** Headings, the chosen option of a few, the main buttons and small labels were a little too faint against the page; they are now clear in both themes. Links inside a sentence are underlined, not marked by colour alone.
+- **Usable with the keyboard alone.** The first Tab on any screen offers **Skip to the page**. Text boxes show clearly when they have the focus. A dialog keeps Tab inside it, closes on `Esc` from anywhere in it, and hands the focus back when it closes.
+- **Better with a screen reader.** Going to another screen says which screen it is, and the window's title follows. The long-text editors are called by their field's name ("Premise", "Campaign notes") and not just "Text". Buttons that show a word or a number are named by it.
+- **Easier to press on a tablet.** The small diamonds on a character sheet have a finger-sized area each.
+- **Reduce motion** on your device is respected: nothing slides or fades.
+
 ## 0.9.21
 
 - **Help inside the app.** The guides are now part of the app: press **?** for help with the screen you are on, or open **Help** to read and search all of them. They work offline and match the version you have.

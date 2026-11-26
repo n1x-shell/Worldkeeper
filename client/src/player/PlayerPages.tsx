@@ -144,11 +144,11 @@ function FilterChips<T extends string>({ label, options, value, onChange }: { la
             aria-checked={on}
             onClick={() => onChange(o.value)}
             className={`inline-flex items-center gap-1.5 rounded-full border px-3 min-h-[40px] sm:min-h-[30px] text-[13px] transition-colors ${
-              on ? 'border-gold/70 bg-gold/15 text-gold' : 'border-line bg-panel text-dim hover:text-ink hover:border-gold/40'
+              on ? 'border-gold/70 bg-gold/10 text-gold' : 'border-line bg-panel text-dim hover:text-ink hover:border-gold/40'
             }`}
           >
             {o.label}
-            {o.n != null && <span className={`num text-[11px] ${on ? 'text-gold/80' : 'text-dim/80'}`}>{o.n}</span>}
+            {o.n != null && <span className={`num text-[11px] ${on ? 'text-gold' : 'text-dim'}`}>{o.n}</span>}
           </button>
         );
       })}
@@ -736,16 +736,16 @@ export function PlayerEntry() {
             <h2 className="font-display text-[11px] tracking-[0.2em] uppercase opacity-70 mb-2">At a glance</h2>
             <dl className="space-y-2">
               <div>
-                <dt className="text-[11px] uppercase tracking-wider opacity-60">Kind</dt>
+                <dt className="text-[11px] uppercase tracking-wider opacity-80">Kind</dt>
                 <dd className="font-serif text-[15px]">{data.typeLabel}</dd>
               </div>
               <div>
-                <dt className="text-[11px] uppercase tracking-wider opacity-60">Where</dt>
+                <dt className="text-[11px] uppercase tracking-wider opacity-80">Where</dt>
                 <dd className="font-serif text-[15px]">{realms.map(realmLabel).join(', ')}</dd>
               </div>
               {onMap && (
                 <div>
-                  <dt className="text-[11px] uppercase tracking-wider opacity-60">On the map</dt>
+                  <dt className="text-[11px] uppercase tracking-wider opacity-80">On the map</dt>
                   <dd className="font-serif text-[15px]">{onMap.name}</dd>
                 </div>
               )}
@@ -1020,7 +1020,7 @@ export function PlayerTreasure() {
               ] as const
             ).map(([k, v]) => (
               <div key={k} className="rounded-md border border-line bg-raised/60 px-3 py-2">
-                <dt className="text-[11px] uppercase tracking-wider text-dim">{k}</dt>
+                <dt className="text-[11px] uppercase tracking-wider opacity-80">{k}</dt>
                 <dd className="num text-lg text-ink leading-tight">{v}</dd>
               </div>
             ))}

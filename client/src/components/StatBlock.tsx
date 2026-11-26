@@ -201,7 +201,7 @@ export function StatBlock({ s, onRoll }: { s: StatBlockData; onRoll?: BlockRolle
   const section = (title: string, list?: Entry[]) =>
     list?.length ? (
       <details open className="space-y-1">
-        <summary className="cursor-pointer select-none font-display text-gold/90 border-b border-gold/30 hover:text-gold">{title}</summary>
+        <summary className="cursor-pointer select-none font-display text-gold border-b border-gold/30 hover:text-gold">{title}</summary>
         {list.map((e) => (
           <p key={e.name || e.text.slice(0, 40)} className="whitespace-pre-line">
             {e.name && (

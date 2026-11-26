@@ -57,6 +57,12 @@ describe.each([
   it.each(TEXT)('%s text reaches 4.5:1 on every surface', (fg) => {
     for (const s of SURFACES) expect(ratio(t[fg], t[s]), `${fg} on ${s}`).toBeGreaterThanOrEqual(4.5);
   });
+  // The chosen one of a few, and the main button: gold words on a tenth of gold laid over the surface (v0.9.22: it was
+  // 15%, where the words fell just short on Warm Parchment).
+  it('gold text still reaches 4.5:1 on the gold tint behind a chosen option or a main button', () => {
+    const tint = (surface: number[]) => surface.map((c, i) => Math.round(c * 0.9 + t.gold[i] * 0.1));
+    for (const s of SURFACES) expect(ratio(t.gold, tint(t[s])), `gold on a gold tint over ${s}`).toBeGreaterThanOrEqual(4.5);
+  });
   it('control borders reach 3:1', () => {
     for (const s of SURFACES) expect(ratio(t.edge, t[s]), `edge on ${s}`).toBeGreaterThanOrEqual(3);
   });
@@ -65,4 +71,10 @@ describe.each([
 it('Warm Parchment is the default theme', () => {
   const store = fs.readFileSync(path.resolve(import.meta.dirname, '../client/src/lib/store.tsx'), 'utf8');
   expect(store).toMatch(/read\('wk\.theme', 'light'\)/);
+});
+
+it('no text is made fainter than its colour: the accent and secondary colours are never used part see-through on words', () => {
+  // (A see-through icon is fine; these are the patterns that put words below 4.5:1, found by the audit in v0.9.22.)
+  expect(css).not.toMatch(/@apply[^;]*\btext-gold\/\d+/);
+  expect(css).not.toMatch(/bg-gold\/(15|20|25) [^;]*\btext-gold\b|\btext-gold\b[^;]*(?<!hover:)bg-gold\/(15|20|25)/);
 });

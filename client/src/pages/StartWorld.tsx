@@ -218,7 +218,7 @@ export function StartWorld() {
               <li
                 key={s}
                 aria-current={s === step ? 'step' : undefined}
-                className={`rounded-full border px-2.5 py-0.5 ${s === step ? 'border-gold bg-gold/15 text-gold' : i + 1 < at ? 'border-line text-ink' : 'border-line text-dim'}`}
+                className={`rounded-full border px-2.5 py-0.5 ${s === step ? 'border-gold bg-gold/10 text-gold' : i + 1 < at ? 'border-line text-ink' : 'border-line text-dim'}`}
               >
                 {i + 1}. {STEP_LABEL[s]}
               </li>

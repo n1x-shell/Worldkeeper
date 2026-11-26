@@ -1,11 +1,17 @@
 /** Inputs: fields, switches, checkboxes, segmented controls and tabs. No app dependencies (the player handbook uses these). */
-import type { KeyboardEvent, ReactNode } from 'react';
+import { createContext, type KeyboardEvent, type ReactNode } from 'react';
+
+/**
+ * The name of the field something sits in. A plain text box gets its name from the `<label>` around it; the long-text
+ * editor is not a text box to the browser, so it asks here (and was called just "Text" by screen readers before).
+ */
+export const FieldLabel = createContext<string | null>(null);
 
 export function Field({ label, children, hint }: { label: string; children: ReactNode; hint?: ReactNode }) {
   return (
     <label className="block">
       <span className="label">{label}</span>
-      {children}
+      <FieldLabel.Provider value={label}>{children}</FieldLabel.Provider>
       {hint && <span className="block text-xs text-dim mt-1">{hint}</span>}
     </label>
   );

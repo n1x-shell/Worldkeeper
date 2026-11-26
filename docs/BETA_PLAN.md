@@ -25,7 +25,8 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | A3 When something goes wrong: a log file, "Copy details for a bug report", issue forms, a troubleshooting guide | v0.9.19 | Done. The issue forms are checked as text; GitHub shows them once this is merged |
 | A4 Tested like a product: the table in real browsers, the built desktop app tried before it is published, a 10,000-record library with limits | v0.9.20 | Done, and run on GitHub on Windows, macOS and Linux. It found two things, both fixed: the app had not built on Windows or macOS since v0.9.6, and every save read every other record |
 | A5 Help inside the app: the guides bundled and searchable, help for the screen you are on, What's new after an update | v0.9.21 | Done |
-| A6 to A7 | | To do |
+| A6 Accessibility and devices: an audit of 42 screens in both themes, on a tablet and with the keyboard alone, in CI; what it found, fixed | v0.9.22 | Done by machine. Not tried by someone who uses a screen reader every day, or on a real tablet |
+| A7 | | To do |
 | C8 A location generator: ink-style maps of places from their records | | To do, before the beta (decided) |
 | The bundled world's own name: Oros | v0.9.16 | Done |
 | C2 play over the internet, C4 assistant, C5 sync and co-GMs, C6 rich-text editor, C3 other systems | | After the beta, if at all (decided) |
@@ -59,7 +60,7 @@ Each was checked in the code, not assumed. "None" means no trace of it.
 | A3 | **When something goes wrong** | **Done in v0.9.19.** Found: no log file, no "copy details for a bug report", no issue templates. A beta lives on bug reports. |
 | A4 | **Tested like a product** | **Done in v0.9.20** (no component tests of the client; the browser tests cover it instead). Found: CI drives only the first-run wizard. The full smoke test runs by hand; the table server, the installed desktop app and a large library (10,000 records) are never tested automatically. No client-side tests. |
 | A5 | **Help inside the app** | **Done in v0.9.21.** Found: the manual is Markdown in the repository. In the app: a first-run wizard, a Getting started card, and nothing after. |
-| A6 | **Accessibility and devices** | Labels exist in places; there has been no keyboard-only, screen-reader or contrast pass, and no pass of the GM app on a tablet. |
+| A6 | **Accessibility and devices** | **Done in v0.9.22** as far as a machine can check. Found: labels exist in places; there has been no keyboard-only, screen-reader or contrast pass, and no pass of the GM app on a tablet. |
 | A7 | **Security and publishing** | The table server's codes are not passwords (documented). Publishing to GitHub Pages has never been run against the real GitHub. |
 
 ### B. What a GM would expect and not find

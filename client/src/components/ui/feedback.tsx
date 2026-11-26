@@ -1,5 +1,5 @@
 /** Feedback: loading, empty, error and save states. */
-import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { Component, useEffect, useState, type ErrorInfo, type ReactNode } from 'react';
 import { AlertTriangle, Check, CircleDashed, Loader2 } from 'lucide-react';
 import type { SaveState } from '../../lib/api';
 
@@ -47,7 +47,7 @@ export function Empty({ title, children, action, icon, compact }: { title: strin
   return (
     <div className={compact ? 'py-3 text-center' : 'panel p-8 text-center'}>
       {icon && <div className="flex justify-center text-gold/60 mb-2">{icon}</div>}
-      <p className={compact ? 'text-sm text-dim italic' : 'font-display text-gold/80'}>{title}</p>
+      <p className={compact ? 'text-sm text-dim italic' : 'font-display text-gold'}>{title}</p>
       {children && <div className={`text-dim ${compact ? 'mt-1 text-xs' : 'mt-2 text-sm'}`}>{children}</div>}
       {action && <div className="mt-4 flex justify-center gap-2">{action}</div>}
     </div>
@@ -99,4 +99,42 @@ export class ErrorBoundary extends Component<{ children: ReactNode; onError?: (e
       );
     return this.props.children;
   }
+}
+
+/**
+ * The first stop for someone using the keyboard (v0.9.22): past the bars and the menu, straight to the page. It is out
+ * of sight until Tab reaches it. The page's own area must be `<main id="main" tabIndex={-1}>`.
+ */
+export function SkipLink() {
+  return (
+    <button type="button" className="skip-link" onClick={() => document.getElementById('main')?.focus()}>
+      Skip to the page
+    </button>
+  );
+}
+
+/**
+ * Says which page this is when it changes (v0.9.22). Going from one screen to another here loads no new page, so a
+ * screen reader said nothing and the window's title never changed. This reads the new screen's heading, puts it in the
+ * window's title ("Backups · The Worldkeeper") and says it quietly. `path` is the page's address; `app` its name.
+ */
+export function PageAnnouncer({ path, app }: { path: string; app: string }) {
+  const [said, setSaid] = useState('');
+  useEffect(() => {
+    // After the new screen has drawn its heading (a screen that loads its data first takes a moment).
+    let tries = 0;
+    const look = () => {
+      const heading = document.querySelector('#main h1')?.textContent?.trim();
+      if (!heading && ++tries < 10) return void (timer = setTimeout(look, 150));
+      document.title = heading && heading !== app ? `${heading} · ${app}` : app;
+      setSaid(heading ?? '');
+    };
+    let timer = setTimeout(look, 80);
+    return () => clearTimeout(timer);
+  }, [path, app]);
+  return (
+    <div className="sr-only" role="status" aria-live="polite" aria-atomic="true" data-testid="page-announcer">
+      {said}
+    </div>
+  );
 }

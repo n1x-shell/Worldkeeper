@@ -160,7 +160,7 @@ function Band({
           />
           <p className="num text-sm text-ink/85">{who.length ? who.join(' · ') : <span className="text-dim">Choose a species and class below.</span>}</p>
           <input
-            className="block w-full max-w-[16rem] border-b border-transparent bg-transparent text-sm text-dim placeholder:text-dim/70 hover:border-line focus:border-gold focus:outline-hidden disabled:opacity-100"
+            className="block w-full max-w-[16rem] border-b border-transparent bg-transparent text-sm text-dim placeholder:text-dim hover:border-line focus:border-gold focus:outline-hidden disabled:opacity-100"
             value={s.pronouns ?? ''}
             placeholder={readOnly ? '' : 'Pronouns'}
             aria-label="Pronouns"

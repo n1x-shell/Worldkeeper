@@ -299,8 +299,8 @@ function AddLine({ campaignId, onAdded }: { campaignId: number; onAdded: () => v
         onAdded();
       }}
     >
-      <input className="input py-1 text-sm w-56" placeholder="Add something by hand…" value={name} onChange={(e) => setName(e.target.value)} />
-      <button className="btn py-1 text-sm" type="submit" disabled={!name.trim()}>
+      <input className="input py-1 text-sm w-56" placeholder="Add something by hand…" aria-label="Something to add by hand" value={name} onChange={(e) => setName(e.target.value)} />
+      <button className="btn py-1 text-sm" type="submit" disabled={!name.trim()} aria-label="Add it" title="Add it">
         <Plus size={13} />
       </button>
     </form>

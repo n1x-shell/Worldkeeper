@@ -141,7 +141,7 @@ export function RumoursPage() {
       />
       {!activeCampaignId && (
         <p className="text-sm text-dim">
-          To track what the party has heard, <Link to="/campaigns" className="text-arcane">choose a campaign</Link>.
+          To track what the party has heard, <Link to="/campaigns" className="text-arcane underline">choose a campaign</Link>.
         </p>
       )}
       <Card className="grid gap-2 md:grid-cols-[1fr_200px_180px_240px] items-end">

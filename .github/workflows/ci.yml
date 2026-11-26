@@ -61,6 +61,13 @@ jobs:
           PORT=4312 WORLDKEEPER_TABLE_PORT=4322 WORLDKEEPER_NO_UPDATE_CHECK=1 WORLDKEEPER_DATA_DIR="$RUNNER_TEMP/table" NODE_ENV=production npx tsx server/src/index.ts > "$RUNNER_TEMP/table.log" 2>&1 &
           for i in $(seq 60); do curl -sf http://127.0.0.1:4312/api/health > /dev/null && break; sleep 1; done
           node scripts/e2e-table.mjs http://127.0.0.1:4312 e2e-shots/table
+      # Can everyone use it? Forty screens in both themes against the accessibility rules (axe-core, WCAG 2.2 AA), on
+      # a tablet held both ways, and with the keyboard alone. On a fourth empty data folder.
+      - name: Accessibility
+        run: |
+          PORT=4313 WORLDKEEPER_TABLE_PORT=4323 WORLDKEEPER_NO_UPDATE_CHECK=1 WORLDKEEPER_DATA_DIR="$RUNNER_TEMP/a11y" NODE_ENV=production npx tsx server/src/index.ts > "$RUNNER_TEMP/a11y.log" 2>&1 &
+          for i in $(seq 60); do curl -sf http://127.0.0.1:4313/api/health > /dev/null && break; sleep 1; done
+          node scripts/e2e-a11y.mjs http://127.0.0.1:4313 e2e-shots/a11y
       - name: Server logs
         if: failure()
         run: cat "$RUNNER_TEMP"/*.log

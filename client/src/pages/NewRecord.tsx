@@ -234,7 +234,7 @@ export function NewRecord() {
                   type="button"
                   aria-current={i === step ? 'step' : undefined}
                   disabled={i > 0 && !basics.name.trim()}
-                  className={`rounded-full border px-2.5 py-0.5 ${i === step ? 'border-gold bg-gold/15 text-gold' : i < step ? 'border-line text-ink' : 'border-line text-dim'} disabled:opacity-50`}
+                  className={`rounded-full border px-2.5 py-0.5 ${i === step ? 'border-gold bg-gold/10 text-gold' : i < step ? 'border-line text-ink' : 'border-line text-dim'} disabled:opacity-50`}
                   onClick={() => setStep(i)}
                 >
                   {i + 1}. {s}
