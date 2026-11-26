@@ -1,5 +1,6 @@
 import { LibraryPicker } from './components/Libraries';
 import { lazy, Suspense, type ComponentType } from 'react';
+import { RemoteGate } from './components/RemoteAccess';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { AppStateProvider } from './lib/store';
 import { Layout } from './components/Layout';
@@ -72,6 +73,8 @@ const HistoryPage = page(() => import('./pages/Library'), 'HistoryPage');
 const ImportExportPage = page(() => import('./pages/Library'), 'ImportExportPage');
 const OpenQuestionsPage = page(() => import('./pages/Library'), 'OpenQuestionsPage');
 const ReviewPage = page(() => import('./pages/Library'), 'ReviewPage');
+const TagsPage = page(() => import('./pages/BulkTools'), 'TagsPage');
+const FindReplacePage = page(() => import('./pages/BulkTools'), 'FindReplacePage');
 const SettingsPage = page(() => import('./pages/Library'), 'SettingsPage');
 const RumoursPage = page(() => import('./pages/Rumours'), 'RumoursPage');
 const RealmsPage = page(() => import('./pages/Realms'), 'RealmsPage');
@@ -116,11 +119,13 @@ export function App() {
         />
         <Route
           element={
-            <LibraryPicker>
-              <AppStateProvider>
-                <Layout />
-              </AppStateProvider>
-            </LibraryPicker>
+            <RemoteGate>
+              <LibraryPicker>
+                <AppStateProvider>
+                  <Layout />
+                </AppStateProvider>
+              </LibraryPicker>
+            </RemoteGate>
           }
         >
           <Route
@@ -618,6 +623,22 @@ export function App() {
             element={
               <Page>
                 <ReviewPage />
+              </Page>
+            }
+          />
+          <Route
+            path="tags"
+            element={
+              <Page>
+                <TagsPage />
+              </Page>
+            }
+          />
+          <Route
+            path="find-replace"
+            element={
+              <Page>
+                <FindReplacePage />
               </Page>
             }
           />

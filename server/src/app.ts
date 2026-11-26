@@ -23,9 +23,11 @@ import { publishRoutes } from './routes/publish.js';
  * mode 'dm'     → full DM API + player API.
  * mode 'player' → ONLY the player API (and the static client). DM routes do not exist in this process.
  */
-export function createApp(ctx: AppContext, opts: { staticDir?: string } = {}) {
+export function createApp(ctx: AppContext, opts: { staticDir?: string; /** Stands in front of everything (the network listener's sign-in, server/src/remote.ts). */ gate?: express.RequestHandler } = {}) {
   const app = express();
   app.disable('x-powered-by');
+  // Before anything is read: without a session, the network listener takes in no more than a password.
+  if (opts.gate) app.use(opts.gate);
   app.use(express.json({ limit: '25mb' }));
   app.use((_req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');

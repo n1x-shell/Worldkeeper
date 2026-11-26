@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-25 · v0.9.12_
+_Last updated: 2026-11-25 · v0.9.14_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,30 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.14: the GM app on another device
+
+`docs/BETA_PLAN.md` B8, the last step of section B.
+
+- **`server/src/remote.ts`:** a second listener (`openRemote`, `closeRemote`; port 4330 or `WORLDKEEPER_REMOTE_PORT`, on `0.0.0.0`) serving the same GM app as `createApp(ctx, { gate })`. `createApp` takes an optional `gate` that runs before anything else, the JSON body parser included.
+- **The gate** (`remoteGate`): requests outside `/api` (the built client) pass; under `/api`, only `health`, `GET /api/remote/session`, `POST /api/remote/login` (a body of at most 4 kB) and `POST /api/remote/logout` answer without a session; everything else is 401 `{ signIn: true }`. The path is compared in lower case, as Express routes it (`/API/entities` is `/api/entities`). With a session: `/api/remote…` is 403 (the password and the door are for the computer itself), and a change whose `Origin` isn't the listener's own host is 403.
+- **Password and sessions:** `setPassword` keeps `scrypt$salt$hash` in `shared/secrets.json` (`gm_remote_password`; not in the database, so not in backups or exports) and clears every session. A session is a random 32-byte token in an `HttpOnly; SameSite=Strict` cookie (`wk_gm`), kept in memory as its SHA-256 with a 12-hour sliding life; closing, restarting or `signEveryoneOut` ends them. `signIn` counts failures: from the fifth, a lockout of 30 seconds doubling to 15 minutes (429).
+- **Local routes** (`server/src/routes/table.ts`): `GET /api/remote`, `GET /api/remote/session` (`{ remote: false, signedIn: true }`), `PUT /api/remote/password`, `POST /api/remote` (`{ open }`), `POST /api/remote/sign-out-all`.
+- **Client:** `client/src/components/RemoteAccess.tsx`: `RemoteGate` around the GM app (asks `/api/remote/session`; shows the sign-in page on another device; a 401 with `signIn` anywhere raises `wk-sign-in`, from `client/src/lib/api.ts`), and `RemoteAccessPanel` in Settings (the controls on the computer; **Sign out** on the other device).
+- **Limits:** plain HTTP, so the password and the cookie can be read by someone listening on the same network; the lockout is for everyone at once, so a device on the network guessing passwords can keep others from signing in until the GM changes the password or closes the door. No per-device names or permissions: a signed-in device is the GM.
+- **Tests:** `tests/remote.test.ts`.
+
+## v0.9.13: bulk tools
+
+`docs/BETA_PLAN.md` B7. All of it is in `server/src/repo/bulk.ts` and `client/src/pages/BulkTools.tsx`.
+
+- **Tags** (`tagList`, `renameTag`, `deleteTag`; `GET /api/tags`, `POST /api/tags/rename`, `/api/tags/delete`; page `/tags`): every tag with its count. Renaming onto a tag that exists merges the two. Tags the app keeps (`realm/`, `status/`, `vis/`) are listed apart and can't be renamed or removed by hand.
+- **One change to many records** (`bulkEdit`; `POST /api/entities/bulk` with `{ ids, action }`): add or take off tags, move to a world or realm, put inside a record (never inside itself or its own contents), set the canon status, reveal or hide (to everyone, or one campaign with `campaign_id`), archive. One transaction. The `realm/` and `status/` tags follow. In the client it is **Select** on any record list (`EntityTable`'s `pick` prop) and the `BulkBar` under it.
+- **Merge** (`mergeRecords`; `POST /api/entities/:id/merge` with `{ from }`, after a `pre-merge` backup; **More → Merge another record into this**): the kept record takes the other's name and alternate names as alternate names, its tags, the facts it lacks (a fact that differs is written into the text), its text under `## From <name>`, its notes, and the players' text if it had none. Every column that holds a record's ID is pointed at the kept record (`POINTERS`: parents, quests, map pins and outlines, campaign state, standing, pictures, reveals, stat blocks…); where each record has one row of its own, the kept record's stays. The other record becomes a redirect (`type = 'redirect'`, `redirect_to`), so its ID, and links written with it, still lead somewhere. Players see none of the merged-in text until its section is revealed.
+- **Find and replace** (`findInRecords`, `replaceInRecords`; `POST /api/find`, `POST /api/replace` after a `pre-replace` backup; page `/find-replace`): plain words (never a pattern), whole words and capitals optional, in the text, players' text, facts, notes, and (when asked) names and alternate names; by type and realm. The preview shows each record with the first match before and after; only ticked records change.
+- **History:** every record changed by any of these has a revision (`bulk` or `merge`, with what was done as the reason), so each can be put back from its History tab. There is no one-click undo of a whole bulk change; merging and replacing make a backup first.
+- **Not done:** merging more than two at once; a merge from the Canon Review duplicates list in one click (it says how); bulk change of type; find-and-replace in sessions, scenes and handouts (records only); replacing with a pattern.
+- **Tests:** `tests/bulkTools.test.ts`.
 
 ## v0.9.12: generators
 

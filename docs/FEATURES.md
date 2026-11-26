@@ -280,6 +280,24 @@ One installation holds several **libraries**. Each is a world (or set of worlds)
 - Backups and restores are each library's own. **Back up everything** keeps every library and your books' rules and packs in one file; **Open everything from a file** adds them to another installation. The table server serves the library that's open.
 - **The desktop app** opens the last library; with several, its start asks which.
 
+## The GM app on another device
+
+The GM app normally answers only on the computer it runs on. To run a session from a tablet at the table, or prepare from a laptop in another room, open **Settings → The GM app on another device** on that computer:
+
+1. **Set a password** (at least 8 characters).
+2. **Open it to the network.** The card shows the address (and a QR code) for the other device, on a port of its own (4330).
+3. On the other device, open the address in its browser and give the password. It is the whole GM app, working on the same library.
+
+How it is kept safe:
+
+- Nothing of the library is sent to a device that hasn't signed in: only the app's sign-in page.
+- It is closed every time the app starts, until you open it. Closing it, changing the password or **Sign them all out** signs every device out at once. A device stays signed in for 12 hours after it was last used.
+- After five wrong passwords, signing in is locked for 30 seconds, then longer each time, up to 15 minutes.
+- The password, and opening and closing, can only be changed on the computer itself. Only a salted hash of the password is kept, outside the library, so it is never in a backup or an export.
+- The connection is not encrypted. Use it on your own network at home; don't open it on public Wi-Fi, and don't forward its port to the internet.
+
+Players never need this: they use the table's address.
+
 ## Library management
 
 The **Library** menu (the gear, top right) holds import preview, confirmation and history, exports, Canon Review, broken-reference reporting, change history, backup and restore, and app settings.
@@ -287,6 +305,15 @@ The **Library** menu (the gear, top right) holds import preview, confirmation an
 **Canon controls:** Changes are versioned with reasons. Edited canonical records can be reviewed using diffs and either approved or reverted. Where Canon Review is on (an imported archive or the Worldkeeper world, or by choice in **Settings → Canon**), new entries start `PROPOSED`; in your own world they are Canon at once. Campaign overlays do not silently promote local developments to universal canon. Protected setting bibles and original references are retained verbatim.
 
 **Import controls:** Preview handles duplicates, source precedence, redirects, templates, edits made locally, and unavailable references. Unchanged entries stay untouched, and disappearing source entries are not automatically removed.
+
+**Bulk tools:**
+
+- **Select** on any list of records, tick the ones you mean (or the box at the top for all the list shows), then change them together: add or take off a tag, put them inside another record, move them to another world or realm, set their canon status, reveal them to players or hide them (everyone's, or only the active campaign's), or archive them.
+- **Tags** (Library → Tags) lists every tag with how many records carry it. Rename one everywhere, rename it onto another to merge the two, or remove it.
+- **Merge** (a record's **More → Merge another record into this**) is for two records of the same thing. The one you're on stays and takes the other's names, tags, facts, text, notes and pictures; whatever pointed at the other (records inside it, quests, map pins, what campaigns know, links in text) now points here, and the other's address leads here too.
+- **Find and Replace** (Library → Find and Replace) changes a word or a name wherever it is written in your records. You see each record's first change before and after, untick any you don't want, and then replace.
+
+Every record these change keeps its earlier state in its History, where it can be put back; merging and replacing also make a backup first.
 
 **Your own notes:** **Add and Share → Your notes** brings in an Obsidian vault or any folder of Markdown: choose the folder (or a ZIP of it), say what each folder holds, and each note becomes a record. Links between notes (`[[Like this]]`) link the records, pictures a note embeds become its record's pictures, and front matter gives the name, alternate names, tags, type and facts. It goes through the same preview and confirmation, and bringing the same notes in again updates the records instead of doubling them. See [Data](DATA.md#bringing-your-own-notes-an-obsidian-vault-or-plain-markdown).
 
