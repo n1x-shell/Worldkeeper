@@ -87,6 +87,17 @@ npm run import -- path/to/archive.zip --take-source
 
 Use `--take-source` only after reviewing its effect on conflicting local changes. An archive's contents should be treated as untrusted input; use import limits and inspect suspicious archives before processing.
 
+## Updating the app
+
+A new version of the app sometimes has to change how a library is stored. When it does:
+
+- **A backup is made first.** Before anything is changed, the library's database is copied into its backups as `…-pre-update-step-N.wkbackup.zip`. It holds no pictures (an update doesn't touch them) and restores like any other backup. The newest eight are kept. The app says once that the library was updated and where the copy is.
+- **An update is all or nothing.** Every change a version needs is made together. If any of it fails, none of it is kept: the library is exactly as the version before left it, and that version still opens it.
+- **A library from a newer version is refused.** If you open a library with an older version of the app than last opened it, the app leaves it untouched and says to install the newest version.
+- **If the library can't be opened at the start**, the app still starts and shows a page that says what happened, that nothing was changed, where the copy from before is, and what to do. From there you can try again or open another library. If another library can't be opened while one is open, you stay in the one you have.
+
+Each library is updated when it is first opened by the new version, so a library you haven't opened since an update still has its own backup and update ahead of it.
+
 ## Backups
 
 Worldkeeper creates backups daily **while the application is running**, before imports and restores, and on demand via **Backups → Back up now** or:

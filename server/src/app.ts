@@ -1,9 +1,9 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import fs from 'node:fs';
-import path from 'node:path';
 import { ZodError } from 'zod';
 import type { AppContext } from './context.js';
 import { HttpError } from './lib/errors.js';
+import { NewerLibraryError, UpgradeError } from './db/migrations.js';
 import { VersionConflictError } from './repo/entities.js';
 import { worldRoutes } from './routes/world.js';
 import { campaignRoutes } from './routes/campaign.js';
@@ -89,7 +89,9 @@ export function createApp(ctx: AppContext, opts: { staticDir?: string; /** Stand
       next();
     });
     app.use(express.static(opts.staticDir, { index: false }));
-    app.get(/^(?!\/api\/).*/, (_req, res) => res.sendFile(path.join(opts.staticDir!, 'index.html')));
+    // Sent by its name inside the folder, not by its full path: a file whose path has a hidden folder in it is refused
+    // otherwise, and the app's own folder often is under one (an AppImage runs from /tmp/.mount_…).
+    app.get(/^(?!\/api\/).*/, (_req, res) => res.sendFile('index.html', { root: opts.staticDir! }));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -97,6 +99,8 @@ export function createApp(ctx: AppContext, opts: { staticDir?: string; /** Stand
     if (err instanceof VersionConflictError) return res.status(409).json({ error: err.message, current: err.current });
     if (err instanceof ZodError) return res.status(400).json({ error: 'Invalid data', details: err.issues });
     if (err instanceof HttpError) return res.status(err.status).json({ error: err.message, details: err.details });
+    // Another library that can't be opened by this version (the GM stays in the one that's open).
+    if (err instanceof UpgradeError || err instanceof NewerLibraryError) return res.status(409).json({ error: err.message, upgrade: err.info });
     const e = err as { type?: string; message?: string; code?: string };
     if (e?.type === 'entity.parse.failed') return res.status(400).json({ error: 'Malformed JSON' });
     if (e?.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ error: 'File is too large' });

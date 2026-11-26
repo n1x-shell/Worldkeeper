@@ -14,8 +14,8 @@ type J = Record<string, any>;
 
 const ASSETS = worldkeeperPath();
 const read = (p: string): J => JSON.parse(fs.readFileSync(path.join(ASSETS, p), 'utf8')) as J;
-export const SETTING_PACK = { id: 'worldkeeper', name: 'The Worldkeeper worldbook', source: 'The Worldkeeper contributors, CC BY 4.0 (built in)' };
-const CREDIT = "The Worldkeeper worldbook's rules (CC BY 4.0)";
+export const SETTING_PACK = { id: 'worldkeeper', name: 'The Oros worldbook', source: 'The Worldkeeper contributors, CC BY 4.0 (built in)' };
+const CREDIT = "The Oros worldbook's rules (CC BY 4.0)";
 
 export const settingPackOn = (db: DB) => (db.prepare(`SELECT value FROM settings WHERE key = 'rules_worldkeeper'`).get() as { value: string } | undefined)?.value === 'on';
 export function setSettingPack(db: DB, on: boolean) {

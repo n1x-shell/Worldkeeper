@@ -190,7 +190,7 @@ export function importPack(db: DB, buf: Buffer) {
  * that play as a book species, named after the world's own names. They come with the world's rules pack, as open rules
  * (Books only sets them aside); a GM who has the book gets the book's species, since each people names it first.
  */
-const WORLD_SPECIES_CREDIT = "The Worldkeeper worldbook's rules (CC BY 4.0)";
+const WORLD_SPECIES_CREDIT = "The Oros worldbook's rules (CC BY 4.0)";
 let speciesCache: ReturnType<typeof entryData>[] | null = null;
 export function worldSpecies(): ReturnType<typeof entryData>[] {
   if (speciesCache) return speciesCache;

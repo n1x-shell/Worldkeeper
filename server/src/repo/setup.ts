@@ -95,7 +95,7 @@ const PLACE_REALM_KINDS = new Set(['continent', 'region_group']);
  */
 export function finishSetup(db: DB, input: unknown) {
   const plan = setupPlan.parse(input);
-  if (plan.path === 'setting' && !isInstalled(db, 'worldkeeper')) throw badRequest('Add the Worldkeeper worldbook first');
+  if (plan.path === 'setting' && !isInstalled(db, 'worldkeeper')) throw badRequest('Add the Oros worldbook first');
   const made: { realms: string[]; campaignId: number | null; town: string | null; characters: number; tutorial: string[] } = {
     realms: [],
     campaignId: null,

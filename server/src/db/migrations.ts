@@ -1223,26 +1223,65 @@ CREATE INDEX table_rolls_campaign ON table_rolls(campaign_id, id);
   },
 ];
 
-export function migrate(db: Database.Database): number {
+export const LATEST_SCHEMA = () => MIGRATIONS[MIGRATIONS.length - 1].version;
+
+/** A library that could not be brought up to date. It is left exactly as it was. */
+export class UpgradeError extends Error {
+  constructor(
+    message: string,
+    public info: { from: number; to: number; backup: string | null; cause: string },
+  ) {
+    super(message);
+  }
+}
+/** A library last opened by a newer version of the app: this version must not touch it. */
+export class NewerLibraryError extends Error {
+  constructor(public info: { library: number; app: number }) {
+    super(`This library was last opened with a newer version of The Worldkeeper (its data is at step ${info.library}; this version knows up to step ${info.app}). Install the newest version to open it. Nothing has been changed.`);
+  }
+}
+
+/**
+ * Bring a library's database up to date (v0.9.15, docs/BETA_PLAN.md A1).
+ *
+ * - A library made by an earlier version is backed up first (`beforeUpgrade`, which returns the backup's name).
+ * - Every step that is missing runs in ONE transaction: if any fails, none is kept, and the library is exactly as
+ *   the earlier version left it (which can still open it).
+ * - A library that has steps this version doesn't know was opened by a newer version: it is refused, untouched.
+ *
+ * Steps already shipped are never edited (tests/migrations.test.ts holds each one's checksum): an old library's
+ * path to the present is the same path every other library took.
+ */
+export function migrate(db: Database.Database, o: { beforeUpgrade?: (from: number, to: number) => string | null } = {}): number {
   db.exec(`CREATE TABLE IF NOT EXISTS schema_migrations (
     version INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
     applied_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
   )`);
   const applied = new Set((db.prepare('SELECT version FROM schema_migrations').all() as { version: number }[]).map((r) => r.version));
+  const latest = LATEST_SCHEMA();
+  const have = Math.max(0, ...applied);
+  if (have > latest) throw new NewerLibraryError({ library: have, app: latest });
+  const pending = MIGRATIONS.filter((m) => !applied.has(m.version));
+  if (!pending.length) return 0;
   const upgrading = applied.size > 0;
-  let count = 0;
-  for (const m of MIGRATIONS) {
-    if (applied.has(m.version)) continue;
-    const run = db.transaction(() => {
-      db.exec(m.sql);
-      if (upgrading && m.onUpgrade) db.exec(m.onUpgrade);
-      db.prepare('INSERT INTO schema_migrations (version, name) VALUES (?, ?)').run(m.version, m.name);
-    });
-    run();
-    count++;
+  const backup = upgrading ? (o.beforeUpgrade?.(have, latest) ?? null) : null;
+  let at = pending[0];
+  try {
+    db.transaction(() => {
+      for (const m of pending) {
+        at = m;
+        db.exec(m.sql);
+        if (upgrading && m.onUpgrade) db.exec(m.onUpgrade);
+        db.prepare('INSERT INTO schema_migrations (version, name) VALUES (?, ?)').run(m.version, m.name);
+      }
+    })();
+  } catch (e) {
+    if (!upgrading) throw e;
+    const cause = `step ${at.version} (${at.name}): ${(e as Error).message}`;
+    throw new UpgradeError(`This library could not be updated for this version of The Worldkeeper, at ${cause}. Nothing has been changed: the library is as it was.`, { from: have, to: latest, backup, cause });
   }
-  return count;
+  return pending.length;
 }
 
 export function schemaVersion(db: Database.Database): number {

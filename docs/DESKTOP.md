@@ -18,7 +18,7 @@ The Worldkeeper (Tauri window)
   4. shows a readable error with the log location if the server fails to start;
   5. stops the server cleanly (SIGTERM, then a forced stop) when you quit.
 - No Tauri commands are exposed to the page, so the page has no native access beyond a normal browser tab.
-- Everything works offline. Nothing is sent anywhere.
+- Everything works offline. The one request the app makes by itself is a daily check of this project's list of releases on GitHub for a newer version (**Settings → Updates**, switchable off); it sends nothing about you or your worlds. Set `WORLDKEEPER_NO_UPDATE_CHECK=1` to leave the check out altogether.
 
 ### Your table
 
@@ -105,7 +105,38 @@ Installers are about 50 MB (Linux `.deb` and `.rpm` were measured; other formats
 
 A later version could shrink this with Node's single-executable feature once it supports native modules cleanly.
 
+### Updating itself ("Update and restart")
+
+From v0.9.18 the app can replace itself with a newer release (Windows, macOS, and the Linux AppImage; a `.deb` or `.rpm` is the package manager's to upgrade).
+
+How it works:
+
+1. The page asks by going to `/__shell/update?tag=v1.2.3` on the local server. The shell sees that navigation (`on_navigation` in `src-tauri/src/lib.rs`), cancels it, and does the rest itself. No Tauri command is exposed to the page.
+2. The shell reads `https://github.com/n1x-shell/Worldkeeper/releases/download/<tag>/latest.json`. The tag must be a plain version tag; the address is otherwise fixed in the shell.
+3. It downloads the file that manifest names for this system and checks its signature against the public key in `src-tauri/tauri.conf.json` (`plugins.updater.pubkey`). A file that doesn't match is refused.
+4. It stops the local server (which closes the library), installs, and restarts.
+5. What it is doing is written to `update-status.json` in the data folder; the server passes that to the page (`GET /api/update` → `install`).
+
+**The update key.** Updates are signed with a key pair made by `tauri signer generate`. This has nothing to do with Apple or Microsoft code signing, and costs nothing.
+
+- The **public** key is in `tauri.conf.json`. It is not a secret.
+- The **private** key is the repository secret `TAURI_SIGNING_PRIVATE_KEY` (with `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` if it has a password). It is never in the repository; `tests/updateCheck.test.ts` checks that.
+- Keep a copy of the private key somewhere safe. **If it is lost, apps already installed can't be updated in place any more** (a new key means a new public key, which only a manually installed version can bring). **If it leaks, whoever has it could sign an update those apps would accept**, though they would also need to get it onto this project's releases page.
+
+**In the release workflow** (`.github/workflows/desktop.yml`): with the secret set, the build adds `--config '{"bundle":{"createUpdaterArtifacts":true}}'`, which makes a `.sig` beside each file the updater can install; the release job runs `scripts/updater-manifest.mjs` to write `latest.json` (each system's file, as GitHub names it, with its signature) and attaches it to the release. Without the secret the build and the release are exactly as before, and the app shows a link instead of the button (the server only offers the button for a release that has `latest.json`).
+
+**Trying it locally** (how v0.9.18 was checked, on Linux):
+
+1. Build two signed development AppImages, the second as a higher version: `TAURI_SIGNING_PRIVATE_KEY=… npm run desktop:build -- --debug --bundles appimage --config '{"bundle":{"createUpdaterArtifacts":true}}'`, then the same with `"version":"<higher>"` added to the config.
+2. Put the second AppImage (named as GitHub would name it, spaces as dots) in a folder with a `latest.json` from `scripts/updater-manifest.mjs`, its `url` changed to `http://127.0.0.1:8765/…`, and serve the folder (`python3 -m http.server 8765`).
+3. Run the first AppImage with `WORLDKEEPER_UPDATE_ENDPOINT=http://127.0.0.1:8765/latest.json`, and press **Update and restart** (give the data folder a `shared/update.json` that names the higher version as `installable`, so the button shows). `WORLDKEEPER_UPDATE_NOW=v<higher>` does the same without a hand on the mouse.
+4. The AppImage file becomes the second one, byte for byte, and the app opens again. Change one byte of the served file and the update is refused ("The signature verification failed"), with the app file untouched and the app still running.
+
+Both variables are read by development builds only (`cfg!(debug_assertions)`); a release build ignores them.
+
 ### Signing
+
+The released installers are unsigned (the owner's decision, `docs/BETA_PLAN.md` §5); [Installing The Worldkeeper](INSTALL.md) tells GMs how to open them.
 
 Unsigned builds work, but:
 - **macOS** Gatekeeper and **Windows** SmartScreen will show warnings.

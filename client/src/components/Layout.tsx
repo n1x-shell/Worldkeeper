@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { LibraryMenuSection } from './Libraries';
 import { TableIndicator } from './HandbookAddress';
+import { UpdateIndicator } from './Updates';
 import { BookMarked, Check, ChevronDown, ChevronsLeft, ChevronsRight, Compass, Eye, Map as MapIcon, MapPinned, Menu, Moon, Plus, Search, Settings, Sun, X } from 'lucide-react';
 import { newMenu } from '@shared/newRecord';
 import { useRecordTypes } from './recordTypes';
@@ -395,6 +396,7 @@ export function Layout() {
               )}
             </Dropdown>
             <TableIndicator />
+            <UpdateIndicator />
             <a href="/player" target="_blank" rel="noreferrer" className="btn-ghost" title="Open the player view in a new tab" aria-label="Player View">
               <Eye size={16} /> <span className="hidden 2xl:inline whitespace-nowrap">Player View</span>
             </a>

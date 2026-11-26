@@ -46,6 +46,7 @@ Use a supported Rust toolchain and your OS-specific dependencies for desktop pac
 | `PORT` | `4310` DM / `4320` player | Listening port |
 | `HOST` | `127.0.0.1` DM / `0.0.0.0` player | Network binding |
 | `WORLDKEEPER_REMOTE_PORT` | `4330` | The GM app's password-protected network listener (opened from Settings) |
+| `WORLDKEEPER_NO_UPDATE_CHECK` | unset | Set to `1` to leave out the daily check for a newer version |
 | `WORLDKEEPER_MODE` | `dm` | Use `player` for player-only server |
 | `WORLDKEEPER_STATIC_DIR` | `./dist` | Built DM client |
 | `WORLDKEEPER_PLAYER_SITE_DIR` | `./dist-player` | Built player handbook |
@@ -77,9 +78,9 @@ npm run audit
 npm run build
 ```
 
-CI runs all of these on every pull request, and the first-run wizard in a browser both ways (`e2e:first-run`, own world and the Worldkeeper world, each on an empty data folder; screenshots and server logs are kept when it fails). The smoke test is run locally. The linter is Oxlint because typescript-eslint doesn't support TypeScript 7 yet; rules that don't fit the codebase are switched off in `.oxlintrc.json` with the reason. Dependabot (`.github/dependabot.yml`) opens update pull requests: npm weekly, Cargo and GitHub Actions monthly, minor and patch updates grouped.
+CI runs all of these on every pull request, and the first-run wizard in a browser both ways (`e2e:first-run`, own world and Oros, each on an empty data folder; screenshots and server logs are kept when it fails). The smoke test is run locally. The linter is Oxlint because typescript-eslint doesn't support TypeScript 7 yet; rules that don't fit the codebase are switched off in `.oxlintrc.json` with the reason. Dependabot (`.github/dependabot.yml`) opens update pull requests: npm weekly, Cargo and GitHub Actions monthly, minor and patch updates grouped.
 
-The tests import the world's archive as the Worldkeeper worldbook ships it (`packs/worldkeeper/archive`; `WORLDKEEPER_TEST_ARCHIVE` can name another copy), and use synthetic fixtures for import planning, deduplication, rollback, idempotency, edit/source protection, relationships, revision history, campaigns, recaps, player projection, backups and exports, maps, dice and initiative.
+The tests import the world's archive as the Oros worldbook ships it (`packs/worldkeeper/archive`; `WORLDKEEPER_TEST_ARCHIVE` can name another copy), and use synthetic fixtures for import planning, deduplication, rollback, idempotency, edit/source protection, relationships, revision history, campaigns, recaps, player projection, backups and exports, maps, dice and initiative.
 
 Browser smoke testing requires Playwright, Chromium and a running application:
 
@@ -89,7 +90,7 @@ node scripts/e2e-smoke.mjs http://127.0.0.1:4310 ./screenshots
 
 On an empty library it adds the shipped archive through **Add and Share**.
 
-The first run, on an app started with an empty data folder (`WORLDKEEPER_DATA_DIR`): a world of one's own, or the Worldkeeper world (the whole world, with no file to choose).
+The first run, on an app started with an empty data folder (`WORLDKEEPER_DATA_DIR`): a world of one's own, or Oros (the whole world, with no file to choose).
 
 ```bash
 node scripts/e2e-first-run.mjs http://127.0.0.1:4310 own ./screenshots
@@ -97,6 +98,15 @@ node scripts/e2e-first-run.mjs http://127.0.0.1:4310 setting ./screenshots
 ```
 
 Test claims describe intended suite coverage, not a guarantee that tests have been executed in a given release. Consult [Development Status](../DEVELOPMENT_STATUS.md) for recorded outcomes and remaining gaps.
+
+## Changing how a library is stored
+
+A library's database is brought up to date by the steps in `MIGRATIONS` (`server/src/db/migrations.ts`), in order, when it is opened.
+
+- **Add a step; never edit one.** Libraries already took the old steps. `tests/migrations.test.ts` holds each shipped step's checksum in `tests/migrations.lock.json` and fails if one changes. When you add a step, add its checksum to the lock (the failing test prints it).
+- **Steps run together.** All the steps a library is missing run in one transaction, after a backup; a failure keeps none of them. So a step can't rely on an earlier one having been committed on its own, and can't use statements that don't work inside a transaction.
+- **Test it on an old library.** The same test opens libraries as they were at several earlier steps and checks nothing is lost. If a step moves or rewrites data, add rows for it there.
+- **The version** is in `package.json`, `package-lock.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml`, `src-tauri/Cargo.lock`, `packs/worldkeeper/pack.json` and `shared/version.ts`; the same test checks they agree.
 
 ## Project layout
 

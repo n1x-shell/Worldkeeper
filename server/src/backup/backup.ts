@@ -19,7 +19,8 @@ const stamp = () => new Date().toISOString().replace(/[:.]/g, '-');
  * Versioned backup: a consistent SQLite snapshot (VACUUM INTO) plus uploaded map images,
  * packed into one .wkbackup.zip with a small manifest.
  */
-export function createBackup(db: DB, paths: Paths, reason = 'manual'): BackupInfo {
+export function createBackup(db: DB, paths: Paths, reason = 'manual', o: { /** Leave the pictures out (they aren't touched by what this backup guards against). */ uploads?: boolean } = {}): BackupInfo {
+  for (const d of [paths.stagingDir, paths.backupsDir]) fs.mkdirSync(d, { recursive: true });
   const safeReason = reason.replace(/[^a-z0-9-]+/gi, '-').slice(0, 40) || 'manual';
   const base = `worldkeeper-${stamp()}-${safeReason}`;
   const tmpDb = path.join(paths.stagingDir, `${base}.db`);
@@ -27,20 +28,24 @@ export function createBackup(db: DB, paths: Paths, reason = 'manual'): BackupInf
   db.prepare('VACUUM INTO ?').run(tmpDb);
   const zip = new AdmZip();
   zip.addLocalFile(tmpDb, '', 'worldkeeper.db');
-  if (fs.existsSync(paths.uploadsDir)) {
+  if (o.uploads !== false && fs.existsSync(paths.uploadsDir)) {
     for (const f of fs.readdirSync(paths.uploadsDir)) {
       const full = path.join(paths.uploadsDir, f);
       if (fs.statSync(full).isFile()) zip.addLocalFile(full, 'uploads');
     }
   }
-  const counts = {
-    entities: (db.prepare('SELECT COUNT(*) n FROM entities').get() as { n: number }).n,
-    relationships: (db.prepare('SELECT COUNT(*) n FROM relationships').get() as { n: number }).n,
-    campaigns: (db.prepare('SELECT COUNT(*) n FROM campaigns').get() as { n: number }).n,
+  // A library from an early version may not have every table yet.
+  const count = (table: string) => {
+    try {
+      return (db.prepare(`SELECT COUNT(*) n FROM ${table}`).get() as { n: number }).n;
+    } catch {
+      return 0;
+    }
   };
+  const counts = { entities: count('entities'), relationships: count('relationships'), campaigns: count('campaigns') };
   zip.addFile(
     'manifest.json',
-    Buffer.from(JSON.stringify({ app: 'worldkeeper', format: 1, schemaVersion: schemaVersion(db), created_at: new Date().toISOString(), reason, counts }, null, 2)),
+    Buffer.from(JSON.stringify({ app: 'worldkeeper', format: 1, schemaVersion: schemaVersion(db), created_at: new Date().toISOString(), reason, counts, uploads: o.uploads !== false }, null, 2)),
   );
   const out = path.join(paths.backupsDir, `${base}.wkbackup.zip`);
   zip.writeZip(out);
@@ -62,10 +67,15 @@ export function listBackups(paths: Paths): BackupInfo[] {
     .sort((a, b) => b.file.localeCompare(a.file));
 }
 
-/** Keep the newest `keep` automatic backups; manual and pre-restore backups are never pruned. */
+/**
+ * Keep the newest `keep` automatic backups (and the newest eight made before an update); manual and pre-restore
+ * backups are never pruned.
+ */
 function pruneBackups(paths: Paths, keep: number) {
-  const auto = listBackups(paths).filter((b) => /-(auto|pre-import|daily)/.test(b.file));
-  for (const b of auto.slice(keep)) fs.unlinkSync(path.join(paths.backupsDir, b.file));
+  const all = listBackups(paths);
+  const auto = all.filter((b) => /-(auto|pre-import|daily|pre-merge|pre-replace)/.test(b.file));
+  const updates = all.filter((b) => /-pre-update/.test(b.file));
+  for (const b of [...auto.slice(keep), ...updates.slice(8)]) fs.unlinkSync(path.join(paths.backupsDir, b.file));
 }
 
 export function backupPath(paths: Paths, file: string): string {

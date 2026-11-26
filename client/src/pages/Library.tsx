@@ -12,6 +12,7 @@ import type { Entity } from '../lib/types';
 import { RulesPacksPanel } from './RulesPacks';
 import { ModulesPanel } from './ModulesPanel';
 import { RemoteAccessPanel } from '../components/RemoteAccess';
+import { UpdatesPanel } from '../components/Updates';
 import { NotesImport, NotesReportCard, type NotesReport } from '../components/NotesImport';
 
 // ------------------------------------------------------------------ Import & export
@@ -834,8 +835,8 @@ export function OpenQuestionsPage() {
         note="A report only: nothing is changed. Some questions are open on purpose (the world's mysteries). Some have been answered by Worldkeeper's additions, linked here. The rest are still to do. The Undefined Lore Register lists the subjects the archive left open deliberately."
       />
       {error ? (
-        <Empty title="Open Questions come with the Worldkeeper worldbook" action={<Link className="btn" to="/worldbooks">Worldbooks</Link>}>
-          They track what the setting's archive leaves undefined. Add the Worldkeeper worldbook to this library (Library → Worldbooks) to use them.
+        <Empty title="Open Questions come with the Oros worldbook" action={<Link className="btn" to="/worldbooks">Worldbooks</Link>}>
+          They track what the setting's archive leaves undefined. Add the Oros worldbook to this library (Library → Worldbooks) to use them.
         </Empty>
       ) : !data ? (
         <Loading />
@@ -944,6 +945,21 @@ export function HistoryPage() {
 }
 
 // ------------------------------------------------------------------ Backups
+/** Why a backup was made, from its file name. */
+function backupWhy(file: string): string {
+  const why: [RegExp, string][] = [
+    [/-pre-update/, 'Made before an update of the app changed this library (the pictures aren’t in it; they weren’t touched)'],
+    [/-pre-import/, 'Made before records were added from files'],
+    [/-pre-merge/, 'Made before two records were merged'],
+    [/-pre-replace/, 'Made before a find-and-replace'],
+    [/-pre-restore/, 'Made before a backup was restored'],
+    [/-pre-install/, 'Made before a worldbook was added'],
+    [/-daily/, 'Made automatically, once a day'],
+    [/-manual/, 'Made by you'],
+  ];
+  return why.find(([re]) => re.test(file))?.[1] ?? 'Made automatically';
+}
+
 export function BackupsPage() {
   const { data, reload } = useApi<{ file: string; size: number; created_at: string; reason: string }[]>('/api/backups');
   const [err, setErr] = useState<string | null>(null);
@@ -1034,7 +1050,9 @@ export function BackupsPage() {
                 render: (b) => (
                   <>
                     <div className="text-sm">{b.file}</div>
-                    <div className="text-xs text-dim">{new Date(b.created_at).toLocaleString()}</div>
+                    <div className="text-xs text-dim">
+                      {new Date(b.created_at).toLocaleString()} · {backupWhy(b.file)}
+                    </div>
                   </>
                 ),
               },
@@ -1127,6 +1145,7 @@ export function SettingsPage() {
       </Card>
       <CanonPanel settings={data} onChange={async () => (await reload(), await reloadMeta())} />
       <RemoteAccessPanel />
+      <UpdatesPanel />
       <ModulesPanel />
       <RulesPacksPanel />
       <DebugToggle />

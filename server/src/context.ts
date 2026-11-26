@@ -3,6 +3,7 @@ import { libraryPaths, type Paths } from './config.js';
 import { libraryEntry, markOpen, readIndex, indexFile } from './libraries.js';
 import { badRequest } from './lib/errors.js';
 import { openDatabase, type DB } from './db/connection.js';
+import { createBackup } from './backup/backup.js';
 import { ensureEras } from './repo/eras.js';
 import { syncBuiltinTypes } from './repo/recordTypes.js';
 import { syncBuiltinTemplates } from './repo/templates.js';
@@ -29,7 +30,27 @@ export class AppContext {
 
   /** Open the library's database and bring it up to date (types, templates, packs, and what older versions lacked). */
   private open(): DB {
-    const db = openDatabase(this.paths.dbFile);
+    // A library made by an earlier version is backed up before this version changes anything in it (the database
+    // only: an update doesn't touch the pictures).
+    let upgraded: { from: number; to: number; backup: string | null } | null = null;
+    const paths = this.paths;
+    const db = openDatabase(paths.dbFile, {
+      beforeUpgrade: (old, from, to) => {
+        const backup = createBackup(old, paths, `pre-update-step-${from}`, { uploads: false }).file;
+        upgraded = { from, to, backup };
+        return backup;
+      },
+    });
+    try {
+      this.finishOpening(db, upgraded);
+    } catch (e) {
+      db.close();
+      throw e;
+    }
+    return db;
+  }
+
+  private finishOpening(db: DB, upgraded: { from: number; to: number; backup: string | null } | null) {
     // The books' rules every library shares; rules this library kept itself (from before) move there.
     attachSharedRules(db, path.join(this.paths.sharedDir, 'rules.db'));
     adoptSharedRules(db);
@@ -44,7 +65,8 @@ export class AppContext {
     adoptTableBands(db);
     adoptHandbookCodes(db);
     ensureEras(db);
-    return db;
+    // Said once in the app: this library was updated, and where the copy from before is.
+    if (upgraded) db.prepare(`INSERT INTO settings (key, value) VALUES ('upgrade_notice', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value`).run(JSON.stringify({ ...upgraded, at: new Date().toISOString() }));
   }
 
   /**
@@ -54,12 +76,22 @@ export class AppContext {
   openLibrary(id: string, remember = this.mode === 'dm') {
     const e = libraryEntry(this.paths.rootDir, id);
     if (e.archived) throw badRequest('That library is archived');
+    if (id === this.paths.libraryId) {
+      if (remember) markOpen(this.paths.rootDir, id);
+      return;
+    }
+    // The other library is opened before this one is let go: if it can't be opened (an update that failed, a library
+    // from a newer version), the GM stays where they were.
+    const before = { db: this.db, paths: this.paths };
+    this.paths = libraryPaths(this.paths.rootDir, e);
+    try {
+      this.db = this.open();
+    } catch (err) {
+      this.paths = before.paths;
+      throw err;
+    }
+    before.db.close();
     if (remember) markOpen(this.paths.rootDir, id);
-    if (id === this.paths.libraryId) return;
-    const next = libraryPaths(this.paths.rootDir, e);
-    this.db.close();
-    this.paths = next;
-    this.db = this.open();
   }
 
   /** On the table server: switch to the library the GM has open, if it changed. True when it switched. */

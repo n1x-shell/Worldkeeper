@@ -41,7 +41,7 @@ describe("the world's own species", () => {
     await request(gm).post('/api/setting-packs/worldkeeper/install').expect(200);
     const rules = async () => (await request(gm).get('/api/player/rules')).body as { species: Record<string, { source: string; traits: { name: string }[] }> };
     let r = await rules();
-    expect(r.species['Cat-folk']).toMatchObject({ source: "The Worldkeeper worldbook's rules (CC BY 4.0)" });
+    expect(r.species['Cat-folk']).toMatchObject({ source: "The Oros worldbook's rules (CC BY 4.0)" });
     expect(Object.keys(r.species)).toHaveLength(9 + 40);
     // The Tabaxi people play as the world's Cat-folk without the book.
     // (peoplesFrom in client/src/player/sheet/options.ts does just this for each people.)

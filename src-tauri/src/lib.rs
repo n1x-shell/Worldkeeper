@@ -8,13 +8,116 @@ use std::fs::{self, OpenOptions};
 use std::net::{SocketAddr, TcpListener, TcpStream};
 use std::path::{Path, PathBuf};
 use std::process::{Child, Command, Stdio};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Mutex;
 use std::thread;
 use std::time::{Duration, Instant};
 
 use tauri::{Manager, RunEvent, Url, WebviewUrl, WebviewWindowBuilder};
+use tauri_plugin_updater::UpdaterExt;
 
 struct ServerProcess(Mutex<Option<Child>>);
+
+// ---- "Update and restart" (v0.9.18) -----------------------------------------------------------------------------------
+//
+// The page asks for an update by going to `/__shell/update?tag=v1.2.3` on the local server. That navigation never
+// happens: this shell sees it, keeps the page where it is, and does the update itself. No Tauri command is exposed to
+// the page, as before. The update is only ever fetched from this project's own releases, and is only installed if it
+// carries a signature made with this project's update key (the public half is in tauri.conf.json).
+
+const RELEASE_DOWNLOADS: &str = "https://github.com/n1x-shell/Worldkeeper/releases/download";
+static UPDATING: AtomicBool = AtomicBool::new(false);
+
+/// A release tag as this project writes them: `v1.2.3` or `v1.2.3-beta.1`. Nothing else is put into an address.
+fn valid_tag(tag: &str) -> bool {
+    let Some(rest) = tag.strip_prefix('v') else { return false };
+    let (numbers, pre) = match rest.split_once('-') {
+        Some((n, p)) => (n, Some(p)),
+        None => (rest, None),
+    };
+    let parts: Vec<&str> = numbers.split('.').collect();
+    tag.len() <= 40
+        && parts.len() == 3
+        && parts.iter().all(|p| !p.is_empty() && p.len() <= 6 && p.chars().all(|c| c.is_ascii_digit()))
+        && pre.map_or(true, |p| !p.is_empty() && p.chars().all(|c| c.is_ascii_alphanumeric() || c == '.'))
+}
+
+/// The tag the page asked to update to, when the address is the shell's own and the tag is a plain version.
+fn requested_update(url: &Url) -> Option<Option<String>> {
+    if url.host_str() != Some("127.0.0.1") || url.path() != "/__shell/update" {
+        return None;
+    }
+    let tag = url.query_pairs().find(|(k, _)| k == "tag").map(|(_, v)| v.to_string());
+    Some(tag.filter(|t| valid_tag(t)))
+}
+
+/// Whether this copy of the app can replace itself. On Linux only an AppImage can; a .deb or .rpm is the package manager's.
+fn can_self_update() -> bool {
+    if cfg!(target_os = "linux") {
+        std::env::var_os("APPIMAGE").is_some()
+    } else {
+        cfg!(any(target_os = "windows", target_os = "macos"))
+    }
+}
+
+/// What the update is doing, for the page to show (the server reads this file; the shell has no other way to speak).
+fn write_update_status(file: &Path, state: &str, tag: &str, error: Option<&str>) {
+    let status = serde_json::json!({ "state": state, "tag": tag, "error": error });
+    let tmp = file.with_extension("json.tmp");
+    if fs::write(&tmp, status.to_string()).is_ok() {
+        let _ = fs::rename(&tmp, file);
+    }
+}
+
+async fn run_update(handle: &tauri::AppHandle, tag: &str, status: &Path) -> Result<(), String> {
+    write_update_status(status, "checking", tag, None);
+    let address = match std::env::var("WORLDKEEPER_UPDATE_ENDPOINT") {
+        // For trying the updater against a local file server: only in a development build.
+        Ok(dev) if cfg!(debug_assertions) => dev,
+        _ => format!("{RELEASE_DOWNLOADS}/{tag}/latest.json"),
+    };
+    let endpoint = Url::parse(&address).map_err(|e| e.to_string())?;
+    let updater = handle.updater_builder().endpoints(vec![endpoint]).map_err(|e| e.to_string())?.build().map_err(|e| e.to_string())?;
+    let update = updater
+        .check()
+        .await
+        .map_err(|e| format!("Couldn't read the update for {tag}: {e}"))?
+        .ok_or_else(|| format!("{tag} has no update for this computer, or isn't newer than this version"))?;
+    write_update_status(status, "downloading", tag, None);
+    // The signature is checked here, against this project's public key, before anything is installed.
+    let bytes = update.download(|_, _| {}, || {}).await.map_err(|e| format!("The download failed or its signature didn't match: {e}"))?;
+    write_update_status(status, "installing", tag, None);
+    // The server holds files the installer must replace: stop it first (it closes the library cleanly).
+    if let Some(mut child) = handle.state::<ServerProcess>().0.lock().unwrap().take() {
+        stop_server(&mut child);
+    }
+    if let Err(e) = update.install(bytes) {
+        write_update_status(status, "failed", tag, Some(&format!("The new version couldn't be installed: {e}")));
+    }
+    // Start again: the new version if the install went through, this one if it didn't (the page then says why).
+    handle.restart();
+}
+
+fn start_update(handle: tauri::AppHandle, tag: Option<String>, status: PathBuf) {
+    let Some(tag) = tag else {
+        write_update_status(&status, "failed", "", Some("That isn't a version this app can update to"));
+        return;
+    };
+    if !can_self_update() {
+        write_update_status(&status, "failed", &tag, Some("This copy of the app can't update itself: install the new version from the releases page"));
+        return;
+    }
+    if UPDATING.swap(true, Ordering::SeqCst) {
+        return;
+    }
+    tauri::async_runtime::spawn(async move {
+        if let Err(e) = run_update(&handle, &tag, &status).await {
+            eprintln!("[worldkeeper] update to {tag} failed: {e}");
+            write_update_status(&status, "failed", &tag, Some(&e));
+            UPDATING.store(false, Ordering::SeqCst);
+        }
+    });
+}
 
 fn free_port() -> std::io::Result<u16> {
     Ok(TcpListener::bind("127.0.0.1:0")?.local_addr()?.port())
@@ -91,6 +194,8 @@ fn start_server(resources: &Path, data_dir: &Path, port: u16) -> Result<Child, S
         .env("WORLDKEEPER_PACKS_DIR", resources.join("packs"))
         // Lets the server exit on its own if this process dies without a clean shutdown.
         .env("WORLDKEEPER_PARENT_PID", std::process::id().to_string())
+        // The page offers "Update and restart" only where this shell can do it.
+        .env("WORLDKEEPER_SHELL_UPDATER", if can_self_update() { "1" } else { "0" })
         .env_remove("NODE_OPTIONS")
         .stdin(Stdio::null())
         .stdout(Stdio::from(log))
@@ -138,19 +243,30 @@ pub fn run() {
                 let _ = window.set_focus();
             }
         }))
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .manage(ServerProcess(Mutex::new(None)))
         .setup(|app| {
-            let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
-                .title("The Worldkeeper")
-                .inner_size(1440.0, 920.0)
-                .min_inner_size(900.0, 600.0)
-                .build()?;
-
             let data_dir = match std::env::var_os("WORLDKEEPER_DATA_DIR") {
                 Some(d) => PathBuf::from(d),
                 None => app.path().app_data_dir()?,
             };
             fs::create_dir_all(&data_dir)?;
+            let update_status = plain_path(&data_dir).join("update-status.json");
+            let handle = app.handle().clone();
+            let window = WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
+                .title("The Worldkeeper")
+                .inner_size(1440.0, 920.0)
+                .min_inner_size(900.0, 600.0)
+                // "Update and restart": the page goes to the shell's own address; the shell acts and the page stays.
+                .on_navigation(move |url| match requested_update(url) {
+                    Some(tag) => {
+                        start_update(handle.clone(), tag, update_status.clone());
+                        false
+                    }
+                    None => true,
+                })
+                .build()?;
+
             let resources = app.path().resource_dir()?;
             let port = free_port()?;
 
@@ -158,10 +274,21 @@ pub fn run() {
                 Ok(child) => {
                     *app.state::<ServerProcess>().0.lock().unwrap() = Some(child);
                     let log_path = data_dir.join("logs").join("server.log");
+                    let running = app.package_info().version.to_string();
                     thread::spawn(move || {
                         if wait_for_port(port, Duration::from_secs(45)) {
                             let url = Url::parse(&format!("http://127.0.0.1:{port}/")).expect("valid url");
                             let _ = window.navigate(url);
+                            // For trying the updater without a hand on the mouse (development builds only): the page
+                            // goes where "Update and restart" would send it, once it has loaded.
+                            if cfg!(debug_assertions) {
+                                if let Ok(tag) = std::env::var("WORLDKEEPER_UPDATE_NOW") {
+                                    if valid_tag(&tag) && tag.trim_start_matches('v') != running {
+                                        thread::sleep(Duration::from_secs(8));
+                                        let _ = window.eval(&format!("window.location.assign('/__shell/update?tag={tag}')"));
+                                    }
+                                }
+                            }
                         } else {
                             show_error(&window, &format!("The local server did not answer in time.\nSee the log: {}", log_path.display()));
                         }
@@ -186,8 +313,31 @@ pub fn run() {
 
 #[cfg(test)]
 mod tests {
-    use super::plain_path;
+    use super::{plain_path, requested_update, valid_tag};
     use std::path::{Path, PathBuf};
+    use tauri::Url;
+
+    #[test]
+    fn only_plain_version_tags_are_updated_to() {
+        for ok in ["v0.9.18", "v1.0.0", "v12.345.6", "v1.0.0-beta.2"] {
+            assert!(valid_tag(ok), "{ok}");
+        }
+        for bad in ["0.9.18", "v1.0", "v1.0.0.0", "v1.0.x", "v1.0.0-", "v1.0.0-beta/../x", "v1.0.0?x=1", "latest", "", "v1.0.0-beta 2", "v1.0.0/../../evil"] {
+            assert!(!valid_tag(bad), "{bad}");
+        }
+    }
+
+    #[test]
+    fn the_shell_only_listens_at_its_own_address() {
+        let u = |s: &str| Url::parse(s).unwrap();
+        assert_eq!(requested_update(&u("http://127.0.0.1:4310/__shell/update?tag=v1.2.3")), Some(Some("v1.2.3".to_string())));
+        // A tag that isn't a version is refused, not ignored: the page is told.
+        assert_eq!(requested_update(&u("http://127.0.0.1:4310/__shell/update?tag=../../evil")), Some(None));
+        assert_eq!(requested_update(&u("http://127.0.0.1:4310/__shell/update")), Some(None));
+        // Any other page, and the same path anywhere else, is an ordinary navigation.
+        assert_eq!(requested_update(&u("http://127.0.0.1:4310/settings")), None);
+        assert_eq!(requested_update(&u("https://evil.example/__shell/update?tag=v1.2.3")), None);
+    }
 
     #[test]
     fn strips_the_extended_length_prefix() {

@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-25 · v0.9.14_
+_Last updated: 2026-11-26 · v0.9.18_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,58 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.18: the app updates itself
+
+The owner asked for updating to be seamless (26 November 2026). Installing a newer version over an older one already upgraded in place, but by hand, and with the unsigned-app warning each time.
+
+- **The shell** (`src-tauri/src/lib.rs`, `tauri-plugin-updater`): `on_navigation` sees the page go to `/__shell/update?tag=…` on `127.0.0.1`, cancels the navigation and calls `start_update`. `valid_tag` lets only `vN.N.N` (with an optional pre-release part) into the address; the address is otherwise fixed (`RELEASE_DOWNLOADS/<tag>/latest.json`). `run_update`: check, download (the plugin verifies the signature against `plugins.updater.pubkey`), stop the server, install, `restart`. `can_self_update`: Windows, macOS, and on Linux only an AppImage; the server is told with `WORLDKEEPER_SHELL_UPDATER`. A failure after the server was stopped still restarts the app (this version), with the reason on record. `WORLDKEEPER_UPDATE_ENDPOINT` replaces the address in development builds only.
+- **Status:** the shell writes `update-status.json` in the data folder (`checking`, `downloading`, `installing`, `failed`); `installStatus` in `server/src/updateCheck.ts` reads it, clears it once the running version is the one it was updating to, and calls it failed if it has been left half-way for 30 minutes. `GET /api/update` adds `canInstall` and `install`; `POST /api/update/dismiss` forgets a failure.
+- **Offered only where it can work:** the daily check records `latest.installable` (the release has a `latest.json`); the button needs that, `canInstall`, and a session on the computer itself (not the tablet). Otherwise the card shows the link, and now says that nothing needs removing first.
+- **Releases** (`.github/workflows/desktop.yml`, `scripts/updater-manifest.mjs`): with the repository secret `TAURI_SIGNING_PRIVATE_KEY`, the build makes signed update files and the release gets `latest.json`; without it, both are as before. The manifest uses GitHub's names for the files (spaces become dots).
+- **The key:** the public half is in `src-tauri/tauri.conf.json`; the private half is not in the repository (a test checks). See `docs/DESKTOP.md`.
+- **Two bugs found while trying it on a real build, both older than this release:**
+  - **A backup downloaded from the Backups page was eleven bytes of `{"ok":true}`, not the backup.** `res.download` sends in the background, and the route's wrapper (`h`) answered first. The route now waits for the download. The backups on disk were always whole, and restoring one from the list worked; only the downloaded copy was wrong. (`GET /api/backups/:file`.)
+  - **In the Linux AppImage the app's pages did not load** (`{"error":"Not Found"}`), and on any Linux desktop install pictures would not have shown: Express refuses to send a file whose full path passes through a hidden folder, and an AppImage runs from `/tmp/.mount_…` while a Linux data folder is under `~/.local`. The app's page, uploaded pictures and backups are now sent by name inside their folder (`{ root }`). `tests/hiddenFolders.test.ts` covers all three.
+- **Tests:** `tests/updateCheck.test.ts` (installable, the status file, the manifest script, no private key in the repository); `cargo test` in `src-tauri` (the tag and the address).
+- **Tried for real, on Linux:** two signed AppImages (0.9.18 and one built as 0.9.19) and a local file server standing in for the release. Pressing **Update and restart** in the running 0.9.18 app: the confirmation, "Downloading the new version…", then the AppImage on disk was the 0.9.19 file byte for byte and the app had started again, about fifteen seconds later. With one byte of the download changed: "The signature verification failed", the AppImage untouched, the app still running, and the page saying why. `docs/DESKTOP.md` has the steps.
+- **Not tried:** Windows (the NSIS installer run by the updater) and macOS (the `.app` replaced in place, on an unsigned app) at all; the release workflow's new steps (they run only on a tag); an update fetched from GitHub itself rather than a local stand-in.
+
+## v0.9.17: the update check, and installing an unsigned app
+
+`docs/BETA_PLAN.md` A2, as the owner decided: no paid signing; a daily check for a newer version, on by default.
+
+- **`server/src/updateCheck.ts`:** `checkForUpdate` asks GitHub's list of this project's releases (`RELEASES_API`, the list and not `…/releases/latest`: every release so far is marked pre-release on GitHub, and that address leaves those out and answers 404), takes the highest version among the published ones (`parseVersion`, `isNewer`; a draft is skipped), and keeps the answer in `shared/update.json` for the installation. At most once a day unless `force`; never when switched off unless `force`; a failure keeps what was known and records why. The request carries `Accept` and `User-Agent: The-Worldkeeper/<version>` and nothing else. A release's link is only kept if it is under this project's releases page.
+- **When:** `scheduleUpdateChecks` in `server/src/index.ts`: 20 seconds after the GM's server starts, then every six hours (the once-a-day rule decides). Not on the table server, not in tests, and not at all with `WORLDKEEPER_NO_UPDATE_CHECK=1`. Opening the app's pages asks GitHub nothing.
+- **Routes:** `GET /api/update`, `PUT /api/update` (`{ enabled }`), `POST /api/update/check` ("Check now").
+- **Client:** `client/src/components/Updates.tsx`: `UpdatesPanel` in Settings (the switch, Check now, what is known, what the check sends) and `UpdateIndicator` in the top bar, shown only when a newer version exists.
+- **`docs/INSTALL.md`:** which file to download for each system, opening the unsigned app on Windows and macOS, checking a download against the SHA-256 GitHub shows for each file, updating, going back, removing. README points to it.
+- **Not done:** the install steps were written from the systems' standard behaviour and the names of the real release files; they have not been tried on a Mac or a Windows PC. No installer for Intel Macs. The app doesn't download or install updates itself.
+- **Tests:** `tests/updateCheck.test.ts` (GitHub's answer is given to it; no test uses the network).
+
+## v0.9.16: the bundled world is Oros
+
+The owner's decision of 26 November 2026 (`docs/BETA_PLAN.md` §5): "Worldkeeper" is the app; its bundled world has a name of its own, Oros. Sections below this one were written before the rename and still say "the Worldkeeper world" or "the Worldkeeper worldbook".
+
+- **The pack** (`packs/worldkeeper/pack.json`): `name` is "Oros", and its world realm (`id: world`) is named "Oros". The pack's ID, folder and every record ID are unchanged, so nothing in an installed library moves.
+- **In a library** (`server/src/packs/registry.ts`): `syncPackDefinitions` renames the library's world realm to the pack's name only while it still has the default name "The World" (a name the GM gave it is kept); `uninstallPack` puts "The World" back if the realm still carries the pack's name; `syncInstalledPacks` updates the worldbook's stored name. Records are matched to realms by ID and by the pack's own words, never by the world realm's name, so imports are unaffected.
+- **The rules pack** is "The Oros worldbook" and its credit line "The Oros worldbook's rules (CC BY 4.0)" (`server/src/repo/settingPack.ts`, `rulesPacks.ts`); the licensor is still the Worldkeeper contributors.
+- **The lore:** `DEC-910` (the owner's decisions register) records the name, and that its origin is UNDEFINED. The archive's own text is not edited.
+- **Wording:** the first-run wizard ("Play in Oros", "Add the Oros worldbook"), empty states, README, Quick Start, Features, Worldbooks and Rules packs docs. Code comments and the plans keep the old wording.
+- **Tests:** `tests/settingPack.test.ts` and others for the names; `tests/settingPacks.test.ts` for the realm's name on install, with a GM's own name, and on uninstall.
+
+## v0.9.15: safe upgrades
+
+`docs/BETA_PLAN.md` A1, the first step of section A (trust).
+
+- **`migrate`** (`server/src/db/migrations.ts`): refuses a library with steps this version doesn't know (`NewerLibraryError`); calls `beforeUpgrade(from, to)` before changing a library made by an earlier version; runs every missing step in one transaction, so a failure keeps none (`UpgradeError`, with `from`, `to`, the backup's name and the failing step). `openDatabase` passes the hook through and closes the file if it throws.
+- **The backup** (`AppContext.open`): `createBackup(db, paths, 'pre-update-step-<from>', { uploads: false })`, the database only. `createBackup` now makes its folders, tolerates a library too old to have every counted table, and writes `uploads: false` in the manifest. `pruneBackups` keeps the newest eight `pre-update` backups, and counts `pre-merge` and `pre-replace` among the automatic ones.
+- **Said once:** `finishOpening` writes the setting `upgrade_notice` (`{ from, to, backup, at }`); `GET /api/meta` returns it as `upgrade` with `version`; the client shows a toast and posts `/api/meta/upgrade-seen`. The Backups page says why each backup was made.
+- **Switching libraries** (`AppContext.openLibrary`): the other library is opened before the open one is closed, and `libraries.json` is only updated on success, so a library that can't be opened leaves the GM where they were (409 with the reason).
+- **At the start** (`server/src/index.ts`, `server/src/recovery.ts`): if the library can't be opened, the GM's server still listens and serves a plain page (no client bundle, no database): what happened, that nothing changed, the backup, what to do, the details for a bug report, **Try again**, and the other libraries to open. `POST /recover` tries again and the real app takes over without a restart. `/api/health` is 503 `{ recovery: true }` meanwhile. The table server process stops, as before.
+- **`shared/version.ts`** (`APP_VERSION`): one more place the version is written; the test checks all seven agree.
+- **Tests:** `tests/migrations.test.ts`: the checksum lock (`tests/migrations.lock.json`); libraries at steps 1, 4, 9, 15, 22, 30 and the one before last, opened and checked; a new library needs no backup; a failing step changes nothing; a newer library is refused; in the app, the backup, the notice and a restore; staying put when another library can't open; the recovery page.
+- **Not done:** the old libraries in the tests are built by running the first N steps, not files kept from real old releases; the steps that run after `migrate` when a library opens (adopting dates, syncing types and templates) are not in the transaction.
 
 ## v0.9.14: the GM app on another device
 

@@ -203,3 +203,44 @@ describe('setting packs', () => {
     expect(report.body.problems.filter((p: { check: string }) => /Treasure/.test(p.check))).toEqual([]);
   });
 });
+
+describe('the world a worldbook names (v0.9.16: Oros)', () => {
+  const worldName = (ctx: AppContext) => (ctx.db.prepare(`SELECT name FROM realms WHERE id = 'world'`).get() as { name: string }).name;
+
+  it('gives the library’s world its name, and takes it back when the worldbook goes', async () => {
+    const ctx = tempContext();
+    expect(worldName(ctx)).toBe('The World');
+    expect(installPack(ctx.db, 'worldkeeper').name).toBe('Oros');
+    expect(worldName(ctx)).toBe('Oros');
+    const gm = createApp(ctx);
+    expect((await request(gm).get('/api/realms')).body.find((r: { id: string }) => r.id === 'world').name).toBe('Oros');
+    // Its records still land in it: they are matched by the realm's ID, never by its name.
+    const made = (await request(gm).post('/api/entities').send({ name: 'A test place', type: 'landmark', realm: 'world' })).body;
+    expect(made.realm).toBe('world');
+    uninstallPack(ctx.db, 'worldkeeper');
+    expect(worldName(ctx)).toBe('The World');
+  });
+
+  it('leaves a name the GM gave their world alone, both ways', () => {
+    const ctx = tempContext();
+    ctx.db.prepare(`UPDATE realms SET name = 'Ostmark' WHERE id = 'world'`).run();
+    installPack(ctx.db, 'worldkeeper');
+    expect(worldName(ctx)).toBe('Ostmark');
+    uninstallPack(ctx.db, 'worldkeeper');
+    expect(worldName(ctx)).toBe('Ostmark');
+  });
+
+  it('a library that had the worldbook under its old name shows the new one', async () => {
+    const ctx = tempContext();
+    installPack(ctx.db, 'worldkeeper');
+    // As a library from before the rename: the old names, as they were stored.
+    ctx.db.prepare(`UPDATE setting_packs SET name = 'The Worldkeeper world' WHERE id = 'worldkeeper'`).run();
+    ctx.db.prepare(`UPDATE realms SET name = 'The World' WHERE id = 'world'`).run();
+    const { syncInstalledPacks } = await import('../server/src/packs/registry.js');
+    syncInstalledPacks(ctx.db);
+    expect(worldName(ctx)).toBe('Oros');
+    expect((ctx.db.prepare(`SELECT name FROM setting_packs WHERE id = 'worldkeeper'`).get() as { name: string }).name).toBe('Oros');
+    // The pack is the same pack: its ID has not changed.
+    expect(isInstalled(ctx.db, 'worldkeeper')).toBe(true);
+  });
+});

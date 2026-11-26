@@ -2,7 +2,7 @@
 
 Status: **under way**, November 2026. The audit below was made at v0.9.2.
 
-**Decided by the owner (24 November 2026):** all of this happens in v0.9.x releases, one step each, starting with section B (what a GM would expect and not find); then 1.0-BETA. The release grouping in section 4 is replaced by that order. The five decisions in section 5 are still open.
+**Decided by the owner (24 November 2026):** all of this happens in v0.9.x releases, one step each, starting with section B (what a GM would expect and not find); then 1.0-BETA. The release grouping in section 4 is replaced by that order. The five decisions in section 5 were made on 26 November 2026.
 
 | Step | Release | Status |
 | --- | --- | --- |
@@ -19,7 +19,13 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | B5 Generators: people, shops, weather | v0.9.12 | Done |
 | B7 Bulk tools: tags, many records at once, merging, find-and-replace | v0.9.13 | Done |
 | B8 The GM on a tablet | v0.9.14 | Done (over plain HTTP, for the GM's own network) |
-| A1 to A7, then C | | To do |
+| A1 Safe upgrades | v0.9.15 | Done, except a test on library files kept from real old versions |
+| A2 Installers: an update check (on, switchable off) and clear instructions for unsigned installers | v0.9.17 | Done; the install steps are written from the systems' standard behaviour, not tried on a Mac or a Windows PC |
+| A2 Installers: the app updates itself ("Update and restart") | v0.9.18 | Built, and tried end to end on Linux; not tried on Windows or macOS. Needs the update key added to the repository's secrets, and a first signed release, before any GM sees it |
+| A3 to A7 | | To do |
+| C8 A location generator: ink-style maps of places from their records | | To do, before the beta (decided) |
+| The bundled world's own name: Oros | v0.9.16 | Done |
+| C2 play over the internet, C4 assistant, C5 sync and co-GMs, C6 rich-text editor, C3 other systems | | After the beta, if at all (decided) |
 
 ## 1. What "beta" should mean
 
@@ -45,8 +51,8 @@ Each was checked in the code, not assumed. "None" means no trace of it.
 
 | # | Gap | What I found |
 | --- | --- | --- |
-| A1 | **Safe upgrades** | No automatic backup before an update changes a library's database, and no test that opens a library made by an older version. Agreed as fine before release; a beta can't lose a campaign to an update. |
-| A2 | **Installers people can trust** | Unsigned: macOS and Windows warn or block. No update check: a GM never learns a fix exists. 130 MB. The Windows build broke for two releases without anyone noticing until a download was missing. |
+| A1 | **Safe upgrades** | **Done in v0.9.15.** Found: no automatic backup before an update changes a library's database, and no test that opens a library made by an older version. Agreed as fine before release; a beta can't lose a campaign to an update. |
+| A2 | **Installers people can trust** | **Done in v0.9.17 as decided** (unsigned with instructions; a daily update check). Found: unsigned: macOS and Windows warn or block. No update check: a GM never learns a fix exists. 130 MB. The Windows build broke for two releases without anyone noticing until a download was missing. |
 | A3 | **When something goes wrong** | No log file, no "copy details for a bug report", no issue templates. A beta lives on bug reports. |
 | A4 | **Tested like a product** | CI drives only the first-run wizard. The full smoke test runs by hand; the table server, the installed desktop app and a large library (10,000 records) are never tested automatically. No client-side tests. |
 | A5 | **Help inside the app** | The manual is Markdown in the repository. In the app: a first-run wizard, a Getting started card, and nothing after. |
@@ -73,12 +79,13 @@ Each is weeks of work. None is needed to call it a beta; any could be its headli
 
 | # | Bet | Notes |
 | --- | --- | --- |
-| C1 | **Battle maps** | None today (the atlas is for world and region maps). A grid, tokens tied to the tracker, fog revealed by the GM, shown on the table display. Not dynamic lighting. This is the one thing that still sends a GM to another tool mid-session. |
+| C1 | **Battle maps** | **Not to be built** (decided 26 November 2026: a tool such as Arkenforge does this better, and is used alongside; see C8). Found: none today (the atlas is for world and region maps). A grid, tokens tied to the tracker, fog revealed by the GM, shown on the table display. Not dynamic lighting. This is the one thing that still sends a GM to another tool mid-session. |
 | C2 | **Play over the internet** | Today: the same network, or a static published handbook. A way for remote players to reach the table without router settings. |
 | C3 | **Other game systems** | D&D 2024 only. A system-neutral mode (worldbuilding and campaign tools without the D&D rules), or other systems' sheets. |
 | C4 | **An assistant** | Planned long ago and deferred: optional, any provider, cites records, only ever makes PROPOSED drafts. |
 | C5 | **Sync and co-GMs** | One computer today; a world moves by file. |
 | C6 | **A rich-text editor** | Markdown with a toolbar and preview today. |
+| C8 | **A location generator** | Added 26 November 2026, in place of C1. Lay out a dungeon, building or settlement from its record (type, terrain, wealth, size, who lives there), with rooms keyed to its text. Drawn as clean ink-style line maps: it can look good that way, and cannot look like painted maps without an art library. Exported as an image with a grid, to be dressed up in a tool such as Arkenforge. |
 | C7 | **A home** | A name ("The Worldkeeper" is a working title that is also the bundled world's name), a website with the manual, a place to find and post worldbooks. |
 
 ## 4. Proposed shape (replaced: see the status at the top)
@@ -92,10 +99,10 @@ Kept as the first proposal. The owner chose one line of v0.9.x releases instead,
 - **1.0-BETA:** a feature freeze, a full pass on real tables, the upgrade promise in writing.
 - **Battle maps (C1):** either the beta's headline (after 0.12, on the table display it needs) or the first thing after it.
 
-## 5. Decisions needed
+## 5. Decisions (made by the owner, 26 November 2026)
 
-1. Which big bets, if any, belong in the beta (C1 to C6)?
-2. Signing: Apple's developer programme is about $99 a year; a Windows certificate about $10 a month or more. Pay for them, or ship unsigned with clear instructions?
-3. Update check: the app makes no network calls today. May it ask GitHub once a day whether a newer version exists (switchable off)?
-4. The name: keep "The Worldkeeper" for both app and world, or rename one before a beta makes it stick?
-5. D&D 2024 only for 1.0, or a system-neutral mode?
+1. **Big bets before the beta:** a location generator (C8) instead of built-in battle maps (C1). Play over the internet (C2) was chosen at first and then dropped the same day. It, the assistant, sync and co-GMs, and a rich-text editor wait until after the beta.
+2. **Signing:** ship unsigned, with clear instructions for opening the app on macOS and Windows. No paid certificates.
+3. **Update check:** yes. The app may ask GitHub once a day whether a newer version exists; on by default, switchable off in Settings, and it sends nothing about the GM or their world.
+4. **The name:** the app stays "The Worldkeeper". The bundled world is called **Oros**, a name its own peoples give it (done in v0.9.16). The pack's ID stays `worldkeeper`, so installed libraries are not affected.
+5. **Game system:** D&D 2024 only for 1.0.

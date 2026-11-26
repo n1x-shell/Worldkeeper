@@ -104,6 +104,9 @@ export function listPacks(db: DB): PackInfo[] {
  * only gains the place the pack gives it if it has none), its record types and its templates. Safe to repeat: the app
  * does it at every start for installed packs, so an updated pack's definitions arrive.
  */
+/** What every library's world is called until it is given a name. */
+const DEFAULT_WORLD_NAME = 'The World';
+
 export function syncPackDefinitions(db: DB, m: PackManifest, dir: string) {
   const depth = (id: string, seen = 0): number => {
     const r = m.realms.find((x) => x.id === id);
@@ -113,6 +116,8 @@ export function syncPackDefinitions(db: DB, m: PackManifest, dir: string) {
     for (const r of [...m.realms].sort((a, b) => depth(a.id) - depth(b.id))) {
       if (realmExists(db, r.id)) {
         if (r.parent_id && realmExists(db, r.parent_id)) db.prepare('UPDATE realms SET parent_id = ? WHERE id = ? AND parent_id IS NULL').run(r.parent_id, r.id);
+        // A setting names its world (Oros): the library's "The World" takes that name, unless the GM gave it another.
+        if (r.id === 'world' && r.name && r.name !== DEFAULT_WORLD_NAME) db.prepare(`UPDATE realms SET name = ? WHERE id = 'world' AND name = ?`).run(r.name, DEFAULT_WORLD_NAME);
         db.prepare('UPDATE realms SET pack_id = ? WHERE id = ? AND pack_id IS NULL AND id <> ?').run(m.id, r.id, 'world');
       } else {
         ensureRealm(db, r.id, r);
@@ -143,7 +148,10 @@ export function syncPackDefinitions(db: DB, m: PackManifest, dir: string) {
 export function syncInstalledPacks(db: DB) {
   for (const p of installedPacks(db)) {
     const found = findPack(p.id);
-    if (found) syncPackDefinitions(db, found.manifest, found.dir);
+    if (!found) continue;
+    syncPackDefinitions(db, found.manifest, found.dir);
+    // A worldbook that has been renamed (the Worldkeeper world became Oros in v0.9.16) is shown by its name now.
+    if (p.name !== found.manifest.name) db.prepare('UPDATE setting_packs SET name = ? WHERE id = ?').run(found.manifest.name, p.id);
   }
 }
 
@@ -183,6 +191,9 @@ export function uninstallPack(db: DB, id: string) {
     // Its realms and types, where nothing of the GM's still uses them (deepest realms first).
     const realms = db.prepare('SELECT id FROM realms WHERE pack_id = ? ORDER BY sort_order DESC').all(id) as { id: string }[];
     db.prepare(`UPDATE realms SET parent_id = NULL WHERE id = 'world' AND parent_id IN (SELECT id FROM realms WHERE pack_id = ?)`).run(id);
+    // The world goes back to its plain name if it still carries the one the pack gave it.
+    const worldName = findPack(id)?.manifest.realms.find((r) => r.id === 'world')?.name;
+    if (worldName && worldName !== DEFAULT_WORLD_NAME) db.prepare(`UPDATE realms SET name = ? WHERE id = 'world' AND name = ?`).run(DEFAULT_WORLD_NAME, worldName);
     for (const r of realms) {
       const used =
         (db.prepare('SELECT COUNT(*) n FROM entities WHERE realm = ?').get(r.id) as { n: number }).n +
