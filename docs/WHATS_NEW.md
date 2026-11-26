@@ -2,6 +2,12 @@
 
 What changed in each version, newest first. Every update keeps your worlds as they are, and makes a backup of a library before changing how it is stored.
 
+## 0.9.23
+
+- **A security fix. Please update.** In every earlier version, a web page open in the same browser as the app could send it requests: open your table to the network, or restore a backup of its own making over your world. A site set up for the purpose could also read your records. The app now answers only its own pages at its own address. It is not known to have been used against anyone.
+- **Publishing a handbook is sturdier.** A repository you have only just made, with nothing in it, now works. A first publish makes a handful of requests where it made one for every file, and if GitHub asks the app to slow down, it waits and carries on.
+- The security policy now says plainly what each part of the app trusts and what it does not.
+
 ## 0.9.22
 
 - **Easier to read.** Headings, the chosen option of a few, the main buttons and small labels were a little too faint against the page; they are now clear in both themes. Links inside a sentence are underlined, not marked by colour alone.
