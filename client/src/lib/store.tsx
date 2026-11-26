@@ -1,3 +1,4 @@
+import { toast } from '../components/ui/overlays';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { api } from './api';
 import type { EntitySummary } from './types';
@@ -81,7 +82,12 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setIndexLoaded(true);
   }, []);
   const reloadMeta = useCallback(async () => {
-    const m = await api.get<{ appName: string; entities: number; debug: boolean; debugForced: boolean; canonReview?: boolean; desktop?: boolean }>('/api/meta');
+    const m = await api.get<{ appName: string; entities: number; debug: boolean; debugForced: boolean; canonReview?: boolean; desktop?: boolean; version?: string; upgrade?: { backup: string | null } | null }>('/api/meta');
+    // Said once after an update changed this library: where the copy from before is.
+    if (m.upgrade) {
+      toast(`This library was updated for version ${m.version ?? 'this version'} of the app.${m.upgrade.backup ? ' A copy from just before is in Backups.' : ''}`, 'ok');
+      void api.post('/api/meta/upgrade-seen');
+    }
     // In the desktop app, links meant for a new tab (Player View, GitHub) open in the system browser.
     if (m.desktop) openNewTabsInBrowser();
     setAppName(m.appName);

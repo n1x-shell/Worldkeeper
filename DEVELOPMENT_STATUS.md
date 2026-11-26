@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-25 · v0.9.14_
+_Last updated: 2026-11-26 · v0.9.15_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,19 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.15: safe upgrades
+
+`docs/BETA_PLAN.md` A1, the first step of section A (trust).
+
+- **`migrate`** (`server/src/db/migrations.ts`): refuses a library with steps this version doesn't know (`NewerLibraryError`); calls `beforeUpgrade(from, to)` before changing a library made by an earlier version; runs every missing step in one transaction, so a failure keeps none (`UpgradeError`, with `from`, `to`, the backup's name and the failing step). `openDatabase` passes the hook through and closes the file if it throws.
+- **The backup** (`AppContext.open`): `createBackup(db, paths, 'pre-update-step-<from>', { uploads: false })`, the database only. `createBackup` now makes its folders, tolerates a library too old to have every counted table, and writes `uploads: false` in the manifest. `pruneBackups` keeps the newest eight `pre-update` backups, and counts `pre-merge` and `pre-replace` among the automatic ones.
+- **Said once:** `finishOpening` writes the setting `upgrade_notice` (`{ from, to, backup, at }`); `GET /api/meta` returns it as `upgrade` with `version`; the client shows a toast and posts `/api/meta/upgrade-seen`. The Backups page says why each backup was made.
+- **Switching libraries** (`AppContext.openLibrary`): the other library is opened before the open one is closed, and `libraries.json` is only updated on success, so a library that can't be opened leaves the GM where they were (409 with the reason).
+- **At the start** (`server/src/index.ts`, `server/src/recovery.ts`): if the library can't be opened, the GM's server still listens and serves a plain page (no client bundle, no database): what happened, that nothing changed, the backup, what to do, the details for a bug report, **Try again**, and the other libraries to open. `POST /recover` tries again and the real app takes over without a restart. `/api/health` is 503 `{ recovery: true }` meanwhile. The table server process stops, as before.
+- **`shared/version.ts`** (`APP_VERSION`): one more place the version is written; the test checks all seven agree.
+- **Tests:** `tests/migrations.test.ts`: the checksum lock (`tests/migrations.lock.json`); libraries at steps 1, 4, 9, 15, 22, 30 and the one before last, opened and checked; a new library needs no backup; a failing step changes nothing; a newer library is refused; in the app, the backup, the notice and a restore; staying put when another library can't open; the recovery page.
+- **Not done:** the old libraries in the tests are built by running the first N steps, not files kept from real old releases; the steps that run after `migrate` when a library opens (adopting dates, syncing types and templates) are not in the transaction.
 
 ## v0.9.14: the GM app on another device
 

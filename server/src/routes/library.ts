@@ -1,3 +1,5 @@
+import { APP_VERSION } from '../../../shared/version.js';
+import { parseJson } from '../lib/json.js';
 import { Router } from 'express';
 import { canonReview } from '../repo/entities.js';
 import { finishSetup, gettingStarted, removeTutorial, setupState, skipSetup, updateGettingStarted } from '../repo/setup.js';
@@ -559,7 +561,17 @@ export function libraryRoutes(ctx: AppContext) {
       canonReview: canonReview(ctx.db),
       /** Running inside the desktop app: links meant for a new tab open in the system browser (see lib/desktop.ts). */
       desktop: isDesktop(),
+      version: APP_VERSION,
+      /** Set when this version updated the library (v0.9.15): said once in the app, with where the copy from before is. */
+      upgrade: parseJson<{ from: number; to: number; backup: string | null; at: string } | null>((ctx.db.prepare(`SELECT value FROM settings WHERE key = 'upgrade_notice'`).get() as { value: string } | undefined)?.value ?? 'null', null),
     })),
+  );
+  r.post(
+    '/meta/upgrade-seen',
+    h(() => {
+      ctx.db.prepare(`DELETE FROM settings WHERE key = 'upgrade_notice'`).run();
+      return null;
+    }),
   );
   // Match the published Player Handbook: reveal what it shows (preview with GET, apply with POST). Only ever adds.
   r.get(

@@ -944,6 +944,21 @@ export function HistoryPage() {
 }
 
 // ------------------------------------------------------------------ Backups
+/** Why a backup was made, from its file name. */
+function backupWhy(file: string): string {
+  const why: [RegExp, string][] = [
+    [/-pre-update/, 'Made before an update of the app changed this library (the pictures aren’t in it; they weren’t touched)'],
+    [/-pre-import/, 'Made before records were added from files'],
+    [/-pre-merge/, 'Made before two records were merged'],
+    [/-pre-replace/, 'Made before a find-and-replace'],
+    [/-pre-restore/, 'Made before a backup was restored'],
+    [/-pre-install/, 'Made before a worldbook was added'],
+    [/-daily/, 'Made automatically, once a day'],
+    [/-manual/, 'Made by you'],
+  ];
+  return why.find(([re]) => re.test(file))?.[1] ?? 'Made automatically';
+}
+
 export function BackupsPage() {
   const { data, reload } = useApi<{ file: string; size: number; created_at: string; reason: string }[]>('/api/backups');
   const [err, setErr] = useState<string | null>(null);
@@ -1034,7 +1049,9 @@ export function BackupsPage() {
                 render: (b) => (
                   <>
                     <div className="text-sm">{b.file}</div>
-                    <div className="text-xs text-dim">{new Date(b.created_at).toLocaleString()}</div>
+                    <div className="text-xs text-dim">
+                      {new Date(b.created_at).toLocaleString()} · {backupWhy(b.file)}
+                    </div>
                   </>
                 ),
               },

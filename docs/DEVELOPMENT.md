@@ -98,6 +98,15 @@ node scripts/e2e-first-run.mjs http://127.0.0.1:4310 setting ./screenshots
 
 Test claims describe intended suite coverage, not a guarantee that tests have been executed in a given release. Consult [Development Status](../DEVELOPMENT_STATUS.md) for recorded outcomes and remaining gaps.
 
+## Changing how a library is stored
+
+A library's database is brought up to date by the steps in `MIGRATIONS` (`server/src/db/migrations.ts`), in order, when it is opened.
+
+- **Add a step; never edit one.** Libraries already took the old steps. `tests/migrations.test.ts` holds each shipped step's checksum in `tests/migrations.lock.json` and fails if one changes. When you add a step, add its checksum to the lock (the failing test prints it).
+- **Steps run together.** All the steps a library is missing run in one transaction, after a backup; a failure keeps none of them. So a step can't rely on an earlier one having been committed on its own, and can't use statements that don't work inside a transaction.
+- **Test it on an old library.** The same test opens libraries as they were at several earlier steps and checks nothing is lost. If a step moves or rewrites data, add rows for it there.
+- **The version** is in `package.json`, `package-lock.json`, `src-tauri/tauri.conf.json`, `src-tauri/Cargo.toml`, `src-tauri/Cargo.lock`, `packs/worldkeeper/pack.json` and `shared/version.ts`; the same test checks they agree.
+
 ## Project layout
 
 ```text

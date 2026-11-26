@@ -19,7 +19,8 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | B5 Generators: people, shops, weather | v0.9.12 | Done |
 | B7 Bulk tools: tags, many records at once, merging, find-and-replace | v0.9.13 | Done |
 | B8 The GM on a tablet | v0.9.14 | Done (over plain HTTP, for the GM's own network) |
-| A1 to A7, then C | | To do |
+| A1 Safe upgrades | v0.9.15 | Done, except a test on library files kept from real old versions |
+| A2 to A7, then C | | To do |
 
 ## 1. What "beta" should mean
 
@@ -45,7 +46,7 @@ Each was checked in the code, not assumed. "None" means no trace of it.
 
 | # | Gap | What I found |
 | --- | --- | --- |
-| A1 | **Safe upgrades** | No automatic backup before an update changes a library's database, and no test that opens a library made by an older version. Agreed as fine before release; a beta can't lose a campaign to an update. |
+| A1 | **Safe upgrades** | **Done in v0.9.15.** Found: no automatic backup before an update changes a library's database, and no test that opens a library made by an older version. Agreed as fine before release; a beta can't lose a campaign to an update. |
 | A2 | **Installers people can trust** | Unsigned: macOS and Windows warn or block. No update check: a GM never learns a fix exists. 130 MB. The Windows build broke for two releases without anyone noticing until a download was missing. |
 | A3 | **When something goes wrong** | No log file, no "copy details for a bug report", no issue templates. A beta lives on bug reports. |
 | A4 | **Tested like a product** | CI drives only the first-run wizard. The full smoke test runs by hand; the table server, the installed desktop app and a large library (10,000 records) are never tested automatically. No client-side tests. |
