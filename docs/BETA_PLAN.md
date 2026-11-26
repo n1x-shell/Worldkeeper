@@ -23,7 +23,7 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | A2 Installers: an update check (on, switchable off) and clear instructions for unsigned installers | v0.9.17 | Done; the install steps are written from the systems' standard behaviour, not tried on a Mac or a Windows PC |
 | A2 Installers: the app updates itself ("Update and restart") | v0.9.18 | Built, and tried end to end on Linux; not tried on Windows or macOS. Needs the update key added to the repository's secrets, and a first signed release, before any GM sees it |
 | A3 When something goes wrong: a log file, "Copy details for a bug report", issue forms, a troubleshooting guide | v0.9.19 | Done. The issue forms are checked as text; GitHub shows them once this is merged |
-| A4 Tested like a product: the table in real browsers, the built desktop app tried before it is published, a 10,000-record library with limits | v0.9.20 | Done. The large library found that every save read every other record; fixed |
+| A4 Tested like a product: the table in real browsers, the built desktop app tried before it is published, a 10,000-record library with limits | v0.9.20 | Done, and run on GitHub on Windows, macOS and Linux. It found two things, both fixed: the app had not built on Windows or macOS since v0.9.6, and every save read every other record |
 | A5 to A7 | | To do |
 | C8 A location generator: ink-style maps of places from their records | | To do, before the beta (decided) |
 | The bundled world's own name: Oros | v0.9.16 | Done |

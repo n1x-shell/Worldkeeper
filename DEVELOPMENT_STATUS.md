@@ -83,6 +83,12 @@ docs/BETA_PLAN.md A4. CI drove only the first-run wizard; the table, the built d
 - **The built desktop app** (`scripts/desktop-smoke.mjs`, `npm run desktop:smoke`, in `.github/workflows/desktop.yml` before the upload): the real app on an empty data folder. Its server starts; its window loads the app (the server logs "the app's page has loaded" at the first `/api/meta`, which only the page's own script asks for: `notePageLoaded` in `server/src/log.ts`); pages, scripts and the API answer; a record round-trips and a backup is made; adding the Oros worldbook brings its records; nothing is logged as an error; closing it stops its server. Linux: the installed `.deb` and the AppImage. macOS: the program in the `.app`. Windows: the app as the NSIS installer installs it.
 - **A large library** (`tests/largeLibrary.test.ts`): 10,000 linked records, a third revealed, with a limit on each thing a GM does often. Timings on this machine: the list of every record 115 ms, a search 16 ms, a record's page 5 ms, a save 6 ms, the graph 139 ms, the consistency check 127 ms, a backup 495 ms, a JSON export 613 ms, the players' list 248 ms.
 
+**What trying the release build found: the app had not built on Windows or macOS since v0.9.6**
+
+`client/src/player/sheet` held `LevelUp.tsx` and `levelUp.ts`. On Windows and macOS those are one file, so `import './LevelUp'` found the wrong one and the build stopped. Linux, where the project is written and where CI ran, never noticed; the last published release (v0.9.2) is from before it. The rules are now `levelUpRules.ts`, and `tests/fileNames.test.ts` refuses two names in a folder that differ only in capitals or only in their ending.
+
+With that fixed, the release workflow was run by hand on this branch (build only, nothing published; run 45802330601) and the smoke test passed on all three: Windows on `C:\Users\runneradmin\AppData\Local\The Worldkeeper\worldkeeper.exe` (the copy the installer installed), macOS on the program inside `The Worldkeeper.app`, Linux on `/usr/bin/worldkeeper` from the `.deb` and on the AppImage. This is the first time the app has been started on Windows or macOS by anything but a person.
+
 **What the large library found: every save read every other record**
 
 Making 10,000 records took more than ten minutes, because each save took longer than the last (37 ms at 3,000 records; it would have been about 125 ms at 10,000). Four things each read the whole library on every save:
