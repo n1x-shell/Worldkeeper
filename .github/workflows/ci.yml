@@ -27,9 +27,9 @@ jobs:
       # Both builds: the GM app and the player site (npm run build typechecks first).
       - run: npm run build
 
-  # The first-run wizard in a real browser, both ways, each on an empty data folder: build your own world, and the
-  # Worldkeeper setting (without the archive, which never goes on GitHub). The smoke test needs the archive, so it stays
-  # a local check (docs/DEVELOPMENT.md).
+  # In a real browser: the first-run wizard both ways, each on an empty data folder (build your own world, and Oros),
+  # then a session at the table. The older smoke test needs the archive, which never goes on GitHub, so it stays a
+  # local check (docs/DEVELOPMENT.md).
   e2e:
     runs-on: ubuntu-latest
     env:
@@ -54,6 +54,13 @@ jobs:
           PORT=4311 WORLDKEEPER_DATA_DIR="$RUNNER_TEMP/setting" NODE_ENV=production npx tsx server/src/index.ts > "$RUNNER_TEMP/setting.log" 2>&1 &
           for i in $(seq 60); do curl -sf http://127.0.0.1:4311/api/health > /dev/null && break; sleep 1; done
           node scripts/e2e-first-run.mjs http://127.0.0.1:4311 setting e2e-shots/setting
+      # A session at the table: the GM's app and two players' phones together, on a third empty data folder. What
+      # players may and may not see is checked in the pages and in everything the table's server answers.
+      - name: At the table
+        run: |
+          PORT=4312 WORLDKEEPER_TABLE_PORT=4322 WORLDKEEPER_NO_UPDATE_CHECK=1 WORLDKEEPER_DATA_DIR="$RUNNER_TEMP/table" NODE_ENV=production npx tsx server/src/index.ts > "$RUNNER_TEMP/table.log" 2>&1 &
+          for i in $(seq 60); do curl -sf http://127.0.0.1:4312/api/health > /dev/null && break; sleep 1; done
+          node scripts/e2e-table.mjs http://127.0.0.1:4312 e2e-shots/table
       - name: Server logs
         if: failure()
         run: cat "$RUNNER_TEMP"/*.log

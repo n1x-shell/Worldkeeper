@@ -57,6 +57,30 @@ jobs:
             echo "::notice::No update key: building without the files for in-app updates"
             npm run desktop:build
           fi
+      # Does what was just built actually work? Each system's app is installed (or run from its bundle), started on
+      # an empty data folder, and checked from outside: its server starts, its window loads the app, a record can be
+      # written and read back, the rules and the Oros worldbook that ship inside it are there, and closing it stops
+      # its server (scripts/desktop-smoke.mjs). A build that fails this is not published.
+      - name: Try the app (Linux, the .deb installed and the AppImage)
+        if: runner.os == 'Linux'
+        env:
+          WEBKIT_DISABLE_COMPOSITING_MODE: '1'
+          WEBKIT_DISABLE_DMABUF_RENDERER: '1'
+        run: |
+          sudo apt-get install -y xvfb
+          sudo apt-get install -y ./src-tauri/target/release/bundle/deb/*.deb
+          xvfb-run -a node scripts/desktop-smoke.mjs /usr/bin/worldkeeper
+          xvfb-run -a node scripts/desktop-smoke.mjs "$(ls src-tauri/target/release/bundle/appimage/*.AppImage | head -1)"
+      - name: Try the app (macOS, from the .app)
+        if: runner.os == 'macOS'
+        run: node scripts/desktop-smoke.mjs --find
+      - name: Try the app (Windows, installed by the installer)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $setup = (Get-ChildItem src-tauri/target/release/bundle/nsis/*-setup.exe | Select-Object -First 1).FullName
+          Start-Process -FilePath $setup -ArgumentList '/S' -Wait
+          node scripts/desktop-smoke.mjs --find
       - uses: actions/upload-artifact@v7
         with:
           name: worldkeeper-${{ matrix.os }}

@@ -28,6 +28,7 @@ import { schemaVersion } from '../db/migrations.js';
 import { listModules, setLibraryModules } from '../repo/modules.js';
 import { importOpen5e, open5eDocuments } from '../repo/open5e.js';
 import { isDesktop, openInBrowser } from '../lib/desktop.js';
+import { notePageLoaded } from '../log.js';
 import { handbookReveals } from '../player/handbookReveals.js';
 import { findPack, installPack, listPacks as listSettingPacks, requirePack, roles, uninstallPack } from '../packs/registry.js';
 import { updatePack } from '../packs/content.js';
@@ -549,7 +550,7 @@ export function libraryRoutes(ctx: AppContext) {
   );
   r.get(
     '/meta',
-    h(() => ({
+    h(() => (notePageLoaded(), {
       mode: ctx.mode,
       schemaVersion: schemaVersion(ctx.db),
       dataDir: ctx.paths.rootDir,

@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { RELATIONSHIP_TYPES, CANON_STATUSES, SYMMETRIC_RELATIONSHIPS, type Relationship } from '../../../shared/domain.js';
 import { parseJson } from '../lib/json.js';
 import { collectRefs, type MentionIndex } from '../../../shared/mentions.js';
-import { loadMentionIndex } from './mentions.js';
-import { listItems, loadNameIndex, type NameIndex } from './nameMatch.js';
+import { loadMentionIndex, loadNameIndex } from './mentions.js';
+import { listItems, type NameIndex } from './nameMatch.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { types } from './recordTypes.js';
 
@@ -93,7 +93,8 @@ export function rebuildDerivedRelationships(db: DB, id: string, index: MentionIn
   db.prepare(`DELETE FROM relationships WHERE source_id = ? AND origin IN ('import-parent','import-reference')`).run(id);
   // Field-derived links may point either way (e.g. "NPC leads Faction" comes from the faction's Leaders field),
   // so they are identified by the record whose field produced them.
-  db.prepare(`DELETE FROM relationships WHERE origin = 'import-field' AND source_context LIKE ?`).run(`field:${id}:%`);
+  // (Such a link always has this record at one end; saying so lets SQLite find them without reading every link.)
+  db.prepare(`DELETE FROM relationships WHERE origin = 'import-field' AND (source_id = ? OR target_id = ?) AND source_context LIKE ?`).run(id, id, `field:${id}:%`);
   if (!row || row.type === 'redirect') return;
 
   const exists = db.prepare('SELECT id, redirect_to FROM entities WHERE id = ?');
