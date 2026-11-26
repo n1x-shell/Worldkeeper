@@ -12,7 +12,9 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { LibraryMenuSection } from './Libraries';
 import { TableIndicator } from './HandbookAddress';
 import { UpdateIndicator } from './Updates';
-import { BookMarked, Check, ChevronDown, ChevronsLeft, ChevronsRight, Compass, Eye, Map as MapIcon, MapPinned, Menu, Moon, Plus, Search, Settings, Sun, X } from 'lucide-react';
+import { helpFor } from '@shared/help';
+import { WhatsNewNote } from './Help';
+import { BookMarked, Check, ChevronDown, CircleHelp, ChevronsLeft, ChevronsRight, Compass, Eye, Map as MapIcon, MapPinned, Menu, Moon, Plus, Search, Settings, Sun, X } from 'lucide-react';
 import { newMenu } from '@shared/newRecord';
 import { useRecordTypes } from './recordTypes';
 import { recentTypes } from '../lib/recentTypes';
@@ -58,6 +60,12 @@ function Dropdown({ button, label, children, align = 'right', active }: { button
     </div>
   );
 }
+
+/** Help for a screen: the part of the guides about it. */
+const helpPath = (pathname: string) => {
+  const h = helpFor(pathname);
+  return `/help/${h.slug}${h.anchor ? `#${h.anchor}` : ''}`;
+};
 
 const menuItem = 'flex items-center gap-2.5 px-3 py-1.5 text-sm text-ink hover:bg-raised hover:text-gold w-full text-left';
 
@@ -225,6 +233,9 @@ export function Layout() {
       } else if (!typing && e.key === '/') {
         e.preventDefault();
         setSearchOpen(true);
+      } else if (!typing && e.key === '?' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        void nav(helpPath(loc.pathname));
       } else if (!typing && e.altKey && e.key === 'd') void nav('/dm');
       else if (((e.ctrlKey || e.metaKey) && e.key === '\\') || (!typing && !e.ctrlKey && !e.metaKey && !e.altKey && e.key === '[')) toggleSidebar();
     };
@@ -397,6 +408,9 @@ export function Layout() {
             </Dropdown>
             <TableIndicator />
             <UpdateIndicator />
+            <NavLink to={helpPath(loc.pathname)} className="btn-ghost" title="Help for this screen (?)" aria-label="Help for this screen" data-testid="help-here">
+              <CircleHelp size={16} />
+            </NavLink>
             <a href="/player" target="_blank" rel="noreferrer" className="btn-ghost" title="Open the player view in a new tab" aria-label="Player View">
               <Eye size={16} /> <span className="hidden 2xl:inline whitespace-nowrap">Player View</span>
             </a>
@@ -432,6 +446,7 @@ export function Layout() {
             </Dropdown>
           </div>
         </header>
+        <WhatsNewNote />
         <div className="flex-1 flex min-h-0">
           <aside className={`hidden md:block shrink-0 bg-panel/70 border-r border-line transition-[width] duration-150 ${compact ? 'w-14' : fullBleed ? 'w-[272px]' : 'w-[248px]'}`}>
             {fullBleed && !compact ? (

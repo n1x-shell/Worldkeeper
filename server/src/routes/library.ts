@@ -29,6 +29,7 @@ import { listModules, setLibraryModules } from '../repo/modules.js';
 import { importOpen5e, open5eDocuments } from '../repo/open5e.js';
 import { isDesktop, openInBrowser } from '../lib/desktop.js';
 import { notePageLoaded } from '../log.js';
+import { updatedNote, updatedNoteSeen } from '../whatsNew.js';
 import { handbookReveals } from '../player/handbookReveals.js';
 import { findPack, installPack, listPacks as listSettingPacks, requirePack, roles, uninstallPack } from '../packs/registry.js';
 import { updatePack } from '../packs/content.js';
@@ -566,9 +567,15 @@ export function libraryRoutes(ctx: AppContext) {
       /** Running inside the desktop app: links meant for a new tab open in the system browser (see lib/desktop.ts). */
       desktop: isDesktop(),
       version: APP_VERSION,
+      /** Set when this version is new to this installation (v0.9.21): said until the GM has looked at what's new. */
+      updated: updatedNote(ctx.paths, () => (ctx.db.prepare('SELECT COUNT(*) n FROM entities').get() as { n: number }).n > 0),
       /** Set when this version updated the library (v0.9.15): said once in the app, with where the copy from before is. */
       upgrade: parseJson<{ from: number; to: number; backup: string | null; at: string } | null>((ctx.db.prepare(`SELECT value FROM settings WHERE key = 'upgrade_notice'`).get() as { value: string } | undefined)?.value ?? 'null', null),
     })),
+  );
+  r.post(
+    '/meta/whats-new-seen',
+    h(() => updatedNoteSeen(ctx.paths)),
   );
   r.post(
     '/meta/upgrade-seen',

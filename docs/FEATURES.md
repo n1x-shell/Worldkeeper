@@ -17,6 +17,16 @@ In your own world the wizard can add a few **records that teach**, ticked by def
 
 Pages with nothing to show say so and point the way: the Name Generator offers built-in styles until a people has common names of its own, the setting's own pages (the dominions, Open Questions) say they come with the setting.
 
+## Help
+
+The guides are part of the app, so they work without the internet and describe the version you have.
+
+- **?** in the top bar (or the `?` key) opens the part of the guides about the screen you are on.
+- **Help** (in the Library menu) lists every guide. Search them all from its box; **Search** in the top bar (`Ctrl+K`) finds parts of the guides too, after your world's own things.
+- A link from one guide to another stays in the app. A link to the project's other files opens its page in your browser.
+- After an update, a line at the top says which version you now have and leads to **What's new**. It goes once you have looked or closed it.
+- [Keyboard shortcuts](SHORTCUTS.md) has its own guide.
+
 ## Finding your way
 
 The top bar holds the five workspaces: **Codex** (the world and its records), **Campaign** (the active campaign, its prep and the state of the world), **Characters** (the party, the builder and reference), **Atlas** (the full map view; its sidebar holds the map switcher and the map's legend and tools, and Manage maps) and **Live** (running the session; a red dot shows while a session is live). The sidebar lists only the current workspace's pages, and collapses to an icon rail (`[`); below 1280px wide it starts as the rail. Search (`Ctrl+K`), the active campaign (switch it from its menu), Player View, the theme and the **Library** menu (the gear: import and export, Canon Review, backups, Settings and the other maintenance pages) are on the right. The app opens on the active campaign's overview when there is one; the app mark always goes to the World Dashboard.
@@ -346,7 +356,7 @@ The local `/player` interface provides a preview of material that has been expli
 
 ## Interface and technical options
 
-The application has two themes, **Warm Parchment** (the default) and **Dark Codex**, switched from the top bar and remembered on each device (Settings also has **Reduce texture**). Navigation collapses to an icon rail; the Live page and the player side are laid out for tablets and phones at the table. The shared components and the design rules are in [the design overhaul](DESIGN_OVERHAUL.md); developers can see every one on the Style Guide page (debug mode). A Tauri desktop build path bundles the server, SQLite driver and its runtime to avoid requiring an external Node installation for end users.
+The application has two themes, **Warm Parchment** (the default) and **Dark Codex**, switched from the top bar and remembered on each device (the desktop app keeps one address between starts, so what you chose is still there next time) (Settings also has **Reduce texture**). Navigation collapses to an icon rail; the Live page and the player side are laid out for tablets and phones at the table. The shared components and the design rules are in [the design overhaul](DESIGN_OVERHAUL.md); developers can see every one on the Style Guide page (debug mode). A Tauri desktop build path bundles the server, SQLite driver and its runtime to avoid requiring an external Node installation for end users.
 
 The world is stored locally in SQLite plus an uploads folder; no paid API or AI dependency is required. An optional AI assistant is planned, but is not represented as a shipping feature. If developed, generated content should enter as `PROPOSED` drafts and require GM approval.
 

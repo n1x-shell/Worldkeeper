@@ -4,7 +4,8 @@
  * pastes nowhere by itself. Nothing is sent by the app: the GM opens the bug report and pastes.
  */
 import { useState, type ReactNode } from 'react';
-import { Bug, ClipboardCopy, FolderOpen } from 'lucide-react';
+import { Bug, ClipboardCopy, FolderOpen, Sparkles, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { api, useApi } from '../lib/api';
 import { bugReportDetails, copyText, reportScreenError } from '../lib/report';
 import { Card, ErrorBoundary, toast } from './ui';
@@ -106,6 +107,34 @@ export function HelpPanel() {
           Bug reports are public, so don’t attach a library or a backup to one.
         </p>
       </Card>
+    </div>
+  );
+}
+
+/**
+ * After an update (v0.9.21): one line at the top of the app saying this version is new here, with the way to what
+ * changed. It stays until the GM follows it or closes it; a first install never shows it.
+ */
+export function WhatsNewNote() {
+  const { data, setData } = useApi<{ version?: string; updated?: { from: string | null; to: string } | null }>('/api/meta');
+  if (!data?.updated) return null;
+  const seen = () => {
+    setData({ ...data, updated: null });
+    void api.post('/api/meta/whats-new-seen').catch(() => undefined);
+  };
+  return (
+    <div className="flex items-center gap-3 px-4 py-2 text-sm bg-gold/10 border-b border-gold/30" role="status" data-testid="whats-new-note">
+      <Sparkles size={15} className="text-gold shrink-0" />
+      <span className="flex-1">
+        The Worldkeeper was updated to version {data.updated.to}
+        {data.updated.from ? ` (from ${data.updated.from})` : ''}.{' '}
+        <Link to="/help/whats-new" onClick={seen} className="text-arcane underline">
+          See what’s new
+        </Link>
+      </span>
+      <button type="button" className="btn-ghost px-1.5!" aria-label="Close this note" onClick={seen}>
+        <X size={14} />
+      </button>
     </div>
   );
 }

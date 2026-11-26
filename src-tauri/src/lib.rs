@@ -119,7 +119,14 @@ fn start_update(handle: tauri::AppHandle, tag: Option<String>, status: PathBuf) 
     });
 }
 
+/// The port the app's own server listens on. Always the same one when it is free: the page keeps what the GM chose
+/// (the theme, the folded menu, pinned records) under its address, and an address with another port each time is
+/// another address, so every preference was forgotten at each start. Any free port if that one is taken.
+const HOME_PORT: u16 = 43110;
 fn free_port() -> std::io::Result<u16> {
+    if let Ok(listener) = TcpListener::bind(("127.0.0.1", HOME_PORT)) {
+        return Ok(listener.local_addr()?.port());
+    }
     Ok(TcpListener::bind("127.0.0.1:0")?.local_addr()?.port())
 }
 
@@ -339,6 +346,19 @@ mod tests {
         }
         for bad in ["0.9.18", "v1.0", "v1.0.0.0", "v1.0.x", "v1.0.0-", "v1.0.0-beta/../x", "v1.0.0?x=1", "latest", "", "v1.0.0-beta 2", "v1.0.0/../../evil"] {
             assert!(!valid_tag(bad), "{bad}");
+        }
+    }
+
+    #[test]
+    fn the_app_keeps_one_port_and_takes_another_only_when_it_is_taken() {
+        // Whoever holds the home port for the length of this test (this test, or an app running on this machine).
+        let held = std::net::TcpListener::bind(("127.0.0.1", super::HOME_PORT));
+        let other = super::free_port().unwrap();
+        assert_ne!(other, super::HOME_PORT);
+        if held.is_ok() {
+            drop(held);
+            assert_eq!(super::free_port().unwrap(), super::HOME_PORT);
+            assert_eq!(super::free_port().unwrap(), super::HOME_PORT);
         }
     }
 

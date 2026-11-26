@@ -4,6 +4,7 @@ import { Search } from 'lucide-react';
 import { api, qs } from '../lib/api';
 import { Badge, RealmBadge, TypeBadge, CanonBadge } from './ui';
 import { useAppState } from '../lib/store';
+import { findInHelp } from '../lib/helpDocs';
 
 export interface Hit {
   kind: string;
@@ -31,6 +32,8 @@ export function hitPath(h: Hit): string {
       return `/adventure/${h.ref}`;
     case 'profile':
       return `/e/${encodeURIComponent(h.ref.split(':')[0])}`;
+    case 'help':
+      return `/help/${h.ref}`;
     default:
       return '/';
   }
@@ -54,7 +57,7 @@ export function Snippet({ text }: { text: string }) {
   );
 }
 
-const KIND_LABEL: Record<string, string> = { doc: 'Source document', session: 'Session', quest: 'Quest', note: 'Note', adventure: 'Adventure', profile: 'Profile notes' };
+const KIND_LABEL: Record<string, string> = { doc: 'Source document', session: 'Session', quest: 'Quest', note: 'Note', adventure: 'Adventure', profile: 'Profile notes', help: 'Help' };
 
 export function SearchPalette({ onClose }: { onClose: () => void }) {
   const [q, setQ] = useState('');
@@ -68,7 +71,10 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
     if (!q.trim()) return setHits([]);
     const t = setTimeout(async () => {
       try {
-        setHits(await api.get<Hit[]>(`/api/search${qs({ q, limit: 15, kinds: debug ? undefined : 'entity,session,quest,note,adventure,profile' })}`));
+        const found = await api.get<Hit[]>(`/api/search${qs({ q, limit: 15, kinds: debug ? undefined : 'entity,session,quest,note,adventure,profile' })}`);
+        // The guides too: the world's own things first, then up to three parts of the help.
+        const help = await findInHelp(q, 3).catch(() => []);
+        setHits([...found, ...help.map((h) => ({ kind: 'help', ref: `${h.slug}#${h.id}`, title: h.title, snippet: h.snippet }))]);
         setHi(0);
       } catch {
         setHits([]);
