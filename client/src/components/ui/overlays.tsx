@@ -2,16 +2,36 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { X } from 'lucide-react';
 
-/** Esc closes, and focus starts on the first control and comes back to where it was. */
-function useOverlay(onClose: () => void) {
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type=hidden]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"]), [contenteditable=true]';
+
+/**
+ * What every dialog and drawer does for someone using the keyboard: Esc closes it, the focus starts on its first
+ * control, Tab goes round inside it and not out to the page behind (v0.9.22), and the focus comes back to where it
+ * was when it closes.
+ */
+export function useOverlay(onClose: () => void) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const back = document.activeElement as HTMLElement | null;
     const k = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return;
-      // Only the topmost overlay closes.
+      if (e.key !== 'Escape' && e.key !== 'Tab') return;
+      // Only the topmost overlay answers.
       const all = document.querySelectorAll('[data-overlay]');
-      if (all[all.length - 1] === ref.current) (e.stopPropagation(), onClose());
+      const box = ref.current;
+      if (!box || all[all.length - 1] !== box) return;
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        onClose();
+        return;
+      }
+      const stops = [...box.querySelectorAll<HTMLElement>(FOCUSABLE)].filter((el) => el.offsetParent !== null || el === document.activeElement);
+      if (!stops.length) return e.preventDefault();
+      const first = stops[0];
+      const last = stops[stops.length - 1];
+      const at = document.activeElement as HTMLElement | null;
+      if (!at || !box.contains(at)) (e.preventDefault(), first.focus());
+      else if (e.shiftKey && at === first) (e.preventDefault(), last.focus());
+      else if (!e.shiftKey && at === last) (e.preventDefault(), first.focus());
     };
     window.addEventListener('keydown', k);
     ref.current?.querySelector<HTMLElement>('[data-autofocus],input,textarea,select,button:not([aria-label="Close"])')?.focus();

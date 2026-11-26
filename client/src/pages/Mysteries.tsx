@@ -288,7 +288,7 @@ export function MysteriesPage() {
       />
       {!activeCampaignId && (
         <p className="text-sm text-dim">
-          To track what the party knows and which clues they have found, <Link to="/campaigns" className="text-arcane">choose a campaign</Link>.
+          To track what the party knows and which clues they have found, <Link to="/campaigns" className="text-arcane underline">choose a campaign</Link>.
         </p>
       )}
       {error && <ErrorBox error={error} onRetry={reload} />}

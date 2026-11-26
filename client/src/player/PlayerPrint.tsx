@@ -128,10 +128,10 @@ function Choice({ on, onClick, count, children }: { on: boolean; onClick: () => 
       type="button"
       aria-pressed={on}
       onClick={onClick}
-      className={`inline-flex min-h-10 items-center gap-1.5 rounded-md border px-3 text-sm transition-colors sm:min-h-8 ${on ? 'border-gold/70 bg-gold/15 font-medium text-gold' : 'border-line bg-raised/50 text-ink/85 hover:border-gold/50 hover:text-ink'}`}
+      className={`inline-flex min-h-10 items-center gap-1.5 rounded-md border px-3 text-sm transition-colors sm:min-h-8 ${on ? 'border-gold/70 bg-gold/10 font-medium text-gold' : 'border-line bg-raised/50 text-ink/85 hover:border-gold/50 hover:text-ink'}`}
     >
       {children}
-      {count !== undefined && <span className={`num text-xs ${on ? 'text-gold/80' : 'text-dim'}`}>{count}</span>}
+      {count !== undefined && <span className={`num text-xs ${on ? 'text-gold' : 'text-dim'}`}>{count}</span>}
     </button>
   );
 }

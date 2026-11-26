@@ -487,7 +487,7 @@ export function EncounterTracker({
                     {c.entityId && <EntityLink id={c.entityId} className="text-[11px] shrink-0 max-w-[50%] truncate" />}
                     {!c.isPC && (
                       <input
-                        className="min-w-0 flex-1 bg-transparent outline-hidden text-[11px] text-dim placeholder:text-dim/70"
+                        className="min-w-0 flex-1 bg-transparent outline-hidden text-[11px] text-dim placeholder:text-dim"
                         placeholder="Players see it as…"
                         title="The name players see on their phones. Leave blank to show its name."
                         value={c.playerName ?? ''}
@@ -548,7 +548,7 @@ export function EncounterTracker({
                 <div className="flex flex-wrap items-center gap-1.5 text-xs">
                   {(c.effects ?? []).map((e) => (
                     <span key={e.id} className="chip gap-1" title={`Ends at the start of ${list.find((x) => x.id === e.anchor)?.name ?? 'the'} turn in round ${e.endRound}`}>
-                      <Hourglass size={11} className="text-arcane" /> {e.name} <span className="num text-dim">{effectRoundsLeft(e, turn)}</span>
+                      <Hourglass size={11} className="text-arcane underline" /> {e.name} <span className="num text-dim">{effectRoundsLeft(e, turn)}</span>
                       <button className="-mr-1 rounded-sm px-0.5 hover:text-danger" aria-label={`End ${e.name} on ${c.name}`} onClick={() => setC(c.id, (x) => ({ ...x, effects: (x.effects ?? []).filter((y) => y.id !== e.id) }))}>
                         <X size={11} />
                       </button>
@@ -703,7 +703,11 @@ export function TrackerPage() {
               </Link>
             </li>
           ))}
-          {!list.length && <Empty title="No encounters yet" />}
+          {!list.length && (
+            <li className="md:col-span-3">
+              <Empty title="No encounters yet" />
+            </li>
+          )}
         </ul>
       )}
     </div>
@@ -954,7 +958,7 @@ export function AgendasPage() {
     return (
       <div className="space-y-4">
         <Empty title="No active campaign">
-          Faction plans are campaign tools. <Link to="/campaigns" className="text-arcane">Choose a campaign.</Link>
+          Faction plans are campaign tools. <Link to="/campaigns" className="text-arcane underline">Choose a campaign.</Link>
         </Empty>
         <StanceMatrix />
       </div>

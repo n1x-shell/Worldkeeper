@@ -115,7 +115,7 @@ export function PartyProgress({
                 {ready && <Badge tone="gold">Has earned level {levelForXp(xp)}</Badge>}
                 {sat && <span className="text-xs text-dim">at {sat}</span>}
                 {c.level < 20 && (mode === 'milestone' || ready) && (
-                  <button className={`${ready ? 'btn-primary' : 'btn-ghost'} ml-auto text-xs`} onClick={() => void levelUp(c)} aria-label={`Level ${c.name} up to ${c.level + 1}`}>
+                  <button className={`${ready ? 'btn-primary' : 'btn-ghost'} ml-auto text-xs`} onClick={() => void levelUp(c)} aria-label={`Level up ${c.name} to ${c.level + 1}`}>
                     <ArrowUpCircle size={13} /> Level up
                   </button>
                 )}

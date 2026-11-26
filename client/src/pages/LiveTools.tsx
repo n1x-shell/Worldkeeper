@@ -260,7 +260,7 @@ function QuickTreasure({ sessionId, campaignId, onLogged }: { sessionId: number;
             <span className="num">{roll.coins.amount.toLocaleString('en')}</span> {roll.coins.coin}
             {roll.goods.length > 0 && `, ${roll.goods.map((g) => (g.count > 1 ? `${g.count} × ${g.text}` : g.text)).join(', ')}`}
           </div>
-          {roll.items.length > 0 && <div className="text-arcane">{roll.items.map((i) => i.name).join(', ')}</div>}
+          {roll.items.length > 0 && <div className="text-arcane underline">{roll.items.map((i) => i.name).join(', ')}</div>}
           {roll.hook && <div className="italic text-dim">{roll.hook}</div>}
           <button
             className="btn-ghost h-10 text-xs"

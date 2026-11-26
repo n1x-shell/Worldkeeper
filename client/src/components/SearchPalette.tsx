@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { api, qs } from '../lib/api';
-import { Badge, RealmBadge, TypeBadge, CanonBadge } from './ui';
+import { Badge, RealmBadge, TypeBadge, CanonBadge, useOverlay } from './ui';
 import { useAppState } from '../lib/store';
 import { findInHelp } from '../lib/helpDocs';
 
@@ -65,8 +65,8 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
   const [hi, setHi] = useState(0);
   const nav = useNavigate();
   const { debug } = useAppState();
-  const ref = useRef<HTMLInputElement>(null);
-  useEffect(() => ref.current?.focus(), []);
+  // Esc closes it from anywhere inside, Tab stays inside, and the focus goes back to where it was.
+  const box = useOverlay(onClose);
   useEffect(() => {
     if (!q.trim()) return setHits([]);
     const t = setTimeout(async () => {
@@ -88,16 +88,15 @@ export function SearchPalette({ onClose }: { onClose: () => void }) {
   };
   return (
     <div className="fixed inset-0 z-2500 bg-black/60 flex justify-center pt-[10vh] px-3" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="panel elev-3 w-full max-w-2xl h-fit max-h-[75vh] flex flex-col" role="dialog" aria-label="Search">
+      <div ref={box} data-overlay className="panel elev-3 w-full max-w-2xl h-fit max-h-[75vh] flex flex-col" role="dialog" aria-modal="true" aria-label="Search">
         <div className="flex items-center gap-2 px-3 border-b border-line">
           <Search size={16} className="text-dim" />
           <input
-            ref={ref}
+            data-autofocus
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Escape') onClose();
-              else if (e.key === 'ArrowDown') setHi((h) => Math.min(h + 1, hits.length - 1));
+              if (e.key === 'ArrowDown') setHi((h) => Math.min(h + 1, hits.length - 1));
               else if (e.key === 'ArrowUp') setHi((h) => Math.max(h - 1, 0));
               else if (e.key === 'Enter') {
                 if (hits[hi]) go(hits[hi]);

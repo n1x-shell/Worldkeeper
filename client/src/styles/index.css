@@ -109,7 +109,7 @@
 }
 
 @utility btn-primary {
-  @apply inline-flex items-center gap-1.5 rounded-md border border-gold/70 bg-gold/15 px-3 py-1.5 text-sm text-gold hover:bg-gold/25 disabled:opacity-50 disabled:pointer-events-none transition-colors;
+  @apply inline-flex items-center gap-1.5 rounded-md border border-gold/70 bg-gold/10 px-3 py-1.5 text-sm text-gold hover:bg-gold/15 disabled:opacity-50 disabled:pointer-events-none transition-colors;
 }
 
 @utility btn-danger {
@@ -117,11 +117,11 @@
 }
 
 @utility btn-ghost {
-  @apply inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm text-dim hover:text-gold hover:bg-raised transition-colors;
+  @apply inline-flex min-h-6 min-w-6 items-center gap-1.5 rounded-md px-2 py-1 text-sm text-dim hover:text-gold hover:bg-raised transition-colors;
 }
 
 @utility input {
-  @apply w-full rounded-md border border-edge/70 bg-raised px-2.5 py-1.5 text-sm text-ink placeholder:text-dim/70 focus:border-gold/70 focus:outline-hidden;
+  @apply w-full rounded-md border border-edge/70 bg-raised px-2.5 py-1.5 text-sm text-ink placeholder:text-dim focus:border-gold/70;
 }
 
 @utility label {
@@ -133,7 +133,7 @@
 }
 
 @utility section-title {
-  @apply font-display text-sm uppercase tracking-[0.18em] text-gold/90;
+  @apply font-display text-sm uppercase tracking-[0.18em] text-gold;
 }
 
 @utility table {
@@ -318,7 +318,7 @@
     @apply border-l border-line;
   }
   & button.on {
-    @apply bg-gold/15 text-gold;
+    @apply bg-gold/10 text-gold;
   }
 }
 
@@ -360,7 +360,7 @@
     --edge: 140 122 92; /* control borders (inputs), 3:1 */
     --ink: 42 34 25; /* text: iron-gall */
     --dim: 98 84 64; /* secondary text */
-    --gold: 128 90 18; /* accent, links on hover, focus */
+    --gold: 121 85 16; /* accent, links on hover, focus (a shade darker in v0.9.22, so it reads on its own tint) */
     --parchment: 246 238 218; /* the character sheet's paper */
     --parchink: 52 40 26;
     --parchlink: 59 74 143; /* links on the paper, which stays light in both themes */
@@ -481,6 +481,28 @@
     outline: 2px solid rgb(var(--gold));
     outline-offset: 2px;
   }
+
+  /* "Skip to the page": out of sight until the keyboard reaches it, then in the corner above everything. */
+  .skip-link {
+    position: fixed;
+    left: 0.5rem;
+    top: 0.5rem;
+    z-index: 6000;
+    transform: translateY(-300%);
+    padding: 0.4rem 0.8rem;
+    border: 1px solid rgb(var(--gold));
+    border-radius: 0.375rem;
+    background: rgb(var(--panel));
+    color: rgb(var(--ink));
+    font-size: 0.875rem;
+  }
+  .skip-link:focus {
+    transform: none;
+  }
+  /* The page's own area takes the focus from "Skip to the page" without drawing a ring round the whole page. */
+  main:focus {
+    outline: none;
+  }
 }
 
 /*
@@ -497,9 +519,18 @@
       background-position: -100% 0;
     }
   }
+  /* "Reduce motion" on the GM's or a player's device: nothing slides, fades or spins (v0.9.22). */
   @media (prefers-reduced-motion: reduce) {
     .skeleton {
       animation: none;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 
@@ -511,10 +542,10 @@
     @apply text-2xl text-gold mt-2 mb-3;
   }
   .prose-lore h2 {
-    @apply text-lg text-gold/90 mt-6 mb-2 border-b border-line pb-1;
+    @apply text-lg text-gold mt-6 mb-2 border-b border-line pb-1;
   }
   .prose-lore h3 {
-    @apply text-base text-gold/80 mt-4 mb-1;
+    @apply text-base text-gold mt-4 mb-1;
   }
   .prose-lore p {
     @apply my-2;
@@ -865,7 +896,7 @@
     @apply border border-gold/30 rounded-lg shadow-lg;
   }
   .ledger-rule {
-    @apply flex items-center gap-2 font-display text-[11px] uppercase tracking-[0.22em] text-gold/90;
+    @apply flex items-center gap-2 font-display text-[11px] uppercase tracking-[0.22em] text-gold;
   }
   .ledger-rule::before,
   .ledger-rule::after {
@@ -908,8 +939,9 @@
     @apply absolute inset-x-2 -bottom-px h-0.5 bg-gold;
   }
   /* A diamond toggle, like the official sheet's. */
+  /* Small to look at, but 24 by 24 to press, each clear of its neighbour (the margin keeps rows the height they were). */
   .diamond {
-    @apply inline-flex h-4 w-4 shrink-0 items-center justify-center;
+    @apply -my-1 inline-flex h-6 w-6 shrink-0 items-center justify-center;
   }
   .diamond::before {
     content: '';
@@ -940,7 +972,7 @@
     @apply font-display text-xl text-ink leading-tight;
   }
   .input-bare {
-    @apply w-full bg-transparent border-0 border-b border-dashed border-line/80 px-0.5 py-0.5 text-ink focus:border-gold focus:outline-hidden;
+    @apply w-full bg-transparent border-0 border-b border-dashed border-line/80 px-0.5 py-0.5 text-ink focus:border-gold;
   }
   @media print {
     html,

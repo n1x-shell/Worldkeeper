@@ -13,7 +13,7 @@ export function PageHeader({ title, subtitle, note, actions, icon }: { title: Re
           {title}
         </h1>
         {subtitle && <div className="text-sm text-dim mt-1">{subtitle}</div>}
-        {note && debug && <div className="text-xs text-dim/80 mt-1 italic">{note}</div>}
+        {note && debug && <div className="text-xs text-dim mt-1 italic">{note}</div>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
     </div>

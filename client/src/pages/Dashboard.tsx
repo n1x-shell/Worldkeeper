@@ -102,7 +102,7 @@ function RecordList({ rows, empty, limit }: { rows: Row[]; empty: string; limit?
 function Fact({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="min-w-0 rounded-md border border-line/70 bg-raised/60 px-3 py-2">
-      <div className="text-[11px] uppercase tracking-wider text-dim">{label}</div>
+      <div className="text-[11px] uppercase tracking-wider opacity-80">{label}</div>
       <div className="mt-0.5 text-sm text-ink truncate">{children}</div>
     </div>
   );

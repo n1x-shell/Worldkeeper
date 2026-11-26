@@ -610,7 +610,7 @@ function AtAGlance({ entity: e, debug, fieldMap, wide }: { entity: Entity; debug
 function Fact({ k, v }: { k: string; v: string }) {
   return (
     <div className="min-w-0">
-      <dt className="text-[11px] uppercase tracking-wider opacity-60">{k}</dt>
+      <dt className="text-[11px] uppercase tracking-wider opacity-80">{k}</dt>
       <dd className="font-serif text-[15px] leading-snug wrap-break-word">
         <Markdown text={v} className="[&_p]:my-0 [&_a]:text-parchlink!" />
       </dd>

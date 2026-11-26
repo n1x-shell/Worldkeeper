@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-26 · v0.9.21_
+_Last updated: 2026-11-26 · v0.9.22_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,27 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.22: accessibility and devices
+
+docs/BETA_PLAN.md A6. There had been no keyboard-only, screen-reader or contrast pass, and no pass of the GM's app on a tablet.
+
+**The audit** (`scripts/e2e-a11y.mjs`, `npm run e2e:a11y`, a step of CI's `e2e` job; `axe-core` is a dev dependency): on a small seeded world, 42 screens (39 of the GM's app, 3 of the handbook) plus the open search box, in both themes, against axe-core's WCAG 2.1 and 2.2 A and AA rules; the same screens at 820×1180 and 1180×820 with touch (nothing wider than the screen, axe's `target-size`); and the keyboard alone on four screens (the first Tab is "Skip to the page" and the next lands in the page; 45 stops each with a name and a visible focus; the search dialog keeps Tab, closes on Esc and returns the focus; a screen change sets the title and is announced). The first run found 106 things; it now finds none.
+
+**What it found, and the fixes**
+
+- **Faint text (13 screens).** The colour tokens pass AA at full strength, but they were used part see-through: `text-gold/90` on section titles and prose headings, `text-gold/80` on empty states, `text-dim/NN` in 47 places, `opacity-60` on fact labels, and gold words on a 15% gold tint (the chosen option of a segmented control, `btn-primary`). All are now solid; the tint is 10%; and Warm Parchment's gold is a shade darker (`121 85 16`) so it reads on its own tint over the page. `tests/designTokens.test.ts` now checks gold on the tint over every surface and refuses the see-through patterns in the stylesheet.
+- **Names that didn't match what is shown (40 screen checks: the top bar is on every screen).** The search button (called "Search", showing "Search… Ctrl K"), the campaign menu (called "Active campaign", showing the campaign's title), roll buttons on the sheet (called "Roll Stealth", showing "+4"), "Level up", and the picture frame. Each is now named by its visible words, with the rest added out of sight (`sr-only`) where needed.
+- **Links marked only by colour:** `className="text-arcane"` links are underlined.
+- **Too small to press:** the sheet's diamonds were 16×16; they are 24×24 with clear space between (`.diamond`), and `btn-ghost` is never under 24.
+- **Structure:** an unnamed icon button (Treasure), and an empty state that was a `<div>` straight inside a `<ul>` (the initiative tracker).
+- **Keyboard:** there was no way past the bars and menu (`SkipLink` in `client/src/components/ui/feedback.tsx`, first in both layouts; `<main id="main" tabIndex={-1}>`); text boxes hid the focus ring (`.input` and `.input-bare` no longer remove it); the search box let Tab out to the page behind and ignored Esc once the focus had left its text box (`useOverlay` in `overlays.tsx` now keeps Tab inside every dialog and drawer, and the search box uses it).
+- **Screen readers, beyond what axe checks:** nothing said the screen had changed and the window's title never did (`PageAnnouncer`: the new screen's `h1` goes into the title and a polite live region, in both layouts); every long-text editor was called "Text" (the editor is not a text box to the browser, so a `<label>` round it names nothing; `Field` now passes its label down through `FieldLabel`, and `AutoTextarea` falls back to its placeholder).
+- **Motion:** `prefers-reduced-motion` now stops every transition and animation, not only the loading shimmer.
+
+**Not found:** nothing ran off the side of a tablet held either way on any of the 41 screens.
+
+**What this is not.** A machine finds perhaps a third of what gets in a person's way. Nobody has used the app with a screen reader, by switch or by voice, and it has not been held as a real tablet. The audit covers 42 screens of about 70, each in one state (few dialogs, no map with pins, no combat under way, no builder steps). axe marks contrast it can't work out (text over the page's gradient) as "can't tell", which this does not count; the token test covers those colours instead.
 
 ## v0.9.21: help inside the app
 

@@ -552,7 +552,7 @@ function RecordChips({ ids, onPick, label, active }: { ids: string[]; onPick: (i
               type="button"
               data-peek={id}
               aria-pressed={active === id}
-              className={`inline-flex min-h-10 items-center gap-1.5 rounded-md border px-3 text-sm transition-colors ${active === id ? 'border-gold/70 bg-gold/15 text-gold' : 'border-line bg-raised text-ink hover:border-gold/60 hover:text-gold'}`}
+              className={`inline-flex min-h-10 items-center gap-1.5 rounded-md border px-3 text-sm transition-colors ${active === id ? 'border-gold/70 bg-gold/10 text-gold' : 'border-line bg-raised text-ink hover:border-gold/60 hover:text-gold'}`}
               onClick={() => onPick(id)}
             >
               {e?.name ?? id}

@@ -1,5 +1,6 @@
 /** Long text in the GM app: the Markdown editor (components/editor), used like a text area. */
-import { lazy, Suspense, type KeyboardEvent } from 'react';
+import { lazy, Suspense, useContext, type KeyboardEvent } from 'react';
+import { FieldLabel } from './inputs';
 
 // The editor (CodeMirror and its Markdown support) loads on first use, so the app's first page stays quick.
 const MarkdownEditor = lazy(() => import('../editor/MarkdownEditor').then((m) => ({ default: m.MarkdownEditor })));
@@ -29,6 +30,9 @@ export function AutoTextarea(props: {
 }) {
   const { value = '', onChange, onBlur, onKeyDown, placeholder, minRows = 3, links = true, full = false, className = '', autoFocus } = props;
   const text = String(value ?? '');
+  // Its name for a screen reader: the one given, the field it sits in, or what its empty state says.
+  const field = useContext(FieldLabel);
+  const name = props['aria-label'] ?? field ?? placeholder ?? undefined;
   const change = (v: string) => onChange?.({ target: { value: v }, currentTarget: { value: v } });
   const fallback = (
     <textarea
@@ -36,7 +40,7 @@ export function AutoTextarea(props: {
       rows={minRows}
       value={text}
       placeholder={placeholder}
-      aria-label={props['aria-label']}
+      aria-label={name}
       onChange={(e) => change(e.target.value)}
       onBlur={onBlur}
     />
@@ -61,7 +65,7 @@ export function AutoTextarea(props: {
           minRows={minRows}
           links={links}
           full={full}
-          label={props['aria-label']}
+          label={name}
           autoFocus={autoFocus}
           startMode={props.startMode}
           className={className.replace(/\b(input|font-mono|font-sans|text-sm|text-\[\d+px\]|min-h-\d+)\b/g, '').trim()}

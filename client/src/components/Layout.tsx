@@ -24,7 +24,7 @@ import { SearchPalette } from './SearchPalette';
 import { SidebarSlotContext } from './sidebarSlot';
 import { DEBUG_ONLY, FULL_BLEED, LIBRARY, NEEDS_PACK, WORKSPACES, matches, withRealms, workspaceFor, type Group, type Item } from './navigation';
 import { useRealms } from './realms';
-import { ConfirmHost, Empty, ToastHost } from './ui';
+import { ConfirmHost, Empty, PageAnnouncer, SkipLink, ToastHost } from './ui';
 import { PeekProvider } from './peek/PeekProvider';
 import { Inspector } from './peek/Inspector';
 import { SplitView } from './peek/Beside';
@@ -321,6 +321,8 @@ export function Layout() {
     <PeekProvider live={live}>
       <PeekKeys />
       <div className="flex flex-col h-full">
+        <SkipLink />
+        <PageAnnouncer path={loc.pathname} app={appName} />
         <header className="h-[52px] shrink-0 flex items-center gap-1 border-b border-line bg-panel px-2 md:px-3 elev-1 relative z-1500">
           <button className="btn-ghost md:hidden" onClick={() => setMobileNav(true)} aria-label="Open navigation">
             <Menu size={18} />
@@ -355,16 +357,19 @@ export function Layout() {
           <button
             onClick={() => setSearchOpen(true)}
             className="ml-auto md:ml-3 flex items-center gap-2 rounded-md border border-line bg-raised px-2.5 h-8 text-sm text-dim hover:border-gold/60 min-w-8 shrink lg:w-48 xl:w-72"
-            aria-label="Search"
+            aria-keyshortcuts="Control+K"
             title="Search (Ctrl K)"
           >
-            <Search size={14} className="shrink-0" /> <span className="hidden lg:inline truncate">Search…</span>
-            <kbd className="ml-auto hidden xl:inline whitespace-nowrap text-[10px] border border-line rounded-sm px-1">Ctrl K</kbd>
+            {/* The word is always its name, shown or not; the key beside it is said by aria-keyshortcuts. */}
+            <Search size={14} className="shrink-0" aria-hidden /> <span className="sr-only lg:not-sr-only truncate">Search…</span>
+            <kbd className="ml-auto hidden xl:inline whitespace-nowrap text-[10px] border border-line rounded-sm px-1" aria-hidden>
+              Ctrl K
+            </kbd>
           </button>
           <div className="ml-auto flex items-center gap-1">
             <NewMenu />
             <Dropdown
-              label="Active campaign"
+              label={activeTitle ? `${activeTitle} (the active campaign)` : 'No campaign: choose one'}
               align="right"
               button={
                 <span className="flex items-center gap-1.5 max-w-[160px]">
@@ -479,13 +484,13 @@ export function Layout() {
             </div>
           )}
           {fullBleed ? (
-            <main className="flex-1 relative overflow-hidden min-w-0" id="main">
+            <main className="flex-1 relative overflow-hidden min-w-0" id="main" tabIndex={-1}>
               <SplitView enabled={splitOk}>
                 <SidebarSlotContext.Provider value={slot}>{pageOff ? <ModuleOff label={pageOff.label} /> : <Outlet />}</SidebarSlotContext.Provider>
               </SplitView>
             </main>
           ) : (
-            <main className="flex-1 overflow-hidden min-w-0" id="main">
+            <main className="flex-1 overflow-hidden min-w-0" id="main" tabIndex={-1}>
               <SplitView enabled={splitOk}>
                 <div className="h-full overflow-y-auto" id="main-scroll">
                   <div className="mx-auto max-w-[1500px] p-4 md:p-6">{pageOff ? <ModuleOff label={pageOff.label} /> : <Outlet />}</div>
@@ -526,7 +531,7 @@ function ModuleOff({ label }: { label: string }) {
   return (
     <Empty title={`${label} is switched off`}>
       Switch it on in{' '}
-      <NavLink to="/settings" className="text-arcane">
+      <NavLink to="/settings" className="text-arcane underline">
         Settings → Modules
       </NavLink>
       . Nothing was deleted.

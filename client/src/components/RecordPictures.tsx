@@ -68,7 +68,6 @@ export function RecordPictures({ entityId, name }: { entityId: string; name: str
           type="button"
           className={`flex h-44 w-full flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed text-dim transition-colors hover:border-gold hover:text-ink ${over ? 'border-gold bg-gold/10 text-ink' : 'border-line bg-raised/40'}`}
           disabled={busy}
-          aria-label={`Add a picture of ${name}`}
           onClick={() => input.current?.click()}
           onDragOver={(e) => {
             e.preventDefault();
@@ -84,6 +83,8 @@ export function RecordPictures({ entityId, name }: { entityId: string; name: str
           <ImagePlus size={28} strokeWidth={1.5} />
           <span className="text-sm">{busy ? 'Adding…' : 'Add a picture'}</span>
           {!busy && <span className="text-xs">Click, or drop one here</span>}
+          {/* Which record it is for, for someone who can't see where the frame sits. */}
+          <span className="sr-only">(for {name})</span>
         </button>
       </div>
     );

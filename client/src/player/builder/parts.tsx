@@ -84,7 +84,7 @@ export function Stepper({ step, done, onStep }: { step: number; done: boolean[];
               >
                 <span
                   className={`num flex h-7 w-7 items-center justify-center rounded-full border text-xs font-semibold transition-colors ${
-                    cur ? 'border-gold bg-gold text-panel' : ok ? 'border-gold/70 bg-gold/15 text-gold' : 'border-line bg-raised text-dim group-hover:border-gold/50 group-hover:text-ink'
+                    cur ? 'border-gold bg-gold text-panel' : ok ? 'border-gold/70 bg-gold/10 text-gold' : 'border-line bg-raised text-dim group-hover:border-gold/50 group-hover:text-ink'
                   }`}
                 >
                   {ok ? <Check size={14} strokeWidth={2.5} /> : i + 1}

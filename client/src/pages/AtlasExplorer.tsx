@@ -589,7 +589,7 @@ export function AtlasExplorer() {
       ) : (
         <p className="text-xs text-dim">
           Choose an active campaign to track what the party has discovered and where it has been.{' '}
-          <Link to="/campaigns" className="text-arcane">
+          <Link to="/campaigns" className="text-arcane underline">
             Campaigns
           </Link>
         </p>

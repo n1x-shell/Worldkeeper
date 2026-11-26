@@ -83,6 +83,8 @@ CI runs all of these on every pull request, and then real browsers (screenshots 
 - **The first run**, both ways (`npm run e2e:first-run`): your own world and Oros, each on an empty data folder.
 - **A session at the table** (`npm run e2e:table`): the GM's app and two players' phones. The table is closed until opened; players see what was revealed and nothing else (not in the page, and not in anything the table's server answers); a character's page follows both sides at once; a roll crosses the table and a hidden one doesn't.
 
+- **Accessibility** (`npm run e2e:a11y`): forty-two screens of the GM's app and the players' handbook, in both themes, against the WCAG 2.1 and 2.2 A and AA rules that axe-core tests; the same screens on a tablet held both ways (nothing off the side, nothing too small to press); and the keyboard alone (the skip link, a name and a visible focus at every stop, a dialog that keeps the focus and gives it back, and a screen change that is announced). Add `--report` to list what it finds without failing. When you add a screen, add it to the list at the top of `scripts/e2e-a11y.mjs`.
+
 Each takes the GM app's address: start the app on an empty data folder (`WORLDKEEPER_DATA_DIR`), then `node scripts/e2e-table.mjs http://127.0.0.1:4310`. Playwright isn't a dependency of the project; install it where you run them.
 
 Two more checks run without a browser:

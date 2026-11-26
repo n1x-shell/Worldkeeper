@@ -181,7 +181,7 @@ export function MarkdownEditor({ value, onChange, onBlur, placeholder, minRows =
                 key={m}
                 type="button"
                 aria-pressed={mode === m}
-                className={`px-2 h-8 text-xs inline-flex items-center gap-1 ${mode === m ? 'bg-gold/15 text-gold' : 'text-dim hover:text-ink'}`}
+                className={`px-2 h-8 text-xs inline-flex items-center gap-1 ${mode === m ? 'bg-gold/10 text-gold' : 'text-dim hover:text-ink'}`}
                 onClick={() => setMode(m)}
               >
                 {icon} {l}
