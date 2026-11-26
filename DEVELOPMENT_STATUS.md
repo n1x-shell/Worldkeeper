@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-26 · v0.9.17_
+_Last updated: 2026-11-26 · v0.9.18_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,22 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.18: the app updates itself
+
+The owner asked for updating to be seamless (26 November 2026). Installing a newer version over an older one already upgraded in place, but by hand, and with the unsigned-app warning each time.
+
+- **The shell** (`src-tauri/src/lib.rs`, `tauri-plugin-updater`): `on_navigation` sees the page go to `/__shell/update?tag=…` on `127.0.0.1`, cancels the navigation and calls `start_update`. `valid_tag` lets only `vN.N.N` (with an optional pre-release part) into the address; the address is otherwise fixed (`RELEASE_DOWNLOADS/<tag>/latest.json`). `run_update`: check, download (the plugin verifies the signature against `plugins.updater.pubkey`), stop the server, install, `restart`. `can_self_update`: Windows, macOS, and on Linux only an AppImage; the server is told with `WORLDKEEPER_SHELL_UPDATER`. A failure after the server was stopped still restarts the app (this version), with the reason on record. `WORLDKEEPER_UPDATE_ENDPOINT` replaces the address in development builds only.
+- **Status:** the shell writes `update-status.json` in the data folder (`checking`, `downloading`, `installing`, `failed`); `installStatus` in `server/src/updateCheck.ts` reads it, clears it once the running version is the one it was updating to, and calls it failed if it has been left half-way for 30 minutes. `GET /api/update` adds `canInstall` and `install`; `POST /api/update/dismiss` forgets a failure.
+- **Offered only where it can work:** the daily check records `latest.installable` (the release has a `latest.json`); the button needs that, `canInstall`, and a session on the computer itself (not the tablet). Otherwise the card shows the link, and now says that nothing needs removing first.
+- **Releases** (`.github/workflows/desktop.yml`, `scripts/updater-manifest.mjs`): with the repository secret `TAURI_SIGNING_PRIVATE_KEY`, the build makes signed update files and the release gets `latest.json`; without it, both are as before. The manifest uses GitHub's names for the files (spaces become dots).
+- **The key:** the public half is in `src-tauri/tauri.conf.json`; the private half is not in the repository (a test checks). See `docs/DESKTOP.md`.
+- **Two bugs found while trying it on a real build, both older than this release:**
+  - **A backup downloaded from the Backups page was eleven bytes of `{"ok":true}`, not the backup.** `res.download` sends in the background, and the route's wrapper (`h`) answered first. The route now waits for the download. The backups on disk were always whole, and restoring one from the list worked; only the downloaded copy was wrong. (`GET /api/backups/:file`.)
+  - **In the Linux AppImage the app's pages did not load** (`{"error":"Not Found"}`), and on any Linux desktop install pictures would not have shown: Express refuses to send a file whose full path passes through a hidden folder, and an AppImage runs from `/tmp/.mount_…` while a Linux data folder is under `~/.local`. The app's page, uploaded pictures and backups are now sent by name inside their folder (`{ root }`). `tests/hiddenFolders.test.ts` covers all three.
+- **Tests:** `tests/updateCheck.test.ts` (installable, the status file, the manifest script, no private key in the repository); `cargo test` in `src-tauri` (the tag and the address).
+- **Tried for real, on Linux:** two signed AppImages (0.9.18 and one built as 0.9.19) and a local file server standing in for the release. Pressing **Update and restart** in the running 0.9.18 app: the confirmation, "Downloading the new version…", then the AppImage on disk was the 0.9.19 file byte for byte and the app had started again, about fifteen seconds later. With one byte of the download changed: "The signature verification failed", the AppImage untouched, the app still running, and the page saying why. `docs/DESKTOP.md` has the steps.
+- **Not tried:** Windows (the NSIS installer run by the updater) and macOS (the `.app` replaced in place, on an unsigned app) at all; the release workflow's new steps (they run only on a tag); an update fetched from GitHub itself rather than a local stand-in.
 
 ## v0.9.17: the update check, and installing an unsigned app
 

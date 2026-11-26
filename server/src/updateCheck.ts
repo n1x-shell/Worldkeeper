@@ -22,7 +22,8 @@ const DAY = 24 * 3600 * 1000;
 interface Stored {
   enabled: boolean;
   checked_at: string | null;
-  latest: { version: string; name: string; url: string; published_at: string | null } | null;
+  /** `installable`: the release carries what the desktop app needs to update itself (its latest.json). */
+  latest: { version: string; name: string; url: string; published_at: string | null; installable?: boolean } | null;
   /** Why the last check didn't get an answer, if it didn't. */
   error: string | null;
 }
@@ -60,6 +61,46 @@ export function isNewer(a: string, b: string): boolean {
   return x.pre.localeCompare(y.pre, undefined, { numeric: true }) > 0;
 }
 
+/**
+ * "Update and restart" in the desktop app (v0.9.18): the app's shell does the update and writes what it is doing to
+ * `update-status.json` in the data folder; this is that, for the page. An update that has finished (this is the
+ * version it was updating to) is cleared; one that stopped half-way is reported as failed.
+ */
+export interface InstallStatus {
+  state: 'checking' | 'downloading' | 'installing' | 'failed';
+  tag: string;
+  error: string | null;
+}
+const installFile = (paths: Paths) => path.join(paths.rootDir, 'update-status.json');
+export function installStatus(paths: Paths, now = Date.now()): InstallStatus | null {
+  let raw: Partial<InstallStatus>;
+  let age: number;
+  try {
+    raw = JSON.parse(fs.readFileSync(installFile(paths), 'utf8')) as Partial<InstallStatus>;
+    age = now - fs.statSync(installFile(paths)).mtimeMs;
+  } catch {
+    return null;
+  }
+  const tag = typeof raw.tag === 'string' ? raw.tag : '';
+  const state = raw.state;
+  if (state !== 'checking' && state !== 'downloading' && state !== 'installing' && state !== 'failed') return null;
+  if (state !== 'failed' && tag.replace(/^v/, '') === APP_VERSION) {
+    // This is the version it was updating to: done.
+    clearInstallStatus(paths);
+    return null;
+  }
+  // Left half-way (the app was closed, the computer slept): not still "downloading" an hour later.
+  if (state !== 'failed' && age > 30 * 60_000) return { state: 'failed', tag, error: 'The update didn’t finish. Try again, or install the new version from the releases page.' };
+  return { state, tag, error: typeof raw.error === 'string' ? raw.error.slice(0, 500) : null };
+}
+export function clearInstallStatus(paths: Paths) {
+  try {
+    fs.unlinkSync(installFile(paths));
+  } catch {
+    /* nothing to clear */
+  }
+}
+
 export function updateStatus(paths: Paths) {
   const s = read(paths);
   return {
@@ -70,6 +111,9 @@ export function updateStatus(paths: Paths) {
     checked_at: s.checked_at,
     error: s.error,
     releases: RELEASES_PAGE,
+    /** This is the desktop app, and it can replace itself (set by the app's shell; never for a copy run from source). */
+    canInstall: process.env.WORLDKEEPER_SHELL_UPDATER === '1',
+    install: installStatus(paths),
   };
 }
 
@@ -83,6 +127,7 @@ interface Release {
   name?: unknown;
   html_url?: unknown;
   published_at?: unknown;
+  assets?: unknown;
 }
 type Fetch = (url: string, init: { headers: Record<string, string>; signal: AbortSignal }) => Promise<{ ok: boolean; status: number; json: () => Promise<unknown> }>;
 
@@ -112,7 +157,13 @@ export async function checkForUpdate(paths: Paths, o: { force?: boolean; fetch?:
       ...s,
       checked_at: stamp,
       error: null,
-      latest: { version: tag.replace(/^v/, ''), name: typeof r.name === 'string' ? r.name.slice(0, 200) : '', url, published_at: typeof r.published_at === 'string' ? r.published_at : null },
+      latest: {
+        version: tag.replace(/^v/, ''),
+        name: typeof r.name === 'string' ? r.name.slice(0, 200) : '',
+        url,
+        published_at: typeof r.published_at === 'string' ? r.published_at : null,
+        installable: Array.isArray(r.assets) && r.assets.some((a) => (a as { name?: unknown } | null)?.name === 'latest.json'),
+      },
     });
   } catch (e) {
     // What was known before is kept; the next try is tomorrow (or "Check now").

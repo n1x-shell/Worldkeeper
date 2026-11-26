@@ -1,11 +1,12 @@
 /** Is there a newer version? (v0.9.17, docs/BETA_PLAN.md A2.) Never the real network here: GitHub's answer is given. */
+import { execFileSync, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import request from 'supertest';
-import { tempContext } from './helpers.js';
+import { tempContext, tempDir } from './helpers.js';
 import { createApp } from '../server/src/app.js';
-import { RELEASES_API, checkForUpdate, isNewer, parseVersion, setUpdateCheck, updateStatus } from '../server/src/updateCheck.js';
+import { RELEASES_API, checkForUpdate, installStatus, isNewer, parseVersion, setUpdateCheck, updateStatus } from '../server/src/updateCheck.js';
 import { APP_VERSION } from '../shared/version.js';
 
 type Call = { url: string; headers: Record<string, string> };
@@ -98,5 +99,94 @@ describe('asking whether a newer version exists', () => {
     expect((await request(gm).put('/api/update').send({ enabled: false })).body.enabled).toBe(false);
     expect((await request(gm).get('/api/update')).body.enabled).toBe(false);
     expect((await request(gm).put('/api/update').send({ enabled: true })).body.enabled).toBe(true);
+  });
+});
+
+describe('“Update and restart” in the desktop app (v0.9.18)', () => {
+  it('is offered only for a release that carries the update, in an app whose shell can do it', async () => {
+    const { paths } = tempContext();
+    const withUpdate = release(`v${NEXT}`, { assets: [{ name: `The.Worldkeeper_${NEXT}_x64-setup.exe` }, { name: 'latest.json' }] });
+    expect((await checkForUpdate(paths, { fetch: github([withUpdate]) })).latest).toMatchObject({ version: NEXT, installable: true });
+    expect((await checkForUpdate(paths, { fetch: github([release(`v${NEXT}`, { assets: [{ name: 'x.exe' }] })]), force: true })).latest!.installable).toBe(false);
+    expect((await checkForUpdate(paths, { fetch: github([release(`v${NEXT}`)]), force: true })).latest!.installable).toBe(false);
+    // Run from source (or a Linux package): the shell didn't say it can update itself.
+    expect(updateStatus(paths).canInstall).toBe(false);
+    process.env.WORLDKEEPER_SHELL_UPDATER = '1';
+    try {
+      expect(updateStatus(paths).canInstall).toBe(true);
+    } finally {
+      delete process.env.WORLDKEEPER_SHELL_UPDATER;
+    }
+  });
+
+  it('says what the shell is doing, forgets an update that finished, and reports one that didn’t', async () => {
+    const ctx = tempContext();
+    const { paths } = ctx;
+    const gm = createApp(ctx);
+    const file = path.join(paths.rootDir, 'update-status.json');
+    const write = (o: Record<string, unknown>) => fs.writeFileSync(file, JSON.stringify(o));
+    expect(installStatus(paths)).toBeNull();
+    write({ state: 'downloading', tag: `v${NEXT}`, error: null });
+    expect((await request(gm).get('/api/update')).body.install).toEqual({ state: 'downloading', tag: `v${NEXT}`, error: null });
+    // The app has restarted as the version it was updating to: done, and nothing left to show.
+    write({ state: 'installing', tag: `v${APP_VERSION}`, error: null });
+    expect(installStatus(paths)).toBeNull();
+    expect(fs.existsSync(file)).toBe(false);
+    // Left half-way for more than half an hour: not "installing" for ever.
+    write({ state: 'installing', tag: `v${NEXT}`, error: null });
+    expect(installStatus(paths, Date.now() + 31 * 60_000)).toMatchObject({ state: 'failed', error: expect.stringContaining('didn’t finish') });
+    // The shell's own failure, and dismissing it.
+    write({ state: 'failed', tag: `v${NEXT}`, error: 'The download failed or its signature didn’t match: x' });
+    expect((await request(gm).get('/api/update')).body.install).toMatchObject({ state: 'failed', error: expect.stringContaining('signature') });
+    expect((await request(gm).post('/api/update/dismiss')).body.install).toBeNull();
+    // Anything else in that file is nothing.
+    write({ state: 'rm -rf', tag: 5 });
+    expect(installStatus(paths)).toBeNull();
+    fs.writeFileSync(file, 'not json');
+    expect(installStatus(paths)).toBeNull();
+  });
+
+  it('a release’s update manifest names each system’s file as GitHub stores it, with its signature', () => {
+    const dir = tempDir();
+    const put = (f: string, text: string) => (fs.mkdirSync(path.dirname(path.join(dir, f)), { recursive: true }), fs.writeFileSync(path.join(dir, f), text));
+    for (const f of ['appimage/The Worldkeeper_1.2.3_amd64.AppImage', 'nsis/The Worldkeeper_1.2.3_x64-setup.exe', 'macos/The Worldkeeper.app.tar.gz', 'msi/The Worldkeeper_1.2.3_x64_en-US.msi']) {
+      put(f, 'bytes');
+      put(`${f}.sig`, `signature of ${path.basename(f)}\n`);
+    }
+    put('deb/The Worldkeeper_1.2.3_amd64.deb', 'bytes');
+    const script = path.resolve(__dirname, '../scripts/updater-manifest.mjs');
+    const m = JSON.parse(execFileSync(process.execPath, [script, dir, 'v1.2.3'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }));
+    expect(m.version).toBe('1.2.3');
+    expect(m.platforms).toEqual({
+      'linux-x86_64': { signature: 'signature of The Worldkeeper_1.2.3_amd64.AppImage', url: 'https://github.com/n1x-shell/Worldkeeper/releases/download/v1.2.3/The.Worldkeeper_1.2.3_amd64.AppImage' },
+      'windows-x86_64': { signature: 'signature of The Worldkeeper_1.2.3_x64-setup.exe', url: 'https://github.com/n1x-shell/Worldkeeper/releases/download/v1.2.3/The.Worldkeeper_1.2.3_x64-setup.exe' },
+      'darwin-aarch64': { signature: 'signature of The Worldkeeper.app.tar.gz', url: 'https://github.com/n1x-shell/Worldkeeper/releases/download/v1.2.3/The.Worldkeeper.app.tar.gz' },
+    });
+    // A build made without the update key has no signatures: no manifest, and the release goes out as before.
+    const plain = tempDir();
+    fs.writeFileSync(path.join(plain, 'The Worldkeeper_1.2.3_amd64.deb'), 'bytes');
+    const run = spawnSync(process.execPath, [script, plain, 'v1.2.3'], { encoding: 'utf8' });
+    expect(run.status).toBe(2);
+    expect(run.stdout).toBe('');
+    // Only a real version tag goes into an address.
+    expect(spawnSync(process.execPath, [script, dir, 'v1;rm -rf'], { encoding: 'utf8' }).status).toBe(1);
+  });
+
+  it('the public half of the update key is in the app, and no private key is in the repository', () => {
+    const root = path.resolve(__dirname, '..');
+    const conf = JSON.parse(fs.readFileSync(path.join(root, 'src-tauri/tauri.conf.json'), 'utf8'));
+    const pub = Buffer.from(conf.plugins.updater.pubkey, 'base64').toString('utf8');
+    expect(pub).toMatch(/^untrusted comment: minisign public key: [0-9A-F]+\n\S+\n$/);
+    // Signing happens only with the key the release workflow is given: a plain build makes no update files.
+    expect(conf.bundle.createUpdaterArtifacts).toBeUndefined();
+    const tracked = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' }).split('\n');
+    expect(tracked.filter((f) => /\.key$|secret key/i.test(f))).toEqual([]);
+    // A private key file begins with this line, in plain text or (as the tool writes it) in base64.
+    const header = ['untrusted comment: rsign', 'encrypted secret key'].join(' ');
+    const marks = [header, Buffer.from(header).toString('base64').slice(0, 56)];
+    for (const f of tracked.filter((x) => /\.(json|ya?ml|md|ts|rs|toml|mjs|txt|pub)$/.test(x) && !x.startsWith('packs/worldkeeper/archive'))) {
+      const text = fs.readFileSync(path.join(root, f), 'utf8');
+      expect(marks.some((m) => text.includes(m)), f).toBe(false);
+    }
   });
 });

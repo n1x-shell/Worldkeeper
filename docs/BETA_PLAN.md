@@ -21,6 +21,7 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | B8 The GM on a tablet | v0.9.14 | Done (over plain HTTP, for the GM's own network) |
 | A1 Safe upgrades | v0.9.15 | Done, except a test on library files kept from real old versions |
 | A2 Installers: an update check (on, switchable off) and clear instructions for unsigned installers | v0.9.17 | Done; the install steps are written from the systems' standard behaviour, not tried on a Mac or a Windows PC |
+| A2 Installers: the app updates itself ("Update and restart") | v0.9.18 | Built, and tried end to end on Linux; not tried on Windows or macOS. Needs the update key added to the repository's secrets, and a first signed release, before any GM sees it |
 | A3 to A7 | | To do |
 | C8 A location generator: ink-style maps of places from their records | | To do, before the beta (decided) |
 | The bundled world's own name: Oros | v0.9.16 | Done |

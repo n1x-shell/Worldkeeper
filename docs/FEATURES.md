@@ -282,7 +282,9 @@ One installation holds several **libraries**. Each is a world (or set of worlds)
 
 ## Updates
 
-Once a day the app asks GitHub for this project's list of releases, and shows a note in the top bar and in **Settings → Updates** when a newer version exists, with a link to its page. It sends nothing about you, your computer or your worlds, and never downloads or installs anything. Turn it off in Settings; **Check now** still works when it is off. See [Installing The Worldkeeper](INSTALL.md) for how to update.
+Once a day the app asks GitHub for this project's list of releases, and shows a note in the top bar and in **Settings → Updates** when a newer version exists, with a link to its page. It sends nothing about you, your computer or your worlds. Turn it off in Settings; **Check now** still works when it is off.
+
+In the desktop app, **Update and restart** does the rest: the app downloads the new version from this project's releases, checks its signature, installs it over itself and opens again. Nothing is downloaded until you choose it, your worlds are untouched, and each library is backed up before the new version changes anything in it. Run from source, or installed from a Linux `.deb` or `.rpm`, the note links to the release instead. See [Installing The Worldkeeper](INSTALL.md).
 
 ## The GM app on another device
 

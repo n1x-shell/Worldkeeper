@@ -221,6 +221,8 @@ export function uploadsHandler(ctx: AppContext) {
     const full = path.join(ctx.paths.uploadsDir, name);
     if (!fs.existsSync(full)) return next(notFound('File'));
     res.setHeader('X-Content-Type-Options', 'nosniff');
-    res.sendFile(full);
+    // By name inside the uploads folder: on Linux a GM's data is under ~/.local, and a full path through a hidden
+    // folder would be refused.
+    res.sendFile(name, { root: ctx.paths.uploadsDir });
   };
 }

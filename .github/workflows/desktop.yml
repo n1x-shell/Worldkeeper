@@ -43,7 +43,20 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev build-essential libssl-dev libxdo-dev libayatana-appindicator3-dev librsvg2-dev file
       - run: npm ci
-      - run: npm run desktop:build
+      # With the update key (the repository secret TAURI_SIGNING_PRIVATE_KEY), each installer the app can update
+      # itself with is signed, for "Update and restart" (docs/DESKTOP.md). Without it the build is as it always was.
+      - name: Build
+        shell: bash
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: |
+          if [ -n "$TAURI_SIGNING_PRIVATE_KEY" ]; then
+            npm run desktop:build -- --config '{"bundle":{"createUpdaterArtifacts":true}}'
+          else
+            echo "::notice::No update key: building without the files for in-app updates"
+            npm run desktop:build
+          fi
       - uses: actions/upload-artifact@v7
         with:
           name: worldkeeper-${{ matrix.os }}
@@ -54,6 +67,8 @@ jobs:
             src-tauri/target/release/bundle/**/*.dmg
             src-tauri/target/release/bundle/**/*.msi
             src-tauri/target/release/bundle/**/*.exe
+            src-tauri/target/release/bundle/**/*.app.tar.gz
+            src-tauri/target/release/bundle/**/*.sig
           if-no-files-found: error
 
   # One job attaches every platform's installers to the release, after all builds pass.
@@ -68,6 +83,22 @@ jobs:
         with:
           path: installers
           merge-multiple: true
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          path: source
+          sparse-checkout: scripts
+      # latest.json tells the app which file is each system's update and carries its signature. The signatures go
+      # into it, so the .sig files themselves aren't published.
+      - name: Update manifest
+        run: |
+          if node source/scripts/updater-manifest.mjs installers "${{ inputs.tag || github.ref_name }}" > latest.json; then
+            mv latest.json installers/latest.json
+          else
+            echo "::notice::This release has no in-app update (built without the update key)"
+            rm -f latest.json
+          fi
+          find installers -name '*.sig' -delete
       - name: List installers
         run: find installers -type f -exec ls -lh {} +
       - uses: softprops/action-gh-release@v3

@@ -450,14 +450,17 @@ export function libraryRoutes(ctx: AppContext) {
   );
   r.get(
     '/backups/:file',
-    h((req, res) => {
+    h(async (req, res) => {
       let full: string;
       try {
         full = backupPath(ctx.paths, String(req.params.file));
       } catch {
         throw notFound('Backup');
       }
-      res.download(full);
+      // Waited for: the file is sent in the background, and without waiting the route's ordinary answer ({ ok: true })
+      // went out first, so "Download" saved those eleven bytes instead of the backup (fixed in v0.9.18).
+      // By name inside the backups folder: a full path through a hidden folder, such as ~/.local, would be refused.
+      await new Promise<void>((resolve, reject) => res.download(path.basename(full), path.basename(full), { root: path.dirname(full) }, (err) => (err ? reject(err) : resolve())));
     }),
   );
   const restore = (buf: Buffer) => {

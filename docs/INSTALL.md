@@ -59,7 +59,11 @@ The long string it prints should be the same as the one on the release page.
 
 ## Updating
 
-Install the new version over the old one, the same way. Your worlds are not in the app: they are in your data folder, and an update never replaces them.
+**In the app:** when a newer version is out, a note appears in the top bar. Open **Settings → Updates** and choose **Update and restart**. The app downloads the new version from this project's releases, checks that it is the real one, installs it and opens again. You don't download or run anything yourself, and Windows and macOS don't ask about an unsigned app again.
+
+**By hand:** you can always download the new version and install it over the old one, the same way as the first time. **You never need to uninstall first.** This is the way for the Linux `.deb` and `.rpm` (your package manager upgrades them) and for a release that has no in-app update.
+
+Either way, your worlds are not in the app: they are in your data folder, and an update never replaces them.
 
 | System | Your data folder |
 | --- | --- |
@@ -67,7 +71,9 @@ Install the new version over the old one, the same way. Your worlds are not in t
 | macOS | `~/Library/Application Support/app.worldkeeper.desktop/` |
 | Linux | `~/.local/share/app.worldkeeper.desktop/` |
 
-- The app checks once a day whether a newer version exists and shows a note when one does (**Settings → Updates**; you can turn the check off). It never downloads or installs anything by itself.
+- The app checks once a day whether a newer version exists and shows a note when one does (**Settings → Updates**; you can turn the check off). It never downloads or installs anything until you choose **Update and restart**.
+- An update is only installed if it carries this project's signature. A file that was changed on the way, or that came from anywhere else, is refused and nothing is installed.
+- If the table is open, your players are cut off while the app restarts. Update between sessions.
 - When a new version needs to change how a library is stored, it makes a backup of that library first. See [Updating the app](DATA.md#updating-the-app).
 - To go back to an older version, install it over the new one. A library the newer version has already updated won't open in the older one; restore the backup made before the update (**Library → Backups**, the one marked "before an update") from the older version.
 

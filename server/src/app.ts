@@ -1,6 +1,5 @@
 import express, { type NextFunction, type Request, type Response } from 'express';
 import fs from 'node:fs';
-import path from 'node:path';
 import { ZodError } from 'zod';
 import type { AppContext } from './context.js';
 import { HttpError } from './lib/errors.js';
@@ -90,7 +89,9 @@ export function createApp(ctx: AppContext, opts: { staticDir?: string; /** Stand
       next();
     });
     app.use(express.static(opts.staticDir, { index: false }));
-    app.get(/^(?!\/api\/).*/, (_req, res) => res.sendFile(path.join(opts.staticDir!, 'index.html')));
+    // Sent by its name inside the folder, not by its full path: a file whose path has a hidden folder in it is refused
+    // otherwise, and the app's own folder often is under one (an AppImage runs from /tmp/.mount_…).
+    app.get(/^(?!\/api\/).*/, (_req, res) => res.sendFile('index.html', { root: opts.staticDir! }));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

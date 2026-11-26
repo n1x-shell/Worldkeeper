@@ -2,7 +2,7 @@ import { Router } from 'express';
 import type { AppContext } from '../context.js';
 import { h } from './util.js';
 import { badRequest } from '../lib/errors.js';
-import { checkForUpdate, setUpdateCheck, updateStatus } from '../updateCheck.js';
+import { checkForUpdate, clearInstallStatus, setUpdateCheck, updateStatus } from '../updateCheck.js';
 import { closeTable, openTable, tableStatus } from '../table.js';
 import { closeRemote, openRemote, remoteStatus, setPassword, signEveryoneOut } from '../remote.js';
 
@@ -59,6 +59,11 @@ export function tableRoutes(ctx: AppContext) {
   r.post(
     '/update/check',
     h(() => checkForUpdate(ctx.paths, { force: true })),
+  );
+  // A failed "Update and restart" has been read: forget it.
+  r.post(
+    '/update/dismiss',
+    h(() => (clearInstallStatus(ctx.paths), updateStatus(ctx.paths))),
   );
   return r;
 }
