@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-26 · v0.9.19_
+_Last updated: 2026-11-26 · v0.9.20_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,33 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.20: tested like a product
+
+docs/BETA_PLAN.md A4. CI drove only the first-run wizard; the table, the built desktop app and a large library had never been tried automatically.
+
+**Three new checks**
+
+- **A session at the table** (`scripts/e2e-table.mjs`, `npm run e2e:table`, in CI's `e2e` job): the GM's app and two players' phones in real browsers, on an empty data folder. The table is unreachable until opened and again once closed; the table's server refuses the GM's API; a revealed record reaches a phone with its revealed section only (an unrevealed section stays hidden, and so does a section headed "GM notes" even when it is ticked by mistake); every answer the table's server gave a phone is searched for the secret texts; hit points follow both ways without a reload; a player's roll shows on the GM's screen and the other phone, and the GM's hidden roll doesn't. Checked that it fails when the unrevealed section is revealed.
+- **The built desktop app** (`scripts/desktop-smoke.mjs`, `npm run desktop:smoke`, in `.github/workflows/desktop.yml` before the upload): the real app on an empty data folder. Its server starts; its window loads the app (the server logs "the app's page has loaded" at the first `/api/meta`, which only the page's own script asks for: `notePageLoaded` in `server/src/log.ts`); pages, scripts and the API answer; a record round-trips and a backup is made; adding the Oros worldbook brings its records; nothing is logged as an error; closing it stops its server. Linux: the installed `.deb` and the AppImage. macOS: the program in the `.app`. Windows: the app as the NSIS installer installs it.
+- **A large library** (`tests/largeLibrary.test.ts`): 10,000 linked records, a third revealed, with a limit on each thing a GM does often. Timings on this machine: the list of every record 115 ms, a search 16 ms, a record's page 5 ms, a save 6 ms, the graph 139 ms, the consistency check 127 ms, a backup 495 ms, a JSON export 613 ms, the players' list 248 ms.
+
+**What the large library found: every save read every other record**
+
+Making 10,000 records took more than ten minutes, because each save took longer than the last (37 ms at 3,000 records; it would have been about 125 ms at 10,000). Four things each read the whole library on every save:
+
+- **The two indexes of names** (`loadMentionIndex` for `@[Name]`, `loadNameIndex` for names written plainly) were built from every record each time, the second with one search pattern of every name. They are now kept for the connection and brought up to date (`server/src/repo/mentions.ts`): temporary triggers on `entities` note the IDs that changed, so no code path can forget to say; another connection's change shows in `data_version` and rebuilds them; and a rolled-back transaction is noticed by marks kept in a temporary table that the rollback empties. `MentionIndex` gained `add`/`remove`; `NameStore` (`server/src/repo/nameMatch.ts`) replaces the built-per-call index and finds names in prose by how each word starts instead of one pattern of every name.
+- **The search index**: replacing a record's entry meant finding it by reading every entry (FTS5 can't look one up by its record). `server/src/repo/search.ts` keeps a temporary table of (kind, ref) to entry.
+- **The next free ID** read every ID of the type. It now asks the ID index for the highest (and, as a side effect, no longer offers `NPC-10000` for ever once 9,999 of a type exist).
+- **Deleting a record's field-derived links** read every link; it now uses the indexes on the two ends.
+
+After: 10,000 records in 14 s, and a save costs the same at 10,000 records as at 10.
+
+**Why this is safe** (a stale name index would link records wrongly without saying so): `tests/keptIndexes.test.ts` holds the kept indexes to freshly built ones (`buildIndexes`) through 400 random changes of every kind, made through the functions and straight into the database, with rolled-back and nested transactions; a first look inside a rolled-back transaction; a change through a second connection; the new prose scan against the old pattern on 3,000 generated texts; the search entries through edits, a rollback, a rebuild and a stray duplicate; and the next ID past 9,999. Separately, the new scan was compared with the old on every line of the Oros world (11,187 lines, 4,500 names found): no difference.
+
+**Not fixed, noted:** `db.prepare` is called afresh for every statement (about a fifth of a save's time is compiling SQL); a statement cache would help everything a little. After a very large import the server pauses for a moment while Node clears up (seen as a 2.4 s pause after 10,000 saves in one unbroken run; a server answering requests between saves never builds this up). A GM app in one process and the players' server in another (`npm run start:player`) rebuild the name indexes after each other's writes (150 ms at 10,000 records); the table opened from the app shares the connection and doesn't.
+
+**Not done:** component tests of the client (the browser tests cover it end to end instead); the archive-based smoke test stays local.
 
 ## v0.9.19: when something goes wrong
 
