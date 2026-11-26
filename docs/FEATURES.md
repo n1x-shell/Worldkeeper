@@ -280,6 +280,10 @@ One installation holds several **libraries**. Each is a world (or set of worlds)
 - Backups and restores are each library's own. **Back up everything** keeps every library and your books' rules and packs in one file; **Open everything from a file** adds them to another installation. The table server serves the library that's open.
 - **The desktop app** opens the last library; with several, its start asks which.
 
+## Updates
+
+Once a day the app asks GitHub for this project's list of releases, and shows a note in the top bar and in **Settings → Updates** when a newer version exists, with a link to its page. It sends nothing about you, your computer or your worlds, and never downloads or installs anything. Turn it off in Settings; **Check now** still works when it is off. See [Installing The Worldkeeper](INSTALL.md) for how to update.
+
 ## The GM app on another device
 
 The GM app normally answers only on the computer it runs on. To run a session from a tablet at the table, or prepare from a laptop in another room, open **Settings → The GM app on another device** on that computer:

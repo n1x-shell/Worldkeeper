@@ -46,6 +46,7 @@ Use a supported Rust toolchain and your OS-specific dependencies for desktop pac
 | `PORT` | `4310` DM / `4320` player | Listening port |
 | `HOST` | `127.0.0.1` DM / `0.0.0.0` player | Network binding |
 | `WORLDKEEPER_REMOTE_PORT` | `4330` | The GM app's password-protected network listener (opened from Settings) |
+| `WORLDKEEPER_NO_UPDATE_CHECK` | unset | Set to `1` to leave out the daily check for a newer version |
 | `WORLDKEEPER_MODE` | `dm` | Use `player` for player-only server |
 | `WORLDKEEPER_STATIC_DIR` | `./dist` | Built DM client |
 | `WORLDKEEPER_PLAYER_SITE_DIR` | `./dist-player` | Built player handbook |

@@ -11,6 +11,7 @@ import { createApp } from './app.js';
 import { createBackup, listBackups } from './backup/backup.js';
 import { closeTable, configureTable } from './table.js';
 import { closeRemote, configureRemote } from './remote.js';
+import { scheduleUpdateChecks } from './updateCheck.js';
 
 const mode = process.env.WORLDKEEPER_MODE === 'player' ? 'player' : 'dm';
 const port = Number(process.env.PORT ?? (mode === 'player' ? 4320 : 4310));
@@ -80,6 +81,9 @@ function dailyBackup() {
 }
 dailyBackup();
 setInterval(dailyBackup, 3600 * 1000).unref();
+
+// Once a day, ask whether a newer version exists (switchable off in Settings; nothing about the GM is sent).
+if (mode === 'dm' && process.env.WORLDKEEPER_NO_UPDATE_CHECK !== '1') scheduleUpdateChecks(() => ctx?.paths ?? null);
 
 // Whichever app is current answers: the real one, or the recovery page until a library opens.
 http

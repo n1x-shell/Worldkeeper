@@ -18,7 +18,7 @@ The Worldkeeper (Tauri window)
   4. shows a readable error with the log location if the server fails to start;
   5. stops the server cleanly (SIGTERM, then a forced stop) when you quit.
 - No Tauri commands are exposed to the page, so the page has no native access beyond a normal browser tab.
-- Everything works offline. Nothing is sent anywhere.
+- Everything works offline. The one request the app makes by itself is a daily check of this project's list of releases on GitHub for a newer version (**Settings → Updates**, switchable off); it sends nothing about you or your worlds. Set `WORLDKEEPER_NO_UPDATE_CHECK=1` to leave the check out altogether.
 
 ### Your table
 
@@ -106,6 +106,8 @@ Installers are about 50 MB (Linux `.deb` and `.rpm` were measured; other formats
 A later version could shrink this with Node's single-executable feature once it supports native modules cleanly.
 
 ### Signing
+
+The released installers are unsigned (the owner's decision, `docs/BETA_PLAN.md` §5); [Installing The Worldkeeper](INSTALL.md) tells GMs how to open them.
 
 Unsigned builds work, but:
 - **macOS** Gatekeeper and **Windows** SmartScreen will show warnings.

@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-26 · v0.9.16_
+_Last updated: 2026-11-26 · v0.9.17_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,18 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.17: the update check, and installing an unsigned app
+
+`docs/BETA_PLAN.md` A2, as the owner decided: no paid signing; a daily check for a newer version, on by default.
+
+- **`server/src/updateCheck.ts`:** `checkForUpdate` asks GitHub's list of this project's releases (`RELEASES_API`, the list and not `…/releases/latest`: every release so far is marked pre-release on GitHub, and that address leaves those out and answers 404), takes the highest version among the published ones (`parseVersion`, `isNewer`; a draft is skipped), and keeps the answer in `shared/update.json` for the installation. At most once a day unless `force`; never when switched off unless `force`; a failure keeps what was known and records why. The request carries `Accept` and `User-Agent: The-Worldkeeper/<version>` and nothing else. A release's link is only kept if it is under this project's releases page.
+- **When:** `scheduleUpdateChecks` in `server/src/index.ts`: 20 seconds after the GM's server starts, then every six hours (the once-a-day rule decides). Not on the table server, not in tests, and not at all with `WORLDKEEPER_NO_UPDATE_CHECK=1`. Opening the app's pages asks GitHub nothing.
+- **Routes:** `GET /api/update`, `PUT /api/update` (`{ enabled }`), `POST /api/update/check` ("Check now").
+- **Client:** `client/src/components/Updates.tsx`: `UpdatesPanel` in Settings (the switch, Check now, what is known, what the check sends) and `UpdateIndicator` in the top bar, shown only when a newer version exists.
+- **`docs/INSTALL.md`:** which file to download for each system, opening the unsigned app on Windows and macOS, checking a download against the SHA-256 GitHub shows for each file, updating, going back, removing. README points to it.
+- **Not done:** the install steps were written from the systems' standard behaviour and the names of the real release files; they have not been tried on a Mac or a Windows PC. No installer for Intel Macs. The app doesn't download or install updates itself.
+- **Tests:** `tests/updateCheck.test.ts` (GitHub's answer is given to it; no test uses the network).
 
 ## v0.9.16: the bundled world is Oros
 

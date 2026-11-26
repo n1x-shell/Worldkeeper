@@ -20,7 +20,7 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | B7 Bulk tools: tags, many records at once, merging, find-and-replace | v0.9.13 | Done |
 | B8 The GM on a tablet | v0.9.14 | Done (over plain HTTP, for the GM's own network) |
 | A1 Safe upgrades | v0.9.15 | Done, except a test on library files kept from real old versions |
-| A2 Installers: an update check (on, switchable off) and clear instructions for unsigned installers | | To do (decided: no paid signing) |
+| A2 Installers: an update check (on, switchable off) and clear instructions for unsigned installers | v0.9.17 | Done; the install steps are written from the systems' standard behaviour, not tried on a Mac or a Windows PC |
 | A3 to A7 | | To do |
 | C8 A location generator: ink-style maps of places from their records | | To do, before the beta (decided) |
 | The bundled world's own name: Oros | v0.9.16 | Done |
@@ -51,7 +51,7 @@ Each was checked in the code, not assumed. "None" means no trace of it.
 | # | Gap | What I found |
 | --- | --- | --- |
 | A1 | **Safe upgrades** | **Done in v0.9.15.** Found: no automatic backup before an update changes a library's database, and no test that opens a library made by an older version. Agreed as fine before release; a beta can't lose a campaign to an update. |
-| A2 | **Installers people can trust** | Unsigned: macOS and Windows warn or block. No update check: a GM never learns a fix exists. 130 MB. The Windows build broke for two releases without anyone noticing until a download was missing. |
+| A2 | **Installers people can trust** | **Done in v0.9.17 as decided** (unsigned with instructions; a daily update check). Found: unsigned: macOS and Windows warn or block. No update check: a GM never learns a fix exists. 130 MB. The Windows build broke for two releases without anyone noticing until a download was missing. |
 | A3 | **When something goes wrong** | No log file, no "copy details for a bug report", no issue templates. A beta lives on bug reports. |
 | A4 | **Tested like a product** | CI drives only the first-run wizard. The full smoke test runs by hand; the table server, the installed desktop app and a large library (10,000 records) are never tested automatically. No client-side tests. |
 | A5 | **Help inside the app** | The manual is Markdown in the repository. In the app: a first-run wizard, a Getting started card, and nothing after. |

@@ -124,7 +124,7 @@ See the [complete feature reference](docs/FEATURES.md).
 
 ### Desktop application
 
-Worldkeeper has a Tauri desktop build path for Linux, macOS and Windows. **Download an installer only for a platform that has a tested release artifact.** See [Releases](https://github.com/n1x-shell/Worldkeeper/releases) and [desktop build notes](docs/DESKTOP.md). If no suitable installer is available, build from source.
+Download the installer for Windows, macOS (Apple silicon) or Linux from [Releases](https://github.com/n1x-shell/Worldkeeper/releases). The installers aren't signed, so Windows and macOS warn the first time you open the app: [Installing The Worldkeeper](docs/INSTALL.md) has the steps for each system, how to check a download, and how updating works. If there is no installer for your computer, run it from source. Developers: see the [desktop build notes](docs/DESKTOP.md).
 
 ### Run from source
 
@@ -199,6 +199,7 @@ Backups are generated on a schedule while the server is running and before sensi
 
 | Guide | Contents |
 | --- | --- |
+| [Installing](docs/INSTALL.md) | The installers, opening an unsigned app on Windows and macOS, checking a download, updating |
 | [Quick Start](docs/QUICKSTART.md) | Start your own world or Oros, and prepare the first session |
 | [Features](docs/FEATURES.md) | Full encyclopedia, atlas, campaign and table-side feature reference |
 | [Rules packs](docs/RULES_PACKS.md) | The SRD, importing your own books from 5etools, and writing packs by hand |
