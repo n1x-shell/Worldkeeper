@@ -200,6 +200,7 @@ Backups are generated on a schedule while the server is running and before sensi
 | Guide | Contents |
 | --- | --- |
 | [Installing](docs/INSTALL.md) | The installers, opening an unsigned app on Windows and macOS, checking a download, updating |
+| [When something goes wrong](docs/TROUBLESHOOTING.md) | Reporting a bug, where the log is, a library that won't open, getting your world back from a backup |
 | [Quick Start](docs/QUICKSTART.md) | Start your own world or Oros, and prepare the first session |
 | [Features](docs/FEATURES.md) | Full encyclopedia, atlas, campaign and table-side feature reference |
 | [Rules packs](docs/RULES_PACKS.md) | The SRD, importing your own books from 5etools, and writing packs by hand |

@@ -71,22 +71,30 @@ export function SaveStatus({ state, error }: { state: SaveState; error?: string 
   );
 }
 
-export class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+/**
+ * A screen that broke shows this instead of a blank page. `onError` hears about it (the GM app writes it into the log);
+ * `actions` are shown beside "Try again" (the GM app offers "Copy details for a bug report").
+ */
+export class ErrorBoundary extends Component<{ children: ReactNode; onError?: (error: Error, componentStack: string) => void; actions?: (error: Error) => ReactNode }, { error: Error | null }> {
   state = { error: null as Error | null };
   static getDerivedStateFromError(error: Error) {
     return { error };
   }
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error(error, info);
+    this.props.onError?.(error, info.componentStack ?? '');
   }
   render() {
     if (this.state.error)
       return (
-        <div className="p-6 space-y-3">
+        <div className="p-6 space-y-3" data-testid="screen-error">
           <ErrorBox error={`This screen hit an error: ${this.state.error.message}. Your saved data is safe.`} />
-          <button className="btn" onClick={() => this.setState({ error: null })}>
-            Try again
-          </button>
+          <div className="flex flex-wrap items-center gap-3">
+            <button className="btn" onClick={() => this.setState({ error: null })}>
+              Try again
+            </button>
+            {this.props.actions?.(this.state.error)}
+          </div>
         </div>
       );
     return this.props.children;

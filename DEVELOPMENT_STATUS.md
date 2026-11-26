@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-26 · v0.9.18_
+_Last updated: 2026-11-26 · v0.9.19_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,23 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.19: when something goes wrong
+
+docs/BETA_PLAN.md A3. Until now the server's words went to a terminal a desktop GM never sees, an unexpected error left nothing behind, and there was nothing to put in a bug report and nowhere obvious to send one.
+
+- **The log** (`server/src/log.ts`): `startLog` (called first thing in `server/src/index.ts`) writes `logs/worldkeeper.log` in the data folder and makes everything the server already says through `console` go there too. `logError(doing, err)` writes an error with its stack; `logInfo` writes only to the file (silent in tests). The file is rotated at about 1 MB with one older file kept. In the desktop app the server writes only to this file, so the shell's `logs/server.log` (which captures the server's output) is left for what happens before the log starts; the shell now sets a `server.log` over 1 MB aside at launch (`set_aside_if_large`).
+- **What is logged:** the start (version, system), the library that opened and any update of it (with the name of the copy made first), an automatic backup or its failure, the table and the network door opening, stopping, every request that failed unexpectedly (the method and path only: `POST /api/entities failed`, never the body or the query), anything nothing caught (`uncaughtExceptionMonitor`), and what the page ran into.
+- **Errors in the page** (`client/src/lib/report.ts`): `watchForErrors` (window errors and unhandled rejections) and the error boundaries send the message, the stack and the screen's path to `POST /api/log/client`, which cuts them to size and accepts twenty a minute (`clientReport`). An `ApiError` is not reported from the page: the server already logged it if it was unexpected.
+- **Copy details for a bug report** (`server/src/diagnostics.ts`, `GET /api/diagnostics`): the version, the system, the library's schema and sizes as numbers, which parts are on, the update check's state and the newest 150 log lines, as text. No library name, record or campaign is in it; the bundled worldbook is named and a GM's own are only counted; `scrub` replaces the home folder with `~`. Nothing is sent: the GM copies and pastes.
+- **Where it is offered:** **Settings → Help and bug reports** (`client/src/components/Help.tsx`: the button, "See what is copied", a link to the new-issue page, and "Show the log files" in the desktop app); on a screen that broke; and on the page shown when no library can be opened (`server/src/recovery.ts`), which has no app to copy from, so the details are on the page.
+- **Found while trying it:** an error outside any one screen (in the frame every screen sits in) left a blank window, because only the screens had an error boundary. `AppSafetyNet` in `client/src/main.tsx` now catches those and shows the error with "Try again", "Go to the start page", "Copy details" and "Report a bug".
+- **Issue forms:** `.github/ISSUE_TEMPLATE/` has "Something went wrong" (asks for the copied details, which app, and whether data is affected; says reports are public) and "An idea".
+- **Docs:** `docs/TROUBLESHOOTING.md` (reporting, the log and where it is, the app not starting, a library that won't open, getting a world back from a backup, a failed update, players who can't reach the table).
+- **Tests:** `tests/log.test.ts` (12): the file's format, rotation and tail; errors logged with the kind of request and not what was sent; the page's reports cut and limited; the details hold no names and no home folder; the recovery page carries them; the log is not in "back up everything"; the issue form names the button as the app does. `cargo test` covers the shell's log trim.
+- **Tried in a browser** on a scratch library: the Help panel, the copied text read back from the clipboard, a single broken screen (the menu stays), the whole frame broken (no blank window), and the recovery page on a deliberately damaged database.
+- **Not tried:** "Show the log files" (desktop app only: it uses the same `openFolder` as "Show the library's folder"); the desktop build writing only to `worldkeeper.log`; the issue forms as GitHub renders them (they are checked as text, and appear only once this is on the default branch).
+- **Left out:** no "send report" button (it would need somewhere to send to and would be the app's first upload of anything); the details are text only, with no file to attach.
 
 ## v0.9.18: the app updates itself
 

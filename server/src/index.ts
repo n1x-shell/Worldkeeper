@@ -12,11 +12,19 @@ import { createBackup, listBackups } from './backup/backup.js';
 import { closeTable, configureTable } from './table.js';
 import { closeRemote, configureRemote } from './remote.js';
 import { scheduleUpdateChecks } from './updateCheck.js';
+import { logError, startLog } from './log.js';
+import { diagnosticsText, systemLines } from './diagnostics.js';
 
 const mode = process.env.WORLDKEEPER_MODE === 'player' ? 'player' : 'dm';
 const port = Number(process.env.PORT ?? (mode === 'player' ? 4320 : 4310));
 // DM server is local-only by default. The player server may be exposed on the LAN deliberately.
 const host = process.env.HOST ?? (mode === 'player' ? '0.0.0.0' : '127.0.0.1');
+
+// The log file (logs/ in the data folder): from here on, what the server says and every unexpected error is kept.
+startLog(defaultRoot(), mode === 'player' ? 'table-server.log' : 'worldkeeper.log');
+console.log(`[worldkeeper] starting (${mode === 'player' ? 'table server' : 'GM app'}): ${systemLines().join(' · ')}`);
+// Something nothing caught: logged before the server stops, so the reason isn't lost with the window.
+process.on('uncaughtExceptionMonitor', (err, origin) => logError(`the server stopped on an error nothing caught (${origin})`, err));
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 // The desktop app passes the bundled client location; otherwise use the repository's build output.
@@ -47,7 +55,7 @@ function boot(libraryId?: string): boolean {
     failure = null;
     return true;
   } catch (error) {
-    console.error('[worldkeeper] the library could not be opened:', error);
+    logError(`the library ${paths?.libraryId ?? ''} could not be opened`, error);
     // The table server has nothing to say to players without a library: it stops, as before.
     if (mode === 'player') throw error;
     failure = { error, paths };
@@ -61,6 +69,7 @@ if (!boot())
       rootDir: failure?.paths?.rootDir ?? defaultRoot(),
       library: failure?.paths ? { id: failure.paths.libraryId, name: libraryEntry(failure.paths.rootDir, failure.paths.libraryId).name, dir: failure.paths.dataDir, backupsDir: failure.paths.backupsDir } : null,
       version: APP_VERSION,
+      details: diagnosticsText({ rootDir: failure?.paths?.rootDir ?? defaultRoot(), lines: 60 }),
     }),
     boot,
   );
@@ -76,7 +85,7 @@ function dailyBackup() {
       console.log(`[worldkeeper] automatic backup ${b.file}`);
     }
   } catch (e) {
-    console.error('[worldkeeper] automatic backup failed', e);
+    logError('the automatic backup failed', e);
   }
 }
 dailyBackup();
@@ -96,6 +105,7 @@ http
     );
   });
 function shutdown() {
+  console.log('[worldkeeper] stopping');
   void closeTable();
   void closeRemote();
   try {

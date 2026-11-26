@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { ZodError } from 'zod';
 import type { AppContext } from './context.js';
 import { HttpError } from './lib/errors.js';
+import { logError } from './log.js';
 import { NewerLibraryError, UpgradeError } from './db/migrations.js';
 import { VersionConflictError } from './repo/entities.js';
 import { worldRoutes } from './routes/world.js';
@@ -95,7 +96,7 @@ export function createApp(ctx: AppContext, opts: { staticDir?: string; /** Stand
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
     if (err instanceof VersionConflictError) return res.status(409).json({ error: err.message, current: err.current });
     if (err instanceof ZodError) return res.status(400).json({ error: 'Invalid data', details: err.issues });
     if (err instanceof HttpError) return res.status(err.status).json({ error: err.message, details: err.details });
@@ -104,7 +105,8 @@ export function createApp(ctx: AppContext, opts: { staticDir?: string; /** Stand
     const e = err as { type?: string; message?: string; code?: string };
     if (e?.type === 'entity.parse.failed') return res.status(400).json({ error: 'Malformed JSON' });
     if (e?.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ error: 'File is too large' });
-    console.error(err);
+    // Unexpected: into the log, with the kind of request it was (never what was sent).
+    logError(`${req.method} ${req.path} failed`, err);
     return res.status(500).json({ error: e?.message ?? 'Unexpected server error' });
   });
   return app;

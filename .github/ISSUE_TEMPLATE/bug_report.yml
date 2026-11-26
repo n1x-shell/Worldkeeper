@@ -1,0 +1,59 @@
+name: Something went wrong
+description: The app did something it shouldn't, or didn't do something it should.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for taking the time. Reports here are **public**: please don't attach a library, a backup or anything from your world you wouldn't want others to read.
+
+        If your world's data looks lost or damaged, stop and don't keep working in it. Your library's `backups` folder holds copies (Library → Backups in the app), and the app makes one before every update.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you saw, and what you expected instead. A screenshot helps.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: What were you doing?
+      description: The steps that lead to it, as well as you remember them. "It happens every time" or "it happened once" is useful too.
+      placeholder: |
+        1. Opened a campaign
+        2. Pressed ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details from the app
+      description: In the app, go to **Settings → Help and bug reports** and press **Copy details for a bug report**, then paste here. If a screen showed "This screen hit an error", it has the same button. The details hold versions, sizes and what the app logged; nothing from your world. You can read them before sending.
+      render: text
+    validations:
+      required: false
+  - type: dropdown
+    id: how
+    attributes:
+      label: Which app?
+      options:
+        - Windows (installer)
+        - macOS (.dmg)
+        - Linux (AppImage)
+        - Linux (.deb or .rpm)
+        - Run from the source code
+        - The players' handbook or the table, in a browser
+    validations:
+      required: true
+  - type: dropdown
+    id: data
+    attributes:
+      label: Is your world's data affected?
+      options:
+        - "No"
+        - I'm not sure
+        - Yes, something is missing or wrong
+    validations:
+      required: true

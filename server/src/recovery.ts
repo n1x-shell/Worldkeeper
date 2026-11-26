@@ -6,6 +6,9 @@
 import express from 'express';
 import { NewerLibraryError, UpgradeError } from './db/migrations.js';
 import { readIndex } from './libraries.js';
+import { scrub } from './log.js';
+
+const ISSUES = 'https://github.com/n1x-shell/Worldkeeper/issues';
 
 const esc = (s: unknown) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
@@ -16,6 +19,8 @@ export interface RecoveryInfo {
   /** The library that couldn't be opened, and where its files are. */
   library: { id: string; name: string; dir: string; backupsDir: string } | null;
   version: string;
+  /** The details for a bug report (server/src/diagnostics.ts): the system and what the log says. */
+  details?: string;
 }
 
 /** What to tell the GM, in plain words. */
@@ -44,7 +49,11 @@ export function describeFailure(error: unknown): { title: string; what: string; 
   return {
     title: 'This library could not be opened',
     what: 'The Worldkeeper could not open the library’s files. Nothing has been changed by this attempt.',
-    todo: ['Check that the disk is not full and that no other copy of the app has it open, then try again.', 'If it still fails, restore the newest backup from the library’s backups folder, or open another library below.'],
+    todo: [
+      'Check that the disk is not full and that no other copy of the app has it open, then try again.',
+      'If it still fails, your world can be brought back from one of the library’s backups: “Getting your world back” in docs/TROUBLESHOOTING.md (on the project’s page) has the steps.',
+      'Or open another library below.',
+    ],
     backup: null,
     detail: `${e?.code ? `${e.code}: ` : ''}${e?.message ?? String(error)}`,
   };
@@ -96,7 +105,7 @@ ${i.library ? `<p><b>${esc(i.library.name)}</b></p>` : ''}
   .map((t) => `<li>${esc(t)}</li>`)
   .join('')}</ul>
 ${f.backup && i.library ? `<p>A copy from just before the update was made: <code>${esc(f.backup)}</code>, in <code>${esc(i.library.backupsDir)}</code>.</p>` : ''}
-${i.library ? `<p class="muted">The library’s files are in <code>${esc(i.library.dir)}</code>.</p>` : ''}
+${i.library ? `<p class="muted">The library’s files are in <code>${esc(i.library.dir)}</code>, and its backups in <code>${esc(i.library.backupsDir)}</code>.</p>` : ''}
 <p><form method="post" action="/recover"><button type="submit">Try again</button></form></p>
 ${
   others.length
@@ -104,7 +113,8 @@ ${
     : ''
 }
 <h2>Details, for a bug report</h2>
-<pre>${esc(`The Worldkeeper ${i.version}\n${f.title}\n${f.detail}`)}</pre>
+<p class="muted">To report this, open a new issue at <code>${esc(ISSUES)}</code> and paste what is below. It holds versions, numbers and what the app logged; nothing from your world. Read it first if you like.</p>
+<pre>${esc(scrub(`${f.title}\n${f.detail}\n\n${i.details ?? `The Worldkeeper ${i.version}`}`))}</pre>
 </main></body></html>`);
   });
   return app;

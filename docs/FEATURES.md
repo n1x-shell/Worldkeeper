@@ -286,6 +286,15 @@ Once a day the app asks GitHub for this project's list of releases, and shows a 
 
 In the desktop app, **Update and restart** does the rest: the app downloads the new version from this project's releases, checks its signature, installs it over itself and opens again. Nothing is downloaded until you choose it, your worlds are untouched, and each library is backed up before the new version changes anything in it. Run from source, or installed from a Linux `.deb` or `.rpm`, the note links to the release instead. See [Installing The Worldkeeper](INSTALL.md).
 
+## When something goes wrong
+
+- **A log on your computer.** The app writes what it does and every error it didn't expect to a small text file in your data folder (`logs/worldkeeper.log`). It records the kind of request an error happened in, never what you typed, and is not part of any backup or export.
+- **Copy details for a bug report** (**Settings → Help and bug reports**): the app's version, your system, how big the library is and what the log says, as text you can read before sending. It holds nothing from your world, and the app sends nothing itself: you paste it into the report.
+- **A screen that breaks says so**, with the same button, instead of going blank; the rest of the app keeps working.
+- **A library that can't be opened** gets a page that says what happened, that nothing was changed, and what to do, with the details on it.
+
+See [When something goes wrong](TROUBLESHOOTING.md).
+
 ## The GM app on another device
 
 The GM app normally answers only on the computer it runs on. To run a session from a tablet at the table, or prepare from a laptop in another room, open **Settings → The GM app on another device** on that computer:
