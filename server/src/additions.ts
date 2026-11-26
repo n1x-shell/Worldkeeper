@@ -185,7 +185,7 @@ export function applyPictures(db: DB, dir: string, uploadsDir: string): number {
 export function applyAdditions(db: DB, dir = DEFAULT_ADDITIONS_DIR, uploadsDir?: string, packId = 'worldkeeper') {
   const archive = archiveFiles(path.resolve(dir, '../archive'));
   const files = [...archive, ...loreFiles(dir)];
-  const plan = files.length ? buildPlan(db, files, 'The Worldkeeper world', { packId }) : null;
+  const plan = files.length ? buildPlan(db, files, 'Oros', { packId }) : null;
   // A record of the GM's own with an ID the pack also uses: the GM's is kept, and the clash is reported.
   const ownIds = new Set((db.prepare(`SELECT id FROM entities WHERE origin = 'user' AND pack_id IS NULL`).all() as { id: string }[]).map((r) => r.id));
   const clashes = (plan?.entities ?? []).filter((p) => ownIds.has(p.draft.id)).map((p) => ({ id: p.draft.id, name: p.draft.name }));

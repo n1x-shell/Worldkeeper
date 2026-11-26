@@ -2,7 +2,7 @@
 
 [← README](../README.md) · [Full Features](FEATURES.md) · [Data & Backups](DATA.md)
 
-This walkthrough takes you from a fresh install to your first tracked session, either in a world of your own or in the Worldkeeper world. Worldkeeper is local-first and does not require an account or AI service.
+This walkthrough takes you from a fresh install to your first tracked session, either in a world of your own or in Oros. Worldkeeper is local-first and does not require an account or AI service.
 
 ## 1. Install and start
 
@@ -36,10 +36,10 @@ A fresh library opens on **Start your world**. There are two ways to begin, on o
 
 The dashboard's **Getting started** card lists things to try. Open **Start Here** first. In your own world, new records are Canon at once (**Settings → Canon**).
 
-### The Worldkeeper world
+### Oros
 
-1. Choose **Play in the Worldkeeper world**.
-2. Choose **Add the Worldkeeper worldbook**. The whole world comes with the app, so there's no file to find; you'll see what came in.
+1. Choose **Play in Oros**.
+2. Choose **Add the Oros worldbook**. The whole world comes with the app, so there's no file to find; you'll see what came in.
 3. **Rules:** the setting's rules (its creatures, hazards and items) and its modules (Thinning, the Return, vaults, shards and the rest) are on; untick any you won't use.
 4. **A first campaign:** pick its starting place (Hollow Refuge, say) and add the party.
 5. **Finish:** choose **Start playing**. New records wait for you in **Canon Review**, which protects the setting's text.

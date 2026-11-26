@@ -258,7 +258,7 @@ export function DominionsPage() {
   const { data: factions } = useApi<EntitySummary[]>(setting ? '/api/entities?realm=aetheris&type=faction,cult' : null);
   if (!setting)
     return (
-      <Empty title="The dominions are the Worldkeeper world's" action={<Link className="btn" to="/browse/regions">Regions and settlements</Link>}>
+      <Empty title="The dominions belong to Oros" action={<Link className="btn" to="/browse/regions">Regions and settlements</Link>}>
         Your own world's regions and settlements are under Regions and Settlements.
       </Empty>
     );

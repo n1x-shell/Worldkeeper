@@ -834,8 +834,8 @@ export function OpenQuestionsPage() {
         note="A report only: nothing is changed. Some questions are open on purpose (the world's mysteries). Some have been answered by Worldkeeper's additions, linked here. The rest are still to do. The Undefined Lore Register lists the subjects the archive left open deliberately."
       />
       {error ? (
-        <Empty title="Open Questions come with the Worldkeeper worldbook" action={<Link className="btn" to="/worldbooks">Worldbooks</Link>}>
-          They track what the setting's archive leaves undefined. Add the Worldkeeper worldbook to this library (Library → Worldbooks) to use them.
+        <Empty title="Open Questions come with the Oros worldbook" action={<Link className="btn" to="/worldbooks">Worldbooks</Link>}>
+          They track what the setting's archive leaves undefined. Add the Oros worldbook to this library (Library → Worldbooks) to use them.
         </Empty>
       ) : !data ? (
         <Loading />

@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-26 · v0.9.15_
+_Last updated: 2026-11-26 · v0.9.16_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,17 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.16: the bundled world is Oros
+
+The owner's decision of 26 November 2026 (`docs/BETA_PLAN.md` §5): "Worldkeeper" is the app; its bundled world has a name of its own, Oros. Sections below this one were written before the rename and still say "the Worldkeeper world" or "the Worldkeeper worldbook".
+
+- **The pack** (`packs/worldkeeper/pack.json`): `name` is "Oros", and its world realm (`id: world`) is named "Oros". The pack's ID, folder and every record ID are unchanged, so nothing in an installed library moves.
+- **In a library** (`server/src/packs/registry.ts`): `syncPackDefinitions` renames the library's world realm to the pack's name only while it still has the default name "The World" (a name the GM gave it is kept); `uninstallPack` puts "The World" back if the realm still carries the pack's name; `syncInstalledPacks` updates the worldbook's stored name. Records are matched to realms by ID and by the pack's own words, never by the world realm's name, so imports are unaffected.
+- **The rules pack** is "The Oros worldbook" and its credit line "The Oros worldbook's rules (CC BY 4.0)" (`server/src/repo/settingPack.ts`, `rulesPacks.ts`); the licensor is still the Worldkeeper contributors.
+- **The lore:** `DEC-910` (the owner's decisions register) records the name, and that its origin is UNDEFINED. The archive's own text is not edited.
+- **Wording:** the first-run wizard ("Play in Oros", "Add the Oros worldbook"), empty states, README, Quick Start, Features, Worldbooks and Rules packs docs. Code comments and the plans keep the old wording.
+- **Tests:** `tests/settingPack.test.ts` and others for the names; `tests/settingPacks.test.ts` for the realm's name on install, with a GM's own name, and on uninstall.
 
 ## v0.9.15: safe upgrades
 

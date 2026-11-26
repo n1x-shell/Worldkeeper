@@ -13,6 +13,13 @@ Tags: realm/world, cat/index, status/canon, vis/gm
 ## How to read this
 Decisions the owner has made since the archive was reconciled. Where one changes something the archive says, the archive's text is left as it was and this register says which reading is current. See also Resolved by Owner [DEC-902] and the Canon Conflict Register [DEC-903].
 
+## The world is called Oros (November 2026)
+**Current reading.** The world of Aetheris and Kaelmar is called Oros. It is the name its own peoples give their world.
+
+**What it changes.** The archive calls it "the world" or "The World" throughout, and those lines stay as written: read "Oros" where they mean the world itself. The Ethereal Realm lies outside Oros, as before.
+
+**What nobody has decided.** Where the name comes from, which tongue it is from, and whether Aetheris and Kaelmar both use it in the same form: UNDEFINED.
+
 ## The Loom of Eternity shapes both continents (November 2026)
 **Current reading.** The Loom of Eternity [ETH-505] is what governs the fates of the people of Aetheris and Kaelmar alike. It shapes the peoples and the world around them. It can be tweaked, though by whom and how is a mystery. It is protected and guarded.
 

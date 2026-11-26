@@ -4,7 +4,7 @@
  *   node scripts/e2e-first-run.mjs <baseUrl> own [screenshotDir]
  *   node scripts/e2e-first-run.mjs <baseUrl> setting [screenshotDir]
  * "own" builds a world of one's own (shape, calendar, a campaign with a town and party, a map, the records that teach,
- * then removes them); "setting" adds the Worldkeeper worldbook (the whole world, with no file to choose) and starts a campaign in it.
+ * then removes them); "setting" adds the Oros worldbook (the whole world, with no file to choose) and starts a campaign in it.
  */
 import { createRequire } from 'node:module';
 const { chromium } = createRequire(import.meta.url)('playwright');
@@ -159,8 +159,8 @@ try {
     }
     step('records of one’s own open (creature, item, artifact, person, place, group); a stat block and an item’s rules are made');
   } else {
-    await page.getByRole('button', { name: /Play in the Worldkeeper world/ }).click();
-    await page.getByRole('button', { name: /Add the Worldkeeper worldbook/ }).click();
+    await page.getByRole('button', { name: /Play in Oros/ }).click();
+    await page.getByRole('button', { name: /Add the Oros worldbook/ }).click();
     await page.getByText('Added', { exact: true }).waitFor({ timeout: 180000 });
     await shot(page, '02-installed');
     await next();
@@ -183,7 +183,7 @@ try {
     if (!meta.canonReview || !mods.includes('thinning') || mods.includes('the-return')) throw new Error(`setting: canonReview ${meta.canonReview}, modules ${mods}`);
     if ((await api(`/api/campaigns/${(await api('/api/campaigns/active')).id}`)).title !== 'The Loose Thread') throw new Error('campaign');
     await shot(page, '05-dashboard');
-    step(`the Worldkeeper world: added whole (${meta.entities} records, its maps), a module unticked, a campaign started, Canon Review on`);
+    step(`Oros: added whole (${meta.entities} records, its maps), a module unticked, a campaign started, Canon Review on`);
   }
 } catch (e) {
   errors.push(`FAILED: ${e.message}`);

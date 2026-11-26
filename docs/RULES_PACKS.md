@@ -55,11 +55,11 @@ Items are found by the names people write: "Weapon, +1" finds "+1 Weapon", "Moon
 
 Magic items and spells you write yourself don't need a pack: make them in **Your Books → Your own** (or give an item record rules from its page). They are kept in the library, join the books' items and spells everywhere those are read, and travel with the library's backups and shared worldbooks. See [Features](FEATURES.md).
 
-## The Worldkeeper worldbook's rules
+## The Oros worldbook's rules
 
-A second built-in pack, **The Worldkeeper worldbook**, holds the world's own creatures and items for use in any campaign: 84 creatures and 8 hazards, and 34 items (the Aetheris and Kaelmar treasures, with their rules). Since v0.9.0 it also holds **40 species of the world's own** (`packs/worldkeeper/rules/species/`), open rules for its peoples that play as a book species, named after the world's own names (Cat-folk, Crow-folk, Taur'n, Shadowkin…), so the world is whole on the SRD alone. Each people names the book species first and the world's second ("Use the tabaxi rules. Without the book, use the cat-folk rules."): a GM who has the book gets the book's; the rest get the world's. They are open rules, so Books only sets them aside, and they go into the published handbook with the pack. It's off until you turn it on in **Settings → Rules packs**.
+A second built-in pack, **The Oros worldbook**, holds the world's own creatures and items for use in any campaign: 84 creatures and 8 hazards, and 34 items (the Aetheris and Kaelmar treasures, with their rules). Since v0.9.0 it also holds **40 species of the world's own** (`packs/worldkeeper/rules/species/`), open rules for its peoples that play as a book species, named after the world's own names (Cat-folk, Crow-folk, Taur'n, Shadowkin…), so the world is whole on the SRD alone. Each people names the book species first and the world's second ("Use the tabaxi rules. Without the book, use the cat-folk rules."): a GM who has the book gets the book's; the rest get the world's. They are open rules, so Books only sets them aside, and they go into the published handbook with the pack. It's off until you turn it on in **Settings → Rules packs**.
 
-When the **Thinning** mechanic is switched off, the few entries that use Thinning, true names or Shardscarred use standard-rules versions instead (for example, the Glass's Thinning save becomes a DC 15 Charisma save that costs a level of Exhaustion and a memory). The pack is licensed CC BY 4.0, credited "The Worldkeeper worldbook, by the Worldkeeper contributors"; see `packs/worldkeeper/rules/README.md`.
+When the **Thinning** mechanic is switched off, the few entries that use Thinning, true names or Shardscarred use standard-rules versions instead (for example, the Glass's Thinning save becomes a DC 15 Charisma save that costs a level of Exhaustion and a memory). The pack is licensed CC BY 4.0, credited "The Oros worldbook, by the Worldkeeper contributors"; see `packs/worldkeeper/rules/README.md`.
 
 ## Open content from Open5e
 
@@ -79,7 +79,7 @@ The SRD 5.2 is already built in, so it's shown but can't be ticked. Many of thes
 
 ## Books only
 
-**Settings → Rules packs → Books only** sets the open rules aside in this library, so the app uses only your books. The open rules are the built-in SRD and openly licensed packs (Open5e, or any pack whose source names CC BY, OGL, CC0 or ORC). A worldbook's own rules (the Worldkeeper world's creatures and items) are the world's, so they stay.
+**Settings → Rules packs → Books only** sets the open rules aside in this library, so the app uses only your books. The open rules are the built-in SRD and openly licensed packs (Open5e, or any pack whose source names CC BY, OGL, CC0 or ORC). A worldbook's own rules (Oros's creatures and items) are the world's, so they stay.
 
 - **It says what your books don't cover.** If your books have no classes, say, while the SRD has them, switching on tells you, and the open rules are kept for classes alone; everything else comes from your books.
 - **Nothing is switched off for good.** The pack switches below stay as they were. Turn Books only off and the open rules are back as before.

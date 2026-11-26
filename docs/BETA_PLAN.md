@@ -2,7 +2,7 @@
 
 Status: **under way**, November 2026. The audit below was made at v0.9.2.
 
-**Decided by the owner (24 November 2026):** all of this happens in v0.9.x releases, one step each, starting with section B (what a GM would expect and not find); then 1.0-BETA. The release grouping in section 4 is replaced by that order. The five decisions in section 5 were made on 26 November 2026; the bundled world's new name is the one thing still open.
+**Decided by the owner (24 November 2026):** all of this happens in v0.9.x releases, one step each, starting with section B (what a GM would expect and not find); then 1.0-BETA. The release grouping in section 4 is replaced by that order. The five decisions in section 5 were made on 26 November 2026.
 
 | Step | Release | Status |
 | --- | --- | --- |
@@ -22,10 +22,9 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | A1 Safe upgrades | v0.9.15 | Done, except a test on library files kept from real old versions |
 | A2 Installers: an update check (on, switchable off) and clear instructions for unsigned installers | | To do (decided: no paid signing) |
 | A3 to A7 | | To do |
-| C2 Play over the internet | | To do, before the beta (decided) |
 | C8 A location generator: ink-style maps of places from their records | | To do, before the beta (decided) |
-| The bundled world's own name | | Waiting for the name |
-| C4 assistant, C5 sync and co-GMs, C6 rich-text editor, C3 other systems | | After the beta (decided) |
+| The bundled world's own name: Oros | v0.9.16 | Done |
+| C2 play over the internet, C4 assistant, C5 sync and co-GMs, C6 rich-text editor, C3 other systems | | After the beta, if at all (decided) |
 
 ## 1. What "beta" should mean
 
@@ -101,8 +100,8 @@ Kept as the first proposal. The owner chose one line of v0.9.x releases instead,
 
 ## 5. Decisions (made by the owner, 26 November 2026)
 
-1. **Big bets before the beta:** play over the internet (C2), and a location generator (C8) instead of built-in battle maps (C1). The assistant, sync and co-GMs, and a rich-text editor wait until after the beta.
+1. **Big bets before the beta:** a location generator (C8) instead of built-in battle maps (C1). Play over the internet (C2) was chosen at first and then dropped the same day. It, the assistant, sync and co-GMs, and a rich-text editor wait until after the beta.
 2. **Signing:** ship unsigned, with clear instructions for opening the app on macOS and Windows. No paid certificates.
 3. **Update check:** yes. The app may ask GitHub once a day whether a newer version exists; on by default, switchable off in Settings, and it sends nothing about the GM or their world.
-4. **The name:** the app stays "The Worldkeeper". The bundled world gets a name of its own, one its people would call their world. The name is not chosen yet; candidates were drafted (the lore's own "the Broken World", "the Unbound", "the Whole"; new: "the Shardlands", "Shardfall", "the Sundered Lands", "Kaeleth", "Ethera", "Aethkael"). The pack's ID stays `worldkeeper`, so installed libraries are not affected.
+4. **The name:** the app stays "The Worldkeeper". The bundled world is called **Oros**, a name its own peoples give it (done in v0.9.16). The pack's ID stays `worldkeeper`, so installed libraries are not affected.
 5. **Game system:** D&D 2024 only for 1.0.

@@ -2,7 +2,7 @@
 
 [← README](../README.md) · [Quick Start](QUICKSTART.md) · [Full Features](FEATURES.md) · [Rules packs](RULES_PACKS.md)
 
-A **worldbook** is a folder that brings a whole world into a library: its realms, its own kinds of record and their templates, its records, maps, adventures and tables, the parts certain records play, and the optional systems (modules) it turns on. The Worldkeeper worldbook is one: everything in `packs/worldkeeper` is data the app reads, and nothing about that world is written into the app's own code. Yours works the same way.
+A **worldbook** is a folder that brings a whole world into a library: its realms, its own kinds of record and their templates, its records, maps, adventures and tables, the parts certain records play, and the optional systems (modules) it turns on. The Oros worldbook is one: everything in `packs/worldkeeper` is data the app reads, and nothing about that world is written into the app's own code. Yours works the same way.
 
 A worldbook is for a world you want to add, update and share as a whole. (Inside the app's code and files a worldbook is still called a pack: `packs/`, `pack.json`.) For a world you're writing yourself in the app, you don't need one: **Start your world** and **New** do everything here from inside the app.
 
@@ -125,7 +125,7 @@ A worldbook never holds book text: it names rules, and the app finds each name i
 - **While you write it:** put the folder in the data folder, under `shared/packs/` (run from source, that's `data/shared/packs/the-isle`, or wherever `WORLDKEEPER_DATA_DIR` points; every library sees it, and each adds it or not; with **Technical details** on, **Settings → Installation** shows the data folder). It appears in **Library → Worldbooks**. A copy there takes precedence over a bundled pack with the same id.
 - **Add to this library** brings in its realms, types, templates and roles, then its content. **Update** brings in a changed version. **Remove from this library** removes what it shipped. Each makes a backup first.
 - **What's yours stays yours.** Everything a pack ships is marked as the pack's (`pack_id`), and update and uninstall touch only that. Records the GM made, or edited, are kept. If the GM already has a record with an ID the pack uses, the update reports the clash and keeps the GM's record.
-- **Two packs side by side** work: each updates and is removed without touching the other (see `tests/settingPacks.test.ts`, which adds a small test worldbook beside the Worldkeeper worldbook).
+- **Two packs side by side** work: each updates and is removed without touching the other (see `tests/settingPacks.test.ts`, which adds a small test worldbook beside the Oros worldbook).
 - New records in a pack's world go through **Canon Review** when the GM chooses so (**Settings → Canon**), which protects your text.
 
 ## pack.json

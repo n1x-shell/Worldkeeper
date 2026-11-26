@@ -1,6 +1,6 @@
 # Worldkeeper Screenshots
 
-Screenshots of The Worldkeeper, a local-first worldbuilding encyclopedia and D&D 5e (2024) campaign manager, used in the main README. They show the Worldkeeper world and a sample campaign, _The Loose Thread_, at 1440 × 900 (and an iPhone 13 for the phone views).
+Screenshots of The Worldkeeper, a local-first worldbuilding encyclopedia and D&D 5e (2024) campaign manager, used in the main README. They show Oros and a sample campaign, _The Loose Thread_, at 1440 × 900 (and an iPhone 13 for the phone views).
 
 | File                                                 | Shows                                                        |
 | ---------------------------------------------------- | ------------------------------------------------------------ |
@@ -18,7 +18,7 @@ Screenshots of The Worldkeeper, a local-first worldbuilding encyclopedia and D&D
 | `reveal-per-campaign.jpg`                            | A record's Player view, revealing to one campaign            |
 | `handbook-address.jpg`                               | A campaign's handbook address and QR code                    |
 | `libraries.jpg`                                      | Library → Libraries, with the Library menu open              |
-| `worldbooks.jpg`                                     | Library → Worldbooks: the Worldkeeper world and a shared one |
+| `worldbooks.jpg`                                     | Library → Worldbooks: Oros and a shared one |
 | `share-worldbook.jpg`                                | Share as a worldbook, in Ostmark's library                   |
 
 To retake them, build a library from the world archive (the v0.6 ones add a second campaign, The Ashen Road, Hollow Refuge revealed partly to everyone and partly to one campaign, and the libraries Ostmark and a copy), Apply additions and a campaign, then screenshot those pages; the same pages are what the design overhaul (docs/DESIGN_OVERHAUL.md) was reviewed against.
