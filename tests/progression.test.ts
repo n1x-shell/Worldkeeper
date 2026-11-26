@@ -7,7 +7,7 @@ import { AppContext } from '../server/src/context.js';
 import { rulesView } from '../server/src/repo/rulesPacks.js';
 import { exportCampaign, importCampaign } from '../server/src/backup/exporter.js';
 import { levelForXp, pendingLevels, readyToLevel, xpForNext } from '../shared/progression.js';
-import { gainSummary, levelGain, takeLevel } from '../client/src/player/sheet/levelUp.js';
+import { gainSummary, levelGain, takeLevel } from '../client/src/player/sheet/levelUpRules.js';
 import { hitPointsFor } from '../shared/rules2024.js';
 import type { SheetChar } from '../shared/sheet.js';
 

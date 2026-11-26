@@ -10,7 +10,7 @@ import { ABILITY_NAMES } from '@shared/rules2024';
 import { pendingLevels } from '@shared/progression';
 import { Modal } from '../../components/ui/overlays';
 import { loadRulesText, useLoaded } from './options';
-import { gainSummary, levelGain, takeLevel } from './levelUp';
+import { gainSummary, levelGain, takeLevel } from './levelUpRules';
 
 export function LevelUpBanner({ value, onChange, speciesRules }: { value: SheetChar; onChange: (v: SheetChar) => void; speciesRules: string | null }) {
   const pending = pendingLevels(value.level, value.sheet.builtLevel);
