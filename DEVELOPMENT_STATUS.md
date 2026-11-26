@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-26 · v0.9.22_
+_Last updated: 2026-11-26 · v0.9.23_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,26 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.23: security, and publishing by GitHub's rules
+
+docs/BETA_PLAN.md A7.
+
+**Found: any website open in the GM's browser could reach the GM's server.** It asks for no password because it answers only on the GM's own computer, but a browser on that computer carries requests from any page. Shown against a running copy before the fix: a request under another name (`Host: evil.example`) got every record back (so a site that points a name at 127.0.0.1 after loading, "DNS rebinding", could read the library); a plain cross-site POST opened the table to the network; and a cross-site file upload reached the restore-a-backup route (a browser sends those without asking). True of every version before this one; the fixed port the desktop app took in v0.9.21 made it easier to aim at.
+
+- **The guard** (`server/src/guard.ts`, first thing in `createApp` and in the recovery app, so on the GM's server, the table and the network listener): (1) the `Host` asked for must be an IP address, `localhost`, a single-label name, or one ending `.local`, `.lan`, `.home.arpa` and the like, or be listed in `WORLDKEEPER_ALLOWED_HOSTS`; (2) a request that is not GET, HEAD or OPTIONS must not say it comes from elsewhere (`Origin` equal to `Host`, or `Sec-Fetch-Site` of `same-origin` or `none`; a request with neither is not from a browser and passes). Every answer carries `Cross-Origin-Resource-Policy: same-origin`.
+- **The desktop window** (`may_show` in `src-tauri/src/lib.rs`): navigation is allowed only to the app's own server and the shell's start page.
+- **Reviewed and left as they are:** uploads (sniffed, SVG refused, strict names), archives (every path checked, nothing unpacked as it stands), the page's content security policy, secrets (owner-only file outside the library), the table's codes (40 bits, addresses not passwords: documented).
+- **Tests:** `tests/guard.test.ts` (10): the two rules; the three attacks above refused with nothing changed; the app's own pages and scripts still served; the table and the recovery page held to the same; the guard is first in each app. `scripts/e2e-table.mjs` now has a second website on the same computer, in a real browser, try to open the table and upload a backup; checked that it fails with the guard taken out ("A page on another site opened the table to the network") and passes with it in. (A first try used a page with no address of its own, which the browser stopped before it could ask: some browsers add protection of their own here, but it differs between them and is not what the app relies on.) `cargo test` covers `may_show`.
+
+**Publishing had only ever met a stand-in for GitHub.** GitHub's documentation (read for this step; the stand-in in `tests/publish.test.ts` now behaves as it says) showed three things the publisher did not handle:
+
+- **An empty repository** ("You are unable to create new references for empty repositories"), which is what a GM following the guide makes. The publisher now starts it with a README through the Contents API, then publishes as before.
+- **"No more than 80 content-generating requests per minute and no more than 500 per hour."** A handbook is 72 files of the app before any picture, each sent by itself. Text files now go inside the tree request (`content`), in batches of at most 80 files and 900 kB, each tree built on the last; only pictures, fonts and files over 200 kB are sent one by one, a second apart when there are more than forty. If GitHub refuses text in a tree, those files fall back to being sent singly.
+- **Being told to slow down** (403 or 429 with `retry-after` or `x-ratelimit-reset`): it waits as long as asked (a minute if not told), up to four times and five minutes each, then says when to publish again.
+- Also: each request has a two-minute limit; a token without the right permission is told which one, in the words GitHub's settings use.
+
+**The one thing not done: none of this has run against GitHub itself.** This session has no way to (it needs the owner's token and a repository of theirs). `npm run publish:check -- owner/repo` (`scripts/publish-check.ts`) does it in a minute: four test files to a branch of its own, read back and compared byte for byte, published again, the branch deleted. The parts resting on documentation alone are: that the Contents API starts an empty repository; that a tree accepts a few hundred kB of inline text; the exact words of GitHub's empty-repository error (the publisher looks for a 409 whose message has "empty" in it).
 
 ## v0.9.22: accessibility and devices
 

@@ -71,6 +71,12 @@ A backup made before an update is marked "before an update". If you went back to
 
 The app says why in **Settings → Updates**, and nothing was installed: an update is only ever installed whole. You can try again, or download the new version from the [releases page](https://github.com/n1x-shell/Worldkeeper/releases) and install it over the old one ([Updating](INSTALL.md#updating)). You never need to uninstall first.
 
+## "This address isn't one the app answers to"
+
+The app answers when it is opened by an IP address, by `localhost`, or by a name that only your own network has (`gm-laptop`, `gm-laptop.local`). It refuses a name the wider internet could answer for, because that is how another website would reach it. If you have deliberately put the app behind a name of your own, start it with that name listed: `WORLDKEEPER_ALLOWED_HOSTS=keeper.example.org`.
+
+"That request didn't come from the app's own pages" means something other than the app's own page tried to change something. If you see it while using the app normally, please [report it](#reporting-a-bug).
+
 ## Players can't open the table
 
 - They need to be on the same network as your computer (the same Wi-Fi), and the table must be open: the campaign's overview shows its address while it is.

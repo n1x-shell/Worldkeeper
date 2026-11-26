@@ -93,14 +93,18 @@ The handbook published on GitHub Pages shows the records the archive tags for pl
 
 The static handbook is a published **snapshot**, not a continuously synchronized live application.
 
-1. Create a dedicated repository for player publication, preferably separate from your development repository.
-2. Create a [fine-grained personal access token](https://github.com/settings/personal-access-tokens/new), restricted to that repository, with only the repository permissions required by the app's publisher (the documented setup uses **Contents** and **Pages**, read/write).
+1. Create a repository on GitHub for the handbook alone. It can be empty: the app starts it.
+2. Create a [fine-grained personal access token](https://github.com/settings/personal-access-tokens/new), restricted to that repository, with two repository permissions: **Contents: Read and write** and **Pages: Read and write**.
 3. Open **Publish for Players** and enter `owner/repository` plus the token.
 4. Review the player-visible material and select **Publish to GitHub Pages**.
 5. Verify the live site in a private browsing session before distributing the link.
 6. Re-publish after subsequent sessions when you want to update the snapshot.
 
-Worldkeeper uploads the static site to `gh-pages`, enabling GitHub Pages when its permissions and repository settings allow it. Only changed files are uploaded on subsequent publishes. The application also offers **Download as ZIP** for another static host.
+Worldkeeper uploads the static site to `gh-pages` and turns GitHub Pages on for it. If GitHub won't let the token do that, the files are still uploaded and the app says how to turn Pages on by hand (the repository's **Settings → Pages**, "Deploy from a branch", `gh-pages`). Later publishes send only what changed.
+
+A first publish with many pictures takes longer: GitHub asks programs to send no more than about one a second, and the app keeps to that. If GitHub asks it to slow down further, it waits and carries on; if the wait would be long, it tells you when to publish again.
+
+**To try your repository and token without publishing anything**, from the source code: `WORLDKEEPER_GITHUB_TOKEN=<token> npm run publish:check -- owner/repository`. It publishes four test files to a branch of its own, checks GitHub holds them exactly, and deletes the branch. The application also offers **Download as ZIP** for another static host.
 
 ### Important publication risks
 

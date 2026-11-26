@@ -7,6 +7,7 @@ import express from 'express';
 import { NewerLibraryError, UpgradeError } from './db/migrations.js';
 import { readIndex } from './libraries.js';
 import { scrub } from './log.js';
+import { guard } from './guard.js';
 
 const ISSUES = 'https://github.com/n1x-shell/Worldkeeper/issues';
 
@@ -66,6 +67,7 @@ export function describeFailure(error: unknown): { title: string; what: string; 
 export function recoveryApp(info: () => RecoveryInfo, retry: (libraryId?: string) => boolean) {
   const app = express();
   app.disable('x-powered-by');
+  app.use(guard());
   app.use(express.urlencoded({ extended: false, limit: '2kb' }));
   app.get('/api/health', (_req, res) => res.status(503).json({ ok: false, recovery: true, error: describeFailure(info().error).title }));
   app.post('/recover', (req, res) => {

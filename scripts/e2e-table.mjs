@@ -13,10 +13,12 @@
  *     and the table's server refuses the GM's own API;
  *   - a character's page follows the GM's changes at once, and the GM's follows the player's;
  *   - a roll made on one phone shows on the GM's screen and on the other phone; a roll the GM keeps hidden does not.
+ *   - a page on another site, open in the GM's own browser, can't open the table or change anything.
  */
 import { createRequire } from 'node:module';
 const { chromium } = createRequire(import.meta.url)('playwright');
 import fs from 'node:fs';
+import http from 'node:http';
 import path from 'node:path';
 
 const [base = 'http://127.0.0.1:4310', shots = null] = process.argv.slice(2);
@@ -167,6 +169,30 @@ try {
   // (And what was looked through is the real thing: the revealed section came the same way.)
   if (!heard.some((h) => h.text.includes(PUBLIC_LINE))) fail('The answers looked through never held the revealed text either: the check is looking in the wrong place');
   step(`none of the ${heard.length} answers the table gave a phone held anything secret`);
+
+  // ---- A page on another site, open in the GM's own browser ----------------------------------------------------------------
+  // It may send what a browser lets any page send (a plain post, a file upload); the app does none of it (v0.9.23).
+  await call('/api/table', 'POST', { open: false });
+  // "Another site" is a real one: a second web server on this computer, on another port. (A page with no address of
+  // its own would be stopped by the browser before it could ask, which would prove nothing about the app.)
+  const otherSite = http.createServer((_q, r) => r.setHeader('content-type', 'text/html').end('<!doctype html><title>another site</title>'));
+  await new Promise((resolve) => otherSite.listen(0, '127.0.0.1', resolve));
+  const stranger = await (await browser.newContext()).newPage();
+  await stranger.goto(`http://127.0.0.1:${otherSite.address().port}/`);
+  await stranger.evaluate(async (gmApp) => {
+    const quiet = { mode: 'no-cors' };
+    await fetch(`${gmApp}/api/table`, { ...quiet, method: 'POST' }).catch(() => undefined);
+    await fetch(`${gmApp}/api/setup/skip`, { ...quiet, method: 'POST', body: '{}' }).catch(() => undefined);
+    const form = new FormData();
+    form.append('backup', new Blob(['not a backup']), 'world.wkbackup.zip');
+    await fetch(`${gmApp}/api/backups/restore-upload`, { ...quiet, method: 'POST', body: form }).catch(() => undefined);
+  }, base);
+  await stranger.close();
+  otherSite.close();
+  if ((await call('/api/table')).open) fail('A page on another site opened the table to the network');
+  if ((await reachable(`${table}/api/health`)) !== null) fail('The table answers after a page on another site asked for it to be opened');
+  await call('/api/table', 'POST', {});
+  step('a page on another site, open in the same browser, can do nothing to the app');
 
   // ---- Closing the table ------------------------------------------------------------------------------------------------
   await gm.goto(`${base}/campaign`);

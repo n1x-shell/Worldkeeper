@@ -60,6 +60,17 @@ fn can_self_update() -> bool {
     }
 }
 
+/// May the app's window go to this address? Only to the app itself: its own server on this computer, and the page
+/// the shell starts on. A link to anywhere else is opened in the system's browser by the page (it asks the server);
+/// the window itself never leaves, so no other site's page can ever run inside the app (v0.9.23).
+fn may_show(url: &Url) -> bool {
+    match url.scheme() {
+        "tauri" | "about" => true,
+        "http" | "https" => matches!(url.host_str(), Some("127.0.0.1") | Some("localhost") | Some("tauri.localhost")),
+        _ => false,
+    }
+}
+
 /// What the update is doing, for the page to show (the server reads this file; the shell has no other way to speak).
 fn write_update_status(file: &Path, state: &str, tag: &str, error: Option<&str>) {
     let status = serde_json::json!({ "state": state, "tag": tag, "error": error });
@@ -285,7 +296,8 @@ pub fn run() {
                         start_update(handle.clone(), tag, update_status.clone());
                         false
                     }
-                    None => true,
+                    // Nothing but the app's own pages is ever shown in its window.
+                    None => may_show(url),
                 })
                 .build()?;
 
@@ -335,7 +347,7 @@ pub fn run() {
 
 #[cfg(test)]
 mod tests {
-    use super::{plain_path, requested_update, set_aside_if_large, valid_tag};
+    use super::{may_show, plain_path, requested_update, set_aside_if_large, valid_tag};
     use std::path::{Path, PathBuf};
     use tauri::Url;
 
@@ -346,6 +358,17 @@ mod tests {
         }
         for bad in ["0.9.18", "v1.0", "v1.0.0.0", "v1.0.x", "v1.0.0-", "v1.0.0-beta/../x", "v1.0.0?x=1", "latest", "", "v1.0.0-beta 2", "v1.0.0/../../evil"] {
             assert!(!valid_tag(bad), "{bad}");
+        }
+    }
+
+    #[test]
+    fn the_window_only_ever_shows_the_app() {
+        let u = |s: &str| Url::parse(s).unwrap();
+        for ok in ["http://127.0.0.1:43110/", "http://127.0.0.1:51234/campaign", "http://localhost:43110/help", "tauri://localhost/index.html", "http://tauri.localhost/index.html", "about:blank"] {
+            assert!(may_show(&u(ok)), "{ok}");
+        }
+        for no in ["https://evil.example/", "http://127.0.0.1.evil.example/", "http://192.168.1.20:4320/", "file:///etc/passwd", "javascript:alert(1)", "data:text/html,<script>1</script>"] {
+            assert!(!may_show(&u(no)), "{no}");
         }
     }
 

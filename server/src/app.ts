@@ -4,6 +4,7 @@ import { ZodError } from 'zod';
 import type { AppContext } from './context.js';
 import { HttpError } from './lib/errors.js';
 import { logError } from './log.js';
+import { guard } from './guard.js';
 import { NewerLibraryError, UpgradeError } from './db/migrations.js';
 import { VersionConflictError } from './repo/entities.js';
 import { worldRoutes } from './routes/world.js';
@@ -27,6 +28,8 @@ import { publishRoutes } from './routes/publish.js';
 export function createApp(ctx: AppContext, opts: { staticDir?: string; /** Stands in front of everything (the network listener's sign-in, server/src/remote.ts). */ gate?: express.RequestHandler } = {}) {
   const app = express();
   app.disable('x-powered-by');
+  // First of all: only the app's own pages, at the app's own address, are listened to (server/src/guard.ts).
+  app.use(guard());
   // Before anything is read: without a session, the network listener takes in no more than a password.
   if (opts.gate) app.use(opts.gate);
   app.use(express.json({ limit: '25mb' }));
