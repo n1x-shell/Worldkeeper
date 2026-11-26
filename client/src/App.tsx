@@ -87,6 +87,7 @@ const CampaignHandbook = page(() => import('./player/CampaignHandbook'), 'Campai
 const PlainHandbookGate = page(() => import('./player/CampaignHandbook'), 'PlainHandbookGate');
 const PublishPage = page(() => import('./pages/Publish'), 'PublishPage');
 const StyleGuidePage = page(() => import('./pages/StyleGuide'), 'StyleGuidePage');
+const HelpPage = page(() => import('./pages/Help'), 'HelpPage');
 
 function Page({ children }: { children: React.ReactNode }) {
   return (
@@ -697,6 +698,22 @@ export function App() {
             element={
               <Page>
                 <StyleGuidePage />
+              </Page>
+            }
+          />
+          <Route
+            path="help"
+            element={
+              <Page>
+                <HelpPage />
+              </Page>
+            }
+          />
+          <Route
+            path="help/:guide"
+            element={
+              <Page>
+                <HelpPage />
               </Page>
             }
           />

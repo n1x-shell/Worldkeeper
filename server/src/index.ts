@@ -13,6 +13,7 @@ import { closeTable, configureTable } from './table.js';
 import { closeRemote, configureRemote } from './remote.js';
 import { scheduleUpdateChecks } from './updateCheck.js';
 import { logError, startLog } from './log.js';
+import { updatedNote } from './whatsNew.js';
 import { diagnosticsText, systemLines } from './diagnostics.js';
 
 const mode = process.env.WORLDKEEPER_MODE === 'player' ? 'player' : 'dm';
@@ -53,6 +54,8 @@ function boot(libraryId?: string): boolean {
     ctx = opened;
     app = createApp(opened, { staticDir });
     failure = null;
+    // Which version last ran here, noted before anything is made: a first install has nothing to be told is new.
+    if (mode === 'dm') updatedNote(paths, () => (opened.db.prepare('SELECT COUNT(*) n FROM entities').get() as { n: number }).n > 0);
     return true;
   } catch (error) {
     logError(`the library ${paths?.libraryId ?? ''} could not be opened`, error);

@@ -7,12 +7,12 @@ The desktop app is the same Worldkeeper you get from `npm start`, packaged as a 
 ```
 The Worldkeeper (Tauri window)
   └─ starts → bundled Node.js runtime (sidecar, installed as `worldkeeper-node`)
-                └─ runs → server/index.mjs  (API + built client, bound to 127.0.0.1 on a free port)
+                └─ runs → server/index.mjs  (API + built client, bound to 127.0.0.1 on port 43110)
                             └─ data → OS app-data folder (SQLite database, map images, backups)
 ```
 
 - The Rust shell (`src-tauri/src/lib.rs`) does five things:
-  1. picks a free local port;
+  1. takes its own port, 43110 (the page keeps the GM's preferences under its address, so the address stays the same between starts), or any free one if that is taken;
   2. starts the bundled server, bound only to `127.0.0.1`;
   3. waits until the server answers, then loads it in the window;
   4. shows a readable error with the log location if the server fails to start;

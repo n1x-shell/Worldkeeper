@@ -56,16 +56,16 @@ Use a supported Rust toolchain and your OS-specific dependencies for desktop pac
 
 ## Keyboard shortcuts
 
-| Shortcut | Action |
-| --- | --- |
-| `Ctrl+K` or `/` | Global search |
-| `Alt+D` | DM screen |
-| `[` or `Ctrl+\` | Collapse/expand the sidebar (its icon rail) |
-| `]` | Open or close the inspector (peeked records, the page's own details, pinned stat blocks) |
-| `Esc` | Close the hover card, the inspector or a dialog |
-| Middle-click a record link | Peek it into the inspector |
-| `Ctrl+Enter` | Save live-session log entry |
-| `@` in a text area | Suggest a record; `Enter`/`Tab` selects, `Esc` cancels |
+They are listed for GMs in [the shortcuts guide](SHORTCUTS.md), which is also in the app's Help. Add a new one there.
+
+## Help inside the app
+
+The guides in `docs/` that are written for GMs are bundled into the GM app and shown at `/help` (`client/src/pages/Help.tsx`). To add or change them:
+
+- **Which files are guides** is `GUIDES` in `shared/help.ts` (the address, the title, one line about it). The same files must be named in the `import.meta.glob` in `client/src/lib/helpDocs.ts`; a test checks the two agree.
+- **Write for both places.** A link to another guide (`DATA.md#backups`) opens in the app; a link to any other file of the project opens on GitHub. A test follows every link in every guide to a heading or a file that exists. No guide may have two headings with the same words.
+- **Help for a screen** (the `?`) is `HELP_FOR_PAGE` in `shared/help.ts`: the start of a page's address, a guide and a heading. A test checks each heading exists, so renaming a heading in a guide fails until the table follows.
+- **What's new** (`docs/WHATS_NEW.md`) needs an entry for each version, newest first, written for GMs; a test fails if the current version has none.
 
 ## Tests
 

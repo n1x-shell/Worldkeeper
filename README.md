@@ -200,6 +200,8 @@ Backups are generated on a schedule while the server is running and before sensi
 | Guide | Contents |
 | --- | --- |
 | [Installing](docs/INSTALL.md) | The installers, opening an unsigned app on Windows and macOS, checking a download, updating |
+| [What's new](docs/WHATS_NEW.md) | What changed in each version |
+| [Keyboard shortcuts](docs/SHORTCUTS.md) | Getting around without the mouse |
 | [When something goes wrong](docs/TROUBLESHOOTING.md) | Reporting a bug, where the log is, a library that won't open, getting your world back from a backup |
 | [Quick Start](docs/QUICKSTART.md) | Start your own world or Oros, and prepare the first session |
 | [Features](docs/FEATURES.md) | Full encyclopedia, atlas, campaign and table-side feature reference |

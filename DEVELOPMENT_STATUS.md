@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-26 · v0.9.20_
+_Last updated: 2026-11-26 · v0.9.21_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,21 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.21: help inside the app
+
+docs/BETA_PLAN.md A5. The manual was Markdown in the repository; in the app there was a first-run wizard, a Getting started card, and nothing after.
+
+- **The guides are part of the app.** `GUIDES` in `shared/help.ts` names ten files of `docs/` (quick start, features, players, data, rules, worldbooks, shortcuts, installing, troubleshooting, what's new); `client/src/lib/helpDocs.ts` bundles them with `import.meta.glob(..., '?raw')`, each its own chunk, loaded when first wanted. Offline, in the desktop app, and always the installed version's. Nothing was added to the server or the desktop packaging.
+- **The page** (`client/src/pages/Help.tsx`, `/help` and `/help/:guide`, in the Library menu): the list of guides, a search box, the guide rendered with headings addressable as GitHub addresses them (`slugify`), and "In this guide". `resolveLink` keeps a link to another guide in the app and sends any other file of the project to GitHub.
+- **Help for the screen you are on:** `?` in the top bar and the `?` key go to `helpFor(pathname)`: `HELP_FOR_PAGE` maps the start of an address to a guide and a heading (the longest match wins; the quick start otherwise).
+- **Search:** `searchHelp` splits the guides at their headings (`sections`, which ignores a `#` inside a code example), needs every word, and weighs a word in a heading far above one in the text. The Help page shows up to twelve parts; the search palette (`Ctrl+K`) adds up to three after the world's own results.
+- **What's new:** `docs/WHATS_NEW.md` (written for GMs, 0.9.3 to now). `server/src/whatsNew.ts` keeps the version that last ran in `shared/app.json`; `/api/meta` returns `updated: { from, to }` while the GM hasn't seen it, and `WhatsNewNote` shows one line under the top bar. A first install shows nothing (noted at start, before anything is made); an installation from before this was kept shows it without a "from"; going back a version shows nothing.
+- **New guide:** `docs/SHORTCUTS.md` (the table that was in DEVELOPMENT.md, completed with the editor's keys and `?`).
+- **Fixed on the way: the desktop app forgot every preference at each start.** The shell took any free port, and the page keeps the theme, the folded menu, pinned records and the editor's mode under its address, port included. The shell now takes port 43110 when it is free (`HOME_PORT` in `src-tauri/src/lib.rs`) and any free one otherwise.
+- **Tests:** `tests/help.test.ts` (10): the bundled files are the guides; headings and their addresses; every link in every guide leads to a heading or a file that exists (checked that it fails on a broken one); every screen's help names a real heading; search; What's new has this version first and is said once. `cargo test` covers the port.
+- **Tried in a browser** on a library with a world in it: the note, `?` from the campaign page landing on Campaigns, What's new and the note gone after, search, links between guides and out of them, the shortcut tables, the `?` key, and help in `Ctrl+K`.
+- **Not done:** help in the players' handbook (it has its own short pages); pictures in the guides (none of them has any); the guides are in English only.
 
 ## v0.9.20: tested like a product
 
