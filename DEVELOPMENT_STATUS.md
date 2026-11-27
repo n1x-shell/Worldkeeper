@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-27 · v0.9.30_
+_Last updated: 2026-11-27 · v1.0.0 (the beta)_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,16 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v1.0.0: the beta
+
+docs/BETA_PLAN.md decision 8 and section 6. No new features. The owner numbered the beta 1.0.0.
+
+- **Libraries made by older versions** (`tests/fixtures/old-libraries/`, `tests/oldLibraries.test.ts`). Four data folders, each about 50 KB zipped, made by checking out that version's commit, running its own server on an empty folder and adding three records through its API: v0.5.0 (schema step 26, from before libraries: one `worldkeeper.db` in the data folder), v0.6.0 (step 30), v0.9.0 (step 33) and v0.9.14 (step 37, the last before safe upgrades). Nothing in them was written by later code; their databases were checkpointed and vacuumed, and hold no paths or names from the machine that made them. The test opens each with this version and checks: it reaches the latest step and says it was updated from the step it was at; its three records and their text are there; a pre-update copy holding three records is in its backups; it then takes a new record, a change to an old one, a plan and a consistency check. This closes the gap A1 left ("a test on library files kept from real old versions").
+- **How to add one:** `git worktree add` at the release's commit, link `node_modules`, start `server/src/index.ts` with `WORLDKEEPER_DATA_DIR` on an empty folder, post three records named Old Keep, Marrow Ford and Captain Ilse with the text "Made by vNNN.", stop it, checkpoint the database, zip the data folder without `-wal`/`-shm` files, and add the version and its step to `MADE` in the test. A library made by 1.0.0 should be added with the release after it.
+- **The upgrade promise** is in docs/DATA.md ("The upgrade promise"), with what it does not promise. README's status now says what the beta is and what has not been done by people.
+- **Checked for this release:** all unit tests, typecheck, lint, dead-code check, build, and the four browser checks (first run both ways, the table, accessibility) in CI.
+- **Not verified, and not verifiable from here:** everything in docs/BETA_PLAN.md section 6: published installers on a Mac or Windows, a real session at a table, publishing against GitHub, a painted plan in a virtual tabletop, a screen reader user.
 
 ## v0.9.30: creatures, hazards and items in Markdown rules packs
 

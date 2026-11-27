@@ -8,7 +8,7 @@ Build **a world of your own**, with its own worlds, continents and planes, calen
 
 **No account, required cloud service, paid API or AI dependency.** World data lives on your computer in SQLite and an uploads directory, with backups and portable exports.
 
-> **Status:** v0.9, an early functional release: Oros is now whole on the SRD alone, with 40 species of its own for its peoples. Built on v0.8 **“Worldbooks”**: whole worlds you add, share and hand to other GMs as one file, Oros complete inside the app, and worldbooks that work with whatever books each GM owns (books required, optional, or open stand-ins), with a Books only switch. Built on v0.7's players' timeline and v0.6's several groups and several worlds in one installation. Some features and desktop platform builds are still undergoing validation. Read [Development Status](DEVELOPMENT_STATUS.md) before relying on the application for important campaign data.
+> **Status:** version 1.0.0, **the beta**. The features are all here and no more are being added for now; what a beta asks for is use. Your worlds are safe across updates (see [the upgrade promise](docs/DATA.md#the-upgrade-promise)), and every release is tested against libraries made by older versions. What has not been done yet: the installers are unsigned and have been run only by automatic checks, not by people on a Mac or a Windows PC; nobody has yet run a real session at a table with it; nobody who uses a screen reader every day has tried it. Keep your own backups, and read [Development Status](DEVELOPMENT_STATUS.md) for what is and is not verified.
 
 ## Screenshots
 

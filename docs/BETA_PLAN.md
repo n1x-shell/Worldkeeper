@@ -1,6 +1,6 @@
 # The road to 1.0-BETA
 
-Status: **under way**, November 2026. The audit below was made at v0.9.2.
+Status: **reached with version 1.0.0**, 27 November 2026. What only the owner can do is listed in section 6. The audit below was made at v0.9.2.
 
 **Decided by the owner (24 November 2026):** all of this happens in v0.9.x releases, one step each, starting with section B (what a GM would expect and not find); then 1.0-BETA. The release grouping in section 4 is replaced by that order. The five decisions in section 5 were made on 26 November 2026.
 
@@ -19,7 +19,7 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | B5 Generators: people, shops, weather | v0.9.12 | Done |
 | B7 Bulk tools: tags, many records at once, merging, find-and-replace | v0.9.13 | Done |
 | B8 The GM on a tablet | v0.9.14 | Done (over plain HTTP, for the GM's own network) |
-| A1 Safe upgrades | v0.9.15 | Done, except a test on library files kept from real old versions |
+| A1 Safe upgrades | v0.9.15, 1.0.0 | Done. From 1.0.0, every release is tested against libraries made by v0.5.0, v0.6.0, v0.9.0 and v0.9.14 themselves, and the upgrade promise is written in docs/DATA.md |
 | A2 Installers: an update check (on, switchable off) and clear instructions for unsigned installers | v0.9.17 | Done; the install steps are written from the systems' standard behaviour, not tried on a Mac or a Windows PC |
 | A2 Installers: the app updates itself ("Update and restart") | v0.9.18 | Built, and tried end to end on Linux; not tried on Windows or macOS. Needs the update key added to the repository's secrets, and a first signed release, before any GM sees it |
 | A3 When something goes wrong: a log file, "Copy details for a bug report", issue forms, a troubleshooting guide | v0.9.19 | Done. The issue forms are checked as text; GitHub shows them once this is merged |
@@ -34,6 +34,7 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | C8, fifth part. The lie of the land, for any world: overgrown, shattered, aloft, adrift (the between), unearthly, and the void (a starred sheet); and ships as a fifth kind of plan, for sea, sky or void | v0.9.28 | Done |
 | C8, sixth part. A painted style for plans: floors, rock and ground from photographs (six public-domain textures, part of the app), shaded walls, painted furnishings with shadows, torchlight, and dressing (rugs, wear, stalls, boats), for every kind of plan and ground; ink unchanged and still the default | v0.9.29 | Done. Looked at as pictures; not tried in a virtual tabletop |
 | The bundled world's own name: Oros | v0.9.16 | Done |
+| **1.0.0, the beta:** no new features; every check run again; libraries from four older versions opened; the upgrade promise in writing; the guides brought up to date | 1.0.0 | Done by machine. The owner's part is in section 6 |
 | C2 play over the internet, C4 assistant, C5 sync and co-GMs, C6 rich-text editor, C3 other systems | | After the beta, if at all (decided) |
 
 ## 1. What "beta" should mean
@@ -122,3 +123,17 @@ Kept as the first proposal. The owner chose one line of v0.9.x releases instead,
    - (d) **The lie of the land**, as a choice any world can use: overgrown (Kaelmar's Bloom), shattered (the Rift, the Fractured Nexus), aloft (Zepharyos, the Empyrean Spire), the between (the Ethereal Realm: fragments adrift, doors to rooms not next door), unearthly (the Watchers' side: nothing straight, passages that loop), and the void (a black, starred sheet). With it, **ships** as a fifth kind of plan: a hull and its decks, for sea, sky or the void. The app's own names for these are plain ones, not any publisher's. (Done, v0.9.28. "The between" is called **adrift** in the app.)
 7. **Art from elsewhere, and a painted style** (27 November 2026). Shown a list of free art, the owner chose a painted style with its pictures part of the app, and then, on seeing two trials, **painted grounds only** (floors, rock and ground from photographs; no hand-drawn furnishings from other artists), built **before the beta** (done, v0.9.29). Only public-domain (CC0) pictures are bundled: six textures from Poly Haven. Ink stays the default. The same day, on seeing real places painted, the owner asked for furnishings and "every other type of asset" as well: these are drawn by the app itself in the painted style (no other artist's pack is bundled), with dressing that is drawing only (same release).
 8. **The beta itself** (27 November 2026). The last open row (creatures and items in Markdown rules packs) is done first, as v0.9.30. The beta is numbered **1.0.0**. It has no new features: every check run again, the upgrade promise in writing, the guides brought up to date. What only the owner can do is listed with it and does not hold it up: `npm run publish:check` against GitHub, publishing the release, trying the installed app, and a real session at a table.
+
+## 6. What only the owner can do
+
+None of this held up 1.0.0 (decision 8). Each is something a person has to do or see; the app's own checks cannot.
+
+1. **Publish the release.** The latest published release is v0.9.2. Tag and publish 1.0.0 so that installers are built and the update check has something to find. The in-app updater ("Update and restart") needs the update key in the repository's secrets and a first signed release before any GM sees it.
+2. **Run `npm run publish:check` once against GitHub**, with a real token and repository (docs/PLAYER_VIEW.md). It publishes nothing; it shows whether publishing the handbook would work.
+3. **Install it on a Mac and on a Windows PC** from the published installers, following docs/INSTALL.md. The steps for unsigned installers are written from how those systems behave, and have not been tried on either. The built app has only been run by an automatic check.
+4. **Run a real session at a table**: the GM's app, players on their phones, a table display if there is one. The checks drive browsers; nobody has played with it.
+5. **Open a painted plan in a virtual tabletop or Arkenforge**, and print an ink one.
+6. **Ask someone who uses a screen reader every day**, and try the GM's app on a real tablet.
+7. **Read the upgrade promise** in docs/DATA.md. It is made in the owner's name.
+
+After the beta, if at all (decided): play over the internet, an assistant, sync and co-GMs, a rich-text editor, other game systems. With each release after 1.0.0, a library made by the release before it should be added to `tests/fixtures/old-libraries/`.
