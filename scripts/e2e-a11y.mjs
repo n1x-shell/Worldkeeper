@@ -92,6 +92,7 @@ const GM = [
   ['a record', `/e/${town.id}`],
   ['a place’s plan', `/e/${town.id}/plan`],
   ['a place’s key, with a room open', `/e/${town.id}/plan?room=1`],
+  ['a place’s plan, being changed by hand', `/e/${town.id}/plan?edit=1&room=1`],
   ['a new record', '/new'],
   ['search results', '/search?q=harrowgate'],
   ['the campaign', '/campaign'],

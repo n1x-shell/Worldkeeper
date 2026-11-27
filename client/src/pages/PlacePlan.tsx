@@ -7,7 +7,7 @@
  */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, BookmarkPlus, Check as Tick, Download, FileText, ImagePlus, Map as MapIcon, RefreshCw, Undo2 } from 'lucide-react';
+import { ArrowLeft, BookmarkPlus, Check as Tick, Download, FileText, ImagePlus, Map as MapIcon, Pencil, RefreshCw, Undo2 } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { useRealms } from '../components/realms';
@@ -19,24 +19,35 @@ import {
   PLAN_KINDS,
   PLAN_LABELS,
   TOWN_LABELS,
+  closeUp,
   drawPlan,
   drawnNames,
   fullKeyMarkdown,
   isKeyed,
   madeNames,
   makePlan,
+  newRoom,
+  pack,
   planKey,
+  removeRoom,
   renamed,
+  renumber,
   roomMarks,
   roomsFor,
+  storeyNamed,
   syncRooms,
+  unnumber,
+  unpack,
   type DrawOptions,
   type KeyRoom,
+  type PackedPlan,
+  type Plan,
   type PlanKind,
   type PlanSettings,
   type TownSize,
 } from '@shared/plan/index';
 import { PlanKey } from '../components/PlanKey';
+import { PlanEditor } from '../components/PlanEditor';
 import type { Entity } from '../lib/types';
 
 export interface PlanInfo {
@@ -62,6 +73,17 @@ const written = (v: unknown): string =>
       : x,
   );
 const same = (a: unknown, b: unknown) => written(a) === written(b);
+/** A plan's choices without its key or its drawing: what it was made from. */
+const choices = (s: PlanSettings): Omit<PlanSettings, 'key' | 'drawn'> => {
+  const { key: _key, drawn: _drawn, ...rest } = s;
+  return rest;
+};
+/** The drawing and its key as they were before a change made by hand, to go back to. */
+interface Snap {
+  drawn: PackedPlan | null;
+  keyed: KeyRoom[] | null;
+  usual: boolean;
+}
 
 /** How the plan is shown and exported: the GM's choice, remembered on this device. */
 type View = Pick<DrawOptions, 'gm' | 'grid' | 'fill' | 'paper' | 'furnishings' | 'px'> & { titled: boolean };
@@ -124,9 +146,9 @@ async function saveFile(blob: Blob, name: string) {
   a.remove();
 }
 
-const Select = <T extends string>({ label, value, onChange, options, hint }: { label: string; value: T; onChange: (v: T) => void; options: [T, string][]; hint?: ReactNode }) => (
+const Select = <T extends string>({ label, value, onChange, options, hint, disabled }: { label: string; value: T; onChange: (v: T) => void; options: [T, string][]; hint?: ReactNode; disabled?: boolean }) => (
   <Field label={label} hint={hint}>
-    <select className="input" value={value} onChange={(e) => onChange(e.target.value as T)}>
+    <select className="input" value={value} disabled={disabled} onChange={(e) => onChange(e.target.value as T)}>
       {options.map(([v, l]) => (
         <option key={v} value={v}>
           {l}
@@ -144,10 +166,11 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   const nav = useNavigate();
   const { reloadIndex } = useAppState();
   const realms = useRealms();
-  const [settings, setSettings] = useState<PlanSettings>(() => {
-    const { key: _key, ...rest } = info?.saved ?? info?.suggested ?? { ...NEW_PLAN, seed: newSeed() };
-    return rest;
-  });
+  const [settings, setSettings] = useState<PlanSettings>(() => choices(info?.saved ?? info?.suggested ?? { ...NEW_PLAN, seed: newSeed() }));
+  // The plan as changed by hand, once it has been: from then on it is this drawing, not made from the choices.
+  const [drawn, setDrawn] = useState<PackedPlan | null>(() => info?.saved?.drawn ?? null);
+  const [past, setPast] = useState<Snap[]>([]);
+  const [future, setFuture] = useState<Snap[]>([]);
   const [view, setView] = useState<View>(readView);
   const [busy, setBusy] = useState('');
   // The whole plan on the screen at once, or as wide as the page allows.
@@ -166,6 +189,8 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   const [usual, setUsual] = useState(() => !!info?.saved?.key && info.saved.kind === 'building' && info.saved.names.length === 0);
   // The place that is open in the key, and ringed on the plan. An address can name one to open (?room=3).
   const [params] = useSearchParams();
+  // Being changed by hand. An address can open it so (?edit=1).
+  const [editing, setEditing] = useState(() => params.get('edit') === '1');
   const [selected, setSelected] = useState<number | null>(() => {
     const n = Number(params.get('room'));
     return Number.isInteger(n) && n >= 1 && n <= 40 ? n - 1 : null;
@@ -184,21 +209,31 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   const drawnFrom = useMemo(() => (keyed ? (building && usual ? [] : drawnNames(keyed, building)) : givenNames), [keyed, building, usual, givenNames]);
   // The plan is made again only when what it is drawn from changes, not when a word of the key does.
   const made = useMemo(() => JSON.stringify({ ...settings, names: drawnFrom }), [settings, drawnFrom]);
-  const plan = useMemo(() => makePlan(JSON.parse(made) as PlanSettings), [made]);
+  const plan = useMemo<Plan>(() => (drawn ? unpack(drawn) : makePlan(JSON.parse(made) as PlanSettings)), [drawn, made]);
   const rooms = useMemo(() => keyed ?? roomsFor(plan, givenNames), [keyed, plan, givenNames]);
   const names = useMemo(() => rooms.map((r) => r.name), [rooms]);
-  const full = useMemo<PlanSettings>(() => ({ ...settings, names: drawnFrom, ...(keyed ? { key: keyed } : {}) }), [settings, drawnFrom, keyed]);
+  const full = useMemo<PlanSettings>(() => ({ ...settings, names: drawnFrom, ...(keyed ? { key: keyed } : {}), ...(drawn ? { drawn } : {}) }), [settings, drawnFrom, keyed, drawn]);
   const options = useMemo<DrawOptions>(() => ({ ...DRAW_DEFAULTS, ...view, numbers: view.gm, title: view.titled ? name : '', marks: roomMarks(rooms) }), [view, name, rooms]);
   const drawing = useMemo(() => drawPlan(plan, options), [plan, options]);
   const key = useMemo(() => planKey(plan, names), [plan, names]);
   // On the page the place being worked on is ringed; a picture taken away never is.
-  const shown = useMemo(() => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(selected == null ? drawing.svg : drawPlan(plan, { ...options, numbers: true, ring: selected + 1 }).svg)}`, [drawing, plan, options, selected]);
+  // While it is being changed by hand it is shown whole: numbers, secret doors, traps and furnishings, whatever is
+  // chosen for the copy that is taken away.
+  const shown = useMemo(
+    () => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(selected == null && !editing ? drawing.svg : drawPlan(plan, { ...options, ...(editing ? { gm: true, furnishings: true } : {}), numbers: true, ring: selected == null ? null : selected + 1 }).svg)}`,
+    [drawing, plan, options, selected, editing],
+  );
 
   const set = (patch: Partial<PlanSettings>) => setSettings((s) => ({ ...s, ...patch }));
   const saved = info?.saved ?? null;
-  const changed = !!info && !same(full, saved);
+  const keyText = useMemo(() => written(keyed), [keyed]);
+  const savedKeyText = useMemo(() => written(saved?.key ?? null), [saved]);
+  const drawnText = useMemo(() => written(drawn), [drawn]);
+  const savedDrawnText = useMemo(() => written(saved?.drawn ?? null), [saved]);
+  const choicesText = useMemo(() => written(choices(full)), [full]);
   // The same plan as the one kept, whatever has changed in its key.
-  const sameLayout = !!saved && same({ ...full, key: null }, { ...saved, key: null });
+  const sameLayout = !!saved && drawnText === savedDrawnText && choicesText === written(choices(saved));
+  const changed = !!info && (!sameLayout || keyText !== savedKeyText);
   const recordNames = info?.suggested.names ?? [];
   const lower = (xs: string[]) => xs.map((x) => x.toLowerCase());
   // The GM may leave the key and the text differing: said once for the text as it is, it is not said again.
@@ -211,7 +246,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
     }
   });
   const textNow = JSON.stringify(lower(recordNames));
-  const textMoved = !!info && own && (keyed ? textNow !== JSON.stringify(lower(names)) && leftAt !== textNow : !!saved && !same(saved.names, recordNames) && same(settings.names, saved.names));
+  const textMoved = !!info && own && !drawn && (keyed ? textNow !== JSON.stringify(lower(names)) && leftAt !== textNow : !!saved && !same(saved.names, recordNames) && same(settings.names, saved.names));
   const leaveIt = () => {
     setLeftAt(textNow);
     try {
@@ -241,14 +276,14 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
     return next;
   };
 
-  // A kept plan's key is kept as it is written: a moment after the last change, without being asked.
+  // A kept plan's key is kept as it is written, and a plan changed by hand as it is changed: a moment after the last
+  // change, without being asked. (A plan made afresh is not: that one is kept when the GM says so.)
   const [keySaved, setKeySaved] = useState<'saved' | 'saving' | 'failed'>('saved');
   const latest = useRef(full);
   latest.current = full;
-  const keyText = useMemo(() => written(keyed), [keyed]);
-  const savedKeyText = useMemo(() => written(saved?.key ?? null), [saved]);
+  const savesItself = !!info && !!saved && changed && (drawn ? true : !!keyed && sameLayout);
   useEffect(() => {
-    if (!info || !keyed || !sameLayout || keyText === savedKeyText) return;
+    if (!savesItself) return;
     setKeySaved('saving');
     const t = window.setTimeout(() => {
       api
@@ -260,17 +295,82 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
         .catch(() => setKeySaved('failed'));
     }, 900);
     return () => window.clearTimeout(t);
-    // Only the key's own words set this off; the rest is read as it is when the moment comes.
+    // Only what is kept sets this off; the rest is read as it is when the moment comes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [keyText, savedKeyText, sameLayout]);
+  }, [keyText, drawnText, choicesText, savesItself]);
+
+  // ---- Changed by hand ---------------------------------------------------------------------------------------------
+  const remember = () => {
+    // A key that was not yet the GM's own becomes so as it stood: a building's usual rooms stay drawn as the usual ones.
+    setPast((h) => [...h.slice(-59), { drawn, keyed: keyed ?? rooms, usual: keyed ? usual : building && drawnFrom.length === 0 }]);
+    setFuture([]);
+  };
+  /** The plan as the editor has changed it. Its numbers are closed up, and the key follows: a new room gets a place in it, a room that is gone loses its. */
+  const applyEdit = (next: Plan) => {
+    const { plan: closed, order } = closeUp(next);
+    const nextRooms = order.map((old, i) => rooms[old - 1] ?? newRoom(closed.areas[i].name, building ? storeyNamed(closed.areas[i].floor) : undefined));
+    remember();
+    setDrawn(pack(closed));
+    setKeyed(nextRooms);
+    setUsual(false);
+    // A new place is opened in the key, to be named; else the one that was open stays open.
+    const openId = selected != null ? rooms[selected]?.id : undefined;
+    const fresh = nextRooms.findIndex((r) => !rooms.some((o) => o.id === r.id));
+    const at = fresh >= 0 ? fresh : nextRooms.findIndex((r) => r.id === openId);
+    setSelected(at >= 0 ? at : null);
+  };
+  /** Back to how it was: the drawing and the places of the key, with whatever has been written in them since. */
+  const restore = (s: Snap) => {
+    const now = new Map((keyed ?? []).map((r) => [r.id, r]));
+    setDrawn(s.drawn);
+    setKeyed(s.keyed ? s.keyed.map((r) => now.get(r.id) ?? r) : null);
+    setUsual(s.usual);
+    setSelected(null);
+  };
+  const undo = () => {
+    const s = past[past.length - 1];
+    if (!s) return;
+    setFuture((f) => [...f, { drawn, keyed, usual }]);
+    setPast((h) => h.slice(0, -1));
+    restore(s);
+  };
+  const redo = () => {
+    const s = future[future.length - 1];
+    if (!s) return;
+    setPast((h) => [...h, { drawn, keyed, usual }]);
+    setFuture((f) => f.slice(0, -1));
+    restore(s);
+  };
+  const mayRemove = (n: number): Promise<boolean> => {
+    const r = rooms[n - 1];
+    return r && isKeyed(r) ? ask({ title: `Take ${r.name} away?`, body: 'What is keyed to it goes with it. (Undo brings it back, until you leave this page.)', confirmLabel: 'Take it away', danger: true }) : Promise.resolve(true);
+  };
 
   /** The key as the GM has changed it. `redraw`: its list of places changed, so the plan is drawn from their names. */
   const changeRooms = (next: KeyRoom[], redraw: boolean) => {
+    if (drawn && redraw) {
+      // A plan changed by hand is not drawn again: the place removed comes off it, and its numbers follow the key's order.
+      const was = new Map(rooms.map((r, i) => [r.id, i + 1]));
+      const stay = new Set(next.map((r) => r.id));
+      let p: Plan = plan;
+      for (const [id, n] of was) if (!stay.has(id)) p = p.kind === 'settlement' ? unnumber(p, n) : removeRoom(p, n);
+      const there = new Set(p.areas.map((a) => a.n));
+      const onPlan = next.filter((r) => there.has(was.get(r.id) ?? 0));
+      remember();
+      setDrawn(pack(renumber(p, onPlan.map((r) => was.get(r.id)!))));
+      setKeyed(onPlan);
+      return;
+    }
     setKeyed(next);
     if (!keyed) setUsual(building && drawnFrom.length === 0);
     if (redraw) setUsual(false);
   };
-  const another = () => {
+  const another = async () => {
+    if (drawn) {
+      if (!(await ask({ title: 'Start again from a plan made afresh?', body: 'What you have changed by hand goes: the places of the key are laid out anew. (Undo, among the tools for changing it by hand, brings it back until you leave this page.)', confirmLabel: 'Start again', danger: true }))) return;
+      remember();
+      setDrawn(null);
+    }
     set({ seed: newSeed() });
     // A new plan is drawn for the names as they are now.
     if (keyed) setKeyed(keyed.map((r) => ({ ...r, drawnAs: r.name.trim() || r.drawnAs })));
@@ -302,7 +402,13 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   /** The key for the record's text: for the GM only once anything is keyed, or the place is not a settlement. */
   const keySection = () => ({ markdown: fullKeyMarkdown(rooms, key), gm: settings.kind !== 'settlement' || rooms.some(isKeyed) });
   /** The plan with its key made the GM's own, as it is once it has been written down anywhere. */
-  const withKey = (): PlanSettings => ({ ...settings, names: drawnFrom, key: rooms });
+  const withKey = (): PlanSettings => ({ ...settings, names: drawnFrom, key: rooms, ...(drawn ? { drawn } : {}) });
+  const startEditing = () => {
+    // From here on the key is the GM's own: what is drawn by hand has its places in it.
+    if (!keyed) changeRooms(rooms, false);
+    setEditing(true);
+    setWhole(false);
+  };
 
   const keepAsRecord = () =>
     run('record', async () => {
@@ -339,6 +445,17 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
       toast('The key is in the record’s text, under “Map key”.', 'ok');
     });
 
+  const sheet = (
+    <img
+      src={shown}
+      width={drawing.width}
+      height={drawing.height}
+      className={`block h-auto w-auto max-w-full rounded-sm ${whole ? 'max-h-[62vh]' : ''}`}
+      style={{ background: view.paper === 'clear' ? 'repeating-conic-gradient(#e9e6df 0% 25%, #ffffff 0% 50%) 50% / 20px 20px' : undefined }}
+      alt={`${name ? `Plan of ${name}` : 'The plan'}: a ${PLAN_LABELS[settings.kind].toLowerCase()} with ${key.length} numbered ${key.length === 1 ? 'place' : 'places'}, listed in the key below.`}
+      data-testid="plan-drawing"
+    />
+  );
   const kindChoices = PLAN_KINDS.map((k) => [k, PLAN_LABELS[k]] as [PlanKind, string]);
   const sizeWord = settings.kind === 'building' ? 'How large it is' : 'How much room';
 
@@ -353,7 +470,12 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                 <input className="input" value={called} onChange={(e) => setCalled(e.target.value)} maxLength={80} placeholder="Tomb of the Last King" />
               </Field>
             )}
-            <Select label="A plan of a" value={settings.kind} onChange={(kind) => set({ kind })} options={kindChoices} />
+            {drawn && (
+              <p className="rounded-sm border border-line bg-raised/40 p-2 text-xs" data-testid="plan-by-hand-note">
+                This plan has been changed by hand, so it is its own drawing now: these choices no longer redraw it. They are used when you redraw around the rooms you have kept, or start again.
+              </p>
+            )}
+            <Select label="A plan of a" value={settings.kind} onChange={(kind) => set({ kind })} options={kindChoices} disabled={!!drawn || editing} />
             {building && <Select label="What it is for" value={settings.use} onChange={changeUse} options={Object.entries(BUILDING_USES).map(([k, v]) => [k, v.label])} />}
             {settings.kind === 'settlement' ? (
               <>
@@ -442,11 +564,11 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                     : 'The numbered places are made up to suit it. Change them in the key below, and they are yours.'}
             </p>
             <div className="flex flex-wrap items-end gap-2 border-t border-line pt-3">
-              <button type="button" className="btn-primary" onClick={another} data-testid="plan-another">
-                <RefreshCw size={14} /> Draw another
+              <button type="button" className={drawn ? 'btn' : 'btn-primary'} onClick={() => void another()} data-testid="plan-another">
+                <RefreshCw size={14} /> {drawn ? 'Start again' : 'Draw another'}
               </button>
-              <Field label="Plan number" hint="The same number and choices always give the same plan.">
-                <input className="input w-36" type="number" min={1} max={2147483647} value={settings.seed} onChange={(e) => set({ seed: Math.max(1, Math.min(2147483647, Math.round(Number(e.target.value)) || 1)) })} />
+              <Field label="Plan number" hint={drawn ? 'The number it was first made from.' : 'The same number and choices always give the same plan.'}>
+                <input className="input w-36" type="number" min={1} max={2147483647} disabled={!!drawn} value={settings.seed} onChange={(e) => set({ seed: Math.max(1, Math.min(2147483647, Math.round(Number(e.target.value)) || 1)) })} />
               </Field>
             </div>
           </div>
@@ -528,7 +650,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
             )}
           </div>
         )}
-        {keyed && renamed(keyed) && (
+        {keyed && !drawn && renamed(keyed) && (
           <div className="panel flex flex-wrap items-center gap-3 p-3 text-sm" role="status">
             <span className="min-w-0 flex-1">Some rooms have new names. The plan is still drawn for the old ones.</span>
             <button type="button" className="btn" onClick={redrawForNames}>
@@ -536,38 +658,41 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
             </button>
           </div>
         )}
-        <div className="panel elev-1 overflow-auto p-2">
-          {/* The picture, and over each number on it a button that opens that place in the key. */}
-          <div className="relative mx-auto w-fit">
-            <img
-              src={shown}
-              width={drawing.width}
-              height={drawing.height}
-              className={`block h-auto w-auto max-w-full rounded-sm ${whole ? 'max-h-[62vh]' : ''}`}
-              style={{ background: view.paper === 'clear' ? 'repeating-conic-gradient(#e9e6df 0% 25%, #ffffff 0% 50%) 50% / 20px 20px' : undefined }}
-              alt={`${name ? `Plan of ${name}` : 'The plan'}: a ${PLAN_LABELS[settings.kind].toLowerCase()} with ${key.length} numbered ${key.length === 1 ? 'place' : 'places'}, listed in the key below.`}
-              data-testid="plan-drawing"
-            />
-            {plan.areas.map((a) => (
-              <button
-                key={a.n}
-                type="button"
-                className="absolute h-6 w-6 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full hover:ring-2 hover:ring-gold focus-visible:ring-2 focus-visible:ring-gold"
-                style={{ left: `${(a.x / plan.w) * 100}%`, top: `${(a.y / plan.h) * 100}%` }}
-                aria-label={`${a.n}. ${names[a.n - 1] ?? a.name}: open it in the key`}
-                aria-pressed={selected === a.n - 1}
-                title={`${a.n}. ${names[a.n - 1] ?? a.name}`}
-                onClick={() => setSelected(selected === a.n - 1 ? null : a.n - 1)}
-                data-testid="plan-room"
-              />
-            ))}
+        {editing ? (
+          <PlanEditor key={plan.kind} plan={plan} names={names} settings={settings} selected={selected} onSelect={setSelected} onChange={applyEdit} mayRemove={mayRemove} canUndo={past.length > 0} canRedo={future.length > 0} onUndo={undo} onRedo={redo} onDone={() => setEditing(false)}>
+            {sheet}
+          </PlanEditor>
+        ) : (
+          <div className="panel elev-1 overflow-auto p-2">
+            {/* The picture, and over each number on it a button that opens that place in the key. */}
+            <div className="relative mx-auto w-fit">
+              {sheet}
+              {plan.areas.map((a) => (
+                <button
+                  key={a.n}
+                  type="button"
+                  className="absolute h-6 w-6 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full hover:ring-2 hover:ring-gold focus-visible:ring-2 focus-visible:ring-gold"
+                  style={{ left: `${(a.x / plan.w) * 100}%`, top: `${(a.y / plan.h) * 100}%` }}
+                  aria-label={`${a.n}. ${names[a.n - 1] ?? a.name}: open it in the key`}
+                  aria-pressed={selected === a.n - 1}
+                  title={`${a.n}. ${names[a.n - 1] ?? a.name}`}
+                  onClick={() => setSelected(selected === a.n - 1 ? null : a.n - 1)}
+                  data-testid="plan-room"
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
         <div className="flex flex-wrap items-center gap-3 text-xs text-dim">
           <span>
             {plan.w} × {plan.h} squares, {plan.feet} ft to a square ({plan.w * plan.feet} × {plan.h * plan.feet} ft).
           </span>
-          <button type="button" className="btn-ghost ml-auto text-xs" aria-pressed={!whole} onClick={() => setWhole((w) => !w)}>
+          {!editing && (
+            <button type="button" className="btn ml-auto text-xs" onClick={startEditing} data-testid="plan-edit">
+              <Pencil size={13} /> Change it by hand
+            </button>
+          )}
+          <button type="button" className={`btn-ghost text-xs ${editing ? 'ml-auto' : ''}`} aria-pressed={!whole} onClick={() => setWhole((w) => !w)}>
             {whole ? 'Show it larger' : 'Fit it on the screen'}
           </button>
         </div>
@@ -576,7 +701,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
       {/* ---- Its key: straight under the drawing, where a place chosen on it opens ---- */}
       <div className="order-2 min-w-0 2xl:order-none 2xl:col-start-2">
         <Card title="Key" aside={`${key.length} ${key.length === 1 ? 'place' : 'places'}. Open one to say what is in it.`}>
-          <PlanKey kind={settings.kind} lines={key} rooms={rooms} selected={selected} onSelect={setSelected} onRooms={changeRooms} entityId={info?.entity.id} />
+          <PlanKey kind={settings.kind} lines={key} rooms={rooms} selected={selected} onSelect={setSelected} onRooms={changeRooms} entityId={info?.entity.id} drawn={!!drawn} still={editing} />
         </Card>
       </div>
 
@@ -589,16 +714,18 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                 <button type="button" className="btn-primary" disabled={!changed || !!busy} onClick={() => void run('keep', async () => void (await keep()))}>
                   <Tick size={14} /> {saved ? (changed ? 'Keep this one instead' : 'Kept') : 'Keep this plan'}
                 </button>
-                {saved && changed && !sameLayout && (
+                {saved && changed && !sameLayout && !savesItself && (
                   <button
                     type="button"
                     className="btn"
                     disabled={!!busy}
                     onClick={() => {
-                      const { key: theirs, ...rest } = saved;
-                      setSettings(rest);
-                      setKeyed(theirs ?? null);
-                      setUsual(!!theirs && saved.kind === 'building' && saved.names.length === 0);
+                      setSettings(choices(saved));
+                      setDrawn(saved.drawn ?? null);
+                      setPast([]);
+                      setFuture([]);
+                      setKeyed(saved.key ?? null);
+                      setUsual(!!saved.key && saved.kind === 'building' && saved.names.length === 0);
                       setSelected(null);
                     }}
                   >
@@ -609,11 +736,15 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                   {!saved
                     ? 'Nothing is kept until you say so, the key included.'
                     : !changed
-                      ? 'This is the plan kept with the record: it will be here, the same, next time.'
-                      : sameLayout
+                      ? drawn
+                        ? 'This is the plan kept with the record. What you change by hand is kept as you change it.'
+                        : 'This is the plan kept with the record: it will be here, the same, next time.'
+                      : savesItself
                         ? keySaved === 'failed'
-                          ? 'The key could not be saved just now. Keep the plan to try again.'
-                          : 'Saving the key…'
+                          ? 'It could not be saved just now. Keep the plan to try again.'
+                          : drawn
+                            ? 'Saving what you have changed…'
+                            : 'Saving the key…'
                         : 'This is not the plan kept with the record. What you change in the key is not kept until you keep this plan.'}
                 </span>
               </div>

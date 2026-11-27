@@ -2,6 +2,15 @@
 
 What changed in each version, newest first. Every update keeps your worlds as they are, and makes a backup of a library before changing how it is stored.
 
+## 0.9.26
+
+- **Change a plan by hand.** **Change it by hand**, under the drawing, gives you tools: draw a room, move or resize one, cut a passage a square at a time, rub floor out, put a door (or a secret door, an archway, a portcullis, a window) in a wall, and set down stairs, pillars, altars, chests, beds and the rest. A new room gets a number and a place in the key.
+- **Ready-made pieces.** Set down a guard post, a shrine, a row of cells, a crypt, a vault, a great hall and more, whole, turned as you like, and join them up.
+- **Keep the rooms you like and redraw the rest.** In a dungeon, mark rooms **Keep**, then **Redraw the rest**: they stay as they are while everything else is laid out again around them. **Furnish it again** sets one room's contents down afresh, to suit the name it has now.
+- **Settlements too.** Move, turn, resize, add and remove buildings, and give any house a number and a place in the key.
+- **Undo and redo**, and everything works from the keyboard: the arrow keys move over the plan a square at a time, and Enter uses the tool.
+- A plan changed by hand is its own drawing from then on, kept as you change it. **Start again** goes back to a plan made afresh.
+
 ## 0.9.25
 
 - **A plan's places can be keyed.** Click a number on the plan and say what is there: words to read aloud, and any number of encounters, traps, puzzles, hazards, loot, secrets, clues, people and notes. Add, change and remove them as you like.

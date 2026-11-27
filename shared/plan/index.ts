@@ -2,18 +2,22 @@
  * From a place's record to its plan: what kind of plan suits it, what its text says is in it, the choices the GM can
  * change, and the key that goes with the drawing.
  */
-import { feetText, rng, type Plan, type PlanKind } from './model.js';
+import { feetText, rng, type GridPlan, type Plan, type PlanKind } from './model.js';
 import { makeCave, makeDungeon } from './dungeon.js';
-import { BUILDING_USES, buildingUse, makeBuilding } from './building.js';
+import { BUILDING_USES, buildingFurnishings, buildingUse, makeBuilding } from './building.js';
 import { TOWN_SIZES, makeSettlement, placeNames, type TownAsk, type TownSize } from './settlement.js';
 import { roomNames } from './names.js';
 import { fullKeyMarkdown, roomsFor, type KeyRoom } from './key.js';
+import { unpack, type PackedPlan } from './edit.js';
+import { furnishAgain, keptRooms } from './again.js';
 
 export * from './model.js';
 export { drawPlan, DRAW_DEFAULTS, type DrawOptions } from './draw.js';
 export { BUILDING_USES } from './building.js';
 export { TOWN_SIZES, type TownSize } from './settlement.js';
 export * from './key.js';
+export * from './edit.js';
+export * from './pieces.js';
 
 /** What a plan is made from. The same settings always give the same plan. */
 export interface PlanSettings {
@@ -40,6 +44,11 @@ export interface PlanSettings {
    * is what the plan is drawn from for them.
    */
   key?: KeyRoom[];
+  /**
+   * The plan as the GM has changed it by hand (v0.9.26). Once this is here the plan is this drawing, as it stands:
+   * the seed and the choices above made it at first and no longer do.
+   */
+  drawn?: PackedPlan;
 }
 
 export const PLAN_LABELS: Record<PlanKind, string> = { dungeon: 'Dungeon', cave: 'Cave', building: 'Building', settlement: 'Settlement' };
@@ -48,6 +57,30 @@ const LOOPS = { one: 0, some: 0.5, many: 1 };
 export const MAX_NAMES = 40;
 
 export function makePlan(s: PlanSettings): Plan {
+  if (s.drawn) return unpack(s.drawn);
+  return generate(s);
+}
+
+/**
+ * A dungeon drawn again around the rooms marked to be kept: they stay where they are with what is in them and the doors
+ * between them; every other room is set down afresh, and the passages are all cut anew. `names` are the places of the
+ * key, in order. Null for any other kind of plan.
+ */
+export function redrawRest(plan: Plan, s: PlanSettings, names: string[], seed: number): GridPlan | null {
+  if (plan.kind !== 'dungeon') return null;
+  const { kept, openings } = keptRooms(plan);
+  const list = names.slice(0, MAX_NAMES);
+  return makeDungeon({ seed, names: list, roomy: ROOMY[s.size], rough: plan.rough.size > 0, loops: LOOPS[s.ways], secrets: s.secrets, traps: s.traps ? Math.max(1, Math.round(list.length / 4)) : 0, kept, keptOpenings: openings });
+}
+
+/** One room's furnishings set down afresh, to suit the name it has now. Null if the place is not a room. */
+export function refurnish(plan: Plan, s: PlanSettings, n: number, name: string, seed: number): GridPlan | null {
+  if (plan.kind === 'settlement') return null;
+  return furnishAgain(plan, n, name, seed, plan.kind === 'building' ? buildingFurnishings(name, s.use) : undefined);
+}
+
+/** A plan made afresh from its seed and choices, whatever has been drawn by hand. */
+export function generate(s: PlanSettings): Plan {
   const names = s.names.slice(0, MAX_NAMES);
   if (s.kind === 'cave') return makeCave({ seed: s.seed, names, roomy: ROOMY[s.size], loops: LOOPS[s.ways] });
   if (s.kind === 'building') return makeBuilding({ seed: s.seed, use: s.use, names, roomy: s.size === 'small' ? 0.85 : s.size === 'large' ? 1.2 : 1 });

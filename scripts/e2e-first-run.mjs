@@ -226,6 +226,49 @@ try {
     if (!/## Map key \(GM only\)[\s\S]*### 2\. Guard room[\s\S]*> Two benches[\s\S]*- \*\*Encounter:\*\* 3 × Skeleton\.[\s\S]*- \*\*Trap \(DC \d+/.test(written)) throw new Error(`the key in the record's text is not as keyed:\n${written}`);
     await shot(page, '08-plan');
     step('its key: a room opened from the drawing, an encounter and a suggested trap keyed to it, kept unasked, there on coming back, written into the record for the GM only');
+
+    // Changed by hand (v0.9.26), with the keyboard alone: a room drawn in the top corner of the sheet, which is always
+    // free ground. It gets a number and a place in the key, is kept unasked as a drawing, and is there on coming back.
+    const places = (await api(`/api/entities/${vault.id}/plan`)).saved.key.length;
+    await page.getByTestId('plan-edit').click();
+    await page.getByTestId('plan-tool-room').click();
+    await page.getByTestId('plan-surface').focus();
+    for (let i = 0; i < 80; i++) await page.keyboard.press('ArrowUp');
+    for (let i = 0; i < 80; i++) await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    await page.getByTestId('plan-said').getByText(`A new room, numbered ${places + 1}.`).waitFor();
+    const named = page.getByTestId('key-room').getByLabel('Its name');
+    if ((await named.inputValue()) !== 'A new room') throw new Error('the room drawn by hand did not open in the key');
+    await named.fill('Hidden shrine');
+    // A door from it to the passage or room below, if there is one beside it, is not needed for this: a thing in it is.
+    await page.getByTestId('plan-tool-thing').click();
+    await page.getByLabel('What to set down').selectOption('altar');
+    await page.getByTestId('plan-surface').focus();
+    await page.keyboard.press('Enter');
+    await page.getByTestId('plan-said').getByText('Altar set down.').waitFor();
+    let byHand;
+    for (let tries = 0; tries < 40; tries++) {
+      byHand = (await api(`/api/entities/${vault.id}/plan`)).saved;
+      if (byHand.drawn?.features.some((f) => f.kind === 'altar') && byHand.key?.[places]?.name === 'Hidden shrine') break;
+      await page.waitForTimeout(250);
+    }
+    if (!byHand?.drawn || byHand.drawn.areas.length !== places + 1 || byHand.key.length !== places + 1 || byHand.key[places].name !== 'Hidden shrine') throw new Error(`the plan changed by hand was not kept as drawn: ${JSON.stringify({ areas: byHand?.drawn?.areas.length, key: byHand?.key?.length })}`);
+    if (byHand.key[1].items.length !== 2) throw new Error('drawing a room lost what was keyed to another');
+    await page.getByTestId('plan-undo').click();
+    await page.getByTestId('plan-undo').click();
+    if ((await page.getByTestId('plan-key').locator('ol > li').count()) !== places) throw new Error('undo did not take the new room away again');
+    await page.getByRole('button', { name: 'Redo' }).click();
+    await page.getByRole('button', { name: 'Redo' }).click();
+    await shot(page, '08b-plan-by-hand');
+    await page.getByTestId('plan-edit-done').click();
+    await page.reload();
+    await page.getByTestId('plan-by-hand-note').waitFor();
+    if ((await page.getByTestId('plan-room').count()) !== places + 1) throw new Error('the room drawn by hand was not there on coming back');
+    step('its plan changed by hand with the keyboard: a room drawn and named, an altar set down in it, undone and redone, kept unasked as a drawing, there on coming back');
   } else {
     await page.getByRole('button', { name: /Play in Oros/ }).click();
     await page.getByRole('button', { name: /Add the Oros worldbook/ }).click();
