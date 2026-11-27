@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-27 · v0.9.29_
+_Last updated: 2026-11-27 · v0.9.30_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,17 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.30: creatures, hazards and items in Markdown rules packs
+
+docs/BETA_PLAN.md B2, the last open row before the beta (the owner chose to do it first, 27 November 2026).
+
+- **The reader** (`server/src/repo/rulesPacks.ts`): `entryData` takes three more kinds. `creature` (or `monster`) becomes a stat block in the shape the SRD's and the books' have, so everything that reads those reads it: `creatureData` takes the numbers from `Key: value` lines and the parts from the text. `hazard` (or `trap`) becomes a hazard card, kept as a creature row as the SRD's traps are. `item` becomes a `BookItem`. Folder names give a kind where a file does not.
+- **Parts of a stat block** (`namedParts`): a part begins with `### Name` or with its name in bold and a full stop; a paragraph with no name stays with the part before it, or stands alone (the line that says how many Legendary Actions). Text before any heading is traits. An unknown `##` heading is a problem reported, not a part lost.
+- **Worked out, not written:** XP and Proficiency Bonus from CR, Initiative from Dexterity, passive Perception from Wisdom, average Hit Points from dice (`hitPoints` in `shared/statblock.ts`, as the stat block editor does).
+- **Identity:** a creature's id is `pack-id:name`, and each creature and item carries the pack's `Source` (or its name), as a book's entry carries its book.
+- **Unchanged:** storage (rows of kind `creature` and `item` in the shared rules, as 5etools and Open5e packs already make), who sees what (creatures never reach the table server's rules or the handbook; `publishedRuleEntries` already takes only the six kinds a sheet uses), and the pack switches.
+- **Tests:** `tests/rulesPacks.test.ts` imports a pack of two creatures, a hazard and two items with three bad files, and checks every field of the result, what is reported, that the table is given none of it, and that switching the pack off removes them.
 
 ## v0.9.29: a painted style for plans
 

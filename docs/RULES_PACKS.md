@@ -1,6 +1,6 @@
 # Rules packs
 
-The character sheet and the character builder draw on **rules packs**: spells, species, classes, subclasses, backgrounds and feats. Packs imported from 5etools also hold creatures and items (see below).
+The character sheet and the character builder draw on **rules packs**: spells, species, classes, subclasses, backgrounds and feats. A pack can also hold creatures, hazards and items: those imported from 5etools and Open5e do, and so can one you write yourself in Markdown (from v0.9.30).
 
 - The **SRD 5.2.1** is built in, under CC-BY-4.0. You can turn it off in **Settings → Rules packs**. It holds everything the SRD has:
   - for players: 12 classes (each with its SRD subclass), 9 species, 4 backgrounds, 17 feats, 339 spells, weapons and armor;
@@ -207,6 +207,83 @@ The feat's text…
 
 `Category` is `Origin`, `General`, `Fighting Style` or `Epic Boon`.
 
-If `Kind` is missing, a file's folder name gives it: `spells/`, `species/`, `classes/`, `subclasses/`, `backgrounds/` or `feats/`.
+### Creature
+
+For the GM only: it appears in **Your Books**, the encounter tracker and on NPC cards that name it, like a creature from a book, and is never sent to players.
+
+```
+Kind: creature
+Name: Ash Hound
+Size: Medium
+Type: Monstrosity
+Alignment: Neutral Evil
+AC: 14
+HP: 6d8 + 12
+Speed: 40 ft.
+Abilities: 15, 14, 14, 3, 12, 6
+Saves: Dex +4
+Skills: Perception +3
+Resistances: Fire
+Senses: Darkvision 60 ft.
+Languages: None
+CR: 2
+Environment: Mountain, Underdark
+
+**Keen Smell.** The hound has Advantage on Wisdom (Perception) checks that rely on smell.
+
+## Actions
+
+**Bite.** Melee Attack Roll: +4, reach 5 ft. Hit: 7 (1d10 + 2) Piercing damage.
+
+**Cinder Breath (Recharge 5–6).** Dexterity Saving Throw: DC 12, each creature in a 15-foot Cone…
+
+## Legendary Actions
+
+Legendary Action Uses: 2.
+
+**Lope.** The hound moves up to half its Speed.
+```
+
+- Only `Name` is needed. What is left out is filled in: 10 in each ability, AC 10, 1 Hit Point, Speed 30 ft., CR 0.
+- `HP` is a number, dice (`6d8 + 12`, and the average is worked out) or both (`39 (6d8 + 12)`).
+- Ability scores go on one line in the usual order (`Abilities:`), or one to a line (`Str: 15` or `Strength: 15`).
+- `CR` is `0`, `1/8`, `1/4`, `1/2` or `1` to `30`. XP and the Proficiency Bonus follow from it. Initiative is the Dexterity modifier unless you write `Initiative: +5`. Passive Perception is added to `Senses` if you leave it out.
+- Also read: `Vulnerabilities`, `Immunities`, `Gear`.
+- The text before any heading is the creature's traits. The headings are `## Traits`, `## Actions`, `## Bonus Actions`, `## Reactions` and `## Legendary Actions`. Each part begins with its name in bold and a full stop, as the books set them, or with a `### Name` line. A paragraph with no name belongs to the part before it.
+
+### Hazard
+
+A trap or other hazard, as a card for the GM, kept with the creatures.
+
+```
+Kind: hazard
+Name: Ash Pit
+Type: Nuisance Trap (Levels 1–4)
+Trigger: A creature steps on the crust
+
+The crust gives way…
+```
+
+### Item
+
+Its rules show in **Your Books**, in treasure and on character sheets, like an item from a book.
+
+```
+Kind: item
+Name: Lantern of the Last Light
+Type: Wondrous Item
+Rarity: Very Rare
+Attunement: by a cleric
+Value: 2,500 gp
+Weight: 2
+
+The item's text…
+```
+
+- `Rarity` is `Common`, `Uncommon`, `Rare`, `Very Rare`, `Legendary` or `Artifact`; leave it out for ordinary gear. An item with a rarity is a magic item.
+- `Attunement` is `Yes`, or who may attune (`by a cleric`); leave it out if none is needed.
+- `Value` is in gold pieces unless you write `sp`, `cp` or `pp`. `Weight` is in pounds.
+
+If `Kind` is missing, a file's folder name gives it: `spells/`, `species/`, `classes/`, `subclasses/`, `backgrounds/`, `feats/`, `creatures/` (or `monsters/`), `hazards/` (or `traps/`) or `items/`.
 
 Files that can't be read are listed when you import. The rest of the pack still comes in.
