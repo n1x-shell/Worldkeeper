@@ -65,6 +65,7 @@ const GM = [
   ['the dashboard', '/'],
   ['the world', '/world'],
   ['a record', `/e/${town.id}`],
+  ['a place’s plan', `/e/${town.id}/plan`],
   ['a new record', '/new'],
   ['search results', '/search?q=harrowgate'],
   ['the campaign', '/campaign'],

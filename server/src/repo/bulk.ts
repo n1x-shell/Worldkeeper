@@ -168,6 +168,7 @@ const POINTERS: [table: string, column: string, own?: true][] = [
   ['bastions', 'location_id'],
   ['bastions', 'host_faction_id'],
   ['entity_images', 'entity_id'],
+  ['place_plans', 'entity_id', true],
   ['profiles', 'entity_id', true],
   ['statblocks', 'entity_id', true],
   ['homebrew', 'entity_id', true],

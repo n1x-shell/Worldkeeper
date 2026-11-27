@@ -27,7 +27,7 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | A5 Help inside the app: the guides bundled and searchable, help for the screen you are on, What's new after an update | v0.9.21 | Done |
 | A6 Accessibility and devices: an audit of 42 screens in both themes, on a tablet and with the keyboard alone, in CI; what it found, fixed | v0.9.22 | Done by machine. Not tried by someone who uses a screen reader every day, or on a real tablet |
 | A7 Security and publishing: a review of what each door trusts; other websites can no longer reach the app; publishing made to follow GitHub's documented rules | v0.9.23 | Done, except one thing only the owner can do: run `npm run publish:check` once against GitHub itself |
-| C8 A location generator: ink-style maps of places from their records | | To do, before the beta (decided) |
+| C8 A location generator: ink-style plans of dungeons, caves, buildings and settlements, laid out from their records, exported with a grid | v0.9.24 | Done. Looked at as pictures while it was built; not yet used by a GM at a table, or its pictures tried in Arkenforge itself |
 | The bundled world's own name: Oros | v0.9.16 | Done |
 | C2 play over the internet, C4 assistant, C5 sync and co-GMs, C6 rich-text editor, C3 other systems | | After the beta, if at all (decided) |
 

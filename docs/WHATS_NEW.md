@@ -2,6 +2,14 @@
 
 What changed in each version, newest first. Every update keeps your worlds as they are, and makes a backup of a library before changing how it is stored.
 
+## 0.9.24
+
+- **Plans of places.** Open a town, a building or a dungeon and choose **Draw a plan**: the app lays it out from what its record says and draws it in ink, with a grid. A settlement gets its streets, houses, walls and water from its population and its land; a building gets the rooms of an inn, a temple or a keep, storey by storey; a dungeon or a cave gets the rooms its text names, numbered in the same order.
+- **Draw another** until you like it, then **Keep this plan**: it is the same every time you come back.
+- **Take it away** as a picture with so many pixels to a square, for a virtual tabletop or a mapping tool, in your copy (numbers, secret doors, traps) or the players' (none of them). Or add it to the record's pictures, or make it a map in the Atlas with a hidden pin on each numbered place.
+- **Write the key into the record** lists each room with its size and its ways out. Rename a room there and the plan follows.
+- A plan for no record yet is under Characters → People, Shops and Places → **Places**.
+
 ## 0.9.23
 
 - **A security fix. Please update.** In every earlier version, a web page open in the same browser as the app could send it requests: open your table to the network, or restore a backup of its own making over your world. A site set up for the purpose could also read your records. The app now answers only its own pages at its own address. It is not known to have been used against anyone.

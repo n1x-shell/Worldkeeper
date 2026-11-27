@@ -198,7 +198,7 @@ export const WORKSPACES: Workspace[] = [
           { to: '/npc-ref', label: 'NPC Quick Reference', icon: UserSquare2 },
           { to: '/books', label: 'Your Books', icon: LibraryBig },
           { to: '/names', label: 'Name Generator', icon: Signature },
-          { to: '/generators', label: 'People and Shops', icon: Store },
+          { to: '/generators', label: 'People, Shops and Places', icon: Store },
         ],
       },
     ],

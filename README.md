@@ -74,6 +74,14 @@ The region border editor lets the GM draw and adjust regional boundaries directl
 
 ![GM drawing and editing region boundaries on the World Atlas](docs/images/region.jpeg)
 
+### Plans of places
+
+Open a town, a building or a dungeon and the app lays it out from what its record says, and draws it in ink with a grid: the rooms its text names, numbered in the same order; a settlement's streets, walls and water from its population and its land. Draw another until you like it, keep it, and take it away as a picture with so many pixels to a square, for a virtual tabletop or a mapping tool.
+
+| A dungeon, from the rooms its record lists | A walled town, from its facts |
+| --- | --- |
+| ![The plan of The Sunken Vault: eleven numbered rooms, with pillars in the great hall, tombs in the crypt and traps marked for the GM](docs/images/plan.jpg) | ![The plan of Hollow Refuge as a walled town by a river, its named places numbered](docs/images/plan-town.jpg) |
+
 ### Prepare, play and keep the party
 
 | Session prep | Live session (Dark Codex) |

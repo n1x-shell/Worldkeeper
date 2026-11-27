@@ -1,5 +1,6 @@
 import { useRecordTypes } from '../components/recordTypes';
 import { RecordPictures } from '../components/RecordPictures';
+import { PlanPanel } from './PlacePlan';
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { MergeDialog } from './BulkTools';
@@ -455,6 +456,9 @@ function RecordTab({
   onBlockClosed: () => void;
 }) {
   const e = data.entity;
+  const recordTypes = useRecordTypes();
+  // A single place (a town, a building, a dungeon) can have a plan; a country cannot.
+  const place = !!recordTypes.get(e.type)?.traits.place && !recordTypes.get(e.type)?.traits.regionLike;
   const [ref, w] = useWidth<HTMLDivElement>();
   const clean = useCleaners()(e.pack_id);
   const sections = useMemo(() => readingSections(e.body, debug, e.name, clean), [e.body, debug, e.name, clean]);
@@ -519,6 +523,7 @@ function RecordTab({
       <aside className="space-y-4 min-w-0" aria-label="Record facts">
         <RecordPictures entityId={e.id} name={e.name} />
         {layout !== 'one' && glance}
+        {place && <PlanPanel entityId={e.id} name={e.name} />}
         <StatBlockPanel entityId={e.id} name={e.name} fights={e.type === 'creature' || e.type === 'npc'} asked={askedBlock} onClosed={onBlockClosed} />
         {details && <section className="panel elev-1 p-4" aria-label="Record details">{details}</section>}
         {(e.type === 'item' || e.type === 'artifact') && <ItemRulesPanel entityId={e.id} name={e.name} />}

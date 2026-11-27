@@ -78,6 +78,7 @@ export const TABLES = [
   'module_data',
   'statblocks',
   'entity_images',
+  'place_plans',
   'homebrew',
   'progress_awards',
   'session_attendance',
