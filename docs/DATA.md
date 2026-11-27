@@ -98,6 +98,21 @@ A new version of the app sometimes has to change how a library is stored. When i
 
 Each library is updated when it is first opened by the new version, so a library you haven't opened since an update still has its own backup and update ahead of it.
 
+### The upgrade promise
+
+From version 1.0.0 on:
+
+1. **Every later version opens your libraries, with everything in them.** A library that 1.0.0 or any later version has opened will be opened by every version after it. Nothing you made is dropped, emptied or changed in meaning by an update. If a later version ever could not keep this, it would refuse to open the library and say so, and change nothing.
+2. **A copy is always made first**, as above, before any change to how a library is stored, and an update is all or nothing.
+3. **Your backups keep working.** A backup made by 1.0.0 or later restores in every later version.
+4. **This is tested, not assumed.** Every release is checked against real libraries made by older versions of the app (0.5.0, 0.6.0, 0.9.0 and 0.9.14, kept as they were left): each must open with its records in it, have its copy made, and then take a new record and a change like any other library. A release that fails this is not published.
+
+What it does not promise:
+
+- **Going back.** An older version of the app does not open a library a newer one has updated: it refuses, and changes nothing. To go back, restore the copy made before the update.
+- **No bugs.** 1.0.0 is a beta. A mistake in the app could still damage what you are working on, so keep backups of your own somewhere else (**Library → Libraries → Back up everything**), as you would with any work that matters to you.
+- **Things outside the library.** Rules packs made from your own books can be imported again from your copy; the app does not promise to carry them across every version.
+
 ## Backups
 
 Worldkeeper creates backups daily **while the application is running**, before imports and restores, and on demand via **Backups → Back up now** or:

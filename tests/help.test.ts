@@ -133,7 +133,9 @@ describe('what’s new', () => {
       .map((s) => s.title);
     expect(versions[0]).toBe(APP_VERSION);
     const n = (v: string) => v.split('.').map(Number);
-    for (let i = 1; i < versions.length; i++) expect(n(versions[i - 1])[2], `${versions[i - 1]} before ${versions[i]}`).toBeGreaterThan(n(versions[i])[2]);
+    // Each is newer than the one under it, part by part (1.0.0 is newer than 0.9.30).
+    const weight = (v: string) => n(v).reduce((sum, part) => sum * 1000 + part, 0);
+    for (let i = 1; i < versions.length; i++) expect(weight(versions[i - 1]), `${versions[i - 1]} before ${versions[i]}`).toBeGreaterThan(weight(versions[i]));
   });
 
   it('is said once after an update, never on a first install, and not for going back a version', async () => {

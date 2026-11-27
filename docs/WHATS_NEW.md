@@ -2,6 +2,14 @@
 
 What changed in each version, newest first. Every update keeps your worlds as they are, and makes a backup of a library before changing how it is stored.
 
+## 1.0.0
+
+**The beta.** Nothing new to learn in this version: it is the one the features stop at for a while, so that it can be used and its faults found.
+
+- **The upgrade promise.** From this version on, every later version opens your libraries with everything in them, a copy is made before any update changes one, and your backups keep working. It is written out in the Data guide ("The upgrade promise"), with what it does not promise.
+- **Tested against real old libraries.** Every release is now checked against libraries made by versions 0.5.0, 0.6.0, 0.9.0 and 0.9.14 of the app, kept as they were left: each must open with its records in it.
+- It is a beta: keep backups of your own, and say what goes wrong (**Settings → Help and bug reports → Copy details for a bug report**).
+
 ## 0.9.30
 
 - **Creatures, hazards and items in a pack you write.** A rules pack of Markdown files can now hold stat blocks, traps and other hazards, and items, beside its spells and character options. Write a creature much as a book sets it out (its numbers as `Key: value` lines, each trait and action beginning with its name in bold) and import the zip in **Settings → Rules packs**.
