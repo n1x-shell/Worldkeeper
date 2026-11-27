@@ -128,7 +128,7 @@ Kept as the first proposal. The owner chose one line of v0.9.x releases instead,
 
 None of this held up 1.0.0 (decision 8). Each is something a person has to do or see; the app's own checks cannot.
 
-1. **Publish the release.** The latest published release is v0.9.2. Tag and publish 1.0.0 so that installers are built and the update check has something to find. The in-app updater ("Update and restart") needs the update key in the repository's secrets and a first signed release before any GM sees it.
+1. **Publish the release.** The latest published release is v0.9.2. The note to publish it with is written: `docs/releases/1.0.0.md` (its links are whole addresses, so it can be pasted as it is). Tag and publish 1.0.0 so that installers are built and the update check has something to find. The in-app updater ("Update and restart") needs the update key in the repository's secrets and a first signed release before any GM sees it.
 2. **Run `npm run publish:check` once against GitHub**, with a real token and repository (docs/PLAYER_VIEW.md). It publishes nothing; it shows whether publishing the handbook would work.
 3. **Install it on a Mac and on a Windows PC** from the published installers, following docs/INSTALL.md. The steps for unsigned installers are written from how those systems behave, and have not been tried on either. The built app has only been run by an automatic check.
 4. **Run a real session at a table**: the GM's app, players on their phones, a table display if there is one. The checks drive browsers; nobody has played with it.
