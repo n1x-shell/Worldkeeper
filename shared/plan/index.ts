@@ -10,6 +10,7 @@ import { roomNames } from './names.js';
 import { fullKeyMarkdown, roomsFor, type KeyRoom } from './key.js';
 import { unpack, type PackedPlan } from './edit.js';
 import { furnishAgain, keptRooms } from './again.js';
+import { DISTRICTS, districtAt, withDistricts } from './districts.js';
 
 export * from './model.js';
 export { drawPlan, DRAW_DEFAULTS, type DrawOptions } from './draw.js';
@@ -18,6 +19,7 @@ export { TOWN_SIZES, type TownSize } from './settlement.js';
 export * from './key.js';
 export * from './edit.js';
 export * from './pieces.js';
+export { DISTRICTS, districtPlan } from './districts.js';
 
 /** What a plan is made from. The same settings always give the same plan. */
 export interface PlanSettings {
@@ -49,6 +51,16 @@ export interface PlanSettings {
    * the seed and the choices above made it at first and no longer do.
    */
   drawn?: PackedPlan;
+  /** For a place under another (v0.9.27): where its way in comes from, in words ("the wine cellar of the Gilded Flagon"). */
+  from?: string;
+  /** A town or a city drawn in districts. */
+  districts?: boolean;
+  /** What the GM calls each district, in the plan's order, and the record that is its own, if it has one. */
+  wards?: Ward[];
+}
+export interface Ward {
+  name: string;
+  record?: string;
 }
 
 export const PLAN_LABELS: Record<PlanKind, string> = { dungeon: 'Dungeon', cave: 'Cave', building: 'Building', settlement: 'Settlement' };
@@ -57,8 +69,12 @@ const LOOPS = { one: 0, some: 0.5, many: 1 };
 export const MAX_NAMES = 40;
 
 export function makePlan(s: PlanSettings): Plan {
-  if (s.drawn) return unpack(s.drawn);
-  return generate(s);
+  return withWards(s.drawn ? unpack(s.drawn) : generate(s), s.wards);
+}
+/** A settlement's districts called what the GM calls them. */
+export function withWards(plan: Plan, wards: Ward[] | undefined): Plan {
+  if (plan.kind !== 'settlement' || !plan.districts || !wards?.length) return plan;
+  return { ...plan, districts: plan.districts.map((d, i) => (wards[i]?.name.trim() ? { ...d, name: wards[i].name.trim() } : d)) };
 }
 
 /**
@@ -82,10 +98,13 @@ export function refurnish(plan: Plan, s: PlanSettings, n: number, name: string, 
 /** A plan made afresh from its seed and choices, whatever has been drawn by hand. */
 export function generate(s: PlanSettings): Plan {
   const names = s.names.slice(0, MAX_NAMES);
-  if (s.kind === 'cave') return makeCave({ seed: s.seed, names, roomy: ROOMY[s.size], loops: LOOPS[s.ways] });
+  if (s.kind === 'cave') return makeCave({ seed: s.seed, names, roomy: ROOMY[s.size], loops: LOOPS[s.ways], ...(s.from ? { from: s.from } : {}) });
   if (s.kind === 'building') return makeBuilding({ seed: s.seed, use: s.use, names, roomy: s.size === 'small' ? 0.85 : s.size === 'large' ? 1.2 : 1 });
-  if (s.kind === 'settlement') return makeSettlement({ seed: s.seed, names, size: s.town, water: s.water, walled: s.walled, around: s.around });
-  return makeDungeon({ seed: s.seed, names, roomy: ROOMY[s.size], rough: s.rough, loops: LOOPS[s.ways], secrets: s.secrets, traps: s.traps ? Math.max(1, Math.round(names.length / 4)) : 0 });
+  if (s.kind === 'settlement') {
+    const town = makeSettlement({ seed: s.seed, names, size: s.town, water: s.water, walled: s.walled, around: s.around });
+    return s.districts ? withDistricts(town, DISTRICTS[s.town]) : town;
+  }
+  return makeDungeon({ seed: s.seed, names, roomy: ROOMY[s.size], rough: s.rough, loops: LOOPS[s.ways], secrets: s.secrets, traps: s.traps ? Math.max(1, Math.round(names.length / 4)) : 0, ...(s.from ? { from: s.from } : {}) });
 }
 
 /**
@@ -267,6 +286,8 @@ export function suggest(p: PlaceFacts): PlanSettings {
     water,
     walled,
     around,
+    // A town or a city is drawn in districts.
+    ...(kind === 'settlement' && (town === 'town' || town === 'city') ? { districts: true } : {}),
   };
   settings.names = namesFor(p, settings);
   return settings;
@@ -311,7 +332,9 @@ export function planKey(plan: Plan, names: string[]): KeyLine[] {
     const size = a.feet ? (plan.kind === 'cave' ? `about ${Math.round((a.feet[0] + a.feet[1]) / 2 / 5) * 5} ft across` : feetText(a.feet)) : '';
     const exits = a.exits.length ? `${a.exits.join('; ').replace(/^./, (c) => c.toUpperCase())}.` : '';
     // A place is called what the key calls it now, which may not be the name the plan was drawn for.
-    out.push({ n, name: names[n - 1] ?? a.name, detail: [a.floor, size].filter(Boolean).join(', ') + (size || a.floor ? '. ' : '') + exits, onPlan: true });
+    const ward = plan.kind === 'settlement' ? plan.districts?.[districtAt(plan, a.x, a.y)]?.name : undefined;
+    const where = [a.floor, ward, size].filter(Boolean).join(', ');
+    out.push({ n, name: names[n - 1] ?? a.name, detail: where + (where ? '. ' : '') + exits, onPlan: true });
   }
   return out;
 }

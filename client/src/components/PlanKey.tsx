@@ -5,8 +5,8 @@
  * ideas.
  */
 import { useEffect, useId, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, Dices, Plus, Swords, Trash2, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowDown, ArrowUp, BookmarkPlus, ChevronDown, ChevronRight, Dices, Map as MapIcon, Plus, Swords, Trash2, Unlink, X } from 'lucide-react';
 import { api } from '../lib/api';
 import { useAppState } from '../lib/store';
 import { newCombatant } from '../../../shared/play';
@@ -182,6 +182,19 @@ function ItemEditor({ item, place, onChange, onRemove }: { item: KeyItem; place:
         </div>
       )}
 
+      {item.kind === 'way' && (
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="min-w-48 max-w-sm flex-1">
+            <EntityPicker value={item.entity ?? null} types={['@place']} placeholder="The place it leads to…" onChange={(id) => onChange({ entity: id })} />
+          </div>
+          {item.entity && (
+            <Link className="btn-ghost text-xs" to={`/e/${encodeURIComponent(item.entity)}/plan`} data-testid="key-way-plan">
+              <MapIcon size={12} /> Open its plan
+            </Link>
+          )}
+        </div>
+      )}
+
       {item.kind === 'person' && (
         <div className="max-w-sm">
           <EntityPicker
@@ -208,6 +221,8 @@ export function PlanKey({
   entityId,
   drawn = false,
   still = false,
+  under = [],
+  onMakeRecord,
 }: {
   kind: PlanKind;
   /** Each place's size and ways out, as the plan has it. */
@@ -223,7 +238,14 @@ export function PlanKey({
   drawn?: boolean;
   /** The plan is being changed by hand: a place chosen on it opens here, but the page stays where it is. */
   still?: boolean;
+  /** Places kept as records under this plan's record: one of the same name as a numbered place is that place. */
+  under?: { id: string; name: string }[];
+  /** Make a numbered place a record of its own, kept under this plan's record. Absent for a plan of no record. */
+  onMakeRecord?: (i: number) => Promise<void>;
 }) {
+  const { index } = useAppState();
+  /** The record a place is: the one it is tied to, or one kept under this place by the same name. */
+  const recordOf = (r: KeyRoom) => r.record ?? under.find((u) => u.name.trim().toLowerCase() === r.name.trim().toLowerCase())?.id;
   const [busy, setBusy] = useState('');
   const open = useRef<HTMLLIElement>(null);
   // Chosen on the drawing: bring its line into view.
@@ -292,6 +314,7 @@ export function PlanKey({
                   {!isOpen && (summary.length > 0 || r.aloud.trim()) && (
                     <span className="mt-0.5 flex flex-wrap gap-1">
                       {r.aloud.trim() && <span className="chip border-line text-xs">Read aloud</span>}
+                      {recordOf(r) && <span className="chip border-line text-xs">A record of its own</span>}
                       {[...new Set(summary)].map((label) => (
                         <span key={label} className="chip border-line text-xs">
                           {label}
@@ -335,6 +358,37 @@ export function PlanKey({
                     </div>
                   </div>
                   {!drawn && r.name.trim() !== r.drawnAs && <p className="text-xs text-dim">The plan was drawn for “{r.drawnAs}”. It stays as it is until you draw it again.</p>}
+
+                  {/* A place that is a record of its own (an inn in a town) has a plan of its own, a step away. */}
+                  <div className="flex flex-wrap items-center gap-2 text-sm" data-testid="key-room-record">
+                    <span className="text-dim">A record of its own:</span>
+                    {recordOf(r) ? (
+                      <>
+                        <Link className="font-medium underline" to={`/e/${encodeURIComponent(recordOf(r)!)}`}>
+                          {index.get(recordOf(r)!)?.name ?? 'a record that is gone'}
+                        </Link>
+                        <Link className="btn-ghost text-xs" to={`/e/${encodeURIComponent(recordOf(r)!)}/plan`} data-testid="key-room-plan">
+                          <MapIcon size={12} /> Its plan
+                        </Link>
+                        {r.record && (
+                          <button type="button" className="btn-ghost text-xs" onClick={() => change(i, { record: undefined })} title="The record stays; this place is no longer tied to it.">
+                            <Unlink size={12} /> Untie
+                          </button>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <div className="w-56">
+                          <EntityPicker value={null} types={['@place']} placeholder="Choose one…" onChange={(id) => id && change(i, { record: id })} />
+                        </div>
+                        {onMakeRecord && (
+                          <button type="button" className="btn-ghost text-xs" disabled={!!busy} onClick={() => void onMakeRecord(i)} data-testid="key-room-make-record">
+                            <BookmarkPlus size={12} /> Make it one
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </div>
 
                   <label className="block">
                     <span className="label">Read aloud</span>

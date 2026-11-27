@@ -19,13 +19,16 @@ import {
   PLAN_KINDS,
   PLAN_LABELS,
   TOWN_LABELS,
+  DISTRICTS,
   closeUp,
+  districtPlan,
   drawPlan,
   drawnNames,
   fullKeyMarkdown,
   isKeyed,
   madeNames,
   makePlan,
+  newItem,
   newRoom,
   pack,
   planKey,
@@ -34,10 +37,12 @@ import {
   renumber,
   roomMarks,
   roomsFor,
+  stairsDown,
   storeyNamed,
   syncRooms,
   unnumber,
   unpack,
+  withWards,
   type DrawOptions,
   type KeyRoom,
   type PackedPlan,
@@ -45,9 +50,11 @@ import {
   type PlanKind,
   type PlanSettings,
   type TownSize,
+  type Ward,
 } from '@shared/plan/index';
 import { PlanKey } from '../components/PlanKey';
 import { PlanEditor } from '../components/PlanEditor';
+import { PlanDistricts, PlanJoins, type Joined } from '../components/PlanJoins';
 import type { Entity } from '../lib/types';
 
 export interface PlanInfo {
@@ -57,6 +64,7 @@ export interface PlanInfo {
   suggested: PlanSettings;
   ownNames: boolean;
   map: { id: number; name: string } | null;
+  joined: Joined;
 }
 
 const NEW_PLAN: PlanSettings = { kind: 'dungeon', seed: 1, names: [], size: 'medium', rough: false, ways: 'some', secrets: true, traps: false, use: 'tavern', town: 'village', water: 'none', walled: false, around: 'fields' };
@@ -76,6 +84,11 @@ const same = (a: unknown, b: unknown) => written(a) === written(b);
 /** A plan's choices without its key or its drawing: what it was made from. */
 const choices = (s: PlanSettings): Omit<PlanSettings, 'key' | 'drawn'> => {
   const { key: _key, drawn: _drawn, ...rest } = s;
+  return rest;
+};
+/** What a plan is laid out from: its choices without what the GM calls its districts, which redraw nothing. */
+const layout = (s: PlanSettings) => {
+  const { wards: _wards, ...rest } = choices(s);
   return rest;
 };
 /** The drawing and its key as they were before a change made by hand, to go back to. */
@@ -164,7 +177,7 @@ const Select = <T extends string>({ label, value, onChange, options, hint, disab
  */
 export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: PlanInfo) => void }) {
   const nav = useNavigate();
-  const { reloadIndex } = useAppState();
+  const { reloadIndex, index } = useAppState();
   const realms = useRealms();
   const [settings, setSettings] = useState<PlanSettings>(() => choices(info?.saved ?? info?.suggested ?? { ...NEW_PLAN, seed: newSeed() }));
   // The plan as changed by hand, once it has been: from then on it is this drawing, not made from the choices.
@@ -209,7 +222,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   const drawnFrom = useMemo(() => (keyed ? (building && usual ? [] : drawnNames(keyed, building)) : givenNames), [keyed, building, usual, givenNames]);
   // The plan is made again only when what it is drawn from changes, not when a word of the key does.
   const made = useMemo(() => JSON.stringify({ ...settings, names: drawnFrom }), [settings, drawnFrom]);
-  const plan = useMemo<Plan>(() => (drawn ? unpack(drawn) : makePlan(JSON.parse(made) as PlanSettings)), [drawn, made]);
+  const plan = useMemo<Plan>(() => (drawn ? withWards(unpack(drawn), settings.wards) : makePlan(JSON.parse(made) as PlanSettings)), [drawn, made, settings.wards]);
   const rooms = useMemo(() => keyed ?? roomsFor(plan, givenNames), [keyed, plan, givenNames]);
   const names = useMemo(() => rooms.map((r) => r.name), [rooms]);
   const full = useMemo<PlanSettings>(() => ({ ...settings, names: drawnFrom, ...(keyed ? { key: keyed } : {}), ...(drawn ? { drawn } : {}) }), [settings, drawnFrom, keyed, drawn]);
@@ -224,15 +237,17 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
     [drawing, plan, options, selected, editing],
   );
 
-  const set = (patch: Partial<PlanSettings>) => setSettings((s) => ({ ...s, ...patch }));
+  // A choice that lays the plan out afresh lays its districts out afresh too: what they were called goes with them.
+  const set = (patch: Partial<PlanSettings>) => setSettings((s) => ({ ...s, ...(drawn ? {} : { wards: undefined }), ...patch }));
   const saved = info?.saved ?? null;
-  const keyText = useMemo(() => written(keyed), [keyed]);
-  const savedKeyText = useMemo(() => written(saved?.key ?? null), [saved]);
+  // The key, and what the districts are called: neither moves a wall, and both are kept as they are written.
+  const keyText = useMemo(() => written({ key: keyed, wards: settings.wards ?? null }), [keyed, settings.wards]);
+  const savedKeyText = useMemo(() => written({ key: saved?.key ?? null, wards: saved?.wards ?? null }), [saved]);
   const drawnText = useMemo(() => written(drawn), [drawn]);
   const savedDrawnText = useMemo(() => written(saved?.drawn ?? null), [saved]);
-  const choicesText = useMemo(() => written(choices(full)), [full]);
+  const choicesText = useMemo(() => written(layout(full)), [full]);
   // The same plan as the one kept, whatever has changed in its key.
-  const sameLayout = !!saved && drawnText === savedDrawnText && choicesText === written(choices(saved));
+  const sameLayout = !!saved && drawnText === savedDrawnText && choicesText === written(layout(saved));
   const changed = !!info && (!sameLayout || keyText !== savedKeyText);
   const recordNames = info?.suggested.names ?? [];
   const lower = (xs: string[]) => xs.map((x) => x.toLowerCase());
@@ -281,7 +296,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   const [keySaved, setKeySaved] = useState<'saved' | 'saving' | 'failed'>('saved');
   const latest = useRef(full);
   latest.current = full;
-  const savesItself = !!info && !!saved && changed && (drawn ? true : !!keyed && sameLayout);
+  const savesItself = !!info && !!saved && changed && (drawn ? true : sameLayout);
   useEffect(() => {
     if (!savesItself) return;
     setKeySaved('saving');
@@ -371,7 +386,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
       remember();
       setDrawn(null);
     }
-    set({ seed: newSeed() });
+    setSettings((s) => ({ ...s, seed: newSeed(), wards: undefined }));
     // A new plan is drawn for the names as they are now.
     if (keyed) setKeyed(keyed.map((r) => ({ ...r, drawnAs: r.name.trim() || r.drawnAs })));
     setSelected(null);
@@ -400,7 +415,84 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
     return toPng(d.svg, d.width, d.height);
   };
   /** The key for the record's text: for the GM only once anything is keyed, or the place is not a settlement. */
-  const keySection = () => ({ markdown: fullKeyMarkdown(rooms, key), gm: settings.kind !== 'settlement' || rooms.some(isKeyed) });
+  const keySection = () => ({ markdown: fullKeyMarkdown(rooms, key, (id) => index.get(id)?.name), gm: settings.kind !== 'settlement' || rooms.some(isKeyed) });
+
+  // ---- Joined plans (v0.9.27) ----------------------------------------------------------------------------------------
+  /** The record a numbered place is: the one tied to it in the key, or one kept under this place by the same name. */
+  const recordOf = (r: KeyRoom) => r.record ?? info?.joined.under.find((u) => u.name.trim().toLowerCase() === r.name.trim().toLowerCase())?.id;
+  /** A record kept under this one, for the GM only, in the same realm. */
+  const child = async (title: string, type: string, body: string, fields: [string, string][] = []) => {
+    const parent = (await api.get<{ entity: Entity }>(`/api/entities/${encodeURIComponent(info!.entity.id)}?follow=0`)).entity;
+    return api.post<Entity>('/api/entities', { name: title, type, realm: parent.realm, parent_id: parent.id, aliases: [], source_raw: 'DM entry (The Worldkeeper)', tags: [`realm/${parent.realm}`, 'vis/gm'], fields, body, notes: '' });
+  };
+  const mention = () => `@[${info!.entity.name}|${info!.entity.id}]`;
+  /** The key made the GM's own, if it was not yet, with a change to it. */
+  const ownKey = (next: KeyRoom[]) => {
+    if (!keyed) setUsual(building && drawnFrom.length === 0);
+    setKeyed(next);
+  };
+  const makeRecord = (i: number) =>
+    run('record', async () => {
+      const r = rooms[i];
+      if (!info || !r) return;
+      // A place renamed since the plan was drawn ("Inn", now "The Gilded Flagon") says what it is used for, so that its
+      // own plan is an inn's.
+      const was = r.drawnAs.trim();
+      const used: [string, string][] = was && was.toLowerCase() !== r.name.trim().toLowerCase() ? [['Used for', was.toLowerCase()]] : [];
+      const e = await child(r.name.trim(), settings.kind === 'dungeon' || settings.kind === 'cave' ? 'dungeon' : 'building', `In ${mention()}.\n`, used);
+      const next = rooms.map((x, j) => (j === i ? { ...x, record: e.id } : x));
+      ownKey(next);
+      if (saved) await keep(true, { ...full, key: next });
+      await reloadIndex();
+      toast(`${r.name.trim()} is a record of its own now, kept under ${info.entity.name}. Open its plan from here.`, 'ok');
+    });
+  const addBelow = (at: number, title: string, kind: 'dungeon' | 'cave', stairs: boolean) =>
+    run('below', async () => {
+      const r = rooms[at];
+      if (!info || !r) return;
+      const e = await child(title, 'dungeon', `Below ${mention()}: the way down is from ${r.name.trim()}.\n`);
+      // Its plan: what suits it, with the way in as the stairs up to here.
+      const theirs = await api.get<PlanInfo>(`/api/entities/${encodeURIComponent(e.id)}/plan`);
+      const s: PlanSettings = { ...theirs.suggested, kind, from: `${r.name.trim()} of ${info.entity.name}`.slice(0, 160) };
+      await api.put(`/api/entities/${encodeURIComponent(e.id)}/plan`, { ...s, names: madeNames(s, title, theirs.suggested.names.length || 8) });
+      // Here: the way on keyed to the place, and the stairs drawn in it.
+      const next = rooms.map((x, j) => (j === at ? { ...x, items: [...x.items, newItem('way', { title: 'Stairs down', entity: e.id })] } : x));
+      const withStairs = stairs && plan.kind !== 'settlement' ? stairsDown(plan, at + 1, title) : null;
+      if (withStairs) remember();
+      const nextDrawn = withStairs ? pack(withStairs) : drawn;
+      ownKey(next);
+      if (withStairs) {
+        setDrawn(nextDrawn);
+        setUsual(false);
+      }
+      await keep(true, { ...settings, names: drawnFrom, key: next, ...(nextDrawn ? { drawn: nextDrawn } : {}) });
+      await reloadIndex();
+      setSelected(at);
+      toast(`${title} is a record under ${info.entity.name}, with a plan of its own.${stairs && !withStairs && plan.kind !== 'settlement' ? ' There was no room to draw the stairs: set them down by hand.' : ''}`, 'ok');
+    });
+  // What each district is called: the plan's own names until the GM changes one.
+  const districts = plan.kind === 'settlement' ? (plan.districts ?? []) : [];
+  const wardsNow = (): Ward[] => districts.map((d, i) => ({ name: settings.wards?.[i]?.name ?? d.name, ...(settings.wards?.[i]?.record ? { record: settings.wards[i].record } : {}) }));
+  const nameWard = (i: number, called: string) => setSettings((s) => ({ ...s, wards: wardsNow().map((w, j) => (j === i ? { ...w, name: called } : w)) }));
+  const makeDistrict = (i: number) =>
+    run('district', async () => {
+      const cut = plan.kind === 'settlement' ? districtPlan(plan, i) : null;
+      if (!info || !cut) return;
+      const title = districts[i].name;
+      const e = await child(title, 'settlement', `A district of ${mention()}.\n`);
+      // The same streets, drawn closer: its numbered places are the ones that stand in it, to be keyed there.
+      const places = cut.from.map((n) => {
+        const r = rooms[n - 1];
+        const record = r ? recordOf(r) : undefined;
+        return { ...newRoom(r?.name.trim() || `Place ${n}`), ...(record ? { record } : {}) };
+      });
+      await api.put(`/api/entities/${encodeURIComponent(e.id)}/plan`, { ...layout(settings), districts: false, names: places.map((p) => p.name), key: places, drawn: cut.plan });
+      const wards = wardsNow().map((w, j) => (j === i ? { ...w, record: e.id } : w));
+      setSettings((s) => ({ ...s, wards }));
+      if (saved) await keep(true, { ...full, wards });
+      await reloadIndex();
+      toast(`${title} is a record under ${info.entity.name}, with the same streets drawn closer.`, 'ok');
+    });
   /** The plan with its key made the GM's own, as it is once it has been written down anywhere. */
   const withKey = (): PlanSettings => ({ ...settings, names: drawnFrom, key: rooms, ...(drawn ? { drawn } : {}) });
   const startEditing = () => {
@@ -500,9 +592,14 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                     ['open', 'Open ground'],
                   ]}
                 />
-                <Check checked={settings.walled} onChange={(walled) => set({ walled })} disabled={settings.town === 'hamlet'} hint={settings.town === 'hamlet' ? 'A hamlet has no wall.' : undefined}>
-                  Walled
-                </Check>
+                <div className="flex flex-col gap-1.5">
+                  <Check checked={settings.walled} onChange={(walled) => set({ walled })} disabled={settings.town === 'hamlet'} hint={settings.town === 'hamlet' ? 'A hamlet has no wall.' : undefined}>
+                    Walled
+                  </Check>
+                  <Check checked={!!settings.districts && DISTRICTS[settings.town] > 0} onChange={(on) => set({ districts: on })} disabled={!DISTRICTS[settings.town] || !!drawn} hint={DISTRICTS[settings.town] ? 'Each named for what stands in it.' : 'A hamlet or a village is one place.'}>
+                    In districts
+                  </Check>
+                </div>
               </>
             ) : (
               <Select
@@ -701,8 +798,15 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
       {/* ---- Its key: straight under the drawing, where a place chosen on it opens ---- */}
       <div className="order-2 min-w-0 2xl:order-none 2xl:col-start-2">
         <Card title="Key" aside={`${key.length} ${key.length === 1 ? 'place' : 'places'}. Open one to say what is in it.`}>
-          <PlanKey kind={settings.kind} lines={key} rooms={rooms} selected={selected} onSelect={setSelected} onRooms={changeRooms} entityId={info?.entity.id} drawn={!!drawn} still={editing} />
+          <PlanKey kind={settings.kind} lines={key} rooms={rooms} selected={selected} onSelect={setSelected} onRooms={changeRooms} entityId={info?.entity.id} drawn={!!drawn} still={editing} under={info?.joined.under} onMakeRecord={info ? makeRecord : undefined} />
         </Card>
+        {/* What this plan is joined to, and a town's districts: beside the key, where its places are. */}
+        {(districts.length > 0 || info) && (
+          <div className="mt-4 space-y-4">
+            {districts.length > 0 && <PlanDistricts districts={districts} wards={wardsNow()} busy={!!busy} onName={nameWard} onMake={info ? makeDistrict : undefined} />}
+            {info && <PlanJoins name={info.entity.name} kind={settings.kind} joined={info.joined} rooms={rooms} recordOf={recordOf} wardRecords={wardsNow().flatMap((w) => w.record ?? [])} selected={selected} busy={!!busy} onBelow={addBelow} />}
+          </div>
+        )}
       </div>
 
       {/* ---- What to do with it ---- */}
@@ -801,7 +905,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                     void run('map', async () => {
                       if (changed) await keep(true);
                       const form = new FormData();
-                      form.append('plan', JSON.stringify({ squares: plan.w, feet: plan.feet, areas: plan.areas.map((a) => ({ n: a.n, name: names[a.n - 1] ?? a.name, x: a.x, y: a.y })) }));
+                      form.append('plan', JSON.stringify({ squares: plan.w, feet: plan.feet, areas: plan.areas.map((a) => ({ n: a.n, name: names[a.n - 1] ?? a.name, x: a.x, y: a.y, ...(rooms[a.n - 1] && recordOf(rooms[a.n - 1]) ? { entity: recordOf(rooms[a.n - 1]) } : {}) })) }));
                       form.append('image', new File([await picture(true)], 'plan.png', { type: 'image/png' }));
                       const made = await api.post<{ map: { id: number; name: string }; updated: boolean }>(`${url}/map`, form);
                       onInfo?.(await api.get<PlanInfo>(url));

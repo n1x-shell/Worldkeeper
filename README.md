@@ -90,6 +90,12 @@ And change it by hand. Draw, move and resize rooms; cut passages a square at a t
 
 ![The Sunken Vault being changed by hand: tools above the plan, two rooms marked to be kept, a row of cells set down as a ready-made piece, and the treasury chosen with handles on its sides](docs/images/plan-edit.jpg)
 
+And join them up. A numbered place can be a record of its own with its own plan: the inn in the town, a click away, and tunnels under the inn's cellar a click below that. **Add a level below** makes the next level down with its stairs. A town or a city is drawn in districts, and each district can have a closer plan of its own, with the same streets.
+
+| A city in districts | The inn's cellar, joined to the town above and the tunnels below |
+| --- | --- |
+| ![The plan of Marrow Ford, a walled city in six named districts with broken lines between them](docs/images/plan-districts.jpg) | ![The key to an inn's cellar with a way on, stairs down to the Smugglers' Run, and under it the joined plans: in Marrow Ford, number 2 on its plan; stairs down to the Smugglers' Run](docs/images/plan-joined.jpg) |
+
 ### Prepare, play and keep the party
 
 | Session prep | Live session (Dark Codex) |

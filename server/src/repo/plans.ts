@@ -39,6 +39,10 @@ const zSettings = z.object({
   around: z.enum(['fields', 'woods', 'open']),
   key: z.array(z.lazy(() => zRoom)).max(MAX_NAMES).optional(),
   drawn: z.lazy(() => zDrawn).optional(),
+  // Joined plans (v0.9.27): where the way in comes from, and a town's districts with the GM's names for them.
+  from: z.string().trim().max(160).optional(),
+  districts: z.boolean().optional(),
+  wards: z.array(z.object({ name: z.string().max(60), record: z.string().max(60).optional() })).max(12).optional(),
 });
 
 // A plan changed by hand, as it is kept (shared/plan/edit.ts): checked for shape and size, not for sense.
@@ -53,7 +57,8 @@ const zArea = z.object({
   x: sq,
   y: sq,
   feet: z.tuple([z.number().min(0).max(100000), z.number().min(0).max(100000)]).nullable(),
-  exits: z.array(z.string().max(80)).max(40),
+  // A way out may name where it leads ("stairs up to the wine cellar of the Gilded Flagon, north").
+  exits: z.array(z.string().max(260)).max(40),
   floor: z.string().max(40).optional(),
   kept: z.boolean().optional(),
 });
@@ -94,6 +99,8 @@ const zTown = z.object({
   trees: z.array(z.tuple([sq, sq, z.number().positive().max(10)])).max(4000),
   fields: z.array(z.object({ corners: z.array(zPoint).min(3).max(12), angle: z.number() })).max(200),
   areas: z.array(zArea).max(MAX_NAMES * 2),
+  districts: z.array(z.object({ name: z.string().max(60), at: zPoint, outline: zLine })).max(12).optional(),
+  districtLines: z.array(z.tuple([zPoint, zPoint])).max(120).optional(),
 });
 const zDrawn = z.union([zGrid, zTown]);
 
@@ -119,6 +126,7 @@ const zRoom = z.object({
   floor: z.enum(['ground', 'upper', 'under']).optional(),
   aloud: z.string().max(6000),
   items: z.array(zItem).max(40),
+  record: z.string().max(60).optional(),
 });
 
 /** What the record says of the place, for choosing and keying its plan. */
@@ -155,6 +163,49 @@ export interface PlanInfo {
   ownNames: boolean;
   /** The Atlas map made from the plan, if it is still there. */
   map: { id: number; name: string } | null;
+  /** The plans this one is joined to (v0.9.27). */
+  joined: Joined;
+}
+export interface Joined {
+  /** The place this one is kept under, with its number on that place's plan (or the district it is), if it has one. */
+  within: { id: string; name: string; plan: boolean; n: number | null; ward: string | null } | null;
+  /** Places kept as records under this one, and whether each has a plan kept. */
+  under: { id: string; name: string; type: string; plan: boolean }[];
+  /** Ways on that lead here from other places' plans: which place, and the numbered place in it. */
+  from: { id: string; name: string; n: number; room: string; how: string }[];
+}
+
+/** A kept plan's key and wards, read loosely: only to see what they point at. */
+interface Loose {
+  key?: { name?: string; record?: string; items?: { kind?: string; entity?: string | null; title?: string }[] }[];
+  wards?: { name?: string; record?: string }[];
+}
+function joinedTo(db: DB, id: string, name: string, placeTypes: string[]): Joined {
+  const loose = (text: string | undefined) => parseJson<Loose>(text ?? '', {}) ?? {};
+  const me = db.prepare('SELECT parent_id FROM entities WHERE id = ?').get(id) as { parent_id: string | null } | undefined;
+  let within: Joined['within'] = null;
+  const parent = me?.parent_id ? (db.prepare('SELECT id, name, type FROM entities WHERE id = ? AND archived = 0').get(me.parent_id) as { id: string; name: string; type: string } | undefined) : undefined;
+  if (parent && placeTypes.includes(parent.type)) {
+    const row = savedRow(db, parent.id);
+    const theirs = loose(row?.settings);
+    const at = (theirs.key ?? []).findIndex((r) => r.record === id);
+    const byName = at >= 0 ? at : (theirs.key ?? []).findIndex((r) => !r.record && (r.name ?? '').trim().toLowerCase() === name.trim().toLowerCase());
+    const ward = (theirs.wards ?? []).find((w) => w.record === id);
+    within = { id: parent.id, name: parent.name, plan: !!row, n: byName >= 0 ? byName + 1 : null, ward: ward?.name?.trim() || null };
+  }
+  const under = placeTypes.length
+    ? (db
+        .prepare(`SELECT e.id, e.name, e.type, EXISTS (SELECT 1 FROM place_plans p WHERE p.entity_id = e.id) AS plan FROM entities e WHERE e.parent_id = ? AND e.archived = 0 AND e.type IN (${placeTypes.map(() => '?').join(',')}) ORDER BY e.name LIMIT 80`)
+        .all(id, ...placeTypes) as { id: string; name: string; type: string; plan: number }[]).map((r) => ({ ...r, plan: !!r.plan }))
+    : [];
+  // Other places' plans that name this one as where a way leads.
+  const from: Joined['from'] = [];
+  const rows = db.prepare(`SELECT p.entity_id AS id, e.name, p.settings FROM place_plans p JOIN entities e ON e.id = p.entity_id WHERE p.entity_id != ? AND e.archived = 0 AND instr(p.settings, ?) > 0 LIMIT 60`).all(id, JSON.stringify(id)) as { id: string; name: string; settings: string }[];
+  for (const r of rows)
+    (loose(r.settings).key ?? []).forEach((room, i) => {
+      for (const it of room.items ?? []) if (it.kind === 'way' && it.entity === id) from.push({ id: r.id, name: r.name, n: i + 1, room: String(room.name ?? '').trim(), how: String(it.title ?? '').trim() });
+    });
+  return { within, under, from: from.slice(0, 40) };
 }
 
 export function planInfo(db: DB, id: string): PlanInfo {
@@ -162,7 +213,18 @@ export function planInfo(db: DB, id: string): PlanInfo {
   const row = savedRow(db, id);
   const parsed = row ? zSettings.safeParse(parseJson(row.settings, null)) : null;
   const map = row?.map_id ? ((db.prepare('SELECT id, name FROM maps WHERE id = ?').get(row.map_id) as { id: number; name: string } | undefined) ?? null) : null;
-  return { entity: { id: f.facts.id, name: f.facts.name, type: f.facts.type, version: f.version }, place: f.place, saved: parsed?.success ? parsed.data : null, suggested: suggest(f.facts), ownNames: hasOwnNames(f.facts), map };
+  const placeTypes = types(db)
+    .list.filter((t) => t.traits.place)
+    .map((t) => t.key);
+  return {
+    entity: { id: f.facts.id, name: f.facts.name, type: f.facts.type, version: f.version },
+    place: f.place,
+    saved: parsed?.success ? parsed.data : null,
+    suggested: suggest(f.facts),
+    ownNames: hasOwnNames(f.facts),
+    map,
+    joined: joinedTo(db, id, f.facts.name, placeTypes),
+  };
 }
 
 export function savePlan(db: DB, id: string, input: unknown): PlanInfo {
@@ -211,7 +273,7 @@ export function planToMap(db: DB, id: string, uploadsDir: string, image: { buffe
     .object({
       squares: z.number().positive().max(400),
       feet: z.number().positive().max(1000),
-      areas: z.array(z.object({ n: z.number().int().min(1).max(999), name: z.string().max(80), x: z.number().min(0).max(400), y: z.number().min(0).max(400) })).max(MAX_NAMES * 2),
+      areas: z.array(z.object({ n: z.number().int().min(1).max(999), name: z.string().max(80), x: z.number().min(0).max(400), y: z.number().min(0).max(400), entity: z.string().max(60).optional() })).max(MAX_NAMES * 2),
     })
     .parse(input);
   const e = getEntity(db, id);
@@ -228,10 +290,13 @@ export function planToMap(db: DB, id: string, uploadsDir: string, image: { buffe
       const map = existing ? maps.update(db, existing.id, data) : maps.create(db, { name: `${e.name}: plan`, entity_id: id, realm_id: e.realm || null, layers: ['Locations'], ...data });
       const mid = Number((map as { id: number }).id);
       db.prepare(`DELETE FROM map_markers WHERE map_id = ? AND category = 'plan'`).run(mid);
-      // A numbered place that is a record kept under this one has its pin lead to that record.
+      // A numbered place that is a record (tied to one in the key, or kept under this one by the same name) has its
+      // pin lead to that record.
       const under = new Map((db.prepare('SELECT id, name FROM entities WHERE parent_id = ? AND archived = 0').all(id) as { id: string; name: string }[]).map((c) => [c.name.toLowerCase(), c.id]));
+      const there = db.prepare('SELECT 1 FROM entities WHERE id = ? AND archived = 0');
+      const tied = (entity: string | undefined) => (entity && there.get(entity) ? entity : null);
       // The Atlas measures up from the bottom of a map; a plan, down from its top.
-      for (const a of o.areas) markers.create(db, { map_id: mid, entity_id: under.get(a.name.toLowerCase()) ?? null, label: `${a.n}. ${a.name}`, x: Math.round(a.x * px), y: Math.round(image.height - a.y * px), category: 'plan', layer: 'Locations', hidden: true });
+      for (const a of o.areas) markers.create(db, { map_id: mid, entity_id: tied(a.entity) ?? under.get(a.name.toLowerCase()) ?? null, label: `${a.n}. ${a.name}`, x: Math.round(a.x * px), y: Math.round(image.height - a.y * px), category: 'plan', layer: 'Locations', hidden: true });
       db.prepare('UPDATE place_plans SET map_id = ? WHERE entity_id = ?').run(mid, id);
       return mid;
     })();

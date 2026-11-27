@@ -25,6 +25,8 @@ export interface DungeonAsk {
   kept?: KeptRoom[];
   /** Doors between two kept rooms, on the same squares as they are: these stay too. */
   keptOpenings?: Opening[];
+  /** Where the way in comes from, for a place under another (v0.9.27): "the wine cellar of the Gilded Flagon". Else it is the outside. */
+  from?: string;
 }
 
 /** A room that is there already. Its squares are on any grid: only how the kept rooms lie to one another matters. */
@@ -288,11 +290,11 @@ export function makeDungeon(ask: DungeonAsk): GridPlan {
     keep.add((s.y + dy * 3) * N + s.x + dx * 3);
     if (natural) {
       mouth = { x: s.x + dx * 2, y: s.y + dy * 2 };
-      wayIn = `the way out, ${DIR_WORDS[entry]}`;
+      wayIn = ask.from ? `the way up to ${ask.from}, ${DIR_WORDS[entry]}` : `the way out, ${DIR_WORDS[entry]}`;
     } else {
       open(s.x, s.y, s.rx, s.ry, 'door');
       features.push({ kind: 'stairs', x: Math.min(s.x + dx, s.x + dx * 2), y: Math.min(s.y + dy, s.y + dy * 2), w: dx ? 2 : 1, h: dy ? 2 : 1, dir: entry as 0 | 1 | 2 | 3 });
-      wayIn = `stairs up to the outside, ${DIR_WORDS[entry]}`;
+      wayIn = `stairs up to ${ask.from || 'the outside'}, ${DIR_WORDS[entry]}`;
     }
   }
 
@@ -764,6 +766,7 @@ export interface CaveAsk {
   roomy: number;
   /** How many ways round there are, as for a dungeon. */
   loops: number;
+  from?: string;
 }
 
 /** A cave: the same way of laying out as a dungeon, with chambers for rooms and tunnels for passages. */

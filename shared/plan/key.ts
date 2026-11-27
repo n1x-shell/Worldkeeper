@@ -8,7 +8,7 @@
  */
 import { pick, type Plan, type Rnd } from './model.js';
 
-export const KEY_KINDS = ['encounter', 'trap', 'puzzle', 'hazard', 'loot', 'secret', 'clue', 'person', 'note'] as const;
+export const KEY_KINDS = ['encounter', 'trap', 'puzzle', 'hazard', 'loot', 'secret', 'clue', 'person', 'way', 'note'] as const;
 export type KeyKind = (typeof KEY_KINDS)[number];
 
 /** How each kind is named, and the letter that marks it on the GM's copy of the plan. */
@@ -21,6 +21,7 @@ export const KEY_KIND_INFO: Record<KeyKind, { label: string; mark: string; hint:
   secret: { label: 'Secret', mark: 'S', hint: 'What is hidden here, and how it comes to light.' },
   clue: { label: 'Clue', mark: 'C', hint: 'What the party can learn here.' },
   person: { label: 'Person', mark: 'N', hint: 'Somebody to meet, and what they want.' },
+  way: { label: 'Way on', mark: 'W', hint: 'How it leads there: stairs down, a tunnel behind the racks, a door that opens somewhere else.' },
   note: { label: 'Note', mark: '', hint: 'Anything else worth keying.' },
 };
 
@@ -52,7 +53,7 @@ export interface KeyItem {
   /** Loot: coin, as written ("120 gp"), and things. */
   coins?: string;
   things?: KeyThing[];
-  /** A person's (or any) record. */
+  /** A person's record; for a way on, the place it leads to. */
   entity?: string | null;
 }
 
@@ -71,6 +72,8 @@ export interface KeyRoom {
   /** Words to read aloud on entering. */
   aloud: string;
   items: KeyItem[];
+  /** The record this place is, if it is one of its own (v0.9.27): an inn in a town, with a plan of its own. */
+  record?: string;
 }
 
 export const newId = () => Math.random().toString(36).slice(2, 10);
@@ -121,7 +124,7 @@ export function syncRooms(rooms: KeyRoom[], names: string[]): { rooms: KeyRoom[]
 }
 
 /** Whether a place has anything keyed to it. */
-export const isKeyed = (r: KeyRoom) => r.items.length > 0 || r.aloud.trim() !== '';
+export const isKeyed = (r: KeyRoom) => r.items.length > 0 || r.aloud.trim() !== '' || !!r.record;
 /** Whether any place's name has changed since the plan was drawn for it. */
 export const renamed = (rooms: KeyRoom[]) => rooms.some((r) => r.name.trim() !== r.drawnAs);
 
@@ -138,7 +141,7 @@ export function roomMarks(rooms: KeyRoom[]): Record<number, string> {
 const several = (n: number, name: string) => (n > 1 ? `${n} × ${name}` : name);
 
 /** An entry in a line: "Trap (DC 13, 2d10 piercing): Poison needle. In the lock of the chest." */
-export function itemLine(it: KeyItem): { label: string; text: string } {
+export function itemLine(it: KeyItem, nameOf?: (id: string) => string | undefined): { label: string; text: string } {
   const info = KEY_KIND_INFO[it.kind];
   const bits: string[] = [];
   if (it.dc) bits.push(`DC ${it.dc}`);
@@ -146,6 +149,9 @@ export function itemLine(it: KeyItem): { label: string; text: string } {
   const label = `${info.label}${bits.length ? ` (${bits.join(', ')})` : ''}`;
   const parts: string[] = [];
   if (it.title.trim()) parts.push(it.title.trim());
+  // A way on names where it leads, as a link the record's text can follow.
+  const leads = it.kind === 'way' && it.entity ? nameOf?.(it.entity) : undefined;
+  if (leads) parts.push(`To @[${leads}|${it.entity}]`);
   if (it.creatures?.length) parts.push(it.creatures.map((c) => several(c.count, c.name)).join(', '));
   const loot = [it.coins?.trim(), ...(it.things ?? []).map((t) => several(t.count, t.name))].filter(Boolean);
   if (loot.length) parts.push(loot.join('; '));
@@ -161,15 +167,17 @@ export function itemLine(it: KeyItem): { label: string; text: string } {
  * The key as Markdown, for the record's text: a heading for each place with its size and ways out, the words to read
  * aloud as a quotation, and a line for each entry. Read back by `keyedNames`, it gives the same places in order.
  */
-export function fullKeyMarkdown(rooms: KeyRoom[], details: { detail: string; onPlan: boolean }[]): string {
+export function fullKeyMarkdown(rooms: KeyRoom[], details: { detail: string; onPlan: boolean }[], nameOf?: (id: string) => string | undefined): string {
   return rooms
     .map((r, i) => {
       const d = details[i];
       const lines = [`### ${i + 1}. ${r.name}`, ''];
       if (d?.detail) lines.push(`*${d.detail.trim()}*`, '');
+      const own = r.record ? nameOf?.(r.record) : undefined;
+      if (own) lines.push(`A record of its own: @[${own}|${r.record}].`, '');
       if (r.aloud.trim()) lines.push(...r.aloud.trim().split(/\n/).map((l) => `> ${l}`), '');
       for (const it of r.items) {
-        const { label, text } = itemLine(it);
+        const { label, text } = itemLine(it, nameOf);
         lines.push(`- **${label}:** ${text}`);
       }
       return lines.join('\n').trimEnd();

@@ -134,6 +134,10 @@ export interface TownPlan {
   trees: [number, number, number][];
   fields: { corners: Pt[]; angle: number }[];
   areas: Area[];
+  /** A town or a city in districts (v0.9.27): each one's name, where the name is written, and its outline. */
+  districts?: { name: string; at: Pt; outline: Pt[] }[];
+  /** The lines drawn between one district and the next. */
+  districtLines?: [Pt, Pt][];
 }
 
 export type Plan = GridPlan | TownPlan;
