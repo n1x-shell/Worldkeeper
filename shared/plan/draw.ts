@@ -23,8 +23,53 @@ export interface DrawOptions {
   marks: Record<number, string>;
   /** A numbered place to ring: the one being worked on. Never part of a picture taken away. */
   ring: number | null;
+  /** Ink on paper, or painted (v0.9.29): floors and ground in stone, wood, earth and grass. */
+  style: 'ink' | 'painted';
+  /** The textures the painted style is made of, each a picture as a data address. Without them it is painted in flat colours. */
+  art?: Partial<PlanArt>;
 }
-export const DRAW_DEFAULTS: DrawOptions = { gm: true, numbers: true, grid: 'floor', fill: 'hatch', paper: 'white', furnishings: true, title: '', px: 70, marks: {}, ring: null };
+export const DRAW_DEFAULTS: DrawOptions = { gm: true, numbers: true, grid: 'floor', fill: 'hatch', paper: 'white', furnishings: true, title: '', px: 70, marks: {}, ring: null, style: 'ink' };
+
+/** The grounds of the painted style. */
+export const ART_KINDS = ['stone', 'wood', 'earth', 'rock', 'grass', 'dirt'] as const;
+export type PlanArt = Record<(typeof ART_KINDS)[number], string>;
+/** Each ground's colour where there is no picture of it, how many units of the sheet one picture covers, and how far it is turned (so that its repeat does not run with the grid). */
+const GROUNDS: Record<keyof PlanArt, { flat: string; size: number; turn: number }> = {
+  stone: { flat: '#a39d91', size: 420, turn: 0 },
+  wood: { flat: '#77604a', size: 300, turn: 0 },
+  earth: { flat: '#9a8364', size: 520, turn: 0 },
+  rock: { flat: '#5a5148', size: 760, turn: 14 },
+  grass: { flat: '#5f7a3c', size: 640, turn: -11 },
+  dirt: { flat: '#b18c61', size: 520, turn: 7 },
+};
+/** Only a picture written out as letters is taken: nothing that could close the mark it is put in. */
+const PICTURE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
+/** The fills of the painted style: ask for a ground as it is needed, and take the patterns for those asked for at the end. */
+export function paints(o: DrawOptions): { fill: (k: keyof PlanArt) => string; defs: () => string } {
+  const used = new Set<keyof PlanArt>();
+  const has = (k: keyof PlanArt) => PICTURE.test(o.art?.[k] ?? '');
+  return {
+    fill: (k) => {
+      used.add(k);
+      return has(k) ? `url(#p-${k})` : GROUNDS[k].flat;
+    },
+    defs: () =>
+      [...used]
+        .filter(has)
+        .map((k) => {
+          const g = GROUNDS[k];
+          return `<pattern id="p-${k}" width="${g.size}" height="${g.size}" patternUnits="userSpaceOnUse"${g.turn ? ` patternTransform="rotate(${g.turn})"` : ''}><image href="${o.art![k]}" width="${g.size}" height="${g.size}" preserveAspectRatio="none"/></pattern>`;
+        })
+        .join(''),
+  };
+}
+/** What lies beyond a place in the painted style: the sky, the mist, the sea. */
+export const SKY = '#b9d2e2';
+export const HAZE = '#cdc9bf';
+export const SEA = '#3c6b82';
+/** What a thing is made of, in the painted style: wood, stone, water, growth. */
+const WOODEN = new Set<Feature['kind']>(['table', 'bed', 'chest', 'barrel', 'shelf', 'counter', 'pew', 'stall', 'bridge', 'mast', 'helm', 'ballista', 'throne']);
+const tone = (kind: Feature['kind']) => (WOODEN.has(kind) ? '#b9925e' : kind === 'pool' ? '#7fa9bb' : kind === 'growth' ? '#a3bd7f' : kind === 'trap' ? '#f3ead6' : '#cbc5ba');
 
 /** The letters for what is keyed to a place, and the ring round the one being worked on. */
 export function keyMarks(n: number, x: number, y: number, o: DrawOptions, halo: string): string {
@@ -82,7 +127,9 @@ export function legend(plan: Plan, o: DrawOptions, sheet: string, dark = false):
 
 function drawGrid(plan: GridPlan, o: DrawOptions): string {
   const { w, h, cells } = plan;
-  const paper = PAPERS[o.paper];
+  const painted = o.style === 'painted';
+  const paper = PAPERS[painted ? 'white' : o.paper];
+  const doorFill = painted ? '#b9925e' : paper.floor;
   const seed = (w * 73856093) ^ (h * 19349663) ^ (plan.areas.length * 83492791);
   const at = (x: number, y: number) => (x < 0 || y < 0 || x >= w || y >= h ? 0 : cells[y * w + x]);
   const floor = (x: number, y: number) => at(x, y) !== 0;
@@ -269,7 +316,7 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
         ? `<rect x="${r1(mx - along / 2)}" y="${r1(my - across / 2)}" width="${r1(along)}" height="${r1(across)}" ${extra}/>`
         : `<rect x="${r1(mx - across / 2)}" y="${r1(my - along / 2)}" width="${r1(across)}" height="${r1(along)}" ${extra}/>`;
     if (p.kind === 'door' || p.kind === 'double') {
-      doors.push(rect(gap, outer ? 0.3 : 0.24, `fill="${paper.floor}" stroke="${INK}" stroke-width="7"`));
+      doors.push(rect(gap, outer ? 0.3 : 0.24, `fill="${doorFill}" stroke="${INK}" stroke-width="7"`));
       if (p.kind === 'double') doors.push(horizontal ? `<path d="M${r1(mx)} ${r1(my - 0.12)}V${r1(my + 0.12)}" stroke="${INK}" stroke-width="6"/>` : `<path d="M${r1(mx - 0.12)} ${r1(my)}H${r1(mx + 0.12)}" stroke="${INK}" stroke-width="6"/>`);
     } else if (p.kind === 'arch') {
       // The jambs of an open doorway.
@@ -278,7 +325,7 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
     } else if (p.kind === 'bars') {
       for (const t of [-0.2, 0, 0.2]) doors.push(`<circle cx="${r1(horizontal ? mx + t : mx)}" cy="${r1(horizontal ? my : my + t)}" r="7" fill="${INK}"/>`);
     } else if (p.kind === 'window') {
-      doors.push(rect(gap, 0.14, `fill="${paper.floor}" stroke="${INK}" stroke-width="5"`));
+      doors.push(rect(gap, 0.14, `fill="${painted ? '#bfd4dd' : paper.floor}" stroke="${INK}" stroke-width="5"`));
     }
   }
 
@@ -352,11 +399,12 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
     else if (land === 'adrift') around.push(mist(w, h, seed, open));
     else if (ship) around.push(waves(w, h, seed, open, INK));
   }
+  let ground = '';
+  let drop = '';
   if (rim > 0) {
     // The island: the outline of its ground, ragged, and under its southern edges the strokes of the drop.
     const next = new Map<string, { to: V; dir: number; used?: boolean }[]>();
     const side = (from: V, to: V, dir: number) => next.set(`${from[0]},${from[1]}`, [...(next.get(`${from[0]},${from[1]}`) ?? []), { to, dir }]);
-    let drop = '';
     for (let y = 0; y < h; y++)
       for (let x = 0; x < w; x++) {
         if (!isle(x, y)) continue;
@@ -370,7 +418,6 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
             drop += `M${r1(x + k)} ${r1(y + 1.12)}v${Math.round(len * U)}`;
           }
       }
-    let ground = '';
     for (const list of next.values())
       for (const first of list) {
         if (first.used) continue;
@@ -389,11 +436,72 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
         if (ring.length >= 4) ground += ragged(ring, seed, 0.3, ([x, y]) => x <= 0 || y <= 0 || x >= w || y >= h);
       }
     const sheet = paper.sheet === 'none' ? '#ffffff' : paper.sheet;
-    around.push(`<path d="${ground}" fill="${sheet}" fill-rule="evenodd" stroke="${INK}" stroke-width="${night ? 0 : 5}" stroke-linejoin="round"/>`);
-    if (drop) around.push(`<path d="${drop}" fill="none" stroke="${INK}" stroke-width="3.2" stroke-linecap="round" opacity="0.8"/>`);
+    if (!painted) {
+      around.push(`<path d="${ground}" fill="${sheet}" fill-rule="evenodd" stroke="${INK}" stroke-width="${night ? 0 : 5}" stroke-linejoin="round"/>`);
+      if (drop) around.push(`<path d="${drop}" fill="none" stroke="${INK}" stroke-width="3.2" stroke-linecap="round" opacity="0.8"/>`);
+    }
   }
   // A rift: the ground gone, in a broken line across floors and rock alike.
   const rifts = (plan.rifts ?? []).map((r) => `<path d="${riftPath(r, seed)}" fill="${INK}" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`);
+
+  const stroke = `stroke-linecap="round" stroke-linejoin="round" fill="none"`;
+  // A mast and a helm are the ship; growth and a bridge are the ground: they are drawn whether or not furnishings are.
+  const always = new Set<Feature['kind']>(['stairs', 'pillar', 'trap', 'mast', 'helm', 'growth', 'bridge']);
+  const shownThings = plan.features.filter((f) => (o.gm || !f.gm) && (o.furnishings || always.has(f.kind)));
+  const titles = plan.captions.map((c) => {
+    // On a patch of clear paper, so that it reads over the hatching round a cellar.
+    const half = c.text.length * 11 + 16;
+    const sheet = paper.sheet === 'none' ? '#ffffff' : paper.sheet;
+    return `<rect x="${r1(c.x) - half}" y="${r1(c.y) - 40}" width="${half * 2}" height="56" rx="10" fill="${sheet}"/><text x="${r1(c.x)}" y="${r1(c.y)}" font-size="44" font-style="italic" text-anchor="middle" fill="${INK}">${esc(c.text)}</text>`;
+  });
+  const numbers = o.numbers
+    ? plan.areas.map(
+        (a) =>
+          keyMarks(a.n, r1(a.x), r1(a.y), o, paper.floor) +
+          `<text x="${r1(a.x)}" y="${r1(a.y)}" font-size="${a.n > 99 ? 40 : 50}" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="${INK}" stroke="${paper.floor}" stroke-width="14" stroke-linejoin="round" paint-order="stroke">${a.n}</text>`,
+      )
+    : [];
+
+  // ---- Painted: floors of stone, wood or earth, on rock or grass, with the shade of the walls on them -------------------
+  if (painted) {
+    const paint = paints(o);
+    const allRock = plan.rock.every((v) => v === 1);
+    const floorOf = plan.kind === 'cave' ? 'earth' : plan.kind === 'dungeon' ? 'stone' : 'wood';
+    const beyond = land === 'void' ? NIGHT : land === 'aloft' ? SKY : land === 'adrift' ? HAZE : ship ? SEA : null;
+    const groundFill = paint.fill(allRock ? 'rock' : 'grass');
+    // Rock is in shadow: the floors are what is lit.
+    const dim = (d: string) => (allRock ? `<path d="${d}" fill="#0e0b08" fill-rule="evenodd" opacity="0.5"/>` : '');
+    const out: string[] = ['', `<rect width="${w * U}" height="${h * U}" fill="${beyond ?? groundFill}"/>`];
+    if (!beyond) out.push(dim(`M0 0H${w * U}V${h * U}H0Z`));
+    out.push(...around);
+    if (ground) out.push(`<path d="${ground}" fill="${groundFill}" fill-rule="evenodd" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`, dim(ground));
+    if (drop) out.push(`<path d="${drop}" fill="none" stroke="${INK}" stroke-width="3.2" stroke-linecap="round" opacity="0.8"/>`);
+    if (!allRock) {
+      // A building's cellar is dug in rock.
+      let under = '';
+      for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (isRock(x, y) && near(x, y, 2)) under += `M${x * U - 2} ${y * U - 2}h${U + 4}v${U + 4}h${-U - 4}Z`;
+      if (under) out.push(`<path d="${under}" fill="${paint.fill('rock')}"/><path d="${under}" fill="#0e0b08" opacity="0.5"/>`);
+    }
+    out.push(`<path d="${floorPath}" fill="${paint.fill(floorOf)}" fill-rule="evenodd"/>`);
+    out.push(`<path d="${floorPath}" fill="${floorOf === 'wood' ? '#ecd6b0' : '#f1e7d0'}" fill-rule="evenodd" opacity="${floorOf === 'wood' ? 0.32 : 0.2}"/>`);
+    out.push(`<path d="${wallPaths.thin}${wallPaths.thick}${inner}" fill="none" stroke="#000000" stroke-width="84" stroke-linejoin="round" opacity="0.42" filter="url(#p-soft)" clip-path="url(#floor)"/>`);
+    if (o.grid !== 'none') out.push(`<path d="${grid}" stroke="#17130f" stroke-opacity="0.34" stroke-width="2.5" fill="none"${o.grid === 'floor' ? ' clip-path="url(#floor)"' : ''}/>`);
+    for (const f of shownThings) if (f.kind !== 'bridge') out.push(feature(f, tone(f.kind), seed));
+    // Walls with some body to them: a dark edge and a core of stone or timber. A cave's are the rock itself.
+    const core = plan.kind === 'cave' ? '' : ship ? '#7d6246' : '#9a9286';
+    for (const [d, wide] of [[`${wallPaths.thin}${inner}${stubs}`, wallW + 7], [`${wallPaths.thick}${stubsThick}`, thickW + 4]] as const) {
+      if (!d) continue;
+      out.push(`<path d="${d}" stroke="#15110d" ${stroke} stroke-width="${wide}"/>`);
+      if (core) out.push(`<path d="${d}" stroke="${core}" ${stroke} stroke-width="${wide - 10}"/>`);
+    }
+    out.push(...doors, ...rifts);
+    for (const f of shownThings) if (f.kind === 'bridge') out.push(feature(f, tone(f.kind), seed));
+    out.push(...marks, ...titles, ...numbers);
+    const light = land === 'aloft' || land === 'adrift';
+    out.push(legend(plan, o, light ? '#ffffff' : 'none', !light));
+    out[0] = `<defs>${paint.defs()}<filter id="p-soft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="26"/></filter><clipPath id="floor"><path d="${floorPath}" clip-rule="evenodd"/></clipPath></defs>`;
+    return out.join('');
+  }
 
   // ---- Put together, from the paper up ---------------------------------------------------------------------------------
   const out: string[] = [];
@@ -404,29 +512,14 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
   if (solid) out.push(`<path d="${solid}" fill="${INK}"/>`);
   out.push(`<path d="${floorPath}" fill="${paper.floor}" fill-rule="evenodd"/>`);
   if (o.grid !== 'none') out.push(`<clipPath id="floor"><path d="${floorPath}" clip-rule="evenodd"/></clipPath><path d="${grid}" stroke="${paper.line}" stroke-width="2.5" fill="none" clip-path="url(#floor)"/>`);
-  // A mast and a helm are the ship; growth and a bridge are the ground: they are drawn whether or not furnishings are.
-  const always = new Set<Feature['kind']>(['stairs', 'pillar', 'trap', 'mast', 'helm', 'growth', 'bridge']);
-  for (const f of plan.features) if (f.kind !== 'bridge' && (o.gm || !f.gm) && (o.furnishings || always.has(f.kind))) out.push(feature(f, paper.floor, seed));
-  const stroke = `stroke="${INK}" stroke-linecap="round" stroke-linejoin="round" fill="none"`;
-  if (wallPaths.thin + stubs + inner) out.push(`<path d="${wallPaths.thin}${inner}${stubs}" ${stroke} stroke-width="${wallW}"/>`);
-  if (wallPaths.thick + stubsThick) out.push(`<path d="${wallPaths.thick}${stubsThick}" ${stroke} stroke-width="${thickW}"/>`);
+  for (const f of shownThings) if (f.kind !== 'bridge') out.push(feature(f, paper.floor, seed));
+  if (wallPaths.thin + stubs + inner) out.push(`<path d="${wallPaths.thin}${inner}${stubs}" stroke="${INK}" ${stroke} stroke-width="${wallW}"/>`);
+  if (wallPaths.thick + stubsThick) out.push(`<path d="${wallPaths.thick}${stubsThick}" stroke="${INK}" ${stroke} stroke-width="${thickW}"/>`);
   out.push(...doors);
   // The rift is over the walls it has broken; a bridge is over the rift.
   out.push(...rifts);
-  for (const f of plan.features) if (f.kind === 'bridge') out.push(feature(f, paper.floor, seed));
-  out.push(...marks);
-  for (const c of plan.captions) {
-    // On a patch of clear paper, so that it reads over the hatching round a cellar.
-    const half = c.text.length * 11 + 16;
-    const sheet = paper.sheet === 'none' ? '#ffffff' : paper.sheet;
-    out.push(`<rect x="${r1(c.x) - half}" y="${r1(c.y) - 40}" width="${half * 2}" height="56" rx="10" fill="${sheet}"/><text x="${r1(c.x)}" y="${r1(c.y)}" font-size="44" font-style="italic" text-anchor="middle" fill="${INK}">${esc(c.text)}</text>`);
-  }
-  if (o.numbers)
-    for (const a of plan.areas)
-      out.push(
-        keyMarks(a.n, r1(a.x), r1(a.y), o, paper.floor) +
-          `<text x="${r1(a.x)}" y="${r1(a.y)}" font-size="${a.n > 99 ? 40 : 50}" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="${INK}" stroke="${paper.floor}" stroke-width="14" stroke-linejoin="round" paint-order="stroke">${a.n}</text>`,
-      );
+  for (const f of shownThings) if (f.kind === 'bridge') out.push(feature(f, paper.floor, seed));
+  out.push(...marks, ...titles, ...numbers);
   out.push(legend(plan, o, paper.sheet, night || (rim < 0 && o.fill === 'solid' && plan.rock.every((v) => v === 1))));
   return out.join('');
 }

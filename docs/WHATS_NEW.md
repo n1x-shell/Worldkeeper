@@ -2,6 +2,13 @@
 
 What changed in each version, newest first. Every update keeps your worlds as they are, and makes a backup of a library before changing how it is stored.
 
+## 0.9.29
+
+- **A painted style for plans.** Under "How it is drawn", choose **Painted**: the same plan on stone, earth, timber and grass from photographs, with shaded walls, for a picture to play on at a table or in a virtual tabletop. Dungeons, caves, buildings, ships and settlements, on every kind of ground.
+- **Ink** is still what a plan is drawn in until you choose otherwise, and is the one to print. Ink plans are exactly as they were.
+- The choice is about how a plan is shown, not the plan: its rooms, key and numbers are the same in both, and the picture is the same size.
+- The photographs are six small textures from Poly Haven, in the public domain (CC0). They are part of the app and work offline.
+
 ## 0.9.28
 
 - **Ships.** A fifth kind of plan: a hull and its decks, with masts, a helm, cabins, a hold and ladders between decks, as a boat, a ship or a great ship. Key it, change it by hand, and take it away as a picture like any other plan.

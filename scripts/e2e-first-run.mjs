@@ -186,6 +186,27 @@ try {
     const size = await page.getByTestId('plan-drawing').evaluate((img) => [img.naturalWidth, img.naturalHeight]);
     if (png.subarray(1, 4).toString() !== 'PNG' || across !== size[0] || down !== size[1] || across % 70 || down % 70) throw new Error(`the plan's picture is ${across} × ${down} pixels, not the ${size.join(' × ')} of the drawing at 70 pixels to a square`);
     if (download.suggestedFilename() !== 'The Sunken Vault.png') throw new Error(`the plan's picture is called ${download.suggestedFilename()}`);
+    // Painted (v0.9.29): the same plan on stone and rock from photographs, as a picture of the same size; ink is the one it comes back to.
+    await page.getByLabel('Style').selectOption('painted');
+    const inked = async () => decodeURIComponent((await page.getByTestId('plan-drawing').getAttribute('src')) ?? '');
+    for (let tries = 0; tries < 80 && !(await inked()).includes('<image'); tries++) await page.waitForTimeout(100);
+    if (!(await inked()).includes('<image')) throw new Error('the painted style has no pictures in it');
+    const paintedSize = await page.getByTestId('plan-drawing').evaluate((img) => img.decode().then(() => [img.naturalWidth, img.naturalHeight], () => [0, 0]));
+    if (paintedSize.join() !== size.join()) throw new Error(`painted, the plan is ${paintedSize.join(' × ')}, not ${size.join(' × ')}`);
+    if ((await page.getByLabel('Paper').count()) || (await page.getByLabel('Rock').count())) throw new Error('painted, the plan still asks about paper and rock');
+    const [paintedFile] = await Promise.all([page.waitForEvent('download'), page.getByTestId('plan-png').click()]);
+    const paintedPath = path.join(os.tmpdir(), `wk-e2e-plan-painted-${Date.now()}.png`);
+    await paintedFile.saveAs(paintedPath);
+    const paintedPng = fs.readFileSync(paintedPath);
+    fs.rmSync(paintedPath, { force: true });
+    if (paintedPng.readUInt32BE(16) !== across || paintedPng.length < png.length * 2) throw new Error(`the painted picture is ${paintedPng.length} bytes beside ink's ${png.length}: the photographs are not in it`);
+    await shot(page, '08a-plan-painted');
+    await page.reload();
+    await page.getByTestId('plan-drawing').waitFor();
+    if ((await page.getByLabel('Style').inputValue()) !== 'painted') throw new Error('the style was not remembered');
+    await page.getByLabel('Style').selectOption('ink');
+    for (let tries = 0; tries < 40 && (await inked()).includes('<image'); tries++) await page.waitForTimeout(100);
+    if ((await inked()).includes('<image')) throw new Error('ink still has the photographs in it');
     await page.getByRole('button', { name: 'Make it a map in the Atlas' }).click();
     await page.getByRole('link', { name: 'Open the map' }).waitFor();
     const made = (await api(`/api/entities/${vault.id}/plan`)).map;

@@ -98,6 +98,12 @@ And join them up. A numbered place can be a record of its own with its own plan:
 
 And put them on the ground they are really on. Any plan can be overgrown, shattered by a rift, aloft on an island in the sky, adrift in the mist between worlds (with lettered doors that open on rooms not next door), unearthly, or in the void among the stars. A **ship** is a fifth kind of plan: a hull and its decks, at sea, in the sky or in the void.
 
+Or paint them. **Painted** draws the same plan on stone, earth, timber and grass from photographs, for a picture to play on; ink stays the one to print.
+
+| A dungeon, painted | A walled town, painted |
+| --- | --- |
+| ![A dungeon of nine rooms on cobbled floors in dark rock, with tables, beds, pillars and two traps marked](docs/images/plan-painted.jpg) | ![A walled town by a river on grass, with earth roads, tiled roofs, fields and four named wards](docs/images/plan-painted-town.jpg) |
+
 | A ship among the stars | A city aloft, in districts | A dungeon adrift: doors of a letter open on one another |
 | --- | --- | --- |
 | ![The plan of The Starwind: three decks of a ship, white on a black sheet of stars](docs/images/plan-ship.jpg) | ![The plan of Zepharyos, the Floating City: a walled city on an island among clouds, with landing stages where its roads end](docs/images/plan-aloft.jpg) | ![The plan of The Unmoored Archive: seven rooms in the mist with no passages between them, their doors lettered A to F](docs/images/plan-adrift.jpg) |
@@ -261,6 +267,8 @@ An optional, provider-independent AI assistant is planned for a later phase. Any
 Licensed under the **BSD 2-Clause License**. See [LICENSE](LICENSE) for the full text.
 
 Worldkeeper is an independent tabletop campaign tool, compatible with fifth edition. It is **not affiliated with or endorsed by Wizards of the Coast**. Apart from the System Reference Document 5.2.1 (its character rules, spells, creatures, magic items, equipment and hazards), it does not bundle official D&D rulebook text. A creature's environments in the encounter generator are facts recorded alongside the SRD's stat blocks, not text. The 5etools importer reads a copy that you supply and stores what it converts only in your own library; users provide their own appropriately licensed or owned material. Worldkeeper is not affiliated with 5etools.
+
+The painted style of plans uses six textures from Poly Haven (polyhaven.com), which are in the public domain (CC0 1.0): cobblestone_floor_08, gravel_floor, rock_04, dark_wooden_planks, rocky_terrain_02 and dirt_floor, cut down and recoloured.
 
 The Oros worldbook's rules (the world's creatures, hazards and items, in `packs/worldkeeper/rules/`, `packs/worldkeeper/statblocks/statblocks.json` and `packs/worldkeeper/treasure/catalogue.json`) is licensed under CC BY 4.0: "The Oros worldbook's rules, by the Worldkeeper contributors, CC BY 4.0."
 

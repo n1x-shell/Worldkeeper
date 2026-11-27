@@ -229,7 +229,9 @@ A ship on ordinary ground is **at sea**. The ground changes the layout only wher
 - **Add to the record's pictures** puts the picture on the record, for you only until you show it to the players there.
 - **Make it a map in the Atlas** makes a map of the players' copy, with a hidden pin on each numbered place (a pin for a place that is a record of its own leads to that record) and the scale set, so the ruler measures true. Show the map and its pins to the players as you would any other, and put it on the table display. Drawn again from a new plan, the same map is updated and any pins you added are kept.
 
-The plans are made by the app itself, with no pictures or services from elsewhere: they work offline, and what you draw is yours to use as you like.
+**Ink or painted.** A plan is drawn in **ink** unless you choose **Painted** under "How it is drawn": then its floors are stone, earth or timber, the rock and ground around it are rock, grass and bare earth, all from photographs, and its walls are shaded. It is the same plan with the same key and numbers, as a picture of the same size, and it is for playing on: ink is the one to print. The grid, whose copy it is, furnishings and the name on the sheet are chosen as before; rock and paper are ink's alone. The choice is remembered on this device.
+
+The plans are made by the app itself, with no services from elsewhere: they work offline, and what you draw is yours to use as you like. The painted style's six textures come from [Poly Haven](https://polyhaven.com) and are in the public domain (CC0), so pictures made with them are yours too.
 
 ## Campaigns
 

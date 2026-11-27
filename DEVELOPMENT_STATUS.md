@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-27 · v0.9.28_
+_Last updated: 2026-11-27 · v0.9.29_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,18 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.29: a painted style for plans
+
+docs/BETA_PLAN.md C8, sixth part, and decision 7 of §5 (27 November 2026). The owner brought a list of free art; the licences were read on each source's own page; two trials were shown; the owner chose painted grounds only, before the beta.
+
+- **A style, not a plan.** `DrawOptions.style` is `'ink'` (the default) or `'painted'`; `DrawOptions.art` carries the pictures. Nothing about a plan, its settings or what the server keeps has changed: the style is one more thing the GM chooses about how a plan is shown, remembered on the device with the rest (`wk.plan.view`).
+- **Ink is byte for byte what it was.** The painted code is a separate branch in `drawGrid` and a palette in `drawTown` whose ink values are the old ones; the fingerprint of every ink drawing checked while building did not change, and `tests/planPaint.test.ts` checks that ink ignores `style: 'ink'` and any `art` given.
+- **The pictures** are six 512-pixel JPEGs in `client/src/assets/plan/` (about 360 KB together): stone, earth, rock, wood, grass, dirt, cut from Poly Haven textures (CC0), recoloured and made to tile. `paints(o)` in `shared/plan/draw.ts` makes one SVG `<pattern>` for each ground a drawing uses, so each picture is in a drawing once however much it covers; each has its own size and turn so that the repeat does not show. A value that is not `data:image/(jpeg|png|webp);base64,…` is not used, and without pictures the style falls back to flat colours.
+- **Plans on squares:** rock (or grass round a building, sky, sea, mist or stars by the ground) behind; textured floors with a soft shade along the walls (a blurred stroke clipped to the floor); a dark grid; walls with a dark edge and a stone or timber core; furnishings in flat tones of wood, stone and iron, drawn by the app as before. **Settlements:** grass, earth roads, a cobbled square, tilled fields, roofs in three colours with their ridges, stone walls and towers.
+- **The client** loads the pictures only when a plan is first shown painted (`client/src/lib/planArt.ts`, a chunk of its own of about 490 KB, by Vite's `?inline`), and they go into the SVG, so a saved picture or drawing needs nothing else. Rock and Paper are not asked when painted. A painted SVG is about 500 KB larger than an ink one.
+- **Checked:** every kind on every ground is well-formed and uses no id it does not make (a browser refuses a drawing that is not); the first-run browser check chooses Painted, waits for the photographs, checks the picture decodes at the same size, saves the PNG, reloads to see the choice remembered, and goes back to ink.
+- **Not done, on purpose:** furnishings from other artists' packs (the owner chose grounds only); pictures of the GM's own choosing. **Not verified:** painted pictures opened in a virtual tabletop or Arkenforge; how the larger SVG behaves in other programs.
 
 ## v0.9.28: the lie of the land, and ships
 

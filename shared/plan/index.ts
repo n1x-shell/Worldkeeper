@@ -15,7 +15,7 @@ import { lieGrid, lieTown } from './land.js';
 import { makeShip } from './ship.js';
 
 export * from './model.js';
-export { drawPlan, DRAW_DEFAULTS, type DrawOptions } from './draw.js';
+export { drawPlan, DRAW_DEFAULTS, ART_KINDS, type DrawOptions, type PlanArt } from './draw.js';
 export { BUILDING_USES } from './building.js';
 export { TOWN_SIZES, type TownSize } from './settlement.js';
 export * from './key.js';
