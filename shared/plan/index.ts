@@ -7,11 +7,13 @@ import { makeCave, makeDungeon } from './dungeon.js';
 import { BUILDING_USES, buildingUse, makeBuilding } from './building.js';
 import { TOWN_SIZES, makeSettlement, placeNames, type TownAsk, type TownSize } from './settlement.js';
 import { roomNames } from './names.js';
+import { fullKeyMarkdown, roomsFor, type KeyRoom } from './key.js';
 
 export * from './model.js';
 export { drawPlan, DRAW_DEFAULTS, type DrawOptions } from './draw.js';
 export { BUILDING_USES } from './building.js';
 export { TOWN_SIZES, type TownSize } from './settlement.js';
+export * from './key.js';
 
 /** What a plan is made from. The same settings always give the same plan. */
 export interface PlanSettings {
@@ -33,6 +35,11 @@ export interface PlanSettings {
   water: TownAsk['water'];
   walled: boolean;
   around: TownAsk['around'];
+  /**
+   * What is in each numbered place, once the GM has keyed any of it. Then the plan's places are these, and `names`
+   * is what the plan is drawn from for them.
+   */
+  key?: KeyRoom[];
 }
 
 export const PLAN_LABELS: Record<PlanKind, string> = { dungeon: 'Dungeon', cave: 'Cave', building: 'Building', settlement: 'Settlement' };
@@ -71,6 +78,13 @@ const clean = (s: string) =>
     .replace(/[*_`]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
+/** A heading inside a key is a name whole: "3. St. Oda's chapel" is "St. Oda's chapel". */
+const headingName = (text: string) =>
+  text
+    .replace(/^\s*(?:(?:room|area|level|site)\s+)?\d{1,3}\s*[.):–—-]\s*/i, '')
+    .replace(/[.:,;]+$/, '')
+    .slice(0, 60)
+    .trim();
 /** The name at the start of a line of a key: what is in bold, or what comes before the first full stop or colon. */
 function itemName(text: string): string {
   const bold = /^\s*\*\*(.+?)\*\*/.exec(text);
@@ -93,25 +107,37 @@ export function keyedNames(body: string): string[] {
   const add = (name: string) => {
     if (name && name.length >= 2 && out.length < MAX_NAMES && !out.some((o) => o.toLowerCase() === name.toLowerCase())) out.push(name);
   };
+  // Within a key, places are its smaller headings if it has any (the lines under one are what is in that place);
+  // else its numbered lines and its lines that begin in bold.
   let depth = 0;
+  let headings: string[] = [];
+  let listed: string[] = [];
+  const close = () => {
+    for (const n of headings.length ? headings : listed) add(n);
+    [headings, listed] = [[], []];
+  };
   for (const line of lines) {
     const h = /^(#{1,5})\s+(.*?)\s*#*\s*$/.exec(line);
     if (h) {
       const text = clean(h[2]);
-      if (depth && h[1].length > depth) add(itemName(text));
-      else depth = KEY_HEADING.test(text) ? h[1].length : 0;
+      if (depth && h[1].length > depth) headings.push(headingName(text));
+      else {
+        close();
+        depth = KEY_HEADING.test(text) ? h[1].length : 0;
+      }
       continue;
     }
-    if (!depth) continue;
+    if (!depth || headings.length) continue;
     const numbered = /^\s*\d{1,3}[.)]\s+(.+)$/.exec(line);
     const bullet = /^\s*[-*+]\s+(\*\*.+?\*\*.*)$/.exec(line);
-    if (numbered) add(itemName(numbered[1]));
-    else if (bullet) add(itemName(bullet[1]));
+    if (numbered) listed.push(itemName(numbered[1]));
+    else if (bullet) listed.push(itemName(bullet[1]));
   }
+  close();
   if (out.length) return out;
   for (const line of lines) {
     const h = /^#{1,5}\s+(?:(?:room|area|level|site)\s+)?(\d{1,3})\s*[.):–—-]\s*(.+?)\s*#*\s*$/i.exec(line);
-    if (h) add(itemName(clean(h[2])));
+    if (h) add(headingName(clean(h[2])));
   }
   return out;
 }
@@ -251,16 +277,18 @@ export function planKey(plan: Plan, names: string[]): KeyLine[] {
     }
     const size = a.feet ? (plan.kind === 'cave' ? `about ${Math.round((a.feet[0] + a.feet[1]) / 2 / 5) * 5} ft across` : feetText(a.feet)) : '';
     const exits = a.exits.length ? `${a.exits.join('; ').replace(/^./, (c) => c.toUpperCase())}.` : '';
-    out.push({ n, name: a.name, detail: [a.floor, size].filter(Boolean).join(', ') + (size || a.floor ? '. ' : '') + exits, onPlan: true });
+    // A place is called what the key calls it now, which may not be the name the plan was drawn for.
+    out.push({ n, name: names[n - 1] ?? a.name, detail: [a.floor, size].filter(Boolean).join(', ') + (size || a.floor ? '. ' : '') + exits, onPlan: true });
   }
   return out;
 }
 
-/** The key as Markdown, for a record's text. Read back by `keyedNames`, it gives the same names in the same order. */
+/**
+ * The key as Markdown, for a record's text, for a plan nothing has been keyed to: each place with its size and its
+ * ways out. Read back by `keyedNames`, it gives the same names in the same order.
+ */
 export function keyMarkdown(plan: Plan, names: string[]): string {
-  return planKey(plan, names)
-    .map((k) => `${k.n}. **${k.name}**${k.detail ? ` ${k.detail.trim()}` : ''}`)
-    .join('\n');
+  return fullKeyMarkdown(roomsFor(plan, names), planKey(plan, names));
 }
 
 export const TOWN_LABELS = Object.fromEntries(Object.entries(TOWN_SIZES).map(([k, v]) => [k, v.label])) as Record<TownSize, string>;

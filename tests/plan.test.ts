@@ -6,7 +6,35 @@ import request from 'supertest';
 import { tempContext } from './helpers.js';
 import { createApp } from '../server/src/app.js';
 import { exportJson, importJson } from '../server/src/backup/exporter.js';
-import { BUILDING_USES, drawPlan, edgeKey, keyMarkdown, keyedNames, madeNames, makePlan, planKey, readNumber, suggest, type GridPlan, type PlaceFacts, type PlanSettings, type TownPlan } from '../shared/plan/index.js';
+import {
+  BUILDING_USES,
+  KEY_KINDS,
+  drawPlan,
+  drawnNames,
+  edgeKey,
+  fullKeyMarkdown,
+  ideaFor,
+  itemLine,
+  keyMarkdown,
+  keyedNames,
+  madeNames,
+  makePlan,
+  newItem,
+  planKey,
+  readNumber,
+  rng,
+  roomMarks,
+  roomsFor,
+  suggest,
+  syncRooms,
+  trapNumbers,
+  type GridPlan,
+  type KeyRoom,
+  type PlaceFacts,
+  type PlanSettings,
+  type TownPlan,
+} from '../shared/plan/index.js';
+import { playerSnapshot } from '../server/src/player/projection.js';
 
 const base: PlanSettings = { kind: 'dungeon', seed: 7, names: [], size: 'medium', rough: false, ways: 'some', secrets: true, traps: true, use: 'house', town: 'village', water: 'none', walled: false, around: 'fields' };
 const plain = (v: unknown) => JSON.stringify(v, (_k, x) => (ArrayBuffer.isView(x) ? Array.from(x as unknown as number[]) : x instanceof Set ? [...x] : x));
@@ -235,6 +263,103 @@ describe('reading a record for its plan', () => {
   });
 });
 
+describe('the key to a plan', () => {
+  const names = ['Entry stair', 'Guard room', 'St. Oda’s chapel', 'Treasury'];
+  const keyed = (): KeyRoom[] => {
+    const rooms = roomsFor(makePlan({ ...base, names }), names);
+    rooms[1].aloud = 'Two benches.\nThe fire is warm.';
+    rooms[1].items = [
+      newItem('encounter', { title: 'The night watch', creatures: [{ name: 'Skeleton', count: 3, id: 'srd:skeleton' }, { name: 'Ghoul', count: 1 }], text: 'They rise when the door opens' }),
+      newItem('trap', { title: 'Needle in the lock', dc: 13, damage: '2d10 poison', text: 'On the chest.' }),
+    ];
+    rooms[3].items = [newItem('loot', { coins: '120 gp', things: [{ name: 'Potion of Healing', count: 2 }, { name: 'Silver ewer (25 gp)', count: 1 }] }), newItem('note', { text: 'Dust everywhere' })];
+    return rooms;
+  };
+
+  it('has a place for each numbered place, named as the plan has them, and a building’s on their storeys', () => {
+    const rooms = roomsFor(makePlan({ ...base, names }), names);
+    expect(rooms.map((r) => [r.name, r.drawnAs, r.items.length])).toEqual(names.map((n) => [n, n, 0]));
+    expect(new Set(rooms.map((r) => r.id)).size).toBe(4);
+    const inn = makePlan({ ...base, kind: 'building', use: 'tavern' });
+    const innRooms = roomsFor(inn, []);
+    expect(innRooms.find((r) => r.name === 'Common room')!.floor).toBe('ground');
+    expect(innRooms.find((r) => r.name === 'Keeper’s room')!.floor).toBe('upper');
+    expect(innRooms.find((r) => r.name === 'Cellar')!.floor).toBe('under');
+    // Drawn from those names and storeys, the keeper's room stays upstairs (its name alone would not put it there).
+    const again = makePlan({ ...base, kind: 'building', use: 'tavern', names: drawnNames(innRooms, true) }) as GridPlan;
+    expect(again.areas.map((a) => a.name)).toEqual(innRooms.map((r) => r.name));
+    expect(again.areas.find((a) => a.name === 'Keeper’s room')!.floor).toBe('Upper floor');
+    expect(again.areas.find((a) => a.name === 'Cold store')!.floor).toBe('Cellar');
+    expect(drawnNames(innRooms, false)[0]).toBe('Common room');
+  });
+
+  it('says each entry in a line', () => {
+    const [enc, trap] = keyed()[1].items;
+    expect(itemLine(enc)).toEqual({ label: 'Encounter', text: 'The night watch. 3 × Skeleton, Ghoul. They rise when the door opens.' });
+    expect(itemLine(trap)).toEqual({ label: 'Trap (DC 13, 2d10 poison)', text: 'Needle in the lock. On the chest.' });
+    expect(itemLine(keyed()[3].items[0])).toEqual({ label: 'Loot', text: '120 gp; 2 × Potion of Healing; Silver ewer (25 gp).' });
+    expect(itemLine(newItem('puzzle', { dc: 15 }))).toEqual({ label: 'Puzzle (DC 15)', text: '' });
+  });
+
+  it('is written as Markdown that reads back as the same places, whatever their names', () => {
+    const rooms = keyed();
+    rooms[1].name = 'Guard post';
+    const plan = makePlan({ ...base, names });
+    const md = fullKeyMarkdown(rooms, planKey(plan, rooms.map((r) => r.name)));
+    expect(md).toContain('### 2. Guard post\n\n*');
+    expect(md).toContain('> Two benches.\n> The fire is warm.\n\n- **Encounter:** The night watch.');
+    expect(md).toContain('- **Trap (DC 13, 2d10 poison):** Needle in the lock. On the chest.');
+    expect(md).toContain('### 4. Treasury');
+    expect(keyedNames(`## A first look\n\nDark.\n\n## Map key (GM only)\n\n${md}\n\n## Afterwards\n\n### Not a room\n`)).toEqual(['Entry stair', 'Guard post', 'St. Oda’s chapel', 'Treasury']);
+  });
+
+  it('marks what is keyed on the GM’s copy only, and rings a place only when asked', () => {
+    const rooms = keyed();
+    expect(roomMarks(rooms)).toEqual({ 2: 'ET', 4: 'L' });
+    const plan = makePlan({ ...base, names });
+    const gm = drawPlan(plan, { marks: roomMarks(rooms) }).svg;
+    expect(gm).toMatch(/letter-spacing="3"[^>]*>ET<\/text>/);
+    expect(drawPlan(plan, { marks: roomMarks(rooms), gm: false, numbers: false }).svg).not.toContain('>ET</text>');
+    expect(gm).not.toContain('stroke-dasharray="20 12"');
+    expect(drawPlan(plan, { ring: 2 }).svg).toContain('stroke-dasharray="20 12"');
+  });
+
+  it('follows the record’s text when asked: the same names keep what is keyed to them', () => {
+    const rooms = keyed();
+    const { rooms: next, left } = syncRooms(rooms, ['Treasury', 'guard room', 'Well room']);
+    expect(next.map((r) => r.name)).toEqual(['Treasury', 'Guard room', 'Well room']);
+    expect(next[0].id).toBe(rooms[3].id);
+    expect(next[1].items).toHaveLength(2);
+    expect(next[2].items).toEqual([]);
+    // What was dropped with nothing keyed to it is not worth a warning; nothing keyed was dropped here.
+    expect(left).toEqual([]);
+    expect(syncRooms(rooms, ['Entry stair']).left.map((r) => r.name)).toEqual(['Guard room', 'Treasury']);
+  });
+
+  it('suggests traps, puzzles and hazards with numbers that fit the party and the place', () => {
+    for (let seed = 1; seed <= 40; seed++) {
+      const rnd = rng(seed);
+      const low = trapNumbers(1, 'safe', rnd);
+      expect(low.dc).toBeGreaterThanOrEqual(10);
+      expect(low.dc).toBeLessThanOrEqual(11);
+      expect(low.dice).toBe('1d10');
+      const high = trapNumbers(17, 'deadly', rnd);
+      expect(high.dc).toBeGreaterThanOrEqual(16);
+      expect(high.dice).toBe('24d10');
+      for (const kind of ['trap', 'puzzle', 'hazard'] as const) {
+        const it = ideaFor(kind, 5, 'risky', rnd);
+        expect(it.kind).toBe(kind);
+        expect(it.title).not.toBe('');
+        expect(it.text.length).toBeGreaterThan(20);
+        expect(it.dc).toBeGreaterThanOrEqual(12);
+        if (kind === 'puzzle') expect(it.damage).toBeUndefined();
+        else expect(it.damage === '' || /^4d10 \w+$/.test(it.damage ?? '')).toBe(true);
+      }
+    }
+    expect(KEY_KINDS).toContain('encounter');
+  });
+});
+
 /** Enough of a PNG for the app to know it's one, of a given size. */
 function png(width: number, height: number) {
   const b = Buffer.alloc(34);
@@ -290,7 +415,7 @@ describe('a record’s plan, kept', () => {
     expect(names.length).toBe(8);
     const plan = makePlan(info.suggested);
     let e = (await request(gm).post(`/api/entities/${vault.id}/plan/key`).send({ markdown: keyMarkdown(plan, names) })).body;
-    expect(e.body).toContain('## Secrets (GM only)\n\nIt is older than it looks.\n\n## Map key (GM only)\n\n1. **');
+    expect(e.body).toContain('## Secrets (GM only)\n\nIt is older than it looks.\n\n## Map key (GM only)\n\n### 1. ');
     // Now the record names its own rooms: the same ones.
     const after = (await request(gm).get(`/api/entities/${vault.id}/plan`)).body;
     expect(after.ownNames).toBe(true);
@@ -347,6 +472,62 @@ describe('a record’s plan, kept', () => {
     await request(gm).delete(`/api/maps/${first.map.id}`);
     expect((await request(gm).get(`/api/entities/${vault.id}/plan`)).body).toMatchObject({ map: null, saved: info.suggested });
     expect((await send(plan.w * 70, plan.h * 70)).body.updated).toBe(false);
+  });
+
+  it('keeps the key with the plan, refuses what is not a key, and never shows it to players', async () => {
+    const { ctx, gm, make } = await world();
+    const vault = await make({ name: 'The Sunken Vault', type: 'dungeon', body: '## A first look\n\nStairs go down.\n' });
+    const info = (await request(gm).get(`/api/entities/${vault.id}/plan`)).body;
+    const plan = makePlan(info.suggested);
+    const rooms = roomsFor(plan, info.suggested.names);
+    rooms[0].aloud = 'Cold air rises from below.';
+    rooms[0].items = [newItem('trap', { title: 'Needle in the lock', dc: 13, damage: '2d10 poison', text: 'A secret the players must not read.' }), newItem('encounter', { creatures: [{ name: 'Skeleton', count: 3, id: 'srd:skeleton' }] })];
+    const kept = (await request(gm).put(`/api/entities/${vault.id}/plan`).send({ ...info.suggested, key: rooms })).body;
+    expect(kept.saved.key).toEqual(rooms);
+    expect((await request(gm).get(`/api/entities/${vault.id}/plan`)).body.saved.key[0].items[0]).toMatchObject({ kind: 'trap', dc: 13, damage: '2d10 poison' });
+    // Not a key: an entry of no known kind, a room with no name, too many rooms.
+    const bad = (key: unknown) => request(gm).put(`/api/entities/${vault.id}/plan`).send({ ...info.suggested, key });
+    expect((await bad([{ ...rooms[0], items: [{ ...rooms[0].items[0], kind: 'bomb' }] }])).status).toBe(400);
+    expect((await bad([{ ...rooms[0], name: '  ' }])).status).toBe(400);
+    expect((await bad(Array(41).fill(rooms[1]))).status).toBe(400);
+    expect((await request(gm).get(`/api/entities/${vault.id}/plan`)).body.saved.key).toEqual(rooms);
+
+    // Written into the record and the record shown to the players: the first look is theirs, the key is not.
+    const lines = planKey(plan, rooms.map((r) => r.name));
+    const e = (await request(gm).post(`/api/entities/${vault.id}/plan/key`).send({ markdown: fullKeyMarkdown(rooms, lines), gm: true })).body;
+    expect(e.body).toContain('## Map key (GM only)\n\n### 1. ');
+    expect(e.body).toContain('- **Trap (DC 13, 2d10 poison):** Needle in the lock. A secret the players must not read.');
+    await request(gm).patch(`/api/entities/${vault.id}`).send({ revealed: true, revealed_sections: ['A first look', 'Map key (GM only)'] });
+    const theirs = JSON.stringify(playerSnapshot(ctx.db));
+    expect(theirs).toContain('Stairs go down.');
+    expect(theirs).not.toContain('A secret the players must not read');
+    expect(theirs).not.toContain('Needle in the lock');
+    expect(theirs).not.toContain('Cold air rises');
+  });
+
+  it('suggests something to key: from its own ideas, and from the books for the party and the place', async () => {
+    const { gm, make } = await world();
+    const vault = await make({ name: 'The Sunken Vault', type: 'dungeon', fields: [['Danger', 'deadly'], ['Wealth', 'rich']] });
+    const ask = async (body: Record<string, unknown>) => (await request(gm).post('/api/plan/suggest').send({ entity: vault.id, ...body })).body as { item: KeyRoom['items'][number]; level: number };
+    const trap = await ask({ kind: 'trap' });
+    expect(trap.level).toBe(1);
+    expect(trap.item).toMatchObject({ kind: 'trap' });
+    // A deadly place: the hardest numbers for a party of this level.
+    expect(trap.item.dc).toBeGreaterThanOrEqual(16);
+    expect(trap.item.damage === '' || trap.item.damage!.startsWith('4d10 ')).toBe(true);
+    expect((await ask({ kind: 'puzzle', level: 12 })).item.title).not.toBe('');
+    expect((await ask({ kind: 'hazard' })).item.kind).toBe('hazard');
+    // From the open rules that come with the app: creatures with stat blocks, within the party's budget.
+    const fight = await ask({ kind: 'encounter', level: 5 });
+    expect(fight.item.kind).toBe('encounter');
+    expect(fight.item.creatures!.length).toBeGreaterThan(0);
+    expect(fight.item.creatures!.every((c) => c.count >= 1 && !!c.id && !!c.name)).toBe(true);
+    const hoard = await ask({ kind: 'loot', level: 5, hoard: true });
+    expect(hoard.item.kind).toBe('loot');
+    expect(hoard.item.coins).toMatch(/^[\d,]+ [a-z]p$/);
+    // With no record: the danger and wealth asked for.
+    expect((await request(gm).post('/api/plan/suggest').send({ kind: 'trap', danger: 'safe' })).body.item.dc).toBeLessThanOrEqual(11);
+    expect((await request(gm).post('/api/plan/suggest').send({ kind: 'dragon' })).status).toBe(400);
   });
 
   it('hands a plan’s picture back as a file to save, under a safe name, and nothing else', async () => {

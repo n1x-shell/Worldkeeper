@@ -6,6 +6,7 @@
 import { chance, edgeKey, edgeOf, int, pick, rng, DIRS, DIR_WORDS, type Area, type Feature, type FeatureKind, type GridPlan, type Opening } from './model.js';
 import { crop, furnish } from './dungeon.js';
 import { furnishingsOf, sizeOf, storeyOf } from './names.js';
+import { storeyAndName } from './key.js';
 
 interface FloorDef {
   title: string;
@@ -393,7 +394,11 @@ export function makeBuilding(ask: BuildingAsk): GridPlan {
   if (ask.names.length) {
     // The record's own rooms: on the ground floor unless a room's name says otherwise.
     const by = { ground: [] as [string, number, number][], upper: [] as [string, number, number][], under: [] as [string, number, number][] };
-    ask.names.forEach((name, i) => by[storeyOf(name)].push([name, WEIGHT[sizeOf(name)], i + 1]));
+    // A name may carry its storey ("upper:Solar"), as the key gives it; else the storey is read from the name.
+    ask.names.forEach((given, i) => {
+      const { floor, name } = storeyAndName(given);
+      by[floor ?? storeyOf(name)].push([name, WEIGHT[sizeOf(name)], i + 1]);
+    });
     if (!by.ground.length) by.ground = by.upper.length ? by.upper.splice(0) : by.under.splice(0);
     floors = [
       { title: 'Ground floor', rooms: [], numbered: by.ground },

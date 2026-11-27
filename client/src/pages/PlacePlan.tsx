@@ -5,8 +5,8 @@
  *
  * The same maker serves a record (`/e/:id/plan`) and Generators, where a plan is drawn for no record yet.
  */
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, BookmarkPlus, Check as Tick, Download, FileText, ImagePlus, Map as MapIcon, RefreshCw, Undo2 } from 'lucide-react';
 import { api, useApi } from '../lib/api';
 import { useAppState } from '../lib/store';
@@ -20,15 +20,23 @@ import {
   PLAN_LABELS,
   TOWN_LABELS,
   drawPlan,
-  keyMarkdown,
+  drawnNames,
+  fullKeyMarkdown,
+  isKeyed,
   madeNames,
   makePlan,
   planKey,
+  renamed,
+  roomMarks,
+  roomsFor,
+  syncRooms,
   type DrawOptions,
+  type KeyRoom,
   type PlanKind,
   type PlanSettings,
   type TownSize,
 } from '@shared/plan/index';
+import { PlanKey } from '../components/PlanKey';
 import type { Entity } from '../lib/types';
 
 export interface PlanInfo {
@@ -42,7 +50,18 @@ export interface PlanInfo {
 
 const NEW_PLAN: PlanSettings = { kind: 'dungeon', seed: 1, names: [], size: 'medium', rough: false, ways: 'some', secrets: true, traps: false, use: 'tavern', town: 'village', water: 'none', walled: false, around: 'fields' };
 const newSeed = () => 1 + Math.floor(Math.random() * 2147483646);
-const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
+/** A value written out the same way whatever order its parts were put together in, with nothing for what is not there. */
+const written = (v: unknown): string =>
+  JSON.stringify(v, (_k, x: unknown) =>
+    x && typeof x === 'object' && !Array.isArray(x)
+      ? Object.fromEntries(
+          Object.entries(x as Record<string, unknown>)
+            .filter(([, y]) => y !== undefined)
+            .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0)),
+        )
+      : x,
+  );
+const same = (a: unknown, b: unknown) => written(a) === written(b);
 
 /** How the plan is shown and exported: the GM's choice, remembered on this device. */
 type View = Pick<DrawOptions, 'gm' | 'grid' | 'fill' | 'paper' | 'furnishings' | 'px'> & { titled: boolean };
@@ -125,7 +144,10 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   const nav = useNavigate();
   const { reloadIndex } = useAppState();
   const realms = useRealms();
-  const [settings, setSettings] = useState<PlanSettings>(() => info?.saved ?? info?.suggested ?? { ...NEW_PLAN, seed: newSeed() });
+  const [settings, setSettings] = useState<PlanSettings>(() => {
+    const { key: _key, ...rest } = info?.saved ?? info?.suggested ?? { ...NEW_PLAN, seed: newSeed() };
+    return rest;
+  });
   const [view, setView] = useState<View>(readView);
   const [busy, setBusy] = useState('');
   // The whole plan on the screen at once, or as wide as the page allows.
@@ -135,6 +157,19 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   const [count, setCount] = useState(() => (info && !info.ownNames ? (info.saved ?? info.suggested).names.length || 8 : 8));
   const own = !!info?.ownNames;
   const name = info?.entity.name ?? called.trim();
+  const building = settings.kind === 'building';
+
+  // The key. Until the GM changes anything in it, its places follow the record (or are made up to suit the kind of
+  // place) and change with the choices above. From the first change on it is the GM's own, kept with the plan.
+  const [keyed, setKeyed] = useState<KeyRoom[] | null>(() => info?.saved?.key ?? null);
+  // A building whose rooms are still the usual ones for its use is drawn from that use, not from their names.
+  const [usual, setUsual] = useState(() => !!info?.saved?.key && info.saved.kind === 'building' && info.saved.names.length === 0);
+  // The place that is open in the key, and ringed on the plan. An address can name one to open (?room=3).
+  const [params] = useSearchParams();
+  const [selected, setSelected] = useState<number | null>(() => {
+    const n = Number(params.get('room'));
+    return Number.isInteger(n) && n >= 1 && n <= 40 ? n - 1 : null;
+  });
 
   useEffect(() => {
     try {
@@ -144,19 +179,47 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
     }
   }, [view]);
 
-  // The numbered places: the record's own, or made up to suit the kind of place (and made again when that changes).
-  const names = useMemo(() => (own ? settings.names : madeNames(settings, name, count)), [own, settings, name, count]);
-  const full = useMemo<PlanSettings>(() => ({ ...settings, names }), [settings, names]);
-  const plan = useMemo(() => makePlan(full), [full]);
-  const options = useMemo<Partial<DrawOptions>>(() => ({ ...DRAW_DEFAULTS, ...view, numbers: view.gm, title: view.titled ? name : '' }), [view, name]);
+  // What the plan is drawn from: the key's places once it is the GM's own; else the record's, or names made up.
+  const givenNames = useMemo(() => (own ? settings.names : madeNames(settings, name, count)), [own, settings, name, count]);
+  const drawnFrom = useMemo(() => (keyed ? (building && usual ? [] : drawnNames(keyed, building)) : givenNames), [keyed, building, usual, givenNames]);
+  // The plan is made again only when what it is drawn from changes, not when a word of the key does.
+  const made = useMemo(() => JSON.stringify({ ...settings, names: drawnFrom }), [settings, drawnFrom]);
+  const plan = useMemo(() => makePlan(JSON.parse(made) as PlanSettings), [made]);
+  const rooms = useMemo(() => keyed ?? roomsFor(plan, givenNames), [keyed, plan, givenNames]);
+  const names = useMemo(() => rooms.map((r) => r.name), [rooms]);
+  const full = useMemo<PlanSettings>(() => ({ ...settings, names: drawnFrom, ...(keyed ? { key: keyed } : {}) }), [settings, drawnFrom, keyed]);
+  const options = useMemo<DrawOptions>(() => ({ ...DRAW_DEFAULTS, ...view, numbers: view.gm, title: view.titled ? name : '', marks: roomMarks(rooms) }), [view, name, rooms]);
   const drawing = useMemo(() => drawPlan(plan, options), [plan, options]);
   const key = useMemo(() => planKey(plan, names), [plan, names]);
-  const shown = useMemo(() => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(drawing.svg)}`, [drawing]);
+  // On the page the place being worked on is ringed; a picture taken away never is.
+  const shown = useMemo(() => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(selected == null ? drawing.svg : drawPlan(plan, { ...options, numbers: true, ring: selected + 1 }).svg)}`, [drawing, plan, options, selected]);
 
   const set = (patch: Partial<PlanSettings>) => setSettings((s) => ({ ...s, ...patch }));
   const saved = info?.saved ?? null;
   const changed = !!info && !same(full, saved);
-  const textMoved = !!info && own && !!saved && !same(saved.names, info.suggested.names) && same(settings.names, saved.names);
+  // The same plan as the one kept, whatever has changed in its key.
+  const sameLayout = !!saved && same({ ...full, key: null }, { ...saved, key: null });
+  const recordNames = info?.suggested.names ?? [];
+  const lower = (xs: string[]) => xs.map((x) => x.toLowerCase());
+  // The GM may leave the key and the text differing: said once for the text as it is, it is not said again.
+  const leaveKey = `wk.plan.text.${info?.entity.id ?? ''}`;
+  const [leftAt, setLeftAt] = useState(() => {
+    try {
+      return localStorage.getItem(leaveKey) ?? '';
+    } catch {
+      return '';
+    }
+  });
+  const textNow = JSON.stringify(lower(recordNames));
+  const textMoved = !!info && own && (keyed ? textNow !== JSON.stringify(lower(names)) && leftAt !== textNow : !!saved && !same(saved.names, recordNames) && same(settings.names, saved.names));
+  const leaveIt = () => {
+    setLeftAt(textNow);
+    try {
+      localStorage.setItem(leaveKey, textNow);
+    } catch {
+      /* it is asked again next time */
+    }
+  };
   const tooBig = Math.max(drawing.width, drawing.height) > MOST_PIXELS;
   const fileName = (what: string) => `${name || PLAN_LABELS[settings.kind]}${what}`;
 
@@ -171,22 +234,81 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
     }
   };
   const url = info ? `/api/entities/${encodeURIComponent(info.entity.id)}/plan` : '';
-  const keep = async (quiet = false) => {
-    const next = await api.put<PlanInfo>(url, full);
+  const keep = async (quiet = false, what: PlanSettings = full) => {
+    const next = await api.put<PlanInfo>(url, what);
     onInfo?.(next);
     if (!quiet) toast('The plan is kept with the record.', 'ok');
     return next;
   };
+
+  // A kept plan's key is kept as it is written: a moment after the last change, without being asked.
+  const [keySaved, setKeySaved] = useState<'saved' | 'saving' | 'failed'>('saved');
+  const latest = useRef(full);
+  latest.current = full;
+  const keyText = useMemo(() => written(keyed), [keyed]);
+  const savedKeyText = useMemo(() => written(saved?.key ?? null), [saved]);
+  useEffect(() => {
+    if (!info || !keyed || !sameLayout || keyText === savedKeyText) return;
+    setKeySaved('saving');
+    const t = window.setTimeout(() => {
+      api
+        .put<PlanInfo>(url, latest.current)
+        .then((next) => {
+          onInfo?.(next);
+          setKeySaved('saved');
+        })
+        .catch(() => setKeySaved('failed'));
+    }, 900);
+    return () => window.clearTimeout(t);
+    // Only the key's own words set this off; the rest is read as it is when the moment comes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyText, savedKeyText, sameLayout]);
+
+  /** The key as the GM has changed it. `redraw`: its list of places changed, so the plan is drawn from their names. */
+  const changeRooms = (next: KeyRoom[], redraw: boolean) => {
+    setKeyed(next);
+    if (!keyed) setUsual(building && drawnFrom.length === 0);
+    if (redraw) setUsual(false);
+  };
+  const another = () => {
+    set({ seed: newSeed() });
+    // A new plan is drawn for the names as they are now.
+    if (keyed) setKeyed(keyed.map((r) => ({ ...r, drawnAs: r.name.trim() || r.drawnAs })));
+    setSelected(null);
+  };
+  const redrawForNames = () => keyed && setKeyed(keyed.map((r) => ({ ...r, drawnAs: r.name.trim() || r.drawnAs })));
+  const fromRecord = async () => {
+    if (!keyed) return set({ names: recordNames });
+    const { rooms: next, left } = syncRooms(keyed, recordNames);
+    if (left.length && !(await ask({ title: 'Take the places from the record’s text?', body: `The text no longer names ${left.map((r) => r.name).join(', ')}. What is keyed to ${left.length === 1 ? 'it' : 'them'} here would be lost.`, confirmLabel: 'Take them from the text', danger: true }))) return;
+    setKeyed(next);
+    setUsual(false);
+    setSelected(null);
+  };
+  const changeUse = (use: string) => {
+    set({ use });
+    // Another use has other rooms: what is keyed stays with its rooms, which are then drawn from their names.
+    if (keyed && usual) {
+      if (keyed.some(isKeyed)) setUsual(false);
+      else setKeyed(null);
+    }
+  };
+
   /** The picture as it is on the page, or the players' copy of it. */
   const picture = (players: boolean) => {
     const d = players ? drawPlan(plan, { ...options, gm: false, numbers: false }) : drawing;
     return toPng(d.svg, d.width, d.height);
   };
+  /** The key for the record's text: for the GM only once anything is keyed, or the place is not a settlement. */
+  const keySection = () => ({ markdown: fullKeyMarkdown(rooms, key), gm: settings.kind !== 'settlement' || rooms.some(isKeyed) });
+  /** The plan with its key made the GM's own, as it is once it has been written down anywhere. */
+  const withKey = (): PlanSettings => ({ ...settings, names: drawnFrom, key: rooms });
 
   const keepAsRecord = () =>
     run('record', async () => {
       const realm = realms.list.find((r) => !r.archived)?.id ?? 'world';
       const title = called.trim() || `A ${PLAN_LABELS[settings.kind].toLowerCase()}`;
+      const section = keySection();
       const e = await api.post<Entity>('/api/entities', {
         name: title,
         type: settings.kind === 'cave' ? 'dungeon' : settings.kind,
@@ -194,11 +316,11 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
         aliases: [],
         source_raw: 'DM entry (The Worldkeeper)',
         tags: [`realm/${realm}`, 'vis/gm'],
-        fields: settings.kind === 'building' ? [['Used for', BUILDING_USES[settings.use].label.toLowerCase()]] : [],
-        body: `## Map key${settings.kind === 'settlement' ? '' : ' (GM only)'}\n\n${keyMarkdown(plan, names)}\n`,
+        fields: building ? [['Used for', BUILDING_USES[settings.use].label.toLowerCase()]] : [],
+        body: `## Map key${section.gm ? ' (GM only)' : ''}\n\n${section.markdown}\n`,
         notes: '',
       });
-      await api.put(`/api/entities/${encodeURIComponent(e.id)}/plan`, { ...full, names: key.map((k) => k.name) });
+      await api.put(`/api/entities/${encodeURIComponent(e.id)}/plan`, withKey());
       await reloadIndex();
       toast(`${title} is now a record, with this plan.`, 'ok');
       void nav(`/e/${e.id}/plan`);
@@ -208,12 +330,12 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
     run('key', async () => {
       if (!info) return;
       const there = /^##\s+Map key\b/im.test((await api.get<{ entity: Entity }>(`/api/entities/${encodeURIComponent(info.entity.id)}?follow=0`)).entity.body);
-      if (there && !(await ask({ title: 'Write the key again?', body: 'The record’s text has a map key already. This one takes its place; anything you added to its lines is lost. (Earlier versions of the record are kept under History.)', confirmLabel: 'Write it again' }))) return;
-      await api.post(`${url}/key`, { markdown: keyMarkdown(plan, names), gm: settings.kind !== 'settlement' });
-      // The record now names these places itself: the plan is kept as drawn for them.
-      const next = await api.put<PlanInfo>(url, { ...full, names: key.map((k) => k.name) });
-      onInfo?.(next);
-      setSettings(next.saved ?? full);
+      if (there && !(await ask({ title: 'Write the key again?', body: 'The record’s text has a map key already. This one takes its place; anything you changed in the text itself is lost. (Earlier versions of the record are kept under History.)', confirmLabel: 'Write it again' }))) return;
+      await api.post(`${url}/key`, keySection());
+      // The record now names these places itself, and the key is the GM's own: kept with the plan, as drawn.
+      const mine = withKey();
+      if (!keyed) changeRooms(rooms, false);
+      await keep(true, mine);
       toast('The key is in the record’s text, under “Map key”.', 'ok');
     });
 
@@ -223,7 +345,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   return (
     <div className="grid gap-4 2xl:grid-cols-[300px_minmax(0,1fr)]" data-testid="plan-maker">
       {/* ---- What it is made from. On a narrow page this comes under the drawing; on a wide one, beside it. ---- */}
-      <div className="order-2 grid content-start gap-4 md:grid-cols-2 2xl:order-none 2xl:row-span-2 2xl:grid-cols-1">
+      <div className="order-3 grid content-start gap-4 md:grid-cols-2 2xl:order-none 2xl:row-span-3 2xl:grid-cols-1">
         <Card title="The place">
           <div className="space-y-3">
             {!info && (
@@ -232,7 +354,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
               </Field>
             )}
             <Select label="A plan of a" value={settings.kind} onChange={(kind) => set({ kind })} options={kindChoices} />
-            {settings.kind === 'building' && <Select label="What it is for" value={settings.use} onChange={(use) => set({ use })} options={Object.entries(BUILDING_USES).map(([k, v]) => [k, v.label])} />}
+            {building && <Select label="What it is for" value={settings.use} onChange={changeUse} options={Object.entries(BUILDING_USES).map(([k, v]) => [k, v.label])} />}
             {settings.kind === 'settlement' ? (
               <>
                 <Select label="How big it is" value={settings.town} onChange={(town) => set({ town })} options={Object.entries(TOWN_LABELS) as [TownSize, string][]} />
@@ -305,22 +427,22 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                 </Check>
               </div>
             )}
-            {!own && (settings.kind === 'dungeon' || settings.kind === 'cave') && (
+            {!keyed && !own && (settings.kind === 'dungeon' || settings.kind === 'cave') && (
               <Field label={settings.kind === 'cave' ? 'Chambers' : 'Rooms'}>
                 <input className="input w-24" type="number" min={1} max={MAX_NAMES} value={count} onChange={(e) => setCount(Math.max(1, Math.min(MAX_NAMES, Math.round(Number(e.target.value)) || 1)))} />
               </Field>
             )}
             <p className="text-xs text-dim" data-testid="plan-names-from">
-              {own
-                ? `Its ${names.length} numbered ${names.length === 1 ? 'place is' : 'places are'} the ones the record names: in its text, or as records kept under it.`
-                : settings.kind === 'building'
-                  ? 'It has the usual rooms of a building of this use. Name its rooms in the record’s text (under “Inside”) and the plan has those.'
-                  : info
-                    ? 'The record names no places of its own, so these are made up to suit it. Write the key into the record and they are its own, to rename as you like.'
-                    : 'The numbered places are made up to suit it.'}
+              {keyed
+                ? `Its ${names.length} numbered ${names.length === 1 ? 'place is' : 'places are'} the ones in the key below: add to them, rename them or take them away there.`
+                : own
+                  ? `Its ${names.length} numbered ${names.length === 1 ? 'place is' : 'places are'} the ones the record names: in its text, or as records kept under it.`
+                  : building
+                    ? 'It has the usual rooms of a building of this use. Change them in the key below.'
+                    : 'The numbered places are made up to suit it. Change them in the key below, and they are yours.'}
             </p>
             <div className="flex flex-wrap items-end gap-2 border-t border-line pt-3">
-              <button type="button" className="btn-primary" onClick={() => set({ seed: newSeed() })} data-testid="plan-another">
+              <button type="button" className="btn-primary" onClick={another} data-testid="plan-another">
                 <RefreshCw size={14} /> Draw another
               </button>
               <Field label="Plan number" hint="The same number and choices always give the same plan.">
@@ -395,22 +517,51 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
       <div className="order-1 min-w-0 space-y-2 2xl:order-none">
         {textMoved && (
           <div className="panel flex flex-wrap items-center gap-3 border-warn/60 bg-warn/10 p-3 text-sm" role="status">
-            <span className="min-w-0 flex-1">The record’s text names different places now than when this plan was kept.</span>
-            <button type="button" className="btn" onClick={() => set({ names: info?.suggested.names ?? settings.names })}>
-              <RefreshCw size={14} /> Draw it for the text as it is now
+            <span className="min-w-0 flex-1">{keyed ? 'The key here and the record’s text name different places.' : 'The record’s text names different places now than when this plan was kept.'}</span>
+            <button type="button" className="btn" onClick={() => void fromRecord()}>
+              <RefreshCw size={14} /> {keyed ? 'Take the places from the text' : 'Draw it for the text as it is now'}
+            </button>
+            {keyed && (
+              <button type="button" className="btn-ghost" onClick={leaveIt}>
+                Leave them as they are
+              </button>
+            )}
+          </div>
+        )}
+        {keyed && renamed(keyed) && (
+          <div className="panel flex flex-wrap items-center gap-3 p-3 text-sm" role="status">
+            <span className="min-w-0 flex-1">Some rooms have new names. The plan is still drawn for the old ones.</span>
+            <button type="button" className="btn" onClick={redrawForNames}>
+              <RefreshCw size={14} /> Draw it to suit the names
             </button>
           </div>
         )}
         <div className="panel elev-1 overflow-auto p-2">
-          <img
-            src={shown}
-            width={drawing.width}
-            height={drawing.height}
-            className={`mx-auto block h-auto w-auto max-w-full rounded-sm ${whole ? 'max-h-[62vh]' : ''}`}
-            style={{ background: view.paper === 'clear' ? 'repeating-conic-gradient(#e9e6df 0% 25%, #ffffff 0% 50%) 50% / 20px 20px' : undefined }}
-            alt={`${name ? `Plan of ${name}` : 'The plan'}: a ${PLAN_LABELS[settings.kind].toLowerCase()} with ${key.length} numbered ${key.length === 1 ? 'place' : 'places'}, listed in the key below.`}
-            data-testid="plan-drawing"
-          />
+          {/* The picture, and over each number on it a button that opens that place in the key. */}
+          <div className="relative mx-auto w-fit">
+            <img
+              src={shown}
+              width={drawing.width}
+              height={drawing.height}
+              className={`block h-auto w-auto max-w-full rounded-sm ${whole ? 'max-h-[62vh]' : ''}`}
+              style={{ background: view.paper === 'clear' ? 'repeating-conic-gradient(#e9e6df 0% 25%, #ffffff 0% 50%) 50% / 20px 20px' : undefined }}
+              alt={`${name ? `Plan of ${name}` : 'The plan'}: a ${PLAN_LABELS[settings.kind].toLowerCase()} with ${key.length} numbered ${key.length === 1 ? 'place' : 'places'}, listed in the key below.`}
+              data-testid="plan-drawing"
+            />
+            {plan.areas.map((a) => (
+              <button
+                key={a.n}
+                type="button"
+                className="absolute h-6 w-6 -translate-x-1/2 -translate-y-1/2 cursor-pointer rounded-full hover:ring-2 hover:ring-gold focus-visible:ring-2 focus-visible:ring-gold"
+                style={{ left: `${(a.x / plan.w) * 100}%`, top: `${(a.y / plan.h) * 100}%` }}
+                aria-label={`${a.n}. ${names[a.n - 1] ?? a.name}: open it in the key`}
+                aria-pressed={selected === a.n - 1}
+                title={`${a.n}. ${names[a.n - 1] ?? a.name}`}
+                onClick={() => setSelected(selected === a.n - 1 ? null : a.n - 1)}
+                data-testid="plan-room"
+              />
+            ))}
+          </div>
         </div>
         <div className="flex flex-wrap items-center gap-3 text-xs text-dim">
           <span>
@@ -422,8 +573,15 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
         </div>
       </div>
 
-      {/* ---- What to do with it, and its key ---- */}
-      <div className="order-3 min-w-0 space-y-4 2xl:order-none 2xl:col-start-2">
+      {/* ---- Its key: straight under the drawing, where a place chosen on it opens ---- */}
+      <div className="order-2 min-w-0 2xl:order-none 2xl:col-start-2">
+        <Card title="Key" aside={`${key.length} ${key.length === 1 ? 'place' : 'places'}. Open one to say what is in it.`}>
+          <PlanKey kind={settings.kind} lines={key} rooms={rooms} selected={selected} onSelect={setSelected} onRooms={changeRooms} entityId={info?.entity.id} />
+        </Card>
+      </div>
+
+      {/* ---- What to do with it ---- */}
+      <div className="order-4 min-w-0 space-y-4 2xl:order-none 2xl:col-start-2">
         <Card title="Take it away">
           <div className="space-y-3">
             {info && (
@@ -431,12 +589,33 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                 <button type="button" className="btn-primary" disabled={!changed || !!busy} onClick={() => void run('keep', async () => void (await keep()))}>
                   <Tick size={14} /> {saved ? (changed ? 'Keep this one instead' : 'Kept') : 'Keep this plan'}
                 </button>
-                {saved && changed && (
-                  <button type="button" className="btn" disabled={!!busy} onClick={() => setSettings(saved)}>
+                {saved && changed && !sameLayout && (
+                  <button
+                    type="button"
+                    className="btn"
+                    disabled={!!busy}
+                    onClick={() => {
+                      const { key: theirs, ...rest } = saved;
+                      setSettings(rest);
+                      setKeyed(theirs ?? null);
+                      setUsual(!!theirs && saved.kind === 'building' && saved.names.length === 0);
+                      setSelected(null);
+                    }}
+                  >
                     <Undo2 size={14} /> Back to the one kept
                   </button>
                 )}
-                <span className="text-xs text-dim">{saved ? (changed ? 'This is not the plan kept with the record.' : 'This is the plan kept with the record: it will be here, the same, next time.') : 'Nothing is kept until you say so.'}</span>
+                <span className="text-xs text-dim" role="status">
+                  {!saved
+                    ? 'Nothing is kept until you say so, the key included.'
+                    : !changed
+                      ? 'This is the plan kept with the record: it will be here, the same, next time.'
+                      : sameLayout
+                        ? keySaved === 'failed'
+                          ? 'The key could not be saved just now. Keep the plan to try again.'
+                          : 'Saving the key…'
+                        : 'This is not the plan kept with the record. What you change in the key is not kept until you keep this plan.'}
+                </span>
               </div>
             )}
             <div className="flex flex-wrap items-end gap-2">
@@ -491,7 +670,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                     void run('map', async () => {
                       if (changed) await keep(true);
                       const form = new FormData();
-                      form.append('plan', JSON.stringify({ squares: plan.w, feet: plan.feet, areas: plan.areas.map((a) => ({ n: a.n, name: a.name, x: a.x, y: a.y })) }));
+                      form.append('plan', JSON.stringify({ squares: plan.w, feet: plan.feet, areas: plan.areas.map((a) => ({ n: a.n, name: names[a.n - 1] ?? a.name, x: a.x, y: a.y })) }));
                       form.append('image', new File([await picture(true)], 'plan.png', { type: 'image/png' }));
                       const made = await api.post<{ map: { id: number; name: string }; updated: boolean }>(`${url}/map`, form);
                       onInfo?.(await api.get<PlanInfo>(url));
@@ -521,20 +700,6 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
           </div>
         </Card>
 
-        <Card title="Key" aside={`${key.length} ${key.length === 1 ? 'place' : 'places'}`}>
-          {/* In two columns on a wide page, read down the first and then the second. */}
-          <ol className="gap-x-6 text-sm md:columns-2" data-testid="plan-key">
-            {key.map((k) => (
-              <li key={k.n} className="mb-1.5 flex break-inside-avoid gap-2">
-                <span className="w-6 shrink-0 text-right font-semibold tabular-nums">{k.n}.</span>
-                <span className="min-w-0">
-                  <span className="font-medium">{k.name}</span>
-                  {k.onPlan ? k.detail && <span className="text-dim"> {k.detail}</span> : <span className="text-danger"> No room for it on this plan: draw another, or give it more room.</span>}
-                </span>
-              </li>
-            ))}
-          </ol>
-        </Card>
       </div>
     </div>
   );

@@ -2,6 +2,14 @@
 
 What changed in each version, newest first. Every update keeps your worlds as they are, and makes a backup of a library before changing how it is stored.
 
+## 0.9.25
+
+- **A plan's places can be keyed.** Click a number on the plan and say what is there: words to read aloud, and any number of encounters, traps, puzzles, hazards, loot, secrets, clues, people and notes. Add, change and remove them as you like.
+- **Suggest** offers an encounter from your books for the party and the place, loot to match its wealth, or a trap, a puzzle or a hazard with a DC to fit.
+- An encounter's creatures open their stat blocks in the key, and **Put in the tracker** starts the fight.
+- **Rename, add, remove and reorder** a plan's rooms in the key itself. Renaming a room no longer redraws the plan.
+- Your copy of the plan marks what is keyed to each room. The key is kept as you write it, and **Write the key into the record** puts all of it into the record's text, for you only.
+
 ## 0.9.24
 
 - **Plans of places.** Open a town, a building or a dungeon and choose **Draw a plan**: the app lays it out from what its record says and draws it in ink, with a grid. A settlement gets its streets, houses, walls and water from its population and its land; a building gets the rooms of an inn, a temple or a keep, storey by storey; a dungeon or a cave gets the rooms its text names, numbered in the same order.

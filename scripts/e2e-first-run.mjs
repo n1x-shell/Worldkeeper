@@ -70,7 +70,7 @@ try {
   if (!(await api('/api/setup')).needed) throw new Error('This library is not fresh: start the app on an empty data folder');
   await page.goto(base);
   await page.waitForURL(/\/start$/);
-  await page.getByText('How would you like to start?').waitFor();
+  await page.getByRole('heading', { name: 'How would you like to start?' }).waitFor();
   await shot(page, '01-welcome');
   step('a fresh library opens on Start your world');
 
@@ -191,8 +191,41 @@ try {
     const made = (await api(`/api/entities/${vault.id}/plan`)).map;
     const detail = await api(`/api/maps/${made.id}/detail`);
     if (detail.map.width !== across || detail.markers.length !== 5 || detail.markers.some((m) => !m.hidden)) throw new Error('the Atlas map of the plan: its size or its pins are wrong');
-    await shot(page, '08-plan');
     step(`a plan: drawn from the record’s five rooms, kept, drawn the same on coming back, saved as a ${across} × ${down} picture, made a map with five hidden pins`);
+    // Its key (v0.9.25): a room opened from the drawing, something keyed to it, kept without being asked, and there
+    // on coming back.
+    await page.goto(`${base}/e/${vault.id}/plan`);
+    await page.getByTestId('plan-drawing').waitFor();
+    await page.getByTestId('plan-room').nth(1).click();
+    const room = page.getByTestId('key-room');
+    if ((await room.getByLabel('Its name').inputValue()) !== 'Guard room') throw new Error('the second number on the plan did not open the second room of the key');
+    await room.getByLabel('Read aloud').fill('Two benches and an overturned table.');
+    await room.getByRole('group', { name: 'Add to Guard room' }).getByRole('button', { name: 'Encounter' }).click();
+    await room.getByRole('combobox', { name: 'Creature' }).fill('Skeleton');
+    await room.getByLabel('How many').fill('3');
+    await room.getByRole('group', { name: 'Suggest for Guard room' }).getByRole('button', { name: 'Trap' }).click();
+    await room.getByTestId('key-item').nth(1).waitFor();
+    // Kept a moment after the last change, without being asked: looked for until it is there.
+    let second;
+    for (let tries = 0; tries < 40; tries++) {
+      second = (await api(`/api/entities/${vault.id}/plan`)).saved.key?.[1];
+      if (second?.items.length === 2 && second.items[0].creatures[0].count === 3) break;
+      await page.waitForTimeout(250);
+    }
+    if (!second || second.aloud !== 'Two benches and an overturned table.' || second.items.map((i) => i.kind).join() !== 'encounter,trap') throw new Error(`the key was not kept as it was written: ${JSON.stringify(second)}`);
+    await page.getByText('This is the plan kept with the record').waitFor();
+    if (second.items[0].creatures[0].id !== 'srd:skeleton' || second.items[0].creatures[0].count !== 3) throw new Error('the creature typed was not matched to its stat block');
+    if (!second.items[1].dc || !second.items[1].title) throw new Error('the suggested trap has no difficulty or no name');
+    // Keying a room does not move a wall.
+    if ((await page.getByTestId('plan-drawing').evaluate((img) => [img.naturalWidth, img.naturalHeight])).join() !== size.join()) throw new Error('keying a room redrew the plan');
+    await page.reload();
+    await page.getByTestId('plan-key').getByRole('button', { name: /Guard room.*Encounter.*Trap/s }).waitFor();
+    await page.getByRole('button', { name: 'Write the key into the record' }).click();
+    await page.getByText('The key is in the record’s text').waitFor();
+    const written = (await api(`/api/entities/${vault.id}`)).entity.body;
+    if (!/## Map key \(GM only\)[\s\S]*### 2\. Guard room[\s\S]*> Two benches[\s\S]*- \*\*Encounter:\*\* 3 × Skeleton\.[\s\S]*- \*\*Trap \(DC \d+/.test(written)) throw new Error(`the key in the record's text is not as keyed:\n${written}`);
+    await shot(page, '08-plan');
+    step('its key: a room opened from the drawing, an encounter and a suggested trap keyed to it, kept unasked, there on coming back, written into the record for the GM only');
   } else {
     await page.getByRole('button', { name: /Play in Oros/ }).click();
     await page.getByRole('button', { name: /Add the Oros worldbook/ }).click();

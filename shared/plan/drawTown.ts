@@ -3,7 +3,7 @@
  * its own gate), bridges, roofs, trees, and the numbers last.
  */
 import type { Pt, TownPlan } from './model.js';
-import { INK, PAPERS, U, esc, legend, type DrawOptions } from './draw.js';
+import { INK, PAPERS, U, esc, keyMarks, legend, type DrawOptions } from './draw.js';
 
 const P = (v: number) => Math.round(v * U);
 const line = (pts: Pt[], close = false) => `M${pts.map(([x, y]) => `${P(x)} ${P(y)}`).join('L')}${close ? 'Z' : ''}`;
@@ -140,7 +140,8 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
   if (o.numbers)
     for (const a of plan.areas)
       out.push(
-        `<circle cx="${P(a.x)}" cy="${P(a.y)}" r="44" fill="${sheet}" stroke="${INK}" stroke-width="6"/><text x="${P(a.x)}" y="${P(a.y)}" font-size="${a.n > 9 ? 44 : 50}" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="${INK}">${esc(String(a.n))}</text>`,
+        keyMarks(a.n, P(a.x), P(a.y) + 12, o, sheet) +
+          `<circle cx="${P(a.x)}" cy="${P(a.y)}" r="44" fill="${sheet}" stroke="${INK}" stroke-width="6"/><text x="${P(a.x)}" y="${P(a.y)}" font-size="${a.n > 9 ? 44 : 50}" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="${INK}">${esc(String(a.n))}</text>`,
       );
   out.push(legend(plan, o, paper.sheet));
   return out.join('');

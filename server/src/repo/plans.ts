@@ -10,10 +10,17 @@ import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
-import { BUILDING_USES, MAX_NAMES, PLAN_KINDS, TOWN_SIZES, hasOwnNames, suggest, type PlaceFacts, type PlanSettings } from '../../../shared/plan/index.js';
+import { BUILDING_USES, KEY_KINDS, MAX_NAMES, PLAN_KINDS, TOWN_SIZES, hasOwnNames, ideaFor, newItem, suggest, type KeyItem, type PlaceFacts, type PlanSettings } from '../../../shared/plan/index.js';
 import { getEntity, updateEntity } from './entities.js';
 import { maps, markers } from './maps.js';
 import { placeProfile } from './places.js';
+import { DANGERS, WEALTHS, difficultyFor } from '../../../shared/places.js';
+import { TREASURE_TIERS } from '../../../shared/treasureTiers.js';
+import { bookTreasure } from './bookData.js';
+import { getActiveCampaignId } from './campaigns.js';
+import { suggestEncounters } from './encounters.js';
+import { partyLevel } from './journey.js';
+import { BOOKS_REGION, rollTreasure } from './treasure.js';
 import { types } from './recordTypes.js';
 
 const zSettings = z.object({
@@ -30,6 +37,31 @@ const zSettings = z.object({
   water: z.enum(['none', 'river', 'coast']),
   walled: z.boolean(),
   around: z.enum(['fields', 'woods', 'open']),
+  key: z.array(z.lazy(() => zRoom)).max(MAX_NAMES).optional(),
+});
+
+const short = z.string().max(200);
+/** One thing keyed to a place (shared/plan/key.ts). */
+const zItem = z.object({
+  id: z.string().min(1).max(40),
+  kind: z.enum(KEY_KINDS),
+  title: short,
+  text: z.string().max(6000),
+  creatures: z.array(z.object({ name: short, count: z.number().int().min(1).max(999), id: z.string().max(200).optional() })).max(40).optional(),
+  dc: z.number().int().min(1).max(40).nullable().optional(),
+  damage: short.optional(),
+  coins: short.optional(),
+  things: z.array(z.object({ name: short, count: z.number().int().min(1).max(9999) })).max(60).optional(),
+  entity: z.string().max(60).nullable().optional(),
+});
+const zRoom = z.object({
+  id: z.string().min(1).max(40),
+  // Kept as typed (a name half typed may end in a space); only a name of nothing is refused.
+  name: z.string().max(80).refine((v) => v.trim().length > 0, 'A place needs a name'),
+  drawnAs: z.string().max(80).refine((v) => v.trim().length > 0, 'A place needs a name'),
+  floor: z.enum(['ground', 'upper', 'under']).optional(),
+  aloud: z.string().max(6000),
+  items: z.array(zItem).max(40),
 });
 
 /** What the record says of the place, for choosing and keying its plan. */
@@ -154,4 +186,39 @@ export function planToMap(db: DB, id: string, uploadsDir: string, image: { buffe
   const made = db.prepare('SELECT id, name FROM maps WHERE id = ?').get(mapId) as { id: number; name: string } | undefined;
   if (!made) throw notFound('Map');
   return { map: made, updated: !!existing };
+}
+
+/**
+ * Something to key to a place. From the GM's books: an encounter for the party's level and the place's danger and
+ * terrain, or loot for the party's level and the place's wealth. From the app's own ideas (shared/plan/key.ts): a
+ * trap, a puzzle or a hazard, with numbers to fit. The level is the active campaign's party's unless one is given.
+ */
+export function suggestKeyItem(db: DB, input: unknown, rng: () => number = Math.random): { item: KeyItem; level: number } {
+  const o = z
+    .object({
+      kind: z.enum(['encounter', 'loot', 'trap', 'puzzle', 'hazard']),
+      entity: z.string().max(60).optional(),
+      level: z.number().int().min(1).max(20).optional(),
+      danger: z.enum(DANGERS).optional(),
+      wealth: z.enum(WEALTHS).optional(),
+      /** A hoard (a treasury, a vault), not what one creature carries. */
+      hoard: z.boolean().default(false),
+    })
+    .parse(input);
+  const profile = o.entity ? placeProfile(db, o.entity) : null;
+  const campaign = getActiveCampaignId(db);
+  const level = o.level ?? (campaign ? partyLevel(db, campaign) : 1);
+  if (o.kind === 'trap' || o.kind === 'puzzle' || o.kind === 'hazard') return { level, item: ideaFor(o.kind, level, o.danger ?? profile?.danger ?? 'risky', rng) };
+  if (o.kind === 'encounter') {
+    const size = campaign ? ((db.prepare(`SELECT COUNT(*) n FROM characters WHERE campaign_id = ? AND kind = 'pc'`).get(campaign) as { n: number }).n || 4) : 4;
+    const { ideas } = suggestEncounters(db, { level, size, difficulty: difficultyFor(o.danger ?? profile?.danger ?? 'risky'), terrain: profile?.terrain ?? [], count: 3, rng });
+    if (!ideas.length) throw badRequest('Nothing in your books fits a party of this level here. Add the creatures yourself, or bring in a book of monsters.');
+    const idea = ideas[Math.floor(rng() * ideas.length)];
+    return { level, item: newItem('encounter', { creatures: idea.creatures.map((c) => ({ name: c.name, count: c.count, id: c.id })) }) };
+  }
+  const tier = TREASURE_TIERS[level >= 17 ? 3 : level >= 11 ? 2 : level >= 5 ? 1 : 0];
+  const label = o.entity ? getEntity(db, o.entity).name : 'This place';
+  const roll = rollTreasure({ tier: tier.key, region: BOOKS_REGION, kind: o.hoard ? 'hoard' : 'individual', books: bookTreasure(db), place: { label, wealth: o.wealth ?? profile?.wealth ?? 'modest' }, fading: false, rng });
+  const things = [...roll.goods.map((g) => ({ name: `${g.text} (${g.gp} gp)`, count: g.count })), ...roll.items.map((i) => ({ name: i.name, count: 1 }))];
+  return { level, item: newItem('loot', { title: o.hoard ? 'A hoard' : '', coins: roll.coins.amount ? `${roll.coins.amount.toLocaleString('en')} ${roll.coins.coin}` : '', things }) };
 }

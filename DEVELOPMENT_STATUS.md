@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-26 · v0.9.24_
+_Last updated: 2026-11-27 · v0.9.25_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,26 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.25: the key to a plan
+
+docs/BETA_PLAN.md C8, second part, and decision 6 of §5 (27 November 2026). v0.9.24 numbered a plan's rooms and gave each a size and its ways out; it had nowhere to say what was in them. The owner asked for a key whose encounters, traps, puzzles and loot can be changed, added and removed in the page.
+
+- **The key** (`shared/plan/key.ts`): a `KeyRoom` for each numbered place (an ID of its own, its name, the name the plan was drawn for, a building's storey, words to read aloud, and entries); a `KeyItem` is an encounter, trap, puzzle, hazard, loot, secret, clue, person or note, with a few words, the rest, and the particulars of its kind (creatures with counts and stat block IDs; a DC and harm; coin and things; a record). Kept inside the plan's settings (`PlanSettings.key`), so there is no new table and it travels wherever the plan does (backups).
+- **Until the GM touches the key** its places follow the record or are made up, as in v0.9.24, and change with the choices. From the first change the key is the GM's own, and the plan is drawn from its places.
+- **Renaming a room does not redraw the plan** (`drawnAs`); "Draw it to suit the names" does, and so does "Draw another". Adding, removing or moving a room, or changing its storey, draws the plan again, because the plan is made from the list of places. (v0.9.26 is to make a kept plan its own geometry, which ends this.)
+- **A building's usual rooms** stay drawn from its use while they are only keyed or renamed; when rooms are added, removed or moved they are drawn from their names and storeys (a name can carry its storey to the generator: `upper:Solar`).
+- **Suggestions** (`POST /api/plan/suggest`, `suggestKeyItem` in `server/src/repo/plans.ts`): an encounter through the existing `suggestEncounters` (the party's level, the place's Danger and Terrain); loot through `rollTreasure` from the books (the party's level, the place's Wealth; a hoard in a treasury or a vault); a trap, puzzle or hazard from the app's own lists in `shared/plan/key.ts`, with a DC and dice by the party's tier and the place's Danger.
+- **The page** (`client/src/components/PlanKey.tsx`, in `PlacePlan.tsx`): the key is under the drawing; a button over each number on the plan opens that place; the open place is ringed on the page (never in a picture taken away). Creatures and things are offered from the books as they are typed; an encounter goes to the tracker as an encounter of the active campaign. `?room=3` in the address opens a place.
+- **Saving:** once a plan is kept, its key is saved a moment after each change. If the layout differs from the one kept, nothing is saved until the GM keeps the plan, and the page says so.
+- **In the record's text:** "Write the key into the record" now writes a heading for each place, its size and ways out, the words to read aloud as a quotation, and a line for each entry, under "Map key (GM only)". `keyedNames` reads the places back from the headings alone (a first version read the "Encounter" and "Trap" lines back as rooms; a test caught it).
+- **On the plan:** letters under a number on the GM's copy for what is keyed there (`DrawOptions.marks`).
+
+**Tests.** `tests/plan.test.ts` has 26 (8 new): the key for a plan and a building's storeys carried into the drawing; each entry in a line; the Markdown reading back as the same places; marks on the GM's copy only; following the record's text by name; the numbers of suggested traps; the key kept, refused when it is not one, and absent from what players are sent even when its section is "revealed"; suggestions from the open rules. `scripts/e2e-first-run.mjs` keys a room in a real browser. `scripts/e2e-a11y.mjs` has the key with a room open and an entry of every kind (44 screens, no findings).
+
+**Two faults the browser check found, both of the same kind and both fixed:** an answer that came back after a wait (the books matching a typed creature to its stat block; a suggestion) was applied to the key as it had been when the question was asked, undoing anything changed meanwhile. And the page compared the key as sent with the key as saved letter for letter, so a difference in the order of fields left it saying "Saving…" for ever.
+
+**Not done.** Entries have no state at the table (sprung, looted, cleared) and nothing is per campaign. Loot does not go to the party's treasure from here. There is no way to key a passage, only a numbered place. The ideas for traps, puzzles and hazards are a dozen or so each, in English.
 
 ## v0.9.24: plans of places
 
