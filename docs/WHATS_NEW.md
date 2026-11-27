@@ -5,6 +5,9 @@ What changed in each version, newest first. Every update keeps your worlds as th
 ## 0.9.29
 
 - **A painted style for plans.** Under "How it is drawn", choose **Painted**: the same plan on stone, earth, timber and grass from photographs, with shaded walls, for a picture to play on at a table or in a virtual tabletop. Dungeons, caves, buildings, ships and settlements, on every kind of ground.
+- **Furnishings, painted.** Beds with pillows and blankets, tables with stools round them and things left on them, barrels, chests with iron bands, shelves of books, altars with their cloth and candles, tombs, thrones, wells, pools, hearths with a fire in them: each with its shadow on the floor.
+- **Dressing.** Torches on the walls and the light they throw, firelight, rugs in the rooms of a house, cracks, damp, moss and cobwebs in a dungeon, stones and puddles in a cave. A town has roofs lit on one side, shadows, chimneys, stalls in its square, boats at its piers, hedged fields under different crops, bushes and stones. Dressing is drawing only: none of it is in the key or in anyone's way, and **Dressing** under "How it is drawn" turns it off.
+- The app now offers the ground of the realm above a place's own (a place in a domain of the Ethereal Realm is offered adrift), and reads "among the clouds" as aloft.
 - **Ink** is still what a plan is drawn in until you choose otherwise, and is the one to print. Ink plans are exactly as they were.
 - The choice is about how a plan is shown, not the plan: its rooms, key and numbers are the same in both, and the picture is the same size.
 - The photographs are six small textures from Poly Haven, in the public domain (CC0). They are part of the app and work offline.

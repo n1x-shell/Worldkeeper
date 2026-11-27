@@ -3,7 +3,7 @@
  * its own gate), bridges, roofs, trees, and the numbers last.
  */
 import { noise, type Pt, type TownPlan } from './model.js';
-import { HAZE, INK, PAPERS, SEA, SKY, U, esc, keyMarks, legend, paints, type DrawOptions } from './draw.js';
+import { INK, PAPERS, U, esc, keyMarks, legend, type DrawOptions } from './draw.js';
 import { NIGHT, clouds, mist, ragged, riftPath, stars } from './drawLand.js';
 import { fromLine } from './land.js';
 
@@ -13,25 +13,14 @@ const lerp = (a: Pt, b: Pt, t: number): Pt => [a[0] + (b[0] - a[0]) * t, a[1] + 
 const dist = (a: Pt, b: Pt) => Math.hypot(a[0] - b[0], a[1] - b[1]);
 
 export function drawTown(plan: TownPlan, o: DrawOptions): string {
-  const painted = o.style === 'painted';
-  const paper = PAPERS[painted ? 'white' : o.paper];
+  const paper = PAPERS[o.paper];
   const sheet = paper.sheet === 'none' ? '#ffffff' : paper.sheet;
-  // What each part is drawn in. In ink, all of it is the paper; painted, each has its own ground or colour.
-  const paint = painted ? paints(o) : null;
-  const tint = paint
-    ? { ground: paint.fill('grass'), road: paint.fill('dirt'), plaza: paint.fill('stone'), wood: '#a5804f', river: '#4f8098', water: '#4f8098', waterOpacity: '1', wallCore: '#a8a093', tower: '#b3ab9e', keyed: '#5f6f82', keyedOpacity: '1', tree: '#4f7b3e', growth: '#b79bc4', grid: '#17130f', gridOpacity: 0.26 }
-    : { ground: sheet, road: paper.floor, plaza: paper.floor, wood: paper.floor, river: sheet, water: paper.line, waterOpacity: '0.34', wallCore: sheet, tower: sheet, keyed: paper.line, keyedOpacity: '0.55', tree: paper.floor, growth: paper.floor, grid: paper.line, gridOpacity: 0.8 };
-  const ROOFS = ['#8f5f45', '#7d6a54', '#9b7450', '#6f6156', '#86553f'];
   const out: string[] = [];
   const round = `stroke-linecap="round" stroke-linejoin="round"`;
   const land = plan.land ?? 'plain';
   const seed = (plan.w * 73856093) ^ (plan.h * 19349663) ^ (plan.buildings.length * 83492791);
   const night = land === 'void' && paper.sheet !== 'none';
-  // Painted, what lies beyond an island is the sky, the mist or the night; with no island, the ground is all there is.
-  const beyond = land === 'void' ? NIGHT : land === 'aloft' ? SKY : land === 'adrift' ? HAZE : SEA;
-  out.push('');
-  if (painted) out.push(`<rect width="${plan.w * U}" height="${plan.h * U}" fill="${plan.island?.length ? beyond : tint.ground}"/>`);
-  else if (paper.sheet !== 'none') out.push(`<rect width="${plan.w * U}" height="${plan.h * U}" fill="${night ? NIGHT : paper.sheet}"/>`);
+  if (paper.sheet !== 'none') out.push(`<rect width="${plan.w * U}" height="${plan.h * U}" fill="${night ? NIGHT : paper.sheet}"/>`);
   // The ground it stands on, where that ends: beyond it the stars, the clouds or the mist; under its southern edge,
   // in the sky, the strokes of the drop.
   if (plan.island?.length) {
@@ -47,7 +36,7 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
     // Open sky is a square none of whose corners is on the island.
     const open = (x: number, y: number) => !on(x, y) && !on(x + 1, y) && !on(x, y + 1) && !on(x + 1, y + 1) && !on(x + 0.5, y + 0.5);
     if (paper.sheet !== 'none') out.push(land === 'void' ? stars(plan.w, plan.h, seed, open) : land === 'aloft' ? clouds(plan.w, plan.h, seed, open, INK, paper.sheet) : mist(plan.w, plan.h, seed, open));
-    out.push(`<path d="${ragged(isle, seed, 0.12)}" fill="${tint.ground}" stroke="${INK}" stroke-width="${night ? 0 : 7}" stroke-linejoin="round"/>`);
+    out.push(`<path d="${ragged(isle, seed, 0.12)}" fill="${sheet}" stroke="${INK}" stroke-width="${night ? 0 : 7}" stroke-linejoin="round"/>`);
     if (land === 'aloft') {
       const cy = isle.reduce((s, p) => s + p[1], 0) / isle.length;
       let drop = '';
@@ -78,7 +67,6 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
       furrows += line([lerp(a, b, 0.04), lerp(a, b, 0.96)]);
     }
   }
-  if (hedges && paint) out.push(`<path d="${hedges}" fill="${paint.fill('dirt')}" opacity="0.7"/>`);
   if (hedges) out.push(`<path d="${hedges}" fill="none" stroke="${INK}" stroke-width="4" ${round}/><path d="${furrows}" fill="none" stroke="${INK}" stroke-width="2" stroke-dasharray="26 9" ${round} opacity="0.75"/>`);
 
   // The sea: its shore, and the lines of the water lapping away from it.
@@ -89,7 +77,7 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
     const far: Pt = [(f0[0] + f1[0]) / 2, (f0[1] + f1[1]) / 2];
     const d = dist(mid, far) || 1;
     const to: Pt = [(far[0] - mid[0]) / d, (far[1] - mid[1]) / d];
-    out.push(`<path d="${line(w, true)}" fill="${tint.water}" fill-opacity="${tint.waterOpacity}"/>`);
+    out.push(`<path d="${line(w, true)}" fill="${paper.line}" fill-opacity="0.34"/>`);
     [0.32, 0.75, 1.35].forEach((off, i) => out.push(`<path d="${line(shore.map(([x, y]) => [x + to[0] * off, y + to[1] * off] as Pt))}" fill="none" stroke="${INK}" stroke-width="${[3, 2.4, 2][i]}" stroke-dasharray="${['90 22', '46 34', '20 46'][i]}" ${round} opacity="${[0.8, 0.65, 0.5][i]}"/>`));
     out.push(`<path d="${line(shore)}" fill="none" stroke="${INK}" stroke-width="7" ${round}/>`);
   }
@@ -97,7 +85,7 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
   for (const r of plan.rivers) {
     const d = line(r.points);
     const w = P(r.width);
-    out.push(`<path d="${d}" fill="none" stroke="${INK}" stroke-width="${w + 12}" ${round}/><path d="${d}" fill="none" stroke="${tint.river}" stroke-width="${w}" ${round}/><path d="${d}" fill="none" stroke="${paper.line}" stroke-opacity="0.34" stroke-width="${w}" ${round}/>`);
+    out.push(`<path d="${d}" fill="none" stroke="${INK}" stroke-width="${w + 12}" ${round}/><path d="${d}" fill="none" stroke="${sheet}" stroke-width="${w}" ${round}/><path d="${d}" fill="none" stroke="${paper.line}" stroke-opacity="0.34" stroke-width="${w}" ${round}/>`);
     if (w > 90) out.push(`<path d="${d}" fill="none" stroke="${INK}" stroke-width="2.6" stroke-dasharray="70 46" ${round} opacity="0.7" transform="translate(0 ${Math.round(w * 0.2)})"/><path d="${d}" fill="none" stroke="${INK}" stroke-width="2.2" stroke-dasharray="34 80" stroke-dashoffset="50" ${round} opacity="0.6" transform="translate(0 ${-Math.round(w * 0.18)})"/>`);
     else out.push(`<path d="${d}" fill="none" stroke="${INK}" stroke-width="2.2" stroke-dasharray="40 60" ${round} opacity="0.6"/>`);
   }
@@ -106,8 +94,8 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
   if (plan.wall) {
     const w = plan.wall;
     out.push(`<path d="${line(w.points, w.closed)}" fill="none" stroke="${INK}" stroke-width="${P(w.width)}" stroke-linejoin="round" stroke-linecap="butt"/>`);
-    out.push(`<path d="${line(w.points, w.closed)}" fill="none" stroke="${tint.wallCore}" stroke-width="${Math.max(3, P(w.width) - 16)}" stroke-linejoin="round" stroke-linecap="butt" stroke-dasharray="${P(w.width * 1.1)} 8"/>`);
-    for (const [x, y] of w.towers) out.push(`<circle cx="${P(x)}" cy="${P(y)}" r="${P(w.width * 1.05)}" fill="${tint.tower}" stroke="${INK}" stroke-width="9"/>`);
+    out.push(`<path d="${line(w.points, w.closed)}" fill="none" stroke="${sheet}" stroke-width="${Math.max(3, P(w.width) - 16)}" stroke-linejoin="round" stroke-linecap="butt" stroke-dasharray="${P(w.width * 1.1)} 8"/>`);
+    for (const [x, y] of w.towers) out.push(`<circle cx="${P(x)}" cy="${P(y)}" r="${P(w.width * 1.05)}" fill="${sheet}" stroke="${INK}" stroke-width="9"/>`);
   }
 
   // Streets: every one drawn dark and a little wide, then every one again in the colour of the paper, so that where
@@ -118,14 +106,14 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
   for (const s of plan.squares) edges += `<path d="${line(s, true)}" fill="${INK}" stroke="${INK}" stroke-width="9" ${round}/>`;
   out.push(edges);
   let surface = '';
-  for (const r of roads) surface += `<path d="${line(r.points)}" fill="none" stroke="${tint.road}" stroke-width="${P(r.width)}" ${round}/>`;
-  for (const s of plan.squares) surface += `<path d="${line(s, true)}" fill="${tint.plaza}"/>`;
+  for (const r of roads) surface += `<path d="${line(r.points)}" fill="none" stroke="${paper.floor}" stroke-width="${P(r.width)}" ${round}/>`;
+  for (const s of plan.squares) surface += `<path d="${line(s, true)}" fill="${paper.floor}"/>`;
   out.push(surface);
 
   // A rift through the town: dark, where the ground is broken; where the town is adrift, a channel of the mist.
   for (const r of plan.rifts ?? []) {
     if (land === 'adrift') {
-      out.push(`<path d="${riftPath(r, seed)}" fill="${painted ? HAZE : sheet}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`);
+      out.push(`<path d="${riftPath(r, seed)}" fill="${sheet}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`);
       out.push(mist(plan.w, plan.h, seed, (x, y) => fromLine([x + 0.5, y + 0.5], r.points) < r.width / 2 - 0.2));
     } else out.push(`<path d="${riftPath(r, seed)}" fill="${INK}" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`);
   }
@@ -133,7 +121,7 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
   for (const b of plan.bridges) {
     const [l, w] = [P(b.length), P(b.width)];
     out.push(
-      `<g transform="translate(${P(b.x)} ${P(b.y)}) rotate(${Math.round((b.angle * 180) / Math.PI)})"><rect x="${-l / 2}" y="${-w / 2}" width="${l}" height="${w}" fill="${tint.wood}"/>` +
+      `<g transform="translate(${P(b.x)} ${P(b.y)}) rotate(${Math.round((b.angle * 180) / Math.PI)})"><rect x="${-l / 2}" y="${-w / 2}" width="${l}" height="${w}" fill="${paper.floor}"/>` +
         `<path d="M${-l / 2 - 10} ${-w / 2}H${l / 2 + 10}M${-l / 2 - 10} ${w / 2}H${l / 2 + 10}" stroke="${INK}" stroke-width="9" stroke-linecap="round"/></g>`,
     );
   }
@@ -141,7 +129,7 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
     const [x2, y2] = [p.x + Math.cos(p.angle) * p.length, p.y + Math.sin(p.angle) * p.length];
     const d = `M${P(p.x)} ${P(p.y)}L${P(x2)} ${P(y2)}`;
     const wide = Math.max(22, Math.round(U * (8 / plan.feet)));
-    out.push(`<path d="${d}" stroke="${INK}" stroke-width="${wide + 9}" stroke-linecap="butt"/><path d="${d}" stroke="${tint.wood}" stroke-width="${wide}" stroke-linecap="butt"/><path d="${d}" stroke="${INK}" stroke-width="${wide}" stroke-dasharray="2.5 14" opacity="0.8"/>`);
+    out.push(`<path d="${d}" stroke="${INK}" stroke-width="${wide + 9}" stroke-linecap="butt"/><path d="${d}" stroke="${paper.floor}" stroke-width="${wide}" stroke-linecap="butt"/><path d="${d}" stroke="${INK}" stroke-width="${wide}" stroke-dasharray="2.5 14" opacity="0.8"/>`);
   }
   // A gate's two towers, either side of the road.
   if (plan.wall)
@@ -157,16 +145,13 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
   // Roofs: an outline, and for a plain oblong its ridge and hips.
   let plain = '';
   let ridges = '';
-  const roofs = ROOFS.map(() => '');
   const keyed: string[] = [];
   for (const b of plan.buildings) {
     if (b.key) {
-      keyed.push(`<path d="${line(b.corners, true)}" fill="${tint.keyed}" fill-opacity="${tint.keyedOpacity}" stroke="${INK}" stroke-width="8" stroke-linejoin="round"/>`);
+      keyed.push(`<path d="${line(b.corners, true)}" fill="${paper.line}" fill-opacity="0.55" stroke="${INK}" stroke-width="8" stroke-linejoin="round"/>`);
       continue;
     }
     plain += line(b.corners, true);
-    // Painted, the roofs are of five colours, shared out by where each house stands.
-    if (painted) roofs[(Math.round(b.corners[0][0] * 7) + Math.round(b.corners[0][1] * 13)) % ROOFS.length] += line(b.corners, true);
     if (b.corners.length !== 4) continue;
     const [p0, p1, p2, p3] = b.corners;
     const [a, c] = [dist(p0, p1), dist(p1, p2)];
@@ -176,8 +161,7 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
     const ends: [Pt, Pt][] = a >= c ? [[p0, p3], [p1, p2]] : [[p0, p1], [p3, p2]];
     ridges += `${line([e0, e1])}${line([ends[0][0], e0, ends[0][1]])}${line([ends[1][0], e1, ends[1][1]])}`;
   }
-  if (painted) roofs.forEach((d, i) => d && out.push(`<path d="${d}" fill="${ROOFS[i]}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`));
-  out.push(`<path d="${plain}" fill="${painted ? 'none' : paper.floor}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/><path d="${ridges}" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linejoin="round" opacity="0.85"/>`, ...keyed);
+  out.push(`<path d="${plain}" fill="${paper.floor}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/><path d="${ridges}" fill="none" stroke="${INK}" stroke-width="2.2" stroke-linejoin="round" opacity="0.85"/>`, ...keyed);
 
   // Trees: a crown, with a stroke of shade on one side. Each is drawn whole, so one in front hides the one behind.
   if (plan.trees.length) {
@@ -186,7 +170,7 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
       const r = P(s);
       trees += `<circle cx="${P(x)}" cy="${P(y)}" r="${r}"/><path d="M${P(x) - Math.round(r * 0.1)} ${P(y) + Math.round(r * 0.62)}a${Math.round(r * 0.62)} ${Math.round(r * 0.62)} 0 0 0 ${Math.round(r * 0.66)} ${-Math.round(r * 0.72)}" fill="none"/>`;
     }
-    out.push(`<g fill="${tint.tree}" stroke="${INK}" stroke-width="3.4" stroke-linecap="round">${trees}</g>`);
+    out.push(`<g fill="${paper.floor}" stroke="${INK}" stroke-width="3.4" stroke-linecap="round">${trees}</g>`);
   }
 
   // Great growths: a cap with its gills, seen from above.
@@ -201,14 +185,14 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
         gills += `M${Math.round(cx + Math.cos(a) * rad * 0.36)} ${Math.round(cy + Math.sin(a) * rad * 0.36)}L${Math.round(cx + Math.cos(a) * rad * 0.86)} ${Math.round(cy + Math.sin(a) * rad * 0.86)}`;
       }
     }
-    out.push(`<g fill="${tint.growth}" stroke="${INK}" stroke-width="4.5">${caps}</g><path d="${gills}" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round" opacity="0.8"/>`);
+    out.push(`<g fill="${paper.floor}" stroke="${INK}" stroke-width="4.5">${caps}</g><path d="${gills}" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round" opacity="0.8"/>`);
   }
 
   if (o.grid !== 'none') {
     let grid = '';
     for (let x = 1; x < plan.w; x++) grid += `M${x * U} 0V${plan.h * U}`;
     for (let y = 1; y < plan.h; y++) grid += `M0 ${y * U}H${plan.w * U}`;
-    out.push(`<path d="${grid}" stroke="${tint.grid}" stroke-width="2.5" fill="none" opacity="${night ? 0.4 : tint.gridOpacity}"/>`);
+    out.push(`<path d="${grid}" stroke="${paper.line}" stroke-width="2.5" fill="none" opacity="${night ? 0.4 : 0.8}"/>`);
   }
 
   // Districts: a broken line between one and the next, and each one's name written across it.
@@ -227,8 +211,6 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
         keyMarks(a.n, P(a.x), P(a.y) + 12, o, sheet) +
           `<circle cx="${P(a.x)}" cy="${P(a.y)}" r="44" fill="${sheet}" stroke="${INK}" stroke-width="6"/><text x="${P(a.x)}" y="${P(a.y)}" font-size="${a.n > 9 ? 44 : 50}" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="${INK}">${esc(String(a.n))}</text>`,
       );
-  // Painted, the title is light on the dark of the ground, unless what lies beyond is light itself.
-  out.push(painted ? legend(plan, o, land === 'aloft' || land === 'adrift' ? '#ffffff' : 'none', !(plan.island?.length && (land === 'aloft' || land === 'adrift'))) : legend(plan, o, paper.sheet, night));
-  out[0] = paint ? `<defs>${paint.defs()}</defs>` : '';
+  out.push(legend(plan, o, paper.sheet, night));
   return out.join('');
 }

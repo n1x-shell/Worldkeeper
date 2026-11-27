@@ -117,9 +117,9 @@ interface Snap {
 }
 
 /** How the plan is shown and exported: the GM's choice, remembered on this device. */
-type View = Pick<DrawOptions, 'gm' | 'grid' | 'fill' | 'paper' | 'furnishings' | 'px' | 'style'> & { titled: boolean };
+type View = Pick<DrawOptions, 'gm' | 'grid' | 'fill' | 'paper' | 'furnishings' | 'px' | 'style' | 'dressing'> & { titled: boolean };
 const VIEW_KEY = 'wk.plan.view';
-const NEW_VIEW: View = { gm: true, grid: 'floor', fill: 'hatch', paper: 'white', furnishings: true, px: 70, titled: true, style: 'ink' };
+const NEW_VIEW: View = { gm: true, grid: 'floor', fill: 'hatch', paper: 'white', furnishings: true, px: 70, titled: true, style: 'ink', dressing: true };
 function readView(): View {
   try {
     const v = JSON.parse(localStorage.getItem(VIEW_KEY) ?? '{}') as Partial<View>;
@@ -130,6 +130,7 @@ function readView(): View {
       fill: one(v.fill, ['hatch', 'solid', 'none'] as const, NEW_VIEW.fill),
       paper: one(v.paper, ['white', 'parchment', 'clear'] as const, NEW_VIEW.paper),
       furnishings: v.furnishings !== false,
+      dressing: v.dressing !== false,
       px: one(v.px, PIXELS, NEW_VIEW.px),
       titled: v.titled !== false,
       style: one(v.style, ['ink', 'painted'] as const, NEW_VIEW.style),
@@ -283,7 +284,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   // chosen for the copy that is taken away.
   const shown = useMemo(
     () =>
-      `data:image/svg+xml;charset=utf-8,${encodeURIComponent(selected == null && !editing ? drawing.svg : drawPlan(plan, { ...options, ...(editing ? { gm: true, furnishings: true } : {}), numbers: true, ring: selected == null ? null : selected + 1 }).svg)}`,
+      `data:image/svg+xml;charset=utf-8,${encodeURIComponent(selected == null && !editing ? drawing.svg : drawPlan(plan, { ...options, ...(editing ? { gm: true, furnishings: true, dressing: false } : {}), numbers: true, ring: selected == null ? null : selected + 1 }).svg)}`,
     [drawing, plan, options, selected, editing],
   );
 
@@ -869,6 +870,19 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
               {settings.kind !== 'settlement' && (
                 <Check checked={view.furnishings} onChange={(furnishings) => setView((o) => ({ ...o, furnishings }))} hint="Leave them off to dress the rooms yourself in a mapping tool.">
                   Furnishings
+                </Check>
+              )}
+              {painted && (settings.kind === 'settlement' || view.furnishings) && (
+                <Check
+                  checked={view.dressing}
+                  onChange={(dressing) => setView((o) => ({ ...o, dressing }))}
+                  hint={
+                    settings.kind === 'settlement'
+                      ? 'Stalls in the square, boats at the piers, chimneys, bushes and stones. Drawing only: none of it is in the key.'
+                      : 'Torches and their light, rugs, cracks, damp and cobwebs. Drawing only: none of it is in the key or in anyone’s way.'
+                  }
+                >
+                  Dressing
                 </Check>
               )}
               <Check checked={view.titled} onChange={(titled) => setView((o) => ({ ...o, titled }))}>

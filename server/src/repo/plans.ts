@@ -10,7 +10,22 @@ import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
-import { BUILDING_USES, FEATURE_KINDS, KEY_KINDS, LANDS, MAX_NAMES, PLAN_KINDS, TOWN_SIZES, hasOwnNames, ideaFor, newItem, suggest, type KeyItem, type PlaceFacts, type PlanSettings } from '../../../shared/plan/index.js';
+import {
+  BUILDING_USES,
+  FEATURE_KINDS,
+  KEY_KINDS,
+  LANDS,
+  MAX_NAMES,
+  PLAN_KINDS,
+  TOWN_SIZES,
+  hasOwnNames,
+  ideaFor,
+  newItem,
+  suggest,
+  type KeyItem,
+  type PlaceFacts,
+  type PlanSettings,
+} from '../../../shared/plan/index.js';
 import { getEntity, updateEntity } from './entities.js';
 import { maps, markers } from './maps.js';
 import { placeProfile } from './places.js';
@@ -37,12 +52,18 @@ const zSettings = z.object({
   water: z.enum(['none', 'river', 'coast']),
   walled: z.boolean(),
   around: z.enum(['fields', 'woods', 'open']),
-  key: z.array(z.lazy(() => zRoom)).max(MAX_NAMES).optional(),
+  key: z
+    .array(z.lazy(() => zRoom))
+    .max(MAX_NAMES)
+    .optional(),
   drawn: z.lazy(() => zDrawn).optional(),
   // Joined plans (v0.9.27): where the way in comes from, and a town's districts with the GM's names for them.
   from: z.string().trim().max(160).optional(),
   districts: z.boolean().optional(),
-  wards: z.array(z.object({ name: z.string().max(60), record: z.string().max(60).optional() })).max(12).optional(),
+  wards: z
+    .array(z.object({ name: z.string().max(60), record: z.string().max(60).optional() }))
+    .max(12)
+    .optional(),
   // The lie of the land (v0.9.28).
   land: z.enum(LANDS).optional(),
 });
@@ -75,9 +96,29 @@ const zGrid = z
     cells: z.array(whole.min(0).max(100000)).max(200000),
     rock: z.array(whole.min(0).max(100000)).max(200000),
     rough: z.array(whole.min(0).max(100000)).max(2000),
-    openings: z.array(z.object({ x: whole.min(0).max(300), y: whole.min(0).max(300), side: z.enum(['n', 'w']), kind: z.enum(['door', 'double', 'arch', 'secret', 'bars', 'window', 'open']), to: z.string().max(4).optional() })).max(4000),
+    openings: z
+      .array(
+        z.object({
+          x: whole.min(0).max(300),
+          y: whole.min(0).max(300),
+          side: z.enum(['n', 'w']),
+          kind: z.enum(['door', 'double', 'arch', 'secret', 'bars', 'window', 'open']),
+          to: z.string().max(4).optional(),
+        }),
+      )
+      .max(4000),
     features: z
-      .array(z.object({ kind: z.enum(FEATURE_KINDS), x: sq, y: sq, w: z.number().positive().max(40), h: z.number().positive().max(40), dir: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]).optional(), gm: z.boolean().optional() }))
+      .array(
+        z.object({
+          kind: z.enum(FEATURE_KINDS),
+          x: sq,
+          y: sq,
+          w: z.number().positive().max(40),
+          h: z.number().positive().max(40),
+          dir: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]).optional(),
+          gm: z.boolean().optional(),
+        }),
+      )
       .max(6000),
     areas: z.array(zArea).max(MAX_NAMES * 2),
     captions: z.array(z.object({ text: z.string().max(60), x: sq, y: sq })).max(20),
@@ -98,17 +139,32 @@ const zTown = z.object({
   bridges: z.array(z.object({ x: sq, y: sq, angle: z.number(), length: z.number().positive().max(60), width: z.number().positive().max(20) })).max(60),
   piers: z.array(z.object({ x: sq, y: sq, angle: z.number(), length: z.number().positive().max(60) })).max(60),
   wall: z
-    .object({ points: zLine, closed: z.boolean(), width: z.number().positive().max(10), towers: zLine, gates: z.array(z.object({ x: sq, y: sq, angle: z.number(), width: z.number().positive().max(20) })).max(40) })
+    .object({
+      points: zLine,
+      closed: z.boolean(),
+      width: z.number().positive().max(10),
+      towers: zLine,
+      gates: z.array(z.object({ x: sq, y: sq, angle: z.number(), width: z.number().positive().max(20) })).max(40),
+    })
     .nullable(),
   trees: z.array(z.tuple([sq, sq, z.number().positive().max(10)])).max(4000),
   fields: z.array(z.object({ corners: z.array(zPoint).min(3).max(12), angle: z.number() })).max(200),
   areas: z.array(zArea).max(MAX_NAMES * 2),
-  districts: z.array(z.object({ name: z.string().max(60), at: zPoint, outline: zLine })).max(12).optional(),
-  districtLines: z.array(z.tuple([zPoint, zPoint])).max(120).optional(),
+  districts: z
+    .array(z.object({ name: z.string().max(60), at: zPoint, outline: zLine }))
+    .max(12)
+    .optional(),
+  districtLines: z
+    .array(z.tuple([zPoint, zPoint]))
+    .max(120)
+    .optional(),
   land: z.enum(LANDS).optional(),
   rifts: z.lazy(() => zRifts).optional(),
   island: zLine.optional(),
-  growths: z.array(z.tuple([sq, sq, z.number().positive().max(20)])).max(2000).optional(),
+  growths: z
+    .array(z.tuple([sq, sq, z.number().positive().max(20)]))
+    .max(2000)
+    .optional(),
 });
 const zRifts = z.array(z.object({ points: zLine, width: z.number().positive().max(20) })).max(4);
 const zDrawn = z.union([zGrid, zTown]);
@@ -120,23 +176,48 @@ const zItem = z.object({
   kind: z.enum(KEY_KINDS),
   title: short,
   text: z.string().max(6000),
-  creatures: z.array(z.object({ name: short, count: z.number().int().min(1).max(999), id: z.string().max(200).optional() })).max(40).optional(),
+  creatures: z
+    .array(z.object({ name: short, count: z.number().int().min(1).max(999), id: z.string().max(200).optional() }))
+    .max(40)
+    .optional(),
   dc: z.number().int().min(1).max(40).nullable().optional(),
   damage: short.optional(),
   coins: short.optional(),
-  things: z.array(z.object({ name: short, count: z.number().int().min(1).max(9999) })).max(60).optional(),
+  things: z
+    .array(z.object({ name: short, count: z.number().int().min(1).max(9999) }))
+    .max(60)
+    .optional(),
   entity: z.string().max(60).nullable().optional(),
 });
 const zRoom = z.object({
   id: z.string().min(1).max(40),
   // Kept as typed (a name half typed may end in a space); only a name of nothing is refused.
-  name: z.string().max(80).refine((v) => v.trim().length > 0, 'A place needs a name'),
-  drawnAs: z.string().max(80).refine((v) => v.trim().length > 0, 'A place needs a name'),
+  name: z
+    .string()
+    .max(80)
+    .refine((v) => v.trim().length > 0, 'A place needs a name'),
+  drawnAs: z
+    .string()
+    .max(80)
+    .refine((v) => v.trim().length > 0, 'A place needs a name'),
   floor: z.enum(['ground', 'upper', 'under']).optional(),
   aloud: z.string().max(6000),
   items: z.array(zItem).max(40),
   record: z.string().max(60).optional(),
 });
+
+/** What a record's realm is called, and the realms that one is in: a domain of the Ethereal Realm is in the Ethereal Realm. */
+function realmNames(db: DB, id: string | null): string | undefined {
+  const names: string[] = [];
+  const get = db.prepare('SELECT name, parent_id FROM realms WHERE id = ?');
+  for (let at = id, steps = 0; at && steps < 8; steps++) {
+    const r = get.get(at) as { name: string; parent_id: string | null } | undefined;
+    if (!r) break;
+    names.push(r.name);
+    at = r.parent_id;
+  }
+  return names.length ? names.join('. ') : undefined;
+}
 
 /** What the record says of the place, for choosing and keying its plan. */
 function facts(db: DB, id: string): { facts: PlaceFacts; place: boolean; version: number } {
@@ -144,11 +225,15 @@ function facts(db: DB, id: string): { facts: PlaceFacts; place: boolean; version
   const reg = types(db);
   const placeTypes = reg.list.filter((t) => t.traits.place).map((t) => t.key);
   const children = placeTypes.length
-    ? (db.prepare(`SELECT name FROM entities WHERE parent_id = ? AND archived = 0 AND type IN (${placeTypes.map(() => '?').join(',')}) ORDER BY name LIMIT ${MAX_NAMES}`).all(id, ...placeTypes) as { name: string }[]).map((r) => r.name)
+    ? (
+        db.prepare(`SELECT name FROM entities WHERE parent_id = ? AND archived = 0 AND type IN (${placeTypes.map(() => '?').join(',')}) ORDER BY name LIMIT ${MAX_NAMES}`).all(id, ...placeTypes) as {
+          name: string;
+        }[]
+      ).map((r) => r.name)
     : [];
   const profile = placeProfile(db, id);
   return {
-    facts: { id: e.id, type: e.type, name: e.name, fields: e.fields, body: e.body, children, terrain: profile.terrain, danger: profile.danger, wealth: profile.wealth, realm: (db.prepare('SELECT name FROM realms WHERE id = ?').get(e.realm) as { name: string } | undefined)?.name },
+    facts: { id: e.id, type: e.type, name: e.name, fields: e.fields, body: e.body, children, terrain: profile.terrain, danger: profile.danger, wealth: profile.wealth, realm: realmNames(db, e.realm) },
     place: !!reg.get(e.type)?.traits.place && !reg.get(e.type)?.traits.regionLike,
     version: e.version,
   };
@@ -193,7 +278,9 @@ function joinedTo(db: DB, id: string, name: string, placeTypes: string[]): Joine
   const loose = (text: string | undefined) => parseJson<Loose>(text ?? '', {}) ?? {};
   const me = db.prepare('SELECT parent_id FROM entities WHERE id = ?').get(id) as { parent_id: string | null } | undefined;
   let within: Joined['within'] = null;
-  const parent = me?.parent_id ? (db.prepare('SELECT id, name, type FROM entities WHERE id = ? AND archived = 0').get(me.parent_id) as { id: string; name: string; type: string } | undefined) : undefined;
+  const parent = me?.parent_id
+    ? (db.prepare('SELECT id, name, type FROM entities WHERE id = ? AND archived = 0').get(me.parent_id) as { id: string; name: string; type: string } | undefined)
+    : undefined;
   if (parent && placeTypes.includes(parent.type)) {
     const row = savedRow(db, parent.id);
     const theirs = loose(row?.settings);
@@ -203,16 +290,23 @@ function joinedTo(db: DB, id: string, name: string, placeTypes: string[]): Joine
     within = { id: parent.id, name: parent.name, plan: !!row, n: byName >= 0 ? byName + 1 : null, ward: ward?.name?.trim() || null };
   }
   const under = placeTypes.length
-    ? (db
-        .prepare(`SELECT e.id, e.name, e.type, EXISTS (SELECT 1 FROM place_plans p WHERE p.entity_id = e.id) AS plan FROM entities e WHERE e.parent_id = ? AND e.archived = 0 AND e.type IN (${placeTypes.map(() => '?').join(',')}) ORDER BY e.name LIMIT 80`)
-        .all(id, ...placeTypes) as { id: string; name: string; type: string; plan: number }[]).map((r) => ({ ...r, plan: !!r.plan }))
+    ? (
+        db
+          .prepare(
+            `SELECT e.id, e.name, e.type, EXISTS (SELECT 1 FROM place_plans p WHERE p.entity_id = e.id) AS plan FROM entities e WHERE e.parent_id = ? AND e.archived = 0 AND e.type IN (${placeTypes.map(() => '?').join(',')}) ORDER BY e.name LIMIT 80`,
+          )
+          .all(id, ...placeTypes) as { id: string; name: string; type: string; plan: number }[]
+      ).map((r) => ({ ...r, plan: !!r.plan }))
     : [];
   // Other places' plans that name this one as where a way leads.
   const from: Joined['from'] = [];
-  const rows = db.prepare(`SELECT p.entity_id AS id, e.name, p.settings FROM place_plans p JOIN entities e ON e.id = p.entity_id WHERE p.entity_id != ? AND e.archived = 0 AND instr(p.settings, ?) > 0 LIMIT 60`).all(id, JSON.stringify(id)) as { id: string; name: string; settings: string }[];
+  const rows = db
+    .prepare(`SELECT p.entity_id AS id, e.name, p.settings FROM place_plans p JOIN entities e ON e.id = p.entity_id WHERE p.entity_id != ? AND e.archived = 0 AND instr(p.settings, ?) > 0 LIMIT 60`)
+    .all(id, JSON.stringify(id)) as { id: string; name: string; settings: string }[];
   for (const r of rows)
     (loose(r.settings).key ?? []).forEach((room, i) => {
-      for (const it of room.items ?? []) if (it.kind === 'way' && it.entity === id) from.push({ id: r.id, name: r.name, n: i + 1, room: String(room.name ?? '').trim(), how: String(it.title ?? '').trim() });
+      for (const it of room.items ?? [])
+        if (it.kind === 'way' && it.entity === id) from.push({ id: r.id, name: r.name, n: i + 1, room: String(room.name ?? '').trim(), how: String(it.title ?? '').trim() });
     });
   return { within, under, from: from.slice(0, 40) };
 }
@@ -282,7 +376,9 @@ export function planToMap(db: DB, id: string, uploadsDir: string, image: { buffe
     .object({
       squares: z.number().positive().max(400),
       feet: z.number().positive().max(1000),
-      areas: z.array(z.object({ n: z.number().int().min(1).max(999), name: z.string().max(80), x: z.number().min(0).max(400), y: z.number().min(0).max(400), entity: z.string().max(60).optional() })).max(MAX_NAMES * 2),
+      areas: z
+        .array(z.object({ n: z.number().int().min(1).max(999), name: z.string().max(80), x: z.number().min(0).max(400), y: z.number().min(0).max(400), entity: z.string().max(60).optional() }))
+        .max(MAX_NAMES * 2),
     })
     .parse(input);
   const e = getEntity(db, id);
@@ -305,7 +401,17 @@ export function planToMap(db: DB, id: string, uploadsDir: string, image: { buffe
       const there = db.prepare('SELECT 1 FROM entities WHERE id = ? AND archived = 0');
       const tied = (entity: string | undefined) => (entity && there.get(entity) ? entity : null);
       // The Atlas measures up from the bottom of a map; a plan, down from its top.
-      for (const a of o.areas) markers.create(db, { map_id: mid, entity_id: tied(a.entity) ?? under.get(a.name.toLowerCase()) ?? null, label: `${a.n}. ${a.name}`, x: Math.round(a.x * px), y: Math.round(image.height - a.y * px), category: 'plan', layer: 'Locations', hidden: true });
+      for (const a of o.areas)
+        markers.create(db, {
+          map_id: mid,
+          entity_id: tied(a.entity) ?? under.get(a.name.toLowerCase()) ?? null,
+          label: `${a.n}. ${a.name}`,
+          x: Math.round(a.x * px),
+          y: Math.round(image.height - a.y * px),
+          category: 'plan',
+          layer: 'Locations',
+          hidden: true,
+        });
       db.prepare('UPDATE place_plans SET map_id = ? WHERE entity_id = ?').run(mid, id);
       return mid;
     })();
@@ -341,7 +447,7 @@ export function suggestKeyItem(db: DB, input: unknown, rng: () => number = Math.
   const level = o.level ?? (campaign ? partyLevel(db, campaign) : 1);
   if (o.kind === 'trap' || o.kind === 'puzzle' || o.kind === 'hazard') return { level, item: ideaFor(o.kind, level, o.danger ?? profile?.danger ?? 'risky', rng) };
   if (o.kind === 'encounter') {
-    const size = campaign ? ((db.prepare(`SELECT COUNT(*) n FROM characters WHERE campaign_id = ? AND kind = 'pc'`).get(campaign) as { n: number }).n || 4) : 4;
+    const size = campaign ? (db.prepare(`SELECT COUNT(*) n FROM characters WHERE campaign_id = ? AND kind = 'pc'`).get(campaign) as { n: number }).n || 4 : 4;
     const { ideas } = suggestEncounters(db, { level, size, difficulty: difficultyFor(o.danger ?? profile?.danger ?? 'risky'), terrain: profile?.terrain ?? [], count: 3, rng });
     if (!ideas.length) throw badRequest('Nothing in your books fits a party of this level here. Add the creatures yourself, or bring in a book of monsters.');
     const idea = ideas[Math.floor(rng() * ideas.length)];
@@ -349,7 +455,15 @@ export function suggestKeyItem(db: DB, input: unknown, rng: () => number = Math.
   }
   const tier = TREASURE_TIERS[level >= 17 ? 3 : level >= 11 ? 2 : level >= 5 ? 1 : 0];
   const label = o.entity ? getEntity(db, o.entity).name : 'This place';
-  const roll = rollTreasure({ tier: tier.key, region: BOOKS_REGION, kind: o.hoard ? 'hoard' : 'individual', books: bookTreasure(db), place: { label, wealth: o.wealth ?? profile?.wealth ?? 'modest' }, fading: false, rng });
+  const roll = rollTreasure({
+    tier: tier.key,
+    region: BOOKS_REGION,
+    kind: o.hoard ? 'hoard' : 'individual',
+    books: bookTreasure(db),
+    place: { label, wealth: o.wealth ?? profile?.wealth ?? 'modest' },
+    fading: false,
+    rng,
+  });
   const things = [...roll.goods.map((g) => ({ name: `${g.text} (${g.gp} gp)`, count: g.count })), ...roll.items.map((i) => ({ name: i.name, count: 1 }))];
   return { level, item: newItem('loot', { title: o.hoard ? 'A hoard' : '', coins: roll.coins.amount ? `${roll.coins.amount.toLocaleString('en')} ${roll.coins.coin}` : '', things }) };
 }

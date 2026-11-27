@@ -98,11 +98,11 @@ And join them up. A numbered place can be a record of its own with its own plan:
 
 And put them on the ground they are really on. Any plan can be overgrown, shattered by a rift, aloft on an island in the sky, adrift in the mist between worlds (with lettered doors that open on rooms not next door), unearthly, or in the void among the stars. A **ship** is a fifth kind of plan: a hull and its decks, at sea, in the sky or in the void.
 
-Or paint them. **Painted** draws the same plan on stone, earth, timber and grass from photographs, for a picture to play on; ink stays the one to print.
+Or paint them. **Painted** draws the same plan on stone, earth, timber and grass from photographs, with its furnishings in timber, stone and cloth, shadows under them, torches and the light they throw, rugs, and wear in the floors; a town gets lit roofs, shadows, stalls in its square and boats at its piers. It is a picture to play on; ink stays the one to print.
 
 | A dungeon, painted | A walled town, painted |
 | --- | --- |
-| ![A dungeon of nine rooms on cobbled floors in dark rock, with tables, beds, pillars and two traps marked](docs/images/plan-painted.jpg) | ![A walled town by a river on grass, with earth roads, tiled roofs, fields and four named wards](docs/images/plan-painted-town.jpg) |
+| ![A dungeon of nine rooms on cobbled floors in dark rock, lit by torches, with beds under blankets, barrels, a shelf of books, pillars and two traps marked](docs/images/plan-painted.jpg) | ![A walled town by a river on grass, with earth roads, roofs lit on one side and shaded on the other, stalls in the square, fields under different crops and four named wards](docs/images/plan-painted-town.jpg) |
 
 | A ship among the stars | A city aloft, in districts | A dungeon adrift: doors of a letter open on one another |
 | --- | --- | --- |

@@ -260,7 +260,7 @@ const GREAT_SHIP = /\b(galleon|man-of-war|great ship|flagship|carrack|dreadnough
 /** Words that say what ground a place is on: the first that fits. */
 const LIES: [RegExp, Land][] = [
   [/\b(void|among the stars|between the stars|star-?sea|astral sea|voidship|starship)\b/i, 'void'],
-  [/\b(floating|aloft|sky-?ship|airship|in the sky|skyborne|sky-?city|cloud-?borne|above the clouds|hovers?|hovering)\b/i, 'aloft'],
+  [/\b(floating|aloft|sky-?ship|airship|in the sky|skyborne|sky-?city|cloud-?borne|above the clouds|among the clouds|in the clouds|hovers?|hovering)\b/i, 'aloft'],
   [/\b(ethereal|adrift|between worlds|the between|unmoored|limbo)\b/i, 'adrift'],
   [/\b(unearthly|eldritch|aberrant|otherworldly|non-euclidean|wrong angles|madness)\b/i, 'unearthly'],
   [/\b(shattered|sundered|riven|cloven|fractured|the rift|a rift|great rift)\b/i, 'shattered'],

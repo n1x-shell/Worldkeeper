@@ -237,6 +237,8 @@ describe('the lie of the land', () => {
     const land = (name: string, body = '', realm?: string): Land | undefined => suggest({ ...facts, name, body, realm }).land;
     expect(land('Zepharyos, the Floating City')).toBe('aloft');
     expect(land('The Hollow Verge', 'A waystation.', 'The Ethereal Realm')).toBe('adrift');
+    expect(land('The Nameless Asylum', 'A house of the lost.', 'The Hollow Verge. The Ethereal Realm')).toBe('adrift');
+    expect(land('Zepharyos', 'The City of the Unbound, among the clouds. Capital of the Fractured Nexus.')).toBe('aloft');
     expect(land('The Weeping Caves', 'Fungus grows on every wall, and the spores drift.')).toBe('overgrown');
     expect(land('The Fractured Nexus')).toBe('shattered');
     expect(land('The Lantern', 'A voidship lost among the stars.')).toBe('void');
@@ -319,6 +321,17 @@ describe('a ship', () => {
 });
 
 describe('a plan on its ground, kept', () => {
+  it('offers the ground of the realm a place is in, and of the realm that one is in', async () => {
+    const gm = createApp(tempContext());
+    const made = async (body: object) => (await request(gm).post('/api/realms').send(body)).body as { id: string };
+    const realm = await made({ name: 'The Ethereal Realm', kind: 'realm' });
+    const domain = await made({ name: 'The Hollow Verge', kind: 'domain', parent_id: realm.id });
+    expect(domain.id).toBeTruthy();
+    const place = (await request(gm).post('/api/entities').send({ realm: domain.id, name: 'The Nameless Asylum', type: 'landmark' })).body as { id: string };
+    const got = (await request(gm).get(`/api/entities/${place.id}/plan`)).body as { suggested: PlanSettings };
+    expect(got.suggested.land).toBe('adrift');
+  });
+
   it('is kept by the server as it is chosen and as it is drawn, for every kind and every ground', async () => {
     const gm = createApp(tempContext());
     const place = (await request(gm).post('/api/entities').send({ realm: 'world', name: 'The Lantern', type: 'landmark' })).body as { id: string };

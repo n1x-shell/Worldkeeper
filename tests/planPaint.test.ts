@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
 import { ART_KINDS, LANDS, drawPlan, madeNames, makePlan, type PlanArt, type PlanKind, type PlanSettings } from '../shared/plan/index.js';
+import { FEATURE_KINDS } from '../shared/plan/model.js';
 
 const base: PlanSettings = { kind: 'dungeon', seed: 7, names: [], size: 'medium', rough: false, ways: 'some', secrets: true, traps: true, use: 'tavern', town: 'town', water: 'river', walled: true, around: 'fields' };
 const named = (s: PlanSettings): PlanSettings => ({ ...s, names: s.kind === 'building' || s.kind === 'ship' ? [] : madeNames(s, 'The Old Keep', s.kind === 'settlement' ? 0 : 7) });
@@ -69,6 +70,44 @@ describe('the painted style', () => {
       const refused = drawPlan(plan, { style: 'painted', art: bad });
       expect(refused.svg, kind).toBe(flat.svg);
     }
+  });
+
+  it('furnishes and dresses a place, and leaves the dressing off when asked', () => {
+    const plan = makePlan(named({ ...base, names: ['Guard room', 'Barracks', 'Kitchen', 'Store room', 'Chapel', 'Great hall', 'Library', 'Well room'] }));
+    const full = drawPlan(plan, { style: 'painted', art }).svg;
+    const bare = drawPlan(plan, { style: 'painted', art, dressing: false }).svg;
+    const empty = drawPlan(plan, { style: 'painted', art, furnishings: false }).svg;
+    wellFormed(bare, 'without dressing');
+    wellFormed(empty, 'without furnishings');
+    // Torchlight is dressing; a shadow under a thing is furnishing.
+    expect(full).toContain('url(#t-glow)');
+    expect(full).toContain('url(#p-shade)');
+    expect(bare.length).toBeLessThan(full.length);
+    expect(empty.length).toBeLessThan(bare.length);
+    // Dressing is drawing only: the plan is what it was, and the same plan is dressed the same way twice.
+    const before = JSON.stringify(plan);
+    expect(drawPlan(plan, { style: 'painted', art }).svg).toBe(full);
+    expect(JSON.stringify(plan)).toBe(before);
+    const town = makePlan(named({ ...base, kind: 'settlement', water: 'coast' }));
+    const dressed = drawPlan(town, { style: 'painted', art }).svg;
+    const plainTown = drawPlan(town, { style: 'painted', art, dressing: false }).svg;
+    wellFormed(plainTown, 'a town without dressing');
+    expect(plainTown.length).toBeLessThan(dressed.length);
+  });
+
+  it('paints every thing that can stand in a room', () => {
+    const plan = makePlan(named(base));
+    if (plan.kind === 'settlement') throw new Error('not a plan on squares');
+    const a = plan.areas[0];
+    const [x, y] = [Math.floor(a.x), Math.floor(a.y)];
+    for (const kind of FEATURE_KINDS)
+      for (const dir of [0, 1, 2, 3] as const) {
+        const one = { ...plan, features: [{ kind, x, y, w: kind === 'bed' || kind === 'stairs' ? (dir % 2 ? 2 : 1) : 1, h: kind === 'bed' || kind === 'stairs' ? (dir % 2 ? 1 : 2) : 1, dir }] };
+        const d = drawPlan(one, { style: 'painted', art, dressing: false });
+        wellFormed(d.svg, `${kind} facing ${dir}`);
+        // (Not in the photographs: letters that spell anything turn up in those by chance.)
+        expect(d.svg.replace(/href="data:[^"]+"/g, ''), `${kind}: a number that is not one`).not.toMatch(/NaN|undefined|Infinity/);
+      }
   });
 
   it('leaves ink as it was', () => {

@@ -200,6 +200,13 @@ try {
     const paintedPng = fs.readFileSync(paintedPath);
     fs.rmSync(paintedPath, { force: true });
     if (paintedPng.readUInt32BE(16) !== across || paintedPng.length < png.length * 2) throw new Error(`the painted picture is ${paintedPng.length} bytes beside ink's ${png.length}: the photographs are not in it`);
+    // Dressing is on until it is turned off, and the picture is plainer without it.
+    const dressedSheet = await inked();
+    if (!dressedSheet.includes('url(#t-glow)')) throw new Error('the painted plan has no torchlight');
+    await page.getByLabel('Dressing').uncheck();
+    for (let tries = 0; tries < 40 && (await inked()).length >= dressedSheet.length; tries++) await page.waitForTimeout(100);
+    if ((await inked()).length >= dressedSheet.length) throw new Error('turning dressing off took nothing out of the drawing');
+    await page.getByLabel('Dressing').check();
     await shot(page, '08a-plan-painted');
     await page.reload();
     await page.getByTestId('plan-drawing').waitFor();

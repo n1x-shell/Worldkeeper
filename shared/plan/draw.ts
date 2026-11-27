@@ -3,6 +3,8 @@
  * pixels to a square. One square is 100 units; every line's small wobble comes from the plan's own squares, so the
  * same plan is drawn the same way every time.
  */
+import { paintTown } from './paintTown.js';
+import { THING_DEFS, dress, paintThing, type Brush } from './paintThings.js';
 import { DIRS, edgeKey, noise, type Feature, type GridPlan, type Opening, type Plan } from './model.js';
 import { drawTown } from './drawTown.js';
 import { NIGHT, clouds, mist, ragged, riftPath, stars, waves } from './drawLand.js';
@@ -27,8 +29,23 @@ export interface DrawOptions {
   style: 'ink' | 'painted';
   /** The textures the painted style is made of, each a picture as a data address. Without them it is painted in flat colours. */
   art?: Partial<PlanArt>;
+  /** Painted only: torches and their light, rugs, wear in the floors; stalls, boats and what grows about a town. Drawing only, and no part of the plan. */
+  dressing: boolean;
 }
-export const DRAW_DEFAULTS: DrawOptions = { gm: true, numbers: true, grid: 'floor', fill: 'hatch', paper: 'white', furnishings: true, title: '', px: 70, marks: {}, ring: null, style: 'ink' };
+export const DRAW_DEFAULTS: DrawOptions = {
+  gm: true,
+  numbers: true,
+  grid: 'floor',
+  fill: 'hatch',
+  paper: 'white',
+  furnishings: true,
+  title: '',
+  px: 70,
+  marks: {},
+  ring: null,
+  style: 'ink',
+  dressing: true,
+};
 
 /** The grounds of the painted style. */
 export const ART_KINDS = ['stone', 'wood', 'earth', 'rock', 'grass', 'dirt'] as const;
@@ -67,23 +84,25 @@ export function paints(o: DrawOptions): { fill: (k: keyof PlanArt) => string; de
 export const SKY = '#b9d2e2';
 export const HAZE = '#cdc9bf';
 export const SEA = '#3c6b82';
-/** What a thing is made of, in the painted style: wood, stone, water, growth. */
-const WOODEN = new Set<Feature['kind']>(['table', 'bed', 'chest', 'barrel', 'shelf', 'counter', 'pew', 'stall', 'bridge', 'mast', 'helm', 'ballista', 'throne']);
-const tone = (kind: Feature['kind']) => (WOODEN.has(kind) ? '#b9925e' : kind === 'pool' ? '#7fa9bb' : kind === 'growth' ? '#a3bd7f' : kind === 'trap' ? '#f3ead6' : '#cbc5ba');
 
 /** The letters for what is keyed to a place, and the ring round the one being worked on. */
 export function keyMarks(n: number, x: number, y: number, o: DrawOptions, halo: string): string {
   let out = '';
   if (o.ring === n) out += `<circle cx="${x}" cy="${y}" r="62" fill="none" stroke="${GM_INK}" stroke-width="9" stroke-dasharray="20 12"/>`;
   const marks = o.gm ? o.marks[n] : '';
-  if (marks) out += `<text x="${x}" y="${y + 50}" font-size="27" font-weight="700" letter-spacing="3" text-anchor="middle" dominant-baseline="central" fill="${GM_INK}" stroke="${halo}" stroke-width="9" stroke-linejoin="round" paint-order="stroke">${esc(marks)}</text>`;
+  if (marks)
+    out += `<text x="${x}" y="${y + 50}" font-size="27" font-weight="700" letter-spacing="3" text-anchor="middle" dominant-baseline="central" fill="${GM_INK}" stroke="${halo}" stroke-width="9" stroke-linejoin="round" paint-order="stroke">${esc(marks)}</text>`;
   return out;
 }
 
 export const U = 100;
 export const INK = '#1d1a16';
 export const GM_INK = '#a3261e';
-export const PAPERS = { white: { sheet: '#ffffff', floor: '#ffffff', line: '#bdb6a8' }, parchment: { sheet: '#efe4cb', floor: '#fbf5e6', line: '#c3b697' }, clear: { sheet: 'none', floor: '#ffffff', line: '#bdb6a8' } } as const;
+export const PAPERS = {
+  white: { sheet: '#ffffff', floor: '#ffffff', line: '#bdb6a8' },
+  parchment: { sheet: '#efe4cb', floor: '#fbf5e6', line: '#c3b697' },
+  clear: { sheet: 'none', floor: '#ffffff', line: '#bdb6a8' },
+} as const;
 
 export const r1 = (v: number) => Math.round(v * U);
 export const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -100,7 +119,7 @@ export interface Drawing {
 
 export function drawPlan(plan: Plan, options: Partial<DrawOptions> = {}): Drawing {
   const o = { ...DRAW_DEFAULTS, ...options };
-  const body = plan.kind === 'settlement' ? drawTown(plan, o) : drawGrid(plan, o);
+  const body = plan.kind === 'settlement' ? (o.style === 'painted' ? paintTown(plan, o) : drawTown(plan, o)) : drawGrid(plan, o);
   const [width, height] = [Math.round(plan.w * o.px), Math.round(plan.h * o.px)];
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${plan.w * U} ${plan.h * U}" width="${width}" height="${height}" font-family="Georgia, 'Times New Roman', serif">${body}</svg>`;
   return { svg, w: plan.w, h: plan.h, width, height };
@@ -231,14 +250,24 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
       const fair = ship ? ring.filter((e, i) => e.dir !== (ring[(i + ring.length - 1) % ring.length].dir + 3) % 4) : ring;
       if (fair.length >= 4) rings.push(fair);
     }
-  const floorPath = rings.map((ring) => through(ring.map((e) => e.from), true)).join('');
+  const floorPath = rings
+    .map((ring) =>
+      through(
+        ring.map((e) => e.from),
+        true,
+      ),
+    )
+    .join('');
 
   // The walls: the same rings, left out where there is a door or a way out.
   const wallPaths = { thin: '', thick: '' };
   for (const ring of rings) {
     const which = ring[0].outer ? 'thick' : 'thin';
     if (!ring.some((e) => e.open)) {
-      wallPaths[which] += through(ring.map((e) => e.from), true);
+      wallPaths[which] += through(
+        ring.map((e) => e.from),
+        true,
+      );
       continue;
     }
     const s = ring.findIndex((e) => e.open);
@@ -261,14 +290,26 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
   for (let y = 1; y < h; y++) {
     let run: V[] = [];
     for (let x = 0; x <= w; x++) {
-      if (x < w && wallBetween(at(x, y - 1), at(x, y), `${x},${y},n`)) run = run.length ? [...run, [x + 1, y]] : [[x, y], [x + 1, y]];
+      if (x < w && wallBetween(at(x, y - 1), at(x, y), `${x},${y},n`))
+        run = run.length
+          ? [...run, [x + 1, y]]
+          : [
+              [x, y],
+              [x + 1, y],
+            ];
       else (innerRun(run), (run = []));
     }
   }
   for (let x = 1; x < w; x++) {
     let run: V[] = [];
     for (let y = 0; y <= h; y++) {
-      if (y < h && wallBetween(at(x - 1, y), at(x, y), `${x},${y},w`)) run = run.length ? [...run, [x, y + 1]] : [[x, y], [x, y + 1]];
+      if (y < h && wallBetween(at(x - 1, y), at(x, y), `${x},${y},w`))
+        run = run.length
+          ? [...run, [x, y + 1]]
+          : [
+              [x, y],
+              [x, y + 1],
+            ];
       else (innerRun(run), (run = []));
     }
   }
@@ -308,7 +349,9 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
     const outer = building && (n1 === 0 || n2 === 0);
     const gap = p.kind === 'double' ? 0.76 : 0.6;
     const s = (1 - gap) / 2;
-    const stub = horizontal ? `M${pa.join(' ')}L${r1(a[0] + s)} ${r1(a[1])}M${r1(b[0] - s)} ${r1(b[1])}L${pb.join(' ')}` : `M${pa.join(' ')}L${r1(a[0])} ${r1(a[1] + s)}M${r1(b[0])} ${r1(b[1] - s)}L${pb.join(' ')}`;
+    const stub = horizontal
+      ? `M${pa.join(' ')}L${r1(a[0] + s)} ${r1(a[1])}M${r1(b[0] - s)} ${r1(b[1])}L${pb.join(' ')}`
+      : `M${pa.join(' ')}L${r1(a[0])} ${r1(a[1] + s)}M${r1(b[0])} ${r1(b[1] - s)}L${pb.join(' ')}`;
     if (outer) stubsThick += stub;
     else stubs += stub;
     const rect = (along: number, across: number, extra: string) =>
@@ -317,11 +360,20 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
         : `<rect x="${r1(mx - across / 2)}" y="${r1(my - along / 2)}" width="${r1(across)}" height="${r1(along)}" ${extra}/>`;
     if (p.kind === 'door' || p.kind === 'double') {
       doors.push(rect(gap, outer ? 0.3 : 0.24, `fill="${doorFill}" stroke="${INK}" stroke-width="7"`));
-      if (p.kind === 'double') doors.push(horizontal ? `<path d="M${r1(mx)} ${r1(my - 0.12)}V${r1(my + 0.12)}" stroke="${INK}" stroke-width="6"/>` : `<path d="M${r1(mx - 0.12)} ${r1(my)}H${r1(mx + 0.12)}" stroke="${INK}" stroke-width="6"/>`);
+      if (p.kind === 'double')
+        doors.push(
+          horizontal
+            ? `<path d="M${r1(mx)} ${r1(my - 0.12)}V${r1(my + 0.12)}" stroke="${INK}" stroke-width="6"/>`
+            : `<path d="M${r1(mx - 0.12)} ${r1(my)}H${r1(mx + 0.12)}" stroke="${INK}" stroke-width="6"/>`,
+        );
     } else if (p.kind === 'arch') {
       // The jambs of an open doorway.
       for (const t of [-gap / 2, gap / 2])
-        doors.push(horizontal ? `<path d="M${r1(mx + t)} ${r1(my - 0.09)}V${r1(my + 0.09)}" stroke="${INK}" stroke-width="${wallW}" stroke-linecap="round"/>` : `<path d="M${r1(mx - 0.09)} ${r1(my + t)}H${r1(mx + 0.09)}" stroke="${INK}" stroke-width="${wallW}" stroke-linecap="round"/>`);
+        doors.push(
+          horizontal
+            ? `<path d="M${r1(mx + t)} ${r1(my - 0.09)}V${r1(my + 0.09)}" stroke="${INK}" stroke-width="${wallW}" stroke-linecap="round"/>`
+            : `<path d="M${r1(mx - 0.09)} ${r1(my + t)}H${r1(mx + 0.09)}" stroke="${INK}" stroke-width="${wallW}" stroke-linecap="round"/>`,
+        );
     } else if (p.kind === 'bars') {
       for (const t of [-0.2, 0, 0.2]) doors.push(`<circle cx="${r1(horizontal ? mx + t : mx)}" cy="${r1(horizontal ? my : my + t)}" r="7" fill="${INK}"/>`);
     } else if (p.kind === 'window') {
@@ -484,22 +536,39 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
     }
     out.push(`<path d="${floorPath}" fill="${paint.fill(floorOf)}" fill-rule="evenodd"/>`);
     out.push(`<path d="${floorPath}" fill="${floorOf === 'wood' ? '#ecd6b0' : '#f1e7d0'}" fill-rule="evenodd" opacity="${floorOf === 'wood' ? 0.32 : 0.2}"/>`);
-    out.push(`<path d="${wallPaths.thin}${wallPaths.thick}${inner}" fill="none" stroke="#000000" stroke-width="84" stroke-linejoin="round" opacity="0.42" filter="url(#p-soft)" clip-path="url(#floor)"/>`);
+    const brush: Brush = { wood: () => paint.fill('wood'), seed };
+    const things = shownThings.map((f) => ({ f, p: paintThing(f, brush) }));
+    const dressed = o.dressing && o.furnishings ? dress(plan, seed) : { under: '', over: '', glow: '' };
+    if (dressed.under) out.push(`<g clip-path="url(#floor)">${dressed.under}</g>`);
+    out.push(
+      `<path d="${wallPaths.thin}${wallPaths.thick}${inner}" fill="none" stroke="#000000" stroke-width="84" stroke-linejoin="round" opacity="0.42" filter="url(#p-soft)" clip-path="url(#floor)"/>`,
+    );
     if (o.grid !== 'none') out.push(`<path d="${grid}" stroke="#17130f" stroke-opacity="0.34" stroke-width="2.5" fill="none"${o.grid === 'floor' ? ' clip-path="url(#floor)"' : ''}/>`);
-    for (const f of shownThings) if (f.kind !== 'bridge') out.push(feature(f, tone(f.kind), seed));
+    const shades = things
+      .filter((t) => t.f.kind !== 'bridge')
+      .map((t) => t.p.shade)
+      .join('');
+    if (shades) out.push(`<g fill="#000000" stroke="#000000" opacity="0.42" filter="url(#p-shade)" transform="translate(8 10)">${shades}</g>`);
+    for (const t of things) if (t.f.kind !== 'bridge') out.push(t.p.body);
     // Walls with some body to them: a dark edge and a core of stone or timber. A cave's are the rock itself.
     const core = plan.kind === 'cave' ? '' : ship ? '#7d6246' : '#9a9286';
-    for (const [d, wide] of [[`${wallPaths.thin}${inner}${stubs}`, wallW + 7], [`${wallPaths.thick}${stubsThick}`, thickW + 4]] as const) {
+    for (const [d, wide] of [
+      [`${wallPaths.thin}${inner}${stubs}`, wallW + 7],
+      [`${wallPaths.thick}${stubsThick}`, thickW + 4],
+    ] as const) {
       if (!d) continue;
       out.push(`<path d="${d}" stroke="#15110d" ${stroke} stroke-width="${wide}"/>`);
       if (core) out.push(`<path d="${d}" stroke="${core}" ${stroke} stroke-width="${wide - 10}"/>`);
     }
-    out.push(...doors, ...rifts);
-    for (const f of shownThings) if (f.kind === 'bridge') out.push(feature(f, tone(f.kind), seed));
+    out.push(...doors, dressed.over, ...rifts);
+    for (const t of things) if (t.f.kind === 'bridge') out.push(t.p.body);
+    // The light of fires and torches, over all of it, where there is floor for it to fall on.
+    const glows = dressed.glow + things.map((t) => t.p.glow).join('');
+    if (glows) out.push(`<g clip-path="url(#floor)">${glows}</g>`);
     out.push(...marks, ...titles, ...numbers);
     const light = land === 'aloft' || land === 'adrift';
     out.push(legend(plan, o, light ? '#ffffff' : 'none', !light));
-    out[0] = `<defs>${paint.defs()}<filter id="p-soft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="26"/></filter><clipPath id="floor"><path d="${floorPath}" clip-rule="evenodd"/></clipPath></defs>`;
+    out[0] = `<defs>${paint.defs()}${THING_DEFS}<filter id="p-soft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="26"/></filter><clipPath id="floor"><path d="${floorPath}" clip-rule="evenodd"/></clipPath></defs>`;
     return out.join('');
   }
 
@@ -511,7 +580,8 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
   if (hatch) out.push(`<path d="${hatch}" stroke="${INK}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`);
   if (solid) out.push(`<path d="${solid}" fill="${INK}"/>`);
   out.push(`<path d="${floorPath}" fill="${paper.floor}" fill-rule="evenodd"/>`);
-  if (o.grid !== 'none') out.push(`<clipPath id="floor"><path d="${floorPath}" clip-rule="evenodd"/></clipPath><path d="${grid}" stroke="${paper.line}" stroke-width="2.5" fill="none" clip-path="url(#floor)"/>`);
+  if (o.grid !== 'none')
+    out.push(`<clipPath id="floor"><path d="${floorPath}" clip-rule="evenodd"/></clipPath><path d="${grid}" stroke="${paper.line}" stroke-width="2.5" fill="none" clip-path="url(#floor)"/>`);
   for (const f of shownThings) if (f.kind !== 'bridge') out.push(feature(f, paper.floor, seed));
   if (wallPaths.thin + stubs + inner) out.push(`<path d="${wallPaths.thin}${inner}${stubs}" stroke="${INK}" ${stroke} stroke-width="${wallW}"/>`);
   if (wallPaths.thick + stubsThick) out.push(`<path d="${wallPaths.thick}${stubsThick}" stroke="${INK}" ${stroke} stroke-width="${thickW}"/>`);
@@ -525,7 +595,7 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
 }
 
 /** One thing standing in a room. */
-function feature(f: Feature, floor: string, seed: number): string {
+export function feature(f: Feature, floor: string, seed: number): string {
   const [x, y, w, h] = [r1(f.x), r1(f.y), r1(f.w), r1(f.h)];
   const [cx, cy] = [x + w / 2, y + h / 2];
   const line = `stroke="${INK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"`;
@@ -598,11 +668,20 @@ function feature(f: Feature, floor: string, seed: number): string {
       const d = r1(0.3);
       const [hx, hy, hw, hh] = dir === 2 ? [x + 8, y, w - 16, d] : dir === 0 ? [x + 8, y + h - d, w - 16, d] : dir === 1 ? [x, y + 8, d, h - 16] : [x + w - d, y + 8, d, h - 16];
       const [fx, fy] = [hx + hw / 2, hy + hh / 2];
-      const arc = dir === 2 ? `M${fx - 22} ${hy + hh}a22 22 0 0 1 44 0Z` : dir === 0 ? `M${fx - 22} ${hy}a22 22 0 0 0 44 0Z` : dir === 1 ? `M${hx + hw} ${fy - 22}a22 22 0 0 0 0 44Z` : `M${hx} ${fy - 22}a22 22 0 0 1 0 44Z`;
+      const arc =
+        dir === 2
+          ? `M${fx - 22} ${hy + hh}a22 22 0 0 1 44 0Z`
+          : dir === 0
+            ? `M${fx - 22} ${hy}a22 22 0 0 0 44 0Z`
+            : dir === 1
+              ? `M${hx + hw} ${fy - 22}a22 22 0 0 0 0 44Z`
+              : `M${hx} ${fy - 22}a22 22 0 0 1 0 44Z`;
       return `<rect x="${hx}" y="${hy}" width="${hw}" height="${hh}" fill="${INK}"/><path d="${arc}" fill="${floor}"/>`;
     }
     case 'table':
-      return Math.abs(w - h) < 10 ? `<circle cx="${cx}" cy="${cy}" r="${Math.round(w / 2)}" fill="${floor}" ${line}/>` : `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="${floor}" ${line}/>`;
+      return Math.abs(w - h) < 10
+        ? `<circle cx="${cx}" cy="${cy}" r="${Math.round(w / 2)}" fill="${floor}" ${line}/>`
+        : `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="8" fill="${floor}" ${line}/>`;
     case 'bed': {
       // The pillow is at the wall: the end away from the way the bed faces.
       const p = 0.26;
@@ -656,7 +735,8 @@ function feature(f: Feature, floor: string, seed: number): string {
         out += `<circle cx="${Math.round(px)}" cy="${Math.round(py)}" r="${rad}" fill="${floor}" ${pen} stroke-width="4.5"/><circle cx="${Math.round(px)}" cy="${Math.round(py)}" r="${Math.max(2, Math.round(rad * 0.3))}" fill="${INK}"/>`;
         dots += `M${Math.round(px + rad + 6)} ${Math.round(py - rad * 0.4)}h1M${Math.round(px - rad - 5)} ${Math.round(py + rad * 0.6)}h1`;
       }
-      const t = (k: number) => `M${cx} ${cy}q${Math.round((noise(ix, iy + k, seed + 24) - 0.5) * w)} ${Math.round((noise(ix + k, iy, seed + 25) - 0.5) * h)} ${Math.round((noise(ix + k, iy + k, seed + 26) - 0.5) * w * 0.9)} ${Math.round((noise(ix - k, iy, seed + 27) - 0.5) * h * 0.9)}`;
+      const t = (k: number) =>
+        `M${cx} ${cy}q${Math.round((noise(ix, iy + k, seed + 24) - 0.5) * w)} ${Math.round((noise(ix + k, iy, seed + 25) - 0.5) * h)} ${Math.round((noise(ix + k, iy + k, seed + 26) - 0.5) * w * 0.9)} ${Math.round((noise(ix - k, iy, seed + 27) - 0.5) * h * 0.9)}`;
       return `<path d="${t(1)}${t(2)}" fill="none" ${pen} stroke-width="3" opacity="0.8"/>${out}<path d="${dots}" ${pen} stroke-width="5"/>`;
     }
     case 'bridge': {
@@ -685,7 +765,12 @@ function feature(f: Feature, floor: string, seed: number): string {
     }
     case 'ballista': {
       // A stock along the way it points, and its bow across the front of it.
-      const [dx, dy] = [[0, -1], [1, 0], [0, 1], [-1, 0]][dir];
+      const [dx, dy] = [
+        [0, -1],
+        [1, 0],
+        [0, 1],
+        [-1, 0],
+      ][dir];
       const [fx, fy] = [cx + dx * w * 0.3, cy + dy * h * 0.3];
       const [sx, sy] = [-dy * w * 0.42, dx * h * 0.42];
       return `<path d="M${Math.round(cx - dx * w * 0.38)} ${Math.round(cy - dy * h * 0.38)}L${Math.round(cx + dx * w * 0.42)} ${Math.round(cy + dy * h * 0.42)}" ${pen} stroke-width="11"/><path d="M${Math.round(fx - sx)} ${Math.round(fy - sy)}Q${Math.round(fx + dx * w * 0.22)} ${Math.round(fy + dy * h * 0.22)} ${Math.round(fx + sx)} ${Math.round(fy + sy)}" fill="none" ${pen} stroke-width="7"/><path d="M${Math.round(fx - sx)} ${Math.round(fy - sy)}L${Math.round(cx - dx * w * 0.2)} ${Math.round(cy - dy * h * 0.2)}L${Math.round(fx + sx)} ${Math.round(fy + sy)}" fill="none" ${pen} stroke-width="2.5"/>`;
