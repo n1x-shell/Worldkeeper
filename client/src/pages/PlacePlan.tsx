@@ -46,6 +46,7 @@ import {
   unpack,
   withWards,
   type DrawOptions,
+  type PlanArt,
   type KeyRoom,
   type Land,
   type PackedPlan,
@@ -70,7 +71,21 @@ export interface PlanInfo {
   joined: Joined;
 }
 
-const NEW_PLAN: PlanSettings = { kind: 'dungeon', seed: 1, names: [], size: 'medium', rough: false, ways: 'some', secrets: true, traps: false, use: 'tavern', town: 'village', water: 'none', walled: false, around: 'fields' };
+const NEW_PLAN: PlanSettings = {
+  kind: 'dungeon',
+  seed: 1,
+  names: [],
+  size: 'medium',
+  rough: false,
+  ways: 'some',
+  secrets: true,
+  traps: false,
+  use: 'tavern',
+  town: 'village',
+  water: 'none',
+  walled: false,
+  around: 'fields',
+};
 const newSeed = () => 1 + Math.floor(Math.random() * 2147483646);
 /** A value written out the same way whatever order its parts were put together in, with nothing for what is not there. */
 const written = (v: unknown): string =>
@@ -102,9 +117,9 @@ interface Snap {
 }
 
 /** How the plan is shown and exported: the GM's choice, remembered on this device. */
-type View = Pick<DrawOptions, 'gm' | 'grid' | 'fill' | 'paper' | 'furnishings' | 'px'> & { titled: boolean };
+type View = Pick<DrawOptions, 'gm' | 'grid' | 'fill' | 'paper' | 'furnishings' | 'px' | 'style' | 'dressing'> & { titled: boolean };
 const VIEW_KEY = 'wk.plan.view';
-const NEW_VIEW: View = { gm: true, grid: 'floor', fill: 'hatch', paper: 'white', furnishings: true, px: 70, titled: true };
+const NEW_VIEW: View = { gm: true, grid: 'floor', fill: 'hatch', paper: 'white', furnishings: true, px: 70, titled: true, style: 'ink', dressing: true };
 function readView(): View {
   try {
     const v = JSON.parse(localStorage.getItem(VIEW_KEY) ?? '{}') as Partial<View>;
@@ -115,8 +130,10 @@ function readView(): View {
       fill: one(v.fill, ['hatch', 'solid', 'none'] as const, NEW_VIEW.fill),
       paper: one(v.paper, ['white', 'parchment', 'clear'] as const, NEW_VIEW.paper),
       furnishings: v.furnishings !== false,
+      dressing: v.dressing !== false,
       px: one(v.px, PIXELS, NEW_VIEW.px),
       titled: v.titled !== false,
+      style: one(v.style, ['ink', 'painted'] as const, NEW_VIEW.style),
     };
   } catch {
     return NEW_VIEW;
@@ -162,7 +179,21 @@ async function saveFile(blob: Blob, name: string) {
   a.remove();
 }
 
-const Select = <T extends string>({ label, value, onChange, options, hint, disabled }: { label: string; value: T; onChange: (v: T) => void; options: [T, string][]; hint?: ReactNode; disabled?: boolean }) => (
+const Select = <T extends string>({
+  label,
+  value,
+  onChange,
+  options,
+  hint,
+  disabled,
+}: {
+  label: string;
+  value: T;
+  onChange: (v: T) => void;
+  options: [T, string][];
+  hint?: ReactNode;
+  disabled?: boolean;
+}) => (
   <Field label={label} hint={hint}>
     <select className="input" value={value} disabled={disabled} onChange={(e) => onChange(e.target.value as T)}>
       {options.map(([v, l]) => (
@@ -231,14 +262,29 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   const rooms = useMemo(() => keyed ?? roomsFor(plan, givenNames), [keyed, plan, givenNames]);
   const names = useMemo(() => rooms.map((r) => r.name), [rooms]);
   const full = useMemo<PlanSettings>(() => ({ ...settings, names: drawnFrom, ...(keyed ? { key: keyed } : {}), ...(drawn ? { drawn } : {}) }), [settings, drawnFrom, keyed, drawn]);
-  const options = useMemo<DrawOptions>(() => ({ ...DRAW_DEFAULTS, ...view, numbers: view.gm, title: view.titled ? name : '', marks: roomMarks(rooms) }), [view, name, rooms]);
+  // The painted style's pictures: fetched the first time a plan is shown painted. Until they come it is drawn in flat colours.
+  const [art, setArt] = useState<PlanArt | null>(null);
+  const painted = view.style === 'painted';
+  useEffect(() => {
+    if (!painted || art) return;
+    let live = true;
+    void import('../lib/planArt').then((m) => live && setArt(m.PLAN_ART)).catch(() => undefined);
+    return () => {
+      live = false;
+    };
+  }, [painted, art]);
+  const options = useMemo<DrawOptions>(
+    () => ({ ...DRAW_DEFAULTS, ...view, numbers: view.gm, title: view.titled ? name : '', marks: roomMarks(rooms), ...(painted && art ? { art } : {}) }),
+    [view, name, rooms, painted, art],
+  );
   const drawing = useMemo(() => drawPlan(plan, options), [plan, options]);
   const key = useMemo(() => planKey(plan, names), [plan, names]);
   // On the page the place being worked on is ringed; a picture taken away never is.
   // While it is being changed by hand it is shown whole: numbers, secret doors, traps and furnishings, whatever is
   // chosen for the copy that is taken away.
   const shown = useMemo(
-    () => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(selected == null && !editing ? drawing.svg : drawPlan(plan, { ...options, ...(editing ? { gm: true, furnishings: true } : {}), numbers: true, ring: selected == null ? null : selected + 1 }).svg)}`,
+    () =>
+      `data:image/svg+xml;charset=utf-8,${encodeURIComponent(selected == null && !editing ? drawing.svg : drawPlan(plan, { ...options, ...(editing ? { gm: true, furnishings: true, dressing: false } : {}), numbers: true, ring: selected == null ? null : selected + 1 }).svg)}`,
     [drawing, plan, options, selected, editing],
   );
 
@@ -266,7 +312,8 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
     }
   });
   const textNow = JSON.stringify(lower(recordNames));
-  const textMoved = !!info && own && !drawn && (keyed ? textNow !== JSON.stringify(lower(names)) && leftAt !== textNow : !!saved && !same(saved.names, recordNames) && same(settings.names, saved.names));
+  const textMoved =
+    !!info && own && !drawn && (keyed ? textNow !== JSON.stringify(lower(names)) && leftAt !== textNow : !!saved && !same(saved.names, recordNames) && same(settings.names, saved.names));
   const leaveIt = () => {
     setLeftAt(textNow);
     try {
@@ -363,7 +410,9 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   };
   const mayRemove = (n: number): Promise<boolean> => {
     const r = rooms[n - 1];
-    return r && isKeyed(r) ? ask({ title: `Take ${r.name} away?`, body: 'What is keyed to it goes with it. (Undo brings it back, until you leave this page.)', confirmLabel: 'Take it away', danger: true }) : Promise.resolve(true);
+    return r && isKeyed(r)
+      ? ask({ title: `Take ${r.name} away?`, body: 'What is keyed to it goes with it. (Undo brings it back, until you leave this page.)', confirmLabel: 'Take it away', danger: true })
+      : Promise.resolve(true);
   };
 
   /** The key as the GM has changed it. `redraw`: its list of places changed, so the plan is drawn from their names. */
@@ -377,7 +426,14 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
       const there = new Set(p.areas.map((a) => a.n));
       const onPlan = next.filter((r) => there.has(was.get(r.id) ?? 0));
       remember();
-      setDrawn(pack(renumber(p, onPlan.map((r) => was.get(r.id)!))));
+      setDrawn(
+        pack(
+          renumber(
+            p,
+            onPlan.map((r) => was.get(r.id)!),
+          ),
+        ),
+      );
       setKeyed(onPlan);
       return;
     }
@@ -387,7 +443,15 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   };
   const another = async () => {
     if (drawn) {
-      if (!(await ask({ title: 'Start again from a plan made afresh?', body: 'What you have changed by hand goes: the places of the key are laid out anew. (Undo, among the tools for changing it by hand, brings it back until you leave this page.)', confirmLabel: 'Start again', danger: true }))) return;
+      if (
+        !(await ask({
+          title: 'Start again from a plan made afresh?',
+          body: 'What you have changed by hand goes: the places of the key are laid out anew. (Undo, among the tools for changing it by hand, brings it back until you leave this page.)',
+          confirmLabel: 'Start again',
+          danger: true,
+        }))
+      )
+        return;
       remember();
       setDrawn(null);
     }
@@ -400,7 +464,16 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   const fromRecord = async () => {
     if (!keyed) return set({ names: recordNames });
     const { rooms: next, left } = syncRooms(keyed, recordNames);
-    if (left.length && !(await ask({ title: 'Take the places from the record’s text?', body: `The text no longer names ${left.map((r) => r.name).join(', ')}. What is keyed to ${left.length === 1 ? 'it' : 'them'} here would be lost.`, confirmLabel: 'Take them from the text', danger: true }))) return;
+    if (
+      left.length &&
+      !(await ask({
+        title: 'Take the places from the record’s text?',
+        body: `The text no longer names ${left.map((r) => r.name).join(', ')}. What is keyed to ${left.length === 1 ? 'it' : 'them'} here would be lost.`,
+        confirmLabel: 'Take them from the text',
+        danger: true,
+      }))
+    )
+      return;
     setKeyed(next);
     setUsual(false);
     setSelected(null);
@@ -428,7 +501,18 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   /** A record kept under this one, for the GM only, in the same realm. */
   const child = async (title: string, type: string, body: string, fields: [string, string][] = []) => {
     const parent = (await api.get<{ entity: Entity }>(`/api/entities/${encodeURIComponent(info!.entity.id)}?follow=0`)).entity;
-    return api.post<Entity>('/api/entities', { name: title, type, realm: parent.realm, parent_id: parent.id, aliases: [], source_raw: 'DM entry (The Worldkeeper)', tags: [`realm/${parent.realm}`, 'vis/gm'], fields, body, notes: '' });
+    return api.post<Entity>('/api/entities', {
+      name: title,
+      type,
+      realm: parent.realm,
+      parent_id: parent.id,
+      aliases: [],
+      source_raw: 'DM entry (The Worldkeeper)',
+      tags: [`realm/${parent.realm}`, 'vis/gm'],
+      fields,
+      body,
+      notes: '',
+    });
   };
   const mention = () => `@[${info!.entity.name}|${info!.entity.id}]`;
   /** The key made the GM's own, if it was not yet, with a change to it. */
@@ -473,7 +557,10 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
       await keep(true, { ...settings, names: drawnFrom, key: next, ...(nextDrawn ? { drawn: nextDrawn } : {}) });
       await reloadIndex();
       setSelected(at);
-      toast(`${title} is a record under ${info.entity.name}, with a plan of its own.${stairs && !withStairs && plan.kind !== 'settlement' ? ' There was no room to draw the stairs: set them down by hand.' : ''}`, 'ok');
+      toast(
+        `${title} is a record under ${info.entity.name}, with a plan of its own.${stairs && !withStairs && plan.kind !== 'settlement' ? ' There was no room to draw the stairs: set them down by hand.' : ''}`,
+        'ok',
+      );
     });
   // What each district is called: the plan's own names until the GM changes one.
   const districts = plan.kind === 'settlement' ? (plan.districts ?? []) : [];
@@ -533,7 +620,15 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
     run('key', async () => {
       if (!info) return;
       const there = /^##\s+Map key\b/im.test((await api.get<{ entity: Entity }>(`/api/entities/${encodeURIComponent(info.entity.id)}?follow=0`)).entity.body);
-      if (there && !(await ask({ title: 'Write the key again?', body: 'The record’s text has a map key already. This one takes its place; anything you changed in the text itself is lost. (Earlier versions of the record are kept under History.)', confirmLabel: 'Write it again' }))) return;
+      if (
+        there &&
+        !(await ask({
+          title: 'Write the key again?',
+          body: 'The record’s text has a map key already. This one takes its place; anything you changed in the text itself is lost. (Earlier versions of the record are kept under History.)',
+          confirmLabel: 'Write it again',
+        }))
+      )
+        return;
       await api.post(`${url}/key`, keySection());
       // The record now names these places itself, and the key is the GM's own: kept with the plan, as drawn.
       const mine = withKey();
@@ -548,7 +643,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
       width={drawing.width}
       height={drawing.height}
       className={`block h-auto w-auto max-w-full rounded-sm ${whole ? 'max-h-[62vh]' : ''}`}
-      style={{ background: view.paper === 'clear' ? 'repeating-conic-gradient(#e9e6df 0% 25%, #ffffff 0% 50%) 50% / 20px 20px' : undefined }}
+      style={{ background: view.paper === 'clear' && !painted ? 'repeating-conic-gradient(#e9e6df 0% 25%, #ffffff 0% 50%) 50% / 20px 20px' : undefined }}
       alt={`${name ? `Plan of ${name}` : 'The plan'}: a ${PLAN_LABELS[settings.kind].toLowerCase()} with ${key.length} numbered ${key.length === 1 ? 'place' : 'places'}, listed in the key below.`}
       data-testid="plan-drawing"
     />
@@ -601,7 +696,12 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                   <Check checked={settings.walled} onChange={(walled) => set({ walled })} disabled={settings.town === 'hamlet'} hint={settings.town === 'hamlet' ? 'A hamlet has no wall.' : undefined}>
                     Walled
                   </Check>
-                  <Check checked={!!settings.districts && DISTRICTS[settings.town] > 0} onChange={(on) => set({ districts: on })} disabled={!DISTRICTS[settings.town] || !!drawn} hint={DISTRICTS[settings.town] ? 'Each named for what stands in it.' : 'A hamlet or a village is one place.'}>
+                  <Check
+                    checked={!!settings.districts && DISTRICTS[settings.town] > 0}
+                    onChange={(on) => set({ districts: on })}
+                    disabled={!DISTRICTS[settings.town] || !!drawn}
+                    hint={DISTRICTS[settings.town] ? 'Each named for what stands in it.' : 'A hamlet or a village is one place.'}
+                  >
                     In districts
                   </Check>
                 </div>
@@ -619,16 +719,16 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                         ['large', 'A great ship (four decks, 150 ft)'],
                       ]
                     : settings.kind === 'building'
-                    ? [
-                        ['small', 'Small'],
-                        ['medium', 'As usual'],
-                        ['large', 'Large'],
-                      ]
-                    : [
-                        ['small', 'Cramped'],
-                        ['medium', 'As usual'],
-                        ['large', 'Grand'],
-                      ]
+                      ? [
+                          ['small', 'Small'],
+                          ['medium', 'As usual'],
+                          ['large', 'Large'],
+                        ]
+                      : [
+                          ['small', 'Cramped'],
+                          ['medium', 'As usual'],
+                          ['large', 'Grand'],
+                        ]
                 }
               />
             )}
@@ -659,7 +759,14 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
             )}
             {!keyed && !own && (settings.kind === 'dungeon' || settings.kind === 'cave') && (
               <Field label={settings.kind === 'cave' ? 'Chambers' : 'Rooms'}>
-                <input className="input w-24" type="number" min={1} max={MAX_NAMES} value={count} onChange={(e) => setCount(Math.max(1, Math.min(MAX_NAMES, Math.round(Number(e.target.value)) || 1)))} />
+                <input
+                  className="input w-24"
+                  type="number"
+                  min={1}
+                  max={MAX_NAMES}
+                  value={count}
+                  onChange={(e) => setCount(Math.max(1, Math.min(MAX_NAMES, Math.round(Number(e.target.value)) || 1)))}
+                />
               </Field>
             )}
             <Select
@@ -677,16 +784,24 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                   ? `Its ${names.length} numbered ${names.length === 1 ? 'place is' : 'places are'} the ones the record names: in its text, or as records kept under it.`
                   : settings.kind === 'ship'
                     ? 'It has the usual decks and compartments of a ship of this size. Change them in the key below.'
-                  : building
-                    ? 'It has the usual rooms of a building of this use. Change them in the key below.'
-                    : 'The numbered places are made up to suit it. Change them in the key below, and they are yours.'}
+                    : building
+                      ? 'It has the usual rooms of a building of this use. Change them in the key below.'
+                      : 'The numbered places are made up to suit it. Change them in the key below, and they are yours.'}
             </p>
             <div className="flex flex-wrap items-end gap-2 border-t border-line pt-3">
               <button type="button" className={drawn ? 'btn' : 'btn-primary'} onClick={() => void another()} data-testid="plan-another">
                 <RefreshCw size={14} /> {drawn ? 'Start again' : 'Draw another'}
               </button>
               <Field label="Plan number" hint={drawn ? 'The number it was first made from.' : 'The same number and choices always give the same plan.'}>
-                <input className="input w-36" type="number" min={1} max={2147483647} disabled={!!drawn} value={settings.seed} onChange={(e) => set({ seed: Math.max(1, Math.min(2147483647, Math.round(Number(e.target.value)) || 1)) })} />
+                <input
+                  className="input w-36"
+                  type="number"
+                  min={1}
+                  max={2147483647}
+                  disabled={!!drawn}
+                  value={settings.seed}
+                  onChange={(e) => set({ seed: Math.max(1, Math.min(2147483647, Math.round(Number(e.target.value)) || 1)) })}
+                />
               </Field>
             </div>
           </div>
@@ -717,7 +832,17 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                 ['none', 'None'],
               ]}
             />
-            {settings.kind !== 'settlement' && (
+            <Select
+              label="Style"
+              value={view.style}
+              onChange={(style) => setView((o) => ({ ...o, style }))}
+              options={[
+                ['ink', 'Ink'],
+                ['painted', 'Painted'],
+              ]}
+            />
+            {painted && <p className="text-xs text-dim">Stone, earth, timber and grass from photographs, for a picture to play on. Ink is the one to print.</p>}
+            {settings.kind !== 'settlement' && !painted && (
               <Select
                 label="Rock"
                 value={view.fill}
@@ -729,20 +854,35 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                 ]}
               />
             )}
-            <Select
-              label="Paper"
-              value={view.paper}
-              onChange={(paper) => setView((o) => ({ ...o, paper }))}
-              options={[
-                ['white', 'White'],
-                ['parchment', 'Parchment'],
-                ['clear', 'None (see-through)'],
-              ]}
-            />
+            {!painted && (
+              <Select
+                label="Paper"
+                value={view.paper}
+                onChange={(paper) => setView((o) => ({ ...o, paper }))}
+                options={[
+                  ['white', 'White'],
+                  ['parchment', 'Parchment'],
+                  ['clear', 'None (see-through)'],
+                ]}
+              />
+            )}
             <div className="space-y-1.5">
               {settings.kind !== 'settlement' && (
                 <Check checked={view.furnishings} onChange={(furnishings) => setView((o) => ({ ...o, furnishings }))} hint="Leave them off to dress the rooms yourself in a mapping tool.">
                   Furnishings
+                </Check>
+              )}
+              {painted && (settings.kind === 'settlement' || view.furnishings) && (
+                <Check
+                  checked={view.dressing}
+                  onChange={(dressing) => setView((o) => ({ ...o, dressing }))}
+                  hint={
+                    settings.kind === 'settlement'
+                      ? 'Stalls in the square, boats at the piers, chimneys, bushes and stones. Drawing only: none of it is in the key.'
+                      : 'Torches and their light, rugs, cracks, damp and cobwebs. Drawing only: none of it is in the key or in anyone’s way.'
+                  }
+                >
+                  Dressing
                 </Check>
               )}
               <Check checked={view.titled} onChange={(titled) => setView((o) => ({ ...o, titled }))}>
@@ -777,7 +917,21 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
           </div>
         )}
         {editing ? (
-          <PlanEditor key={plan.kind} plan={plan} names={names} settings={settings} selected={selected} onSelect={setSelected} onChange={applyEdit} mayRemove={mayRemove} canUndo={past.length > 0} canRedo={future.length > 0} onUndo={undo} onRedo={redo} onDone={() => setEditing(false)}>
+          <PlanEditor
+            key={plan.kind}
+            plan={plan}
+            names={names}
+            settings={settings}
+            selected={selected}
+            onSelect={setSelected}
+            onChange={applyEdit}
+            mayRemove={mayRemove}
+            canUndo={past.length > 0}
+            canRedo={future.length > 0}
+            onUndo={undo}
+            onRedo={redo}
+            onDone={() => setEditing(false)}
+          >
             {sheet}
           </PlanEditor>
         ) : (
@@ -819,13 +973,37 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
       {/* ---- Its key: straight under the drawing, where a place chosen on it opens ---- */}
       <div className="order-2 min-w-0 2xl:order-none 2xl:col-start-2">
         <Card title="Key" aside={`${key.length} ${key.length === 1 ? 'place' : 'places'}. Open one to say what is in it.`}>
-          <PlanKey kind={settings.kind} lines={key} rooms={rooms} selected={selected} onSelect={setSelected} onRooms={changeRooms} entityId={info?.entity.id} drawn={!!drawn} still={editing} under={info?.joined.under} onMakeRecord={info ? makeRecord : undefined} />
+          <PlanKey
+            kind={settings.kind}
+            lines={key}
+            rooms={rooms}
+            selected={selected}
+            onSelect={setSelected}
+            onRooms={changeRooms}
+            entityId={info?.entity.id}
+            drawn={!!drawn}
+            still={editing}
+            under={info?.joined.under}
+            onMakeRecord={info ? makeRecord : undefined}
+          />
         </Card>
         {/* What this plan is joined to, and a town's districts: beside the key, where its places are. */}
         {(districts.length > 0 || info) && (
           <div className="mt-4 space-y-4">
             {districts.length > 0 && <PlanDistricts districts={districts} wards={wardsNow()} busy={!!busy} onName={nameWard} onMake={info ? makeDistrict : undefined} />}
-            {info && <PlanJoins name={info.entity.name} kind={settings.kind} joined={info.joined} rooms={rooms} recordOf={recordOf} wardRecords={wardsNow().flatMap((w) => w.record ?? [])} selected={selected} busy={!!busy} onBelow={addBelow} />}
+            {info && (
+              <PlanJoins
+                name={info.entity.name}
+                kind={settings.kind}
+                joined={info.joined}
+                rooms={rooms}
+                recordOf={recordOf}
+                wardRecords={wardsNow().flatMap((w) => w.record ?? [])}
+                selected={selected}
+                busy={!!busy}
+                onBelow={addBelow}
+              />
+            )}
           </div>
         )}
       </div>
@@ -884,10 +1062,22 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                   ))}
                 </select>
               </Field>
-              <button type="button" className="btn" disabled={!!busy || tooBig} onClick={() => void run('png', async () => saveFile(await picture(false), fileName(view.gm ? '.png' : ' (players).png')))} data-testid="plan-png">
+              <button
+                type="button"
+                className="btn"
+                disabled={!!busy || tooBig}
+                onClick={() => void run('png', async () => saveFile(await picture(false), fileName(view.gm ? '.png' : ' (players).png')))}
+                data-testid="plan-png"
+              >
                 <Download size={14} /> Picture (PNG)
               </button>
-              <button type="button" className="btn" disabled={!!busy} onClick={() => void run('svg', () => saveFile(new Blob([drawing.svg], { type: 'image/svg+xml' }), fileName(view.gm ? '.svg' : ' (players).svg')))} data-testid="plan-svg">
+              <button
+                type="button"
+                className="btn"
+                disabled={!!busy}
+                onClick={() => void run('svg', () => saveFile(new Blob([drawing.svg], { type: 'image/svg+xml' }), fileName(view.gm ? '.svg' : ' (players).svg')))}
+                data-testid="plan-svg"
+              >
                 <Download size={14} /> Drawing (SVG)
               </button>
             </div>
@@ -896,7 +1086,8 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                 <span className="text-danger">At {view.px} pixels to a square this plan is larger than a picture can be. Choose fewer.</span>
               ) : (
                 <>
-                  The picture is {drawing.width} × {drawing.height} pixels, as it is shown above ({view.gm ? 'your copy' : 'the players’ copy'}). In a mapping tool or a virtual tabletop, set the grid to {view.px} pixels and it lines up with this one.
+                  The picture is {drawing.width} × {drawing.height} pixels, as it is shown above ({view.gm ? 'your copy' : 'the players’ copy'}). In a mapping tool or a virtual tabletop, set the grid
+                  to {view.px} pixels and it lines up with this one.
                 </>
               )}
             </p>
@@ -926,7 +1117,20 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                     void run('map', async () => {
                       if (changed) await keep(true);
                       const form = new FormData();
-                      form.append('plan', JSON.stringify({ squares: plan.w, feet: plan.feet, areas: plan.areas.map((a) => ({ n: a.n, name: names[a.n - 1] ?? a.name, x: a.x, y: a.y, ...(rooms[a.n - 1] && recordOf(rooms[a.n - 1]) ? { entity: recordOf(rooms[a.n - 1]) } : {}) })) }));
+                      form.append(
+                        'plan',
+                        JSON.stringify({
+                          squares: plan.w,
+                          feet: plan.feet,
+                          areas: plan.areas.map((a) => ({
+                            n: a.n,
+                            name: names[a.n - 1] ?? a.name,
+                            x: a.x,
+                            y: a.y,
+                            ...(rooms[a.n - 1] && recordOf(rooms[a.n - 1]) ? { entity: recordOf(rooms[a.n - 1]) } : {}),
+                          })),
+                        }),
+                      );
                       form.append('image', new File([await picture(true)], 'plan.png', { type: 'image/png' }));
                       const made = await api.post<{ map: { id: number; name: string }; updated: boolean }>(`${url}/map`, form);
                       onInfo?.(await api.get<PlanInfo>(url));
@@ -955,7 +1159,6 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
             )}
           </div>
         </Card>
-
       </div>
     </div>
   );
@@ -1010,7 +1213,11 @@ export function PlanPanel({ entityId, name }: { entityId: string; name: string }
       </div>
       {saved ? (
         <Link to={`/e/${entityId}/plan`} className="block">
-          {small ? <img src={small} alt={`The plan kept for ${name}. Open it.`} className="h-auto max-h-56 w-full rounded-sm border border-line bg-white object-contain" /> : <div className="h-32 rounded-sm border border-line bg-raised/40" />}
+          {small ? (
+            <img src={small} alt={`The plan kept for ${name}. Open it.`} className="h-auto max-h-56 w-full rounded-sm border border-line bg-white object-contain" />
+          ) : (
+            <div className="h-32 rounded-sm border border-line bg-raised/40" />
+          )}
           <span className="mt-2 block text-sm">Open the plan</span>
         </Link>
       ) : (
