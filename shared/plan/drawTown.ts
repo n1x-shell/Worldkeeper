@@ -2,8 +2,10 @@
  * Drawing a settlement: fields and water first, then the wall, the streets over it (so a road through the wall makes
  * its own gate), bridges, roofs, trees, and the numbers last.
  */
-import type { Pt, TownPlan } from './model.js';
+import { noise, type Pt, type TownPlan } from './model.js';
 import { INK, PAPERS, U, esc, keyMarks, legend, type DrawOptions } from './draw.js';
+import { NIGHT, clouds, mist, ragged, riftPath, stars } from './drawLand.js';
+import { fromLine } from './land.js';
 
 const P = (v: number) => Math.round(v * U);
 const line = (pts: Pt[], close = false) => `M${pts.map(([x, y]) => `${P(x)} ${P(y)}`).join('L')}${close ? 'Z' : ''}`;
@@ -15,7 +17,40 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
   const sheet = paper.sheet === 'none' ? '#ffffff' : paper.sheet;
   const out: string[] = [];
   const round = `stroke-linecap="round" stroke-linejoin="round"`;
-  if (paper.sheet !== 'none') out.push(`<rect width="${plan.w * U}" height="${plan.h * U}" fill="${paper.sheet}"/>`);
+  const land = plan.land ?? 'plain';
+  const seed = (plan.w * 73856093) ^ (plan.h * 19349663) ^ (plan.buildings.length * 83492791);
+  const night = land === 'void' && paper.sheet !== 'none';
+  if (paper.sheet !== 'none') out.push(`<rect width="${plan.w * U}" height="${plan.h * U}" fill="${night ? NIGHT : paper.sheet}"/>`);
+  // The ground it stands on, where that ends: beyond it the stars, the clouds or the mist; under its southern edge,
+  // in the sky, the strokes of the drop.
+  if (plan.island?.length) {
+    const isle = plan.island;
+    const on = (x: number, y: number) => {
+      let hit = false;
+      for (let i = 0, j = isle.length - 1; i < isle.length; j = i++) {
+        const [a, b] = [isle[i], isle[j]];
+        if (a[1] > y !== b[1] > y && x < ((b[0] - a[0]) * (y - a[1])) / (b[1] - a[1]) + a[0]) hit = !hit;
+      }
+      return hit;
+    };
+    // Open sky is a square none of whose corners is on the island.
+    const open = (x: number, y: number) => !on(x, y) && !on(x + 1, y) && !on(x, y + 1) && !on(x + 1, y + 1) && !on(x + 0.5, y + 0.5);
+    if (paper.sheet !== 'none') out.push(land === 'void' ? stars(plan.w, plan.h, seed, open) : land === 'aloft' ? clouds(plan.w, plan.h, seed, open, INK, paper.sheet) : mist(plan.w, plan.h, seed, open));
+    out.push(`<path d="${ragged(isle, seed, 0.12)}" fill="${sheet}" stroke="${INK}" stroke-width="${night ? 0 : 7}" stroke-linejoin="round"/>`);
+    if (land === 'aloft') {
+      const cy = isle.reduce((s, p) => s + p[1], 0) / isle.length;
+      let drop = '';
+      isle.forEach(([x, y], i) => {
+        const next = isle[(i + 1) % isle.length];
+        if (y < cy) return;
+        for (const k of [0, 0.33, 0.66]) {
+          const [px, py] = [x + (next[0] - x) * k, y + (next[1] - y) * k];
+          drop += `M${P(px)} ${P(py + 0.22)}v${Math.round((0.3 + noise(i, Math.round(k * 9), seed + 43) * 0.7) * U)}`;
+        }
+      });
+      out.push(`<path d="${drop}" fill="none" stroke="${INK}" stroke-width="3.6" stroke-linecap="round" opacity="0.8"/>`);
+    }
+  }
 
   // Fields: an outline and its furrows.
   let furrows = '';
@@ -75,6 +110,14 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
   for (const s of plan.squares) surface += `<path d="${line(s, true)}" fill="${paper.floor}"/>`;
   out.push(surface);
 
+  // A rift through the town: dark, where the ground is broken; where the town is adrift, a channel of the mist.
+  for (const r of plan.rifts ?? []) {
+    if (land === 'adrift') {
+      out.push(`<path d="${riftPath(r, seed)}" fill="${sheet}" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`);
+      out.push(mist(plan.w, plan.h, seed, (x, y) => fromLine([x + 0.5, y + 0.5], r.points) < r.width / 2 - 0.2));
+    } else out.push(`<path d="${riftPath(r, seed)}" fill="${INK}" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`);
+  }
+
   for (const b of plan.bridges) {
     const [l, w] = [P(b.length), P(b.width)];
     out.push(
@@ -130,11 +173,26 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
     out.push(`<g fill="${paper.floor}" stroke="${INK}" stroke-width="3.4" stroke-linecap="round">${trees}</g>`);
   }
 
+  // Great growths: a cap with its gills, seen from above.
+  if (plan.growths?.length) {
+    let caps = '';
+    let gills = '';
+    for (const [x, y, s] of [...plan.growths].sort((a, b) => a[1] - b[1])) {
+      const [cx, cy, rad] = [P(x), P(y), P(s / 2)];
+      caps += `<circle cx="${cx}" cy="${cy}" r="${rad}"/><circle cx="${cx}" cy="${cy}" r="${Math.max(3, Math.round(rad * 0.22))}" fill="${INK}"/>`;
+      for (let i = 0; i < 9; i++) {
+        const a = (i / 9) * Math.PI * 2 + noise(Math.round(x * 5), Math.round(y * 5), seed + 31) * 2;
+        gills += `M${Math.round(cx + Math.cos(a) * rad * 0.36)} ${Math.round(cy + Math.sin(a) * rad * 0.36)}L${Math.round(cx + Math.cos(a) * rad * 0.86)} ${Math.round(cy + Math.sin(a) * rad * 0.86)}`;
+      }
+    }
+    out.push(`<g fill="${paper.floor}" stroke="${INK}" stroke-width="4.5">${caps}</g><path d="${gills}" fill="none" stroke="${INK}" stroke-width="2.4" stroke-linecap="round" opacity="0.8"/>`);
+  }
+
   if (o.grid !== 'none') {
     let grid = '';
     for (let x = 1; x < plan.w; x++) grid += `M${x * U} 0V${plan.h * U}`;
     for (let y = 1; y < plan.h; y++) grid += `M0 ${y * U}H${plan.w * U}`;
-    out.push(`<path d="${grid}" stroke="${paper.line}" stroke-width="2.5" fill="none" opacity="0.8"/>`);
+    out.push(`<path d="${grid}" stroke="${paper.line}" stroke-width="2.5" fill="none" opacity="${night ? 0.4 : 0.8}"/>`);
   }
 
   // Districts: a broken line between one and the next, and each one's name written across it.
@@ -153,6 +211,6 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
         keyMarks(a.n, P(a.x), P(a.y) + 12, o, sheet) +
           `<circle cx="${P(a.x)}" cy="${P(a.y)}" r="44" fill="${sheet}" stroke="${INK}" stroke-width="6"/><text x="${P(a.x)}" y="${P(a.y)}" font-size="${a.n > 9 ? 44 : 50}" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="${INK}">${esc(String(a.n))}</text>`,
       );
-  out.push(legend(plan, o, paper.sheet));
+  out.push(legend(plan, o, paper.sheet, night));
   return out.join('');
 }

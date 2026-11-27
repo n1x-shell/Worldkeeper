@@ -1,6 +1,6 @@
 # Development Status
 
-_Last updated: 2026-11-27 · v0.9.27_
+_Last updated: 2026-11-27 · v0.9.28_
 
 This file is the hand-over document for anyone (human or AI) continuing the project. Keep it current.
 
@@ -72,6 +72,27 @@ This file is the hand-over document for anyone (human or AI) continuing the proj
   - Recap drafts and from-hook adventures now write `@[Name]`.
 - **Relationship wording** reads from each side, e.g. "Leads" and "Led by", "Mentions" and "Mentioned in".
 - **Tests:** `tests/mentions.test.ts` covers resolution, qualifiers, aliases, redirects, legacy parsing, collected and broken refs, relationships created from mentions, the broken-reference report, player text and user-created records. The E2E test checks that IDs, files, tags and editorial sections are absent without debug and present with it, that `@` inserts `@[The Blind Seer]`, and that typed `@[Hollow Refuge]` renders as a link.
+
+## v0.9.28: the lie of the land, and ships
+
+docs/BETA_PLAN.md C8, fifth part, and decision 6 of §5 (27 November 2026), the last of the four steps the owner asked for on seeing the location generator. The owner asked about the fungus of Kaelmar, the shattered places, the floating city, places like the Ethereal Realm, and ships between worlds. These are a choice any world can use, under plain names of the app's own (`LANDS`: plain, overgrown, shattered, aloft, adrift, unearthly, void). No new table and no migration: the choice is `PlanSettings.land`, and a plan carries its ground (`land`, `rifts`, `island`, `growths`).
+
+- **A plan is laid out on ordinary ground first, then changed to suit its ground** (`shared/plan/land.ts`: `lieGrid`, `lieTown`), from its own seed, so it is the same every time. With ordinary ground nothing runs: every plan and drawing made before this version has the same fingerprint as before.
+  - **Overgrown:** growth on free floor squares (17% by a wall, 3.5% in the open, an occasional clump of four), and two rooms in five with their walls broken (drawn rough). A town loses one unnumbered house in six to great growths, has them among its houses, and its fields become groves.
+  - **Shattered:** one rift across the sheet (two on a large one), a wandering line with a width. Furnishings in it go; a passage square in it gets a bridge; a room it crosses says "the rift runs through it" among its ways out; a number in it moves to firm floor of its room. In a town the houses on it go and a great road that crosses it is bridged where it goes in and comes out.
+  - **Adrift:** in a dungeon each connected run of passage with two or more room doors on it is removed down to a stub at each door, and those doors are given one letter (`Opening.to`): the key says "door east, marked A". The way in keeps its passage. A town stands on an island parted by a channel of mist.
+  - **Unearthly:** every room and passage is drawn rough, the drawing bends every wall in long curves (the grid stays true, so tokens still fit), and a dungeon is laid out with the most ways round whatever was asked. A town has every point turned about its middle, more the nearer it is.
+  - **Aloft** and **the void** change nothing in a dungeon's layout: they are what is drawn around it. A town on either (and adrift) stands on an island: an outline a little past its houses, with everything beyond removed, its water gone, and a landing stage where a great road meets the edge. Numbered places left beyond the edge are brought in to the brink.
+- **The drawing** (`shared/plan/drawLand.ts`, and in `draw.ts` and `drawTown.ts`): stars on a black sheet, clouds, mist, the sea round a ship; an island's ragged edge with the strokes of the drop under its southern side; a rift as a broken dark band over floors and walls, with bridges over it; lettered doors on the GM's copy. On see-through paper there are no surroundings.
+- **Ships** (`shared/plan/ship.ts`, kind `ship`): a hull whose width follows a curve from stern to bow, deck by deck, each deck down two squares shorter and the hold narrower; compartments by bulkheads with a door on the centre line (bars for a brig); a ladder between each pair of decks, to alternate sides so that two never meet; masts through every deck; a helm, casks and (on the larger two) a ballista on the open deck. Named compartments go to the deck their names suit. The hull is drawn fair: the corners where it steps in are left out and the rest rounded.
+- **Suggested from the record** (`suggest`): a ship from its name or "Used for" (not if the words also name a kind of building: "The Ship Inn" is an inn); the ground from the name, "Used for", the first sentence of the text and the realm's name.
+- **By hand:** a ship has the tools a building has, less the ready-made pieces. Growth, bridges, masts, helms and ballistae can be set down on any plan. The ground is fixed once a plan is drawn by hand; its rifts move with the sheet when it grows.
+
+**Tests.** `tests/planLand.test.ts` has 13: every kind of plan on every ground, three seeds each, sound (doors in walls, things and numbers on floors), the same every time, drawn four ways with every mark well-formed, and the same after being put away; ordinary ground changing nothing; what each ground does, checked square by square; ships of each size (decks, masts, helm, ladders, a hull the same either side of its centre line, a door in every bulkhead); named compartments on their decks; the suggestions, and that the names used are the app's own; every kind on every ground kept by the server as chosen and as drawn. The first-run browser test draws a ship at sea and among the stars, checks the browser can show the picture, and keeps it as a record.
+
+**Found on the way.** The new things (masts, growth, bridges, helms, ballistae) each gave a line its width twice. A page shows such a drawing well enough when it is part of the page, and refuses it whole as a picture: every ship, and every overgrown or shattered plan, was a broken image in the app while looking right in the pictures made for checking. The test for well-formed marks is there for this. A boat had no helm (its cabin door stood where the helm goes). A district cut from a town on an island lost the island.
+
+**Not done.** A rift cannot be moved or drawn by hand, and an island's edge follows the floors rather than being drawn. A cave or a building adrift is only drawn in mist: nothing in it is parted. Doors that share a letter are not joined on the plan in any other way, and a hand-drawn door cannot be given a letter. A ship has no oars, sails or rigging drawn, no sweeps or rams, and one hull shape; its decks are not laid one over another. Growth is one drawing, whatever grows. Nothing here is per campaign: a town cannot be whole in one campaign and shattered in another.
 
 ## v0.9.27: joined plans
 

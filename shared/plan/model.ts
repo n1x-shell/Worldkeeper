@@ -43,8 +43,22 @@ export function noise(x: number, y: number, seed: number): number {
   return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
 }
 
-export const PLAN_KINDS = ['dungeon', 'cave', 'building', 'settlement'] as const;
+export const PLAN_KINDS = ['dungeon', 'cave', 'building', 'settlement', 'ship'] as const;
 export type PlanKind = (typeof PLAN_KINDS)[number];
+
+/**
+ * The lie of the land (v0.9.28): what kind of ground a place is on, for any world. Ordinary ground; overgrown (fungus,
+ * roots, a bloom through everything); shattered (rifts across it); aloft (an island in the sky); adrift (fragments in
+ * the mist between worlds, with doors that open on rooms not next door); unearthly (nothing straight); and the void (a
+ * black sheet of stars). These are the app's own plain names.
+ */
+export const LANDS = ['plain', 'overgrown', 'shattered', 'aloft', 'adrift', 'unearthly', 'void'] as const;
+export type Land = (typeof LANDS)[number];
+/** A rift across a plan: a line with a width, in squares, like a river with no water in it. */
+export interface Rift {
+  points: Pt[];
+  width: number;
+}
 
 /** A numbered place on a plan, with its line in the key. */
 export interface Area {
@@ -73,9 +87,11 @@ export interface Opening {
   y: number;
   side: 'n' | 'w';
   kind: OpeningKind;
+  /** A door that opens somewhere not next door: the letter it shares with the doors it opens on (v0.9.28). */
+  to?: string;
 }
 
-export const FEATURE_KINDS = ['stairs', 'pillar', 'statue', 'altar', 'tomb', 'pool', 'rubble', 'chest', 'throne', 'hearth', 'table', 'bed', 'counter', 'shelf', 'barrel', 'pew', 'anvil', 'well', 'trap', 'stall'] as const;
+export const FEATURE_KINDS = ['stairs', 'pillar', 'statue', 'altar', 'tomb', 'pool', 'rubble', 'chest', 'throne', 'hearth', 'table', 'bed', 'counter', 'shelf', 'barrel', 'pew', 'anvil', 'well', 'trap', 'stall', 'growth', 'bridge', 'mast', 'helm', 'ballista'] as const;
 export type FeatureKind = (typeof FEATURE_KINDS)[number];
 /** Something drawn in a room. `x`, `y`, `w` and `h` are in squares (parts of a square are fine). */
 export interface Feature {
@@ -92,7 +108,7 @@ export interface Feature {
 
 /** A plan on squares: a dungeon, a cave or a building. */
 export interface GridPlan {
-  kind: 'dungeon' | 'cave' | 'building';
+  kind: 'dungeon' | 'cave' | 'building' | 'ship';
   /** Squares across and down, margins included. */
   w: number;
   h: number;
@@ -109,6 +125,10 @@ export interface GridPlan {
   areas: Area[];
   /** Titles drawn over parts of the sheet: the storeys of a building. */
   captions: { text: string; x: number; y: number }[];
+  /** The lie of the land, if it is not ordinary ground. */
+  land?: Land;
+  /** Rifts across it, on shattered ground. */
+  rifts?: Rift[];
 }
 
 /** A plan of a settlement: streets and roofs, not squares. Distances are in squares all the same, for the grid. */
@@ -138,6 +158,12 @@ export interface TownPlan {
   districts?: { name: string; at: Pt; outline: Pt[] }[];
   /** The lines drawn between one district and the next. */
   districtLines?: [Pt, Pt][];
+  land?: Land;
+  rifts?: Rift[];
+  /** The ground it stands on, where that ends: an island in the sky, in the void or in the mist. */
+  island?: Pt[];
+  /** Great growths among the houses, on overgrown ground: where each stands and how wide it is. */
+  growths?: [number, number, number][];
 }
 
 export type Plan = GridPlan | TownPlan;

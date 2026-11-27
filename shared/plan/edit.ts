@@ -6,7 +6,7 @@
  *
  * Every change gives a new plan and leaves the old one as it was, so that each step can be undone.
  */
-import { DIRS, DIR_WORDS, type Area, type Feature, type FeatureKind, type GridPlan, type Opening, type OpeningKind, type Plan, type Pt, type TownPlan } from './model.js';
+import { DIRS, DIR_WORDS, type Area, type Feature, type FeatureKind, type GridPlan, type Land, type Opening, type OpeningKind, type Plan, type Pt, type Rift, type TownPlan } from './model.js';
 
 // ---- Put away and brought back ---------------------------------------------------------------------------------------
 
@@ -23,6 +23,8 @@ export interface PackedGrid {
   features: Feature[];
   areas: Area[];
   captions: GridPlan['captions'];
+  land?: Land;
+  rifts?: Rift[];
 }
 export type PackedPlan = PackedGrid | TownPlan;
 
@@ -47,7 +49,7 @@ const unrun = (rs: number[], into: Int16Array | Uint8Array) => {
 
 export function pack(plan: Plan): PackedPlan {
   if (plan.kind === 'settlement') return plan;
-  return { kind: plan.kind, w: plan.w, h: plan.h, feet: plan.feet, cells: runs(plan.cells), rock: runs(plan.rock), rough: [...plan.rough], openings: plan.openings, features: plan.features, areas: plan.areas, captions: plan.captions };
+  return { kind: plan.kind, w: plan.w, h: plan.h, feet: plan.feet, cells: runs(plan.cells), rock: runs(plan.rock), rough: [...plan.rough], openings: plan.openings, features: plan.features, areas: plan.areas, captions: plan.captions, ...(plan.land ? { land: plan.land } : {}), ...(plan.rifts ? { rifts: plan.rifts } : {}) };
 }
 export function unpack(p: PackedPlan): Plan {
   if (p.kind === 'settlement') return p;
@@ -63,6 +65,8 @@ export function unpack(p: PackedPlan): Plan {
     features: p.features.map((f) => ({ ...f })),
     areas: p.areas.map((a) => ({ ...a, exits: [...a.exits] })),
     captions: p.captions.map((c) => ({ ...c })),
+    ...(p.land ? { land: p.land } : {}),
+    ...(p.rifts ? { rifts: p.rifts.map((r) => ({ ...r, points: r.points.map(([x, y]): Pt => [x, y]) })) } : {}),
   };
 }
 
@@ -101,7 +105,7 @@ export function standsInWall(p: GridPlan, o: Opening): boolean {
   const [a, b] = across(o).map(([x, y]) => regionAt(p, x, y));
   if (o.kind === 'open') return (a === 0) !== (b === 0);
   if (a === b) return false;
-  return (a !== 0 && b !== 0) || p.kind === 'building';
+  return (a !== 0 && b !== 0) || p.kind === 'building' || p.kind === 'ship';
 }
 
 /** The middle of the square a thing stands on. */
@@ -174,8 +178,10 @@ export function describe(p: GridPlan): GridPlan {
       const [[ax, ay], [bx, by]] = across(o);
       const [ra, rb] = [regionAt(p, ax, ay), regionAt(p, bx, by)];
       // Seen from the first square the opening is to the south or east; from the second, north or west.
-      if (ra === region) doors.push(`${word} ${DIR_WORDS[o.side === 'n' ? 2 : 1]}`);
-      else if (rb === region) doors.push(`${word} ${DIR_WORDS[o.side === 'n' ? 0 : 3]}`);
+      // A door that opens somewhere not next door says which others it opens on.
+      const to = o.to ? `, marked ${o.to}` : '';
+      if (ra === region) doors.push(`${word} ${DIR_WORDS[o.side === 'n' ? 2 : 1]}${to}`);
+      else if (rb === region) doors.push(`${word} ${DIR_WORDS[o.side === 'n' ? 0 : 3]}${to}`);
     }
     const other = a.exits.filter((e) => !/^(door|archway|secret door|portcullis) /.test(e));
     a.exits = [...new Set(doors), ...other];
@@ -229,6 +235,7 @@ export function fit(plan: GridPlan): GridPlan {
     features: plan.features.map((f) => ({ ...f, x: f.x + left, y: f.y + up })),
     areas: plan.areas.map((a) => ({ ...a, x: a.x + left, y: a.y + up })),
     captions: plan.captions.map((c) => ({ ...c, x: c.x + left, y: c.y + up })),
+    ...(plan.rifts ? { rifts: plan.rifts.map((r) => ({ ...r, points: r.points.map(([x, y]): Pt => [x + left, y + up]) })) } : {}),
   };
 }
 
@@ -275,7 +282,7 @@ export function reach(plan: GridPlan, x0: number, y0: number, x1: number, y1: nu
     }
   shift = [shift[0] + left, shift[1] + up];
   const moved = <T extends { x: number; y: number }>(v: T): T => ({ ...v, x: v.x + left, y: v.y + up });
-  return { plan: { ...plan, w, h, cells, rock, rough: new Set(plan.rough), openings: plan.openings.map(moved), features: plan.features.map(moved), areas: plan.areas.map((a) => ({ ...moved(a), exits: [...a.exits] })), captions: plan.captions.map(moved) }, dx: left, dy: up };
+  return { plan: { ...plan, w, h, cells, rock, rough: new Set(plan.rough), openings: plan.openings.map(moved), features: plan.features.map(moved), areas: plan.areas.map((a) => ({ ...moved(a), exits: [...a.exits] })), captions: plan.captions.map(moved), ...(plan.rifts ? { rifts: plan.rifts.map((r) => ({ ...r, points: r.points.map(([x, y]): Pt => [x + left, y + up]) })) } : {}) }, dx: left, dy: up };
 }
 
 /**
@@ -497,6 +504,10 @@ export function shapeOf(kind: FeatureKind, x: number, y: number, dir: 0 | 1 | 2 
     }
     case 'trap':
       return { kind, x, y, w: 1, h: 1, gm: true };
+    case 'mast':
+      return { kind, x: x + 0.08, y: y + 0.08, w: 0.84, h: 0.84 };
+    case 'helm':
+      return { kind, x: x + 0.1, y: y + 0.1, w: 0.8, h: 0.8, dir };
     default:
       // A hearth, a stall, rubble, barrels: the whole square.
       return { kind, x, y, w: 1, h: 1, dir };
@@ -523,6 +534,11 @@ export const THINGS: [FeatureKind, string][] = [
   ['pew', 'Bench'],
   ['anvil', 'Anvil'],
   ['stall', 'Stall'],
+  ['growth', 'Growth'],
+  ['bridge', 'Bridge'],
+  ['mast', 'Mast'],
+  ['helm', 'Helm'],
+  ['ballista', 'Ballista'],
   ['trap', 'Trap (your copy only)'],
 ];
 /** The kinds of opening that can be put in a wall by hand. */

@@ -20,6 +20,8 @@ import {
   PLAN_LABELS,
   TOWN_LABELS,
   DISTRICTS,
+  LANDS,
+  LAND_LABELS,
   closeUp,
   districtPlan,
   drawPlan,
@@ -45,6 +47,7 @@ import {
   withWards,
   type DrawOptions,
   type KeyRoom,
+  type Land,
   type PackedPlan,
   type Plan,
   type PlanKind,
@@ -194,12 +197,14 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   const own = !!info?.ownNames;
   const name = info?.entity.name ?? called.trim();
   const building = settings.kind === 'building';
+  // A building and a ship have the rooms of their kind until the GM names others.
+  const fitted = building || settings.kind === 'ship';
 
   // The key. Until the GM changes anything in it, its places follow the record (or are made up to suit the kind of
   // place) and change with the choices above. From the first change on it is the GM's own, kept with the plan.
   const [keyed, setKeyed] = useState<KeyRoom[] | null>(() => info?.saved?.key ?? null);
   // A building whose rooms are still the usual ones for its use is drawn from that use, not from their names.
-  const [usual, setUsual] = useState(() => !!info?.saved?.key && info.saved.kind === 'building' && info.saved.names.length === 0);
+  const [usual, setUsual] = useState(() => !!info?.saved?.key && (info.saved.kind === 'building' || info.saved.kind === 'ship') && info.saved.names.length === 0);
   // The place that is open in the key, and ringed on the plan. An address can name one to open (?room=3).
   const [params] = useSearchParams();
   // Being changed by hand. An address can open it so (?edit=1).
@@ -219,7 +224,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
 
   // What the plan is drawn from: the key's places once it is the GM's own; else the record's, or names made up.
   const givenNames = useMemo(() => (own ? settings.names : madeNames(settings, name, count)), [own, settings, name, count]);
-  const drawnFrom = useMemo(() => (keyed ? (building && usual ? [] : drawnNames(keyed, building)) : givenNames), [keyed, building, usual, givenNames]);
+  const drawnFrom = useMemo(() => (keyed ? (fitted && usual ? [] : drawnNames(keyed, building)) : givenNames), [keyed, building, fitted, usual, givenNames]);
   // The plan is made again only when what it is drawn from changes, not when a word of the key does.
   const made = useMemo(() => JSON.stringify({ ...settings, names: drawnFrom }), [settings, drawnFrom]);
   const plan = useMemo<Plan>(() => (drawn ? withWards(unpack(drawn), settings.wards) : makePlan(JSON.parse(made) as PlanSettings)), [drawn, made, settings.wards]);
@@ -317,7 +322,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   // ---- Changed by hand ---------------------------------------------------------------------------------------------
   const remember = () => {
     // A key that was not yet the GM's own becomes so as it stood: a building's usual rooms stay drawn as the usual ones.
-    setPast((h) => [...h.slice(-59), { drawn, keyed: keyed ?? rooms, usual: keyed ? usual : building && drawnFrom.length === 0 }]);
+    setPast((h) => [...h.slice(-59), { drawn, keyed: keyed ?? rooms, usual: keyed ? usual : fitted && drawnFrom.length === 0 }]);
     setFuture([]);
   };
   /** The plan as the editor has changed it. Its numbers are closed up, and the key follows: a new room gets a place in it, a room that is gone loses its. */
@@ -377,7 +382,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
       return;
     }
     setKeyed(next);
-    if (!keyed) setUsual(building && drawnFrom.length === 0);
+    if (!keyed) setUsual(fitted && drawnFrom.length === 0);
     if (redraw) setUsual(false);
   };
   const another = async () => {
@@ -428,7 +433,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
   const mention = () => `@[${info!.entity.name}|${info!.entity.id}]`;
   /** The key made the GM's own, if it was not yet, with a change to it. */
   const ownKey = (next: KeyRoom[]) => {
-    if (!keyed) setUsual(building && drawnFrom.length === 0);
+    if (!keyed) setUsual(fitted && drawnFrom.length === 0);
     setKeyed(next);
   };
   const makeRecord = (i: number) =>
@@ -509,12 +514,12 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
       const section = keySection();
       const e = await api.post<Entity>('/api/entities', {
         name: title,
-        type: settings.kind === 'cave' ? 'dungeon' : settings.kind,
+        type: settings.kind === 'cave' ? 'dungeon' : settings.kind === 'ship' ? 'building' : settings.kind,
         realm,
         aliases: [],
         source_raw: 'DM entry (The Worldkeeper)',
         tags: [`realm/${realm}`, 'vis/gm'],
-        fields: building ? [['Used for', BUILDING_USES[settings.use].label.toLowerCase()]] : [],
+        fields: building ? [['Used for', BUILDING_USES[settings.use].label.toLowerCase()]] : settings.kind === 'ship' ? [['Used for', 'ship']] : [],
         body: `## Map key${section.gm ? ' (GM only)' : ''}\n\n${section.markdown}\n`,
         notes: '',
       });
@@ -549,7 +554,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
     />
   );
   const kindChoices = PLAN_KINDS.map((k) => [k, PLAN_LABELS[k]] as [PlanKind, string]);
-  const sizeWord = settings.kind === 'building' ? 'How large it is' : 'How much room';
+  const sizeWord = fitted ? 'How large it is' : 'How much room';
 
   return (
     <div className="grid gap-4 2xl:grid-cols-[300px_minmax(0,1fr)]" data-testid="plan-maker">
@@ -607,7 +612,13 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                 value={settings.size}
                 onChange={(size) => set({ size })}
                 options={
-                  settings.kind === 'building'
+                  settings.kind === 'ship'
+                    ? [
+                        ['small', 'A boat (two decks, 70 ft)'],
+                        ['medium', 'A ship (three decks, 110 ft)'],
+                        ['large', 'A great ship (four decks, 150 ft)'],
+                      ]
+                    : settings.kind === 'building'
                     ? [
                         ['small', 'Small'],
                         ['medium', 'As usual'],
@@ -651,11 +662,21 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                 <input className="input w-24" type="number" min={1} max={MAX_NAMES} value={count} onChange={(e) => setCount(Math.max(1, Math.min(MAX_NAMES, Math.round(Number(e.target.value)) || 1)))} />
               </Field>
             )}
+            <Select
+              label="The lie of the land"
+              value={settings.land ?? 'plain'}
+              onChange={(land: Land) => set({ land: land === 'plain' ? undefined : land })}
+              options={LANDS.map((l) => [l, settings.kind === 'ship' && l === 'plain' ? 'At sea' : LAND_LABELS[l].label])}
+              hint={drawn ? undefined : LAND_LABELS[settings.land ?? 'plain'].hint || undefined}
+              disabled={!!drawn}
+            />
             <p className="text-xs text-dim" data-testid="plan-names-from">
               {keyed
                 ? `Its ${names.length} numbered ${names.length === 1 ? 'place is' : 'places are'} the ones in the key below: add to them, rename them or take them away there.`
                 : own
                   ? `Its ${names.length} numbered ${names.length === 1 ? 'place is' : 'places are'} the ones the record names: in its text, or as records kept under it.`
+                  : settings.kind === 'ship'
+                    ? 'It has the usual decks and compartments of a ship of this size. Change them in the key below.'
                   : building
                     ? 'It has the usual rooms of a building of this use. Change them in the key below.'
                     : 'The numbered places are made up to suit it. Change them in the key below, and they are yours.'}
@@ -829,7 +850,7 @@ export function PlanMaker({ info, onInfo }: { info?: PlanInfo; onInfo?: (i: Plan
                       setPast([]);
                       setFuture([]);
                       setKeyed(saved.key ?? null);
-                      setUsual(!!saved.key && saved.kind === 'building' && saved.names.length === 0);
+                      setUsual(!!saved.key && (saved.kind === 'building' || saved.kind === 'ship') && saved.names.length === 0);
                       setSelected(null);
                     }}
                   >

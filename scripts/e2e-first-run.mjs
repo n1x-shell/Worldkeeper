@@ -288,6 +288,30 @@ try {
     await page.getByTestId('plan-join-from').click();
     await page.getByTestId('plan-by-hand-note').waitFor();
     step('a level below added from one of its places: a record under it with a plan of its own, a way on keyed here, and a link each way');
+
+    // The lie of the land, and a ship (v0.9.28): a plan for no record yet, on the Generators page. A ship is drawn at
+    // sea; in the void its sheet is black; kept as a record, it is that ship on that ground.
+    await page.goto(`${base}/generators`);
+    await page.getByRole('tab', { name: /Places/ }).click();
+    await page.getByTestId('plan-drawing').waitFor();
+    await page.getByLabel('What it is called').fill('The Starwind');
+    await page.getByLabel('A plan of a').selectOption('ship');
+    const sheet = async () => decodeURIComponent((await page.getByTestId('plan-drawing').getAttribute('src')) ?? '');
+    if ((await sheet()).includes('#0b0c11')) throw new Error('a ship at sea is drawn on a black sheet');
+    if ((await page.getByTestId('plan-key').locator('ol > li').count()) !== 9) throw new Error('a ship does not have its nine usual compartments in the key');
+    await page.getByLabel('The lie of the land').selectOption('void');
+    for (let tries = 0; tries < 40 && !(await sheet()).includes('#0b0c11'); tries++) await page.waitForTimeout(100);
+    if (!(await sheet()).includes('#0b0c11')) throw new Error('the void did not blacken the sheet');
+    // The drawing is a picture the browser can show, not only words that say so.
+    const shown = await page.getByTestId('plan-drawing').evaluate((img) => img.decode().then(() => img.naturalWidth, () => 0));
+    if (!shown) throw new Error('the ship’s drawing is not a picture the browser can show');
+    await shot(page, '08d-ship-in-the-void');
+    await page.getByTestId('plan-record').click();
+    await page.waitForURL(/\/e\/.+\/plan$/);
+    await page.getByTestId('plan-drawing').waitFor();
+    const starwind = (await api(`/api/entities/${decodeURIComponent(page.url().split('/e/')[1].split('/')[0])}/plan`)).saved;
+    if (starwind?.kind !== 'ship' || starwind.land !== 'void' || starwind.key?.length !== 9) throw new Error(`the ship was not kept as drawn: ${JSON.stringify({ kind: starwind?.kind, land: starwind?.land, key: starwind?.key?.length })}`);
+    step('a ship drawn for no record: at sea, then among the stars on a black sheet, and kept as a record on that ground');
   } else {
     await page.getByRole('button', { name: /Play in Oros/ }).click();
     await page.getByRole('button', { name: /Add the Oros worldbook/ }).click();

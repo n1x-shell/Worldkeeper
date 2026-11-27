@@ -147,11 +147,11 @@ Maps support draggable record-linked markers, categories, layers, region boundar
 
 ## Plans of places
 
-A dungeon, a cave, a building or a settlement, laid out from what its record says and drawn in ink with a grid. Open a place's record and choose **Draw a plan** (in the panel beside its text), or draw one for no record yet under Characters → People, Shops and Places → **Places**.
+A dungeon, a cave, a building, a settlement or a ship, laid out from what its record says and drawn in ink with a grid. Open a place's record and choose **Draw a plan** (in the panel beside its text), or draw one for no record yet under Characters → People, Shops and Places → **Places**.
 
 **What the plan is made from.** The app reads the record and offers a plan to suit it; you change what you like.
 
-- **The kind of plan** comes from the record's type and its name: a Settlement gets streets and roofs, a Building gets its storeys, "The Weeping Caves" gets a cave, "Old Garran Mine" a dungeon that is roughly cut.
+- **The kind of plan** comes from the record's type and its name: a Settlement gets streets and roofs, a Building gets its storeys, "The Weeping Caves" gets a cave, "Old Garran Mine" a dungeon that is roughly cut, and "The Sea Wyrm, a galleon" a ship.
 - **A settlement's size** comes from its **Population** fact (under 120 a hamlet, under 1,500 a village, under 8,000 a town, more a city). **Terrain** and the words of its description give it a river or the sea, a wall with gates, and fields or woods around it.
 - **A building's use** comes from its name and its **Used for** fact: tavern, temple, smithy, shop, keep, tower, warehouse, stable, manor, hall, cottage or house. Its **Wealth** makes it smaller or larger.
 - **A dungeon's rooms** number what its **Rooms** fact says; **Danger** decides whether it has secret doors and traps to begin with.
@@ -184,7 +184,7 @@ Once a plan is kept, its key is kept as you write it, without being asked. **Wri
 - **Floor** cuts floor a square at a time. Begun in a room, it adds to that room (rooms need not be oblongs); begun anywhere else, it cuts a passage. In a cave it opens up more cave.
 - **Rub out** takes away the thing or the door you click, and fills floor in again where you drag.
 - **Door** puts a door, a wide door, an open archway, a secret door, a portcullis or a window in the wall you click, and takes it out if you click it again. The key's "ways out" follow.
-- **Thing** sets down stairs, pillars, statues, altars, tombs, thrones, chests, wells, pools, rubble, tables, beds, hearths, shelves, counters, barrels, benches, anvils, stalls, and traps (on your copy only). Click one again to turn it.
+- **Thing** sets down stairs, pillars, statues, altars, tombs, thrones, chests, wells, pools, rubble, tables, beds, hearths, shelves, counters, barrels, benches, anvils, stalls, growth, bridges, masts, helms, ballistae, and traps (on your copy only). Click one again to turn it.
 - **Number** gives a floor a number and a place in the key: a chamber of a cave, a stretch of passage. In a room that has one, its number moves to where you click.
 - **Piece** sets down a ready-made piece whole, turned as you like: a guard post, a shrine with its vestry, a row of cells, a crypt, a vault behind a secret door, a great hall, a well room, a crossroads, a stair, a secret room, a barracks, a collapsed passage. Cut floor from where its passage ends to join it up.
 - Drawn past the edge of the sheet, the sheet grows.
@@ -205,6 +205,21 @@ A plan changed by hand is kept as you change it, once it has been kept at all. T
 - **A town or a city in districts.** A town has four districts and a city six, each named for what stands in it (Market Ward, Temple Ward, The Docks) or for where it lies, with a broken line between one and the next. Call them what you like under **Districts**; the key says which district each numbered place is in. **A plan of its own** makes a district a record kept under the town, with the same streets and houses drawn closer, at 10 feet to a square: its numbered places are the ones that stand in it, ready to be keyed, and it can be changed by hand like any other. **In districts**, among the choices, turns them off. A hamlet or a village is one place.
 
 Each joined plan is a record like any other: it has its own text, key, pictures and Atlas map, and is shown to the players, or not, by itself.
+
+**Ships.** A ship is a hull and its decks, drawn one under another, stern to the left and bow to the right: a **boat** (two decks, 70 feet), a **ship** (three decks, 110 feet) or a **great ship** (four decks, 150 feet). The top deck is open, with its masts, its helm and a cabin at the stern; below are the decks the crew live and work on, and the hold. Bulkheads divide each deck into compartments with a door on the centre line, a ladder joins each deck to the next, and the key says which deck each compartment is on. The compartments are the usual ones for a ship of its size, or the ones the record names: a "Brig" and a "Hold" go in the hold, a "Captain's cabin" at the stern of the top deck, the rest on the decks between. A ship can be keyed, changed by hand (masts, helms and ballistae are among the things to set down) and taken away as a picture like any other plan. A record is offered a ship when its name or its **Used for** fact says it is one.
+
+**The lie of the land.** Any plan can be on ground that is not ordinary. Choose it under **The lie of the land**; the app offers one when the record's name, what it is used for, how its text begins or the name of its realm says so ("the Floating City", "a voidship", a realm called "The Ethereal Realm").
+
+| The ground | A dungeon, a cave, a building or a ship | A settlement |
+| --- | --- | --- |
+| **Overgrown** | Growth on the floors, thickest along the walls; some rooms' walls broken by roots. | One house in six given up to great growths, which stand among the rest; its fields are groves of them. |
+| **Shattered** | A rift from one side of the sheet to the other. What stood in it is gone; a passage that crosses it is bridged; a room it runs through says so in the key. | A rift through the town. The houses on it are gone, and a great road that meets it is bridged. |
+| **Aloft, in the sky** | The place stands on an island two squares wide around its floors, with clouds beyond. | The ground ends a little past the last house. Nothing lies beyond it; where a great road reaches the edge there is a landing stage. No river or sea. |
+| **Adrift, between worlds** | Fragments in the mist. A dungeon's passages are gone: each door that opened on one is lettered, and doors that share a letter open on one another. The letters are on your copy and in the key. | An island in the mist, parted in two by a channel of it. |
+| **Unearthly** | No wall is straight, and there are more ways round than you asked for. | Every street is turned about the middle of the town, more the nearer it is. |
+| **The void, among the stars** | A black sheet of stars around an island of rock, or around a ship's hull. | An island on a black sheet of stars. |
+
+A ship on ordinary ground is **at sea**. The ground changes the layout only where the table says; a plan with ordinary ground is exactly the plan it was before this version. Once a plan has been changed by hand its ground is fixed, as its other choices are. A district cut from a town is on the town's ground. These are the app's own plain names: use them for whatever your world calls such places.
 
 **How it is drawn.** Your copy has numbers, secret doors (an S in the wall) and traps; **the players' copy** has none of them. Choose the grid (on the floors, over the whole sheet, or none), the rock (hatched by hand, filled in, or left plain), the paper (white, parchment, or none, for laying over something else), and whether rooms have their furnishings. A dungeon, a cave or a building is drawn at 5 feet to a square; a hamlet or village at 10, a town at 20 and a city at 30.
 

@@ -77,6 +77,7 @@ const CAVE_FLOOR_HINT = 'Drag to open up more of the cave.';
 const TOOLS: Record<Plan['kind'], Tool[]> = {
   dungeon: ['select', 'room', 'floor', 'rub', 'door', 'thing', 'number', 'piece'],
   building: ['select', 'room', 'floor', 'rub', 'door', 'thing', 'number', 'piece'],
+  ship: ['select', 'room', 'floor', 'rub', 'door', 'thing', 'number'],
   cave: ['select', 'floor', 'rub', 'thing', 'number'],
   settlement: ['select', 'house'],
 };
