@@ -206,6 +206,8 @@ export function PlanKey({
   onSelect,
   onRooms,
   entityId,
+  drawn = false,
+  still = false,
 }: {
   kind: PlanKind;
   /** Each place's size and ways out, as the plan has it. */
@@ -217,12 +219,18 @@ export function PlanKey({
   /** `redraw`: the list of places changed (one added, removed, moved, or put on another storey), so the plan is drawn again. */
   onRooms: (next: KeyRoom[], redraw: boolean) => void;
   entityId?: string;
+  /** The plan has been changed by hand: places are added on the plan itself, and one removed here comes off it as drawn. */
+  drawn?: boolean;
+  /** The plan is being changed by hand: a place chosen on it opens here, but the page stays where it is. */
+  still?: boolean;
 }) {
   const [busy, setBusy] = useState('');
   const open = useRef<HTMLLIElement>(null);
   // Chosen on the drawing: bring its line into view.
   useEffect(() => {
-    if (selected != null) open.current?.scrollIntoView({ block: 'nearest', behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    if (selected != null && !still) open.current?.scrollIntoView({ block: 'nearest', behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    // Only a place newly chosen brings its line into view, not the plan's leaving the editor.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
 
   const change = (i: number, patch: Partial<KeyRoom>, redraw = false) => onRooms(rooms.map((r, j) => (j === i ? { ...r, ...patch } : r)), redraw);
@@ -237,7 +245,9 @@ export function PlanKey({
   };
   const remove = async (i: number) => {
     const r = rooms[i];
-    if (isKeyed(r) && !(await ask({ title: `Remove ${r.name}?`, body: 'What is keyed to it goes with it. The plan is drawn again without it, and the places after it are renumbered.', confirmLabel: 'Remove it', danger: true }))) return;
+    const off = kind === 'settlement' ? 'Its building stays on the plan, as a house like any other.' : kind === 'cave' ? 'Its number comes off the plan.' : 'The room comes off the plan, with what is in it.';
+    const body = `${isKeyed(r) ? 'What is keyed to it goes with it. ' : ''}${drawn ? off : 'The plan is drawn again without it.'} The places after it are renumbered.`;
+    if ((drawn || isKeyed(r)) && !(await ask({ title: `Remove ${r.name}?`, body, confirmLabel: 'Remove it', danger: true }))) return;
     onRooms(
       rooms.filter((_, j) => j !== i),
       true,
@@ -300,7 +310,7 @@ export function PlanKey({
                       <span className="label">Its name</span>
                       <input className="input" value={r.name} maxLength={80} onChange={(e) => change(i, { name: e.target.value })} onBlur={(e) => !e.target.value.trim() && change(i, { name: r.drawnAs })} />
                     </label>
-                    {kind === 'building' && (
+                    {kind === 'building' && !drawn && (
                       <label>
                         <span className="label">Storey</span>
                         <select className="input" value={r.floor ?? 'ground'} onChange={(e) => change(i, { floor: e.target.value as Storey }, true)}>
@@ -324,7 +334,7 @@ export function PlanKey({
                       </button>
                     </div>
                   </div>
-                  {r.name.trim() !== r.drawnAs && <p className="text-xs text-dim">The plan was drawn for “{r.drawnAs}”. It stays as it is until you draw it again.</p>}
+                  {!drawn && r.name.trim() !== r.drawnAs && <p className="text-xs text-dim">The plan was drawn for “{r.drawnAs}”. It stays as it is until you draw it again.</p>}
 
                   <label className="block">
                     <span className="label">Read aloud</span>
@@ -361,18 +371,24 @@ export function PlanKey({
           );
         })}
       </ol>
-      <button
-        type="button"
-        className="btn mt-3"
-        disabled={rooms.length >= MAX_NAMES}
-        onClick={() => {
-          onRooms([...rooms, newRoom(kind === 'settlement' ? 'A new place' : 'A new room', kind === 'building' ? 'ground' : undefined)], true);
-          onSelect(rooms.length);
-        }}
-        data-testid="key-add-room"
-      >
-        <Plus size={14} /> Add a {kind === 'settlement' ? 'place' : 'room'}
-      </button>
+      {drawn ? (
+        <p className="mt-3 text-xs text-dim" data-testid="key-add-by-hand">
+          {kind === 'settlement' ? 'To add a place, change the plan by hand: choose a building and give it a number.' : kind === 'cave' ? 'To add a place, change the plan by hand: put a number on a floor.' : 'To add a room, change the plan by hand: draw one, or put a number on a floor.'}
+        </p>
+      ) : (
+        <button
+          type="button"
+          className="btn mt-3"
+          disabled={rooms.length >= MAX_NAMES}
+          onClick={() => {
+            onRooms([...rooms, newRoom(kind === 'settlement' ? 'A new place' : 'A new room', kind === 'building' ? 'ground' : undefined)], true);
+            onSelect(rooms.length);
+          }}
+          data-testid="key-add-room"
+        >
+          <Plus size={14} /> Add a {kind === 'settlement' ? 'place' : 'room'}
+        </button>
+      )}
     </div>
   );
 }

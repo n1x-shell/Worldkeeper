@@ -86,6 +86,10 @@ Then key it. Click a number on the plan and say what is there: words to read alo
 
 ![The key to the guard room: what is read aloud, an encounter with its creatures and their stat blocks, a trap with its DC and harm, and the loot in the chest](docs/images/plan-key.jpg)
 
+And change it by hand. Draw, move and resize rooms; cut passages a square at a time; put doors in walls; set down stairs, pillars and altars, or a whole ready-made piece (a shrine, a row of cells, a crypt). In a dungeon, keep the rooms you like and redraw the rest around them. A settlement's buildings move, turn, come and go. Everything undoes, and everything works from the keyboard.
+
+![The Sunken Vault being changed by hand: tools above the plan, two rooms marked to be kept, a row of cells set down as a ready-made piece, and the treasury chosen with handles on its sides](docs/images/plan-edit.jpg)
+
 ### Prepare, play and keep the party
 
 | Session prep | Live session (Dark Codex) |

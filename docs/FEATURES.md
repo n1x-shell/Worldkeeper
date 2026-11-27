@@ -168,13 +168,33 @@ A dungeon, a cave, a building or a settlement, laid out from what its record say
   - **Loot** has its coin and its things, offered from the items in your books as you type.
   - A **person** is one of your records.
 - **Suggest** adds an entry for you to change: an encounter from your books for the party's level, the place's Danger and its Terrain; loot for the party's level and the place's Wealth (a hoard, in a room called a treasury or a vault); or a trap, a puzzle or a hazard from the app's own ideas, with a DC and harm to fit. The party's level is the active campaign's.
-- **Add a room**, **remove** one, or move one **earlier or later** in the key. These draw the plan again, since the plan is made from the list of places.
+- **Add a room**, **remove** one, or move one **earlier or later** in the key. These draw the plan again, since the plan is made from the list of places. (Once you have changed a plan by hand it is not drawn again: see below.)
 
 On your copy of the plan, letters under a place's number say what is keyed to it: E encounter, T trap, P puzzle, H hazard, L loot, S secret, C clue, N person. The players' copy has none.
 
 Once a plan is kept, its key is kept as you write it, without being asked. **Write the key into the record** puts it into the record's text as a **Map key** section: a heading for each place with its size and ways out, the words to read aloud, and a line for each entry. It is for the GM only (a settlement's with nothing keyed to it is for everyone). The app reads the places back from that section, so the text and the plan agree; if you change the places in the text itself, the page says so and offers to take them from there.
 
-**Drawing another.** **Draw another** lays the same place out differently. Every plan has a **plan number**: the same number and choices always give the same plan, on any computer. **Keep this plan** remembers it with the record, so it is there, the same, next time. If the record's text later names different places than the plan was kept for, the page says so and offers to draw it for the text as it is now.
+**Drawing another.** **Draw another** lays the same place out differently, whole. Every plan has a **plan number**: the same number and choices always give the same plan, on any computer. **Keep this plan** remembers it with the record, so it is there, the same, next time. If the record's text later names different places than the plan was kept for, the page says so and offers to draw it for the text as it is now.
+
+**Changing it by hand.** **Change it by hand**, under the drawing, turns the plan into a drawing of your own. From the first change on it is no longer made from its plan number and choices: it is kept as it stands, wall for wall.
+
+- **Choose** picks a room. Drag it to move it, with what is in it and its doors; drag the middle of one of its sides to make it larger or smaller; **Take it away** removes it.
+- **Room** draws a new room: drag from one corner to the other. It gets the next number and a place in the key, open and ready to be named.
+- **Floor** cuts floor a square at a time. Begun in a room, it adds to that room (rooms need not be oblongs); begun anywhere else, it cuts a passage. In a cave it opens up more cave.
+- **Rub out** takes away the thing or the door you click, and fills floor in again where you drag.
+- **Door** puts a door, a wide door, an open archway, a secret door, a portcullis or a window in the wall you click, and takes it out if you click it again. The key's "ways out" follow.
+- **Thing** sets down stairs, pillars, statues, altars, tombs, thrones, chests, wells, pools, rubble, tables, beds, hearths, shelves, counters, barrels, benches, anvils, stalls, and traps (on your copy only). Click one again to turn it.
+- **Number** gives a floor a number and a place in the key: a chamber of a cave, a stretch of passage. In a room that has one, its number moves to where you click.
+- **Piece** sets down a ready-made piece whole, turned as you like: a guard post, a shrine with its vestry, a row of cells, a crypt, a vault behind a secret door, a great hall, a well room, a crossroads, a stair, a secret room, a barracks, a collapsed passage. Cut floor from where its passage ends to join it up.
+- Drawn past the edge of the sheet, the sheet grows.
+- In a **settlement**, choose a building to move it, turn it, make it larger or smaller, give it a number and a place in the key, or take it away; **House** sets down a new one. Streets, walls and water stay as they were drawn.
+- **Undo** and **Redo** step back and forward through what you have done, until you leave the page.
+
+Everything can be done from the keyboard as well. With the plan chosen, the arrow keys move a cursor a square at a time and say what is under it, and Enter uses the tool there: for a room, Enter at one corner and Enter at the other; for floor and rubbing out, Enter to begin, move, Enter to finish. With a room chosen, Alt and the arrow keys move it, Shift and the arrow keys change its size, and Delete takes it away. With the Door tool, Shift and an arrow key puts the door in the wall on that side. R turns a thing or a piece. Ctrl+Z undoes.
+
+**Keeping parts and drawing the rest again.** In a dungeon, choose a room and press **Keep**. **Redraw the rest** then lays the dungeon out afresh around the rooms you have kept: they stay where they are to one another, with what is in them and any doors between them, while every other room is set down anew and the passages and doors are all cut again. Keep the three rooms you like and redraw until the rest suits. **Furnish it again** does the same for one room's contents in a dungeon or a building: its walls, doors and stairs stay, and what stands in it is set down afresh to suit the name it has now.
+
+A plan changed by hand is kept as you change it, once it has been kept at all. The key works as before, except that a place is added on the plan itself (draw a room, or number a floor), and one removed from the key comes off the plan as drawn. **Start again** discards what you did by hand and lays the key's places out afresh.
 
 **How it is drawn.** Your copy has numbers, secret doors (an S in the wall) and traps; **the players' copy** has none of them. Choose the grid (on the floors, over the whole sheet, or none), the rock (hatched by hand, filled in, or left plain), the paper (white, parchment, or none, for laying over something else), and whether rooms have their furnishings. A dungeon, a cave or a building is drawn at 5 feet to a square; a hamlet or village at 10, a town at 20 and a city at 30.
 

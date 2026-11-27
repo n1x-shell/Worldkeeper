@@ -10,7 +10,7 @@ import { z } from 'zod';
 import type { DB } from '../db/connection.js';
 import { badRequest, notFound } from '../lib/errors.js';
 import { parseJson } from '../lib/json.js';
-import { BUILDING_USES, KEY_KINDS, MAX_NAMES, PLAN_KINDS, TOWN_SIZES, hasOwnNames, ideaFor, newItem, suggest, type KeyItem, type PlaceFacts, type PlanSettings } from '../../../shared/plan/index.js';
+import { BUILDING_USES, FEATURE_KINDS, KEY_KINDS, MAX_NAMES, PLAN_KINDS, TOWN_SIZES, hasOwnNames, ideaFor, newItem, suggest, type KeyItem, type PlaceFacts, type PlanSettings } from '../../../shared/plan/index.js';
 import { getEntity, updateEntity } from './entities.js';
 import { maps, markers } from './maps.js';
 import { placeProfile } from './places.js';
@@ -38,7 +38,64 @@ const zSettings = z.object({
   walled: z.boolean(),
   around: z.enum(['fields', 'woods', 'open']),
   key: z.array(z.lazy(() => zRoom)).max(MAX_NAMES).optional(),
+  drawn: z.lazy(() => zDrawn).optional(),
 });
+
+// A plan changed by hand, as it is kept (shared/plan/edit.ts): checked for shape and size, not for sense.
+const whole = z.number().int();
+const sq = z.number().min(-10).max(400);
+// A settlement's rivers, roads and shores run on past the edge of the sheet.
+const far = z.number().min(-1000).max(1400);
+const zPoint = z.tuple([far, far]);
+const zArea = z.object({
+  n: whole.min(1).max(999),
+  name: z.string().max(80),
+  x: sq,
+  y: sq,
+  feet: z.tuple([z.number().min(0).max(100000), z.number().min(0).max(100000)]).nullable(),
+  exits: z.array(z.string().max(80)).max(40),
+  floor: z.string().max(40).optional(),
+  kept: z.boolean().optional(),
+});
+const zGrid = z
+  .object({
+    kind: z.enum(['dungeon', 'cave', 'building']),
+    w: whole.min(1).max(300),
+    h: whole.min(1).max(300),
+    feet: z.number().positive().max(1000),
+    cells: z.array(whole.min(0).max(100000)).max(200000),
+    rock: z.array(whole.min(0).max(100000)).max(200000),
+    rough: z.array(whole.min(0).max(100000)).max(2000),
+    openings: z.array(z.object({ x: whole.min(0).max(300), y: whole.min(0).max(300), side: z.enum(['n', 'w']), kind: z.enum(['door', 'double', 'arch', 'secret', 'bars', 'window', 'open']) })).max(4000),
+    features: z
+      .array(z.object({ kind: z.enum(FEATURE_KINDS), x: sq, y: sq, w: z.number().positive().max(40), h: z.number().positive().max(40), dir: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3)]).optional(), gm: z.boolean().optional() }))
+      .max(6000),
+    areas: z.array(zArea).max(MAX_NAMES * 2),
+    captions: z.array(z.object({ text: z.string().max(60), x: sq, y: sq })).max(20),
+  })
+  // The squares add up to the sheet: a drawing that does not is not one this app made.
+  .refine((g) => [g.cells, g.rock].every((runs) => runs.length % 2 === 0 && runs.reduce((sum, v, i) => (i % 2 ? sum + v : sum), 0) === g.w * g.h), 'The drawing’s squares do not fill its sheet');
+const zLine = z.array(zPoint).max(800);
+const zTown = z.object({
+  kind: z.literal('settlement'),
+  w: whole.min(1).max(300),
+  h: whole.min(1).max(300),
+  feet: z.number().positive().max(1000),
+  roads: z.array(z.object({ points: zLine, width: z.number().positive().max(20) })).max(1500),
+  buildings: z.array(z.object({ corners: z.array(zPoint).min(3).max(12), key: whole.min(1).max(999).optional() })).max(6000),
+  squares: z.array(zLine).max(40),
+  rivers: z.array(z.object({ points: zLine, width: z.number().positive().max(40) })).max(10),
+  water: z.array(zLine).max(10),
+  bridges: z.array(z.object({ x: sq, y: sq, angle: z.number(), length: z.number().positive().max(60), width: z.number().positive().max(20) })).max(60),
+  piers: z.array(z.object({ x: sq, y: sq, angle: z.number(), length: z.number().positive().max(60) })).max(60),
+  wall: z
+    .object({ points: zLine, closed: z.boolean(), width: z.number().positive().max(10), towers: zLine, gates: z.array(z.object({ x: sq, y: sq, angle: z.number(), width: z.number().positive().max(20) })).max(40) })
+    .nullable(),
+  trees: z.array(z.tuple([sq, sq, z.number().positive().max(10)])).max(4000),
+  fields: z.array(z.object({ corners: z.array(zPoint).min(3).max(12), angle: z.number() })).max(200),
+  areas: z.array(zArea).max(MAX_NAMES * 2),
+});
+const zDrawn = z.union([zGrid, zTown]);
 
 const short = z.string().max(200);
 /** One thing keyed to a place (shared/plan/key.ts). */

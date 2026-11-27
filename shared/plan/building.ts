@@ -375,7 +375,7 @@ interface Room extends Rect {
 const WEIGHT = { small: 1, medium: 2, large: 4.5, long: 2 } as const;
 
 /** In a building, the big rooms have a fire, and a taproom has its bar. */
-function buildingFurnishings(name: string, use: string): FeatureKind[] {
+export function buildingFurnishings(name: string, use: string): FeatureKind[] {
   if (/\b(common room|taproom|bar)\b/i.test(name)) return ['counter', 'table', 'hearth'];
   if (/\b(main room|living room|parlour|parlor|great hall|entrance hall|dining room)\b/i.test(name)) return ['hearth', 'table'];
   if (/\b(kitchen)\b/i.test(name)) return ['hearth', 'table', 'barrel'];

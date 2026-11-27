@@ -59,6 +59,8 @@ export interface Area {
   exits: string[];
   /** The storey it is on, for a building with more than one. */
   floor?: string;
+  /** Kept as it is when the rest of the plan is drawn again (v0.9.26). */
+  kept?: boolean;
 }
 
 /**
@@ -73,27 +75,8 @@ export interface Opening {
   kind: OpeningKind;
 }
 
-export type FeatureKind =
-  | 'stairs'
-  | 'pillar'
-  | 'statue'
-  | 'altar'
-  | 'tomb'
-  | 'pool'
-  | 'rubble'
-  | 'chest'
-  | 'throne'
-  | 'hearth'
-  | 'table'
-  | 'bed'
-  | 'counter'
-  | 'shelf'
-  | 'barrel'
-  | 'pew'
-  | 'anvil'
-  | 'well'
-  | 'trap'
-  | 'stall';
+export const FEATURE_KINDS = ['stairs', 'pillar', 'statue', 'altar', 'tomb', 'pool', 'rubble', 'chest', 'throne', 'hearth', 'table', 'bed', 'counter', 'shelf', 'barrel', 'pew', 'anvil', 'well', 'trap', 'stall'] as const;
+export type FeatureKind = (typeof FEATURE_KINDS)[number];
 /** Something drawn in a room. `x`, `y`, `w` and `h` are in squares (parts of a square are fine). */
 export interface Feature {
   kind: FeatureKind;

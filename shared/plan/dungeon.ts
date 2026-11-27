@@ -21,6 +21,20 @@ export interface DungeonAsk {
   traps: number;
   /** A cave: chambers of no regular shape, joined by winding tunnels, with no doors. */
   natural?: boolean;
+  /** Rooms that stay as they are (v0.9.26): the rest are set down around them, and every passage is cut anew. */
+  kept?: KeptRoom[];
+  /** Doors between two kept rooms, on the same squares as they are: these stay too. */
+  keptOpenings?: Opening[];
+}
+
+/** A room that is there already. Its squares are on any grid: only how the kept rooms lie to one another matters. */
+export interface KeptRoom {
+  /** Its place in `names`. */
+  at: number;
+  squares: [number, number][];
+  /** What stands in it, and the square its number is on. */
+  features: Feature[];
+  label: [number, number];
 }
 
 interface Room {
@@ -30,6 +44,8 @@ interface Room {
   y: number;
   w: number;
   h: number;
+  /** A room kept from before: its squares (it need not be an oblong), what stands in it, and where its number is. */
+  fixed?: { squares: [number, number][]; features: Feature[]; label: [number, number] };
 }
 
 const N = 180;
@@ -96,6 +112,12 @@ class Heap {
 /** The squares just outside a room's walls (not its corners), each with the room square it touches and which way out it is. */
 function doorsteps(r: Room): { x: number; y: number; rx: number; ry: number; dir: number }[] {
   const out: { x: number; y: number; rx: number; ry: number; dir: number }[] = [];
+  if (r.fixed) {
+    // A room of any shape: every square beside one of its own that is not its own.
+    const mine = new Set(r.fixed.squares.map(([x, y]) => `${x},${y}`));
+    for (const [x, y] of r.fixed.squares) DIRS.forEach(([dx, dy], dir) => !mine.has(`${x + dx},${y + dy}`) && out.push({ x: x + dx, y: y + dy, rx: x, ry: y, dir }));
+    return out;
+  }
   for (let x = r.x; x < r.x + r.w; x++) {
     out.push({ x, y: r.y - 1, rx: x, ry: r.y, dir: 0 });
     out.push({ x, y: r.y + r.h, rx: x, ry: r.y + r.h - 1, dir: 2 });
@@ -115,12 +137,45 @@ export function makeDungeon(ask: DungeonAsk): GridPlan {
 
   // ---- Rooms ---------------------------------------------------------------------------------------------------------
   const rooms: Room[] = [];
-  const links: { a: number; b: number; gap: number; extra?: boolean }[] = [];
+  const links: { a: Room; b: Room; gap: number; extra?: boolean }[] = [];
   const natural = !!ask.natural;
+  const keptDoors: Opening[] = [];
   // The way in is on one side of the first room, and nothing is built past that side: the entrance is at the edge.
   const entry = int(rnd, 0, 3);
   const pastEntrance = (r: Room, first: Room) => (entry === 2 ? r.y + r.h > first.y + first.h : entry === 0 ? r.y < first.y : entry === 1 ? r.x + r.w > first.x + first.w : r.x < first.x);
+  // Rooms kept from before are set down first, where they were (the middle of them at the middle of the sheet), each
+  // joined to the nearest already down. The others are then set down around them.
+  const kept = new Map<number, KeptRoom>((ask.kept ?? []).filter((k) => k.at >= 0 && k.at < names.length && k.squares.length).map((k) => [k.at, k]));
+  if (kept.size) {
+    let [kx0, ky0, kx1, ky1] = [Infinity, Infinity, -Infinity, -Infinity];
+    for (const k of kept.values()) for (const [x, y] of k.squares) [kx0, ky0, kx1, ky1] = [Math.min(kx0, x), Math.min(ky0, y), Math.max(kx1, x), Math.max(ky1, y)];
+    const [ox, oy] = [(N >> 1) - Math.round((kx0 + kx1) / 2), (N >> 1) - Math.round((ky0 + ky1) / 2)];
+    const gapTo = (a: Room, b: Room) => Math.max(0, a.x - (b.x + b.w), b.x - (a.x + a.w)) + Math.max(0, a.y - (b.y + b.h), b.y - (a.y + a.h));
+    for (const [i, k] of [...kept].sort((a, b) => a[0] - b[0])) {
+      const squares = k.squares.map(([x, y]) => [x + ox, y + oy] as [number, number]);
+      const xs = squares.map((c) => c[0]);
+      const ys = squares.map((c) => c[1]);
+      const room: Room = {
+        id: i + 2,
+        name: names[i],
+        x: Math.min(...xs),
+        y: Math.min(...ys),
+        w: Math.max(...xs) - Math.min(...xs) + 1,
+        h: Math.max(...ys) - Math.min(...ys) + 1,
+        fixed: { squares, features: k.features.map((f) => ({ ...f, x: f.x + ox, y: f.y + oy })), label: [k.label[0] + ox, k.label[1] + oy] },
+      };
+      if (room.x < 12 || room.y < 12 || room.x + room.w > N - 12 || room.y + room.h > N - 12) continue;
+      if (rooms.length) {
+        const parent = rooms.reduce((best, o) => (gapTo(room, o) < gapTo(room, best) ? o : best), rooms[0]);
+        links.push({ a: parent, b: room, gap: gapTo(room, parent) });
+      }
+      rooms.push(room);
+    }
+    for (const o of ask.keptOpenings ?? []) keptDoors.push({ ...o, x: o.x + ox, y: o.y + oy });
+  }
+  const someKept = rooms.length > 0;
   names.forEach((name, i) => {
+    if (rooms.some((r) => r.id === i + 2)) return;
     const size = sizeOf(name);
     let best: { room: Room; parent: number; gap: number; score: number } | null = null;
     for (let attempt = 0, found = 0; attempt < 240 && found < 6; attempt++) {
@@ -130,7 +185,8 @@ export function makeDungeon(ask: DungeonAsk): GridPlan {
         break;
       }
       // Mostly beside the room before, sometimes beside an older one: a main way with branches off it.
-      const p = Math.max(0, i - 1 - Math.floor(rnd() ** 1.6 * i));
+      const before = someKept ? rooms.length : i;
+      const p = Math.max(0, before - 1 - Math.floor(rnd() ** 1.6 * before));
       const parent = rooms[p];
       const side = int(rnd, 0, 3);
       const gap = natural ? pick(rnd, [1, 1, 2, 3, 4]) : pick(rnd, [0, 2, 2, 3, 3, 4, 5]);
@@ -144,7 +200,7 @@ export function makeDungeon(ask: DungeonAsk): GridPlan {
         r.y = int(rnd, parent.y - h + ov(h, parent.h), parent.y + parent.h - ov(h, parent.h));
       }
       if (r.x < 12 || r.y < 12 || r.x + r.w > N - 12 || r.y + r.h > N - 12) continue;
-      if (pastEntrance(r, rooms[0]) || rooms.some((o, k) => (k === p ? overlaps(r, o, 0) : overlaps(r, o, 1)))) continue;
+      if ((!someKept && pastEntrance(r, rooms[0])) || rooms.some((o, k) => (k === p ? overlaps(r, o, 0) : overlaps(r, o, 1)))) continue;
       found++;
       const cx = rooms.reduce((s, o) => s + o.x + o.w / 2, 0) / rooms.length;
       const cy = rooms.reduce((s, o) => s + o.y + o.h / 2, 0) / rooms.length;
@@ -152,10 +208,16 @@ export function makeDungeon(ask: DungeonAsk): GridPlan {
       if (!best || score < best.score) best = { room: r, parent: p, gap, score };
     }
     if (!best) return; // no room for it: the key says so (its line has no number on the plan)
+    if (best.parent >= 0) links.push({ a: rooms[best.parent], b: best.room, gap: best.gap });
     rooms.push(best.room);
-    if (best.parent >= 0) links.push({ a: best.parent, b: rooms.length - 1, gap: best.gap });
   });
+  // In the order of the key, whatever order they were set down in.
+  rooms.sort((a, b) => a.id - b.id);
   for (const r of rooms) {
+    if (r.fixed) {
+      for (const [x, y] of r.fixed.squares) cells[y * N + x] = r.id;
+      continue;
+    }
     if (!natural) {
       for (let y = r.y; y < r.y + r.h; y++) for (let x = r.x; x < r.x + r.w; x++) cells[y * N + x] = r.id;
       continue;
@@ -204,9 +266,18 @@ export function makeDungeon(ask: DungeonAsk): GridPlan {
   let wayIn = '';
   let mouth: { x: number; y: number } | null = null;
   let entryStep: ReturnType<typeof doorsteps>[number] | null = null;
-  {
-    const steps = doorsteps(first).filter((s) => s.dir === entry);
-    const s = steps[steps.length >> 1];
+  // Among rooms that were there already, the way in is cut wherever there is clear ground for it: if there is none,
+  // the place has no way in until one is drawn.
+  const clearFor = (st: ReturnType<typeof doorsteps>[number]) => {
+    const [dx, dy] = DIRS[st.dir];
+    for (let k = 0; k < 4; k++) for (const side of [-1, 0, 1]) if (at(st.x + dx * k + dy * side, st.y + dy * k + dx * side) !== 0) return false;
+    return true;
+  };
+  const sideSteps = (dir: number) => doorsteps(first).filter((st) => st.dir === dir);
+  const way = someKept ? ([0, 1, 2, 3].flatMap((k) => sideSteps((entry + k) % 4).sort((a, b) => Math.abs(a.x + a.y - first.x - first.y - (first.w + first.h) / 2) - Math.abs(b.x + b.y - first.x - first.y - (first.w + first.h) / 2))).find(clearFor) ?? null) : sideSteps(entry)[sideSteps(entry).length >> 1];
+  if (way) {
+    const s = way;
+    const entry = way.dir;
     entryStep = s;
     const [dx, dy] = DIRS[entry];
     for (let k = 0; k < 3; k++) {
@@ -328,18 +399,29 @@ export function makeDungeon(ask: DungeonAsk): GridPlan {
     return true;
   };
 
+  // Doors between two rooms that were kept stay where they are, and those two need no other way between them.
+  const doored = new Set<string>();
+  for (const o of keptDoors) {
+    const [ax, ay] = o.side === 'n' ? [o.x, o.y - 1] : [o.x - 1, o.y];
+    const [ra, rb] = [at(ax, ay), at(o.x, o.y)];
+    if (ra < 2 || rb < 2 || ra === rb) continue;
+    openings.set(edgeKey(o), o);
+    doored.add(`${Math.min(ra, rb)}-${Math.max(ra, rb)}`);
+  }
   for (const l of links) {
-    const [a, b] = [rooms[l.a], rooms[l.b]];
-    if (l.gap === 0) {
-      // They share a wall: a door in it, somewhere along the part they share.
-      const shared = doorsteps(b).filter((s) => at(s.x, s.y) === a.id);
+    const [a, b] = [l.a, l.b];
+    if (doored.has(`${Math.min(a.id, b.id)}-${Math.max(a.id, b.id)}`)) continue;
+    // They share a wall: a door in it, somewhere along the part they share.
+    const shared = l.gap === 0 ? doorsteps(b).filter((s) => at(s.x, s.y) === a.id) : [];
+    if (shared.length) {
       const s = pick(rnd, shared);
       open(s.x, s.y, s.rx, s.ry, chance(rnd, 0.85) ? 'door' : 'arch');
     } else join(a, b, [doorKind(), doorKind()]);
   }
   if (natural && entryStep) into(first, entryStep.rx, entryStep.ry);
   // More ways round: rooms that are near each other and not yet joined.
-  const linked = new Set(links.map((l) => `${Math.min(l.a, l.b)}-${Math.max(l.a, l.b)}`));
+  const placeOf = new Map(rooms.map((r, i) => [r, i]));
+  const linked = new Set(links.map((l) => `${Math.min(placeOf.get(l.a)!, placeOf.get(l.b)!)}-${Math.max(placeOf.get(l.a)!, placeOf.get(l.b)!)}`));
   const near: [number, number][] = [];
   for (let i = 0; i < rooms.length; i++)
     for (let j = i + 1; j < rooms.length; j++) {
@@ -351,7 +433,7 @@ export function makeDungeon(ask: DungeonAsk): GridPlan {
   const extra = Math.round(ask.loops * Math.max(1, rooms.length / 2.5));
   for (const [i, j] of shuffled(rnd, near).slice(0, extra)) {
     const secret = ask.secrets && !natural && chance(rnd, 0.4);
-    if (join(rooms[i], rooms[j], [secret ? 'secret' : doorKind(), doorKind()])) links.push({ a: i, b: j, gap: 1, extra: true });
+    if (join(rooms[i], rooms[j], [secret ? 'secret' : doorKind(), doorKind()])) links.push({ a: rooms[i], b: rooms[j], gap: 1, extra: true });
   }
 
   // ---- A cave is one space: its chambers and tunnels have no walls between them. -------------------------------------
@@ -376,7 +458,7 @@ export function makeDungeon(ask: DungeonAsk): GridPlan {
         const [fx, fy] = [x + dx * Math.max(1, Math.floor(r.w / 4)), y + dy * Math.max(1, Math.floor(r.h / 4))];
         if (cells[fy * N + fx] === r.id) features.push({ kind: 'rubble', x: fx, y: fy, w: 1, h: 1 });
       }
-      return { n: i + 1, name: r.name, x: x + 0.5, y: y + 0.5, feet: [r.w * 5, r.h * 5], exits: i === 0 ? [wayIn] : [] };
+      return { n: r.id - 1, name: r.name, x: x + 0.5, y: y + 0.5, feet: [r.w * 5, r.h * 5], exits: i === 0 ? [wayIn] : [] };
     });
     for (let i = 0; i < cells.length; i++) if (cells[i]) cells[i] = CAVE;
     const { plan, dx, dy } = cropped({ cells, n: N, rough: new Set([CAVE]), openings: [], features, areas, kind: 'cave' });
@@ -408,7 +490,10 @@ export function makeDungeon(ask: DungeonAsk): GridPlan {
       if (id >= 2) exits.set(id, [...(exits.get(id) ?? []), `${word} ${DIR_WORDS[dir]}`]);
     }
   }
-  for (const r of rooms) furnish(rnd, r, features, (x, y) => doorCells.has(y * N + x));
+  for (const r of rooms) {
+    if (r.fixed) features.push(...r.fixed.features);
+    else furnish(rnd, r, features, (x, y) => doorCells.has(y * N + x));
+  }
 
   if (ask.traps > 0) {
     const spots: [number, number][] = [];
@@ -418,8 +503,9 @@ export function makeDungeon(ask: DungeonAsk): GridPlan {
 
   const areas: Area[] = rooms.map((r, i) => {
     const taken = (x: number, y: number) => features.some((f) => x + 0.85 > f.x && x + 0.15 < f.x + f.w && y + 0.85 > f.y && y + 0.15 < f.y + f.h);
-    const spot = labelSpot(r, taken);
-    return { n: i + 1, name: r.name, x: spot[0] + 0.5, y: spot[1] + 0.5, feet: [r.w * 5, r.h * 5], exits: [...new Set(exits.get(r.id) ?? []), ...(i === 0 ? [wayIn] : [])] };
+    const spot = r.fixed ? r.fixed.label : labelSpot(r, taken);
+    // A room has the number of its place in the key, whether or not every room before it found room on the plan.
+    return { n: r.id - 1, name: r.name, x: spot[0] + 0.5, y: spot[1] + 0.5, feet: [r.w * 5, r.h * 5], exits: [...new Set(exits.get(r.id) ?? []), ...(i === 0 && wayIn ? [wayIn] : [])], ...(r.fixed ? { kept: true } : {}) };
   });
 
   const rough = new Set<number>(ask.rough ? [CORRIDOR, ...rooms.map((r) => r.id)] : []);
