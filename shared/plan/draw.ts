@@ -5,6 +5,7 @@
  */
 import { DIRS, edgeKey, noise, type Feature, type GridPlan, type Opening, type Plan } from './model.js';
 import { drawTown } from './drawTown.js';
+import { NIGHT, clouds, mist, ragged, riftPath, stars, waves } from './drawLand.js';
 
 export interface DrawOptions {
   /** The GM's copy shows secret doors and traps. */
@@ -86,13 +87,21 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
   const at = (x: number, y: number) => (x < 0 || y < 0 || x >= w || y >= h ? 0 : cells[y * w + x]);
   const floor = (x: number, y: number) => at(x, y) !== 0;
   const openings = new Map<string, Opening>(plan.openings.map((p) => [edgeKey(p), p]));
+  const land = plan.land ?? 'plain';
+  const ship = plan.kind === 'ship';
+  // What is outside its walls is not rock: a building's, and a ship's.
+  const building = plan.kind === 'building' || ship;
 
   // ---- Where each corner of the squares is drawn: a little off true, and well off where the walls are rough. --------
-  const roughAt = (x: number, y: number) => plan.rough.has(at(x, y)) || plan.rough.has(at(x - 1, y)) || plan.rough.has(at(x, y - 1)) || plan.rough.has(at(x - 1, y - 1));
+  // A ship's hull is rounded like rough rock, and as true as a wall.
+  const hullAt = (x: number, y: number) => ship && (at(x, y) === 0 || at(x - 1, y) === 0 || at(x, y - 1) === 0 || at(x - 1, y - 1) === 0);
+  const roughAt = (x: number, y: number) => hullAt(x, y) || plan.rough.has(at(x, y)) || plan.rough.has(at(x - 1, y)) || plan.rough.has(at(x, y - 1)) || plan.rough.has(at(x - 1, y - 1));
   const pos = (x: number, y: number): [number, number] => {
     if (x <= 0 || y <= 0 || x >= w || y >= h) return [x * U, y * U];
-    const amp = roughAt(x, y) ? 0.21 : 0.028;
-    return [Math.round((x + (noise(x, y, seed) - 0.5) * 2 * amp) * U), Math.round((y + (noise(x, y, seed + 7) - 0.5) * 2 * amp) * U)];
+    const amp = hullAt(x, y) ? 0 : roughAt(x, y) ? 0.21 : 0.028;
+    // On unearthly ground the walls bend in long curves as well: nothing is straight.
+    const [bx, by] = land === 'unearthly' ? [Math.sin(y * 0.71 + x * 0.23 + (seed % 7)) * 0.19, Math.sin(x * 0.67 - y * 0.19 + (seed % 5)) * 0.19] : [0, 0];
+    return [Math.round((x + bx + (noise(x, y, seed) - 0.5) * 2 * amp) * U), Math.round((y + by + (noise(x, y, seed + 7) - 0.5) * 2 * amp) * U)];
   };
   const mid = (a: [number, number], b: [number, number]): [number, number] => [Math.round((a[0] + b[0]) / 2), Math.round((a[1] + b[1]) / 2)];
   type V = [number, number];
@@ -143,7 +152,7 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
   const starts = new Map<string, Edge[]>();
   const add = (from: V, to: V, dir: number, key: string, sx: number, sy: number) => {
     const op = openings.get(key);
-    const outer = sx < 0 || sy < 0 || sx >= w || sy >= h ? plan.kind === 'building' : !plan.rock[sy * w + sx];
+    const outer = sx < 0 || sy < 0 || sx >= w || sy >= h ? building : !plan.rock[sy * w + sx];
     const e: Edge = { from, to, dir, open: !!op && op.kind !== 'secret', outer };
     const k = `${from[0]},${from[1]}`;
     starts.set(k, [...(starts.get(k) ?? []), e]);
@@ -170,7 +179,10 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
         // Where two rooms touch only at a corner, keep to the room being walked round.
         e = next.find((c) => c.dir === (d + 1) % 4) ?? next.find((c) => c.dir === d) ?? next.find((c) => c.dir === (d + 3) % 4);
       }
-      if (ring.length >= 4) rings.push(ring);
+      // A ship's hull runs fair from one outer corner to the next: the corners where it steps in are left out, and the
+      // rounding does the rest.
+      const fair = ship ? ring.filter((e, i) => e.dir !== (ring[(i + ring.length - 1) % ring.length].dir + 3) % 4) : ring;
+      if (fair.length >= 4) rings.push(fair);
     }
   const floorPath = rings.map((ring) => through(ring.map((e) => e.from), true)).join('');
 
@@ -214,7 +226,6 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
     }
   }
 
-  const building = plan.kind === 'building';
   const wallW = building ? 11 : 15;
   const thickW = 26;
 
@@ -230,6 +241,15 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
     const [mx, my] = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
     const horizontal = p.side === 'n';
     if (p.kind === 'open') continue;
+    // A door that opens somewhere not next door: its letter, on the GM's copy, on the stub of passage before it.
+    if (p.to && o.gm) {
+      const [n1, n2] = p.side === 'n' ? [at(p.x, p.y - 1), at(p.x, p.y)] : [at(p.x - 1, p.y), at(p.x, p.y)];
+      const out = n1 === 1 || n2 !== 1 ? -1 : 1;
+      const [lx, ly] = horizontal ? [mx, my + out * 0.5] : [mx + out * 0.5, my];
+      marks.push(
+        `<text x="${r1(lx)}" y="${r1(ly)}" font-size="46" font-weight="700" font-style="italic" text-anchor="middle" dominant-baseline="central" fill="${GM_INK}" stroke="${paper.floor}" stroke-width="12" paint-order="stroke">${esc(p.to)}</text>`,
+      );
+    }
     if (p.kind === 'secret') {
       if (o.gm)
         marks.push(
@@ -268,6 +288,10 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
     return false;
   };
   const isRock = (x: number, y: number) => x >= 0 && y >= 0 && x < w && y < h && !floor(x, y) && plan.rock[y * w + x] === 1;
+  // In the sky, in the mist and in the void a place stands on an island: so many squares of ground round its floors,
+  // and nothing beyond. (A ship is its own island.)
+  const rim = ship ? 0 : land === 'aloft' ? 2 : land === 'adrift' || land === 'void' ? 1 : -1;
+  const isle = (x: number, y: number) => rim >= 0 && x >= 0 && y >= 0 && x < w && y < h && (floor(x, y) || (rim > 0 && near(x, y, rim)));
   let hatch = '';
   let solid = '';
   if (o.fill === 'hatch') {
@@ -276,7 +300,7 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
     const K = 3;
     for (let y = 0; y < h; y++)
       for (let x = 0; x < w; x++) {
-        if (!isRock(x, y)) continue;
+        if (!isRock(x, y) || (rim >= 0 && !isle(x, y))) continue;
         const close = near(x, y, 1);
         if (!close && !near(x, y, 2)) continue;
         for (let k = 0; k < K * K; k++) {
@@ -296,12 +320,12 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
       }
   } else if (o.fill === 'solid') {
     // Rock filled in: the whole sheet where it is all rock, else the squares of rock themselves.
-    if (plan.rock.every((v) => v === 1)) solid = `M0 0H${w * U}V${h * U}H0Z`;
+    if (rim < 0 && plan.rock.every((v) => v === 1)) solid = `M0 0H${w * U}V${h * U}H0Z`;
     else
       for (let y = 0; y < h; y++) {
         let from = -1;
         for (let x = 0; x <= w; x++) {
-          const on = x < w && isRock(x, y);
+          const on = x < w && isRock(x, y) && (rim < 0 || isle(x, y));
           if (on && from < 0) from = x;
           if (!on && from >= 0) {
             solid += `M${from * U - 2} ${y * U - 2}H${x * U + 2}V${(y + 1) * U + 2}H${from * U - 2}Z`;
@@ -318,19 +342,79 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
     for (let y = 1; y < h; y++) grid += `M0 ${y * U}H${w * U}`;
   }
 
+  // ---- What lies around it ---------------------------------------------------------------------------------------------
+  const night = land === 'void' && paper.sheet !== 'none';
+  const around: string[] = [];
+  if (paper.sheet !== 'none') {
+    const open = (x: number, y: number) => !isle(x, y) && !floor(x, y);
+    if (land === 'void') around.push(stars(w, h, seed, open));
+    else if (land === 'aloft') around.push(clouds(w, h, seed, open, INK, paper.sheet));
+    else if (land === 'adrift') around.push(mist(w, h, seed, open));
+    else if (ship) around.push(waves(w, h, seed, open, INK));
+  }
+  if (rim > 0) {
+    // The island: the outline of its ground, ragged, and under its southern edges the strokes of the drop.
+    const next = new Map<string, { to: V; dir: number; used?: boolean }[]>();
+    const side = (from: V, to: V, dir: number) => next.set(`${from[0]},${from[1]}`, [...(next.get(`${from[0]},${from[1]}`) ?? []), { to, dir }]);
+    let drop = '';
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        if (!isle(x, y)) continue;
+        if (!isle(x, y - 1)) side([x, y], [x + 1, y], 0);
+        if (!isle(x + 1, y)) side([x + 1, y], [x + 1, y + 1], 1);
+        if (!isle(x, y + 1)) side([x + 1, y + 1], [x, y + 1], 2);
+        if (!isle(x - 1, y)) side([x, y + 1], [x, y], 3);
+        if (land === 'aloft' && !isle(x, y + 1) && y + 1 < h)
+          for (const k of [0.2, 0.5, 0.8]) {
+            const len = 0.2 + noise(x * 3 + Math.round(k * 10), y, seed + 43) * 0.45;
+            drop += `M${r1(x + k)} ${r1(y + 1.12)}v${Math.round(len * U)}`;
+          }
+      }
+    let ground = '';
+    for (const list of next.values())
+      for (const first of list) {
+        if (first.used) continue;
+        const ring: V[] = [];
+        let e: { to: V; dir: number; used?: boolean } | undefined = first;
+        let from: V | null = null;
+        for (const [k, es] of next) if (es.includes(first)) from = k.split(',').map(Number) as V;
+        while (e && !e.used && from) {
+          e.used = true;
+          ring.push(from);
+          const d: number = e.dir;
+          from = e.to;
+          const options: { to: V; dir: number; used?: boolean }[] = (next.get(`${e.to[0]},${e.to[1]}`) ?? []).filter((c) => !c.used);
+          e = options.find((c) => c.dir === (d + 1) % 4) ?? options.find((c) => c.dir === d) ?? options.find((c) => c.dir === (d + 3) % 4);
+        }
+        if (ring.length >= 4) ground += ragged(ring, seed, 0.3, ([x, y]) => x <= 0 || y <= 0 || x >= w || y >= h);
+      }
+    const sheet = paper.sheet === 'none' ? '#ffffff' : paper.sheet;
+    around.push(`<path d="${ground}" fill="${sheet}" fill-rule="evenodd" stroke="${INK}" stroke-width="${night ? 0 : 5}" stroke-linejoin="round"/>`);
+    if (drop) around.push(`<path d="${drop}" fill="none" stroke="${INK}" stroke-width="3.2" stroke-linecap="round" opacity="0.8"/>`);
+  }
+  // A rift: the ground gone, in a broken line across floors and rock alike.
+  const rifts = (plan.rifts ?? []).map((r) => `<path d="${riftPath(r, seed)}" fill="${INK}" stroke="${INK}" stroke-width="6" stroke-linejoin="round"/>`);
+
   // ---- Put together, from the paper up ---------------------------------------------------------------------------------
   const out: string[] = [];
-  if (paper.sheet !== 'none') out.push(`<rect width="${w * U}" height="${h * U}" fill="${paper.sheet}"/>`);
-  if (o.grid === 'all') out.push(`<path d="${grid}" stroke="${paper.line}" stroke-width="2.5" fill="none"/>`);
+  if (paper.sheet !== 'none') out.push(`<rect width="${w * U}" height="${h * U}" fill="${night ? NIGHT : paper.sheet}"/>`);
+  out.push(...around);
+  if (o.grid === 'all') out.push(`<path d="${grid}" stroke="${paper.line}" stroke-width="2.5" fill="none"${night ? ' opacity="0.45"' : ''}/>`);
   if (hatch) out.push(`<path d="${hatch}" stroke="${INK}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`);
   if (solid) out.push(`<path d="${solid}" fill="${INK}"/>`);
   out.push(`<path d="${floorPath}" fill="${paper.floor}" fill-rule="evenodd"/>`);
   if (o.grid !== 'none') out.push(`<clipPath id="floor"><path d="${floorPath}" clip-rule="evenodd"/></clipPath><path d="${grid}" stroke="${paper.line}" stroke-width="2.5" fill="none" clip-path="url(#floor)"/>`);
-  for (const f of plan.features) if ((o.gm || !f.gm) && (o.furnishings || f.kind === 'stairs' || f.kind === 'pillar' || f.kind === 'trap')) out.push(feature(f, paper.floor, seed));
+  // A mast and a helm are the ship; growth and a bridge are the ground: they are drawn whether or not furnishings are.
+  const always = new Set<Feature['kind']>(['stairs', 'pillar', 'trap', 'mast', 'helm', 'growth', 'bridge']);
+  for (const f of plan.features) if (f.kind !== 'bridge' && (o.gm || !f.gm) && (o.furnishings || always.has(f.kind))) out.push(feature(f, paper.floor, seed));
   const stroke = `stroke="${INK}" stroke-linecap="round" stroke-linejoin="round" fill="none"`;
   if (wallPaths.thin + stubs + inner) out.push(`<path d="${wallPaths.thin}${inner}${stubs}" ${stroke} stroke-width="${wallW}"/>`);
   if (wallPaths.thick + stubsThick) out.push(`<path d="${wallPaths.thick}${stubsThick}" ${stroke} stroke-width="${thickW}"/>`);
-  out.push(...doors, ...marks);
+  out.push(...doors);
+  // The rift is over the walls it has broken; a bridge is over the rift.
+  out.push(...rifts);
+  for (const f of plan.features) if (f.kind === 'bridge') out.push(feature(f, paper.floor, seed));
+  out.push(...marks);
   for (const c of plan.captions) {
     // On a patch of clear paper, so that it reads over the hatching round a cellar.
     const half = c.text.length * 11 + 16;
@@ -343,7 +427,7 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
         keyMarks(a.n, r1(a.x), r1(a.y), o, paper.floor) +
           `<text x="${r1(a.x)}" y="${r1(a.y)}" font-size="${a.n > 99 ? 40 : 50}" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="${INK}" stroke="${paper.floor}" stroke-width="14" stroke-linejoin="round" paint-order="stroke">${a.n}</text>`,
       );
-  out.push(legend(plan, o, paper.sheet, o.fill === 'solid' && plan.rock.every((v) => v === 1)));
+  out.push(legend(plan, o, paper.sheet, night || (rim < 0 && o.fill === 'solid' && plan.rock.every((v) => v === 1))));
   return out.join('');
 }
 
@@ -352,6 +436,8 @@ function feature(f: Feature, floor: string, seed: number): string {
   const [x, y, w, h] = [r1(f.x), r1(f.y), r1(f.w), r1(f.h)];
   const [cx, cy] = [x + w / 2, y + h / 2];
   const line = `stroke="${INK}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"`;
+  // The same pen with no width of its own, for a line that is given one.
+  const pen = `stroke="${INK}" stroke-linecap="round" stroke-linejoin="round"`;
   const dir = f.dir ?? 0;
   switch (f.kind) {
     case 'stairs': {
@@ -465,6 +551,52 @@ function feature(f: Feature, floor: string, seed: number): string {
     }
     case 'trap':
       return `<g fill="none" stroke="${GM_INK}" stroke-width="6" stroke-linejoin="round"><path d="M${cx} ${y + 16}L${x + w - 16} ${cy}L${cx} ${y + h - 16}L${x + 16} ${cy}Z" fill="${floor}"/></g><text x="${cx}" y="${cy}" font-size="34" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="${GM_INK}">T</text>`;
+    case 'growth': {
+      // A clump of caps, large and small, with spores about them and a tendril or two running out.
+      const [ix, iy] = [Math.round(f.x), Math.round(f.y)];
+      const caps = Math.max(3, Math.round(f.w * f.h * 2.6));
+      let out = '';
+      let dots = '';
+      for (let i = 0; i < caps; i++) {
+        const [px, py] = [x + (0.2 + noise(ix * 7 + i, iy, seed + 21) * 0.6) * w, y + (0.2 + noise(ix, iy * 7 + i, seed + 22) * 0.6) * h];
+        const rad = Math.round((9 + noise(ix + i, iy + i, seed + 23) * 15) * Math.min(1.7, Math.sqrt(f.w)));
+        out += `<circle cx="${Math.round(px)}" cy="${Math.round(py)}" r="${rad}" fill="${floor}" ${pen} stroke-width="4.5"/><circle cx="${Math.round(px)}" cy="${Math.round(py)}" r="${Math.max(2, Math.round(rad * 0.3))}" fill="${INK}"/>`;
+        dots += `M${Math.round(px + rad + 6)} ${Math.round(py - rad * 0.4)}h1M${Math.round(px - rad - 5)} ${Math.round(py + rad * 0.6)}h1`;
+      }
+      const t = (k: number) => `M${cx} ${cy}q${Math.round((noise(ix, iy + k, seed + 24) - 0.5) * w)} ${Math.round((noise(ix + k, iy, seed + 25) - 0.5) * h)} ${Math.round((noise(ix + k, iy + k, seed + 26) - 0.5) * w * 0.9)} ${Math.round((noise(ix - k, iy, seed + 27) - 0.5) * h * 0.9)}`;
+      return `<path d="${t(1)}${t(2)}" fill="none" ${pen} stroke-width="3" opacity="0.8"/>${out}<path d="${dots}" ${pen} stroke-width="5"/>`;
+    }
+    case 'bridge': {
+      // Planks across, between two ropes: the way over a rift.
+      const along = dir % 2 === 1;
+      const [bx, by, bw, bh] = along ? [x - 18, y + Math.round(h * 0.2), w + 36, Math.round(h * 0.6)] : [x + Math.round(w * 0.2), y - 18, Math.round(w * 0.6), h + 36];
+      let planks = '';
+      const n = 5;
+      for (let i = 1; i < n; i++) planks += along ? `M${bx + Math.round((bw * i) / n)} ${by}v${bh}` : `M${bx} ${by + Math.round((bh * i) / n)}h${bw}`;
+      const ropes = along ? `M${bx} ${by}h${bw}M${bx} ${by + bh}h${bw}` : `M${bx} ${by}v${bh}M${bx + bw} ${by}v${bh}`;
+      return `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="${floor}"/><path d="${planks}" ${pen} stroke-width="3"/><path d="${ropes}" ${pen} stroke-width="7"/>`;
+    }
+    case 'mast':
+      // The mast, and its yard lying across the deck.
+      return `<path d="M${cx} ${cy - 150}V${cy + 150}" ${pen} stroke-width="9" opacity="0.85"/><circle cx="${cx}" cy="${cy}" r="${Math.round(w * 0.46)}" fill="${floor}" ${pen} stroke-width="8"/><circle cx="${cx}" cy="${cy}" r="${Math.round(w * 0.2)}" fill="${INK}"/>`;
+    case 'helm': {
+      // A wheel: its rim, its hub and its spokes, run out a little past the rim.
+      const rad = Math.round(w * 0.36);
+      let spokes = '';
+      for (let i = 0; i < 4; i++) {
+        const a = (i * Math.PI) / 4;
+        const [ux, uy] = [Math.cos(a) * (rad + 9), Math.sin(a) * (rad + 9)];
+        spokes += `M${Math.round(cx - ux)} ${Math.round(cy - uy)}L${Math.round(cx + ux)} ${Math.round(cy + uy)}`;
+      }
+      return `<circle cx="${cx}" cy="${cy}" r="${rad}" fill="${floor}" ${line}/><path d="${spokes}" ${pen} stroke-width="4"/><circle cx="${cx}" cy="${cy}" r="7" fill="${INK}"/>`;
+    }
+    case 'ballista': {
+      // A stock along the way it points, and its bow across the front of it.
+      const [dx, dy] = [[0, -1], [1, 0], [0, 1], [-1, 0]][dir];
+      const [fx, fy] = [cx + dx * w * 0.3, cy + dy * h * 0.3];
+      const [sx, sy] = [-dy * w * 0.42, dx * h * 0.42];
+      return `<path d="M${Math.round(cx - dx * w * 0.38)} ${Math.round(cy - dy * h * 0.38)}L${Math.round(cx + dx * w * 0.42)} ${Math.round(cy + dy * h * 0.42)}" ${pen} stroke-width="11"/><path d="M${Math.round(fx - sx)} ${Math.round(fy - sy)}Q${Math.round(fx + dx * w * 0.22)} ${Math.round(fy + dy * h * 0.22)} ${Math.round(fx + sx)} ${Math.round(fy + sy)}" fill="none" ${pen} stroke-width="7"/><path d="M${Math.round(fx - sx)} ${Math.round(fy - sy)}L${Math.round(cx - dx * w * 0.2)} ${Math.round(cy - dy * h * 0.2)}L${Math.round(fx + sx)} ${Math.round(fy + sy)}" fill="none" ${pen} stroke-width="2.5"/>`;
+    }
     default:
       return '';
   }

@@ -2,7 +2,7 @@
  * From a place's record to its plan: what kind of plan suits it, what its text says is in it, the choices the GM can
  * change, and the key that goes with the drawing.
  */
-import { feetText, rng, type GridPlan, type Plan, type PlanKind } from './model.js';
+import { feetText, rng, type GridPlan, type Land, type Plan, type PlanKind } from './model.js';
 import { makeCave, makeDungeon } from './dungeon.js';
 import { BUILDING_USES, buildingFurnishings, buildingUse, makeBuilding } from './building.js';
 import { TOWN_SIZES, makeSettlement, placeNames, type TownAsk, type TownSize } from './settlement.js';
@@ -11,6 +11,8 @@ import { fullKeyMarkdown, roomsFor, type KeyRoom } from './key.js';
 import { unpack, type PackedPlan } from './edit.js';
 import { furnishAgain, keptRooms } from './again.js';
 import { DISTRICTS, districtAt, withDistricts } from './districts.js';
+import { lieGrid, lieTown } from './land.js';
+import { makeShip } from './ship.js';
 
 export * from './model.js';
 export { drawPlan, DRAW_DEFAULTS, type DrawOptions } from './draw.js';
@@ -57,13 +59,25 @@ export interface PlanSettings {
   districts?: boolean;
   /** What the GM calls each district, in the plan's order, and the record that is its own, if it has one. */
   wards?: Ward[];
+  /** The lie of the land (v0.9.28), if it is not ordinary ground. */
+  land?: Land;
 }
 export interface Ward {
   name: string;
   record?: string;
 }
 
-export const PLAN_LABELS: Record<PlanKind, string> = { dungeon: 'Dungeon', cave: 'Cave', building: 'Building', settlement: 'Settlement' };
+export const PLAN_LABELS: Record<PlanKind, string> = { dungeon: 'Dungeon', cave: 'Cave', building: 'Building', settlement: 'Settlement', ship: 'Ship' };
+/** What each lie of the land is called, and what it does to a plan. */
+export const LAND_LABELS: Record<Land, { label: string; hint: string }> = {
+  plain: { label: 'Ordinary ground', hint: '' },
+  overgrown: { label: 'Overgrown', hint: 'Growth on the floors and among the houses; walls the roots have broken.' },
+  shattered: { label: 'Shattered', hint: 'A rift runs across it, bridged where a passage or a great road meets it.' },
+  aloft: { label: 'Aloft, in the sky', hint: 'An island in the air: the ground ends a little way out, and there are clouds beyond.' },
+  adrift: { label: 'Adrift, between worlds', hint: 'Fragments in the mist. A dungeon’s passages are gone: doors that share a letter open on one another.' },
+  unearthly: { label: 'Unearthly', hint: 'Nothing is straight, and there are more ways round than there should be.' },
+  void: { label: 'The void, among the stars', hint: 'A black sheet of stars around it.' },
+};
 const ROOMY = { small: 0.78, medium: 1, large: 1.32 };
 const LOOPS = { one: 0, some: 0.5, many: 1 };
 export const MAX_NAMES = 40;
@@ -97,14 +111,25 @@ export function refurnish(plan: Plan, s: PlanSettings, n: number, name: string, 
 
 /** A plan made afresh from its seed and choices, whatever has been drawn by hand. */
 export function generate(s: PlanSettings): Plan {
+  const land = s.land ?? 'plain';
   const names = s.names.slice(0, MAX_NAMES);
-  if (s.kind === 'cave') return makeCave({ seed: s.seed, names, roomy: ROOMY[s.size], loops: LOOPS[s.ways], ...(s.from ? { from: s.from } : {}) });
-  if (s.kind === 'building') return makeBuilding({ seed: s.seed, use: s.use, names, roomy: s.size === 'small' ? 0.85 : s.size === 'large' ? 1.2 : 1 });
+  const from = s.from ? { from: s.from } : {};
+  // On unearthly ground there are more ways round than there should be.
+  const loops = land === 'unearthly' ? 1 : LOOPS[s.ways];
   if (s.kind === 'settlement') {
-    const town = makeSettlement({ seed: s.seed, names, size: s.town, water: s.water, walled: s.walled, around: s.around });
+    const town = lieTown(makeSettlement({ seed: s.seed, names, size: s.town, water: s.water, walled: s.walled, around: s.around }), land, s.seed);
+    // The districts are worked out from the town as it stands on its ground. (A town turned about has them turned with it.)
     return s.districts ? withDistricts(town, DISTRICTS[s.town]) : town;
   }
-  return makeDungeon({ seed: s.seed, names, roomy: ROOMY[s.size], rough: s.rough, loops: LOOPS[s.ways], secrets: s.secrets, traps: s.traps ? Math.max(1, Math.round(names.length / 4)) : 0, ...(s.from ? { from: s.from } : {}) });
+  const plan =
+    s.kind === 'cave'
+      ? makeCave({ seed: s.seed, names, roomy: ROOMY[s.size], loops, ...from })
+      : s.kind === 'building'
+        ? makeBuilding({ seed: s.seed, use: s.use, names, roomy: s.size === 'small' ? 0.85 : s.size === 'large' ? 1.2 : 1 })
+        : s.kind === 'ship'
+          ? makeShip({ seed: s.seed, size: s.size, names })
+          : makeDungeon({ seed: s.seed, names, roomy: ROOMY[s.size], rough: s.rough, loops, secrets: s.secrets, traps: s.traps ? Math.max(1, Math.round(names.length / 4)) : 0, ...from });
+  return lieGrid(plan, land, s.seed);
 }
 
 /**
@@ -113,7 +138,8 @@ export function generate(s: PlanSettings): Plan {
  */
 export function madeNames(s: Pick<PlanSettings, 'kind' | 'seed' | 'town' | 'water' | 'walled'>, about: string, count: number): string[] {
   const rnd = rng(s.seed + 101);
-  if (s.kind === 'building') return [];
+  // A building and a ship have the rooms of their kind until the record or the GM names others.
+  if (s.kind === 'building' || s.kind === 'ship') return [];
   if (s.kind === 'settlement') return placeNames(rnd, s.town, s.water, s.walled);
   return roomNames(rnd, Math.max(1, Math.min(MAX_NAMES, count)), about, s.kind === 'cave');
 }
@@ -216,6 +242,8 @@ export interface PlaceFacts {
   body: string;
   /** The places kept under it as records of their own. */
   children: string[];
+  /** What its realm is called, if that is known: it may say what ground the place is on. */
+  realm?: string;
   terrain: string[];
   danger: 'safe' | 'risky' | 'deadly';
   wealth: 'poor' | 'modest' | 'rich';
@@ -225,6 +253,19 @@ const CAVE = /\b(caves?|caverns?|grotto|grottoes|warren|burrows?|den|sinkhole|ch
 const ROUGH = /\b(mines?|quarry|delve|diggings|tunnels|sewers?|catacombs?)\b/i;
 const DUNGEON = /\b(dungeon|vault|tomb|crypt|ruins?|ruined|lair|labyrinth|maze|undercity|depths|sunken|barrow|necropolis|prison|oubliette|asylum)\b/i;
 const TOWN = /\b(hamlet|village|town|city|capital|metropolis|thorp|outpost|camp|encampment|settlement|port|refuge)\b/i;
+
+const SHIP = /\b(ship|galley|galleon|cog|caravel|carrack|sloop|skiff|barge|longship|frigate|schooner|brigantine|airship|skyship|voidship|starship|shipwreck|boat|dhow|trireme|man-of-war)\b/i;
+const BOAT = /\b(boat|skiff|sloop|cutter|launch|barge|longboat|ferry|dhow|cog)\b/i;
+const GREAT_SHIP = /\b(galleon|man-of-war|great ship|flagship|carrack|dreadnought|treasure ship)\b/i;
+/** Words that say what ground a place is on: the first that fits. */
+const LIES: [RegExp, Land][] = [
+  [/\b(void|among the stars|between the stars|star-?sea|astral sea|voidship|starship)\b/i, 'void'],
+  [/\b(floating|aloft|sky-?ship|airship|in the sky|skyborne|sky-?city|cloud-?borne|above the clouds|hovers?|hovering)\b/i, 'aloft'],
+  [/\b(ethereal|adrift|between worlds|the between|unmoored|limbo)\b/i, 'adrift'],
+  [/\b(unearthly|eldritch|aberrant|otherworldly|non-euclidean|wrong angles|madness)\b/i, 'unearthly'],
+  [/\b(shattered|sundered|riven|cloven|fractured|the rift|a rift|great rift)\b/i, 'shattered'],
+  [/\b(overgrown|fung\w*|spores?|mycel\w*|the bloom|vine-?choked|jungle-?choked|moulder\w*|molder\w*)\b/i, 'overgrown'],
+];
 
 const hash = (s: string) => {
   let h = 2166136261;
@@ -241,6 +282,7 @@ export function suggest(p: PlaceFacts): PlanSettings {
 
   let kind: PlanKind;
   if (p.type === 'settlement') kind = 'settlement';
+  else if (SHIP.test(near) && !Object.values(BUILDING_USES).some((u) => u.test.test(near))) kind = 'ship';
   else if (p.type === 'building') kind = 'building';
   else if (CAVE.test(near)) kind = 'cave';
   else if (p.type === 'dungeon' || DUNGEON.test(near) || ROUGH.test(near)) kind = 'dungeon';
@@ -275,7 +317,7 @@ export function suggest(p: PlaceFacts): PlanSettings {
     kind,
     seed: hash(p.id) % 2147483647 || 1,
     names: [],
-    size: kind === 'building' ? (p.wealth === 'poor' ? 'small' : p.wealth === 'rich' ? 'large' : 'medium') : 'medium',
+    size: kind === 'building' ? (p.wealth === 'poor' ? 'small' : p.wealth === 'rich' ? 'large' : 'medium') : kind === 'ship' ? (BOAT.test(near) ? 'small' : GREAT_SHIP.test(near) ? 'large' : 'medium') : 'medium',
     rough: ROUGH.test(about) && !CAVE.test(near),
     ways: 'some',
     secrets: p.danger !== 'safe',
@@ -289,6 +331,11 @@ export function suggest(p: PlaceFacts): PlanSettings {
     // A town or a city is drawn in districts.
     ...(kind === 'settlement' && (town === 'town' || town === 'city') ? { districts: true } : {}),
   };
+  // The lie of the land, from what the record is called, what it is for, how it begins, and the realm it is in.
+  // (Only how it begins: a town that mentions a rift three paragraphs down is not on one.)
+  const first = start.split(/(?<=[.!?])\s/)[0].slice(0, 220);
+  const ground = LIES.find(([re]) => re.test(`${near}. ${first} ${p.realm ?? ''}`))?.[1];
+  if (ground) settings.land = ground;
   settings.names = namesFor(p, settings);
   return settings;
 }

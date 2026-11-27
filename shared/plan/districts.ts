@@ -200,6 +200,11 @@ export function districtPlan(town: TownPlan, index: number, feet = 10): { plan: 
     trees: town.trees.map(([x, y, s]): [number, number, number] => [...at([x, y]), r2(s * k)]).filter(([x, y]) => near([x, y], 3)),
     fields: town.fields.map((f) => ({ ...f, corners: f.corners.map(at) })).filter((f) => touches(f.corners)),
     areas,
+    // It is on the same ground as the town: its edge, its rifts and its growths come with it.
+    ...(town.land ? { land: town.land } : {}),
+    ...(town.island ? { island: town.island.map(at) } : {}),
+    ...(town.rifts ? { rifts: town.rifts.map(line) } : {}),
+    ...(town.growths ? { growths: town.growths.map(([x, y, s]): [number, number, number] => [...at([x, y]), r2(s * k)]).filter(([x, y]) => near([x, y], 3)) } : {}),
   };
   return { plan, from: numbered.map((a) => a.n) };
 }

@@ -76,7 +76,7 @@ The region border editor lets the GM draw and adjust regional boundaries directl
 
 ### Plans of places
 
-Open a town, a building or a dungeon and the app lays it out from what its record says, and draws it in ink with a grid: the rooms its text names, numbered in the same order; a settlement's streets, walls and water from its population and its land. Draw another until you like it, keep it, and take it away as a picture with so many pixels to a square, for a virtual tabletop or a mapping tool.
+Open a town, a building, a dungeon or a ship and the app lays it out from what its record says, and draws it in ink with a grid: the rooms its text names, numbered in the same order; a settlement's streets, walls and water from its population and its land. Draw another until you like it, keep it, and take it away as a picture with so many pixels to a square, for a virtual tabletop or a mapping tool.
 
 Then key it. Click a number on the plan and say what is there: words to read aloud, and encounters, traps, puzzles, hazards, loot, secrets, clues and people, added, changed and removed as you like, or suggested from your books for the party and the place.
 
@@ -95,6 +95,12 @@ And join them up. A numbered place can be a record of its own with its own plan:
 | A city in districts | The inn's cellar, joined to the town above and the tunnels below |
 | --- | --- |
 | ![The plan of Marrow Ford, a walled city in six named districts with broken lines between them](docs/images/plan-districts.jpg) | ![The key to an inn's cellar with a way on, stairs down to the Smugglers' Run, and under it the joined plans: in Marrow Ford, number 2 on its plan; stairs down to the Smugglers' Run](docs/images/plan-joined.jpg) |
+
+And put them on the ground they are really on. Any plan can be overgrown, shattered by a rift, aloft on an island in the sky, adrift in the mist between worlds (with lettered doors that open on rooms not next door), unearthly, or in the void among the stars. A **ship** is a fifth kind of plan: a hull and its decks, at sea, in the sky or in the void.
+
+| A ship among the stars | A city aloft, in districts | A dungeon adrift: doors of a letter open on one another |
+| --- | --- | --- |
+| ![The plan of The Starwind: three decks of a ship, white on a black sheet of stars](docs/images/plan-ship.jpg) | ![The plan of Zepharyos, the Floating City: a walled city on an island among clouds, with landing stages where its roads end](docs/images/plan-aloft.jpg) | ![The plan of The Unmoored Archive: seven rooms in the mist with no passages between them, their doors lettered A to F](docs/images/plan-adrift.jpg) |
 
 ### Prepare, play and keep the party
 

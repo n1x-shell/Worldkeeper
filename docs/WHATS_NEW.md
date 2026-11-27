@@ -2,6 +2,13 @@
 
 What changed in each version, newest first. Every update keeps your worlds as they are, and makes a backup of a library before changing how it is stored.
 
+## 0.9.28
+
+- **Ships.** A fifth kind of plan: a hull and its decks, with masts, a helm, cabins, a hold and ladders between decks, as a boat, a ship or a great ship. Key it, change it by hand, and take it away as a picture like any other plan.
+- **The lie of the land.** Any plan can be on ground that is not ordinary: **overgrown** (growth through everything), **shattered** (a rift across it), **aloft** (an island in the sky), **adrift** (fragments in the mist, with lettered doors that open on rooms not next door), **unearthly** (nothing straight) or **the void** (a black sheet of stars). A ship is at sea, in the sky or among the stars.
+- The app offers the ground a record's words suggest: "the Floating City" is drawn aloft, a place in a realm called "The Ethereal Realm" adrift.
+- Plans you have already kept are not changed.
+
 ## 0.9.27
 
 - **Plans join up.** Under a plan's key, **Joined plans** shows the place it is in, what leads to it and what it leads to, with a link each way.
