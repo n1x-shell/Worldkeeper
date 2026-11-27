@@ -28,6 +28,10 @@ Status: **under way**, November 2026. The audit below was made at v0.9.2.
 | A6 Accessibility and devices: an audit of 42 screens in both themes, on a tablet and with the keyboard alone, in CI; what it found, fixed | v0.9.22 | Done by machine. Not tried by someone who uses a screen reader every day, or on a real tablet |
 | A7 Security and publishing: a review of what each door trusts; other websites can no longer reach the app; publishing made to follow GitHub's documented rules | v0.9.23 | Done, except one thing only the owner can do: run `npm run publish:check` once against GitHub itself |
 | C8 A location generator: ink-style plans of dungeons, caves, buildings and settlements, laid out from their records, exported with a grid | v0.9.24 | Done. Looked at as pictures while it was built; not yet used by a GM at a table, or its pictures tried in Arkenforge itself |
+| C8, second part. The key to a plan: each place's words to read aloud and its encounters, traps, puzzles, hazards, loot and the rest, added, changed and removed in the page; suggestions from the GM's books | v0.9.25 | Done |
+| C8, third part. Plans edited by hand and made of parts: rooms, passages, doors, things in rooms, squares painted; settlements' buildings; parts kept while the rest is redrawn; a shelf of ready-made pieces | | To do (decided 27 November 2026) |
+| C8, fourth part. Joined plans: levels of a dungeon linked by their stairs, a building's plan opened from its town's, a city in districts | | To do (decided 27 November 2026) |
+| C8, fifth part. The lie of the land, for any world: overgrown, shattered, aloft, the between (ethereal), unearthly, and the void (a starred sheet); and ships as a fifth kind of plan, with their decks | | To do (decided 27 November 2026) |
 | The bundled world's own name: Oros | v0.9.16 | Done |
 | C2 play over the internet, C4 assistant, C5 sync and co-GMs, C6 rich-text editor, C3 other systems | | After the beta, if at all (decided) |
 
@@ -110,3 +114,8 @@ Kept as the first proposal. The owner chose one line of v0.9.x releases instead,
 3. **Update check:** yes. The app may ask GitHub once a day whether a newer version exists; on by default, switchable off in Settings, and it sends nothing about the GM or their world.
 4. **The name:** the app stays "The Worldkeeper". The bundled world is called **Oros**, a name its own peoples give it (done in v0.9.16). The pack's ID stays `worldkeeper`, so installed libraries are not affected.
 5. **Game system:** D&D 2024 only for 1.0.
+6. **The location generator grows before the beta** (27 November 2026, on seeing v0.9.24). One release each, in this order:
+   - (a) **A real key** for each place, with its contents changed in the page (done, v0.9.25).
+   - (b) **Plans edited by hand**, on dungeons, caves, buildings and settlements alike, and "modular" in both senses: parts locked while the rest is redrawn, and ready-made pieces to drag in.
+   - (c) **Joined plans:** levels of a dungeon linked by their stairs, a place inside a place (a building's plan opened from its town's, tunnels from a cellar), and a city in districts. After (b), which makes a kept plan its own geometry.
+   - (d) **The lie of the land**, as a choice any world can use: overgrown (Kaelmar's Bloom), shattered (the Rift, the Fractured Nexus), aloft (Zepharyos, the Empyrean Spire), the between (the Ethereal Realm: fragments adrift, doors to rooms not next door), unearthly (the Watchers' side: nothing straight, passages that loop), and the void (a black, starred sheet). With it, **ships** as a fifth kind of plan: a hull and its decks, for sea, sky or the void. The app's own names for these are plain ones, not any publisher's.

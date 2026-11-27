@@ -156,7 +156,23 @@ A dungeon, a cave, a building or a settlement, laid out from what its record say
 - **A building's use** comes from its name and its **Used for** fact: tavern, temple, smithy, shop, keep, tower, warehouse, stable, manor, hall, cottage or house. Its **Wealth** makes it smaller or larger.
 - **A dungeon's rooms** number what its **Rooms** fact says; **Danger** decides whether it has secret doors and traps to begin with.
 - **The numbered places are the record's own.** They are read from the record's key: a section called **Rooms**, **Inside**, **Places in town**, **Map key** and the like, taking its numbered lines, its lines that begin in bold, or its smaller headings. Places kept as records under this one are added. A room's name shapes it: a "Great hall" is large and has pillars, a "Crypt" has tombs, a "Guard post" is small, a "Cellar" is below ground and a "Loft" upstairs. In a settlement, a "Market", a "Bridge", a "Gate" and "Docks" are the square, the bridge, a gate and the jetties, not buildings.
-- A record that names no places gets rooms made up to suit it. **Write the key into the record** puts them into its text as a **Map key** section (for the GM only, except a settlement's), with each room's size and the ways out of it. From then on they are the record's own: rename them there and the plan follows.
+- A record that names no places gets rooms made up to suit it.
+
+**The key: what is in each place.** Under the drawing is its key. Click a number on the plan, or a line of the key, and that place opens:
+
+- **Its name**, to change. The plan stays as it was drawn until you choose **Draw it to suit the names** (a room renamed "Great hall" is then drawn large, with pillars). In a building, each room has its **storey**.
+- **Read aloud:** what the party sees, hears and smells on coming in.
+- **Entries**, as many as you like, each one an **encounter**, a **trap**, a **puzzle**, a **hazard**, **loot**, a **secret**, a **clue**, a **person** or a **note**. Each has a few words for a name and room for the rest. Change one's kind, or remove it, at any time.
+  - An **encounter** lists its creatures and how many. Type a name and the creatures in your books are offered; one picked from them opens its stat block here, and **Put in the tracker** starts the fight with their hit points, Armor Class and initiative filled in.
+  - A **trap**, a **puzzle** and a **hazard** have a DC, and a trap and a hazard the harm they do.
+  - **Loot** has its coin and its things, offered from the items in your books as you type.
+  - A **person** is one of your records.
+- **Suggest** adds an entry for you to change: an encounter from your books for the party's level, the place's Danger and its Terrain; loot for the party's level and the place's Wealth (a hoard, in a room called a treasury or a vault); or a trap, a puzzle or a hazard from the app's own ideas, with a DC and harm to fit. The party's level is the active campaign's.
+- **Add a room**, **remove** one, or move one **earlier or later** in the key. These draw the plan again, since the plan is made from the list of places.
+
+On your copy of the plan, letters under a place's number say what is keyed to it: E encounter, T trap, P puzzle, H hazard, L loot, S secret, C clue, N person. The players' copy has none.
+
+Once a plan is kept, its key is kept as you write it, without being asked. **Write the key into the record** puts it into the record's text as a **Map key** section: a heading for each place with its size and ways out, the words to read aloud, and a line for each entry. It is for the GM only (a settlement's with nothing keyed to it is for everyone). The app reads the places back from that section, so the text and the plan agree; if you change the places in the text itself, the page says so and offers to take them from there.
 
 **Drawing another.** **Draw another** lays the same place out differently. Every plan has a **plan number**: the same number and choices always give the same plan, on any computer. **Keep this plan** remembers it with the record, so it is there, the same, next time. If the record's text later names different places than the plan was kept for, the page says so and offers to draw it for the text as it is now.
 

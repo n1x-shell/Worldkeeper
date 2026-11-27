@@ -15,7 +15,7 @@ import { getActiveCampaignId } from '../repo/campaigns.js';
 import { campaignLayers, regionPanel } from '../repo/mapLayers.js';
 import { journey } from '../repo/journey.js';
 import { sniffImage } from '../lib/images.js';
-import { forgetPlan, planInfo, planToMap, savePlan, writeKey } from '../repo/plans.js';
+import { forgetPlan, planInfo, planToMap, savePlan, suggestKeyItem, writeKey } from '../repo/plans.js';
 import { handBack, hold } from '../lib/handBack.js';
 
 const IMAGE_TYPES: Record<string, string> = {
@@ -157,6 +157,11 @@ export function atlasRoutes(ctx: AppContext) {
       }
       return planToMap(ctx.db, String(req.params.id), ctx.paths.uploadsDir, { buffer: req.file.buffer, ext, ...size }, about);
     }),
+  );
+  // Something to key to a place on a plan: an encounter or loot from the GM's books, for the party and the place.
+  r.post(
+    '/plan/suggest',
+    h((req) => suggestKeyItem(ctx.db, req.body)),
   );
   // A plan's picture, made in the window, handed back as a file to save (the same way in a browser and the desktop app).
   r.post(

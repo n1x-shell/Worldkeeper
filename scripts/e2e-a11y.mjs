@@ -49,6 +49,31 @@ const npc = await call('/api/entities', 'POST', { type: 'npc', realm: 'world', n
 await call('/api/entities', 'POST', { type: 'faction', realm: 'world', name: 'The Ashen Hand', summary: 'Smugglers.', body: 'They move goods by night.' });
 await call(`/api/entities/${town.id}`, 'PATCH', { revealed: true, revealed_sections: ['A first look'] });
 await call(`/api/entities/${npc.id}`, 'PATCH', { revealed: true, revealed_sections: ['A first look'] });
+// The town's plan, kept with a key whose first place has an entry of every kind: the key's editor with all its parts.
+const townPlan = (await call(`/api/entities/${town.id}/plan`)).suggested;
+const entry = (kind, more = {}) => ({ id: `e-${kind}`, kind, title: `A ${kind}`, text: 'What there is to say about it.', ...more });
+await call(`/api/entities/${town.id}/plan`, 'PUT', {
+  ...townPlan,
+  key: townPlan.names.map((name, i) => ({
+    id: `r${i}`,
+    name,
+    drawnAs: name,
+    aloud: i ? '' : 'Mills line the river.',
+    items: i
+      ? []
+      : [
+          entry('encounter', { creatures: [{ name: 'Skeleton', count: 3, id: 'srd:skeleton' }, { name: 'A thing with no stat block', count: 1 }] }),
+          entry('trap', { dc: 13, damage: '2d10 piercing' }),
+          entry('puzzle', { dc: 15 }),
+          entry('hazard', { dc: 12, damage: '' }),
+          entry('loot', { coins: '120 gp', things: [{ name: 'Potion of Healing', count: 2 }] }),
+          entry('secret'),
+          entry('clue'),
+          entry('person', { entity: npc.id }),
+          entry('note'),
+        ],
+  })),
+});
 const campaign = await call('/api/campaigns', 'POST', { title: 'The Iron Crown', premise: 'A crown, and who wears it.' });
 await call('/api/campaigns/active', 'PUT', { id: campaign.id });
 const hero = await call('/api/characters', 'POST', { campaign_id: campaign.id, name: 'Brakka' });
@@ -66,6 +91,7 @@ const GM = [
   ['the world', '/world'],
   ['a record', `/e/${town.id}`],
   ['a place’s plan', `/e/${town.id}/plan`],
+  ['a place’s key, with a room open', `/e/${town.id}/plan?room=1`],
   ['a new record', '/new'],
   ['search results', '/search?q=harrowgate'],
   ['the campaign', '/campaign'],

@@ -12,6 +12,7 @@ Screenshots of The Worldkeeper, a local-first worldbuilding encyclopedia and D&D
 | `region.jpeg`                                        | The region border editor                                     |
 | `plan.jpg`                                           | The plan of a dungeon, drawn from its record's rooms         |
 | `plan-town.jpg`                                      | The plan of a walled town                                    |
+| `plan-key.jpg`                                       | A room of a plan's key, open, with its entries               |
 | `session-prep.jpg`                                   | Session prep                                                 |
 | `live-session.jpg`                                   | A live session with the encounter tracker (Dark Codex)       |
 | `party.jpg`                                          | Party and Characters with a character sheet                  |

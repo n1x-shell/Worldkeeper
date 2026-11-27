@@ -18,8 +18,21 @@ export interface DrawOptions {
   title: string;
   /** Pixels to a square, for the picture's size. */
   px: number;
+  /** For the GM's copy: letters under a place's number for what is keyed to it (`{ 3: 'ET' }`). */
+  marks: Record<number, string>;
+  /** A numbered place to ring: the one being worked on. Never part of a picture taken away. */
+  ring: number | null;
 }
-export const DRAW_DEFAULTS: DrawOptions = { gm: true, numbers: true, grid: 'floor', fill: 'hatch', paper: 'white', furnishings: true, title: '', px: 70 };
+export const DRAW_DEFAULTS: DrawOptions = { gm: true, numbers: true, grid: 'floor', fill: 'hatch', paper: 'white', furnishings: true, title: '', px: 70, marks: {}, ring: null };
+
+/** The letters for what is keyed to a place, and the ring round the one being worked on. */
+export function keyMarks(n: number, x: number, y: number, o: DrawOptions, halo: string): string {
+  let out = '';
+  if (o.ring === n) out += `<circle cx="${x}" cy="${y}" r="62" fill="none" stroke="${GM_INK}" stroke-width="9" stroke-dasharray="20 12"/>`;
+  const marks = o.gm ? o.marks[n] : '';
+  if (marks) out += `<text x="${x}" y="${y + 50}" font-size="27" font-weight="700" letter-spacing="3" text-anchor="middle" dominant-baseline="central" fill="${GM_INK}" stroke="${halo}" stroke-width="9" stroke-linejoin="round" paint-order="stroke">${esc(marks)}</text>`;
+  return out;
+}
 
 export const U = 100;
 export const INK = '#1d1a16';
@@ -327,7 +340,8 @@ function drawGrid(plan: GridPlan, o: DrawOptions): string {
   if (o.numbers)
     for (const a of plan.areas)
       out.push(
-        `<text x="${r1(a.x)}" y="${r1(a.y)}" font-size="${a.n > 99 ? 40 : 50}" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="${INK}" stroke="${paper.floor}" stroke-width="14" stroke-linejoin="round" paint-order="stroke">${a.n}</text>`,
+        keyMarks(a.n, r1(a.x), r1(a.y), o, paper.floor) +
+          `<text x="${r1(a.x)}" y="${r1(a.y)}" font-size="${a.n > 99 ? 40 : 50}" font-weight="700" text-anchor="middle" dominant-baseline="central" fill="${INK}" stroke="${paper.floor}" stroke-width="14" stroke-linejoin="round" paint-order="stroke">${a.n}</text>`,
       );
   out.push(legend(plan, o, paper.sheet, o.fill === 'solid' && plan.rock.every((v) => v === 1)));
   return out.join('');

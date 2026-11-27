@@ -78,9 +78,13 @@ The region border editor lets the GM draw and adjust regional boundaries directl
 
 Open a town, a building or a dungeon and the app lays it out from what its record says, and draws it in ink with a grid: the rooms its text names, numbered in the same order; a settlement's streets, walls and water from its population and its land. Draw another until you like it, keep it, and take it away as a picture with so many pixels to a square, for a virtual tabletop or a mapping tool.
 
+Then key it. Click a number on the plan and say what is there: words to read aloud, and encounters, traps, puzzles, hazards, loot, secrets, clues and people, added, changed and removed as you like, or suggested from your books for the party and the place.
+
 | A dungeon, from the rooms its record lists | A walled town, from its facts |
 | --- | --- |
-| ![The plan of The Sunken Vault: eleven numbered rooms, with pillars in the great hall, tombs in the crypt and traps marked for the GM](docs/images/plan.jpg) | ![The plan of Hollow Refuge as a walled town by a river, its named places numbered](docs/images/plan-town.jpg) |
+| ![The plan of The Sunken Vault: eleven numbered rooms, with letters on the GM's copy for what is keyed to each](docs/images/plan.jpg) | ![The plan of Hollow Refuge as a walled town by a river, its named places numbered](docs/images/plan-town.jpg) |
+
+![The key to the guard room: what is read aloud, an encounter with its creatures and their stat blocks, a trap with its DC and harm, and the loot in the chest](docs/images/plan-key.jpg)
 
 ### Prepare, play and keep the party
 
