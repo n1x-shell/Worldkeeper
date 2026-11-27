@@ -269,6 +269,25 @@ try {
     await page.getByTestId('plan-by-hand-note').waitFor();
     if ((await page.getByTestId('plan-room').count()) !== places + 1) throw new Error('the room drawn by hand was not there on coming back');
     step('its plan changed by hand with the keyboard: a room drawn and named, an altar set down in it, undone and redone, kept unasked as a drawing, there on coming back');
+
+    // Joined plans (v0.9.27): a level below, reached from one of its places. It is a record kept under this one with a
+    // plan of its own; each plan has a link to the other.
+    await page.getByTestId('plan-below').click();
+    await page.getByTestId('plan-below-form').getByLabel('What the level below is called').fill('The Lower Vault');
+    await page.getByTestId('plan-below-add').click();
+    await page.getByTestId('plan-join-way').waitFor();
+    const upper = (await api(`/api/entities/${vault.id}/plan`)).saved;
+    const wayDown = upper.key.flatMap((r) => r.items).find((i) => i.kind === 'way');
+    if (!wayDown?.entity || wayDown.title !== 'Stairs down') throw new Error(`no way on was keyed for the level below: ${JSON.stringify(wayDown)}`);
+    const lower = await api(`/api/entities/${wayDown.entity}/plan`);
+    if (lower.entity.name !== 'The Lower Vault' || !lower.saved?.from || lower.joined.from[0]?.id !== vault.id || lower.joined.within?.id !== vault.id) throw new Error(`the level below is not joined to the one above: ${JSON.stringify(lower.joined)}`);
+    await page.getByTestId('plan-join-way').click();
+    await page.getByTestId('plan-join-from').waitFor();
+    await page.getByTestId('plan-drawing').waitFor();
+    await shot(page, '08c-plan-below');
+    await page.getByTestId('plan-join-from').click();
+    await page.getByTestId('plan-by-hand-note').waitFor();
+    step('a level below added from one of its places: a record under it with a plan of its own, a way on keyed here, and a link each way');
   } else {
     await page.getByRole('button', { name: /Play in Oros/ }).click();
     await page.getByRole('button', { name: /Add the Oros worldbook/ }).click();

@@ -2,6 +2,14 @@
 
 What changed in each version, newest first. Every update keeps your worlds as they are, and makes a backup of a library before changing how it is stored.
 
+## 0.9.27
+
+- **Plans join up.** Under a plan's key, **Joined plans** shows the place it is in, what leads to it and what it leads to, with a link each way.
+- **A level below.** **Add a level below** makes the next level down as a plan of its own: tunnels under an inn's cellar, caves under a keep, the third level of a dungeon. Stairs are drawn where the way down is, and each plan says how it is reached from the other.
+- **A place inside a place.** Tie a numbered place to a record of its own, or press **Make it one**, and its plan is a click away: the inn in the town, with the town's plan saying which number it is.
+- **Way on**, a new kind of entry in the key: where a place leads and how, with a link to that place's plan.
+- **Towns and cities in districts.** Each district is named for what stands in it, and you can call it what you like. **A plan of its own** draws a district closer, with the same streets and houses, to key and to change by hand.
+
 ## 0.9.26
 
 - **Change a plan by hand.** **Change it by hand**, under the drawing, gives you tools: draw a room, move or resize one, cut a passage a square at a time, rub floor out, put a door (or a secret door, an archway, a portcullis, a window) in a wall, and set down stairs, pillars, altars, chests, beds and the rest. A new room gets a number and a place in the key.

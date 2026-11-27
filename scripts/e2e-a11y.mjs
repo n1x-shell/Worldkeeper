@@ -50,14 +50,19 @@ await call('/api/entities', 'POST', { type: 'faction', realm: 'world', name: 'Th
 await call(`/api/entities/${town.id}`, 'PATCH', { revealed: true, revealed_sections: ['A first look'] });
 await call(`/api/entities/${npc.id}`, 'PATCH', { revealed: true, revealed_sections: ['A first look'] });
 // The town's plan, kept with a key whose first place has an entry of every kind: the key's editor with all its parts.
+// It is drawn in districts, one of its places is a record of its own, and a way leads on to it: the joined plans.
+const inn = await call('/api/entities', 'POST', { name: 'The Gilded Flagon', type: 'building', realm: 'world', parent_id: town.id });
 const townPlan = (await call(`/api/entities/${town.id}/plan`)).suggested;
 const entry = (kind, more = {}) => ({ id: `e-${kind}`, kind, title: `A ${kind}`, text: 'What there is to say about it.', ...more });
 await call(`/api/entities/${town.id}/plan`, 'PUT', {
   ...townPlan,
+  town: 'town',
+  districts: true,
   key: townPlan.names.map((name, i) => ({
     id: `r${i}`,
     name,
     drawnAs: name,
+    ...(i === 1 ? { record: inn.id } : {}),
     aloud: i ? '' : 'Mills line the river.',
     items: i
       ? []
@@ -70,6 +75,7 @@ await call(`/api/entities/${town.id}/plan`, 'PUT', {
           entry('secret'),
           entry('clue'),
           entry('person', { entity: npc.id }),
+          entry('way', { entity: inn.id }),
           entry('note'),
         ],
   })),

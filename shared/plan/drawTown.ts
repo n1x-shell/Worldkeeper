@@ -137,6 +137,16 @@ export function drawTown(plan: TownPlan, o: DrawOptions): string {
     out.push(`<path d="${grid}" stroke="${paper.line}" stroke-width="2.5" fill="none" opacity="0.8"/>`);
   }
 
+  // Districts: a broken line between one and the next, and each one's name written across it.
+  if (plan.districts?.length) {
+    const between = (plan.districtLines ?? []).map(([a, b]) => `M${P(a[0])} ${P(a[1])}L${P(b[0])} ${P(b[1])}`).join('');
+    if (between) out.push(`<path d="${between}" fill="none" stroke="${INK}" stroke-width="9" stroke-dasharray="46 30" stroke-linecap="round" opacity="0.62"/>`);
+    for (const d of plan.districts)
+      out.push(
+        `<text x="${P(d.at[0])}" y="${P(d.at[1])}" font-size="78" font-style="italic" font-weight="700" letter-spacing="9" text-anchor="middle" dominant-baseline="central" fill="${INK}" stroke="${sheet}" stroke-width="20" stroke-linejoin="round" paint-order="stroke" opacity="0.9">${esc(d.name.toUpperCase())}</text>`,
+      );
+  }
+
   if (o.numbers)
     for (const a of plan.areas)
       out.push(

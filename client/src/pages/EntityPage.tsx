@@ -746,7 +746,7 @@ function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; 
                   <ul className="space-y-0.5">
                     {kids.map((c) => (
                       <li key={c.id} className="flex items-baseline gap-2">
-                        <EntityLink id={c.id} className="min-w-0 truncate">
+                        <EntityLink id={c.id} className="min-w-0 truncate py-0.5">
                           {c.name}
                         </EntityLink>
                         <span className="ml-auto shrink-0 text-[11px] text-dim">{recordTypes.label(c.type)}</span>
@@ -777,7 +777,7 @@ function RecordDetails({ data, revisions, inInspector, onTab }: { data: Detail; 
             <ul className="space-y-0.5">
               {mentions.map((m) => (
                 <li key={m.id} className="flex items-baseline gap-2">
-                  <EntityLink id={m.id} className="min-w-0 truncate">
+                  <EntityLink id={m.id} className="min-w-0 truncate py-0.5">
                     {m.name}
                   </EntityLink>
                   <span className="ml-auto shrink-0 text-[11px] text-dim">{m.type}</span>

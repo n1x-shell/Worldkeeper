@@ -571,6 +571,40 @@ export function turnThing(plan: GridPlan, x: number, y: number): GridPlan | null
   return p;
 }
 
+/**
+ * Stairs set down in a numbered place, for a way down to the level below (v0.9.27): on two squares of its floor with
+ * nothing on them, as far from its doors and its number as may be. Null if the place has no room for them.
+ */
+export function stairsDown(plan: GridPlan, n: number, to = ''): GridPlan | null {
+  const a = plan.areas.find((k) => k.n === n);
+  if (!a) return null;
+  const region = regionOf(plan, a);
+  const mine = (x: number, y: number) => regionAt(plan, x, y) === region && (plan.kind !== 'cave' || Math.hypot(x + 0.5 - a.x, y + 0.5 - a.y) <= 4);
+  const busy = (x: number, y: number) => featureAt(plan, x, y) >= 0 || (Math.floor(a.x) === x && Math.floor(a.y) === y);
+  const doors = plan.openings.flatMap((o) => across(o)).filter(([x, y]) => regionAt(plan, x, y) === region);
+  let best: { f: Feature; score: number } | null = null;
+  for (let y = 0; y < plan.h; y++)
+    for (let x = 0; x < plan.w; x++)
+      for (const dir of [0, 1, 2, 3] as const) {
+        const f = shapeOf('stairs', x, y, dir);
+        const squares: Pt[] = dir % 2 === 0 ? [[x, y], [x, y + 1]] : [[x, y], [x + 1, y]];
+        if (!squares.every(([sx, sy]) => mine(sx, sy) && !busy(sx, sy))) continue;
+        // Away from the doors (never on a doorstep) and off the number; against a wall for choice.
+        const fromDoors = Math.min(9, ...doors.flatMap(([dx, dy]) => squares.map(([sx, sy]) => Math.abs(dx - sx) + Math.abs(dy - sy))));
+        if (fromDoors === 0) continue;
+        const walls = squares.reduce((sum, [sx, sy]) => sum + DIRS.filter(([ex, ey]) => regionAt(plan, sx + ex, sy + ey) !== region).length, 0);
+        const score = fromDoors * 2 + walls + Math.min(3, Math.hypot(x + 0.5 - a.x, y + 0.5 - a.y)) * 0.5;
+        if (!best || score > best.score + 1e-9) best = { f, score };
+      }
+  if (!best) return null;
+  const p = copy(plan);
+  p.features.push(best.f);
+  // The key says where they go, among the place's ways out.
+  const mineNow = p.areas.find((k) => k.n === n)!;
+  mineNow.exits = [...mineNow.exits.filter((e) => !e.startsWith('stairs down')), to.trim() ? `stairs down to ${to.trim().slice(0, 80)}` : 'stairs down'];
+  return p;
+}
+
 /** The wall nearest a point within a square: which square's top or left edge it is. `fx`, `fy` are 0 to 1 across and down the square. */
 export function nearestEdge(x: number, y: number, fx: number, fy: number): { x: number; y: number; side: 'n' | 'w' } {
   const d = [fy, 1 - fx, 1 - fy, fx];
