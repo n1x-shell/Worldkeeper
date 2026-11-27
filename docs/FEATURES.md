@@ -250,7 +250,7 @@ Each character has a full **D&D 2024 character sheet** that holds everything on 
 - **Thinning**: the world's own page (below).
 - **Log**: every change, who made it (the player or the GM) and when. A burst of typing makes one entry.
 
-The rules come from **rules packs**: the built-in SRD 5.2.1 (character rules and spells, plus its creatures, magic items, gear and hazards for the GM), which you can turn off, and packs you import from your own books or homebrew as a zip of Markdown files (see [Rules packs](RULES_PACKS.md)). Packs stay in your library: the GM app and table server use them, but they never reach the published handbook or an export. Each people page names the species rules it uses, and the sheet uses exactly those, so a Sea Elf never picks up the SRD's Elf traits.
+The rules come from **rules packs**: the built-in SRD 5.2.1 (character rules and spells, plus its creatures, magic items, gear and hazards for the GM), which you can turn off, and packs you import from your own books or homebrew as a zip of Markdown files, which can hold creatures, hazards and items of your own as well as spells and character options (see [Rules packs](RULES_PACKS.md)). Packs stay in your library: the GM app and table server use them, but they never reach the published handbook or an export. Each people page names the species rules it uses, and the sheet uses exactly those, so a Sea Elf never picks up the SRD's Elf traits.
 
 Packs imported from your books also bring **creatures and items**:
 

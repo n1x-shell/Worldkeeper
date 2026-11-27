@@ -2,6 +2,13 @@
 
 What changed in each version, newest first. Every update keeps your worlds as they are, and makes a backup of a library before changing how it is stored.
 
+## 0.9.30
+
+- **Creatures, hazards and items in a pack you write.** A rules pack of Markdown files can now hold stat blocks, traps and other hazards, and items, beside its spells and character options. Write a creature much as a book sets it out (its numbers as `Key: value` lines, each trait and action beginning with its name in bold) and import the zip in **Settings → Rules packs**.
+- They work like a book's: creatures in Your Books, the encounter tracker and NPC cards, for you only; items in treasure and on character sheets.
+- What a stat block works out for itself need not be written: XP, Proficiency Bonus, Initiative, passive Perception, and average Hit Points from dice.
+- A file that can't be read is named with what is wrong with it, and the rest of the pack still comes in. The format is in the Rules packs guide.
+
 ## 0.9.29
 
 - **A painted style for plans.** Under "How it is drawn", choose **Painted**: the same plan on stone, earth, timber and grass from photographs, with shaded walls, for a picture to play on at a table or in a virtual tabletop. Dungeons, caves, buildings, ships and settlements, on every kind of ground.

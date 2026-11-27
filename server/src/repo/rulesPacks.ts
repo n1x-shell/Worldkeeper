@@ -24,6 +24,7 @@ import { isOpenSource, openRulesFor } from './booksOnly.js';
 import { standIns, standInSource } from './standIns.js';
 import { byName } from '../../../shared/rulesView.js';
 import { HOMEBREW_SOURCE, homebrewSpells } from './homebrew.js';
+import { XP_BY_CR, abilityMod, crPb, hitPoints } from '../../../shared/statblock.js';
 
 type DB = Database.Database;
 export const RULE_KINDS = ['spell', 'species', 'class', 'subclass', 'background', 'feat'] as const;
@@ -42,7 +43,6 @@ export interface PackSummary {
   /** Published: its rules go into the players' handbook. */
   publish?: boolean;
 }
-
 
 /** One Markdown entry: "Key: value" lines, a blank line, then the text (with "## " headings for features or traits). */
 export function parseEntry(md: string, fallbackKind?: string) {
@@ -71,12 +71,140 @@ const list = (s?: string) =>
     .split(/,| and /)
     .map((x) => x.trim())
     .filter(Boolean);
-const FOLDER_KIND: Record<string, RuleKind> = { spells: 'spell', species: 'species', classes: 'class', subclasses: 'subclass', backgrounds: 'background', feats: 'feat' };
+/** What a Markdown pack can hold: the rules of a sheet, and (v0.9.30) creatures, hazards and items for the GM. */
+type PackKind = RuleKind | 'creature' | 'item';
+const FOLDER_KIND: Record<string, string> = {
+  spells: 'spell',
+  species: 'species',
+  classes: 'class',
+  subclasses: 'subclass',
+  backgrounds: 'background',
+  feats: 'feat',
+  creatures: 'creature',
+  monsters: 'creature',
+  hazards: 'hazard',
+  traps: 'hazard',
+  items: 'item',
+};
+
+const ABILITIES = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+const LONG_ABILITIES = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
+const BLOCKS: Record<string, 'traits' | 'actions' | 'bonus' | 'reactions' | 'legendary'> = {
+  traits: 'traits',
+  actions: 'actions',
+  'bonus actions': 'bonus',
+  bonus: 'bonus',
+  reactions: 'reactions',
+  'legendary actions': 'legendary',
+  legendary: 'legendary',
+};
+const RARITIES = ['common', 'uncommon', 'rare', 'very rare', 'legendary', 'artifact'];
+
+/**
+ * The named parts of a stat block's section: each begins with a "### Name" line, or with its name in bold and a full
+ * stop ("**Bite.** Melee Attack Roll…"), as the books set them. Text with no name stays with the part before it, or
+ * stands alone (the line that says how many Legendary Actions there are).
+ */
+function namedParts(text: string): { name: string; text: string }[] {
+  const out: { name: string; text: string }[] = [];
+  for (const para of text
+    .split(/\n\s*\n/)
+    .map((x) => x.trim())
+    .filter(Boolean)) {
+    const head = /^### +(.+?)\s*(?:\n([\s\S]*))?$/.exec(para) ?? /^(?:\*{1,3}|_{1,3})(.+?)\.?(?:\*{1,3}|_{1,3})\.?\s*([\s\S]*)$/.exec(para);
+    if (head) out.push({ name: head[1].trim().replace(/\.$/, ''), text: (head[2] ?? '').trim() });
+    else if (out.length && out[out.length - 1].name) out[out.length - 1].text = `${out[out.length - 1].text}\n\n${para}`.trim();
+    else out.push({ name: '', text: para });
+  }
+  return out;
+}
+
+/** A creature as the app keeps one, from a Markdown entry. What a stat block works out for itself (XP, Proficiency Bonus, Initiative, passive Perception) need not be written. */
+function creatureData(name: string, fields: Record<string, string>, body: string): Record<string, unknown> {
+  const f = (...keys: string[]) => keys.map((k) => fields[k]).find((v) => v !== undefined && v !== '') ?? '';
+  const together = f('abilities', 'ability scores')
+    .split(/[,\s]+/)
+    .filter(Boolean)
+    .map(Number);
+  const ab = ABILITIES.map((a, i) => {
+    const one = f(a, LONG_ABILITIES[i]);
+    const n = one ? Number(/\d+/.exec(one)?.[0]) : together.length === 6 ? together[i] : 10;
+    if (!Number.isInteger(n) || n < 1 || n > 30) throw new Error(`has a ${LONG_ABILITIES[i]} that is not 1 to 30`);
+    return n;
+  });
+  const cr = f('cr', 'challenge', 'challenge rating').replace(/\s*\(.*$/, '') || '0';
+  if (!(cr in XP_BY_CR)) throw new Error(`has a CR "${cr}" that is not a Challenge Rating`);
+  const hp = hitPoints(f('hp', 'hit points') || '1');
+  if (!hp) throw new Error('has HP that is not a number or dice (for example "38 (7d8 + 7)" or "7d8+7")');
+  const ac = Number(/\d+/.exec(f('ac', 'armor class', 'armour class'))?.[0] ?? 10);
+  const init = f('initiative');
+  const senses = f('senses');
+  const groups: Record<string, { name: string; text: string }[]> = { traits: [], actions: [], bonus: [], reactions: [], legendary: [] };
+  const parts = sections(body);
+  groups.traits.push(...namedParts(parts.intro));
+  for (const sec of parts.list) {
+    const block = BLOCKS[sec.heading.toLowerCase().replace(/:$/, '')];
+    if (!block) throw new Error(`has a section "${sec.heading}" (use Traits, Actions, Bonus Actions, Reactions or Legendary Actions)`);
+    groups[block].push(...namedParts(sec.text));
+  }
+  return {
+    name,
+    meta: f('meta') || `${f('size') || 'Medium'} ${f('type', 'creature type') || 'Creature'}${f('alignment') ? `, ${f('alignment')}` : ''}`,
+    kind: 'creature',
+    ac,
+    hp: hp.hp,
+    hpAvg: hp.avg,
+    init: init ? Number(init.replace(/[^\d-]/g, '')) || 0 : abilityMod(ab[1]),
+    speed: f('speed') || '30 ft.',
+    ab,
+    cr,
+    xp: XP_BY_CR[cr],
+    pb: crPb(cr),
+    saves: f('saves', 'saving throws'),
+    skills: f('skills'),
+    vuln: f('vulnerabilities', 'vulnerable'),
+    res: f('resistances', 'resistant'),
+    imm: f('immunities', 'immune'),
+    gear: f('gear'),
+    senses: /passive perception/i.test(senses) ? senses : [senses, `Passive Perception ${10 + abilityMod(ab[4])}`].filter(Boolean).join('; '),
+    languages: f('languages') || 'None',
+    ...groups,
+    environment: list(f('environment', 'environments')),
+  };
+}
+
+/** An item as the app keeps one, from a Markdown entry. */
+function itemData(name: string, fields: Record<string, string>, body: string): Record<string, unknown> {
+  const rarity = (fields.rarity ?? '').toLowerCase().replace(/-/g, ' ').trim();
+  if (rarity && !RARITIES.includes(rarity)) throw new Error(`has a Rarity "${fields.rarity}" (use ${RARITIES.join(', ')}, or leave it out)`);
+  const att = (fields.attunement ?? '').trim();
+  const attunement =
+    !att || /^(no|none|false)$/i.test(att) ? '' : /^(yes|true|required|requires attunement)$/i.test(att) ? 'requires attunement' : `requires attunement ${att.replace(/^requires attunement\s*/i, '')}`;
+  const money = /([\d,.]+)\s*(gp|sp|cp|pp)?/i.exec(fields.value ?? fields.cost ?? '');
+  const coins = money ? Number(money[1].replace(/,/g, '')) * ({ gp: 1, sp: 0.1, cp: 0.01, pp: 10 }[(money[2] ?? 'gp').toLowerCase()] ?? 1) : 0;
+  const weight = Number(/[\d.]+/.exec(fields.weight ?? '')?.[0] ?? 0);
+  return {
+    name,
+    type: fields.type || (rarity ? 'Wondrous Item' : 'Gear'),
+    rarity,
+    attunement,
+    magic: !!rarity || /^(yes|true)$/i.test(fields.magic ?? ''),
+    value: coins > 0 ? coins : null,
+    weight: weight > 0 ? weight : null,
+    text: body,
+    tables: [],
+  };
+}
 
 /** Turn a parsed entry into what the sheet uses. Throws on a missing name or an unknown kind. */
-export function entryData(kind: string, fields: Record<string, string>, body: string): { kind: RuleKind; name: string; cls: string; data: Record<string, unknown> } {
+export function entryData(kind: string, fields: Record<string, string>, body: string): { kind: PackKind; name: string; cls: string; data: Record<string, unknown> } {
   const name = fields.name;
   if (!name) throw new Error('has no Name');
+  // For the GM: a creature, a hazard (kept with the creatures, as the SRD's traps are) or an item.
+  if (kind === 'creature' || kind === 'monster') return { kind: 'creature', name, cls: '', data: creatureData(name, fields, body) };
+  if (kind === 'hazard' || kind === 'trap')
+    return { kind: 'creature', name, cls: '', data: { name, meta: fields.type || fields.meta || 'Hazard', kind: 'hazard', trigger: fields.trigger ?? '', effect: body } };
+  if (kind === 'item') return { kind: 'item', name, cls: '', data: itemData(name, fields, body) };
   if (!(RULE_KINDS as readonly string[]).includes(kind)) throw new Error(`has an unknown Kind "${kind}"`);
   const k = kind as RuleKind;
   const features = (b: string) =>
@@ -173,8 +301,16 @@ export function readPack(buf: Buffer) {
       problems.push(`${f.entryName} ${(x as Error).message}`);
     }
   }
+  // A creature or an item says which pack it is from, as one from a book does; a creature is known by its pack and name.
+  const id = slug(meta.id ?? name);
+  const source = meta.source ?? meta.book ?? name;
+  for (const e of entries)
+    if (e.kind === 'creature' || e.kind === 'item') {
+      e.data.source = source;
+      if (e.kind === 'creature') e.data.id = `${id}:${slug(e.name)}`;
+    }
   if (!entries.length) throw badRequest(`No rules found in the pack.${problems.length ? ` ${problems.slice(0, 5).join('; ')}` : ''}`);
-  return { id: slug(meta.id ?? name), name, source: meta.source ?? meta.book ?? '', entries, problems };
+  return { id, name, source: meta.source ?? meta.book ?? '', entries, problems };
 }
 
 /** Import (or replace) a pack. */
@@ -191,8 +327,9 @@ export function importPack(db: DB, buf: Buffer) {
  * (Books only sets them aside); a GM who has the book gets the book's species, since each people names it first.
  */
 const WORLD_SPECIES_CREDIT = "The Oros worldbook's rules (CC BY 4.0)";
-let speciesCache: ReturnType<typeof entryData>[] | null = null;
-export function worldSpecies(): ReturnType<typeof entryData>[] {
+type SheetEntry = Omit<ReturnType<typeof entryData>, 'kind'> & { kind: RuleKind };
+let speciesCache: SheetEntry[] | null = null;
+export function worldSpecies(): SheetEntry[] {
   if (speciesCache) return speciesCache;
   const dir = worldkeeperPath('rules', 'species');
   speciesCache = fs.existsSync(dir)
@@ -202,7 +339,7 @@ export function worldSpecies(): ReturnType<typeof entryData>[] {
         .sort()
         .map((f) => {
           const e = parseEntry(fs.readFileSync(path.join(dir, f), 'utf8'), 'species');
-          return entryData(e.kind, e.fields, e.body);
+          return entryData(e.kind, e.fields, e.body) as SheetEntry;
         })
     : [];
   return speciesCache;
@@ -277,11 +414,15 @@ export function publishedRuleEntries(db: DB): { kind: RuleKind; name: string; cl
     const rows = db.prepare('SELECT kind, name, cls, data FROM rules_entries WHERE pack_id = ?');
     // The GM's own spells are theirs to give their players.
     const own = homebrewSpells(db).map((h) => ({ ...h, source: HOMEBREW_SOURCE }));
-    return [...world, ...own, ...packs.flatMap((p) =>
-      (rows.all(p.id) as { kind: RuleKind; name: string; cls: string; data: string }[])
-        .filter((r) => ['spell', 'species', 'class', 'subclass', 'background', 'feat'].includes(r.kind))
-        .map((r) => ({ ...r, data: JSON.parse(r.data) as Record<string, unknown>, source: p.source || p.name })),
-    )];
+    return [
+      ...world,
+      ...own,
+      ...packs.flatMap((p) =>
+        (rows.all(p.id) as { kind: RuleKind; name: string; cls: string; data: string }[])
+          .filter((r) => ['spell', 'species', 'class', 'subclass', 'background', 'feat'].includes(r.kind))
+          .map((r) => ({ ...r, data: JSON.parse(r.data) as Record<string, unknown>, source: p.source || p.name })),
+      ),
+    ];
   } catch {
     return world;
   }
